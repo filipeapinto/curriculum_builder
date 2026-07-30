@@ -214,12 +214,20 @@ def _class_drift_sweep(records, status, by_id) -> None:
             drift.append(f"{gid}: declared {'+'.join(sorted(declared))}, reported {'+'.join(sorted(reported)) or '-'}")
     record = records[registry_id]
     record["class_drift"] = drift
-    if drift:
+    if not drift:
+        return
+    # The four outcomes are distinct and never interchanged (rule 2). Drift found
+    # after the gate ran fails a gate that PASSed; it never rewrites a BLOCKED gate
+    # into a FAILed one, because BLOCKED means the gate did not run at all. The run
+    # still exits non-zero either way — BLOCKED is counted.
+    print(f"{registry_id} claim-class-drift: {'; '.join(drift)}")
+    if record["status"] == "PASS":
         record["status"] = "FAIL"
         record["exit_code"] = 1
         record["detail"] = "claim-class-drift: " + "; ".join(drift)
         status[registry_id] = "FAIL"
-        print(f"{registry_id} FAIL claim-class-drift: {'; '.join(drift)}")
+    else:
+        record["detail"] += f" | claim-class-drift found after the run: {'; '.join(drift)}"
 
 
 def main(argv: list[str]) -> int:

@@ -1,0 +1,10 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "A schema retired into deprecated/ that nothing cites",
+  "description": "Positive fixture for FR-P1-SCHEMA-RETENTION. The gate is conditional, so rule 3 requires the accepting case be shown too: a file inside deprecated/ whose basename appears nowhere outside that folder must pass, or the gate would forbid retirement altogether rather than gate it.",
+  "type": "object",
+  "required": ["id"],
+  "properties": {
+    "id": { "type": "string" }
+  }
+}

@@ -9,6 +9,30 @@
 - `tests/` is the gate harness: `tests/run_gates.sh <phase>` runs every gate registered in `tests/gates/registry.py` with an activation phase at or below `<phase>`, in dependency order. `tests/fixtures/` and `tests/selftest/` are never read by a production check.
 - Treat `plans/legacy_v3/` as archival reference only. Its runner targets a retired external directory layout and is not the local build entry point.
 
+## Retention
+
+Three words, three meanings, and none of them is a synonym for the others.
+`deprecated/` holds an artifact superseded by a newer version of itself, retained for
+history — **nothing may read it**. `plans/legacy_v3/` holds a prior *system*, retained
+as evidence and actively cited: `policy/failures.v1.yaml` requires a path and line
+from it for every A-series defect. `name.vN.ext` is in-place coexistence while both
+versions are live, which is why a superseded contract stays in `schemas/` rather than
+moving. Every `deprecated/` carries a `.gitkeep`, or the convention disappears on
+clone.
+
+Every top-level folder is answered here explicitly, so no folder's retention is left
+to inference:
+
+| Folder | Keeps a `deprecated/`? | Why |
+|---|---|---|
+| `policy/` | yes | a manifest is superseded in place; the prior version is history a run must never read |
+| `curricula/` | yes | a retired curriculum is evidence of what was taught, never a live input |
+| `schemas/` | yes — gated | a schema may enter only when zero accepted artifacts and zero manifests reference it, because `--resume` refuses to mutate accepted work and the contract a lab was accepted under must keep resolving |
+| `meta_prompt/` | yes | a superseded prompt is read by nobody, but it records why a contract changed |
+| `tests/` | no | a gate outlives no rule; when the rule goes, the gate that proved it is deleted, and an archived detector is a second copy nothing keeps equal |
+| `docs/` | no | explainers are regenerated from `how_it_works.typ`; an archive of stale claims is a drift risk rather than a record |
+| `plans/` | yes | every plan and prompt pair below the active version lives in `plans/<topic>/deprecated/`, which is what keeps the executing agent off a superseded plan |
+
 ## Validation, Rendering, and Development
 
 There is no package manifest or build system. The committed automated checks are the gate harness under `tests/`. Validate every edited manifest against its schema before review. For the two top-level manifests the harness itself validates:

@@ -159,12 +159,25 @@ def resolve_destinations(entries: list[dict], rules: list[dict]) -> dict[int, li
     return grouped
 
 
-def destination_files() -> tuple[list[str], list[dict], dict[int, list[str]]]:
-    """The destination list section 8 requires, read from sections 4 and 5."""
-    plan = read_named(active_plan_path())
+def destination_files(ev: Evidence | None = None):
+    """The destination list section 8 requires, read from sections 4 and 5.
+
+    When an ``Evidence`` is passed, the plan is read through it and every rule is
+    resolved through it, so the gate's ``text`` and ``mapping`` claims are made by
+    the work rather than beside it.
+    """
+    plan_path = active_plan_path()
+    plan = ev.text_of(plan_path) if ev is not None else read_named(plan_path)
     entries = parse_target_tree(plan_section(plan, 4))
     rules = parse_move_rules(plan_section(plan, 5))
     grouped = resolve_destinations(entries, rules)
+    if ev is not None:
+        for rule in rules:
+            ev.resolve(
+                f"move rule {rule['n']} ({rule['source']} → {rule['dest']})",
+                f"{rel(plan_path)} section 5",
+                f"{rel(plan_path)} section 4's tree entries",
+            )
     files = [p for n in sorted(grouped) for p in grouped[n]]
     return files, rules, grouped
 
@@ -176,9 +189,7 @@ def destination_files() -> tuple[list[str], list[dict], dict[int, list[str]]]:
 def check_tree(ev: Evidence):
     plan = ev.text_of(active_plan_path())
     entries = parse_target_tree(plan_section(plan, 4))
-    rules = parse_move_rules(plan_section(plan, 5))
-    ev.resolve("section 5's 13 rules against section 4's destination entries")
-    grouped = resolve_destinations(entries, rules)
+    _, rules, grouped = destination_files(ev)
 
     problems: list[str] = []
     if len(rules) != 13:
@@ -290,18 +301,27 @@ def check_stale(ev: Evidence):
 # FR-P0-PLANREF
 
 
-def _plan_pairs(folder: Path) -> dict[str, dict[int, Path]]:
+def _plan_pairs(folder: Path, ev: Evidence | None = None) -> dict[str, dict[int, Path]]:
     found = {"plan": {}, "prompt": {}}
-    for path in sorted(folder.rglob("folder_refactoring.*.v*.md")):
+    listing = (
+        ev.glob(folder, "folder_refactoring.*.v*.md") if ev is not None
+        else sorted(folder.rglob("folder_refactoring.*.v*.md"))
+    )
+    for path in listing:
         match = re.match(r"folder_refactoring\.(plan|prompt)\.v(\d+)\.md$", path.name)
         if match:
             found[match.group(1)][int(match.group(2))] = path
     return found
 
 
-def planref_violations(folder: Path) -> list[str]:
-    """The four version relationships, checked against any plan folder."""
-    found = _plan_pairs(folder)
+def planref_violations(folder: Path, ev: Evidence | None = None) -> list[str]:
+    """The four version relationships, checked against any plan folder.
+
+    This is the one place a production gate globs ``plans/`` — for version
+    relationships only, never for path literals (rule 7).
+    """
+    read = (lambda p: ev.text_of(p)) if ev is not None else read_named
+    found = _plan_pairs(folder, ev)
     problems: list[str] = []
     if not found["plan"] or not found["prompt"]:
         return ["plan-ref-stale: no versioned plan/prompt pair found"]
@@ -316,12 +336,19 @@ def planref_violations(folder: Path) -> list[str]:
     plan_path = folder / f"folder_refactoring.plan.v{version}.md"
     prompt_path = folder / f"folder_refactoring.prompt.v{version}.md"
     for path in (plan_path, prompt_path):
-        if not path.exists():
+        present = ev.exists(path) if ev is not None else path.exists()
+        if not present:
             problems.append(f"plan-ref-stale: {path.name} is not at the plan folder root")
     if problems:
         return problems
 
-    prompt_text = read_named(prompt_path)
+    if ev is not None:
+        ev.resolve(
+            f"the v{version} plan named by the prompt's goal",
+            prompt_path.name,
+            f"the versioned files present in {rel(folder)}",
+        )
+    prompt_text = read(prompt_path)
     goal = re.search(r"^## Goal$(.*?)^## ", prompt_text, re.S | re.M)
     goal_text = goal.group(1) if goal else prompt_text
     if f"folder_refactoring.plan.v{version}.md" not in goal_text:
@@ -330,7 +357,7 @@ def planref_violations(folder: Path) -> list[str]:
             f"folder_refactoring.plan.v{version}.md"
         )
 
-    plan_text = read_named(plan_path)
+    plan_text = read(plan_path)
     try:
         tree = plan_section(plan_text, 4)
         ledger = plan_section(plan_text, 10)
@@ -350,15 +377,13 @@ def planref_violations(folder: Path) -> list[str]:
 
 
 def check_planref(ev: Evidence):
-    ev.exists(PLAN_DIR)
-    ev.text_of(active_plan_path())
-    ev.resolve("prompt version against plan version, and superseded pairs against deprecated/")
-    problems = planref_violations(PLAN_DIR)
-    version = max(_plan_pairs(PLAN_DIR)["plan"] or {0: None})
+    problems = planref_violations(PLAN_DIR, ev)
+    pairs = _plan_pairs(PLAN_DIR, ev)
+    version = max(pairs["plan"] or {0: None})
     archived = sum(
         1
         for kind in ("plan", "prompt")
-        for number, path in _plan_pairs(PLAN_DIR)[kind].items()
+        for number, path in pairs[kind].items()
         if path.parent.name == "deprecated"
     )
     line = (
@@ -464,41 +489,68 @@ def check_schema(ev: Evidence):
 
 
 def check_history(ev: Evidence):
-    files, rules, grouped = destination_files()
-    ev.text_of(active_plan_path())
-    ev.resolve("section 4's 26 destination files against git's rename record")
+    files, rules, grouped = destination_files(ev)
 
-    baseline = ev.run(["git", "rev-list", "--max-parents=0", "HEAD"]).stdout.split()
+    root = ev.run(["git", "rev-list", "--max-parents=0", "HEAD"])
+    if root.returncode != 0:
+        raise GateFailure(f"external: git could not be run — {root.stderr.strip()}")
+    baseline = root.stdout.split()
     if not baseline:
         raise GateFailure("no baseline commit found")
     baseline_sha = baseline[-1]
 
     problems = []
+    followed = 0
     for path in files:
         log = ev.run(["git", "log", "--follow", "--format=%H", "--", path])
-        if baseline_sha not in log.stdout.split():
+        if log.returncode != 0:
+            raise GateFailure(
+                f"external: git log --follow {path} failed — {log.stderr.strip()}. "
+                "This is the environment, not the repository; provenance is unproven, "
+                "not lost."
+            )
+        if baseline_sha in log.stdout.split():
+            followed += 1
+        else:
             problems.append(f"git log --follow {path} does not reach the baseline commit")
+        ev.resolve(path, "section 4's target tree", f"the history of {path} back to {baseline_sha[:8]}")
 
-    shown = ev.run(["git", "show", "--name-status", "-M", "HEAD"])
-    renames = {}
-    for line in shown.stdout.splitlines():
-        parts = line.split("\t")
-        if len(parts) == 3 and parts[0].startswith("R"):
-            renames[parts[2]] = (parts[1], parts[0])
-
+    # gate_impl_fix: the rename is recorded in the commit that performed it, not at
+    # the tip. Reading HEAD passed at phase 0 and then failed at phase 1 for a
+    # repository that had not changed — a wrong subject, not a weakened criterion.
+    # The claim is unchanged: each rule-1 file's own history must contain an R entry
+    # from its schema/ source rather than an A/D pair.
+    ev.note("gate_impl_fix: (b) reads each file's own history, not HEAD, so the "
+            "rename stays provable once later phases land on top of it")
     pairs = []
     for dest in grouped.get(1, []):
-        if dest not in renames:
-            problems.append(f"{dest} is not recorded as a rename in HEAD (added/deleted instead)")
+        shown = ev.run(
+            ["git", "log", "--follow", "--name-status", "-M", "--format=commit:%h", "--", dest]
+        )
+        if shown.returncode != 0:
+            raise GateFailure(
+                f"external: git log --name-status {dest} failed — {shown.stderr.strip()}"
+            )
+        found = None
+        for line in shown.stdout.splitlines():
+            parts = line.split("\t")
+            if len(parts) == 3 and parts[0].startswith("R") and parts[2] == dest:
+                found = (parts[1], parts[0])
+                break
+        if found is None:
+            problems.append(
+                f"{dest} is not recorded as a rename anywhere in its history (added/deleted instead)"
+            )
             continue
-        source, score = renames[dest]
+        source, score = found
         if not source.startswith("schema/"):
             problems.append(f"{dest} is a rename from {source}, not from schema/")
         pairs.append(f"{source} → {dest} ({score})")
 
     line = (
         f"FR-P0-HISTORY {'PASS' if not problems else 'FAIL'} "
-        f"({len(files)} files follow to baseline; rule-1 renames: {', '.join(pairs) or 'none'})"
+        f"({followed}/{len(files)} files follow to baseline; "
+        f"rule-1 renames: {', '.join(pairs) or 'none'})"
     )
     detail = line if not problems else line + " — " + "; ".join(problems)
     return gate_result(not problems, detail, stdout=line)

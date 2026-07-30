@@ -43,11 +43,17 @@ PLAN_DIR = REPO_ROOT / "plans" / "folder_refactoring"
 
 # Rule 7 — the production scan root set, stated by exclusion and never
 # re-enumerated. A second hand-maintained copy is the defect this plan keeps
-# closing.
+# closing, so this is exactly rule 7's list and nothing else: adding a root here
+# would narrow a normative scan set without declaring it, which is how a detector
+# stops seeing the file it exists to check.
 PRODUCTION_EXCLUDED_TOP_LEVEL = frozenset({"tests", "plans", ".git"})
-PRODUCTION_EXCLUDED_ANYWHERE = frozenset({".git", "__pycache__", ".pytest_cache", ".claude"})
+PRODUCTION_EXCLUDED_ANYWHERE = frozenset({".git"})
 
-BINARY_SUFFIXES = frozenset({".png", ".jpg", ".jpeg", ".gif", ".pdf", ".ico"})
+# Not roots — file kinds a text scan cannot read. Bytecode caches are build output
+# of this harness, never repository content.
+BINARY_SUFFIXES = frozenset(
+    {".png", ".jpg", ".jpeg", ".gif", ".pdf", ".ico", ".pyc", ".pyo"}
+)
 
 MECHANISM_ORDER = ("tree", "parse", "schema", "text", "mapping", "declaration", "execution")
 
@@ -196,12 +202,24 @@ class Evidence:
         self._record("text")
         return re.findall(pattern, haystack, flags)
 
+    def glob(self, root: Path | str, pattern: str) -> list[Path]:
+        """Enumerate a **named** directory where the enumeration *is* the
+        assertion — which files exist there, at which version. Not a scan of their
+        contents, and the one question ``plans/`` is legitimately asked (rule 7)."""
+        self._record("tree")
+        return sorted(Path(root).rglob(pattern))
+
     # -- mapping ------------------------------------------------------------
-    def resolve(self, description: str = "") -> None:
-        """Resolve an id or path found in one file against another."""
+    def resolve(self, what: str, found_in: str, against: str) -> None:
+        """Resolve an id or path found in one file against another.
+
+        The three operands are mandatory and recorded. A ``mapping`` claim names
+        *what* was resolved, *where it was found* and *what it was resolved
+        against*, so ``FR-P0-REGISTRY`` (d) compares evidence rather than two
+        declarations.
+        """
         self._record("mapping")
-        if description:
-            self.notes.append(f"resolve: {description}")
+        self.notes.append(f"resolved {what} in {found_in} against {against}")
 
     def import_gate_module(self, module: str):
         """Read or import a module under ``tests/gates/`` to resolve an id."""

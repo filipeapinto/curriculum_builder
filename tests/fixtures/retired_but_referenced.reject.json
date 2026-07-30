@@ -1,0 +1,10 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "A schema retired into deprecated/ while a manifest still cites it",
+  "description": "Negative fixture for FR-P1-SCHEMA-RETENTION. Stands in for a file placed in schemas/deprecated/ although retired_schema_manifest.reject.yaml still names it. Retiring it breaks the audit trail --resume relies on, because the contract a lab was accepted under must keep resolving at a stable path.",
+  "type": "object",
+  "required": ["id"],
+  "properties": {
+    "id": { "type": "string" }
+  }
+}

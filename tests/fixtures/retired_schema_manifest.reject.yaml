@@ -1,0 +1,14 @@
+# The manifest half of FR-P1-SCHEMA-RETENTION's negative fixture.
+#
+# It cites retired_but_referenced.reject.json by basename. A schema may enter
+# schemas/deprecated/ only when a repository-wide search for its basename returns
+# zero hits outside that folder, so this citation is what must make retirement fail.
+#
+# It deliberately names no other fixture. The positive case is a retired file whose
+# basename appears nowhere outside deprecated/, and this manifest is the scan root
+# both cases are checked against, so a mention here would defeat it.
+
+fixture_version: '1.0'
+
+enforced_by:
+  identity: retired_but_referenced.reject.json → properties.id

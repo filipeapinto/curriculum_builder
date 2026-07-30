@@ -153,7 +153,7 @@ def _selftest_phase_selection(ev: Evidence, scratch: Path) -> dict:
     gates = [_gate("SYN-A", 0, [], "passing"), _gate("SYN-LATER", 4, ["SYN-A"], "passing")]
     registry = _write_case(case, "phase", gates, case / "order.log")
     proc, payloads = _run(registry, 0, results, case)
-    ev.resolve("synthetic gate ids against the recorded outcomes")
+    ev.resolve("SYN-LATER", "the synthetic registry", "its entry in the result record")
     record = {r["id"]: r for r in payloads[0]["gates"]} if payloads else {}
     ok = (
         bool(payloads)
@@ -192,7 +192,7 @@ def _selftest_result_integrity(ev: Evidence, scratch: Path) -> dict:
     ]
     registry = _write_case(case, "integrity", gates, case / "order.log")
     proc, payloads = _run(registry, 0, results, case)
-    ev.resolve("every registered id against the entries in the result record")
+    ev.resolve("every synthetic gate id", "the synthetic registry", "the result record's entries")
     recorded = [g["id"] for g in payloads[0]["gates"]] if payloads else []
     ok = sorted(recorded) == sorted(g["id"] for g in gates) and len(recorded) == len(set(recorded))
     return {
@@ -277,7 +277,7 @@ def _selftest_dependency_order(ev: Evidence, scratch: Path) -> dict:
     registry = _write_case(case, "blocked", gates, case / "order.log")
     proc, payloads = _run(registry, 0, results, case)
     record = {r["id"]: r for r in payloads[0]["gates"]} if payloads else {}
-    ev.resolve("BLOCKED outcomes against the dependency each names")
+    ev.resolve("each BLOCKED outcome", "the result record", "the dependency it names")
     if record.get("SYN-B", {}).get("status") != "BLOCKED":
         problems.append(f"SYN-B is {record.get('SYN-B', {}).get('status')}, expected BLOCKED")
     if "dependency SYN-A failed" not in record.get("SYN-B", {}).get("detail", ""):
