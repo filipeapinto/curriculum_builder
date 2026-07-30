@@ -1,0 +1,5 @@
+# Negative fixture for FR-P0-PARSE. This file is not valid YAML: the flow mapping
+# below is never closed, so the scanner fails before any structure exists.
+manifest_version: '1.0'
+broken: { unclosed: "value
+trailing: still here

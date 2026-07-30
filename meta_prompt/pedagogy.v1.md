@@ -1,6 +1,6 @@
 # The teaching methods behind the lab schema
 
-Every pedagogical field in `schema/lab.schema.v3.json` implements a named,
+Every pedagogical field in `schemas/lab.schema.v3.json` implements a named,
 evidence-based method. This file says which, and why it is in the schema rather
 than in a style guide.
 
@@ -154,6 +154,6 @@ gets used up" survives an otherwise good lesson.
 
 Tone, warmth, sentence rhythm, when a metaphor helps, whether a particular hook
 will land with a particular child. Those stay in
-`prompts/component_lab_template.v1.md` and in the reviewers' judgement. The
+`meta_prompt/component_lab_template.v1.md` and in the reviewers' judgement. The
 schema fixes the structure that makes good teaching possible; it does not attempt
 to specify good teaching.

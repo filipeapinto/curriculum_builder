@@ -10,7 +10,7 @@ checks_version: '1.0'
 # ---------------------------------------------------------------------------
 calibration:
   - id: CAL-VALID
-    asserts: calibration.v1.yaml validates against schema/calibration.schema.v1.json
+    asserts: calibration.v1.yaml validates against schemas/calibration.schema.v1.json
     stage: static
     note: run first — every later check reads values from calibration
   - id: CAL-SCHEMA-AGREE
@@ -29,7 +29,7 @@ calibration:
 # ---------------------------------------------------------------------------
 curriculum:
   - id: CUR-SCHEMA-VALID
-    asserts: the curriculum validates against schema/curriculum.schema.v4.json
+    asserts: the curriculum validates against schemas/curriculum.schema.v4.json
     stage: static
   - id: CUR-COUNT-DERIVED
     asserts: >-
@@ -60,9 +60,9 @@ l01:
   - id: L01-POLARITY-NEUTRAL
     asserts: >-
       no connector-polarity claim without exact primary evidence. Proven by
-      assets/fixtures/l01_polarity_asserted.reject.json, which must be REJECTED
+      curricula/arduino_kit/fixtures/l01_polarity_asserted.reject.json, which must be REJECTED
     stage: deterministic
-    fixture: assets/fixtures/l01_polarity_asserted.reject.json
+    fixture: curricula/arduino_kit/fixtures/l01_polarity_asserted.reject.json
     fixture_expectation: reject
   - id: L01-NO-INVENTED-SUPPLY
     asserts: no wall adapter or supply that is not in calibration.power.permitted_inputs
@@ -74,7 +74,7 @@ l01:
 # ---------------------------------------------------------------------------
 lab_document:
   - id: LAB-SCHEMA-VALID
-    asserts: the lab dossier validates against schema/lab.schema.v3.json, all seven blocks present
+    asserts: the lab dossier validates against schemas/lab.schema.v3.json, all seven blocks present
     stage: golden
   - id: LAB-BLOOM-DEPTH
     asserts: at least one learning objective reaches understand or higher
@@ -191,5 +191,5 @@ preconditions:
       never merge, never overwrite — choosing which evidence to keep is a human
       decision an unattended run must not make.
   - id: ROUTE-PROVEN
-    asserts: every route in assets/routes.v1.yaml made one real preflight call
+    asserts: every route in policy/routes.v1.yaml made one real preflight call
     stage: live-capability

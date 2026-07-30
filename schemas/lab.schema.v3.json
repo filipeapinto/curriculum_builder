@@ -56,7 +56,7 @@
       }
     },
     "pedagogy": {
-      "description": "How this lab teaches. Every field here implements a named, evidence-based method; see pedagogy.md.",
+      "description": "How this lab teaches. Every field here implements a named, evidence-based method; see meta_prompt/pedagogy.v1.md.",
       "type": "object",
       "additionalProperties": false,
       "required": [

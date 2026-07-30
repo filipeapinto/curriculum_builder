@@ -17,7 +17,7 @@ kit_power_profile:
       supplied source identified by the official Super Starter Kit listing and product photograph; it
       is not a 9 V/1 A wall adapter.
     evidence: 'Official listing: https://www.elegoo.com/en-gb/products/elegoo-uno-r3-super-starter-kit
-      ; cached photograph: work/elegoo_labs/templates/kit_references/elegoo_uno_r3_super_starter_kit_v1/official_kit_photo.jpg'
+      ; cached photograph: curricula/arduino_kit/official_kit_photo.jpg'
   rail_choices:
   - 'OFF'
   - 3.3 V

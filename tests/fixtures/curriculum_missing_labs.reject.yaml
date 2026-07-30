@@ -1,0 +1,34 @@
+# Negative fixture for FR-P0-SCHEMA. Identical to the curriculum manifest except
+# that the `labs` array is absent, so the one validation error it produces is the
+# declared expected_error. Never an input to a run.
+manifest_version: '4.0'
+curriculum:
+  title: Electronics Discoveries — Component-Oriented Workbook
+  learner: Supervised beginners aged 9+, with no assumed electronics knowledge
+  delivery: One lab is generated, technically checked, pedagogically checked, and accepted before the
+    next lab begins.
+  design_rule: Component first; a problem is an application, never the organising principle.
+kit_power_profile:
+  id: elegoo-uno-r3-super-starter-kit-power-system
+  reference_verification: verified_official
+  local_inspection: not_available
+  input:
+    description: Included 9 V battery with DC connector feeding the kit power-supply module. This is the
+      supplied source identified by the official Super Starter Kit listing and product photograph; it
+      is not a 9 V/1 A wall adapter.
+    evidence: 'Official listing: https://www.elegoo.com/en-gb/products/elegoo-uno-r3-super-starter-kit
+      ; cached photograph: curricula/arduino_kit/official_kit_photo.jpg'
+  rail_choices:
+  - 'OFF'
+  - 3.3 V
+  - 5 V
+  release_rule: Reference evidence authorises curriculum drafting. Every powered technical map must cite
+    the verified kit photo, the selected physical jumper position, the module orientation, the circuit
+    current calculation, and component/load ratings. Generated imagery never supplies those facts.
+visual_system:
+  photorealistic_roles:
+  - component identification
+  - safe working context
+  - expected observation or before-after comparison
+  technical_map_rule: Technical build maps are deterministically rendered from verified circuit data;
+    generative images are never the connection authority.

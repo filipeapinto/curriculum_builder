@@ -1,0 +1,9 @@
+# Gate result records are written on every run and are never committed; the folder
+# itself is kept by tests/results/.gitkeep so "results written" and "worktree clean"
+# are simultaneously satisfiable (harness rule 4).
+tests/results/*.json
+!tests/results/.gitkeep
+
+# Python bytecode from the gate harness.
+__pycache__/
+*.pyc

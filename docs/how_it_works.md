@@ -77,7 +77,8 @@ curriculum.v4.yaml   the curriculum: 35 labs, component-first
 canonical_curriculum.yaml      the single authority for the run
 ```
 
-`assets/curriculum.v4.yaml` is the input; `schema/lab.schema.v3.json` (section 5)
+`curricula/arduino_kit/arduino_kit_curriculum.v4.yaml` is the input;
+`schemas/lab.schema.v3.json` (section 5)
 is the output contract. There is one curriculum file and it is already resolved. Earlier versions shipped a
 base plus an override layer that patched 11 labs, and the two disagreed on
 `component_set`, `core_activity` and `safety_focus` for labs like L14, L20, L21 and
@@ -103,14 +104,14 @@ system rather than by asking a model to behave.
 
 ## 5. What a lab must contain
 
-The curriculum says *which* labs exist. `schema/lab.schema.v3.json` says what a
+The curriculum says *which* labs exist. `schemas/lab.schema.v3.json` says what a
 finished lab **is** — seven blocks, none optional. A lab that misses any of them
 fails validation before a reviewer ever sees it.
 
 | Block | Holds | Enforces |
 |---|---|---|
 | `identity` | id, slug, kind, title, one-sentence component job | the component is the title; a problem is an application, never the organising principle |
-| `pedagogy` | objectives, prior knowledge, misconceptions, vocabulary, scaffolding, cognitive load | named evidence-based methods — see `pedagogy.md` |
+| `pedagogy` | objectives, prior knowledge, misconceptions, vocabulary, scaffolding, cognitive load | named evidence-based methods — see `meta_prompt/pedagogy.v1.md` |
 | `sequence` | engage → explore → explain → elaborate → evaluate | the 5E model, with Predict-Observe-Explain inside Explore |
 | `electronics` | component spec, quantities taught, circuit, behaviour, ratings, failure modes, calculations, measurements | the electrical model — every value datasheet- or measurement-backed |
 | `content` | identification, build map, troubleshooting | physical assembly, generated from the circuit |
@@ -284,7 +285,7 @@ gate B4.
 
 ## 10. Model routing
 
-Routing is code, not judgment, configured under `routing/`:
+Routing is code, not judgment, configured under `policy/routing/`:
 
 - **no model** — merge, validation, metrics, rendering, aggregation, hashing, audits
 - **cheapest eligible route** — bounded drafting

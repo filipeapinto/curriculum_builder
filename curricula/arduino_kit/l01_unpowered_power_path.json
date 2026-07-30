@@ -3,7 +3,7 @@
   "component_identity": {
     "kit_roster_name": "ELEGOO UNO R3 Super Starter Kit power path",
     "part_marking": null,
-    "kit_photo_or_listing": "work/elegoo_labs/templates/kit_references/elegoo_uno_r3_super_starter_kit_v1/official_kit_photo.jpg"
+    "kit_photo_or_listing": "curricula/arduino_kit/official_kit_photo.jpg"
   },
   "primary_sources": [
     {

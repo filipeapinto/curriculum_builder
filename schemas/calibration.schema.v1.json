@@ -2,7 +2,7 @@
   "$schema": "https://json-schema.org/draft/2020-12/schema",
   "$id": "https://example.invalid/elegoo/calibration.schema.v1.json",
   "title": "Calibration v1 — the premises every other rule derives from",
-  "description": "Validates assets/calibration.v1.yaml. This file states the learner age band, the pedagogy caps that follow from it, the permitted power inputs, and the safety floor. It outranks every prose document in CREATOR. The caps here are premises, not preferences: enforced_by must name, for each cap, the schema constraint that implements it, and the CAL-SCHEMA-AGREE gate asserts the two agree.",
+  "description": "Validates policy/calibration.v1.yaml. This file states the learner age band, the pedagogy caps that follow from it, the permitted power inputs, and the safety floor. It outranks every prose document in CREATOR. The caps here are premises, not preferences: enforced_by must name, for each cap, the schema constraint that implements it, and the CAL-SCHEMA-AGREE gate asserts the two agree.",
   "type": "object",
   "additionalProperties": false,
   "required": ["calibration_version", "learner", "pedagogy_caps", "power", "safety_floor", "enforced_by"],

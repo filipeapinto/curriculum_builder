@@ -8,14 +8,14 @@ Create `templates_v7/` — a deterministic controller plus small bounded worker
 prompts — and prove it well enough that a full run needs nobody watching. Its
 human-readable runtime contract is:
 
-`work/elegoo_labs/templates_v7/component_lab_orchestrator_prompt.v7.md`
+`V7/component_lab_orchestrator_prompt.v7.md`
 
 Produce exactly one live lab, L01, as evidence the generator works. Nothing else.
 
 The v3 generator failed eight overnight runs without producing one accepted lab.
 Two rebuilds followed; the second stopped at `META_DRIFT_STOP` with four failed
 gates. Every constraint below traces to one of those failures, recorded in
-`assets/failures.v1.yaml`.
+`policy/failures.v1.yaml`.
 
 ## Write boundary
 
@@ -23,16 +23,17 @@ gates. Every constraint below traces to one of those failures, recorded in
 ROOT        = /Users/filipepinto/Library/CloudStorage/OneDrive-ISCTE-IUL/Documentos/elegoo
 CREATOR     = curriculum_creator
 META_PROMPT = curriculum_creator/prompts/meta_curriculum_prompt.prompt.v5.md
-LEGACY      = curriculum_creator/assets/legacy
-PRIOR_V4    = work/elegoo_labs/templates_v4
-PRIOR_V5    = work/elegoo_labs/templates_v5
-V7          = work/elegoo_labs/templates_v7
+LEGACY      = curriculum_creator/plans/legacy_v3
+WORK        = the run's work root under ROOT, recorded in the v7 meta state at startup
+PRIOR_V4    = WORK/templates_v4
+PRIOR_V5    = WORK/templates_v5
+V7          = WORK/templates_v7
 ```
 
 Write only to `V7` and one new golden-L01 output root recorded in the v7 meta
 state. Everything else is immutable, `CREATOR` included. `PRIOR_V4` and `PRIOR_V5`
 are named so they are not written to; they are never read, and every diagnosis
-drawn from them is quoted in full in `assets/failures.v1.yaml`.
+drawn from them is quoted in full in `policy/failures.v1.yaml`.
 
 All names `V7` creates are lowercase, versioned `.vN` where versioned at all.
 
@@ -51,39 +52,40 @@ before reading a value from it.
 
 | Input | Role |
 |---|---|
-| `assets/calibration.v1.yaml` | **the premises** — learner age band, the pedagogy caps derived from it, permitted supplies, safety floor |
-| `assets/curriculum.v4.yaml` | the curriculum — which labs exist, in order, and **how many** |
-| `assets/limits.v1.yaml` | every resource limit, with its numeric default and flag |
-| `assets/routes.v1.yaml` | every external capability, with the exact proven invocation |
-| `assets/checks.v1.yaml` | every stable check id and what it asserts |
-| `assets/failures.v1.yaml` | A1–A10 and B1–B4, with diagnoses and required corrections |
-| `assets/controller.v1.yaml` | states, transitions, ownership, CLI surface |
-| `schema/` | the shapes for calibration, curriculum, a finished lab, and the execution log |
-| `prompts/component_lab_template.v1.md` | lab structure in prose — tone, child-language rules, safety baseline |
-| `routing/` | task taxonomy, routing policy, model registry, quality gates |
-| `assets/legacy/` | the failed v3 generator and runner — cite by path and line |
-| `assets/official_kit_photo.jpg`, `assets/kit_evidence.md` | the verified kit evidence L01 depends on |
-| `assets/fixtures/` | fixtures the tests must **reject**, never inputs |
-| `assets/lab_brief.md`, `roster.md`, `teacher_framework.md`, `teacher_audit.md` | project scope and teaching context |
-| `pedagogy.md`, `how_it_works.md` | why each pedagogy field exists; how the machine fits together |
+| `policy/calibration.v1.yaml` | **the premises** — learner age band, the pedagogy caps derived from it, permitted supplies, safety floor |
+| `curricula/arduino_kit/arduino_kit_curriculum.v4.yaml` | the curriculum — which labs exist, in order, and **how many** |
+| `policy/limits.v1.yaml` | every resource limit, with its numeric default and flag |
+| `policy/routes.v1.yaml` | every external capability, with the exact proven invocation |
+| `policy/checks.v1.yaml` | every stable check id and what it asserts |
+| `policy/failures.v1.yaml` | A1–A10 and B1–B4, with diagnoses and required corrections |
+| `policy/controller.v1.yaml` | states, transitions, ownership, CLI surface |
+| `schemas/` | the shapes for calibration, curriculum, a finished lab, and the execution log |
+| `meta_prompt/component_lab_template.v1.md` | lab structure in prose — tone, child-language rules, safety baseline |
+| `policy/routing/` | task taxonomy, routing policy, model registry, quality gates |
+| `plans/legacy_v3/` | the failed v3 generator and runner — cite by path and line |
+| `curricula/arduino_kit/official_kit_photo.jpg`, `curricula/arduino_kit/kit_evidence.md` | the verified kit evidence L01 depends on |
+| `curricula/arduino_kit/fixtures/` | fixtures the tests must **reject**, never inputs |
+| `curricula/arduino_kit/lab_brief.md`, `roster.md`, `teacher_framework.md`, `teacher_audit.md` | project scope and teaching context |
+| `meta_prompt/pedagogy.v1.md`, `docs/how_it_works.md` | why each pedagogy field exists; how the machine fits together |
 
 Two reads reach outside `CREATOR`, both declared and bounded: `~/.codex/config.toml`
-determines the sandbox policy in `assets/routes.v1.yaml`, and `RESEARCH` fetches
+determines the sandbox policy in `policy/routes.v1.yaml`, and `RESEARCH` fetches
 manufacturer datasheets over the network. Nothing else outside `CREATOR` is read.
 
 ## Precedence
 
 When sources disagree, this order settles it — always, and without averaging:
 
-1. `assets/calibration.v1.yaml` — the premises
-2. `assets/curriculum.v4.yaml` — which labs exist
-3. `schema/` — the shapes those must take
+1. `policy/calibration.v1.yaml` — the premises
+2. `curricula/arduino_kit/arduino_kit_curriculum.v4.yaml` — which labs exist
+3. `schemas/` — the shapes those must take
 4. this prompt
-5. prose documents in `assets/`
+5. prose documents in `curricula/` and `docs/`
 
 A prose document that contradicts calibration loses, **and the divergence is
 recorded as a defect in `remediation_report.md`** rather than resolved silently.
-`assets/lab_brief.md` and `assets/teacher_framework.md` currently state a different
+`curricula/arduino_kit/lab_brief.md` and `curricula/arduino_kit/teacher_framework.md`
+currently state a different
 learner age and an exclusive supply; both are known divergences, and both must
 appear in that report.
 
@@ -98,12 +100,12 @@ retries, checkpoints, revision targeting, every audit, and every acceptance
 decision. A model never advances a state, never aggregates a verdict, never
 decides a lab is done. Deterministic work — merging, validating, hashing,
 rendering, aggregating, auditing, logging — uses no model at all. The full
-contract is `assets/controller.v1.yaml`.
+contract is `policy/controller.v1.yaml`.
 
 Workers are deliberately starved. Each receives only its role, its stable check
 ids, the selected lab data, accepted prerequisite artifacts, its authorized input
 paths, its authorized output paths, and one output schema — the block of
-`schema/lab.schema.v3.json` it is authorized to write. A worker cannot choose a
+`schemas/lab.schema.v3.json` it is authorized to write. A worker cannot choose a
 transition, scan prior versions, change acceptance rules, or create an undeclared
 file.
 
@@ -117,14 +119,14 @@ verdict file, and a test must fail if such a path exists.
 
 ## What a lab must be
 
-`schema/lab.schema.v3.json` is the contract. Seven blocks, none optional:
+`schemas/lab.schema.v3.json` is the contract. Seven blocks, none optional:
 identity, pedagogy, sequence (5E), electronics, content, safety, visuals. Every
 lab validates against it before acceptance; the controller validates
 deterministically, and a failure routes to targeted revision.
 
 Do not restate that schema here or in v7. It already encodes the pedagogy caps,
 the 5E ordering, the Predict-Observe-Explain rule, the electrical model, the
-provenance fields and the safety enums. `prompts/component_lab_template.v1.md`
+provenance fields and the safety enums. `meta_prompt/component_lab_template.v1.md`
 carries what a schema cannot — tone, child-language rules, the safety baseline in
 sentences — and governs where the schema has no field.
 
@@ -153,15 +155,15 @@ Six gates, in order. Record every result with a timestamp and a category label:
 | # | Gate | Proves |
 |---|---|---|
 | 0 | **Logger** | append-only ordering, monotonic ids, start/completion pairing, concurrent-append safety, coverage of every checkpoint, and failure when an operation lacks its record. **Passes before any other v7 artifact exists.** |
-| 1 | **Static** | every `CAL-*`, `CUR-*` and `L01-*` check in `assets/checks.v1.yaml`, each backed by an executed assertion |
+| 1 | **Static** | every `CAL-*`, `CUR-*` and `L01-*` check in `policy/checks.v1.yaml`, each backed by an executed assertion |
 | 2 | **Deterministic** | transitions, aggregation, block eligibility, failure classification, checkpoints, hashes, selector enforcement, resource limits, circuit/prose/render consistency, terminal audits — plus every fixture marked `reject` in `checks.v1.yaml`, each of which must fail validation |
 | 3 | **Simulated** | fake workers drive clean acceptance, plan and artifact revision, malformed output, transient retry, repeated failure, legal block, system failure, interrupt and resume, then one clean pass over every lab |
-| 4 | **Live capability** | one real preflight call on every route in `assets/routes.v1.yaml`, under the exact recorded invocation |
+| 4 | **Live capability** | one real preflight call on every route in `policy/routes.v1.yaml`, under the exact recorded invocation |
 | 5 | **Golden L01** | one complete lab: twelve reviews, sourced data, required visuals with resolving receipts, targeted revision evidence, PDF rendered and every page rasterized and inspected, forced interrupt and resume with before/after hashes, final controller audit |
 
 Gate 1 exists because the previous build advertised six static checks and asserted
 two. A meta-test must fail if any check id named in a result has no executed
-assertion, or if any id in `assets/checks.v1.yaml` is never executed. Reporting a
+assertion, or if any id in `policy/checks.v1.yaml` is never executed. Reporting a
 check as present without running it is evidence misreporting — a drift stop, not a
 bug.
 
@@ -171,7 +173,7 @@ start a live full run.
 ## The action log
 
 `V7/test_results/prompt_execution_log.md`, append-only, validating against
-`schema/execution_log.schema.v1.json`.
+`schemas/execution_log.schema.v1.json`.
 
 Every controller action appends one record before it starts and one when it ends:
 a completion `ACT` citing the started id, or an `EXEC` whose mandatory `Closes`
@@ -202,8 +204,8 @@ run gate → record failures → authorize affected artifacts
 → record measurable improvement → repeat
 ```
 
-Stop as `META_DRIFT_STOP` on any `DRIFT-*` condition in `assets/checks.v1.yaml`, or
-on exceeding any limit in `assets/limits.v1.yaml`. A defective test may change only
+Stop as `META_DRIFT_STOP` on any `DRIFT-*` condition in `policy/checks.v1.yaml`, or
+on exceeding any limit in `policy/limits.v1.yaml`. A defective test may change only
 where it contradicts this prompt; record both hashes, the contradiction, the
 correction and the regression evidence.
 
@@ -226,7 +228,7 @@ templates_v7/
   component_lab_orchestrator_prompt.v7.md    concise runtime contract; delegates to controller and workers
   readme.md                                  derivation, authority, test categories, preflight, run/resume commands
   remediation_report.md                      every id in failures.v1.yaml → correction, proving test, result, residual risk
-  canonical_curriculum.yaml + .schema.json   derived from assets/curriculum.v4.yaml, with source hash recorded
+  canonical_curriculum.yaml + .schema.json   derived from the curriculum manifest, with source hash recorded
   automation/  prompts/  routing/  schemas/  renderers/  tests/  test_results/
 ```
 
@@ -239,8 +241,8 @@ decomposition in `remediation_report.md`.
 
 1. Build the logger. Pass its proving tests before creating any other artifact.
 2. Validate every input against its schema. Read no value before it validates.
-3. Inspect `assets/legacy/` and write failure→fix→test traceability for every id in
-   `assets/failures.v1.yaml`.
+3. Inspect `plans/legacy_v3/` and write failure→fix→test traceability for every id in
+   `policy/failures.v1.yaml`.
 4. Design v7: canonical data, controller, runtime prompt, worker contracts.
 5. Create `V7` and its meta state; record authorized roots.
 6. Implement controller, prompts, schemas, selector, renderers, audits, reports.
@@ -262,17 +264,17 @@ exceeding any limit and preserve the safest resumable checkpoint.
 
 - every deliverable above present;
 - gates 0–5 passing, with resume and PDF inspection proven;
-- every check in `assets/checks.v1.yaml` executed, and every check id in every
+- every check in `policy/checks.v1.yaml` executed, and every check id in every
   result backed by an executed assertion;
 - every fixture marked `reject` actually rejected;
-- golden L01 validating against `schema/lab.schema.v3.json`, all seven blocks;
+- golden L01 validating against `schemas/lab.schema.v3.json`, all seven blocks;
 - exactly twelve isolated reviewer invocations, with isolation proven structurally;
 - every visual receipt hash resolving to an asset embedded in the accepted PDF;
 - one real preflight call per route, with the sandbox policy recorded;
 - every action paired and ordered, zero unpaired starts, totals agreeing across
   controller state, test results and log;
 - every limit recorded with the numeric value in force;
-- every id in `assets/failures.v1.yaml` mapped to a correction and a proving test;
+- every id in `policy/failures.v1.yaml` mapped to a correction and a proving test;
 - calibration divergences recorded, not resolved;
 - immutable inputs unchanged; no unauthorized write; no unlogged model or tool call;
 - no live generation beyond L01;

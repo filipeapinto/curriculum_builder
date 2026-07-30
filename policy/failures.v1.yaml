@@ -9,7 +9,7 @@ failures_version: '1.0'
 
 # ---------------------------------------------------------------------------
 # A — defects in the v3 generator, which never produced an accepted lab across
-# eight overnight runs. Cite a path and line from assets/legacy/ for each.
+# eight overnight runs. Cite a path and line from plans/legacy_v3/ for each.
 # ---------------------------------------------------------------------------
 generator_defects:
   - id: A1
@@ -49,7 +49,7 @@ generator_defects:
 # originating record is cited for provenance only and is never read.
 # ---------------------------------------------------------------------------
 v5_gate_failures:
-  provenance: work/elegoo_labs/templates_v5/test_results/meta_execution_state.json
+  provenance: the retired v5 run root, templates_v5/test_results/meta_execution_state.json
   provenance_note: cited, not read — the diagnoses below are complete
   gates:
 
@@ -99,7 +99,7 @@ v5_gate_failures:
       check as present without running it is evidence misreporting.
     correction: >-
       Every id named in a result must be backed by an executed assertion, and a
-      meta-test fails the build if any advertised id has none. assets/checks.v1.yaml is
+      meta-test fails the build if any advertised id has none. policy/checks.v1.yaml is
       the single list both sides are compared against.
     checks: [DRIFT-NO-MISREPORTING]
 
@@ -119,10 +119,10 @@ v5_gate_failures:
 capability_failures:
   - id: EXEC-001
     observed: reportlab, pypdf and the PIL capability set could not be imported; only PIL is present
-    resolution: see assets/routes.v1.yaml → route "pdf"
+    resolution: see policy/routes.v1.yaml → route "pdf"
   - id: EXEC-002
     observed: codex exec exited 1 because the sandbox denied initialization of its in-process app-server client
-    resolution: see assets/routes.v1.yaml → route "worker"
+    resolution: see policy/routes.v1.yaml → route "worker"
 
 traceability_rule: >-
   remediation_report.md must map every id in this file to its corrective path in V7,

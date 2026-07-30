@@ -1,14 +1,15 @@
 # Calibration — the premises every other rule derives from.
 #
-# The pedagogy caps in schema/lab.schema.v3.json are not universal truths. They are
+# The pedagogy caps in schemas/lab.schema.v3.json are not universal truths. They are
 # what follows from a nine-year-old learner. This file states that premise once so
 # nothing downstream has to guess it, and so no document can quietly assume a
 # different one.
 #
 # Precedence: this file outranks every prose document in the project. Where
-# lab_brief.md, teacher_framework.md, teacher_audit.md or roster.md state a learner
-# age, a supply, or a supervision rule that differs from the values below, this
-# file wins and the difference is a defect to be reported, not resolved silently.
+# curricula/arduino_kit/lab_brief.md, curricula/arduino_kit/teacher_framework.md,
+# curricula/arduino_kit/teacher_audit.md or curricula/arduino_kit/roster.md state a
+# learner age, a supply, or a supervision rule that differs from the values below,
+# this file wins and the difference is a defect to be reported, not resolved silently.
 
 calibration_version: '1.0'
 
@@ -35,7 +36,7 @@ power:
   permitted_inputs:
     - id: kit_battery_9v
       description: Included 9 V battery with DC connector, feeding the breadboard power module.
-      evidence: assets/official_kit_photo.jpg
+      evidence: curricula/arduino_kit/official_kit_photo.jpg
       verification: verified_official
     - id: regulated_usb_5v
       description: Regulated 5 V USB source feeding the breadboard power module.
@@ -66,10 +67,10 @@ safety_floor:
 
 # Where the caps are enforced, so a change here has a known blast radius.
 enforced_by:
-  new_terms_per_lab: schema/lab.schema.v3.json → pedagogy.vocabulary.maxItems
-  segments_per_lab: schema/lab.schema.v3.json → pedagogy.cognitive_load.segments
-  bloom_floor: schema/lab.schema.v3.json → pedagogy.learning_objectives.contains
-  objectives_per_lab: schema/lab.schema.v3.json → pedagogy.learning_objectives
-  success_criterion_voice: schema/lab.schema.v3.json → success_criterion.pattern
-  misconceptions_per_lab_min: schema/lab.schema.v3.json → pedagogy.misconceptions.minItems
-  power.permitted_inputs: schema/lab.schema.v3.json → safety.power_profile.source
+  new_terms_per_lab: schemas/lab.schema.v3.json → pedagogy.vocabulary.maxItems
+  segments_per_lab: schemas/lab.schema.v3.json → pedagogy.cognitive_load.segments
+  bloom_floor: schemas/lab.schema.v3.json → pedagogy.learning_objectives.contains
+  objectives_per_lab: schemas/lab.schema.v3.json → pedagogy.learning_objectives
+  success_criterion_voice: schemas/lab.schema.v3.json → success_criterion.pattern
+  misconceptions_per_lab_min: schemas/lab.schema.v3.json → pedagogy.misconceptions.minItems
+  power.permitted_inputs: schemas/lab.schema.v3.json → safety.power_profile.source

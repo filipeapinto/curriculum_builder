@@ -142,8 +142,8 @@ cli:
     - --test-simulated-all
     - --test-live-capabilities
     - --test-golden-l01
-  limit_flags: see assets/limits.v1.yaml — every limit names its flag and default
+  limit_flags: see policy/limits.v1.yaml — every limit names its flag and default
   model_flag:
     name: --model
-    rule: fallback only; may not bypass the selector in routing/
+    rule: fallback only; may not bypass the selector in policy/routing/
   note: "\"Expose at least\" is not a licence to omit; these flags are the minimum surface."

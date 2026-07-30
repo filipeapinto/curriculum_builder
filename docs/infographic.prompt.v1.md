@@ -6,11 +6,11 @@ without a human watching.
 
 ## Deliverable
 
-- Path: `curriculum_creator/how_it_works.png`, with its typst source beside it as
-  `curriculum_creator/how_it_works.typ` — at the CREATOR root, next to
-  `how_it_works.md`, **not** in `assets/`. `assets/` holds declared run inputs that
-  the meta prompt treats as immutable; this diagram is documentation about the
-  system, authored before a run and never written by one.
+- Path: `docs/how_it_works.png`, with its typst source beside it as
+  `docs/how_it_works.typ` — in `docs/`, next to `how_it_works.md`, **not** in
+  `policy/`. `policy/` holds declared run inputs that the meta prompt treats as
+  immutable; this diagram is documentation about the system, authored before a run
+  and never written by one.
 - Landscape, at least **2400 × 1600 px**, white background, print-legible at A3.
 - Self-contained. Only system fonts — use **Helvetica** (it is present; a missing
   font is a hard failure in typst). No network fetches, no external images.
@@ -27,10 +27,10 @@ can I walk away?*
 
 ```
 INPUTS                          META-PROMPT                    OUTPUT
-curriculum.v4.yaml  ← defines WHICH labs and HOW MANY                                   templates_v7/
+curriculum manifest ← defines WHICH labs and HOW MANY                                   templates_v7/
 lab.schema.v3.json         →    meta_curriculum_prompt    →      controller (python)
 component_lab_template            .prompt.v5.md                  worker prompts
-routing/ (model policy)                                          schemas
+policy/routing/ (model policy)                                   schemas
 legacy v3 generator (evidence)   "builds the factory,             tests
                                   never the product"              golden L01
 ```
