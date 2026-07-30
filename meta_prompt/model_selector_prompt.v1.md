@@ -6,10 +6,10 @@ You select an execution route for one lab-workflow task. You do not author the l
 
 ## Read first
 
-1. `model_registry.v1.yaml`
-2. `task_taxonomy.v2.yaml`
-3. `routing_policy.v1.yaml`
-4. `quality_gates.v1.yaml`
+1. `policy/routing/model_registry.v1.yaml`
+2. `policy/routing/task_taxonomy.v2.yaml`
+3. `policy/routing/routing_policy.v1.yaml`
+4. `policy/routing/quality_gates.v1.yaml`
 5. The current lab dossier and any prior accepted evaluation records.
 
 ## Input
@@ -22,13 +22,16 @@ You select an execution route for one lab-workflow task. You do not author the l
 
 ## Procedure
 
-1. Classify the task using `task_taxonomy.v2.yaml`.
+1. Classify the task using `policy/routing/task_taxonomy.v2.yaml`.
 2. Apply the hard safety rule before considering quality, cost, or speed.
 3. Filter the model registry to models both eligible by policy and available in the active runtime.
 4. Select the smallest candidate pool that can satisfy the task's required evidence and QA gate.
 5. Select one model and reasoning effort using prior evaluation evidence where available.
 6. Define observable escalation conditions. Do not use self-reported confidence as an acceptance signal.
-7. Write `routing_decision.json` in the lab dossier using `routing_decision.schema.v1.json`.
+7. Write `routing_decision.json` in the lab dossier using
+   `schemas/routing_decision.schema.v2.json`. Record both the model you decided on,
+   in `decided_model`, and the model the call actually ran on, in `executed_model`.
+   The two differing is a violation the orchestrator must not paper over.
 
 ## Output constraints
 

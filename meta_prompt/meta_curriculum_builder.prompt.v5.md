@@ -59,14 +59,33 @@ before reading a value from it.
 | `policy/checks.v1.yaml` | every stable check id and what it asserts |
 | `policy/failures.v1.yaml` | A1–A10 and B1–B4, with diagnoses and required corrections |
 | `policy/controller.v1.yaml` | states, transitions, ownership, CLI surface |
-| `schemas/` | the shapes for calibration, curriculum, a finished lab, and the execution log |
+| `policy/deferred.v1.yaml` | RT-1…RT-6 — the obligations this contract states but nothing yet executes |
+| `schemas/curriculum.schema.v4.json`, `schemas/lab.schema.v3.json`, `schemas/calibration.schema.v1.json` | the shapes for the curriculum, a finished lab, and calibration |
+| `schemas/routing_decision.schema.v2.json` | the routing-decision record format — ten required fields, decided and executed |
+| `schemas/execution_log.schema.v2.json` | the execution-log record format — typed `action_kind`, conditional `decision_id` |
 | `meta_prompt/component_lab_template.v1.md` | lab structure in prose — tone, child-language rules, safety baseline |
-| `policy/routing/` | task taxonomy, routing policy, model registry, quality gates |
+| `policy/routing/model_registry.v1.yaml` | model capabilities and availability |
+| `policy/routing/task_taxonomy.v2.yaml` | task classes and their risk profiles |
+| `policy/routing/routing_policy.v1.yaml` | candidate-pool and escalation policy |
+| `policy/routing/quality_gates.v1.yaml` | observable acceptance gates, never model self-confidence |
 | `plans/legacy_v3/` | the failed v3 generator and runner — cite by path and line |
 | `curricula/arduino_kit/official_kit_photo.jpg`, `curricula/arduino_kit/kit_evidence.md` | the verified kit evidence L01 depends on |
 | `curricula/arduino_kit/fixtures/` | fixtures the tests must **reject**, never inputs |
 | `curricula/arduino_kit/lab_brief.md`, `roster.md`, `teacher_framework.md`, `teacher_audit.md` | project scope and teaching context |
 | `meta_prompt/pedagogy.v1.md`, `docs/how_it_works.md` | why each pedagogy field exists; how the machine fits together |
+
+### Retained contracts
+
+These are **not** authorized inputs. Each is a superseded version kept so that work
+already accepted under it still validates; a validator checking an old record may
+read one, and nothing else may. A new run is never validated against a superseded
+contract. Both are retirable under `RT-6` in `policy/deferred.v1.yaml`, once a
+logger emits `v2`-valid records and a selector emits `v2`-valid decisions.
+
+| Retained contract | Readable only to |
+|---|---|
+| `schemas/execution_log.schema.v1.json` | validate execution logs already accepted under v1 |
+| `schemas/routing_decision.schema.v1.json` | validate routing decisions already accepted under v1 |
 
 Two reads reach outside `CREATOR`, both declared and bounded: `~/.codex/config.toml`
 determines the sandbox policy in `policy/routes.v1.yaml`, and `RESEARCH` fetches
@@ -147,19 +166,64 @@ datasheets ship in `CREATOR`; acquiring them is part of the run. A rating that
 cannot be sourced is the one legitimate `BLOCKED` case. A value recalled rather
 than sourced is a failed check, not a shortcut.
 
+## Routing
+
+Which model serves which task is data, and this section is what binds that data. It
+names the authorized routing inputs and states the invariants no data file can
+express. It **never inlines a value**: no model id, no reasoning level, no candidate
+pool appears here. The prompt binds; the data obeys. A routing fact with two owners
+is the defect this separation exists to stop.
+
+`policy/routes.v1.yaml` and `policy/routing/` are different things and are never
+merged: the first is the set of external capabilities proven by a real preflight
+call, the second is which model serves which task.
+
+**The invariants.**
+
+- The selector runs first and code applies its result. A model never chooses its own
+  route.
+- `--model` is a fallback only and **may not bypass the selector** in
+  `policy/routing/`, promoted here from `policy/controller.v1.yaml`. Check id
+  `SEL-NO-MODEL-BYPASS`.
+- No model at all for merging, validating, hashing, rendering, aggregating,
+  auditing or logging — those are deterministic work. Check id
+  `SEL-NO-MODEL-FOR-DETERMINISTIC`.
+- The cheapest eligible route serves bounded drafting; a stronger route serves
+  electronics design and QA; maximum reasoning is reached only through a failed
+  safety escalation, and never as a default. Check id `SEL-ESCALATION-BOUNDED`.
+- No redundant drafts. Runs are serial by default.
+- No model approves its own unsupported technical claim, promoted here from
+  `policy/routing/readme.md`.
+
+**The obligation.** Every model call emits a schema-valid routing decision before
+the call is made, validating against `schemas/routing_decision.schema.v2.json`
+(`SEL-DECISION-VALID`), and the decision records the route **actually executed** in
+`executed_model` beside the route decided in `decided_model`
+(`SEL-EXECUTED-MATCHES-DECIDED`). The execution log's act for that call carries the
+decision's id in `decision_id`, required by `action_kind: model_call` in
+`schemas/execution_log.schema.v2.json`.
+
+**What this section does and does not achieve.** It makes these rules stated, owned
+and representable in records a validator can check. It does not make them enforced,
+because nothing in this repository executes a model, applies a routing decision or
+refuses a call. Prose states the rule, JSON Schema proves both fields exist, and a
+gate compares them; only a controller could refuse to act on the difference.
+`RT-3`, `RT-4` and `RT-5` in `policy/deferred.v1.yaml` name that work, and until
+each is discharged no document or report may state that the selector is enforced.
+
 ## Proving it
 
 Six gates, in order. Record every result with a timestamp and a category label:
 `logger`, `static`, `deterministic`, `simulated`, `live-capability`, `live-golden`.
 
-| # | Gate | Proves |
-|---|---|---|
-| 0 | **Logger** | append-only ordering, monotonic ids, start/completion pairing, concurrent-append safety, coverage of every checkpoint, and failure when an operation lacks its record. **Passes before any other v7 artifact exists.** |
-| 1 | **Static** | every `CAL-*`, `CUR-*` and `L01-*` check in `policy/checks.v1.yaml`, each backed by an executed assertion |
-| 2 | **Deterministic** | transitions, aggregation, block eligibility, failure classification, checkpoints, hashes, selector enforcement, resource limits, circuit/prose/render consistency, terminal audits — plus every fixture marked `reject` in `checks.v1.yaml`, each of which must fail validation |
-| 3 | **Simulated** | fake workers drive clean acceptance, plan and artifact revision, malformed output, transient retry, repeated failure, legal block, system failure, interrupt and resume, then one clean pass over every lab |
-| 4 | **Live capability** | one real preflight call on every route in `policy/routes.v1.yaml`, under the exact recorded invocation |
-| 5 | **Golden L01** | one complete lab: twelve reviews, sourced data, required visuals with resolving receipts, targeted revision evidence, PDF rendered and every page rasterized and inspected, forced interrupt and resume with before/after hashes, final controller audit |
+| # | Gate | Check ids | Proves |
+|---|---|---|---|
+| 0 | **Logger** | `LOG-*` | append-only ordering, monotonic ids, start/completion pairing, concurrent-append safety, coverage of every checkpoint, and failure when an operation lacks its record. **Passes before any other v7 artifact exists.** |
+| 1 | **Static** | `CAL-*`, `CUR-*`, `L01-*`, `SEL-*` | every one of those checks in `policy/checks.v1.yaml`, each backed by an executed assertion. A `SEL-*` id whose method is `execution` is reported `MAPPED, NOT EXECUTED` with its `RT-` id, never as covered |
+| 2 | **Deterministic** | `LAB-*`, `REV-ISOLATED` | transitions, aggregation, block eligibility, failure classification, checkpoints, hashes, resource limits, circuit/prose/render consistency, terminal audits — plus every fixture marked `reject` in `policy/checks.v1.yaml`, each of which must fail validation |
+| 3 | **Simulated** | — | fake workers drive clean acceptance, plan and artifact revision, malformed output, transient retry, repeated failure, legal block, system failure, interrupt and resume, then one clean pass over every lab |
+| 4 | **Live capability** | `ROUTE-PROVEN` | one real preflight call on every route in `policy/routes.v1.yaml`, under the exact recorded invocation |
+| 5 | **Golden L01** | `PDF-*`, `REV-COUNT-TWELVE`, `LAB-SCHEMA-VALID` | one complete lab: twelve reviews, sourced data, required visuals with resolving receipts, targeted revision evidence, PDF rendered and every page rasterized and inspected, forced interrupt and resume with before/after hashes, final controller audit |
 
 Gate 1 exists because the previous build advertised six static checks and asserted
 two. A meta-test must fail if any check id named in a result has no executed
@@ -173,7 +237,10 @@ start a live full run.
 ## The action log
 
 `V7/test_results/prompt_execution_log.md`, append-only, validating against
-`schemas/execution_log.schema.v1.json`.
+`schemas/execution_log.schema.v2.json`. Every record carries a typed `action_kind`,
+and an act whose `action_kind` is `model_call` must carry the `decision_id` of the
+routing decision it was made under — the condition keys on the type, never on the
+wording of `action`.
 
 Every controller action appends one record before it starts and one when it ends:
 a completion `ACT` citing the started id, or an `EXEC` whose mandatory `Closes`

@@ -1,0 +1,12 @@
+{
+  "_fixture": "Negative fixture for FR-P2-DECISION-VALID. reasoning_effort is absent, so the record cannot be checked against the hard rules that bind it. A decision nobody can check is an audit trail that cannot be audited.",
+  "task_id": "L01-child-explanatory-writing",
+  "task_class": "child_explanatory_writing",
+  "risk": "medium",
+  "candidate_pool": ["gpt-5.6-sol", "gpt-5.6-terra"],
+  "decided_model": "gpt-5.6-terra",
+  "executed_model": "gpt-5.6-terra",
+  "quality_gate": ["pedagogy"],
+  "decision_rationale": "Bounded drafting against a template, so the cheapest eligible route serves.",
+  "status": "approved_to_run"
+}

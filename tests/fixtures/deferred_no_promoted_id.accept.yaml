@@ -1,0 +1,14 @@
+# Positive fixture for FR-P2-DEFERRED (a). An RT- entry carrying promotes_gate but
+# no promoted_id, which must PASS: four of the six real ids are shaped this way, and
+# (a) says "where one exists". promoted_id names a gate that does not exist yet and
+# is never resolved against the registry, so requiring it would forbid the ordinary
+# case — a deferral that strengthens an existing gate rather than renaming it.
+deferred_version: '1.0'
+deferred:
+  - id: RT-1
+    obligation: Controller states are real
+    acceptance_criterion: >-
+      every state in policy/controller.v1.yaml is reachable in an implemented state
+      machine, and no implemented state is absent from the manifest
+    blocked_by: no controller implementation
+    promotes_gate: FR-P4-AGREEMENT

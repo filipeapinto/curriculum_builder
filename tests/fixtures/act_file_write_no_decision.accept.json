@@ -1,0 +1,13 @@
+{
+  "id": "ACT-044",
+  "date": "2026-07-30",
+  "action": "Wrote the merged circuit data for L01 to the dossier",
+  "action_kind": "file_write",
+  "status": "started",
+  "input_quality": "complete",
+  "authorized_paths": ["V7/labs/L01/02_circuit.yaml"],
+  "trigger": "controller state CIRCUIT",
+  "expected": "the circuit data on disk with its hash recorded",
+  "result": "pending",
+  "notes": "Positive fixture for FR-P2-UNRECORDED-DECLARED (c). An act of a different action_kind carrying no decision_id, which must validate — proving the conditional requirement is not over-broad. A file write must not be forced to carry a decision id."
+}

@@ -1,18 +1,22 @@
-# Model Selector — v1
+# Model routing manifests — folder index
 
-This package separates task classification, model selection, and quality escalation from the lab orchestrator.
-
-The selector does not author a lab. It reads the task, applicable quality gates, available model registry, and prior evaluation evidence; it then produces a recorded routing decision. The orchestrator must use that decision or record why it could not.
+A human's map of this directory. It is never an input to a run: the rules that bind
+a run are stated in the meta prompt's `## Routing` section, and the data those rules
+read is the four manifests below.
 
 ## Files
 
-- `model_registry.v1.yaml` — current model capabilities and availability.
-- `task_taxonomy.v2.yaml` — current task classes and risk profiles, including workbook/PDF assembly.
+- `model_registry.v1.yaml` — model capabilities and availability, plus the anchored
+  `prose_pattern` for every value the meta prompt must never inline.
+- `task_taxonomy.v2.yaml` — task classes and risk profiles, including workbook and
+  PDF assembly.
 - `routing_policy.v1.yaml` — candidate-pool and escalation policy.
-- `quality_gates.v1.yaml` — observable acceptance gates, not model self-confidence.
-- `routing_decision.schema.v1.json` — required decision-record format.
-- `model_selector_prompt.v1.md` — prompt for the selector.
+- `quality_gates.v1.yaml` — observable acceptance gates, never a model's own
+  confidence.
 
-## Design rule
+## Elsewhere
 
-Hard safety rules constrain the eligible model pool. Task classification chooses among the eligible models. QA outcomes determine acceptance, retry, or escalation. No model may approve its own unsupported technical claim.
+- `schemas/routing_decision.schema.v2.json` — the decision-record format. Contracts
+  live with the other contracts, because a validator reads them.
+- `meta_prompt/model_selector_prompt.v1.md` — the selector's own prompt. Prose a
+  model reads lives with the other prose a model reads.

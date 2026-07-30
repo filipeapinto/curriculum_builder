@@ -1,0 +1,12 @@
+{
+  "id": "ACT-001",
+  "date": "2026-07-30",
+  "action": "Validated the curriculum manifest against its schema before reading a value from it",
+  "status": "started",
+  "input_quality": "complete",
+  "authorized_paths": ["curricula/arduino_kit/arduino_kit_curriculum.v4.yaml"],
+  "trigger": "controller state VALIDATE",
+  "expected": "the manifest validates and the lab count is read from it",
+  "result": "pending",
+  "notes": "Positive fixture for FR-P2-CONTRACT-VERSIONED (e). A v1-shaped act, which must still validate against $defs.act of execution_log.schema.v1.json after v2 exists. Without it, (e) asserts an acceptance nothing demonstrates."
+}

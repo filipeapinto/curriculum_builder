@@ -210,6 +210,27 @@ class Evidence:
         return sorted(Path(root).rglob(pattern))
 
     # -- mapping ------------------------------------------------------------
+    def read_for_resolution(self, path: Path | str):
+        """Deserialize a file **solely** to resolve one of its values against
+        another file.
+
+        Subsumption rule 4: a mechanism used only to reach another mechanism's
+        input is not reported separately, so this is ``mapping`` and not
+        ``parse``. Use :meth:`parse` instead whenever the value read out of the
+        file is itself part of what the gate claims.
+        """
+        self._record("mapping")
+        return _deserialize(Path(path))
+
+    def subschema(self, schema_path: Path | str, *keys: str) -> dict:
+        """One named ``$defs`` branch of a schema, with ``$defs`` carried along so
+        internal ``$ref``s still resolve. Reported by whatever validates it."""
+        schema = _deserialize(Path(schema_path))
+        node = schema
+        for key in keys:
+            node = node[key]
+        return {**node, "$defs": schema.get("$defs", {})}
+
     def resolve(self, what: str, found_in: str, against: str) -> None:
         """Resolve an id or path found in one file against another.
 

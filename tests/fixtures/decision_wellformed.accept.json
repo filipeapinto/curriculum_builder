@@ -1,0 +1,17 @@
+{
+  "_fixture": "Positive fixture for FR-P2-DECISION-VALID. The record its pass criterion asserts validates: all ten required fields, and a decided_model that resolves to a member of policy/routing/model_registry.v1.yaml. Named, so the acceptance is demonstrated rather than assumed.",
+  "task_id": "L01-adult-technical-guide",
+  "task_class": "adult_technical_guide",
+  "risk": "high",
+  "candidate_pool": ["gpt-5.6-sol"],
+  "decided_model": "gpt-5.6-sol",
+  "executed_model": "gpt-5.6-sol",
+  "reasoning_effort": "xhigh",
+  "pro_mode": false,
+  "quality_gate": ["electronics", "pedagogy"],
+  "decision_rationale": "Adult technical guide is risk high, so the hard rules leave one eligible model and an independent QA pass is required.",
+  "evidence_inputs": ["source_manifest", "electrical_review", "physical_release_state"],
+  "escalate_when": ["circuit_or_safety_claim_unverified"],
+  "substitution": null,
+  "status": "approved_to_run"
+}

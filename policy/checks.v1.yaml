@@ -10,7 +10,7 @@ checks_version: '1.0'
 # ---------------------------------------------------------------------------
 calibration:
   - id: CAL-VALID
-    asserts: calibration.v1.yaml validates against schemas/calibration.schema.v1.json
+    asserts: policy/calibration.v1.yaml validates against schemas/calibration.schema.v1.json
     stage: static
     note: run first — every later check reads values from calibration
   - id: CAL-SCHEMA-AGREE
@@ -159,6 +159,62 @@ reviewers:
       test fails if a path exists
     stage: deterministic
     note: corrects B2 — structural isolation, not instructed isolation
+
+# ---------------------------------------------------------------------------
+# Model selection. Deliberately not ROUTE-*: "route" already means an external
+# capability proven by preflight, and these are about which model serves which
+# task. Each id names the file that states the rule and the method that verifies
+# it. An id whose method is `execution` needs a runtime nobody has built yet; it
+# carries the deferred id that would discharge it and is recorded
+# MAPPED, NOT EXECUTED — never as covered.
+selector:
+  - id: SEL-DECISION-VALID
+    asserts: >-
+      every routing decision validates against
+      schemas/routing_decision.schema.v2.json with all ten required fields, and its
+      decided_model is a member of policy/routing/model_registry.v1.yaml
+    stage: static
+    owner: meta_prompt/meta_curriculum_builder.prompt.v5.md
+    method: schema
+    artifact: schemas/routing_decision.schema.v2.json
+    verified_by: FR-P2-DECISION-VALID
+  - id: SEL-NO-MODEL-BYPASS
+    asserts: >-
+      --model is a fallback only and may not bypass the selector in
+      policy/routing/; a record whose executed_model differs from its
+      decided_model is a violation
+    stage: static
+    owner: policy/controller.v1.yaml
+    method: declaration
+    artifact: schemas/routing_decision.schema.v2.json
+    verified_by: FR-P2-BYPASS-DECLARED
+    note: >-
+      stated, representable and compared in gate code. Refusing the call at runtime
+      is RT-3; nothing executes --model today.
+  - id: SEL-NO-MODEL-FOR-DETERMINISTIC
+    asserts: >-
+      no model is used for merge, validation, hashing, rendering, aggregation,
+      audits or the logger
+    stage: static
+    owner: policy/controller.v1.yaml
+    method: execution
+    deferred: RT-5
+  - id: SEL-ESCALATION-BOUNDED
+    asserts: >-
+      maximum reasoning effort is reached only through a failed safety escalation,
+      and escalation stops at the convergence limits in policy/limits.v1.yaml
+    stage: static
+    owner: policy/routing/routing_policy.v1.yaml
+    method: execution
+    deferred: RT-5
+  - id: SEL-EXECUTED-MATCHES-DECIDED
+    asserts: >-
+      the model a call actually ran on equals the model its routing decision
+      decided on
+    stage: static
+    owner: meta_prompt/meta_curriculum_builder.prompt.v5.md
+    method: execution
+    deferred: RT-3
 
 # ---------------------------------------------------------------------------
 drift:

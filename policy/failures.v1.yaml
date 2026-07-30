@@ -129,3 +129,20 @@ traceability_rule: >-
   the executable test that proves the correction, the test's result record, and any
   residual risk. An id with no correction, or a correction with no proving test, fails
   the release gate.
+
+# ---------------------------------------------------------------------------
+# C — obligations whose breach ends the run. Each names its outcome, the condition
+# that triggers it, and the anchored prose_pattern that matches that condition as
+# it is written in prose. The pattern is declared here rather than interpreted by a
+# gate: free-text matching is the last place a rule could be dodged by rewording.
+# policy/controller.v1.yaml maps each condition id to its terminal state.
+runtime_obligations:
+  - id: C1
+    condition: >-
+      a model call was made although the rule that every model call emits a
+      schema-valid routing decision was in force, and no decision_id was recorded
+    outcome: META_SYSTEM_FAILURE
+    prose_pattern: '(?i)every model call emits a schema-valid routing decision'
+    representable_by: schemas/execution_log.schema.v2.json → $defs.act action_kind model_call requires decision_id
+    enforced_at_runtime: false
+    deferred: RT-4

@@ -35,3 +35,38 @@ models:
     supports_pro_mode: false
     allowed_for: [mechanical_processing]
 availability_note: "This registry is a policy input, not a guarantee of entitlement. The active runtime is authoritative."
+
+# Every routing value the meta prompt must never inline, and the anchored pattern
+# that matches it *as it would be written in prose*. FR-P2-NOVALUES matches the
+# pattern, never the bare value: an effort level of `high` or `low` scanned
+# literally flags "high risk" and "low-cost" in ordinary prose across the whole
+# repository. A term without a pattern is a failure, never a skip — authoring the
+# pattern is part of authoring the term.
+#
+# `kind` records which of the three term families the entry belongs to, so the gate
+# reports what it matched rather than a bare count.
+prose_patterns:
+  gpt-5.6-sol:
+    kind: model_id
+    prose_pattern: '(?i)\bgpt[ _-]?5\.6[ _-]?sol\b'
+  gpt-5.6-terra:
+    kind: model_id
+    prose_pattern: '(?i)\bgpt[ _-]?5\.6[ _-]?terra\b'
+  gpt-5.6-luna:
+    kind: model_id
+    prose_pattern: '(?i)\bgpt[ _-]?5\.6[ _-]?luna\b'
+  low:
+    kind: reasoning_effort
+    prose_pattern: '(?i)\b(?:reasoning[ _-]?)?effort\b[^.\n]{0,24}?\blow\b'
+  medium:
+    kind: reasoning_effort
+    prose_pattern: '(?i)\b(?:reasoning[ _-]?)?effort\b[^.\n]{0,24}?\bmedium\b'
+  high:
+    kind: reasoning_effort
+    prose_pattern: '(?i)\b(?:reasoning[ _-]?)?effort\b[^.\n]{0,24}?\bhigh\b'
+  xhigh:
+    kind: reasoning_effort
+    prose_pattern: '(?i)\bxhigh\b'
+  max:
+    kind: reasoning_effort
+    prose_pattern: '(?i)\b(?:reasoning[ _-]?)?effort\b[^.\n]{0,24}?\bmax\b'

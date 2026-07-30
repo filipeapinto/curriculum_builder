@@ -1,0 +1,13 @@
+{
+  "_fixture": "Negative fixture for FR-P2-DECISION-VALID. Schema-valid, but decided_model names a model that policy/routing/model_registry.v1.yaml does not carry. That cross-file resolution is why the gate's class includes mapping: the schema alone cannot see the registry.",
+  "task_id": "L01-visual-asset-review",
+  "task_class": "visual_asset_review",
+  "risk": "high",
+  "candidate_pool": ["gpt-5.6-nova"],
+  "decided_model": "gpt-5.6-nova",
+  "executed_model": "gpt-5.6-nova",
+  "reasoning_effort": "xhigh",
+  "quality_gate": ["visual"],
+  "decision_rationale": "Chose a model that is not in the registry at all.",
+  "status": "approved_to_run"
+}

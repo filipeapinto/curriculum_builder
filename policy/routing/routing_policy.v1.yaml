@@ -42,3 +42,11 @@ escalation_rules:
 quality_estimation:
   rule: "Use observable QA gates and independent review, not a model's uncalibrated self-confidence."
   accepted_signals: [schema_validation, evidence_completeness, rendered_visual_review, independent_qa_pass]
+
+# The escalation rules above are bounded by policy/limits.v1.yaml
+# (max_meta_revision_cycles, repeat_failure_threshold) and by
+# policy/controller.v1.yaml's repeat_failure rule. The stable check id for that
+# boundary is SEL-ESCALATION-BOUNDED; whether it holds can only be observed in a
+# run, so policy/checks.v1.yaml records it MAPPED, NOT EXECUTED against RT-5.
+check_ids:
+  - SEL-ESCALATION-BOUNDED

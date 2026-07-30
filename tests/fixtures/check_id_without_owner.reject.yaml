@@ -1,0 +1,12 @@
+# Negative fixture for FR-P2-SEL-MAPPED. A selector check id advertised with no
+# owner: nothing states the rule it claims to check. This is gate B3 and
+# DRIFT-NO-MISREPORTING in the form this plan can close — a check named but owned by
+# nothing.
+checks_version: '1.0'
+selector:
+  - id: SEL-DECISION-VALID
+    asserts: every routing decision validates against its schema
+    stage: static
+    method: schema
+    artifact: schemas/routing_decision.schema.v2.json
+    verified_by: FR-P2-DECISION-VALID

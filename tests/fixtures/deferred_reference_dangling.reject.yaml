@@ -1,0 +1,10 @@
+# Negative fixture for FR-P2-DEFERRED (d). A check citing RT-9, which no id in
+# policy/deferred.v1.yaml defines. An unresolvable RT- reference is a failure, not a
+# warning: "MAPPED, NOT EXECUTED, see the deferred register" is only a verifiable
+# statement while every citation resolves.
+checks_version: '1.0'
+selector:
+  - id: SEL-EXECUTED-MATCHES-DECIDED
+    asserts: the model a call ran on equals the model its decision decided on
+    method: execution
+    deferred: RT-9

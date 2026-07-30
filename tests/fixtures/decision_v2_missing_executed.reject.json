@@ -1,0 +1,13 @@
+{
+  "_fixture": "Negative fixture for FR-P2-CONTRACT-VERSIONED (a). A v2 decision omitting executed_model. Under v1 this record was complete; under v2 the route actually executed must be recorded, or 'the executed route differs from the decided route' stays inexpressible.",
+  "task_id": "L01-deterministic-circuit-design",
+  "task_class": "deterministic_circuit_design",
+  "risk": "safety_critical",
+  "candidate_pool": ["gpt-5.6-sol"],
+  "decided_model": "gpt-5.6-sol",
+  "reasoning_effort": "max",
+  "pro_mode": true,
+  "quality_gate": ["electronics"],
+  "decision_rationale": "Safety-critical design, so the hard rules pin the model and the effort.",
+  "status": "approved_to_run"
+}

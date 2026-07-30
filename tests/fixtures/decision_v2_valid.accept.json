@@ -1,0 +1,14 @@
+{
+  "_fixture": "Positive fixture for FR-P2-CONTRACT-VERSIONED (e). A v2-shaped decision that must validate against routing_decision.schema.v2.json, so the acceptance half of (e) is demonstrated rather than assumed. Its counterpart is act_v1_shaped.accept.json, which must still validate against v1.",
+  "task_id": "L01-component-research",
+  "task_class": "component_research",
+  "risk": "high",
+  "candidate_pool": ["gpt-5.6-sol"],
+  "decided_model": "gpt-5.6-sol",
+  "executed_model": "gpt-5.6-sol",
+  "reasoning_effort": "xhigh",
+  "quality_gate": ["electronics"],
+  "decision_rationale": "Component research is risk high, so the hard rules leave one eligible model and independent QA is required.",
+  "evidence_inputs": ["primary_sources", "kit_reference", "claim_log", "source_manifest"],
+  "status": "approved_to_run"
+}

@@ -1,0 +1,78 @@
+# The deferred register — obligations this refactor states but cannot execute.
+#
+# This plan makes the routing and logging rules stated, owned, mapped, and
+# representable in records a validator can check. It cannot make them *executed*,
+# because no controller, execution-log writer, renderer or live route exists. Every
+# such obligation gets a stable id here rather than a prose bullet, because three
+# gates cite these ids as evidence that an unexecuted obligation is *recorded*
+# rather than forgotten, and "see the plan's section 12" is not a checkable
+# reference.
+#
+# This is a manifest and not a section of a plan because code reads it, and code
+# reads policy/, not plans/. It is mirrored exactly by section 12 of
+# plans/folder_refactoring/folder_refactoring.plan.v6.md; FR-P2-DEFERRED proves the
+# two agree in both directions and that every citation elsewhere resolves.
+#
+# Field meanings, which the mirror table's column names match exactly:
+#   blocked_by      what the obligation waits on
+#   promotes_gate   an EXISTING gate id, resolved against tests/gates/registry.py
+#   promoted_id     the name that gate takes once discharged — a gate that does not
+#                   exist yet, and is never resolved against the registry
+#
+# Until each is discharged, no document, gate name or report may state that the
+# selector is enforced or that the check suite is fully executed.
+
+deferred_version: '1.0'
+
+deferred:
+
+  - id: RT-1
+    obligation: Controller states are real
+    acceptance_criterion: >-
+      every state in policy/controller.v1.yaml is reachable in an implemented state
+      machine, and no implemented state is absent from the manifest
+    blocked_by: no controller implementation
+    promotes_gate: FR-P4-AGREEMENT
+
+  - id: RT-2
+    obligation: Routes are proven by use
+    acceptance_criterion: >-
+      every entry in policy/routes.v1.yaml carries proof recorded from an actual
+      execution
+    blocked_by: no executed run to record proof from
+    promotes_gate: FR-P4-AGREEMENT
+
+  - id: RT-3
+    obligation: Bypass is refused, not just detected
+    acceptance_criterion: >-
+      a call whose executed_model differs from its decided_model is rejected at
+      runtime, not merely by a gate reading a static fixture
+    blocked_by: no selector implementation
+    promotes_gate: FR-P2-BYPASS-DECLARED
+    promoted_id: FR-P2-BYPASS-ENFORCED
+
+  - id: RT-4
+    obligation: An unrecorded call is fatal
+    acceptance_criterion: >-
+      a model call with no decision_id terminates the run as META_SYSTEM_FAILURE,
+      rather than failing schema validation after the fact
+    blocked_by: no controller implementation
+    promotes_gate: FR-P2-UNRECORDED-DECLARED
+    promoted_id: FR-P2-UNRECORDED-FATAL
+
+  - id: RT-5
+    obligation: Advertised checks are executed
+    acceptance_criterion: >-
+      every id FR-P4-CHECK-MAPPING reports as MAPPED, NOT EXECUTED becomes executed,
+      and every A-series id in policy/failures.v1.yaml gains a proving test
+    blocked_by: no controller, logger, renderer or live route
+    promotes_gate: FR-P4-CHECK-MAPPING
+
+  - id: RT-6
+    obligation: The v1 contracts are retirable
+    acceptance_criterion: >-
+      the logger emits execution_log.schema.v2.json-valid records and the selector
+      emits routing_decision.schema.v2.json-valid decisions, after which both v1
+      schemas may enter schemas/deprecated/ under the retention gate
+    blocked_by: no logger emitting v2 records
+    promotes_gate: FR-P1-SCHEMA-RETENTION

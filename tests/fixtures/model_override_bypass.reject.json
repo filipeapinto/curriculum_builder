@@ -1,0 +1,13 @@
+{
+  "_fixture": "Negative fixture for FR-P2-BYPASS-DECLARED. Valid against routing_decision.schema.v2.json — both fields are present — and still a violation, because executed_model differs from decided_model. That it passes (b) and fails (c) is the point: JSON Schema cannot compare two sibling values without enumerating every pair, so the comparison is performed in gate code and recorded as comparison: python.",
+  "task_id": "L01-electronics-qa",
+  "task_class": "electronics_qa",
+  "risk": "safety_critical",
+  "candidate_pool": ["gpt-5.6-sol"],
+  "decided_model": "gpt-5.6-sol",
+  "executed_model": "gpt-5.6-luna",
+  "reasoning_effort": "max",
+  "quality_gate": ["electronics"],
+  "decision_rationale": "The selector decided the flagship route; --model overrode it at the call site.",
+  "status": "approved_to_run"
+}

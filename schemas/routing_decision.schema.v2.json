@@ -1,0 +1,30 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://example.invalid/elegoo/routing_decision.schema.v2.json",
+  "title": "Lab Model Routing Decision v2",
+  "description": "Additive successor to version 1 of this contract, which is retained byte-unchanged so records already accepted under it keep validating; editing v1 in place would retroactively invalidate them. Two changes: selected_model is renamed decided_model, because 'selected' names an intention and the invariant concerns the difference between what was decided and what ran; and executed_model is added and required, so 'the executed route differs from the decided route' becomes expressible at all. The schema proves both fields exist. It is not asked to compare them — standard JSON Schema cannot compare two sibling values without enumerating every pair — so the comparison is performed in gate code and recorded as comparison: python.",
+  "type": "object",
+  "required": ["task_id", "task_class", "risk", "candidate_pool", "decided_model", "executed_model", "reasoning_effort", "quality_gate", "decision_rationale", "status"],
+  "properties": {
+    "task_id": {"type": "string"},
+    "task_class": {"type": "string"},
+    "risk": {"enum": ["low", "medium", "high", "safety_critical"]},
+    "candidate_pool": {"type": "array", "items": {"type": "string"}, "minItems": 1},
+    "decided_model": {
+      "description": "The model the selector decided on, before any execution.",
+      "type": "string"
+    },
+    "executed_model": {
+      "description": "The model the call actually ran on. Equal to decided_model unless a bypass or substitution occurred; a difference is a violation the controller must refuse, which is RT-3.",
+      "type": "string"
+    },
+    "reasoning_effort": {"enum": ["medium", "high", "xhigh", "max"]},
+    "pro_mode": {"type": "boolean"},
+    "quality_gate": {"type": "array", "items": {"type": "string"}},
+    "decision_rationale": {"type": "string"},
+    "evidence_inputs": {"type": "array", "items": {"type": "string"}},
+    "escalate_when": {"type": "array", "items": {"type": "string"}},
+    "substitution": {"type": ["string", "null"]},
+    "status": {"enum": ["approved_to_run", "blocked_pending_evidence", "blocked_pending_physical_kit_check"]}
+  }
+}

@@ -147,3 +147,34 @@ cli:
     name: --model
     rule: fallback only; may not bypass the selector in policy/routing/
   note: "\"Expose at least\" is not a licence to omit; these flags are the minimum surface."
+
+# ---------------------------------------------------------------------------
+# Selector obligations code owns. Each carries its stable check id so the rule and
+# the id cannot drift apart; policy/checks.v1.yaml names the verification method.
+selector_rules:
+  - id: SEL-NO-MODEL-BYPASS
+    rule: >-
+      The selector runs first and code applies its result. --model is a fallback
+      only and may never bypass the selector in policy/routing/. A call whose
+      executed_model differs from its decided_model is a violation.
+    enforced_at_runtime: false
+    deferred: RT-3
+  - id: SEL-NO-MODEL-FOR-DETERMINISTIC
+    rule: >-
+      No model at all for merge, validation, hashing, rendering, aggregation,
+      audits or the logger. Those are the never_uses_a_model_for list above.
+    enforced_at_runtime: false
+    deferred: RT-5
+
+# ---------------------------------------------------------------------------
+# Conditions that end a run, and the terminal state each maps to. The condition
+# ids are owned by policy/failures.v1.yaml; this file owns the mapping.
+terminal_conditions:
+  - condition_id: C1
+    condition: >-
+      a model call was made although the rule that every model call emits a
+      schema-valid routing decision was in force, and no decision_id was recorded
+    terminal_state: META_SYSTEM_FAILURE
+    owned_by: code
+    enforced_at_runtime: false
+    deferred: RT-4

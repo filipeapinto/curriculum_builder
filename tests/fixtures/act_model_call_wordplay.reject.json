@@ -1,0 +1,13 @@
+{
+  "id": "ACT-042",
+  "date": "2026-07-30",
+  "action": "consulted the assistant about the adult guide wording",
+  "action_kind": "model_call",
+  "status": "started",
+  "input_quality": "complete",
+  "authorized_paths": ["V7/test_results/prompt_execution_log.md"],
+  "trigger": "controller state ADULT_GUIDE",
+  "expected": "a drafted adult guide section",
+  "result": "pending",
+  "notes": "Negative fixture for FR-P2-CONTRACT-VERSIONED (c). The free-text action says 'consulted the assistant' rather than 'model call', but action_kind is the typed discriminator and it says model_call, so decision_id is required and its absence must still be rejected. A record cannot dodge the rule by rewording."
+}

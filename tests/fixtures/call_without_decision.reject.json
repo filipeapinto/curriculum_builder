@@ -1,0 +1,13 @@
+{
+  "id": "ACT-043",
+  "date": "2026-07-30",
+  "action": "Requested a first-pass classification of the task before routing it",
+  "action_kind": "model_call",
+  "status": "started",
+  "input_quality": "complete",
+  "authorized_paths": ["V7/test_results/prompt_execution_log.md"],
+  "trigger": "controller state PLAN",
+  "expected": "a task classification recorded against the taxonomy",
+  "result": "pending",
+  "notes": "Negative fixture for FR-P2-UNRECORDED-DECLARED (c). A model call with no decision_id, rejected by execution_log.schema.v2.json because action_kind is model_call. That is the schema-expressible half of the obligation; terminating the run on it is RT-4."
+}

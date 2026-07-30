@@ -1,0 +1,16 @@
+# Positive fixture for FR-P2-SEL-MAPPED. A SEL-* id whose verification method is
+# `execution` and which carries a resolving RT- reference. It must PASS and be
+# recorded MAPPED, NOT EXECUTED — never as covered. That branch is the gate's whole
+# reason for existing and is otherwise untested: nothing in this repository executes
+# a model, so an id that needs a runtime must be reportable as mapped without being
+# reportable as proven.
+checks_version: '1.0'
+selector:
+  - id: SEL-NO-MODEL-FOR-DETERMINISTIC
+    asserts: >-
+      no model is used for merge, validation, hashing, rendering, aggregation,
+      audits or the logger
+    stage: static
+    owner: policy/controller.v1.yaml
+    method: execution
+    deferred: RT-5
