@@ -1,0 +1,72 @@
+# Resource limits — the numbers the run stops before exceeding.
+#
+# A limit without a number cannot be exceeded, so a drift rule that halts on
+# exceeding it never fires. These are values, not placeholders. Flags override
+# them; the values actually in force are recorded in meta_execution_state.json at
+# startup, and the limit that bound a stopped run is named in the final report.
+
+limits_version: '1.0'
+
+per_lab:
+  max_model_calls:
+    value: 60
+    flag: --max-model-calls-per-lab
+    rationale: 12 reviews + ~20 authoring calls + bounded retries, with headroom
+  max_revisions:
+    value: 3
+    flag: --max-lab-revisions
+    rationale: a fourth attempt on the same failed-check set is the repeat-failure signal
+  max_images:
+    value: 12
+    flag: --max-images-per-lab
+    rationale: seven visual roles plus revisions
+  max_seconds:
+    value: 5400
+    flag: --max-lab-seconds
+    rationale: 90 minutes wall clock for one lab
+  max_storage_mb:
+    value: 250
+    flag: --max-lab-storage-mb
+    rationale: one lab's dossier, visuals and rendered PDF
+
+per_phase:
+  timeout_seconds:
+    value: 900
+    flag: --phase-timeout-seconds
+    rationale: 15 minutes per state; longer is a stall, not slow work
+
+per_run:
+  max_concurrency:
+    value: 1
+    flag: --max-concurrency
+    rationale: serial by default; reviewer isolation is easier to prove
+  max_seconds:
+    value: 36000
+    flag: --max-run-seconds
+    rationale: 10 hours for the whole meta run
+  max_storage_mb:
+    value: 10000
+    flag: --max-run-storage-mb
+    rationale: the whole v7 package plus one golden lab
+
+convergence:
+  max_meta_revision_cycles:
+    value: 6
+    rationale: beyond six the loop is not converging, it is thrashing
+  repeat_failure_threshold:
+    value: 2
+    rationale: the same failed-check set twice without narrowing ends the loop
+  complexity_without_progress_cycles:
+    value: 2
+    rationale: two cycles adding calls or code while failed gates do not fall
+
+retry:
+  malformed_structured_output: 1
+  transient_worker_source_or_image_failure: 1
+  rationale: one retry distinguishes a blip from a defect; a second hides the defect
+
+behaviour_on_limit:
+  - Stop before exceeding the limit, never after.
+  - Preserve the last valid checkpoint so the run is resumable.
+  - Record which limit bound the run, its value, and the observed figure.
+  - Reaching a limit is never reported as an accepted lab or a passed gate.

@@ -1,0 +1,116 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://example.invalid/elegoo/execution_log.schema.v1.json",
+  "title": "Execution log v1 — the all-action audit trail",
+  "description": "Validates the parsed form of V7/test_results/prompt_execution_log.md. Every controller action appends one record before it starts and one record when it ends: a completion ACT, or an EXEC whose Closes field names the start it terminates. The log is append-only and its ids are monotonic by construction. This schema exists because the previous run's logger was never proven correct before it recorded the entire run (failure B1) — the audit trail was the one thing that could not be audited.",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["log_version", "records"],
+
+  "properties": {
+    "log_version": { "const": "1.0" },
+
+    "records": {
+      "description": "In file order. Order is meaningful: the log is append-only and must never be reordered, rewritten or pruned.",
+      "type": "array",
+      "items": { "oneOf": [{ "$ref": "#/$defs/act" }, { "$ref": "#/$defs/exec" }] }
+    },
+
+    "unclosed_starts": {
+      "description": "Computed, not authored: every started ACT id, minus every id cited by a completion ACT or an EXEC Closes. Must be empty — zero unpaired starts is a release gate (LOG-PAIRED).",
+      "type": "array",
+      "maxItems": 0,
+      "items": { "type": "string" }
+    }
+  },
+
+  "$defs": {
+    "act_id": { "type": "string", "pattern": "^ACT-[0-9]{3,}$" },
+    "exec_id": { "type": "string", "pattern": "^EXEC-[0-9]{3,}$" },
+
+    "act": {
+      "description": "A successful action. Appended once when the action starts (status: started, result: pending) and once when it ends (status: completed or skipped, citing the started id).",
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["id", "date", "action", "status", "input_quality", "authorized_paths", "trigger", "expected", "result"],
+      "properties": {
+        "id": { "$ref": "#/$defs/act_id" },
+        "date": { "type": "string", "format": "date" },
+        "action": {
+          "description": "A concrete controller or worker action — inspection, design, initialization, file creation, command, test, model call, render, source request, state transition, revision, audit, resume, terminal decision.",
+          "type": "string",
+          "minLength": 10
+        },
+        "status": { "enum": ["started", "completed", "skipped"] },
+        "closes": {
+          "description": "On a completion or skipped record: the started ACT id this closes. Required unless status is 'started'. Never derived — always passed explicitly, because deriving it is exactly the B1 defect.",
+          "$ref": "#/$defs/act_id"
+        },
+        "input_quality": { "enum": ["complete", "partial", "missing"] },
+        "authorized_paths": {
+          "type": "array",
+          "minItems": 1,
+          "items": { "type": "string", "minLength": 1 }
+        },
+        "trigger": {
+          "description": "The exact command, state or gate that caused this action.",
+          "type": "string",
+          "minLength": 5
+        },
+        "expected": { "type": "string", "minLength": 5 },
+        "result": {
+          "description": "'pending' on a started record; a concrete measured result on a completion.",
+          "type": "string",
+          "minLength": 5
+        },
+        "notes": {
+          "description": "Optional. Elapsed time, hashes, model and effort, command exit code, linked EXEC id. Never load-bearing — anything a gate depends on is a required field, not a note.",
+          "type": "string"
+        }
+      },
+      "allOf": [
+        {
+          "if": { "properties": { "status": { "const": "started" } }, "required": ["status"] },
+          "then": { "properties": { "result": { "const": "pending" } }, "not": { "required": ["closes"] } }
+        },
+        {
+          "if": { "properties": { "status": { "enum": ["completed", "skipped"] } }, "required": ["status"] },
+          "then": { "required": ["closes"] }
+        }
+      ]
+    },
+
+    "exec": {
+      "description": "A failed action. Terminates exactly one started ACT, named in closes — mandatory, because the pairing gate cannot be computed from free text.",
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["id", "date", "closes", "failure_type", "input_quality", "authorized_paths", "trigger", "what_failed", "expected"],
+      "properties": {
+        "id": { "$ref": "#/$defs/exec_id" },
+        "date": { "type": "string", "format": "date" },
+        "closes": {
+          "description": "The started ACT id this failure terminates. Required, never blank. An EXEC whose closes does not resolve is itself a logging failure and stops the run as META_SYSTEM_FAILURE.",
+          "$ref": "#/$defs/act_id"
+        },
+        "failure_type": {
+          "enum": ["missing-input", "bad-input", "tool-error", "wrong-output", "partial-run", "other"]
+        },
+        "input_quality": { "enum": ["complete", "partial", "missing"] },
+        "authorized_paths": {
+          "type": "array",
+          "minItems": 1,
+          "items": { "type": "string", "minLength": 1 }
+        },
+        "trigger": { "type": "string", "minLength": 5 },
+        "what_failed": { "type": "string", "minLength": 10 },
+        "expected": { "type": "string", "minLength": 5 },
+        "notes": { "type": "string" }
+      },
+      "if": { "properties": { "failure_type": { "const": "other" } }, "required": ["failure_type"] },
+      "then": {
+        "required": ["notes"],
+        "description": "'other' must state the reason in notes, or the taxonomy is a wildcard."
+      }
+    }
+  }
+}

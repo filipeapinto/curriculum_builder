@@ -1,0 +1,15 @@
+version: 1
+gates:
+  electronics:
+    requires: [circuit_data_valid, component_orientation_checked, supply_limit_checked, hazard_checked, meter_setup_checked]
+    fail_action: revise_circuit_or_adult_guide
+  pedagogy:
+    requires: [component_oriented, purpose_before_mechanism, substantive_explanation, child_adult_roles_separated, evidence_activity]
+    fail_action: revise_child_lab
+  visual:
+    requires: [photorealistic_supporting_visuals, deterministic_map, print_legibility, image_text_alignment, no_generated_text_as_authority]
+    fail_action: revise_visual_plan_or_assets
+  release:
+    requires: [electronics_pass, pedagogy_pass, visual_pass]
+    conditional_requirement: physical_kit_signoff_for_powered_release
+    fail_action: do_not_start_next_lab

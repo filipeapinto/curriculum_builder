@@ -1,0 +1,37 @@
+version: 1
+last_verified: 2026-07-27
+selection_rule: "Only choose models available in the active runtime. Record any substitution."
+models:
+  gpt-5.6-sol:
+    provider: OpenAI
+    role: flagship_reasoning
+    strengths:
+      - complex reasoning
+      - technical synthesis
+      - structured planning
+      - critical review
+      - visual and layout judgment
+    reasoning_efforts: [medium, high, xhigh, max]
+    supports_pro_mode: true
+    allowed_for: [safety_critical, technical_authority, final_acceptance, pedagogy_authority]
+  gpt-5.6-terra:
+    provider: OpenAI
+    role: balanced_generalist
+    strengths:
+      - bounded drafting
+      - visual prompt drafting
+      - formatting
+      - first-pass classification
+    reasoning_efforts: [medium, high, xhigh]
+    supports_pro_mode: true
+    allowed_for: [bounded_drafting, visual_prompt_drafting, formatting]
+  gpt-5.6-luna:
+    provider: OpenAI
+    role: high_volume_efficiency
+    strengths:
+      - structured extraction
+      - repetitive transformation
+    reasoning_efforts: [low, medium, high]
+    supports_pro_mode: false
+    allowed_for: [mechanical_processing]
+availability_note: "This registry is a policy input, not a guarantee of entitlement. The active runtime is authoritative."

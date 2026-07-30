@@ -1,0 +1,195 @@
+# Every stable check id, what it asserts, and where it is enforced.
+#
+# A check named in a result record but never executed is evidence misreporting —
+# that is gate B3, and it is a drift stop, not a bug. So this file is the single
+# list, and a meta-test asserts that every id advertised by a result appears here
+# with a real assertion behind it, and that every id here is executed by the suite.
+
+checks_version: '1.0'
+
+# ---------------------------------------------------------------------------
+calibration:
+  - id: CAL-VALID
+    asserts: calibration.v1.yaml validates against schema/calibration.schema.v1.json
+    stage: static
+    note: run first — every later check reads values from calibration
+  - id: CAL-SCHEMA-AGREE
+    asserts: >-
+      every value in calibration.pedagogy_caps equals the schema constraint named in
+      calibration.enforced_by
+    stage: static
+    note: a schema cap that drifts from its premise fails the build
+  - id: CAL-SOURCE-VERIFIED
+    asserts: >-
+      every powered lab declares exactly one input by id from
+      calibration.power.permitted_inputs, and that input's verification is
+      verified_official
+    stage: static
+
+# ---------------------------------------------------------------------------
+curriculum:
+  - id: CUR-SCHEMA-VALID
+    asserts: the curriculum validates against schema/curriculum.schema.v4.json
+    stage: static
+  - id: CUR-COUNT-DERIVED
+    asserts: >-
+      the lab count used by every test and command was read from the manifest at run
+      time, and no fixed count appears in code, schema, CLI default or report text
+    stage: static
+  - id: CUR-IDS-CONTIGUOUS
+    asserts: lab ids are unique, ascending and contiguous from L01
+    stage: static
+  - id: CUR-PREREQS-RESOLVE
+    asserts: every prerequisite names a lab that exists and precedes it
+    stage: static
+  - id: CUR-ORIENTATIONS
+    asserts: every lab declaring an orientation cue has one, or states the part has none
+    stage: static
+  - id: CUR-VISUAL-ROLES
+    asserts: every lab declares its visual roles, or a documented reviewer finding omits one
+    stage: static
+  - id: CUR-BOUNDED-PROMPTS
+    asserts: every worker prompt declares role, check ids, authorized paths and one output schema
+    stage: static
+
+# ---------------------------------------------------------------------------
+l01:
+  - id: L01-DISCONNECTED
+    asserts: all objects disconnected and unpowered; no selected or live rail
+    stage: static
+  - id: L01-POLARITY-NEUTRAL
+    asserts: >-
+      no connector-polarity claim without exact primary evidence. Proven by
+      assets/fixtures/l01_polarity_asserted.reject.json, which must be REJECTED
+    stage: deterministic
+    fixture: assets/fixtures/l01_polarity_asserted.reject.json
+    fixture_expectation: reject
+  - id: L01-NO-INVENTED-SUPPLY
+    asserts: no wall adapter or supply that is not in calibration.power.permitted_inputs
+    stage: static
+  - id: L01-NO-UNPERFORMED-OBSERVATION
+    asserts: no claim that a physical observation occurred when it did not
+    stage: static
+
+# ---------------------------------------------------------------------------
+lab_document:
+  - id: LAB-SCHEMA-VALID
+    asserts: the lab dossier validates against schema/lab.schema.v3.json, all seven blocks present
+    stage: golden
+  - id: LAB-BLOOM-DEPTH
+    asserts: at least one learning objective reaches understand or higher
+    stage: deterministic
+    fixture_expectation: reject
+    rejects: a lab whose objectives sit entirely at remember — identification alone is not a lab
+  - id: LAB-POE-ORDER
+    asserts: the prediction is recorded before the observation
+    stage: deterministic
+    fixture_expectation: reject
+    rejects: recorded_before_observing false or absent
+  - id: LAB-CURRENT-MARGIN
+    asserts: >-
+      a circuit at designed_verified carries calculations and measurements, and every
+      calculation states its margin_to_rating
+    stage: deterministic
+    fixture_expectation: reject
+  - id: LAB-VALUE-SOURCED
+    asserts: >-
+      every component_spec.parameters entry and every ratings_and_limits entry carries
+      a source
+    stage: deterministic
+    fixture_expectation: reject
+    rejects: a forward voltage recalled rather than cited
+
+# ---------------------------------------------------------------------------
+pdf:
+  - id: PDF-PAGE-COUNT
+    asserts: rendered page count equals the count recorded at assembly
+    stage: golden
+  - id: PDF-PAGE-NONBLANK
+    asserts: no page is uniform within 1% of a single colour
+    stage: golden
+    rejects: blank or all-black pages
+  - id: PDF-ASSET-RESOLVES
+    asserts: >-
+      every visual receipt's recorded hash matches an asset actually embedded in this
+      PDF
+    stage: golden
+    note: corrects B4 — a receipt that does not resolve is a failed gate, not a warning
+  - id: PDF-TEXT-LEGIBLE
+    asserts: body text renders at 9 pt or above effective at 200 dpi and is not clipped
+    stage: golden
+  - id: PDF-VISUAL-REVIEW
+    asserts: all four PDF reviewers pass against the rasterized pages
+    stage: golden
+
+# ---------------------------------------------------------------------------
+log:
+  - id: LOG-APPEND-ONLY
+    asserts: no record is rewritten, reordered or deleted once on disk
+    stage: logger
+  - id: LOG-IDS-MONOTONIC
+    asserts: >-
+      ACT and EXEC ids increase monotonically by construction, never recovered by
+      counting text in the file being written
+    stage: logger
+    note: corrects B1
+  - id: LOG-PAIRED
+    asserts: >-
+      every started ACT is closed exactly once, by a completion ACT citing its id or an
+      EXEC whose mandatory Closes field cites it; the unclosed set is empty
+    stage: logger
+  - id: LOG-CONCURRENT-SAFE
+    asserts: concurrent appends do not clobber earlier records
+    stage: logger
+  - id: LOG-COVERAGE
+    asserts: every checkpoint and state transition has an action record
+    stage: logger
+  - id: LOG-NO-ORPHAN-OPERATION
+    asserts: an operation without its action record fails the run
+    stage: logger
+
+# ---------------------------------------------------------------------------
+reviewers:
+  - id: REV-COUNT-TWELVE
+    asserts: exactly twelve reviewer invocations per lab — 4 plan, 4 QA, 4 PDF
+    stage: golden
+  - id: REV-ISOLATED
+    asserts: >-
+      no reviewer's authorized input set can reach any sibling reviewer's output. The
+      test fails if a path exists
+    stage: deterministic
+    note: corrects B2 — structural isolation, not instructed isolation
+
+# ---------------------------------------------------------------------------
+drift:
+  - id: DRIFT-SCOPE
+    asserts: no write left the authorized roots and no immutable file changed
+  - id: DRIFT-NO-EARLY-GENERATION
+    asserts: no live dossier was created for any lab beyond L01 during the meta run
+  - id: DRIFT-NO-WEAKENING
+    asserts: no test, schema, evidence rule or release gate was weakened to obtain a pass
+  - id: DRIFT-NO-MISREPORTING
+    asserts: >-
+      static and simulated coverage was never described as generated-lab coverage, and
+      no check was reported as present without executing
+  - id: DRIFT-TRACEABLE
+    asserts: every action links to an authorized deliverable, a failed gate, a resource total or a terminal decision
+  - id: DRIFT-CONVERGING
+    asserts: >-
+      the same failed-check set did not repeat twice without narrowing, and two cycles
+      did not add complexity without reducing failed gates
+  - id: DRIFT-EVIDENCE-STABLE
+    asserts: no accepted evidence changed without reopening its gate
+
+# ---------------------------------------------------------------------------
+preconditions:
+  - id: PRECONDITION-OUTPUT-ROOT-EXISTS
+    asserts: V7 does not exist at startup
+    on_failure: >-
+      stop immediately as META_SYSTEM_FAILURE before any artifact or model call.
+      Report the occupied path and the next free version name. Never auto-increment,
+      never merge, never overwrite — choosing which evidence to keep is a human
+      decision an unattended run must not make.
+  - id: ROUTE-PROVEN
+    asserts: every route in assets/routes.v1.yaml made one real preflight call
+    stage: live-capability

@@ -1,0 +1,131 @@
+# The failure ledger — every defect v7 must correct, with the evidence behind it.
+#
+# Kept as data rather than prose so each entry can be traced mechanically:
+# remediation_report.md must show, for every id here, the corrective path, the
+# proving test, and its result record. An id with no correction is an incomplete
+# remediation, and the release gate fails.
+
+failures_version: '1.0'
+
+# ---------------------------------------------------------------------------
+# A — defects in the v3 generator, which never produced an accepted lab across
+# eight overnight runs. Cite a path and line from assets/legacy/ for each.
+# ---------------------------------------------------------------------------
+generator_defects:
+  - id: A1
+    defect: an entire lab is delegated to one monolithic model run
+    consequence: nothing is separately checkable, so nothing can be separately revised
+  - id: A2
+    defect: cannot reliably checkpoint, resume, or recover after interruption
+    consequence: any interruption restarts from zero
+  - id: A3
+    defect: targeted revisions are not executed outside the model
+    consequence: a whole lab is regenerated to fix one caption
+  - id: A4
+    defect: non-accepted terminal decisions receive weaker audits than acceptances
+    consequence: bad outcomes pass as progress
+  - id: A5
+    defect: static whole-curriculum coverage is reported as if it were live generation
+    consequence: '"the system can handle every lab" is read as "every lab exists"'
+  - id: A6
+    defect: L01 data contradicts its own disconnected, polarity-neutral activity
+    consequence: the foundation lab asserts what it cannot evidence
+  - id: A7
+    defect: preflight checks tool presence rather than real execution
+    consequence: capability failures surface mid-run instead of before it
+  - id: A8
+    defect: text, circuit data and visuals can contradict one another
+    consequence: a correct diagram beside incorrect prose, with nothing to arbitrate
+  - id: A9
+    defect: PDF and visual inspection occur too late to matter
+    consequence: layout defects are found after acceptance
+  - id: A10
+    defect: partial activity is reported as progress without an accepted lab
+    consequence: effort is mistaken for output
+
+# ---------------------------------------------------------------------------
+# B — gates that failed in the v5 run, which terminated META_DRIFT_STOP.
+# Diagnoses are quoted in full so no prior artifact needs to be opened. The
+# originating record is cited for provenance only and is never read.
+# ---------------------------------------------------------------------------
+v5_gate_failures:
+  provenance: work/elegoo_labs/templates_v5/test_results/meta_execution_state.json
+  provenance_note: cited, not read — the diagnoses below are complete
+  gates:
+
+  - id: B1
+    gate: DRIFT-LOG-NONMONOTONIC-OR-UNPAIRED
+    observed: 28 ACT records with 6 unpaired starts (ACT-011, ACT-016, and four controller-generated records)
+    location: templates_v5/automation/run_curriculum_v5.py:36
+    defective_code: "n=entries.count('\\n## ACT-')+1"
+    diagnosis: >-
+      The next id is derived by counting existing sections, and a completion record is
+      appended as its own "## ACT-" section. A completion therefore mints a fresh id
+      instead of referencing the started action it completes, which leaves starts
+      permanently unpaired. The same helper rewrites the whole log through write(), so
+      any concurrent append silently clobbers earlier records.
+    root_cause: >-
+      The prompt required the log but never required the logger to be proven correct
+      before use, so a defective implementation recorded the entire run. The audit
+      trail was the one thing that could not be audited.
+    correction: >-
+      Build and prove the logger before any other artifact exists. Completion takes the
+      started id as an argument and never derives one; the counter is monotonic by
+      construction; appends hold an exclusive lock and never rewrite; failure to
+      allocate or prove an append stops the run as META_SYSTEM_FAILURE.
+    checks: [LOG-APPEND-ONLY, LOG-IDS-MONOTONIC, LOG-PAIRED, LOG-CONCURRENT-SAFE, LOG-COVERAGE, LOG-NO-ORPHAN-OPERATION]
+
+  - id: B2
+    gate: GOLDEN-REVIEWER-INDEPENDENCE
+    observed: independence was required but never proven
+    diagnosis: >-
+      Distinct reviewers were specified, and none was permitted to read another's
+      verdict before submitting its own, but nothing structurally prevented it and no
+      test demonstrated it. "Required" and "proven" are different words.
+    correction: >-
+      Enforce isolation through path authorization — a reviewer's authorized input set
+      must not include any sibling's verdict file — and prove it with a test that fails
+      if any such path exists.
+    checks: [REV-COUNT-TWELVE, REV-ISOLATED]
+
+  - id: B3
+    gate: STATIC-CONTRACT-COVERAGE
+    observed: six checks advertised, two asserted
+    location: templates_v5/automation/run_curriculum_v5.py:47
+    advertised: [canonical-schema, l01-contradictions, prerequisites, orientations, visual-roles, bounded-prompts]
+    actually_asserted: [lab ordering, the L01 contradiction set]
+    diagnosis: >-
+      Four check ids appeared in the result record having never executed. Reporting a
+      check as present without running it is evidence misreporting.
+    correction: >-
+      Every id named in a result must be backed by an executed assertion, and a
+      meta-test fails the build if any advertised id has none. assets/checks.v1.yaml is
+      the single list both sides are compared against.
+    checks: [DRIFT-NO-MISREPORTING]
+
+  - id: B4
+    gate: GOLDEN-VISUAL-RECEIPT-CONSISTENCY
+    observed: provenance receipts did not demonstrably resolve to the assets embedded in the rendered PDF
+    diagnosis: >-
+      A receipt recorded a hash, and an asset shipped in the PDF, and nothing compared
+      the two. Provenance that does not resolve to the shipped artifact proves nothing.
+    correction: >-
+      Rasterize the shipped PDF and assert that every receipt hash matches an asset
+      actually embedded in it. A receipt that does not resolve is a failed gate, not a
+      warning. Never inspect a re-render from source in its place.
+    checks: [PDF-ASSET-RESOLVES, PDF-PAGE-COUNT, PDF-PAGE-NONBLANK, PDF-TEXT-LEGIBLE, PDF-VISUAL-REVIEW]
+
+# ---------------------------------------------------------------------------
+capability_failures:
+  - id: EXEC-001
+    observed: reportlab, pypdf and the PIL capability set could not be imported; only PIL is present
+    resolution: see assets/routes.v1.yaml → route "pdf"
+  - id: EXEC-002
+    observed: codex exec exited 1 because the sandbox denied initialization of its in-process app-server client
+    resolution: see assets/routes.v1.yaml → route "worker"
+
+traceability_rule: >-
+  remediation_report.md must map every id in this file to its corrective path in V7,
+  the executable test that proves the correction, the test's result record, and any
+  residual risk. An id with no correction, or a correction with no proving test, fails
+  the release gate.

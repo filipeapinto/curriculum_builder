@@ -1,0 +1,41 @@
+{
+  "id": "l01_unpowered_power_path.v2",
+  "component_identity": {
+    "kit_roster_name": "ELEGOO UNO R3 Super Starter Kit power path",
+    "part_marking": null,
+    "kit_photo_or_listing": "work/elegoo_labs/templates/kit_references/elegoo_uno_r3_super_starter_kit_v1/official_kit_photo.jpg"
+  },
+  "primary_sources": [
+    {
+      "url_or_path": "https://www.elegoo.com/en-gb/products/elegoo-uno-r3-super-starter-kit",
+      "access_date": "2026-07-27",
+      "claim_scope": "Included 9 V battery with DC connector and breadboard power-supply module; disconnected identification only."
+    }
+  ],
+  "orientation": "Disconnected conceptual path; no connector polarity, live module selector, or breadboard orientation is asserted.",
+  "terminals": [
+    {
+      "name": "source_lead_end",
+      "function": "disconnected source lead end; polarity is not asserted",
+      "coordinate": "kit,battery,dc_lead,connector_end"
+    },
+    {
+      "name": "module_dc_input",
+      "function": "power-module DC input; polarity is not asserted",
+      "coordinate": "kit,power_module,dc_input,terminal"
+    },
+    {
+      "name": "candidate_label",
+      "function": "labelled candidate output location; not live",
+      "coordinate": "kit,power_module,output_rail,candidate_label"
+    }
+  ],
+  "legal_coordinates": [
+    "kit,battery,dc_lead,connector_end",
+    "kit,power_module,dc_input,terminal",
+    "kit,power_module,output_rail,candidate_label"
+  ],
+  "rail_topology": null,
+  "ratings": [],
+  "source_bundle_sha256": "8f9ab6c86f259c4d8cc75066df4bba73ef895973bfd5e182316c2659cd964efc"
+}

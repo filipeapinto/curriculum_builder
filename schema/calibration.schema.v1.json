@@ -1,0 +1,163 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://example.invalid/elegoo/calibration.schema.v1.json",
+  "title": "Calibration v1 — the premises every other rule derives from",
+  "description": "Validates assets/calibration.v1.yaml. This file states the learner age band, the pedagogy caps that follow from it, the permitted power inputs, and the safety floor. It outranks every prose document in CREATOR. The caps here are premises, not preferences: enforced_by must name, for each cap, the schema constraint that implements it, and the CAL-SCHEMA-AGREE gate asserts the two agree.",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["calibration_version", "learner", "pedagogy_caps", "power", "safety_floor", "enforced_by"],
+
+  "properties": {
+    "calibration_version": { "const": "1.0" },
+
+    "learner": {
+      "description": "The premise. Every value in pedagogy_caps is derived from age_band.",
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["age_band", "description", "supervision", "reading"],
+      "properties": {
+        "age_band": {
+          "description": "Minimum age with a plus, e.g. '9+'. One band per calibration file — a workbook written for two ages at once is written for neither.",
+          "type": "string",
+          "pattern": "^[0-9]{1,2}\\+$"
+        },
+        "description": { "type": "string", "minLength": 20 },
+        "supervision": { "enum": ["adult_required", "adult_for_powered", "independent"] },
+        "reading": { "type": "string", "minLength": 20 }
+      }
+    },
+
+    "pedagogy_caps": {
+      "description": "Derived from learner.age_band. Never edit a value here independently of the age band — change the band, then re-derive and justify each cap.",
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "new_terms_per_lab",
+        "segments_per_lab",
+        "bloom_floor",
+        "objectives_per_lab",
+        "success_criterion_voice",
+        "misconceptions_per_lab_min",
+        "concrete_before_abstract"
+      ],
+      "properties": {
+        "new_terms_per_lab": {
+          "description": "Working-memory limit for the band. Above 6 is not a calibration, it is a glossary.",
+          "type": "integer",
+          "minimum": 1,
+          "maximum": 6
+        },
+        "segments_per_lab": { "$ref": "#/$defs/range" },
+        "bloom_floor": {
+          "description": "At least one objective must reach this level. 'remember' is not a permitted floor — identification alone is not a lab.",
+          "enum": ["understand", "apply", "analyse", "evaluate", "create"]
+        },
+        "objectives_per_lab": { "$ref": "#/$defs/range" },
+        "success_criterion_voice": {
+          "description": "first_person means 'I can …' — the child must be able to judge their own work.",
+          "enum": ["first_person", "third_person"]
+        },
+        "misconceptions_per_lab_min": { "type": "integer", "minimum": 1 },
+        "concrete_before_abstract": { "enum": ["required", "recommended"] }
+      }
+    },
+
+    "power": {
+      "description": "The kit may offer several supplies; that is a set, not a conflict. What is forbidden is a lab that does not declare which one it uses.",
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["permitted_inputs", "rails", "student_circuit_range", "rules"],
+      "properties": {
+        "permitted_inputs": {
+          "type": "array",
+          "minItems": 1,
+          "items": { "$ref": "#/$defs/power_input" }
+        },
+        "rails": {
+          "description": "Selectable rail positions. 'OFF' must be one of them.",
+          "type": "array",
+          "minItems": 2,
+          "uniqueItems": true,
+          "items": { "type": "string", "minLength": 1 },
+          "contains": { "const": "OFF" }
+        },
+        "student_circuit_range": { "type": "string", "minLength": 3 },
+        "rules": {
+          "type": "array",
+          "minItems": 3,
+          "items": { "type": "string", "minLength": 20 }
+        }
+      }
+    },
+
+    "safety_floor": {
+      "description": "Applies to every lab regardless of age band. Each is required or the calibration is invalid — these are not tunable.",
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "power_off_before_rewiring",
+        "troubleshooting_starts_power_off",
+        "adult_guide_separate_from_child_text",
+        "stop_if_warm"
+      ],
+      "properties": {
+        "power_off_before_rewiring": { "const": "required" },
+        "troubleshooting_starts_power_off": { "const": "required" },
+        "adult_guide_separate_from_child_text": { "const": "required" },
+        "stop_if_warm": { "const": "required" }
+      }
+    },
+
+    "enforced_by": {
+      "description": "For each cap, the exact schema constraint that implements it. CAL-SCHEMA-AGREE reads this map and asserts calibration and schema agree; a cap with no entry here is unenforced and fails the gate.",
+      "type": "object",
+      "minProperties": 7,
+      "additionalProperties": {
+        "description": "A path of the form '<file> → <json pointer or dotted path>'.",
+        "type": "string",
+        "pattern": ".+→.+"
+      }
+    }
+  },
+
+  "$defs": {
+    "range": {
+      "description": "Inclusive [min, max].",
+      "type": "array",
+      "prefixItems": [
+        { "type": "integer", "minimum": 1 },
+        { "type": "integer", "minimum": 1 }
+      ],
+      "minItems": 2,
+      "maxItems": 2,
+      "items": false
+    },
+
+    "power_input": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["id", "description", "evidence", "verification"],
+      "properties": {
+        "id": {
+          "description": "Stable id a lab cites to declare its supply.",
+          "type": "string",
+          "pattern": "^[a-z][a-z0-9_]*$"
+        },
+        "description": { "type": "string", "minLength": 15 },
+        "evidence": {
+          "description": "Path or citation proving this supply is what ships with the kit. Null only while verification is 'unverified'.",
+          "type": ["string", "null"]
+        },
+        "verification": {
+          "description": "Only a verified_official input may be cited by a lab.",
+          "enum": ["verified_official", "unverified"]
+        }
+      },
+      "if": { "properties": { "verification": { "const": "verified_official" } } },
+      "then": {
+        "properties": { "evidence": { "type": "string", "minLength": 5 } },
+        "description": "A supply cannot be called verified with no evidence behind it."
+      }
+    }
+  }
+}

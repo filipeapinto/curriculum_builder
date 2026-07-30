@@ -1,0 +1,19 @@
+version: 2
+tasks:
+  component_research: {risk: high, evidence_required: [primary_sources, kit_reference, claim_log, source_manifest]}
+  deterministic_circuit_design: {risk: safety_critical, evidence_required: [structured_circuit_data, component_profiles, component_constraints, hazard_analysis]}
+  deterministic_map_generation: {risk: safety_critical, evidence_required: [validated_circuit_data, validated_profiles, renderer_receipt]}
+  concept_diagram_generation: {risk: high, evidence_required: [structured_concept_data, primary_sources, renderer_receipt]}
+  child_explanatory_writing: {risk: medium, evidence_required: [template_conformance, language_metrics, pedagogy_review]}
+  adult_technical_guide: {risk: high, evidence_required: [source_manifest, electrical_review, physical_release_state]}
+  controller_authoring: {risk: high, evidence_required: [controller_manifest, source_code, pin_mapping, primary_sources]}
+  controller_build_validation: {risk: safety_critical, evidence_required: [build_receipt, source_hashes, expected_output]}
+  photorealistic_visual_prompt: {risk: medium, evidence_required: [visual_brief, nontechnical_constraint, imagegen_receipt]}
+  visual_asset_review: {risk: high, evidence_required: [asset_manifest, visual_receipts, print_legibility_check]}
+  qa_checklist_generation: {risk: high, evidence_required: [merged_manifest_hash, template_hash, dossier_inventory]}
+  electronics_qa: {risk: safety_critical, evidence_required: [circuit_data, experiment_data, profiles, rendered_map, technical_guide]}
+  pedagogy_qa: {risk: high, evidence_required: [child_lab, language_metrics, evidence_activity, rendered_page]}
+  final_acceptance: {risk: safety_critical, evidence_required: [qa_checklist, all_qa_records, evidence_receipts, physical_release_state]}
+  workbook_assembly: {risk: medium, evidence_required: [accepted_lab_dossiers, assembly_manifest, source_hashes]}
+  pdf_visual_qa: {risk: high, evidence_required: [rendered_pdf_pages, assembly_manifest, print_legibility_checks]}
+  curriculum_final_review: {risk: safety_critical, evidence_required: [all_lab_acceptances, workbook_qa_checklist, all_workbook_reviews, pdf_hash]}

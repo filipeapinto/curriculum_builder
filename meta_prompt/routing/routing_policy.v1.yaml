@@ -1,0 +1,44 @@
+version: 1
+objective_order:
+  - safety_and_evidence
+  - task_success
+  - explanation_quality
+  - resource_efficiency
+selection_method:
+  - apply_hard_safety_eligibility_rules
+  - classify_the_task_against_task_taxonomy
+  - create_the_smallest_eligible_candidate_pool
+  - select_using_prior_evaluation_evidence_for_this_task_type
+  - record_the_decision_before_work_begins
+hard_rules:
+  safety_critical:
+    allowed_models: [gpt-5.6-sol]
+    minimum_reasoning_effort: max
+    independent_qa_required: true
+    pro_mode_for_final_judgment: true
+  high:
+    allowed_models: [gpt-5.6-sol]
+    minimum_reasoning_effort: xhigh
+    independent_qa_required: true
+  medium:
+    allowed_models: [gpt-5.6-sol, gpt-5.6-terra]
+    minimum_reasoning_effort: high
+    independent_qa_required: false
+  low:
+    allowed_models: [gpt-5.6-sol, gpt-5.6-terra, gpt-5.6-luna]
+    minimum_reasoning_effort: medium
+    independent_qa_required: false
+escalation_rules:
+  - condition: evidence_missing_or_conflicting
+    action: stop_and_request_or_find_primary_evidence
+  - condition: circuit_or_safety_claim_unverified
+    action: route_to_safety_critical_review
+  - condition: qa_gate_fails
+    action: revise_failed_artifact_then_rerun_affected_qa
+  - condition: physical_kit_variant_unknown
+    action: block_powered_release_and_mark_pending_physical_kit_check
+  - condition: model_unavailable
+    action: choose_strongest_available_eligible_model_and_record_substitution
+quality_estimation:
+  rule: "Use observable QA gates and independent review, not a model's uncalibrated self-confidence."
+  accepted_signals: [schema_validation, evidence_completeness, rendered_visual_review, independent_qa_pass]

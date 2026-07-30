@@ -1,0 +1,93 @@
+# Execution routes — every external capability the run depends on, with the exact
+# invocation and the evidence it works.
+#
+# Rule: help text, installed binaries, and configuration files are never capability
+# proof. Each route below carries the command that was actually executed and what
+# it returned. Preflight repeats each one for real before generation starts; a
+# route that cannot be proven is removed, not assumed.
+#
+# Every route in this file was proven by real execution on 2026-07-29 in ROOT.
+
+routes_version: '1.0'
+proven_on: '2026-07-29'
+environment_note: >-
+  ROOT is not a git repository and has trust_level "untrusted" inherited from the
+  /Users/filipepinto entry in ~/.codex/config.toml. Both facts change the required
+  invocation and are why the naive commands fail.
+
+routes:
+
+  - id: worker
+    purpose: every bounded model call — authoring, review, acceptance
+    command: codex exec -s workspace-write --skip-git-repo-check
+    proof:
+      executed: 'codex exec -s workspace-write --skip-git-repo-check "Reply with exactly: ROUTE_OK"'
+      returned: ROUTE_OK
+    failure_without_flags:
+      command: codex exec -s workspace-write
+      error: 'Not inside a trusted directory and --skip-git-repo-check was not specified.'
+      note: fails before any model call, so a missing flag looks like a model outage
+    constraints:
+      - '--skip-git-repo-check is required, not optional.'
+      - Record the sandbox policy actually used in the route record, beside model and effort.
+      - 'Never use --dangerously-bypass-approvals-and-sandbox.'
+      - Do not widen the policy beyond what the authorized roots require.
+
+  - id: pdf
+    purpose: render a lab or the workbook to PDF
+    command: 'pandoc <input>.md --pdf-engine=typst -V mainfont="Helvetica" -o <output>.pdf'
+    proof:
+      executed: 'pandoc t.md --pdf-engine=typst -V mainfont="Helvetica" -o t2.pdf'
+      returned: 'valid %PDF-1.7, 11586 bytes'
+    failure_without_flags:
+      command: 'pandoc t.md -o t.pdf'
+      error: 'pdflatex not found. Please select a different --pdf-engine or install pdflatex'
+    unavailable_alternatives:
+      tex_engines: [pdflatex, xelatex, lualatex, tectonic, context]
+      python_libraries: [reportlab, pypdf, fpdf, weasyprint]
+      note: only PIL is importable; typst is the sole working engine
+    constraints:
+      - The font must be named explicitly or typst fails with "font fallback list must not be empty".
+      - 'Never fall back to bare `pandoc -o out.pdf`; it cannot work in this environment.'
+      - Do not add a Python PDF route unless its dependencies are proven importable by real execution.
+
+  - id: rasterizer
+    purpose: turn the shipped PDF into page images for visual QA
+    command: 'pdftoppm -r 200 -png <lab>.pdf <outdir>/page'
+    proof:
+      executed: 'pdftoppm -r 200 -png t2.pdf page'
+      returned: 'page-1.png, 1700x2200 px, RGB'
+    parameters:
+      resolution_dpi: 200
+      colour: RGB
+      coverage: every page, none sampled or skipped
+      naming: "page-<n>.png, poppler's own zero-padding convention"
+      hashing: sha256 of each page image recorded in the test result
+    constraints:
+      - Rasterize the shipped PDF, never a re-render from the typst or markdown source.
+        Inspecting a different artifact than the one shipped is the substitution that
+        gate B4 exists to catch.
+      - A page that cannot be rasterized is a tool-error EXEC record and stops the run.
+        It is never treated as a page that passed.
+
+  - id: imagegen
+    purpose: polished nontechnical context, mechanism and observation support
+    command: null
+    proof: null
+    status: UNPROVEN
+    constraints:
+      - No invocation has been proven in this environment. Preflight must establish one
+        or remove the route before generation.
+      - If the route cannot be proven, the run stops as META_SYSTEM_FAILURE at the
+        live-capability gate rather than proceeding without it.
+      - ImageGen may never carry exact components, wiring, pinouts, polarity, values,
+        geometry or safety evidence, and never substitutes for missing evidence.
+
+preflight:
+  rule: >-
+    Make one real, minimal, structured call on every route that will be used, under
+    the exact command recorded above, before any generation begins. Report actual
+    calls by role, model, effort, sandbox policy and elapsed time.
+  on_failure: >-
+    Remove the unavailable route before generation, or stop as META_SYSTEM_FAILURE
+    if the route is required. Never discover a capability failure mid-run.

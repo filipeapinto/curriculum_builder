@@ -1,0 +1,75 @@
+# Calibration — the premises every other rule derives from.
+#
+# The pedagogy caps in schema/lab.schema.v3.json are not universal truths. They are
+# what follows from a nine-year-old learner. This file states that premise once so
+# nothing downstream has to guess it, and so no document can quietly assume a
+# different one.
+#
+# Precedence: this file outranks every prose document in the project. Where
+# lab_brief.md, teacher_framework.md, teacher_audit.md or roster.md state a learner
+# age, a supply, or a supervision rule that differs from the values below, this
+# file wins and the difference is a defect to be reported, not resolved silently.
+
+calibration_version: '1.0'
+
+learner:
+  age_band: '9+'
+  description: Supervised beginners aged nine and above, with no assumed electronics knowledge.
+  supervision: adult_required
+  reading: one idea per short paragraph; a new word is defined beside its first useful visual
+
+# Derived from learner.age_band. Change the age band and these must be re-derived
+# and justified — never edited independently of it.
+pedagogy_caps:
+  new_terms_per_lab: 2            # cognitive load: working-memory limit at this age
+  segments_per_lab: [2, 6]        # segmenting: more than six chunks overloads
+  bloom_floor: understand         # at least one objective above recall
+  objectives_per_lab: [1, 3]
+  success_criterion_voice: first_person   # "I can ..." — the child must self-judge
+  misconceptions_per_lab_min: 1
+  concrete_before_abstract: required      # physical object before schematic symbol
+
+# The kit offers several supplies. That is a set, not a conflict. What is forbidden
+# is a lab that does not say which one it is using.
+power:
+  permitted_inputs:
+    - id: kit_battery_9v
+      description: Included 9 V battery with DC connector, feeding the breadboard power module.
+      evidence: assets/official_kit_photo.jpg
+      verification: verified_official
+    - id: regulated_usb_5v
+      description: Regulated 5 V USB source feeding the breadboard power module.
+      evidence: null
+      verification: unverified          # no photograph or listing sourced yet
+  rails:
+    - 'OFF'
+    - '3.3 V'
+    - '5 V'
+  student_circuit_range: 3-5 V DC
+  rules:
+    - Every powered lab declares exactly one input from permitted_inputs, by id.
+      "All available sources" is a kit-level statement and is never a lab-level answer.
+    - A lab may only cite an input whose verification is verified_official. An
+      unverified input must be sourced and photographed before a lab may use it.
+    - The child never connects, disconnects or reconfigures the input side. An adult
+      does, and signs off before the first powered test.
+    - Rail colour is a label, never an electrical identity. The selected physical
+      selector position and the measured value decide what a rail does.
+    - No mains, no wall adapter with bare leads, no unknown supply — ever.
+
+# Applies to the whole workbook regardless of age band.
+safety_floor:
+  power_off_before_rewiring: required
+  troubleshooting_starts_power_off: required
+  adult_guide_separate_from_child_text: required
+  stop_if_warm: required
+
+# Where the caps are enforced, so a change here has a known blast radius.
+enforced_by:
+  new_terms_per_lab: schema/lab.schema.v3.json → pedagogy.vocabulary.maxItems
+  segments_per_lab: schema/lab.schema.v3.json → pedagogy.cognitive_load.segments
+  bloom_floor: schema/lab.schema.v3.json → pedagogy.learning_objectives.contains
+  objectives_per_lab: schema/lab.schema.v3.json → pedagogy.learning_objectives
+  success_criterion_voice: schema/lab.schema.v3.json → success_criterion.pattern
+  misconceptions_per_lab_min: schema/lab.schema.v3.json → pedagogy.misconceptions.minItems
+  power.permitted_inputs: schema/lab.schema.v3.json → safety.power_profile.source

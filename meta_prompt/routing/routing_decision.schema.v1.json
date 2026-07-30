@@ -1,0 +1,21 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "Lab Model Routing Decision v1",
+  "type": "object",
+  "required": ["task_id", "task_class", "risk", "candidate_pool", "selected_model", "reasoning_effort", "quality_gate", "decision_rationale", "status"],
+  "properties": {
+    "task_id": {"type": "string"},
+    "task_class": {"type": "string"},
+    "risk": {"enum": ["low", "medium", "high", "safety_critical"]},
+    "candidate_pool": {"type": "array", "items": {"type": "string"}, "minItems": 1},
+    "selected_model": {"type": "string"},
+    "reasoning_effort": {"enum": ["medium", "high", "xhigh", "max"]},
+    "pro_mode": {"type": "boolean"},
+    "quality_gate": {"type": "array", "items": {"type": "string"}},
+    "decision_rationale": {"type": "string"},
+    "evidence_inputs": {"type": "array", "items": {"type": "string"}},
+    "escalate_when": {"type": "array", "items": {"type": "string"}},
+    "substitution": {"type": ["string", "null"]},
+    "status": {"enum": ["approved_to_run", "blocked_pending_evidence", "blocked_pending_physical_kit_check"]}
+  }
+}

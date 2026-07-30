@@ -1,0 +1,149 @@
+# The controller contract — states, transitions, ownership, CLI surface.
+#
+# Python owns this, not a model. Every decision below is made by code that can be
+# read and tested; a model never chooses a transition, never aggregates a verdict,
+# and never decides whether a lab is accepted.
+
+controller_version: '1.0'
+
+owned_by_code:
+  - lab order and state transitions
+  - worker and model selection, and invocation
+  - retries, timeouts, stall detection, resource limits
+  - checkpoints, hashes, idempotency, resume
+  - failed-artifact targeting and revision routing
+  - schema, dossier, terminal-decision, PDF and acceptance audits
+  - permission to advance to the next lab
+
+never_uses_a_model_for:
+  - deterministic merge, validation, metrics
+  - rendering, aggregation, hashing
+  - audits and terminal decisions
+  - the action logger
+
+# ---------------------------------------------------------------------------
+states:
+  - VALIDATE
+  - PLAN
+  - PLAN_REVIEW_ELECTRONICS
+  - PLAN_REVIEW_PEDAGOGY
+  - PLAN_REVIEW_COMMUNICATION
+  - PLAN_REVIEW_GRAPHIC
+  - PLAN_DECISION
+  - RESEARCH
+  - CIRCUIT
+  - EXPERIMENT
+  - CHILD_TEXT
+  - ADULT_GUIDE
+  - VISUAL_PLAN
+  - VISUAL_SOURCE_ACQUISITION
+  - VISUAL_PRODUCTION
+  - ARTIFACT_CONSISTENCY
+  - QA_ELECTRONICS
+  - QA_PEDAGOGY
+  - QA_COMMUNICATION
+  - QA_GRAPHIC
+  - QA_DECISION
+  - LAB_PDF
+  - PDF_RENDER
+  - PDF_VISUAL_QA
+  - FINAL_ACCEPTANCE
+
+terminal_states: [ACCEPTED, BLOCKED, SYSTEM_FAILURE]
+
+ordering_rules:
+  - id: circuit-before-prose
+    rule: >-
+      CIRCUIT and EXPERIMENT produce machine-readable data first. Prose steps,
+      connection tables, maps, schematics, troubleshooting and adult checks are all
+      generated from that same data, so text and diagrams cannot drift apart.
+    corrects: A8
+  - id: consistency-before-qa
+    rule: >-
+      ARTIFACT_CONSISTENCY runs before any reviewer sees the dossier, so no review
+      cycle is spent on a lab whose own artifacts already disagree.
+  - id: pdf-review-before-acceptance
+    rule: >-
+      PDF_RENDER and PDF_VISUAL_QA precede FINAL_ACCEPTANCE. A lab correct as markdown
+      and wrong at print size is caught while revision is still cheap.
+    corrects: A9
+
+checkpointing:
+  after_every_state: true
+  records:
+    - inputs and outputs with hashes
+    - worker identity
+    - model and effort actually executed
+    - elapsed time and attempt number
+    - next state
+  atomicity: writes are atomic; a partial checkpoint is never observable
+
+resume:
+  validates: hashes of every prior checkpoint
+  preserves: valid accepted work, never rebuilt
+  restarts_at: the first missing or invalid checkpoint
+  refuses: mutation of a fully accepted lab without a new output version
+  corrects: A2
+
+# ---------------------------------------------------------------------------
+review_aggregation:
+  performed_by: controller code, never a model
+  rules:
+    - invalid record → reject, retry once
+    - a valid, sourced, safety-critical block → BLOCKED
+    - any failed check → targeted revision of the named artifacts only
+    - zero failed checks → advance
+  targeted_revision_meaning: >-
+    If graphic QA fails one visual check, the controller re-runs the visual worker for
+    that one asset. It does not regenerate the lab.
+  audit_rule: >-
+    Independently audit every terminal decision — including revision, block and system
+    failure, not only acceptance.
+  corrects: [A3, A4]
+
+blocked_eligibility:
+  legal_only_when: >-
+    a named safety-critical fact remains unavailable after recorded
+    official-manufacturer and primary-source searches
+  never_a_block:
+    - tool failure
+    - model failure
+    - image generation failure
+    - schema failure
+    - writing, rendering or layout failure
+  rationale: >-
+    Those are the system's problem. It must fix them or fail honestly; it must not
+    reclassify its own defect as a curriculum obstacle.
+
+repeat_failure:
+  on_same_failed_check_set_twice: allow one documented safety escalation, then SYSTEM_FAILURE
+
+# ---------------------------------------------------------------------------
+full_run:
+  advance_rule: advance to the next lab only after the current lab is ACCEPTED
+  completion_rule: >-
+    Accepting the last lab is not completion. Assemble the workbook, render and inspect
+    every page, run four independent workbook reviews, revise only workbook artifacts,
+    and accept only when every lab acceptance, the assembly hashes, the checklist
+    entries, the reviews and the final PDF all pass.
+  never_claim_complete_unless: >-
+    every lab in the curriculum has been live-generated and accepted and the final
+    audited workbook exists
+
+# ---------------------------------------------------------------------------
+cli:
+  required_flags:
+    - --lab-id
+    - --all
+    - --output-root
+    - --resume
+    - --preflight
+    - --test-static
+    - --test-simulated-all
+    - --test-live-capabilities
+    - --test-golden-l01
+  limit_flags: see assets/limits.v1.yaml — every limit names its flag and default
+  model_flag:
+    name: --model
+    rule: fallback only; may not bypass the selector in routing/
+  note: "\"Expose at least\" is not a licence to omit; these flags are the minimum surface."
