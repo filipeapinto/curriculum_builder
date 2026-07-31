@@ -213,6 +213,8 @@ curriculum_builder/
 │   │   ├── component_lab_template.v1.md        companion: how to write a lab
 │   │   ├── pedagogy.v1.md                      companion: why the pedagogy fields exist ← root
 │   │   └── model_selector_prompt.v1.md         companion: the selector's own prompt ← meta_prompt/routing/
+│   ├── docs/                                   orientation only, never a constraint
+│   │   └── how_the_meta_prompt_works.html      the contract explained, with diagrams
 │   └── deprecated/.gitkeep                     + the v5 prompt, superseded, read by nobody
 │
 ├── tests/                                      THE GATE HARNESS — see §7
