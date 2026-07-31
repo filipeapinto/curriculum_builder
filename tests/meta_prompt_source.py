@@ -85,6 +85,18 @@ EXPECTED: tuple[tuple[str, str, tuple[str, ...]], ...] = (
 
 EXPECTED_HEADINGS = {path: headings for path, _, headings in EXPECTED}
 
+# The prompt carries no banner — it is the thing banners name — so its own headings
+# are pinned here. Without this the file at the top of the contract was the easiest
+# to gut: deleting `## Final response`, the entire reporting contract, passed.
+PROMPT_HEADINGS = (
+    "# ELEGOO Meta-Curriculum Prompt — v6",
+    "## Mission",
+    "## Write boundary",
+    "## Assets",
+    "## Execution",
+    "## Final response",
+)
+
 
 def table_rows_loose(prompt_text: str) -> list[tuple[str, str]]:
     """Every row of the asset table, read without requiring backticks."""
@@ -167,6 +179,8 @@ PLAN = REPO / "plans" / "folder_refactoring" / "folder_refactoring.plan.v6.md"
 def plan_assets(read=None) -> list[tuple[str, str]]:
     """The assets §4's target tree names under ``meta_prompt/assets/``, with the kind
     each annotation declares — ``section: …`` or ``companion: …``."""
+    if not PLAN.exists():
+        return []
     text = _read(PLAN, read)
     rows = []
     inside = False

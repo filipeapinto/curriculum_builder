@@ -39,9 +39,13 @@ manufacturer datasheets over the network; and `OUTPUT_ROOT` is read to evaluate 
 startup precondition and, on `--resume`, to re-read this run's own checkpoints.
 Nothing else outside `CREATOR` is read, and nothing outside `V7` is written.
 
-`RESEARCH` — the network capability `policy/routes.v1.yaml` declares and gate 4
-proves by one real preflight call. It is named in this contract and nowhere
-defined as a path, because it is a capability and not a directory.
+`RESEARCH` — the network capability the sourcing rule depends on. Fetching a
+manufacturer datasheet is a read outside `CREATOR`, so it is declared here; it is a
+capability and not a directory, which is why no boundary line defines it as a path.
+`policy/routes.v1.yaml` declares four routes and none of them is this one, so gate 4
+proves those four and cannot preflight this. That is a known divergence, not a
+detail: record it in `remediation_report.md`, and never report the route set as
+fully proven while it stands.
 
 ### Retained contracts
 
@@ -80,9 +84,9 @@ When sources disagree, this order settles it — always, and without averaging:
    and `curricula/arduino_kit/teacher_audit.md`
 11. `docs/` and `readme.md` — orientation only, never a constraint
 
-Every source that is read is ranked. An unranked document is one whose contradictions get settled
-by whoever reads it last, which is how four prose files came to promise something
-fourteen labs contradict.
+Every source that is read is ranked. An unranked document is one whose
+contradictions get settled by whoever reads it last, which is how four prose files
+came to promise something fourteen labs contradict.
 
 `meta_prompt/deprecated/` is not ranked because it is never read. It holds superseded
 versions of this contract, retained as history; each is a complete and contradicting
@@ -92,9 +96,8 @@ contract replaced.
 A prose document that contradicts calibration loses, **and the divergence is
 recorded as a defect in `remediation_report.md`** rather than resolved silently.
 `curricula/arduino_kit/lab_brief.md` and `curricula/arduino_kit/teacher_framework.md`
-currently state a different
-learner age and an exclusive supply; both are known divergences, and both must
-appear in that report.
+currently state a different learner age and an exclusive supply; both are known
+divergences, and both must appear in that report.
 
 Never hardcode a lab count. Read it from the curriculum at run time, assert it
 against the ids present, and derive every "all labs" test and command from it. A

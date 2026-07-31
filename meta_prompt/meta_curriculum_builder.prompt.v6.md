@@ -82,12 +82,11 @@ every section, above the project prose.
 Every `section` asset carries a banner naming this prompt and listing the headings it
 owns, at whatever level they are written. The table is this file's claim about that
 asset; the banner is the asset's own. **Both must hold, and they are checked against
-each other**: a file
-declared `section` that carries no banner, a `companion` that carries one, or a
-heading claimed and not stated is the same defect as an unresolved row, and stops
-the run the same way — check id `PRECONDITION-ASSETS-RESOLVE`. One flipped cell
-would otherwise drop a rule out of this contract while every check still reported a
-pass.
+each other**: a file declared `section` that carries no banner, a `companion` that
+carries one, or a heading claimed and not stated is the same defect as an unresolved
+row, and stops the run the same way — check id `PRECONDITION-ASSETS-RESOLVE`. One
+flipped cell would otherwise drop a rule out of this contract while every check
+still reported a pass.
 
 The `Carries` column is a map, never a rule: what a companion may govern is fixed
 only by the precedence list in `meta_prompt/assets/inputs.v1.md`.
@@ -109,9 +108,8 @@ not the contract you are reading.
    that skips this check cannot know it holds the whole. This check runs before the
    logger exists, so a stop here is reported and not logged; the contract it read is
    reconstructible from the asset files themselves.
-3. Check the startup precondition: if `V7` exists, stop as `META_SYSTEM_FAILURE` with
-   failure id `PRECONDITION-OUTPUT-ROOT-EXISTS`, before any artifact and before any
-   model call.
+3. Check the startup precondition stated in § Write boundary — `V7` must not exist —
+   before any artifact and before any model call.
 4. Create `V7` and `V7/test_results/`, and nothing else. This is the only write that
    precedes the logger, and it exists because the logger must have somewhere legal to
    append: authorized writes are confined to `V7`, so `V7` has to exist before the
@@ -122,8 +120,8 @@ not the contract you are reading.
 6. Validate every manifest against its schema. Read no value before it validates.
 7. Write the v7 meta state; record authorized roots, and record the prompt hash over
    this file and its `section` assets together.
-8. Inspect `LEGACY` and write failure→fix→test traceability for every id in
-   `policy/failures.v1.yaml`.
+8. Inspect `LEGACY`, citing it by path and line, and write failure→fix→test
+   traceability for every id in `policy/failures.v1.yaml`.
 9. Design v7: canonical data, controller, runtime prompt, worker contracts.
 10. Implement controller, prompts, schemas, selector, renderers, audits, reports.
 11. Run gates 1–3.

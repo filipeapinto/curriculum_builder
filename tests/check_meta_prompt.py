@@ -46,12 +46,13 @@ Mutation-tested, three rounds, each round attacking the previous round's fix. Wh
     of the composed contract would catch that, and none is kept; the run's own
     prompt hash proves one run read one contract start to finish, not that the
     contract handed over was the intended one.
-  * **A heading can be removed by editing three places at once** — the asset, its
-    banner, and `EXPECTED` here. The plan's §4 tree pins *which* assets exist, their
-    kinds and their order, so losing a whole asset takes a fourth edit in a file
-    maintained by a different gate; it does not pin headings. Any expectation that
-    lives in the repository can be edited by whoever edits what it describes. Past
-    that point the record is git history and review, not this checker.
+  * **A section's heading can be removed by editing three places at once** — the
+    asset, its banner, and `EXPECTED` here. The plan's §4 tree pins *which* assets
+    exist, their kinds and their order, so losing a whole asset takes a fourth edit
+    in a file maintained by a different gate; it does not pin headings. The prompt's
+    own headings are pinned here too, since it carries no banner. Any expectation
+    that lives in the repository can be edited by whoever edits what it describes.
+    Past that point the record is git history and review, not this checker.
   * **Nothing here reads meaning.** A contract whose paths resolve and whose
     instructions contradict each other passes.
 
@@ -369,7 +370,9 @@ TABLE_ROW = re.compile(r"^ {0,3}\|(?P<first>[^|]*)\|(?P<kind>[^|]*)\|", re.M)
 HEADING = re.compile(r"^(#+)\s+(.*?)\s*$", re.M)
 # Each section asset names the headings it owns, so the file itself says what it
 # is and what it carries. Companions never carry it.
-SECTION_BANNER = re.compile(r"<!--\s*section asset of .*?·\s*owns:\s*(.*?)\s*-->", re.S)
+SECTION_BANNER = re.compile(
+    r"<!--\s*section asset of meta_curriculum_builder\.prompt\.v6\.md"
+    r"[^-]*?·\s*owns:\s*(.*?)\s*-->", re.S)
 
 KINDS = {source.SECTION, source.COMPANION}
 
@@ -489,6 +492,16 @@ def check_assets(_text: str = "") -> list[str]:
 
     problems += source.table_problems(prompt_text)
     problems += source.shape_problems()
+    prompt_headings = headings_of(PROMPT)
+    for gone in sorted(set(source.PROMPT_HEADINGS) - prompt_headings):
+        problems.append(
+            f"assets: the prompt no longer states {gone!r}; it carries no banner, so its "
+            "own headings are pinned and nothing else would notice one leaving"
+        )
+    for added in sorted(prompt_headings - set(source.PROMPT_HEADINGS)):
+        problems.append(
+            f"assets: the prompt states {added!r}, which is not part of the contract's shape"
+        )
     problems += banner_problems(rows)
     for phrase in BANNER_RULE_STATED:
         if phrase not in prompt_text:
