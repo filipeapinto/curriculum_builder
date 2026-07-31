@@ -1,0 +1,11 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "A contract whose digits are constraints, not learner facts",
+  "description": "Positive fixture for FR-P3-NO-LITERALS. It must NOT match. Scanning the bare learner value literally would flag maxItems 9 below, every array bound, and every ordinal in every schema in the repository — which is why each term is matched by the declared anchored pattern its owning manifest carries, and never by the value itself.",
+  "type": "object",
+  "properties": {
+    "visuals": { "type": "array", "maxItems": 9 },
+    "steps": { "type": "array", "minItems": 9, "maxItems": 90 },
+    "revision": { "const": 9 }
+  }
+}

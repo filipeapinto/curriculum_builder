@@ -1,6 +1,6 @@
 {
   "$schema": "https://json-schema.org/draft/2020-12/schema",
-  "$id": "https://example.invalid/elegoo/curriculum.schema.v4.json",
+  "$id": "https://example.invalid/curriculum_builder/curriculum.schema.v4.json",
   "title": "Component-oriented electronics curriculum manifest v4",
   "type": "object",
   "additionalProperties": false,
@@ -266,8 +266,39 @@
                 "not_designed",
                 "requires_verified_circuit_data"
               ]
+            },
+            "power_input": {
+              "description": "The id of the one permitted supply this lab draws on, from the curriculum's own kit_calibration.v1.yaml power.permitted_inputs. Required for every lab whose mode is not `unpowered`, and forbidden for one whose mode is. \"All available sources\" is a kit-level statement and is never a lab-level answer; FR-P3-KIT-SOURCE additionally resolves the id and refuses one whose verification is not verified_official, so a lab cannot cite a supply nobody photographed.",
+              "type": "string",
+              "pattern": "^[a-z0-9_]+$"
             }
-          }
+          },
+          "allOf": [
+            {
+              "if": {
+                "properties": {
+                  "mode": {
+                    "const": "unpowered"
+                  }
+                },
+                "required": [
+                  "mode"
+                ]
+              },
+              "then": {
+                "not": {
+                  "required": [
+                    "power_input"
+                  ]
+                }
+              },
+              "else": {
+                "required": [
+                  "power_input"
+                ]
+              }
+            }
+          ]
         },
         "applications": {
           "type": "array",

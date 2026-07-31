@@ -1,34 +1,56 @@
 {
   "$schema": "https://json-schema.org/draft/2020-12/schema",
-  "$id": "https://example.invalid/elegoo/calibration.schema.v1.json",
-  "title": "Calibration v1 — the premises every other rule derives from",
-  "description": "Validates policy/calibration.v1.yaml. This file states the learner age band, the pedagogy caps that follow from it, the permitted power inputs, and the safety floor. It outranks every prose document in CREATOR. The caps here are premises, not preferences: enforced_by must name, for each cap, the schema constraint that implements it, and the CAL-SCHEMA-AGREE gate asserts the two agree.",
+  "$id": "https://example.invalid/curriculum_builder/calibration.schema.v1.json",
+  "title": "Calibration v1 \u2014 the premises every other rule derives from",
+  "description": "Validates policy/calibration.v1.yaml. This file states the learner premise, the pedagogy caps that follow from it, and the safety floor. It outranks every prose document in the project. The permitted power inputs are NOT here: they belong to one kit rather than to the engine, and they live in that curriculum's own kit calibration, validated by kit_calibration.schema.v1.json. The caps here are premises, not preferences: each names the schema constraint that implements it in enforced_by, and the anchored prose_pattern that matches it as prose would write it, so a gate can find an unowned copy without scanning bare values.",
   "type": "object",
   "additionalProperties": false,
-  "required": ["calibration_version", "learner", "pedagogy_caps", "power", "safety_floor", "enforced_by"],
-
+  "required": [
+    "calibration_version",
+    "learner",
+    "pedagogy_caps",
+    "safety_floor",
+    "learner_terms"
+  ],
   "properties": {
-    "calibration_version": { "const": "1.0" },
-
+    "calibration_version": {
+      "const": "1.0"
+    },
     "learner": {
       "description": "The premise. Every value in pedagogy_caps is derived from age_band.",
       "type": "object",
       "additionalProperties": false,
-      "required": ["age_band", "description", "supervision", "reading"],
+      "required": [
+        "age_band",
+        "description",
+        "supervision",
+        "reading"
+      ],
       "properties": {
         "age_band": {
-          "description": "Minimum age with a plus, e.g. '9+'. One band per calibration file — a workbook written for two ages at once is written for neither.",
+          "description": "Minimum age with a plus, e.g. '9+'. One band per calibration file \u2014 a workbook written for two ages at once is written for neither.",
           "type": "string",
           "pattern": "^[0-9]{1,2}\\+$"
         },
-        "description": { "type": "string", "minLength": 20 },
-        "supervision": { "enum": ["adult_required", "adult_for_powered", "independent"] },
-        "reading": { "type": "string", "minLength": 20 }
+        "description": {
+          "type": "string",
+          "minLength": 20
+        },
+        "supervision": {
+          "enum": [
+            "adult_required",
+            "adult_for_powered",
+            "independent"
+          ]
+        },
+        "reading": {
+          "type": "string",
+          "minLength": 20
+        }
       }
     },
-
     "pedagogy_caps": {
-      "description": "Derived from learner.age_band. Never edit a value here independently of the age band — change the band, then re-derive and justify each cap.",
+      "description": "Derived from learner.age_band. Never edit a value here independently of the age band - change the band, then re-derive and justify each cap. Every cap carries its value, the schema constraint that enforces it, and the prose pattern that finds an unowned copy of it.",
       "type": "object",
       "additionalProperties": false,
       "required": [
@@ -42,56 +64,223 @@
       ],
       "properties": {
         "new_terms_per_lab": {
-          "description": "Working-memory limit for the band. Above 6 is not a calibration, it is a glossary.",
-          "type": "integer",
-          "minimum": 1,
-          "maximum": 6
+          "type": "object",
+          "additionalProperties": false,
+          "required": [
+            "value",
+            "enforced_by",
+            "prose_pattern"
+          ],
+          "properties": {
+            "value": {
+              "description": "Working-memory limit for the band. Above 6 is not a calibration, it is a glossary.",
+              "type": "integer",
+              "minimum": 1,
+              "maximum": 6
+            },
+            "enforced_by": {
+              "description": "A path of the form '<file> \u2192 <json pointer or dotted path>'.",
+              "type": "string",
+              "pattern": ".+\u2192.+"
+            },
+            "prose_pattern": {
+              "description": "An anchored regular expression matching this cap as it would be written in prose. Required: a cap with no pattern fails FR-P3-CAPS-OWNED rather than being skipped, because scanning the bare value would flag every ordinal and list index in the repository.",
+              "type": "string",
+              "minLength": 8
+            },
+            "rationale": {
+              "type": "string",
+              "minLength": 8
+            }
+          }
         },
-        "segments_per_lab": { "$ref": "#/$defs/range" },
+        "segments_per_lab": {
+          "type": "object",
+          "additionalProperties": false,
+          "required": [
+            "value",
+            "enforced_by",
+            "prose_pattern"
+          ],
+          "properties": {
+            "value": {
+              "$ref": "#/$defs/range"
+            },
+            "enforced_by": {
+              "description": "A path of the form '<file> \u2192 <json pointer or dotted path>'.",
+              "type": "string",
+              "pattern": ".+\u2192.+"
+            },
+            "prose_pattern": {
+              "description": "An anchored regular expression matching this cap as it would be written in prose. Required: a cap with no pattern fails FR-P3-CAPS-OWNED rather than being skipped, because scanning the bare value would flag every ordinal and list index in the repository.",
+              "type": "string",
+              "minLength": 8
+            },
+            "rationale": {
+              "type": "string",
+              "minLength": 8
+            }
+          }
+        },
         "bloom_floor": {
-          "description": "At least one objective must reach this level. 'remember' is not a permitted floor — identification alone is not a lab.",
-          "enum": ["understand", "apply", "analyse", "evaluate", "create"]
+          "type": "object",
+          "additionalProperties": false,
+          "required": [
+            "value",
+            "enforced_by",
+            "prose_pattern"
+          ],
+          "properties": {
+            "value": {
+              "description": "At least one objective must reach this level. 'remember' is not a permitted floor \u2014 identification alone is not a lab.",
+              "enum": [
+                "understand",
+                "apply",
+                "analyse",
+                "evaluate",
+                "create"
+              ]
+            },
+            "enforced_by": {
+              "description": "A path of the form '<file> \u2192 <json pointer or dotted path>'.",
+              "type": "string",
+              "pattern": ".+\u2192.+"
+            },
+            "prose_pattern": {
+              "description": "An anchored regular expression matching this cap as it would be written in prose. Required: a cap with no pattern fails FR-P3-CAPS-OWNED rather than being skipped, because scanning the bare value would flag every ordinal and list index in the repository.",
+              "type": "string",
+              "minLength": 8
+            },
+            "rationale": {
+              "type": "string",
+              "minLength": 8
+            }
+          }
         },
-        "objectives_per_lab": { "$ref": "#/$defs/range" },
+        "objectives_per_lab": {
+          "type": "object",
+          "additionalProperties": false,
+          "required": [
+            "value",
+            "enforced_by",
+            "prose_pattern"
+          ],
+          "properties": {
+            "value": {
+              "$ref": "#/$defs/range"
+            },
+            "enforced_by": {
+              "description": "A path of the form '<file> \u2192 <json pointer or dotted path>'.",
+              "type": "string",
+              "pattern": ".+\u2192.+"
+            },
+            "prose_pattern": {
+              "description": "An anchored regular expression matching this cap as it would be written in prose. Required: a cap with no pattern fails FR-P3-CAPS-OWNED rather than being skipped, because scanning the bare value would flag every ordinal and list index in the repository.",
+              "type": "string",
+              "minLength": 8
+            },
+            "rationale": {
+              "type": "string",
+              "minLength": 8
+            }
+          }
+        },
         "success_criterion_voice": {
-          "description": "first_person means 'I can …' — the child must be able to judge their own work.",
-          "enum": ["first_person", "third_person"]
+          "type": "object",
+          "additionalProperties": false,
+          "required": [
+            "value",
+            "enforced_by",
+            "prose_pattern"
+          ],
+          "properties": {
+            "value": {
+              "description": "first_person means 'I can \u2026' \u2014 the child must be able to judge their own work.",
+              "enum": [
+                "first_person",
+                "third_person"
+              ]
+            },
+            "enforced_by": {
+              "description": "A path of the form '<file> \u2192 <json pointer or dotted path>'.",
+              "type": "string",
+              "pattern": ".+\u2192.+"
+            },
+            "prose_pattern": {
+              "description": "An anchored regular expression matching this cap as it would be written in prose. Required: a cap with no pattern fails FR-P3-CAPS-OWNED rather than being skipped, because scanning the bare value would flag every ordinal and list index in the repository.",
+              "type": "string",
+              "minLength": 8
+            },
+            "rationale": {
+              "type": "string",
+              "minLength": 8
+            }
+          }
         },
-        "misconceptions_per_lab_min": { "type": "integer", "minimum": 1 },
-        "concrete_before_abstract": { "enum": ["required", "recommended"] }
-      }
-    },
-
-    "power": {
-      "description": "The kit may offer several supplies; that is a set, not a conflict. What is forbidden is a lab that does not declare which one it uses.",
-      "type": "object",
-      "additionalProperties": false,
-      "required": ["permitted_inputs", "rails", "student_circuit_range", "rules"],
-      "properties": {
-        "permitted_inputs": {
-          "type": "array",
-          "minItems": 1,
-          "items": { "$ref": "#/$defs/power_input" }
+        "misconceptions_per_lab_min": {
+          "type": "object",
+          "additionalProperties": false,
+          "required": [
+            "value",
+            "enforced_by",
+            "prose_pattern"
+          ],
+          "properties": {
+            "value": {
+              "type": "integer",
+              "minimum": 1
+            },
+            "enforced_by": {
+              "description": "A path of the form '<file> \u2192 <json pointer or dotted path>'.",
+              "type": "string",
+              "pattern": ".+\u2192.+"
+            },
+            "prose_pattern": {
+              "description": "An anchored regular expression matching this cap as it would be written in prose. Required: a cap with no pattern fails FR-P3-CAPS-OWNED rather than being skipped, because scanning the bare value would flag every ordinal and list index in the repository.",
+              "type": "string",
+              "minLength": 8
+            },
+            "rationale": {
+              "type": "string",
+              "minLength": 8
+            }
+          }
         },
-        "rails": {
-          "description": "Selectable rail positions. 'OFF' must be one of them.",
-          "type": "array",
-          "minItems": 2,
-          "uniqueItems": true,
-          "items": { "type": "string", "minLength": 1 },
-          "contains": { "const": "OFF" }
-        },
-        "student_circuit_range": { "type": "string", "minLength": 3 },
-        "rules": {
-          "type": "array",
-          "minItems": 3,
-          "items": { "type": "string", "minLength": 20 }
+        "concrete_before_abstract": {
+          "type": "object",
+          "additionalProperties": false,
+          "required": [
+            "value",
+            "enforced_by",
+            "prose_pattern"
+          ],
+          "properties": {
+            "value": {
+              "enum": [
+                "required",
+                "recommended"
+              ]
+            },
+            "enforced_by": {
+              "description": "A path of the form '<file> \u2192 <json pointer or dotted path>'.",
+              "type": "string",
+              "pattern": ".+\u2192.+"
+            },
+            "prose_pattern": {
+              "description": "An anchored regular expression matching this cap as it would be written in prose. Required: a cap with no pattern fails FR-P3-CAPS-OWNED rather than being skipped, because scanning the bare value would flag every ordinal and list index in the repository.",
+              "type": "string",
+              "minLength": 8
+            },
+            "rationale": {
+              "type": "string",
+              "minLength": 8
+            }
+          }
         }
       }
     },
-
     "safety_floor": {
-      "description": "Applies to every lab regardless of age band. Each is required or the calibration is invalid — these are not tunable.",
+      "description": "Applies to every lab regardless of age band. Each is required or the calibration is invalid \u2014 these are not tunable.",
       "type": "object",
       "additionalProperties": false,
       "required": [
@@ -101,62 +290,63 @@
         "stop_if_warm"
       ],
       "properties": {
-        "power_off_before_rewiring": { "const": "required" },
-        "troubleshooting_starts_power_off": { "const": "required" },
-        "adult_guide_separate_from_child_text": { "const": "required" },
-        "stop_if_warm": { "const": "required" }
+        "power_off_before_rewiring": {
+          "const": "required"
+        },
+        "troubleshooting_starts_power_off": {
+          "const": "required"
+        },
+        "adult_guide_separate_from_child_text": {
+          "const": "required"
+        },
+        "stop_if_warm": {
+          "const": "required"
+        }
       }
     },
-
-    "enforced_by": {
-      "description": "For each cap, the exact schema constraint that implements it. CAL-SCHEMA-AGREE reads this map and asserts calibration and schema agree; a cap with no entry here is unenforced and fails the gate.",
+    "learner_terms": {
+      "description": "Every fact in this file that describes this learner rather than any learner, with the anchored pattern that matches it in prose. FR-P3-NO-LITERALS reads this list and matches the pattern, never the bare value, so a contract cannot hard-code the learner (F03).",
       "type": "object",
-      "minProperties": 7,
+      "minProperties": 1,
       "additionalProperties": {
-        "description": "A path of the form '<file> → <json pointer or dotted path>'.",
-        "type": "string",
-        "pattern": ".+→.+"
+        "$ref": "#/$defs/term"
       }
     }
   },
-
   "$defs": {
     "range": {
       "description": "Inclusive [min, max].",
       "type": "array",
       "prefixItems": [
-        { "type": "integer", "minimum": 1 },
-        { "type": "integer", "minimum": 1 }
+        {
+          "type": "integer",
+          "minimum": 1
+        },
+        {
+          "type": "integer",
+          "minimum": 1
+        }
       ],
       "minItems": 2,
       "maxItems": 2,
       "items": false
     },
-
-    "power_input": {
+    "term": {
       "type": "object",
       "additionalProperties": false,
-      "required": ["id", "description", "evidence", "verification"],
+      "required": [
+        "kind",
+        "prose_pattern"
+      ],
       "properties": {
-        "id": {
-          "description": "Stable id a lab cites to declare its supply.",
+        "kind": {
           "type": "string",
-          "pattern": "^[a-z][a-z0-9_]*$"
+          "minLength": 3
         },
-        "description": { "type": "string", "minLength": 15 },
-        "evidence": {
-          "description": "Path or citation proving this supply is what ships with the kit. Null only while verification is 'unverified'.",
-          "type": ["string", "null"]
-        },
-        "verification": {
-          "description": "Only a verified_official input may be cited by a lab.",
-          "enum": ["verified_official", "unverified"]
+        "prose_pattern": {
+          "type": "string",
+          "minLength": 4
         }
-      },
-      "if": { "properties": { "verification": { "const": "verified_official" } } },
-      "then": {
-        "properties": { "evidence": { "type": "string", "minLength": 5 } },
-        "description": "A supply cannot be called verified with no evidence behind it."
       }
     }
   }

@@ -1,0 +1,112 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://example.invalid/curriculum_builder/kit_calibration.schema.v1.json",
+  "title": "Kit calibration v1 — one kit's supplies and the evidence behind them",
+  "description": "Validates a curriculum's kit_calibration.v1.yaml. This is the half of the old calibration contract that was never engine-wide: which supplies one physical kit offers, which of them has been photographed or listed, and the rules a lab must obey when it cites one. It is the only schema permitted to name its kit, because it is the kit's own contract — FR-P3-NO-LITERALS excludes it for exactly that reason and forbids every other schema from doing the same.",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["kit_calibration_version", "kit", "power", "enforced_by", "kit_terms"],
+
+  "properties": {
+    "kit_calibration_version": { "const": "1.0" },
+
+    "kit": {
+      "description": "Which kit this is, and how well it has been verified. reference_verification is what an official listing or photograph establishes; local_inspection is what someone has confirmed by holding the thing.",
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["id", "name", "reference_verification", "local_inspection"],
+      "properties": {
+        "id": { "type": "string", "pattern": "^[a-z0-9_]+$" },
+        "name": { "type": "string", "minLength": 3 },
+        "reference_verification": { "enum": ["unverified", "verified_official"] },
+        "local_inspection": { "enum": ["not_available", "verified"] }
+      }
+    },
+
+    "power": {
+      "description": "The kit may offer several supplies; that is a set, not a conflict. What is forbidden is a lab that does not declare which one it uses.",
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["permitted_inputs", "rails", "student_circuit_range", "rules"],
+      "properties": {
+        "permitted_inputs": {
+          "type": "array",
+          "minItems": 1,
+          "items": { "$ref": "#/$defs/power_input" }
+        },
+        "rails": {
+          "description": "Selectable rail positions. 'OFF' must be one of them.",
+          "type": "array",
+          "minItems": 2,
+          "uniqueItems": true,
+          "items": { "type": "string", "minLength": 1 },
+          "contains": { "const": "OFF" }
+        },
+        "student_circuit_range": { "type": "string", "minLength": 3 },
+        "rules": {
+          "type": "array",
+          "minItems": 3,
+          "items": { "type": "string", "minLength": 20 }
+        }
+      }
+    },
+
+    "enforced_by": {
+      "description": "For each kit premise, the exact schema constraint that implements it. A premise with no entry here is unenforced.",
+      "type": "object",
+      "minProperties": 1,
+      "additionalProperties": {
+        "description": "A path of the form '<file> → <json pointer or dotted path>'.",
+        "type": "string",
+        "pattern": ".+→.+"
+      }
+    },
+
+    "kit_terms": {
+      "description": "Every fact in this file that is this kit's rather than any kit's, with the anchored pattern that matches it in prose. FR-P3-SPLIT reads this list to prove no kit fact survived in the engine-wide calibration, and FR-P3-NO-LITERALS reads it to prove no contract names the kit. Both match the pattern, never the bare value.",
+      "type": "object",
+      "minProperties": 1,
+      "additionalProperties": { "$ref": "#/$defs/term" }
+    }
+  },
+
+  "$defs": {
+    "power_input": {
+      "description": "One supply the kit offers. A lab may cite an input only when its verification is verified_official — an unverified input must be sourced and photographed first, or a lab can cite a supply nobody ever saw.",
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["id", "description", "evidence", "verification"],
+      "properties": {
+        "id": { "type": "string", "pattern": "^[a-z0-9_]+$" },
+        "description": { "type": "string", "minLength": 10 },
+        "evidence": {
+          "description": "The photograph or listing that establishes this supply exists. Null only while verification is unverified.",
+          "type": ["string", "null"]
+        },
+        "verification": { "enum": ["unverified", "verified_official"] }
+      },
+      "allOf": [
+        {
+          "if": {
+            "properties": { "verification": { "const": "verified_official" } },
+            "required": ["verification"]
+          },
+          "then": {
+            "properties": { "evidence": { "type": "string", "minLength": 5 } },
+            "description": "Verified means something was seen. A verified input with no evidence is the claim this schema exists to refuse."
+          }
+        }
+      ]
+    },
+
+    "term": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["kind", "prose_pattern"],
+      "properties": {
+        "kind": { "type": "string", "minLength": 3 },
+        "prose_pattern": { "type": "string", "minLength": 4 }
+      }
+    }
+  }
+}

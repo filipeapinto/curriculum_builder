@@ -1,0 +1,16 @@
+# Positive fixture for FR-P3-SPLIT. An engine-wide calibration whose prose uses kit
+# words in a non-kit sense. It must NOT match: the terms are matched by their
+# declared anchored patterns, never by their bare values, or the word "kit" or
+# "module" alone would forbid the calibration from describing anything physical.
+calibration_version: '1.0'
+learner:
+  age_band: '9+'
+  description: Supervised beginners with no assumed electronics knowledge.
+  supervision: adult_required
+  reading: one idea per short paragraph
+notes:
+  - Any starter kit a curriculum brings must declare its own supplies; this file
+    never names one.
+  - A lab is built from modules of work, and a module is finished before the next
+    one starts. That is a teaching structure, not a power module.
+  - A battery kit bought separately is still a supply that needs photographing.

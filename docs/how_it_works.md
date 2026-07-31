@@ -121,9 +121,9 @@ fails validation before a reviewer ever sees it.
 Four constraints in that schema do real work, because each blocks a specific way a
 lab goes wrong:
 
-**A lab cannot be identification-only.** At least one learning objective must reach
-`understand` or higher on Bloom's taxonomy. Pointing at a stripe on a diode is not
-a lesson.
+**A lab cannot be identification-only.** The schema floors the Bloom level of a
+lab's objectives, at the height `pedagogy_caps.bloom_floor` sets in
+`policy/calibration.v1.yaml`. Pointing at a stripe on a diode is not a lesson.
 
 **A prediction cannot be recorded after the observation.**
 `explore.predict.recorded_before_observing` is a `const true`. Recording it

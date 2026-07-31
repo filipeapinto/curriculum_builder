@@ -1,0 +1,12 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "A contract that hard-codes the learner",
+  "description": "Negative fixture for FR-P3-NO-LITERALS. This is defect F03: the constraint below is written for a nine-year-old, so the contract cannot serve a different learner without being edited. Who the learner is belongs in policy/calibration.v1.yaml, which the caps are derived from.",
+  "type": "object",
+  "properties": {
+    "component_job": {
+      "description": "The component's main job in one sentence a nine-year-old can repeat.",
+      "type": "string"
+    }
+  }
+}

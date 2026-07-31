@@ -1,0 +1,80 @@
+# Kit calibration — the supplies this one kit actually offers.
+#
+# Split out of policy/calibration.v1.yaml in phase 3 of the folder-refactoring
+# plan. policy/ is engine-wide: it binds every run of the generator regardless of
+# curriculum. The permitted supplies are not engine-wide — they are the ELEGOO UNO
+# R3 Super Starter Kit's, and a second curriculum would have silently inherited
+# them. This file is the kit's own premise, and it lives with the kit.
+#
+# The learner premise stays in policy/calibration.v1.yaml and still outranks this
+# file. Where the two disagree about supervision or age, calibration wins and the
+# difference is a defect to be reported, not resolved silently.
+
+kit_calibration_version: '1.0'
+
+kit:
+  id: elegoo_uno_r3_super_starter_kit
+  name: ELEGOO UNO R3 Super Starter Kit
+  reference_verification: verified_official
+  local_inspection: not_available
+
+# The kit offers several supplies. That is a set, not a conflict. What is forbidden
+# is a lab that does not say which one it is using.
+power:
+  permitted_inputs:
+    - id: kit_battery_9v
+      description: Included 9 V battery with DC connector, feeding the breadboard power module.
+      evidence: curricula/arduino_kit/official_kit_photo.jpg
+      verification: verified_official
+    - id: regulated_usb_5v
+      description: Regulated 5 V USB source feeding the breadboard power module.
+      evidence: null
+      verification: unverified          # no photograph or listing sourced yet
+  rails:
+    - 'OFF'
+    - '3.3 V'
+    - '5 V'
+  student_circuit_range: 3-5 V DC
+  rules:
+    - Every powered lab declares exactly one input from permitted_inputs, by id.
+      "All available sources" is a kit-level statement and is never a lab-level answer.
+    - A lab may only cite an input whose verification is verified_official. An
+      unverified input must be sourced and photographed before a lab may use it.
+    - The child never connects, disconnects or reconfigures the input side. An adult
+      does, and signs off before the first powered test.
+    - Rail colour is a label, never an electrical identity. The selected physical
+      selector position and the measured value decide what a rail does.
+    - No mains, no wall adapter with bare leads, no unknown supply — ever.
+
+# Where the kit's power premise is enforced, so a change here has a known blast
+# radius. Same form as the caps in policy/calibration.v1.yaml.
+enforced_by:
+  power.permitted_inputs: schemas/lab.schema.v3.json → safety.power_profile.source
+
+# Every fact in this file that is *this kit's* rather than any kit's, and the
+# anchored pattern that matches it as it would be written in prose.
+#
+# The pattern is what FR-P3-SPLIT and FR-P3-NO-LITERALS match — never the bare
+# value. A term list of `9`, `kit` or `module` scanned literally would flag
+# ordinals, list indices and ordinary sentences across the whole repository, and a
+# contract that names a kit cannot serve a different one. A term with no pattern is
+# a failure, not a skip: authoring the pattern is part of authoring the term.
+kit_terms:
+  elegoo_uno_r3_super_starter_kit:
+    kind: kit_id
+    prose_pattern: '\belegoo_uno_r3_super_starter_kit\b'
+  ELEGOO UNO R3 Super Starter Kit:
+    kind: kit_name
+    prose_pattern: '(?i)\belegoo\s+uno\s+r3\b'
+  kit_battery_9v:
+    kind: power_input_id
+    prose_pattern: '\bkit_battery_9v\b'
+  regulated_usb_5v:
+    kind: power_input_id
+    prose_pattern: '\bregulated_usb_5v\b'
+  official_kit_photo.jpg:
+    kind: kit_evidence
+    prose_pattern: '\bofficial_kit_photo\.jpg\b'
+  breadboard power module:
+    kind: kit_component
+    prose_pattern: '(?i)\bbreadboard\s+power(?:[- ]supply)?\s+module\b'

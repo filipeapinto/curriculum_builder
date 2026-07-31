@@ -21,9 +21,10 @@ calibration:
     note: a schema cap that drifts from its premise fails the build
   - id: CAL-SOURCE-VERIFIED
     asserts: >-
-      every powered lab declares exactly one input by id from
-      calibration.power.permitted_inputs, and that input's verification is
-      verified_official
+      every powered lab declares exactly one input by id from its curriculum's
+      kit_calibration power.permitted_inputs, and that input's verification is
+      verified_official. The permitted supplies belong to one kit, not to the
+      engine, which is why they left policy/calibration.v1.yaml in phase 3.
     stage: static
 
 # ---------------------------------------------------------------------------
@@ -77,10 +78,13 @@ lab_document:
     asserts: the lab dossier validates against schemas/lab.schema.v3.json, all seven blocks present
     stage: golden
   - id: LAB-BLOOM-DEPTH
-    asserts: at least one learning objective reaches understand or higher
+    asserts: >-
+      at least one learning objective reaches the Bloom level floored by
+      calibration.pedagogy_caps.bloom_floor. The floor is a premise and is never
+      restated here; this check asserts the lab meets it.
     stage: deterministic
     fixture_expectation: reject
-    rejects: a lab whose objectives sit entirely at remember — identification alone is not a lab
+    rejects: a lab whose objectives sit entirely at the lowest Bloom level — identification alone is not a lab
   - id: LAB-POE-ORDER
     asserts: the prediction is recorded before the observation
     stage: deterministic

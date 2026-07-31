@@ -1,15 +1,20 @@
 # Calibration — the premises every other rule derives from.
 #
 # The pedagogy caps in schemas/lab.schema.v3.json are not universal truths. They are
-# what follows from a nine-year-old learner. This file states that premise once so
-# nothing downstream has to guess it, and so no document can quietly assume a
-# different one.
+# what follows from the learner this file describes. This file states that premise
+# once so nothing downstream has to guess it, and so no document can quietly assume
+# a different one.
 #
 # Precedence: this file outranks every prose document in the project. Where
 # curricula/arduino_kit/lab_brief.md, curricula/arduino_kit/teacher_framework.md,
 # curricula/arduino_kit/teacher_audit.md or curricula/arduino_kit/roster.md state a
 # learner age, a supply, or a supervision rule that differs from the values below,
 # this file wins and the difference is a defect to be reported, not resolved silently.
+#
+# What is NOT here: the permitted supplies. They belong to one kit, not to the
+# engine, and they moved to curricula/arduino_kit/kit_calibration.v1.yaml in phase 3
+# of the folder-refactoring plan. policy/ binds every run regardless of curriculum;
+# a second curriculum would otherwise have inherited one kit's supplies in silence.
 
 calibration_version: '1.0'
 
@@ -21,42 +26,54 @@ learner:
 
 # Derived from learner.age_band. Change the age band and these must be re-derived
 # and justified — never edited independently of it.
+#
+# Each cap states three things, and a cap missing any of them is a failure rather
+# than a skip:
+#   value          the premise itself
+#   enforced_by    the exact schema constraint that carries it, which
+#                  FR-P3-CAL-AGREE follows and compares against the value
+#   prose_pattern  an anchored regular expression matching the cap *as it would be
+#                  written in prose*. FR-P3-CAPS-OWNED matches that pattern, never
+#                  the bare value: a cap whose value is 1, 2, `required` or
+#                  `understand` would otherwise flag every ordinal, list index and
+#                  ordinary sentence in the repository. This block is where the cap
+#                  is owned, so it is the one place the pattern is allowed to match.
 pedagogy_caps:
-  new_terms_per_lab: 2            # cognitive load: working-memory limit at this age
-  segments_per_lab: [2, 6]        # segmenting: more than six chunks overloads
-  bloom_floor: understand         # at least one objective above recall
-  objectives_per_lab: [1, 3]
-  success_criterion_voice: first_person   # "I can ..." — the child must self-judge
-  misconceptions_per_lab_min: 1
-  concrete_before_abstract: required      # physical object before schematic symbol
-
-# The kit offers several supplies. That is a set, not a conflict. What is forbidden
-# is a lab that does not say which one it is using.
-power:
-  permitted_inputs:
-    - id: kit_battery_9v
-      description: Included 9 V battery with DC connector, feeding the breadboard power module.
-      evidence: curricula/arduino_kit/official_kit_photo.jpg
-      verification: verified_official
-    - id: regulated_usb_5v
-      description: Regulated 5 V USB source feeding the breadboard power module.
-      evidence: null
-      verification: unverified          # no photograph or listing sourced yet
-  rails:
-    - 'OFF'
-    - '3.3 V'
-    - '5 V'
-  student_circuit_range: 3-5 V DC
-  rules:
-    - Every powered lab declares exactly one input from permitted_inputs, by id.
-      "All available sources" is a kit-level statement and is never a lab-level answer.
-    - A lab may only cite an input whose verification is verified_official. An
-      unverified input must be sourced and photographed before a lab may use it.
-    - The child never connects, disconnects or reconfigures the input side. An adult
-      does, and signs off before the first powered test.
-    - Rail colour is a label, never an electrical identity. The selected physical
-      selector position and the measured value decide what a rail does.
-    - No mains, no wall adapter with bare leads, no unknown supply — ever.
+  new_terms_per_lab:
+    value: 2
+    enforced_by: schemas/lab.schema.v3.json → pedagogy.vocabulary.maxItems
+    prose_pattern: '(?i)\b(?:no more than|at most|capped at|maximum of|limit of)\s+(?:two|2)\s+new\s+(?:terms?|words?|vocabulary)\b'
+    rationale: cognitive load — the working-memory limit at this age band
+  segments_per_lab:
+    value: [2, 6]
+    enforced_by: schemas/lab.schema.v3.json → pedagogy.cognitive_load.segments
+    prose_pattern: '(?i)\b(?:no more than|at most|capped at|maximum of|limit of)\s+(?:six|6)\s+(?:segments?|chunks?)\b'
+    rationale: segmenting — more than six chunks overloads
+  bloom_floor:
+    value: understand
+    enforced_by: schemas/lab.schema.v3.json → pedagogy.learning_objectives.contains.bloom_level.enum
+    prose_pattern: '(?i)\b(?:one|at least one)\s+(?:learning\s+)?objective\s+(?:must\s+)?(?:reach|reaches|be|sit at)\s+["\x27`]?understand\b'
+    rationale: at least one objective above recall
+  objectives_per_lab:
+    value: [1, 3]
+    enforced_by: schemas/lab.schema.v3.json → pedagogy.learning_objectives
+    prose_pattern: '(?i)\b(?:between\s+)?(?:one|1)\s+(?:to|and|-)\s+(?:three|3)\s+(?:learning\s+)?objectives\b'
+    rationale: enough to structure a lab, few enough to assess
+  success_criterion_voice:
+    value: first_person
+    enforced_by: schemas/lab.schema.v3.json → pedagogy.learning_objectives.items.success_criterion.pattern
+    prose_pattern: '(?i)\bsuccess\s+criteri(?:on|a)\b[^.\n]{0,40}?(?:first[- ]person|I can\b)'
+    rationale: '"I can ..." — the child must be able to judge their own work'
+  misconceptions_per_lab_min:
+    value: 1
+    enforced_by: schemas/lab.schema.v3.json → pedagogy.misconceptions.minItems
+    prose_pattern: '(?i)\b(?:requires|at least|no fewer than|minimum of)\s+(?:one|1)\s+misconception\b'
+    rationale: conceptual change — an untouched misconception survives a good explanation
+  concrete_before_abstract:
+    value: required
+    enforced_by: schemas/lab.schema.v3.json → pedagogy.cognitive_load.required
+    prose_pattern: '(?i)\bconcrete[- ]before[- ]abstract\s+is\s+(?:required|mandatory)\b'
+    rationale: the physical object and action come before any schematic symbol
 
 # Applies to the whole workbook regardless of age band.
 safety_floor:
@@ -65,12 +82,26 @@ safety_floor:
   adult_guide_separate_from_child_text: required
   stop_if_warm: required
 
-# Where the caps are enforced, so a change here has a known blast radius.
-enforced_by:
-  new_terms_per_lab: schemas/lab.schema.v3.json → pedagogy.vocabulary.maxItems
-  segments_per_lab: schemas/lab.schema.v3.json → pedagogy.cognitive_load.segments
-  bloom_floor: schemas/lab.schema.v3.json → pedagogy.learning_objectives.contains
-  objectives_per_lab: schemas/lab.schema.v3.json → pedagogy.learning_objectives
-  success_criterion_voice: schemas/lab.schema.v3.json → success_criterion.pattern
-  misconceptions_per_lab_min: schemas/lab.schema.v3.json → pedagogy.misconceptions.minItems
-  power.permitted_inputs: schemas/lab.schema.v3.json → safety.power_profile.source
+# Every fact in this file that describes *this learner* rather than any learner,
+# and the anchored pattern that matches it as it would be written in prose.
+#
+# FR-P3-NO-LITERALS matches the pattern and never the bare value: an age of `9`
+# scanned literally would flag every `9` in every schema, including `"maxItems": 9`.
+# A contract that hard-codes the learner cannot serve a different one — that is
+# defect F03, and lab.schema.v3.json carried it in two descriptions.
+learner_terms:
+  nine-year-old:
+    kind: learner_age_prose
+    prose_pattern: '(?i)\bnine[- ]year[- ]olds?\b'
+  '9+':
+    kind: learner_age_band
+    prose_pattern: '(?i)\b(?:age[d_ -]?band|aged)\s*["\x27`]?9\+'
+  '9':
+    kind: learner_age
+    prose_pattern: '(?i)\b(?:aged?|age[ _-]band|years?[ _-]old)\b[^.\n]{0,12}?\b9\b'
+
+# Not a learner term: `adult_required`. The supervision *enum* belongs in
+# schemas/calibration.schema.v1.json — listing the permitted values is the contract
+# doing its job. What is a data fact is which value this learner takes, and that is
+# `learner.supervision` above. FR-P3-NO-LITERALS forbids a contract from carrying a
+# learner-age literal or a kit name, not from carrying its own vocabulary.

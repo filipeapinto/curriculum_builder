@@ -233,6 +233,7 @@ labs:
   - A series resistor protects an LED by limiting current.
   core_activity:
     mode: powered_pending_physical_check
+    power_input: kit_battery_9v
     question: How does changing a verified series resistor change LED brightness?
     circuit_status: requires_verified_circuit_data
   applications:
@@ -276,6 +277,7 @@ labs:
   - A diode can protect against reverse connection and give a coil's stored energy a safe path.
   core_activity:
     mode: powered_pending_physical_check
+    power_input: kit_battery_9v
     question: What changes when a verified diode is turned around in the same protected test circuit?
     circuit_status: requires_verified_circuit_data
   applications:
@@ -320,6 +322,7 @@ labs:
   - The series resistor controls current and prevents damage.
   core_activity:
     mode: powered_pending_physical_check
+    power_input: kit_battery_9v
     question: Can I make the LED light only when its polarity and resistor are both correct?
     circuit_status: requires_verified_circuit_data
   applications:
@@ -362,6 +365,7 @@ labs:
   - Common-anode and common-cathode versions need different wiring and must never be guessed.
   core_activity:
     mode: powered_pending_physical_check
+    power_input: kit_battery_9v
     question: Which light sections must be on to make a chosen mixed colour?
     circuit_status: requires_verified_circuit_data
   applications:
@@ -406,6 +410,7 @@ labs:
   - A voltage divider creates an adjustable fraction of a supply voltage.
   core_activity:
     mode: powered_pending_physical_check
+    power_input: kit_battery_9v
     question: How does the verified wiper voltage change as I turn the knob?
     circuit_status: requires_verified_circuit_data
   applications:
@@ -446,6 +451,7 @@ labs:
   - More or less light may raise or lower the chosen signal depending on circuit position.
   core_activity:
     mode: powered_pending_physical_check
+    power_input: kit_battery_9v
     question: What evidence changes when I shade the photoresistor?
     circuit_status: requires_verified_circuit_data
   applications:
@@ -486,6 +492,7 @@ labs:
   - A divider turns resistance change into a voltage signal.
   core_activity:
     mode: powered_pending_physical_check
+    power_input: kit_battery_9v
     question: What changes when the thermistor is gently warmed by a hand?
     circuit_status: requires_verified_circuit_data
   applications:
@@ -527,6 +534,7 @@ labs:
   - A pull-up or pull-down resistor gives that resting state.
   core_activity:
     mode: powered_pending_physical_check
+    power_input: kit_battery_9v
     question: Which button legs connect only while the button is pressed?
     circuit_status: requires_verified_circuit_data
   applications:
@@ -566,6 +574,7 @@ labs:
   - A pull resistor provides a known state when the contact is open.
   core_activity:
     mode: powered_pending_physical_check
+    power_input: kit_battery_9v
     question: Which tilt direction closes this verified switch?
     circuit_status: requires_verified_circuit_data
   applications:
@@ -607,6 +616,7 @@ labs:
   - Module labels and pins are kit-specific.
   core_activity:
     mode: powered_pending_physical_check
+    power_input: kit_battery_9v
     question: How does one verified joystick axis change as the stick moves, and how does the push-button
       state change when pressed?
     circuit_status: requires_verified_circuit_data
@@ -652,6 +662,7 @@ labs:
   - Pin order varies by package and must be verified.
   core_activity:
     mode: powered_pending_physical_check
+    power_input: kit_battery_9v
     question: Can a protected small control path switch a separate LED load path?
     circuit_status: requires_verified_circuit_data
   applications:
@@ -694,6 +705,7 @@ labs:
   - A flyback diode gives stored coil energy a safe path when power turns off.
   core_activity:
     mode: adult_led_controller_station
+    power_input: kit_battery_9v
     question: Which verified contact path changes when the relay coil is energised?
     circuit_status: requires_verified_circuit_data
   applications:
@@ -733,6 +745,7 @@ labs:
   - Sound is evidence that the buzzer's internal circuit is running.
   core_activity:
     mode: powered_pending_physical_check
+    power_input: kit_battery_9v
     question: Does the verified active buzzer sound when its correct supply and polarity are applied?
     circuit_status: requires_verified_circuit_data
   applications:
@@ -771,6 +784,7 @@ labs:
   - A static supply is not a complete test for a passive buzzer.
   core_activity:
     mode: adult_led_controller_station
+    power_input: kit_battery_9v
     question: What changes when the adult-controlled signal changes frequency?
     circuit_status: requires_verified_circuit_data
   applications:
@@ -809,6 +823,7 @@ labs:
   - Each lit segment requires suitable current control.
   core_activity:
     mode: powered_pending_physical_check
+    power_input: kit_battery_9v
     question: Which verified segments must light to show a chosen digit?
     circuit_status: requires_verified_circuit_data
   applications:
@@ -848,6 +863,7 @@ labs:
   - A controller and verified module pinout are required for an honest demonstration.
   core_activity:
     mode: adult_led_controller_station
+    power_input: kit_battery_9v
     question: Why can several digits look lit when they take turns?
     circuit_status: requires_verified_circuit_data
   applications:
@@ -891,6 +907,7 @@ labs:
   - and timing come from the verified datasheet.
   core_activity:
     mode: adult_led_controller_station
+    power_input: kit_battery_9v
     question: How can three controller signals update several LED outputs?
     circuit_status: requires_verified_circuit_data
   applications:
@@ -935,6 +952,7 @@ labs:
   - LCD variants and backpacks require pin verification.
   core_activity:
     mode: adult_led_controller_station
+    power_input: kit_battery_9v
     question: What is the difference between turning contrast and changing the text command?
     circuit_status: requires_verified_circuit_data
   applications:
@@ -977,6 +995,7 @@ labs:
     explains how the receiver works.
   core_activity:
     mode: adult_led_controller_station
+    power_input: kit_battery_9v
     question: Can a receiver show that different buttons send different codes?
     circuit_status: requires_verified_circuit_data
   applications:
@@ -1017,6 +1036,7 @@ labs:
   - Module pin labels are not universal.
   core_activity:
     mode: adult_led_controller_station
+    power_input: kit_battery_9v
     question: What changes in the verified output when a remote button is pressed?
     circuit_status: requires_verified_circuit_data
   applications:
@@ -1058,6 +1078,7 @@ labs:
   - Distance calculations need the return trip to be divided by two.
   core_activity:
     mode: adult_led_controller_station
+    power_input: kit_battery_9v
     question: How does echo time change as a flat target moves farther away?
     circuit_status: requires_verified_circuit_data
   applications:
@@ -1097,6 +1118,7 @@ labs:
   - Readings update slowly and have limited accuracy.
   core_activity:
     mode: adult_led_controller_station
+    power_input: kit_battery_9v
     question: What can the controller display from this verified sensor, and what are its limits?
     circuit_status: requires_verified_circuit_data
   applications:
@@ -1137,6 +1159,7 @@ labs:
   - Motor current can exceed what a controller pin or weak rail can safely supply.
   core_activity:
     mode: adult_led_controller_station
+    power_input: kit_battery_9v
     question: How does a verified pulse command choose a servo position?
     circuit_status: requires_verified_circuit_data
   applications:
@@ -1180,6 +1203,7 @@ labs:
   - Motors need more current than a controller output can provide directly.
   core_activity:
     mode: adult_led_controller_station
+    power_input: kit_battery_9v
     question: What happens when a verified coil sequence is changed or reversed?
     circuit_status: requires_verified_circuit_data
   applications:
@@ -1221,6 +1245,7 @@ labs:
   - Inductive loads need managed turn-off energy.
   core_activity:
     mode: adult_led_controller_station
+    power_input: kit_battery_9v
     question: Which path carries the controller signal and which path carries motor current?
     circuit_status: requires_verified_circuit_data
   applications:
@@ -1260,6 +1285,7 @@ labs:
   - One component can communicate the state made by another.
   core_activity:
     mode: powered_pending_physical_check
+    power_input: kit_battery_9v
     question: Can a button make a protected LED show a clear on/off state?
     circuit_status: requires_verified_circuit_data
   applications:
@@ -1300,6 +1326,7 @@ labs:
   - Circuit position determines whether darkness or brightness turns the load on.
   core_activity:
     mode: powered_pending_physical_check
+    power_input: kit_battery_9v
     question: Does shading the sensor change the protected load state as the verified design predicts?
     circuit_status: requires_verified_circuit_data
   applications:
@@ -1340,6 +1367,7 @@ labs:
   - Real temperature alarms need calibration and safety margins.
   core_activity:
     mode: adult_led_controller_station
+    power_input: kit_battery_9v
     question: At what gently warmed condition does the verified demonstration change state?
     circuit_status: requires_verified_circuit_data
   applications:
@@ -1384,6 +1412,7 @@ labs:
   - Relay contacts remain a separate low-voltage demonstration only.
   core_activity:
     mode: adult_led_controller_station
+    power_input: kit_battery_9v
     question: Can a protected driver change a verified low-voltage contact circuit?
     circuit_status: requires_verified_circuit_data
   applications:
@@ -1425,6 +1454,7 @@ labs:
   - A clear signal needs a consistent rule.
   core_activity:
     mode: powered_pending_physical_check
+    power_input: kit_battery_9v
     question: How can an accepted pushbutton circuit make a protected LED and active buzzer communicate
       two verified states?
     circuit_status: requires_verified_circuit_data
@@ -1469,6 +1499,7 @@ labs:
   - Change one thing at a time and record evidence.
   core_activity:
     mode: diagnostic
+    power_input: kit_battery_9v
     question: Which safe power-off check identifies whether the accepted L30 fixture has a loose jumper
       or a reversed LED?
     circuit_status: requires_verified_circuit_data

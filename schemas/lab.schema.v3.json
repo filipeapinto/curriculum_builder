@@ -1,6 +1,6 @@
 {
   "$schema": "https://json-schema.org/draft/2020-12/schema",
-  "$id": "https://example.invalid/elegoo/lab.schema.v3.json",
+  "$id": "https://example.invalid/curriculum_builder/lab.schema.v3.json",
   "title": "Lab document v3 \u2014 pedagogy, electronics, content, safety and evidence",
   "description": "The structure of one finished lab. Five co-equal blocks: pedagogy (how it teaches), sequence (the 5E lesson), electronics (the electrical model \u2014 spec, quantities, circuit, behaviour, ratings, failure modes, calculations, measurements), content (physical assembly), safety (what must be verified). v2 specified the lesson but modelled no electronics; that block is the domain spine and is now required.",
   "type": "object",
@@ -49,7 +49,7 @@
           "minLength": 5
         },
         "component_job_sentence": {
-          "description": "The component's main job in one sentence a nine-year-old can repeat.",
+          "description": "The component's main job in one sentence the calibrated learner can repeat. Who that learner is comes from policy/calibration.v1.yaml, never from this contract.",
           "type": "string",
           "minLength": 20
         }
@@ -672,7 +672,7 @@
                 ]
               },
               "child_facing_meaning": {
-                "description": "How this quantity is described to a nine-year-old without falsifying it.",
+                "description": "How this quantity is described to the calibrated learner without falsifying it. The age band is a premise in policy/calibration.v1.yaml, not a constant here.",
                 "type": "string",
                 "minLength": 15
               }

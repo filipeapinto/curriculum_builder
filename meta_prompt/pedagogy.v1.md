@@ -24,8 +24,8 @@ evidence → applications` chain already approximates.
 | **Evaluate** | `sequence.evaluate` | the child judges their own success |
 
 The order matters more than the labels. Explanation comes *after* exploration —
-telling a nine-year-old how a diode works before they have seen one refuse current
-produces recitation, not understanding.
+telling a child how a diode works before they have seen one refuse current produces
+recitation, not understanding.
 
 ---
 
@@ -50,7 +50,8 @@ Posner, Strike, Hewson & Gertzog. Wrong ideas are not absent — they are alread
 there, and a clear explanation delivered alongside an untouched misconception
 leaves the misconception intact.
 
-`pedagogy.misconceptions` requires at least one per lab, each with:
+`pedagogy.misconceptions` requires a minimum per lab — the figure is
+`pedagogy_caps.misconceptions_per_lab_min` — each with:
 
 - the misconception itself
 - **why it is common** — forces it to be a real alternative conception, not a
@@ -80,14 +81,22 @@ fail for a child who missed something three labs ago.
 
 Sweller; Mayer.
 
-- `vocabulary` is capped at **two** new terms per lab (`maxItems: 2`), each defined
-  at first use.
-- `cognitive_load.segments` is capped at **six** — beyond that, working memory in
-  this age band is the binding constraint, not motivation.
+- `vocabulary` is capped, and each new term is defined at first use. *How many* is
+  a premise, not a teaching claim: it is `pedagogy_caps.new_terms_per_lab` in
+  `policy/calibration.v1.yaml`, which also names the schema constraint carrying it.
+- `cognitive_load.segments` is capped, because working memory in the calibrated age
+  band is the binding constraint rather than motivation. The bound is
+  `pedagogy_caps.segments_per_lab`.
 - `cognitive_load.concrete_before_abstract` enforces the CRA sequence: the physical
-  object and action come before any schematic symbol or abstract term.
+  object and action come before any schematic symbol or abstract term. Whether it is
+  required or merely recommended is `pedagogy_caps.concrete_before_abstract`.
 - `worked_example` is optional but available — the worked-example effect is
   strongest exactly where this workbook operates, with novices in a new domain.
+
+Every number above lives in exactly one place. This file says *why* a cap exists;
+`policy/calibration.v1.yaml` says *what* it is and which schema constraint enforces
+it. A copy here would be a second owner that nothing keeps equal — which is how the
+caps drifted before, and why `FR-P3-CAPS-OWNED` now fails on one.
 
 ---
 
@@ -96,15 +105,18 @@ Sweller; Mayer.
 Bloom's revised taxonomy for the objective; Black & Wiliam for the criterion.
 
 ```
-learning_objectives[].bloom_level      one must be "understand" or higher
-learning_objectives[].success_criterion  must match ^I can .+
+learning_objectives[].bloom_level        floored, per pedagogy_caps.bloom_floor
+learning_objectives[].success_criterion  pattern-constrained, per
+                                         pedagogy_caps.success_criterion_voice
 evaluate.success_criteria_checklist      the same criteria, child-tickable
 ```
 
-The `contains` constraint blocks a lab whose objectives are all `remember` —
-identification alone is not a lab. The `^I can` pattern forces the criterion into
-the child's voice, because a success criterion the child cannot apply to their own
-work is a teacher's note, not formative assessment.
+The `contains` constraint blocks a lab whose objectives sit entirely at the lowest
+Bloom level — identification alone is not a lab. The success-criterion pattern forces
+the criterion into the child's own voice, because a criterion the child cannot apply
+to their own work is a teacher's note, not formative assessment. Both the floor and
+the voice are premises in `policy/calibration.v1.yaml`, derived from the learner's
+age band and re-derived whenever it changes.
 
 `evaluate.hinge_question` is one question whose answer reveals whether the key idea
 landed or the misconception survived.

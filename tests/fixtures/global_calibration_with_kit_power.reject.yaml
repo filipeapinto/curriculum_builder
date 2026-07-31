@@ -1,0 +1,18 @@
+# Negative fixture for FR-P3-SPLIT. An engine-wide calibration that still carries
+# one kit's supplies. policy/ binds every run regardless of curriculum, so a kit
+# fact here is inherited in silence by the next curriculum — which is exactly what
+# the split exists to stop.
+calibration_version: '1.0'
+learner:
+  age_band: '9+'
+  description: Supervised beginners with no assumed electronics knowledge.
+  supervision: adult_required
+  reading: one idea per short paragraph
+power:
+  permitted_inputs:
+    - id: kit_battery_9v
+      description: Included 9 V battery with DC connector, feeding the breadboard power module.
+      evidence: curricula/arduino_kit/official_kit_photo.jpg
+      verification: verified_official
+  rails: ['OFF', '5 V']
+  student_circuit_range: 3-5 V DC

@@ -1,6 +1,6 @@
 {
   "$schema": "https://json-schema.org/draft/2020-12/schema",
-  "$id": "https://example.invalid/elegoo/routing_decision.schema.v2.json",
+  "$id": "https://example.invalid/curriculum_builder/routing_decision.schema.v2.json",
   "title": "Lab Model Routing Decision v2",
   "description": "Additive successor to version 1 of this contract, which is retained byte-unchanged so records already accepted under it keep validating; editing v1 in place would retroactively invalidate them. Two changes: selected_model is renamed decided_model, because 'selected' names an intention and the invariant concerns the difference between what was decided and what ran; and executed_model is added and required, so 'the executed route differs from the decided route' becomes expressible at all. The schema proves both fields exist. It is not asked to compare them — standard JSON Schema cannot compare two sibling values without enumerating every pair — so the comparison is performed in gate code and recorded as comparison: python.",
   "type": "object",

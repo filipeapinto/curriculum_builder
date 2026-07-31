@@ -1,0 +1,12 @@
+# Negative fixture for FR-P3-KIT-SOURCE. A powered lab citing an input whose
+# verification is `unverified` — a supply nobody has photographed or found a listing
+# for. This is the safety premise the whole calibration file exists to hold: a lab
+# may only cite an input that has actually been seen.
+manifest_version: '4.0'
+labs:
+  - id: L07
+    core_activity:
+      mode: powered_pending_physical_check
+      question: Which rail does the module select when the jumper is moved?
+      circuit_status: requires_verified_circuit_data
+      power_input: regulated_usb_5v

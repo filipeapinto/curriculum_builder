@@ -1,6 +1,6 @@
 {
   "$schema": "https://json-schema.org/draft/2020-12/schema",
-  "$id": "https://example.invalid/elegoo/execution_log.schema.v2.json",
+  "$id": "https://example.invalid/curriculum_builder/execution_log.schema.v2.json",
   "title": "Execution log v2 \u2014 the all-action audit trail, with a typed action discriminator",
   "description": "Additive successor to version 1 of this contract, which is retained byte-unchanged so already-accepted logs keep validating. Two changes to the act record. A required typed discriminator, action_kind, names the action family the free-text action field only described. And decision_id is required conditionally on that discriminator: an act with action_kind model_call must carry the id of its routing decision, and cannot escape the requirement by calling itself something else. The condition never keys on a substring of action, because a record could otherwise evade decision_id by rewording. if/then is standard draft 2020-12, so this obligation is schema-expressible \u2014 unlike the decided/executed comparison, which is not.",
   "type": "object",

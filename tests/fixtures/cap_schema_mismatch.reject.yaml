@@ -1,0 +1,11 @@
+# Negative fixture for FR-P3-CAL-AGREE. The cap says four new terms per lab; the
+# constraint it names carries two. CAL-SCHEMA-AGREE is the one derivation this
+# repository already enforced correctly, and the split must not break it: a cap that
+# drifts from the schema implementing it means the premise and the enforcement
+# disagree, and nothing downstream can tell which one is true.
+calibration_version: '1.0'
+pedagogy_caps:
+  new_terms_per_lab:
+    value: 4
+    enforced_by: schemas/lab.schema.v3.json → pedagogy.vocabulary.maxItems
+    prose_pattern: '(?i)\bno more than four new terms\b'
