@@ -1,9 +1,10 @@
-<!-- section asset of meta_curriculum_builder.prompt.v6.md · read whole -->
+<!-- section asset of meta_curriculum_builder.prompt.v6.md · read whole
+     · owns: ## Deliverables -->
 
 ## Deliverables
 
 ```text
-V7/                                          = OUTPUT_ROOT/templates_v7
+V7/                                          the only authorized write root
   component_lab_orchestrator_prompt.v7.md    concise runtime contract; delegates to controller and workers
   readme.md                                  derivation, authority, test categories, preflight, run/resume commands
   remediation_report.md                      every id in failures.v1.yaml → correction, proving test, result, residual risk

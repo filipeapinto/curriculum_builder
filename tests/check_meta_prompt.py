@@ -296,7 +296,7 @@ def check_write_order(text: str) -> list[str]:
 
 
 def check_no_dangling(text: str) -> list[str]:
-    defined = set(boundary(text)) | {"CREATOR", "ROOT", "RESEARCH"}
+    defined = set(boundary(text)) | {"CREATOR", "RESEARCH"}
     body = text.split("```", 2)[-1]
     problems = []
     for name in sorted(set(re.findall(r"`([A-Z][A-Z0-9_]{2,})`", body))):
@@ -345,6 +345,10 @@ def check_portability(_text: str = "") -> list[str]:
 ASSETS_BLOCK = re.compile(r"^## Assets\s*$(.*?)(?=^## )", re.M | re.S)
 TABLE_ROW = re.compile(r"^\|(?P<first>[^|]*)\|(?P<kind>[^|]*)\|", re.M)
 HEADING = re.compile(r"^(##+)\s+(.*?)\s*$", re.M)
+# Each section asset names the headings it owns, so the file itself says what it
+# is and what it carries. Companions never carry it.
+SECTION_BANNER = re.compile(
+    r"<!--\s*section asset of [^\n]*\n\s*·\s*owns:\s*(.*?)\s*-->", re.S)
 
 KINDS = {source.SECTION, source.COMPANION}
 
@@ -439,6 +443,52 @@ def check_assets(_text: str = "") -> list[str]:
             f"{section_lines}; a prompt no smaller than its assets has not been split, "
             "it has been copied"
         )
+
+    problems += banner_problems(rows)
+    return problems
+
+
+def banner_problems(rows: list[tuple[str, str]]) -> list[str]:
+    """The banner is the asset's own claim; the table cell is the prompt's.
+
+    Without this, one edited table cell silently shrinks the contract: flip a row
+    from `section` to `companion` and that file leaves the composition, its rules
+    stop being contract, and every other check still reports a full pass — the
+    orphan rule cannot fire, because the row still names the file. So the two
+    claims must agree, and each section must still carry the headings it claims to
+    own. That is what makes deleting `## Precedence` a failure rather than a
+    quieter contract.
+
+    It does not make prose safe. A rule deleted from inside a heading this file
+    still declares is invisible here, and only the run's own prompt hash — over
+    the prompt and its section assets together — would catch it.
+    """
+    problems = []
+    for first, kind in rows:
+        name = first.strip("`")
+        path = REPO / name
+        if not path.is_file():
+            continue  # already reported as unresolved
+        banner = SECTION_BANNER.search(read(path))
+        if kind == source.SECTION and not banner:
+            problems.append(
+                f"assets: {name} is declared section but carries no section banner, so "
+                "nothing in the file itself claims to be part of this contract"
+            )
+        elif kind == source.COMPANION and banner:
+            problems.append(
+                f"assets: {name} carries the section banner but the table declares it "
+                "companion; one flipped cell is all it takes to drop a rule out of the "
+                "contract while every check still passes"
+            )
+        if not banner:
+            continue
+        declared = {h.strip() for h in banner.group(1).split(",") if h.strip()}
+        present = {f"{hashes} {title}" for hashes, title in HEADING.findall(read(path))}
+        for missing in sorted(declared - present):
+            problems.append(f"assets: {name} claims to own {missing!r} and does not state it")
+        for extra in sorted(present - declared):
+            problems.append(f"assets: {name} states {extra!r}, which its banner does not claim")
     return problems
 
 

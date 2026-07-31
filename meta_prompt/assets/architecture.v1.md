@@ -1,13 +1,14 @@
-<!-- section asset of meta_curriculum_builder.prompt.v6.md · read whole -->
+<!-- section asset of meta_curriculum_builder.prompt.v6.md · read whole
+     · owns: ## What the generator must be, ## What a lab must be -->
 
 ## What the generator must be
 
 Code decides, models write. Python owns lab order, state transitions, routing,
 retries, checkpoints, revision targeting, every audit, and every acceptance
 decision. A model never advances a state, never aggregates a verdict, never
-decides a lab is done. Deterministic work — merging, validating, hashing,
-rendering, aggregating, auditing, logging — uses no model at all. The full
-contract is `policy/controller.v1.yaml`.
+decides a lab is done. Which work may reach a model at all is stated once, in
+`meta_prompt/assets/routing.v1.md`, and the full contract is
+`policy/controller.v1.yaml`.
 
 Workers are deliberately starved. Each receives only its role, its stable check
 ids, the selected lab data, accepted prerequisite artifacts, its authorized input
@@ -16,13 +17,14 @@ paths, its authorized output paths, and one output schema — the block of
 transition, scan prior versions, change acceptance rules, or create an undeclared
 file.
 
-**Twelve isolated reviewer invocations per lab.** Three passes — plan, dossier QA,
-rendered PDF — across four domains: electronics, pedagogy, communication, graphic.
-Twelve separate bounded calls, never batched. Reviewing a dossier and reviewing the
-printed page are different acts: a diagram correct in the data can be illegible at
-print size, passing the first and failing the second. Isolation is structural, not
-instructed — a reviewer's authorized input paths must not include any sibling's
-verdict file, and a test must fail if such a path exists.
+**Twelve isolated reviewer invocations per lab** — check id `REV-COUNT-TWELVE`.
+Three passes — plan, dossier QA, rendered PDF — across four domains: electronics,
+pedagogy, communication, graphic. Twelve separate bounded calls, never batched.
+Reviewing a dossier and reviewing the printed page are different acts: a diagram
+correct in the data can be illegible at print size, passing the first and failing the
+second. Isolation is structural, not instructed — a reviewer's authorized input paths
+must not include any sibling's verdict file, and a test must fail if such a path
+exists.
 
 ## What a lab must be
 

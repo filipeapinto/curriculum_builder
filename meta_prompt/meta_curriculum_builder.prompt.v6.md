@@ -57,8 +57,9 @@ Never create a live dossier for any lab beyond L01 during this task.
 This file is deliberately short: it carries the mission, the boundary, the order of
 work and the report. The rules that need room to be exact live in `ASSETS`, and they
 bind exactly as this file does. A `section` asset is part of this contract and is
-read whole, in the order below; **this file plus those six is the contract**, and a
-rule is no weaker for having been written in the asset that had room for it.
+read whole, in the order below; **this file plus every `section` row is the
+contract**, and a rule is no weaker for having been written in the asset that had
+room for it.
 
 | Asset | Kind | Carries |
 |---|---|---|
@@ -76,8 +77,14 @@ A `companion` is not part of this contract. It is an input, read where a section
 asset says so and ranked where `meta_prompt/assets/inputs.v1.md` ranks it — below
 every section, above the project prose.
 
+The `Carries` column is a map, never a rule: what a companion may govern is fixed
+only by the precedence list in `meta_prompt/assets/inputs.v1.md`.
+
 Nothing else belongs in `ASSETS`. A file there that no row above names is prose with
-no owner, and prose with no owner is how a contract acquires a second author.
+no owner, and prose with no owner is how a contract acquires a second author. A row
+that names a file which does not resolve is the reverse defect, and it is fatal: stop
+as `META_SYSTEM_FAILURE` before any artifact, because the contract you were handed is
+not the contract you are reading.
 
 ## Execution
 
@@ -96,9 +103,9 @@ no owner, and prose with no owner is how a contract acquires a second author.
 5. Build the logger. Pass its proving tests before creating any other artifact. From
    this point on every action is logged before it is taken.
 6. Validate every manifest against its schema. Read no value before it validates.
-7. Write the v7 meta state; record authorized roots, and record the contract hash
-   over this file and its `section` assets together.
-8. Inspect `plans/legacy_v3/` and write failure→fix→test traceability for every id in
+7. Write the v7 meta state; record authorized roots, and record the prompt hash over
+   this file and its `section` assets together.
+8. Inspect `LEGACY` and write failure→fix→test traceability for every id in
    `policy/failures.v1.yaml`.
 9. Design v7: canonical data, controller, runtime prompt, worker contracts.
 10. Implement controller, prompts, schemas, selector, renderers, audits, reports.

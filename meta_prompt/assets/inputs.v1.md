@@ -1,4 +1,5 @@
-<!-- section asset of meta_curriculum_builder.prompt.v6.md · read whole -->
+<!-- section asset of meta_curriculum_builder.prompt.v6.md · read whole
+     · owns: ## Inputs, ### Retained contracts, ## Precedence -->
 
 ## Inputs
 
@@ -46,7 +47,8 @@ logger emits `v2`-valid records and a selector emits `v2`-valid decisions.
 | `schemas/routing_decision.schema.v1.json` | validate routing decisions already accepted under v1 |
 
 Three reads reach outside `CREATOR`, all declared and bounded: `~/.codex/config.toml`
-determines the sandbox policy in `policy/routes.v1.yaml`; `RESEARCH` fetches
+determines the sandbox policy in `policy/routes.v1.yaml`; `RESEARCH` — the network
+capability `policy/routes.v1.yaml` declares and gate 4 proves — fetches
 manufacturer datasheets over the network; and `OUTPUT_ROOT` is read to evaluate the
 startup precondition and, on `--resume`, to re-read this run's own checkpoints.
 Nothing else outside `CREATOR` is read, and nothing outside `V7` is written.
@@ -68,10 +70,12 @@ When sources disagree, this order settles it — always, and without averaging:
    has no field: tone, child-language, the safety baseline in sentences
 8. `meta_prompt/assets/pedagogy.v1.md` — why a pedagogy field exists, never what its
    value is
-9. the prose documents `curricula/arduino_kit/lab_brief.md`,
+9. `meta_prompt/assets/model_selector_prompt.v1.md` — how the selector decides, never
+   which route it may decide on: that is `policy/routing/`, ranked above at 5
+10. the prose documents `curricula/arduino_kit/lab_brief.md`,
    `curricula/arduino_kit/roster.md`, `curricula/arduino_kit/teacher_framework.md`
    and `curricula/arduino_kit/teacher_audit.md`
-10. `docs/` and `readme.md` — orientation only, never a constraint
+11. `docs/` and `readme.md` — orientation only, never a constraint
 
 Every source is ranked. An unranked document is one whose contradictions get settled
 by whoever reads it last, which is how four prose files came to promise something

@@ -1,4 +1,5 @@
-<!-- section asset of meta_curriculum_builder.prompt.v6.md · read whole -->
+<!-- section asset of meta_curriculum_builder.prompt.v6.md · read whole
+     · owns: ## Routing -->
 
 ## Routing
 

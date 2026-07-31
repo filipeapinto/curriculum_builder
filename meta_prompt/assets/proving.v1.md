@@ -1,11 +1,12 @@
-<!-- section asset of meta_curriculum_builder.prompt.v6.md · read whole -->
+<!-- section asset of meta_curriculum_builder.prompt.v6.md · read whole
+     · owns: ## Proving it, ## Release gates -->
 
 ## Proving it
 
 Six gates, in order. Record every result with a timestamp and a category label. Five
 labels are the stage vocabulary `policy/checks.v1.yaml` owns — `logger`, `static`,
 `deterministic`, `live-capability`, `golden` — and are never spelled differently here.
-The sixth, `simulated`, is this prompt's own: it labels runs driven by fake workers,
+The sixth, `simulated`, is this contract's own: it labels runs driven by fake workers,
 and no check id carries it, because a simulated result is evidence about the
 controller and never evidence about a lab.
 
