@@ -20,20 +20,26 @@ gates. Every constraint below traces to one of those failures, recorded in
 ## Write boundary
 
 ```text
-ROOT        = /Users/filipepinto/Library/CloudStorage/OneDrive-ISCTE-IUL/Documentos/elegoo
-CREATOR     = curriculum_creator
-META_PROMPT = curriculum_creator/prompts/meta_curriculum_prompt.prompt.v5.md
-LEGACY      = curriculum_creator/plans/legacy_v3
-WORK        = the run's work root under ROOT, recorded in the v7 meta state at startup
-PRIOR_V4    = WORK/templates_v4
-PRIOR_V5    = WORK/templates_v5
-V7          = WORK/templates_v7
+CREATOR     = the directory containing this prompt's `meta_prompt/` folder
+META_PROMPT = CREATOR/meta_prompt/meta_curriculum_builder.prompt.v5.md
+LEGACY      = CREATOR/plans/legacy_v3
+OUTPUT_ROOT = supplied by --output-root; required, no default
+V7          = OUTPUT_ROOT/templates_v7
 ```
 
-Write only to `V7` and one new golden-L01 output root recorded in the v7 meta
-state. Everything else is immutable, `CREATOR` included. `PRIOR_V4` and `PRIOR_V5`
-are named so they are not written to; they are never read, and every diagnosis
-drawn from them is quoted in full in `policy/failures.v1.yaml`.
+`CREATOR` is **derived, never written down**: resolve it from this file's own
+location. An absolute path here would be correct on exactly one machine and would
+silently resolve to nothing on any clone, which is the failure this line replaces.
+
+`OUTPUT_ROOT` is **required at invocation** and has no default. It is deliberately
+outside `CREATOR`: the inputs are immutable and a run writes nothing into them.
+Refusing to guess is the point — a default would eventually be a directory holding
+someone else's evidence. `policy/controller.v1.yaml` already declares the flag.
+
+Write only to `V7`. Everything else is immutable, `CREATOR` included. The v3, v4 and
+v5 attempts are not named here as paths: they may not exist at any location, and
+naming a directory that is not there protects nothing. They are never read, and every
+diagnosis drawn from them is quoted in full in `policy/failures.v1.yaml`.
 
 All names `V7` creates are lowercase, versioned `.vN` where versioned at all.
 
@@ -47,8 +53,9 @@ Never create a live dossier for any lab beyond L01 during this task.
 
 ## Inputs
 
-Everything required is under `CREATOR`. Validate each file against its schema
-before reading a value from it.
+Everything required is under `CREATOR`, and every path in the table below is
+relative to it. Validate each **manifest** against its schema before reading a value
+from it; the prose inputs have no schema and cannot have one — read them as prose.
 
 | Input | Role |
 |---|---|
@@ -71,7 +78,7 @@ before reading a value from it.
 | `plans/legacy_v3/` | the failed v3 generator and runner — cite by path and line |
 | `curricula/arduino_kit/official_kit_photo.jpg`, `curricula/arduino_kit/kit_evidence.md` | the verified kit evidence L01 depends on |
 | `curricula/arduino_kit/fixtures/` | fixtures the tests must **reject**, never inputs |
-| `curricula/arduino_kit/lab_brief.md`, `roster.md`, `teacher_framework.md`, `teacher_audit.md` | project scope and teaching context |
+| `curricula/arduino_kit/lab_brief.md`, `curricula/arduino_kit/roster.md`, `curricula/arduino_kit/teacher_framework.md`, `curricula/arduino_kit/teacher_audit.md` | project scope and teaching context |
 | `meta_prompt/pedagogy.v1.md`, `docs/how_it_works.md` | why each pedagogy field exists; how the machine fits together |
 
 ### Retained contracts
@@ -87,19 +94,34 @@ logger emits `v2`-valid records and a selector emits `v2`-valid decisions.
 | `schemas/execution_log.schema.v1.json` | validate execution logs already accepted under v1 |
 | `schemas/routing_decision.schema.v1.json` | validate routing decisions already accepted under v1 |
 
-Two reads reach outside `CREATOR`, both declared and bounded: `~/.codex/config.toml`
-determines the sandbox policy in `policy/routes.v1.yaml`, and `RESEARCH` fetches
-manufacturer datasheets over the network. Nothing else outside `CREATOR` is read.
+Three reads reach outside `CREATOR`, all declared and bounded: `~/.codex/config.toml`
+determines the sandbox policy in `policy/routes.v1.yaml`; `RESEARCH` fetches
+manufacturer datasheets over the network; and `OUTPUT_ROOT` is read to evaluate the
+startup precondition and, on `--resume`, to re-read this run's own checkpoints.
+Nothing else outside `CREATOR` is read, and nothing outside `V7` is written.
 
 ## Precedence
 
 When sources disagree, this order settles it — always, and without averaging:
 
 1. `policy/calibration.v1.yaml` — the premises
-2. `curricula/arduino_kit/arduino_kit_curriculum.v4.yaml` — which labs exist
-3. `schemas/` — the shapes those must take
-4. this prompt
-5. prose documents in `curricula/` and `docs/`
+2. `curricula/arduino_kit/kit_calibration.v1.yaml` — that kit's supplies and evidence
+3. `curricula/arduino_kit/arduino_kit_curriculum.v4.yaml` — which labs exist
+4. `schemas/` — the shapes those must take
+5. the remaining `policy/` manifests — checks, controller, limits, routes, failures,
+   deferred, and `policy/routing/`
+6. this prompt
+7. `meta_prompt/component_lab_template.v1.md` — governs only where the schema has no
+   field: tone, child-language, the safety baseline in sentences
+8. `meta_prompt/pedagogy.v1.md` — why a pedagogy field exists, never what its value is
+9. the prose documents `curricula/arduino_kit/lab_brief.md`,
+   `curricula/arduino_kit/roster.md`, `curricula/arduino_kit/teacher_framework.md`
+   and `curricula/arduino_kit/teacher_audit.md`
+10. `docs/` and `readme.md` — orientation only, never a constraint
+
+Every source is ranked. An unranked document is one whose contradictions get settled
+by whoever reads it last, which is how four prose files came to promise something
+fourteen labs contradict.
 
 A prose document that contradicts calibration loses, **and the divergence is
 recorded as a defect in `remediation_report.md`** rather than resolved silently.
@@ -213,8 +235,12 @@ each is discharged no document or report may state that the selector is enforced
 
 ## Proving it
 
-Six gates, in order. Record every result with a timestamp and a category label:
-`logger`, `static`, `deterministic`, `simulated`, `live-capability`, `live-golden`.
+Six gates, in order. Record every result with a timestamp and a category label. Five
+labels are the stage vocabulary `policy/checks.v1.yaml` owns — `logger`, `static`,
+`deterministic`, `live-capability`, `golden` — and are never spelled differently here.
+The sixth, `simulated`, is this prompt's own: it labels runs driven by fake workers,
+and no check id carries it, because a simulated result is evidence about the
+controller and never evidence about a lab.
 
 | # | Gate | Check ids | Proves |
 |---|---|---|---|
@@ -255,7 +281,7 @@ an id cannot be allocated or an append cannot be proven, the run stops as
 `META_SYSTEM_FAILURE`. That is failure B1, which recorded an entire previous run
 through a logger nobody had tested.
 
-`meta_execution_state.json` records the log path and hash, completed action count,
+`V7/test_results/meta_execution_state.json` records the log path and hash, completed action count,
 failure count, unpaired-start ids, last action id and last completion id.
 
 ## Convergence and drift
@@ -291,7 +317,7 @@ of God.
 ## Deliverables
 
 ```text
-templates_v7/
+V7/                                          = OUTPUT_ROOT/templates_v7
   component_lab_orchestrator_prompt.v7.md    concise runtime contract; delegates to controller and workers
   readme.md                                  derivation, authority, test categories, preflight, run/resume commands
   remediation_report.md                      every id in failures.v1.yaml → correction, proving test, result, residual risk
@@ -306,20 +332,31 @@ decomposition in `remediation_report.md`.
 
 ## Execution
 
-1. Build the logger. Pass its proving tests before creating any other artifact.
-2. Validate every input against its schema. Read no value before it validates.
-3. Inspect `plans/legacy_v3/` and write failure→fix→test traceability for every id in
+1. Resolve `CREATOR` from this file's location and read `--output-root`. Refuse to
+   start if it was not supplied.
+2. Check the startup precondition: if `V7` exists, stop as `META_SYSTEM_FAILURE` with
+   failure id `PRECONDITION-OUTPUT-ROOT-EXISTS`, before any artifact and before any
+   model call.
+3. Create `V7` and `V7/test_results/`, and nothing else. This is the only write that
+   precedes the logger, and it exists because the logger must have somewhere legal to
+   append: authorized writes are confined to `V7`, so `V7` has to exist before the
+   first record can be written. Creating it is not logged, because the log does not
+   exist yet; it is reconstructible from the directory's own timestamp.
+4. Build the logger. Pass its proving tests before creating any other artifact. From
+   this point on every action is logged before it is taken.
+5. Validate every manifest against its schema. Read no value before it validates.
+6. Write the v7 meta state; record authorized roots.
+7. Inspect `plans/legacy_v3/` and write failure→fix→test traceability for every id in
    `policy/failures.v1.yaml`.
-4. Design v7: canonical data, controller, runtime prompt, worker contracts.
-5. Create `V7` and its meta state; record authorized roots.
-6. Implement controller, prompts, schemas, selector, renderers, audits, reports.
-7. Run gates 1–3.
-8. Run gate 4 — one real call per route.
-9. Run gate 5 — golden L01, including forced interruption, resume, and page
-   inspection of the shipped PDF.
-10. Drift-audit before and after implementation, tests and revisions.
-11. Revise only affected artifacts until a terminal state.
-12. Write `remediation_report.md` and the full-run command, only if earned.
+8. Design v7: canonical data, controller, runtime prompt, worker contracts.
+9. Implement controller, prompts, schemas, selector, renderers, audits, reports.
+10. Run gates 1–3.
+11. Run gate 4 — one real call per route.
+12. Run gate 5 — golden L01, including forced interruption, resume, and page
+    inspection of the shipped PDF.
+13. Drift-audit before and after implementation, tests and revisions.
+14. Revise only affected artifacts until a terminal state.
+15. Write `V7/remediation_report.md` and the full-run command, only if earned.
 
 Log the planned action before making any change. Use conservative documented
 defaults; do not ask the user for ordinary implementation decisions. Stop before
@@ -333,7 +370,11 @@ exceeding any limit and preserve the safest resumable checkpoint.
 - gates 0–5 passing, with resume and PDF inspection proven;
 - every check in `policy/checks.v1.yaml` executed, and every check id in every
   result backed by an executed assertion;
-- every fixture marked `reject` actually rejected;
+- every fixture marked `reject` in `policy/checks.v1.yaml` actually rejected, and
+  every id declaring `fixture_expectation: reject` that names no fixture reported by
+  id in `remediation_report.md` as advertised-but-unfixtured. Four do today:
+  `LAB-BLOOM-DEPTH`, `LAB-POE-ORDER`, `LAB-CURRENT-MARGIN`, `LAB-VALUE-SOURCED`.
+  Silence about them would be the misreporting gate B3 exists to catch;
 - golden L01 validating against `schemas/lab.schema.v3.json`, all seven blocks;
 - exactly twelve isolated reviewer invocations, with isolation proven structurally;
 - every visual receipt hash resolving to an asset embedded in the accepted PDF;
@@ -355,7 +396,9 @@ every gate result; the golden PDF and resume outcome; the log path, hash, `ACT`/
 correction; meta-revision and resource totals; unresolved failures and the safest
 restart point; and the full-run command only on `META_ACCEPTED`.
 
-`ACT` entries record completed actions and `EXEC` entries record failures — do not
-present the failure records as a general success log. Never claim the curriculum is
+An `ACT` is appended when an action **starts** and again when it **ends**, so a
+started record is not a completed one; an `EXEC` records a failure and closes the
+start it terminates. Report the pairing, not the raw count, and do not present the
+failure records as a general success log. Never claim the curriculum is
 complete unless every lab has been live-generated and accepted and the final
 audited workbook exists.
