@@ -169,7 +169,7 @@
   #nbox(col2x, boxtop, col2w, col2h, [
     #box(width: col2w - 14mm)[
       #align(center)[
-        #text(weight: "bold", size: 11.5pt, fill: build-c)[meta\_curriculum\_builder.prompt.v6.md + assets/]
+        #text(weight: "bold", size: 11.5pt, fill: build-c)[meta\_curriculum\_builder.prompt.v6.md + 6 section assets]
         #v(2mm)
         #text(size: 9.5pt, style: "italic", fill: build-c)["builds the factory, never the product"]
         #v(2mm)
@@ -480,5 +480,5 @@
 
 #v(6mm)
 #align(right)[
-  #text(size: 7.2pt, fill: grey-lt)[curriculum\_creator  ·  meta prompt v5  ·  lab schema v3]
+  #text(size: 7.2pt, fill: grey-lt)[curriculum\_creator  ·  meta prompt v6  ·  lab schema v3]
 ]

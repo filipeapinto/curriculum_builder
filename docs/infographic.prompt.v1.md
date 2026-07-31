@@ -29,7 +29,7 @@ can I walk away?*
 INPUTS                          META-PROMPT                    OUTPUT
 curriculum manifest ← defines WHICH labs and HOW MANY                                   templates_v7/
 lab.schema.v3.json         →    meta_curriculum_builder   →      controller (python)
-assets/ (6 section files)         .prompt.v6.md + assets         worker prompts
+component_lab_template            .prompt.v6.md + 6 assets       worker prompts
 policy/routing/ (model policy)                                   schemas
 legacy v3 generator (evidence)   "builds the factory,             tests
                                   never the product"              golden L01
@@ -117,7 +117,7 @@ Close the panel with the three, and only three, ways a run can end:
   (dashed or coloured differently, labelled).
 - Include a one-line subtitle under the main title: *"One prompt builds the
   generator. The generator builds every lab the curriculum names. Nobody watches."*
-- Bottom-right, small: `curriculum_creator · meta prompt v5 · lab schema v3`
+- Bottom-right, small: `curriculum_creator · meta prompt v6 · lab schema v3`
 
 ## Acceptance
 
