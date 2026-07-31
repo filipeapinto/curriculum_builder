@@ -77,6 +77,15 @@ A `companion` is not part of this contract. It is an input, read where a section
 asset says so and ranked where `meta_prompt/assets/inputs.v1.md` ranks it — below
 every section, above the project prose.
 
+Every `section` asset opens with a banner naming this prompt and listing the `##`
+headings it owns. The table is this file's claim about that asset; the banner is the
+asset's own. **Both must hold, and they are checked against each other**: a file
+declared `section` that carries no banner, a `companion` that carries one, or a
+heading claimed and not stated is the same defect as an unresolved row, and stops
+the run the same way — check id `PRECONDITION-ASSETS-RESOLVE`. One flipped cell
+would otherwise drop a rule out of this contract while every check still reported a
+pass.
+
 The `Carries` column is a map, never a rule: what a companion may govern is fixed
 only by the precedence list in `meta_prompt/assets/inputs.v1.md`.
 
@@ -90,8 +99,10 @@ not the contract you are reading.
 
 1. Resolve `CREATOR` from this file's location and read `--output-root`. Refuse to
    start if it was not supplied.
-2. Read every `section` asset in the table above, in the order given. A run that
-   begins before them is executing a fragment of its own contract.
+2. Check the asset table: every row resolves, every `section` carries its banner,
+   every banner's headings are stated. Then read every `section` asset in the order
+   the table gives. A run that begins before them is executing a fragment of its own
+   contract, and one that skips this check cannot know it holds the whole.
 3. Check the startup precondition: if `V7` exists, stop as `META_SYSTEM_FAILURE` with
    failure id `PRECONDITION-OUTPUT-ROOT-EXISTS`, before any artifact and before any
    model call.
@@ -100,7 +111,7 @@ not the contract you are reading.
    append: authorized writes are confined to `V7`, so `V7` has to exist before the
    first record can be written. Creating it is not logged, because the log does not
    exist yet; it is reconstructible from the directory's own timestamp.
-5. Build the logger. Pass its proving tests before creating any other artifact. From
+5. Build the logger and run gate 0. Pass it before creating any other artifact. From
    this point on every action is logged before it is taken.
 6. Validate every manifest against its schema. Read no value before it validates.
 7. Write the v7 meta state; record authorized roots, and record the prompt hash over

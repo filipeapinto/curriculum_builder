@@ -299,6 +299,11 @@ def check_no_dangling(text: str) -> list[str]:
     defined = set(boundary(text)) | {"CREATOR", "RESEARCH"}
     body = text.split("```", 2)[-1]
     problems = []
+    if "`RESEARCH`" in body and RESEARCH_DEFINED not in text:
+        problems.append(
+            "dangling: `RESEARCH` is used as a capability and the contract never "
+            "defines it; it was only ever defined in this checker's own whitelist"
+        )
     for name in sorted(set(re.findall(r"`([A-Z][A-Z0-9_]{2,})`", body))):
         if name in defined:
             continue
@@ -344,13 +349,16 @@ def check_portability(_text: str = "") -> list[str]:
 
 ASSETS_BLOCK = re.compile(r"^## Assets\s*$(.*?)(?=^## )", re.M | re.S)
 TABLE_ROW = re.compile(r"^\|(?P<first>[^|]*)\|(?P<kind>[^|]*)\|", re.M)
-HEADING = re.compile(r"^(##+)\s+(.*?)\s*$", re.M)
+HEADING = re.compile(r"^(#+)\s+(.*?)\s*$", re.M)
 # Each section asset names the headings it owns, so the file itself says what it
 # is and what it carries. Companions never carry it.
-SECTION_BANNER = re.compile(
-    r"<!--\s*section asset of [^\n]*\n\s*·\s*owns:\s*(.*?)\s*-->", re.S)
+SECTION_BANNER = re.compile(r"<!--\s*section asset of .*?·\s*owns:\s*(.*?)\s*-->", re.S)
 
 KINDS = {source.SECTION, source.COMPANION}
+
+# `RESEARCH` is a capability, not a path, so it cannot be a boundary line — but a
+# capability the contract never defines is a word the reader has to guess at.
+RESEARCH_DEFINED = "`RESEARCH` — the network capability"
 
 
 def read(path: Path) -> str:
@@ -444,6 +452,7 @@ def check_assets(_text: str = "") -> list[str]:
             "it has been copied"
         )
 
+    problems += source.table_problems(prompt_text)
     problems += banner_problems(rows)
     return problems
 
@@ -469,7 +478,13 @@ def banner_problems(rows: list[tuple[str, str]]) -> list[str]:
         path = REPO / name
         if not path.is_file():
             continue  # already reported as unresolved
-        banner = SECTION_BANNER.search(read(path))
+        banners = SECTION_BANNER.findall(read(path))
+        if len(banners) > 1:
+            problems.append(
+                f"assets: {name} carries {len(banners)} section banners; only the first is "
+                "read, so the others are claims about the file that nothing checks"
+            )
+        banner = banners[0] if banners else None
         if kind == source.SECTION and not banner:
             problems.append(
                 f"assets: {name} is declared section but carries no section banner, so "
@@ -483,12 +498,26 @@ def banner_problems(rows: list[tuple[str, str]]) -> list[str]:
             )
         if not banner:
             continue
-        declared = {h.strip() for h in banner.group(1).split(",") if h.strip()}
+        declared = {h.strip() for h in banner.split(",") if h.strip()}
         present = {f"{hashes} {title}" for hashes, title in HEADING.findall(read(path))}
+        expected = set(source.EXPECTED_HEADINGS.get(name, ()))
+        # Three claims, not one: the file's headings, the file's own banner, and the
+        # shape held outside the contract. A banner edited to match a gutted file
+        # satisfies the first two and fails the third, which is the point.
         for missing in sorted(declared - present):
             problems.append(f"assets: {name} claims to own {missing!r} and does not state it")
         for extra in sorted(present - declared):
             problems.append(f"assets: {name} states {extra!r}, which its banner does not claim")
+        for dropped in sorted(expected - declared):
+            problems.append(
+                f"assets: {name} is expected to own {dropped!r} and its banner no longer "
+                "claims it — a banner edited to match a gutted file certifies itself"
+            )
+        for added in sorted(declared - expected):
+            problems.append(
+                f"assets: {name} claims to own {added!r}, which is not part of the "
+                "contract's shape"
+            )
     return problems
 
 

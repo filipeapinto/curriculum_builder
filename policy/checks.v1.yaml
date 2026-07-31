@@ -395,6 +395,19 @@ preconditions:
       Report the occupied path and the next free version name. Never auto-increment,
       never merge, never overwrite — choosing which evidence to keep is a human
       decision an unattended run must not make.
+  - id: PRECONDITION-ASSETS-RESOLVE
+    owner: meta_prompt/meta_curriculum_builder.prompt.v6.md
+    method: execution
+    deferred: RT-5
+    asserts: >-
+      every row of the meta prompt's asset table resolves, every asset it declares a
+      section carries the banner naming this prompt, every companion carries none, and
+      every heading a banner claims is stated in the file claiming it
+    on_failure: >-
+      stop as META_SYSTEM_FAILURE before any artifact or model call. The contract read
+      is not the contract written: a section that has left the composition takes its
+      rules with it, and an unattended run cannot tell a shorter contract from a
+      satisfied one.
   - id: ROUTE-PROVEN
     owner: policy/routes.v1.yaml
     method: execution

@@ -47,11 +47,14 @@ logger emits `v2`-valid records and a selector emits `v2`-valid decisions.
 | `schemas/routing_decision.schema.v1.json` | validate routing decisions already accepted under v1 |
 
 Three reads reach outside `CREATOR`, all declared and bounded: `~/.codex/config.toml`
-determines the sandbox policy in `policy/routes.v1.yaml`; `RESEARCH` — the network
-capability `policy/routes.v1.yaml` declares and gate 4 proves — fetches
+determines the sandbox policy in `policy/routes.v1.yaml`; `RESEARCH` fetches
 manufacturer datasheets over the network; and `OUTPUT_ROOT` is read to evaluate the
 startup precondition and, on `--resume`, to re-read this run's own checkpoints.
 Nothing else outside `CREATOR` is read, and nothing outside `V7` is written.
+
+`RESEARCH` — the network capability `policy/routes.v1.yaml` declares and gate 4
+proves by one real preflight call. It is named in this contract and nowhere
+defined as a path, because it is a capability and not a directory.
 
 ## Precedence
 
@@ -80,6 +83,11 @@ When sources disagree, this order settles it — always, and without averaging:
 Every source is ranked. An unranked document is one whose contradictions get settled
 by whoever reads it last, which is how four prose files came to promise something
 fourteen labs contradict.
+
+`meta_prompt/deprecated/` is not ranked because it is never read. It holds superseded
+versions of this contract, retained as history; each is a complete and contradicting
+set of instructions, so a run that opens one is taking orders from a document this
+contract replaced.
 
 A prose document that contradicts calibration loses, **and the divergence is
 recorded as a defect in `remediation_report.md`** rather than resolved silently.

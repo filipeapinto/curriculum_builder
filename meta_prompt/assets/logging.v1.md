@@ -35,7 +35,9 @@ measurable improvement, drift result, next action, terminal state, log totals.
 The prompt hash covers this contract whole — `meta_prompt/meta_curriculum_builder.prompt.v6.md`
 and every `section` asset it names, hashed in the order the asset table gives. A
 hash over the short file alone would let a rule change under a run that reports
-itself unchanged.
+itself unchanged. It proves this run read one contract from start to finish; it does
+not prove the contract handed over was the intended one, because nothing here holds
+a baseline to compare it against.
 
 ```text
 run gate → record failures → authorize affected artifacts
@@ -52,8 +54,10 @@ Three terminal states, no others:
 
 - `META_ACCEPTED` — every release gate and drift audit passes; golden L01 accepted.
 - `META_SYSTEM_FAILURE` — a required capability stays unavailable after bounded
-  retry, with evidence; or the log cannot be written; or a startup precondition
-  needs a human decision.
+  retry, with evidence; or the log cannot be written; or an asset this contract
+  names does not resolve or disagrees with its banner
+  (`PRECONDITION-ASSETS-RESOLVE`); or a startup precondition needs a human
+  decision.
 - `META_DRIFT_STOP` — scope drift or bounded non-convergence.
 
 Implementation, prompt, schema, test, renderer, visual and layout defects require
