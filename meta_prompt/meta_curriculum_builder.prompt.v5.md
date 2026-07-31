@@ -59,7 +59,8 @@ from it; the prose inputs have no schema and cannot have one — read them as pr
 
 | Input | Role |
 |---|---|
-| `policy/calibration.v1.yaml` | **the premises** — learner age band, the pedagogy caps derived from it, permitted supplies, safety floor |
+| `policy/calibration.v1.yaml` | **the engine-wide premises** — learner age band, the pedagogy caps derived from it, safety floor. Never the supplies: those belong to one kit |
+| `curricula/arduino_kit/kit_calibration.v1.yaml` | **that kit's premises** — permitted supplies, power envelope, the evidence each is verified against. Outranked by the engine-wide premises, and outranks the curriculum |
 | `curricula/arduino_kit/arduino_kit_curriculum.v4.yaml` | the curriculum — which labs exist, in order, and **how many** |
 | `policy/limits.v1.yaml` | every resource limit, with its numeric default and flag |
 | `policy/routes.v1.yaml` | every external capability, with the exact proven invocation |
@@ -67,7 +68,7 @@ from it; the prose inputs have no schema and cannot have one — read them as pr
 | `policy/failures.v1.yaml` | A1–A10 and B1–B4, with diagnoses and required corrections |
 | `policy/controller.v1.yaml` | states, transitions, ownership, CLI surface |
 | `policy/deferred.v1.yaml` | RT-1…RT-6 — the obligations this contract states but nothing yet executes |
-| `schemas/curriculum.schema.v4.json`, `schemas/lab.schema.v3.json`, `schemas/calibration.schema.v1.json` | the shapes for the curriculum, a finished lab, and calibration |
+| `schemas/curriculum.schema.v4.json`, `schemas/lab.schema.v3.json`, `schemas/calibration.schema.v1.json`, `schemas/kit_calibration.schema.v1.json` | the shapes for the curriculum, a finished lab, and the two calibrations |
 | `schemas/routing_decision.schema.v2.json` | the routing-decision record format — ten required fields, decided and executed |
 | `schemas/execution_log.schema.v2.json` | the execution-log record format — typed `action_kind`, conditional `decision_id` |
 | `meta_prompt/component_lab_template.v1.md` | lab structure in prose — tone, child-language rules, safety baseline |
