@@ -53,7 +53,10 @@ deferred:
     acceptance_criterion: >-
       a call whose executed_model differs from its decided_model is rejected at
       runtime, not merely by a gate reading a static fixture
-    blocked_by: no selector implementation
+    blocked_by: >-
+      no selector implementation. The second blocker is cleared: until 2026-07-31 the
+      worker route in policy/routes.v1.yaml could not express a model at all, so no
+      selector could have routed through it whatever its quality.
     promotes_gate: FR-P2-BYPASS-DECLARED
     promoted_id: FR-P2-BYPASS-ENFORCED
 

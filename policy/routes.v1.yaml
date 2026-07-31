@@ -6,7 +6,10 @@
 # it returned. Preflight repeats each one for real before generation starts; a
 # route that cannot be proven is removed, not assumed.
 #
-# Every route in this file was proven by real execution on 2026-07-29 in ROOT.
+# Every route in this file was proven by real execution on 2026-07-29 in ROOT. The
+# worker route was re-proven on 2026-07-31, when it gained the model and effort
+# parameters: its earlier proof established that codex ran, not that a routing
+# decision could reach it. Each proof carries the date it was executed.
 
 routes_version: '1.0'
 
@@ -25,19 +28,48 @@ routes:
 
   - id: worker
     purpose: every bounded model call — authoring, review, acceptance
-    command: codex exec -s workspace-write --skip-git-repo-check
+    command: 'codex exec -s workspace-write --skip-git-repo-check -m <decided_model> -c model_reasoning_effort=<decided_effort>'
+    parameters:
+      note: >-
+        This route owns the channel a routing decision travels down, never the value
+        it carries: policy/routing/ decides which model serves which task, and a
+        literal model id appears in this file only inside proof, which records what
+        was actually executed. Before these two slots existed the command could not
+        express a model at all, so executed_model could equal decided_model only by
+        coincidence — SEL-EXECUTED-MATCHES-DECIDED was unprovable by construction,
+        and the selector deferred under RT-3 had nowhere to send its result.
+      decided_model:
+        flag: -m
+        supplied_by: the routing decision's decided_model, per schemas/routing_decision.schema.v2.json
+      decided_effort:
+        flag: -c model_reasoning_effort=
+        supplied_by: the routing decision's reasoning_effort
     proof:
-      executed: 'codex exec -s workspace-write --skip-git-repo-check "Reply with exactly: ROUTE_OK"'
-      returned: ROUTE_OK
+      executed_on: '2026-07-31'
+      executed: 'codex exec -s workspace-write --skip-git-repo-check -m gpt-5.6-luna -c model_reasoning_effort="low" "Reply with exactly: ROUTE_OK"'
+      returned: >-
+        ROUTE_OK, with the session banner reporting "model: gpt-5.6-luna" and
+        "reasoning effort: low" — both parameters reached the runtime and overrode the
+        config.toml defaults, which is the capability being proven, not the reply.
     failure_without_flags:
       command: codex exec -s workspace-write
       error: 'Not inside a trusted directory and --skip-git-repo-check was not specified.'
       note: fails before any model call, so a missing flag looks like a model outage
+    unavailable_alternatives:
+      omitting_the_parameters:
+        effect: >-
+          the call silently inherits model and model_reasoning_effort from
+          ~/.codex/config.toml and runs at that setting whatever the task, which is
+          the unbounded-escalation failure SEL-ESCALATION-BOUNDED exists to catch
+        note: not an alternative, recorded so the silent path is named
     constraints:
       - '--skip-git-repo-check is required, not optional.'
       - Record the sandbox policy actually used in the route record, beside model and effort.
       - 'Never use --dangerously-bypass-approvals-and-sandbox.'
       - Do not widen the policy beyond what the authorized roots require.
+      - >-
+        Both parameters are required on every call. A call that omits them inherits a
+        default no decision chose, and its routing record cannot be trusted.
 
   - id: pdf
     purpose: render a lab or the workbook to PDF
