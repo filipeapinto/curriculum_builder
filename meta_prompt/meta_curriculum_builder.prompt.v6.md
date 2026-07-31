@@ -37,10 +37,12 @@ outside `CREATOR`: the inputs are immutable and a run writes nothing into them.
 Refusing to guess is the point — a default would eventually be a directory holding
 someone else's evidence. `policy/controller.v1.yaml` already declares the flag.
 
-Write only to `V7`. Everything else is immutable, `CREATOR` included. The v3, v4 and
-v5 attempts are not named here as paths: they may not exist at any location, and
-naming a directory that is not there protects nothing. They are never read, and every
-diagnosis drawn from them is quoted in full in `policy/failures.v1.yaml`.
+Write only to `V7`. Everything else is immutable, `CREATOR` included. The generated
+`templates_v4/` and `templates_v5/` attempts are not named here as paths: they may
+not exist at any location, and naming a directory that is not there protects nothing.
+They are never read, and every diagnosis drawn from them is quoted in full in
+`policy/failures.v1.yaml`. The v3 generator is different — it survives as `LEGACY`,
+an authorized input, and step 8 requires citing it by path and line.
 
 All names `V7` creates are lowercase, versioned `.vN` where versioned at all.
 
@@ -77,9 +79,10 @@ A `companion` is not part of this contract. It is an input, read where a section
 asset says so and ranked where `meta_prompt/assets/inputs.v1.md` ranks it — below
 every section, above the project prose.
 
-Every `section` asset opens with a banner naming this prompt and listing the `##`
-headings it owns. The table is this file's claim about that asset; the banner is the
-asset's own. **Both must hold, and they are checked against each other**: a file
+Every `section` asset carries a banner naming this prompt and listing the headings it
+owns, at whatever level they are written. The table is this file's claim about that
+asset; the banner is the asset's own. **Both must hold, and they are checked against
+each other**: a file
 declared `section` that carries no banner, a `companion` that carries one, or a
 heading claimed and not stated is the same defect as an unresolved row, and stops
 the run the same way — check id `PRECONDITION-ASSETS-RESOLVE`. One flipped cell
@@ -100,9 +103,12 @@ not the contract you are reading.
 1. Resolve `CREATOR` from this file's location and read `--output-root`. Refuse to
    start if it was not supplied.
 2. Check the asset table: every row resolves, every `section` carries its banner,
-   every banner's headings are stated. Then read every `section` asset in the order
-   the table gives. A run that begins before them is executing a fragment of its own
-   contract, and one that skips this check cannot know it holds the whole.
+   no `companion` carries one, and every heading a banner claims is stated in the
+   file claiming it. Then read every `section` asset in the order the table gives. A
+   run that begins before them is executing a fragment of its own contract, and one
+   that skips this check cannot know it holds the whole. This check runs before the
+   logger exists, so a stop here is reported and not logged; the contract it read is
+   reconstructible from the asset files themselves.
 3. Check the startup precondition: if `V7` exists, stop as `META_SYSTEM_FAILURE` with
    failure id `PRECONDITION-OUTPUT-ROOT-EXISTS`, before any artifact and before any
    model call.

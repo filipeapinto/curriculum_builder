@@ -38,7 +38,7 @@ ASSETS = REPO / ASSETS_REL
 
 # ``| `meta_prompt/assets/inputs.v1.md` | section | … |`` — the kind is a fixed word
 # in its own column, never inferred from the role text beside it.
-ASSET_ROW = re.compile(r"^\|\s*`([^`]+)`\s*\|\s*(section|companion)\s*\|", re.M)
+ASSET_ROW = re.compile(r"^ {0,3}\|\s*`([^`]+)`\s*\|\s*(section|companion)\s*\|", re.M)
 
 # The same rows read loosely — no backticks required, any word as the kind. The
 # composer must use the strict form (a path is a path), but a checker that reads
@@ -46,7 +46,7 @@ ASSET_ROW = re.compile(r"^\|\s*`([^`]+)`\s*\|\s*(section|companion)\s*\|", re.M)
 # readings must agree; ``table_problems`` is where that is asserted. Stripping two
 # backticks was enough to remove a whole section from the contract with every
 # check still green.
-ROW_ANY = re.compile(r"^\|(?P<first>[^|]*)\|(?P<kind>[^|]*)\|", re.M)
+ROW_ANY = re.compile(r"^ {0,3}\|(?P<first>[^|]*)\|(?P<kind>[^|]*)\|", re.M)
 
 SECTION = "section"
 COMPANION = "companion"
@@ -67,9 +67,20 @@ EXPECTED: tuple[tuple[str, str, tuple[str, ...]], ...] = (
     ("meta_prompt/assets/logging.v1.md", SECTION,
      ("## The action log", "## Convergence and drift")),
     ("meta_prompt/assets/deliverables.v1.md", SECTION, ("## Deliverables",)),
-    ("meta_prompt/assets/component_lab_template.v1.md", COMPANION, ()),
-    ("meta_prompt/assets/pedagogy.v1.md", COMPANION, ()),
-    ("meta_prompt/assets/model_selector_prompt.v1.md", COMPANION, ()),
+    # A companion carries no banner — it is not contract text — so what is pinned
+    # here is its top-level structure, the floor below which it has been gutted
+    # rather than edited. Its `###` detail is free to change.
+    ("meta_prompt/assets/component_lab_template.v1.md", COMPANION,
+     ("## Purpose", "## Required lab structure", "## Visual standard",
+      "## Child-language rules", "## Safety baseline")),
+    ("meta_prompt/assets/pedagogy.v1.md", COMPANION,
+     ("## The spine: 5E instructional model", "## Inside Explore: Predict–Observe–Explain",
+      "## Misconceptions: conceptual change", "## Prior knowledge and retrieval practice",
+      "## Vocabulary and cognitive load", "## Objectives and success criteria",
+      "## Scaffolding and fading", "## Dual coding", "## Where pedagogy meets safety",
+      "## What the schema deliberately does not encode")),
+    ("meta_prompt/assets/model_selector_prompt.v1.md", COMPANION,
+     ("## Role", "## Read first", "## Input", "## Procedure", "## Output constraints")),
 )
 
 EXPECTED_HEADINGS = {path: headings for path, _, headings in EXPECTED}
@@ -148,3 +159,55 @@ def compose(read=None) -> str:
     """The composed contract. Sections are joined with a blank line so a heading
     always starts a line, which is what every section-slicing reader depends on."""
     return "\n".join(_read(path, read) for path in sources(read))
+
+
+PLAN = REPO / "plans" / "folder_refactoring" / "folder_refactoring.plan.v6.md"
+
+
+def plan_assets(read=None) -> list[tuple[str, str]]:
+    """The assets §4's target tree names under ``meta_prompt/assets/``, with the kind
+    each annotation declares — ``section: …`` or ``companion: …``."""
+    text = _read(PLAN, read)
+    rows = []
+    inside = False
+    for line in text.splitlines():
+        if re.search(r"├── assets/", line):
+            inside = True
+            continue
+        if inside:
+            match = re.search(r"[├└]── ([A-Za-z0-9_.-]+\.md)\s+(\w+):", line)
+            if not match:
+                if re.search(r"[├└]── ", line) and "│   │" not in line:
+                    break  # left the assets/ block
+                continue
+            rows.append((f"{ASSETS_REL}/{match.group(1)}", match.group(2)))
+    return rows
+
+
+def shape_problems(read=None) -> list[str]:
+    """``EXPECTED`` against the plan's tree, both directions.
+
+    Without this the shape is self-certifying: whoever deletes a section asset and
+    its table row can delete its line here in the same edit, and every check stays
+    green. The plan is maintained for a different purpose by a different gate, so
+    agreeing with it is evidence rather than restatement.
+    """
+    expected = [(path, kind) for path, kind, _ in EXPECTED]
+    declared = plan_assets(read)
+    problems = []
+    if not declared:
+        return ["assets: the plan's §4 tree names no assets, so the contract's shape rests "
+                "on nothing but its own word"]
+    for row in expected:
+        if row not in declared:
+            problems.append(
+                f"assets: {row[0]} ({row[1]}) is part of the contract's shape and the plan's "
+                f"§4 tree does not name it as such"
+            )
+    for row in declared:
+        if row not in expected:
+            problems.append(
+                f"assets: the plan's §4 tree names {row[0]} ({row[1]}) and the contract's "
+                "shape does not"
+            )
+    return problems

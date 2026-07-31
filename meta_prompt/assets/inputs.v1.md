@@ -33,6 +33,16 @@ from it; the prose inputs have no schema and cannot have one — read them as pr
 | `meta_prompt/assets/pedagogy.v1.md`, `docs/how_it_works.md` | why each pedagogy field exists; how the machine fits together |
 | `meta_prompt/assets/model_selector_prompt.v1.md` | the selector's own prompt, read by the selector call and by nothing else |
 
+Three reads reach outside `CREATOR`, all declared and bounded: `~/.codex/config.toml`
+determines the sandbox policy in `policy/routes.v1.yaml`; `RESEARCH` fetches
+manufacturer datasheets over the network; and `OUTPUT_ROOT` is read to evaluate the
+startup precondition and, on `--resume`, to re-read this run's own checkpoints.
+Nothing else outside `CREATOR` is read, and nothing outside `V7` is written.
+
+`RESEARCH` — the network capability `policy/routes.v1.yaml` declares and gate 4
+proves by one real preflight call. It is named in this contract and nowhere
+defined as a path, because it is a capability and not a directory.
+
 ### Retained contracts
 
 These are **not** authorized inputs. Each is a superseded version kept so that work
@@ -45,16 +55,6 @@ logger emits `v2`-valid records and a selector emits `v2`-valid decisions.
 |---|---|
 | `schemas/execution_log.schema.v1.json` | validate execution logs already accepted under v1 |
 | `schemas/routing_decision.schema.v1.json` | validate routing decisions already accepted under v1 |
-
-Three reads reach outside `CREATOR`, all declared and bounded: `~/.codex/config.toml`
-determines the sandbox policy in `policy/routes.v1.yaml`; `RESEARCH` fetches
-manufacturer datasheets over the network; and `OUTPUT_ROOT` is read to evaluate the
-startup precondition and, on `--resume`, to re-read this run's own checkpoints.
-Nothing else outside `CREATOR` is read, and nothing outside `V7` is written.
-
-`RESEARCH` — the network capability `policy/routes.v1.yaml` declares and gate 4
-proves by one real preflight call. It is named in this contract and nowhere
-defined as a path, because it is a capability and not a directory.
 
 ## Precedence
 
@@ -80,7 +80,7 @@ When sources disagree, this order settles it — always, and without averaging:
    and `curricula/arduino_kit/teacher_audit.md`
 11. `docs/` and `readme.md` — orientation only, never a constraint
 
-Every source is ranked. An unranked document is one whose contradictions get settled
+Every source that is read is ranked. An unranked document is one whose contradictions get settled
 by whoever reads it last, which is how four prose files came to promise something
 fourteen labs contradict.
 

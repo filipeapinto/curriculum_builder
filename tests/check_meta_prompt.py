@@ -24,19 +24,36 @@ This checker asks only that question, in six parts:
   5. **portability**  no absolute path is hard-coded in any source of the contract —
                       any filesystem root, not just /Users, and Windows drives.
   6. **assets**       the v6 split is honest: every asset row resolves, no file in
-                      `meta_prompt/assets/` is unowned by the table, no `##` heading
-                      is owned twice, and the prompt is smaller than the sections it
-                      binds. Without this the split becomes a way to *pass* — move a
-                      rule into an unlisted file and every other check stops seeing
-                      it while still reporting a full pass.
+                      `meta_prompt/assets/` is unowned by the table, no heading is
+                      owned twice, the prompt is smaller than the sections it binds,
+                      and four claims about the contract's shape agree — the table
+                      read strictly, the table read loosely, each section's own
+                      banner, and `EXPECTED` in `tests/meta_prompt_source.py`, which
+                      is itself checked against the plan's §4 tree. Without this the
+                      split becomes a way to *pass*: move a rule into an unlisted
+                      file, or flip one `section` cell to `companion`, and every
+                      other check stops seeing it while still reporting a full pass.
 
 Checks 1-5 read the **composed contract**: the prompt plus its section assets, as
 `tests/meta_prompt_source.py` composes them. Reading the short v6 file alone would
 report 5/5 on a document with most of its rules elsewhere.
 
-Mutation-tested. What it still cannot see is semantic: it would pass a contract whose
-paths all resolve and whose instructions contradict each other. Checks 1-6 are
-mechanical properties, and "6/6" is a statement about those six and nothing wider.
+Mutation-tested, three rounds, each round attacking the previous round's fix. What
+"6/6" means is narrow, and these are the things it does **not** say:
+
+  * **Prose under a heading this contract still declares is unchecked.** A section
+    can keep every heading and lose the rules beneath them. Only a baseline digest
+    of the composed contract would catch that, and none is kept; the run's own
+    prompt hash proves one run read one contract start to finish, not that the
+    contract handed over was the intended one.
+  * **A heading can be removed by editing three places at once** — the asset, its
+    banner, and `EXPECTED` here. The plan's §4 tree pins *which* assets exist, their
+    kinds and their order, so losing a whole asset takes a fourth edit in a file
+    maintained by a different gate; it does not pin headings. Any expectation that
+    lives in the repository can be edited by whoever edits what it describes. Past
+    that point the record is git history and review, not this checker.
+  * **Nothing here reads meaning.** A contract whose paths resolve and whose
+    instructions contradict each other passes.
 
 It is deliberately NOT one of the FR- gates. `FR-P0-REGISTRY` requires
 `tests/gates/registry.py` to equal section 8 of the active folder-refactoring plan
@@ -348,7 +365,7 @@ def check_portability(_text: str = "") -> list[str]:
 # 6. assets — is the split honest?
 
 ASSETS_BLOCK = re.compile(r"^## Assets\s*$(.*?)(?=^## )", re.M | re.S)
-TABLE_ROW = re.compile(r"^\|(?P<first>[^|]*)\|(?P<kind>[^|]*)\|", re.M)
+TABLE_ROW = re.compile(r"^ {0,3}\|(?P<first>[^|]*)\|(?P<kind>[^|]*)\|", re.M)
 HEADING = re.compile(r"^(#+)\s+(.*?)\s*$", re.M)
 # Each section asset names the headings it owns, so the file itself says what it
 # is and what it carries. Companions never carry it.
@@ -360,9 +377,27 @@ KINDS = {source.SECTION, source.COMPANION}
 # capability the contract never defines is a word the reader has to guess at.
 RESEARCH_DEFINED = "`RESEARCH` — the network capability"
 
+# The contract has to keep saying what the checker enforces. Without this, the
+# § Assets paragraph and execution step 2 can both be deleted: the mechanism
+# survives, the instruction to the agent that must run it does not, and the
+# check id's owner claim in policy/checks.v1.yaml quietly becomes false.
+BANNER_RULE_STATED = ("`PRECONDITION-ASSETS-RESOLVE`", "banner")
+
 
 def read(path: Path) -> str:
     return path.read_text(encoding="utf-8")
+
+
+FENCE = re.compile(r"^```.*?^```", re.M | re.S)
+
+
+def headings_of(path: Path) -> set[str]:
+    """The headings a reader sees. Fenced blocks are stripped first: `## Routing`
+    inside ```text is a line of sample text, and a file whose only heading is
+    fenced renders with no sections while satisfying every regex that looks for
+    one."""
+    return {f"{hashes} {title}"
+            for hashes, title in HEADING.findall(FENCE.sub("", read(path)))}
 
 
 def declared_rows(prompt_text: str) -> list[tuple[str, str]]:
@@ -431,8 +466,8 @@ def check_assets(_text: str = "") -> list[str]:
     # One rule, one home: a heading owned by two sources is two authors again.
     owners: dict[str, list[str]] = {}
     for path in source.sources():
-        for _, title in HEADING.findall(read(path)):
-            owners.setdefault(title, []).append(str(path.relative_to(REPO)))
+        for heading in headings_of(path):
+            owners.setdefault(heading.split(" ", 1)[1], []).append(str(path.relative_to(REPO)))
     for title, where in sorted(owners.items()):
         if len(where) > 1:
             problems.append(f"assets: heading {title!r} is stated in {', '.join(where)}")
@@ -453,7 +488,14 @@ def check_assets(_text: str = "") -> list[str]:
         )
 
     problems += source.table_problems(prompt_text)
+    problems += source.shape_problems()
     problems += banner_problems(rows)
+    for phrase in BANNER_RULE_STATED:
+        if phrase not in prompt_text:
+            problems.append(
+                f"assets: the prompt does not state {phrase} anywhere, so the rule this "
+                "check enforces is no longer a rule the contract gives its reader"
+            )
     return problems
 
 
@@ -497,9 +539,16 @@ def banner_problems(rows: list[tuple[str, str]]) -> list[str]:
                 "contract while every check still passes"
             )
         if not banner:
+            missing = set(source.EXPECTED_HEADINGS.get(name, ())) - headings_of(path)
+            for gone in sorted(missing):
+                problems.append(
+                    f"assets: {name} no longer states {gone!r}; a companion is ranked below "
+                    "every section but it is still an authorized input, and gutting one is "
+                    "not editing it"
+                )
             continue
         declared = {h.strip() for h in banner.split(",") if h.strip()}
-        present = {f"{hashes} {title}" for hashes, title in HEADING.findall(read(path))}
+        present = headings_of(path)
         expected = set(source.EXPECTED_HEADINGS.get(name, ()))
         # Three claims, not one: the file's headings, the file's own banner, and the
         # shape held outside the contract. A banner edited to match a gutted file

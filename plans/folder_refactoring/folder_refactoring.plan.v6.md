@@ -212,7 +212,7 @@ curriculum_builder/
 │   │   ├── deliverables.v1.md                  section: what V7 must contain
 │   │   ├── component_lab_template.v1.md        companion: how to write a lab
 │   │   ├── pedagogy.v1.md                      companion: why the pedagogy fields exist ← root
-│   │   └── model_selector_prompt.v1.md         ← meta_prompt/routing/
+│   │   └── model_selector_prompt.v1.md         companion: the selector's own prompt ← meta_prompt/routing/
 │   └── deprecated/.gitkeep                     + the v5 prompt, superseded, read by nobody
 │
 ├── tests/                                      THE GATE HARNESS — see §7
