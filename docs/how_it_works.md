@@ -111,7 +111,7 @@ fails validation before a reviewer ever sees it.
 | Block | Holds | Enforces |
 |---|---|---|
 | `identity` | id, slug, kind, title, one-sentence component job | the component is the title; a problem is an application, never the organising principle |
-| `pedagogy` | objectives, prior knowledge, misconceptions, vocabulary, scaffolding, cognitive load | named evidence-based methods — see `meta_prompt/pedagogy.v1.md` |
+| `pedagogy` | objectives, prior knowledge, misconceptions, vocabulary, scaffolding, cognitive load | named evidence-based methods — see `meta_prompt/assets/pedagogy.v1.md` |
 | `sequence` | engage → explore → explain → elaborate → evaluate | the 5E model, with Predict-Observe-Explain inside Explore |
 | `electronics` | component spec, quantities taught, circuit, behaviour, ratings, failure modes, calculations, measurements | the electrical model — every value datasheet- or measurement-backed |
 | `content` | identification, build map, troubleshooting | physical assembly, generated from the circuit |
@@ -140,7 +140,7 @@ computed against the part's absolute maximum.
 `component_spec.parameters` and `ratings_and_limits` requires a `source`. "Vf is
 about 0.7 volts" fails validation; a datasheet citation passes.
 
-The prose companion, `prompts/component_lab_template.v1.md`, carries what a schema
+The prose companion, `meta_prompt/assets/component_lab_template.v1.md`, carries what a schema
 cannot: tone, child-language rules, when a metaphor helps, the safety baseline in
 sentences. The two are the same contract in two forms — the schema makes the
 structure checkable, the template makes it writable.

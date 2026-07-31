@@ -61,7 +61,7 @@ curriculum:
     asserts: the curriculum validates against schemas/curriculum.schema.v4.json
     stage: static
   - id: CUR-COUNT-DERIVED
-    owner: meta_prompt/meta_curriculum_builder.prompt.v5.md
+    owner: meta_prompt/assets/inputs.v1.md
     method: execution
     deferred: RT-5
     asserts: >-
@@ -93,7 +93,7 @@ curriculum:
     asserts: every lab declares its visual roles, or a documented reviewer finding omits one
     stage: static
   - id: CUR-BOUNDED-PROMPTS
-    owner: meta_prompt/meta_curriculum_builder.prompt.v5.md
+    owner: meta_prompt/assets/architecture.v1.md
     method: execution
     deferred: RT-5
     asserts: every worker prompt declares role, check ids, authorized paths and one output schema
@@ -189,13 +189,13 @@ lab_document:
 # ---------------------------------------------------------------------------
 pdf:
   - id: PDF-PAGE-COUNT
-    owner: meta_prompt/meta_curriculum_builder.prompt.v5.md
+    owner: meta_prompt/assets/proving.v1.md
     method: execution
     deferred: RT-5
     asserts: rendered page count equals the count recorded at assembly
     stage: golden
   - id: PDF-PAGE-NONBLANK
-    owner: meta_prompt/meta_curriculum_builder.prompt.v5.md
+    owner: meta_prompt/assets/proving.v1.md
     method: execution
     deferred: RT-5
     asserts: no page is uniform within 1% of a single colour
@@ -211,13 +211,13 @@ pdf:
     stage: golden
     note: corrects B4 — a receipt that does not resolve is a failed gate, not a warning
   - id: PDF-TEXT-LEGIBLE
-    owner: meta_prompt/meta_curriculum_builder.prompt.v5.md
+    owner: meta_prompt/assets/proving.v1.md
     method: execution
     deferred: RT-5
     asserts: body text renders at 9 pt or above effective at 200 dpi and is not clipped
     stage: golden
   - id: PDF-VISUAL-REVIEW
-    owner: meta_prompt/meta_curriculum_builder.prompt.v5.md
+    owner: meta_prompt/assets/proving.v1.md
     method: execution
     deferred: RT-5
     asserts: all four PDF reviewers pass against the rasterized pages
@@ -270,7 +270,7 @@ log:
 # ---------------------------------------------------------------------------
 reviewers:
   - id: REV-COUNT-TWELVE
-    owner: meta_prompt/meta_curriculum_builder.prompt.v5.md
+    owner: meta_prompt/assets/architecture.v1.md
     method: execution
     deferred: RT-5
     asserts: exactly twelve reviewer invocations per lab — 4 plan, 4 QA, 4 PDF
@@ -299,7 +299,7 @@ selector:
       schemas/routing_decision.schema.v2.json with all ten required fields, and its
       decided_model is a member of policy/routing/model_registry.v1.yaml
     stage: static
-    owner: meta_prompt/meta_curriculum_builder.prompt.v5.md
+    owner: meta_prompt/assets/routing.v1.md
     method: schema
     artifact: schemas/routing_decision.schema.v2.json
     verified_by: FR-P2-DECISION-VALID
@@ -337,24 +337,24 @@ selector:
       the model a call actually ran on equals the model its routing decision
       decided on
     stage: static
-    owner: meta_prompt/meta_curriculum_builder.prompt.v5.md
+    owner: meta_prompt/assets/routing.v1.md
     method: execution
     deferred: RT-3
 
 # ---------------------------------------------------------------------------
 drift:
   - id: DRIFT-SCOPE
-    owner: meta_prompt/meta_curriculum_builder.prompt.v5.md
+    owner: meta_prompt/meta_curriculum_builder.prompt.v6.md
     method: execution
     deferred: RT-5
     asserts: no write left the authorized roots and no immutable file changed
   - id: DRIFT-NO-EARLY-GENERATION
-    owner: meta_prompt/meta_curriculum_builder.prompt.v5.md
+    owner: meta_prompt/meta_curriculum_builder.prompt.v6.md
     method: execution
     deferred: RT-5
     asserts: no live dossier was created for any lab beyond L01 during the meta run
   - id: DRIFT-NO-WEAKENING
-    owner: meta_prompt/meta_curriculum_builder.prompt.v5.md
+    owner: meta_prompt/assets/logging.v1.md
     method: execution
     deferred: RT-5
     asserts: no test, schema, evidence rule or release gate was weakened to obtain a pass
@@ -386,7 +386,7 @@ drift:
 # ---------------------------------------------------------------------------
 preconditions:
   - id: PRECONDITION-OUTPUT-ROOT-EXISTS
-    owner: meta_prompt/meta_curriculum_builder.prompt.v5.md
+    owner: meta_prompt/meta_curriculum_builder.prompt.v6.md
     method: execution
     deferred: RT-5
     asserts: V7 does not exist at startup

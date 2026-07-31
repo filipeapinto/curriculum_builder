@@ -18,5 +18,5 @@ read is the four manifests below.
 
 - `schemas/routing_decision.schema.v2.json` — the decision-record format. Contracts
   live with the other contracts, because a validator reads them.
-- `meta_prompt/model_selector_prompt.v1.md` — the selector's own prompt. Prose a
+- `meta_prompt/assets/model_selector_prompt.v1.md` — the selector's own prompt. Prose a
   model reads lives with the other prose a model reads.

@@ -166,6 +166,6 @@ gets used up" survives an otherwise good lesson.
 
 Tone, warmth, sentence rhythm, when a metaphor helps, whether a particular hook
 will land with a particular child. Those stay in
-`meta_prompt/component_lab_template.v1.md` and in the reviewers' judgement. The
+`meta_prompt/assets/component_lab_template.v1.md` and in the reviewers' judgement. The
 schema fixes the structure that makes good teaching possible; it does not attempt
 to specify good teaching.

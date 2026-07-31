@@ -169,7 +169,7 @@
   #nbox(col2x, boxtop, col2w, col2h, [
     #box(width: col2w - 14mm)[
       #align(center)[
-        #text(weight: "bold", size: 11.5pt, fill: build-c)[meta\_curriculum\_prompt.prompt.v5.md]
+        #text(weight: "bold", size: 11.5pt, fill: build-c)[meta\_curriculum\_builder.prompt.v6.md + assets/]
         #v(2mm)
         #text(size: 9.5pt, style: "italic", fill: build-c)["builds the factory, never the product"]
         #v(2mm)

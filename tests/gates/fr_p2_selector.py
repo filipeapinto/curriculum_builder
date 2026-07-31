@@ -19,8 +19,10 @@ import sys
 from pathlib import Path
 
 sys.path.insert(0, str(Path(__file__).resolve().parent))
+sys.path.insert(0, str(Path(__file__).resolve().parents[1]))
 
 import common  # noqa: E402
+import meta_prompt_source  # noqa: E402
 from common import (  # noqa: E402
     Evidence,
     Fixture,
@@ -35,7 +37,7 @@ from common import (  # noqa: E402
 
 FIXTURES = common.FIXTURES_DIR
 
-META_PROMPT = REPO_ROOT / "meta_prompt" / "meta_curriculum_builder.prompt.v5.md"
+META_PROMPT = meta_prompt_source.PROMPT
 CHECKS = REPO_ROOT / "policy" / "checks.v1.yaml"
 CONTROLLER = REPO_ROOT / "policy" / "controller.v1.yaml"
 FAILURES = REPO_ROOT / "policy" / "failures.v1.yaml"
@@ -68,7 +70,20 @@ SEL_REFERENCE = re.compile(r"(?<![A-Za-z0-9])SEL-[A-Z0-9\-]+")
 
 
 # ---------------------------------------------------------------------------
-# Prompt-section helpers. The meta prompt is a named file, opened, never globbed.
+# Prompt-section helpers. Every file composed here is a **named** file, opened by
+# name and never globbed (rule 7): the prompt names its section assets in its own
+# table, so the set is read from the contract rather than from the directory.
+
+
+def contract_text(ev: Evidence | None = None) -> str:
+    """The composed contract — the prompt plus its section assets.
+
+    Since v6, `## Routing`, `## Inputs` and `## Proving it` live in assets the
+    prompt binds. Slicing the short file alone would find none of them and report
+    every section absent, so the subject of these gates is the composition.
+    ``tests/meta_prompt_source.py`` owns how it is formed.
+    """
+    return meta_prompt_source.compose(ev.text_of if ev is not None else None)
 
 
 def _slice(text: str, start: str, stop: str) -> str:
@@ -255,7 +270,7 @@ def live_v1_references(ev: Evidence | None = None) -> list[str]:
     retained-contracts table; a live manifest reference must name v2."""
     problems = []
     retained = retained_contracts_section(
-        ev.text_of(META_PROMPT) if ev is not None else read_named(META_PROMPT)
+        contract_text(ev)
     )
     for path in common.production_files():
         if path.name in V1_CONTRACTS:
@@ -409,10 +424,10 @@ def bound_violations(prompt_text: str) -> list[str]:
 
 
 def check_bound(ev: Evidence):
-    text = ev.text_of(META_PROMPT)
+    text = contract_text(ev)
     for required in REQUIRED_AUTHORIZED:
         ev.resolve(required, "the authorized-input list section 9 fixes",
-                   f"a row of {rel(META_PROMPT)}'s input table")
+                   "a row of the composed contract's input table")
     problems = bound_violations(text)
     line = (
         f"FR-P2-BOUND {'PASS' if not problems else 'FAIL'} "
@@ -489,7 +504,7 @@ def check_no_values(ev: Evidence):
     terms, patterns = routing_terms()
     for term in sorted(terms):
         ev.resolve(term, "policy/routing/*.yaml", "the prose_pattern the owning manifest declares")
-    text = ev.text_of(META_PROMPT)
+    text = contract_text(ev)
     problems = no_values_violations(text, terms, patterns)
     line = (
         f"FR-P2-NOVALUES {'PASS' if not problems else 'FAIL'} "
@@ -693,7 +708,7 @@ def check_bypass_declared(ev: Evidence):
     problems = []
 
     # (a) stated
-    prompt = routing_section(ev.text_of(META_PROMPT))
+    prompt = routing_section(contract_text(ev))
     if not re.search(r"--model[^.\n]*may not bypass the selector", prompt):
         problems.append("the § Routing section does not state that --model may not bypass the selector")
     controller = ev.text_of(CONTROLLER)
@@ -785,7 +800,7 @@ def check_unrecorded_declared(ev: Evidence):
         problems.append(f"controller-does-not-map:{entry.get('id')}")
     elif mapped[0].get("terminal_state") != "META_SYSTEM_FAILURE":
         problems.append(f"controller-maps-wrong-state:{entry.get('id')} → {mapped[0].get('terminal_state')}")
-    if pattern and not re.search(pattern, ev.text_of(META_PROMPT)):
+    if pattern and not re.search(pattern, contract_text(ev)):
         problems.append("the meta prompt does not state the obligation the failure entry declares")
 
     # (c) representable, and not over-broad
@@ -863,9 +878,9 @@ def gate_item_violations(prompt_text: str, checks_doc) -> list[str]:
 
 def check_gate_items(ev: Evidence):
     checks_doc = ev.read_for_resolution(CHECKS)
-    text = ev.text_of(META_PROMPT)
+    text = contract_text(ev)
     for row in release_table_rows(text):
-        ev.resolve(row[1].strip("*"), f"{rel(META_PROMPT)}'s release table",
+        ev.resolve(row[1].strip("*"), "the composed contract's release table",
                    f"the check ids in {rel(CHECKS)}")
     problems = gate_item_violations(text, checks_doc)
     line = (

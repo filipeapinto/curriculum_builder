@@ -202,11 +202,18 @@ curriculum_builder/
 │   └── deprecated/.gitkeep                     gated — see §6
 │
 ├── meta_prompt/                                PROSE A MODEL READS
-│   ├── meta_curriculum_builder.prompt.v5.md    + new § Routing (phase 2)
-│   ├── component_lab_template.v1.md            companion: how to write a lab
-│   ├── pedagogy.v1.md                          companion: why the pedagogy fields exist ← root
-│   ├── model_selector_prompt.v1.md             ← meta_prompt/routing/
-│   └── deprecated/.gitkeep
+│   ├── meta_curriculum_builder.prompt.v6.md    the contract: mission, boundary, assets, order of work
+│   ├── assets/                                 the rest of that contract, and its companions
+│   │   ├── inputs.v1.md                        section: inputs, retained contracts, precedence
+│   │   ├── architecture.v1.md                  section: what the generator and a lab must be
+│   │   ├── routing.v1.md                       section: which model serves which task
+│   │   ├── proving.v1.md                       section: the six gates and the release gates
+│   │   ├── logging.v1.md                       section: action log, convergence, drift
+│   │   ├── deliverables.v1.md                  section: what V7 must contain
+│   │   ├── component_lab_template.v1.md        companion: how to write a lab
+│   │   ├── pedagogy.v1.md                      companion: why the pedagogy fields exist ← root
+│   │   └── model_selector_prompt.v1.md         ← meta_prompt/routing/
+│   └── deprecated/.gitkeep                     + the v5 prompt, superseded, read by nobody
 │
 ├── tests/                                      THE GATE HARNESS — see §7
 │   ├── run_gates.sh
@@ -258,13 +265,21 @@ fix 3, neither may appear in the meta prompt's authorized-input table.
 | 6 | `assets/teacher_audit.md` | `curricula/arduino_kit/` | 1 | ELEGOO-specific |
 | 7 | `assets/l01_unpowered_power_path.json` | `curricula/arduino_kit/` | 1 | L01 circuit data |
 | 8 | `assets/fixtures/l01_polarity_asserted.reject.json` | `curricula/arduino_kit/fixtures/` | 1 | kit-specific fixture |
-| 9 | `pedagogy.md` | `meta_prompt/pedagogy.v1.md` | 1 | constraint-bearing prose; versioned per `AGENTS.md:29` |
+| 9 | `pedagogy.md` | `meta_prompt/assets/pedagogy.v1.md` | 1 | constraint-bearing prose; versioned per `AGENTS.md:29` |
 | 10 | `meta_prompt/routing/*.yaml` | `policy/routing/` | 4 | data code reads |
 | 11 | `meta_prompt/routing/readme.md` | `policy/routing/` | 1 | index of those files |
-| 12 | `meta_prompt/routing/model_selector_prompt.v1.md` | `meta_prompt/` | 1 | prose a model reads |
+| 12 | `meta_prompt/routing/model_selector_prompt.v1.md` | `meta_prompt/assets/` | 1 | prose a model reads |
 | 13 | `meta_prompt/routing/routing_decision.schema.v1.json` | `schemas/` | 1 | all contracts in one folder |
 
 Nothing is deleted. Phases 2–4 *add* files; they move none.
+
+Rows 9 and 12 name `meta_prompt/assets/` rather than `meta_prompt/`, and §4 shows that
+folder, because a later piece of work — splitting the meta prompt into a short contract
+plus the `section` and `companion` assets it names — moved both files one level down.
+Their phase-0 destination was `meta_prompt/`; `git log --follow` still reaches the
+baseline through both renames, which is what `FR-P0-HISTORY` proves. §4 and §5 state
+where each file **is**, so the gates reading them stay a test of the repository rather
+than of a frozen snapshot; §10's ledger is the phase-0 record and is not rewritten.
 
 **How to move, so that history follows.**
 

@@ -28,8 +28,8 @@ can I walk away?*
 ```
 INPUTS                          META-PROMPT                    OUTPUT
 curriculum manifest ← defines WHICH labs and HOW MANY                                   templates_v7/
-lab.schema.v3.json         →    meta_curriculum_prompt    →      controller (python)
-component_lab_template            .prompt.v5.md                  worker prompts
+lab.schema.v3.json         →    meta_curriculum_builder   →      controller (python)
+assets/ (6 section files)         .prompt.v6.md + assets         worker prompts
 policy/routing/ (model policy)                                   schemas
 legacy v3 generator (evidence)   "builds the factory,             tests
                                   never the product"              golden L01

@@ -6,7 +6,7 @@ ids. Not one of them asks whether an agent handed the prompt could **start**. Th
 why the write boundary named a directory that has not existed for the life of this
 repository while 31 gates passed.
 
-This checker asks only that question, in five parts:
+This checker asks only that question, in six parts:
 
   1. **anchoring**    every variable in the write boundary is a path, not prose,
                       and resolves — or is explicitly supplied at invocation.
@@ -16,17 +16,27 @@ This checker asks only that question, in five parts:
                       CREATOR defined in terms of a variable supplied at
                       invocation is circular and fails. A name defined twice
                       fails: dict-building silently keeps the last.
-  2. **inputs**       every path the prompt names under CREATOR exists.
+  2. **inputs**       every path the contract names under CREATOR exists.
   3. **write order**  no step writes before the only authorized root exists, no
                       model is called before the logger, the startup precondition
                       is actually checked, and nothing is written outside V7.
   4. **no dangling**  every variable the prose names is defined in the boundary.
-  5. **portability**  no absolute path is hard-coded anywhere in the prompt —
+  5. **portability**  no absolute path is hard-coded in any source of the contract —
                       any filesystem root, not just /Users, and Windows drives.
+  6. **assets**       the v6 split is honest: every asset row resolves, no file in
+                      `meta_prompt/assets/` is unowned by the table, no `##` heading
+                      is owned twice, and the prompt is smaller than the sections it
+                      binds. Without this the split becomes a way to *pass* — move a
+                      rule into an unlisted file and every other check stops seeing
+                      it while still reporting a full pass.
 
-Mutation-tested. What it still cannot see is semantic: it would pass a prompt whose
-paths all resolve and whose instructions contradict each other. Checks 1-5 are
-mechanical properties, and "5/5" is a statement about those five and nothing wider.
+Checks 1-5 read the **composed contract**: the prompt plus its section assets, as
+`tests/meta_prompt_source.py` composes them. Reading the short v6 file alone would
+report 5/5 on a document with most of its rules elsewhere.
+
+Mutation-tested. What it still cannot see is semantic: it would pass a contract whose
+paths all resolve and whose instructions contradict each other. Checks 1-6 are
+mechanical properties, and "6/6" is a statement about those six and nothing wider.
 
 It is deliberately NOT one of the FR- gates. `FR-P0-REGISTRY` requires
 `tests/gates/registry.py` to equal section 8 of the active folder-refactoring plan
@@ -46,8 +56,13 @@ import re
 import sys
 from pathlib import Path
 
-REPO = Path(__file__).resolve().parents[1]
-PROMPT = REPO / "meta_prompt" / "meta_curriculum_builder.prompt.v5.md"
+sys.path.insert(0, str(Path(__file__).resolve().parent))
+
+import meta_prompt_source as source  # noqa: E402
+
+REPO = source.REPO
+PROMPT = source.PROMPT
+ASSETS = source.ASSETS
 
 # Variables the prompt is allowed to leave unresolved because the invocation supplies
 # them. Anything else in the boundary must resolve on disk.
@@ -302,11 +317,129 @@ ABSOLUTE = re.compile(
     r"|(?<![\w])[A-Za-z]:[\\/][A-Za-z0-9_.\\/-]+")
 
 
-def check_portability(text: str) -> list[str]:
-    return [
-        f"portability: absolute path at line {text[:m.start()].count(chr(10)) + 1}: {m.group(0)[:60]}"
-        for m in ABSOLUTE.finditer(text)
+def check_portability(_text: str = "") -> list[str]:
+    """Reported per source file. A line number in the composed contract names no
+    file anyone can open, so the scan runs over each source and cites it by name.
+    Companions are scanned too: an absolute path in a lab-writing guide is as
+    unportable as one in the prompt."""
+    problems = []
+    prompt_text = read(PROMPT)
+    files = [PROMPT] + [
+        REPO / rel for rel, _ in source.asset_rows(prompt_text)
+        if (REPO / rel).is_file()
     ]
+    for path in files:
+        body = read(path)
+        for match in ABSOLUTE.finditer(body):
+            line = body[: match.start()].count(chr(10)) + 1
+            problems.append(
+                f"portability: absolute path at {path.relative_to(REPO)}:{line}: "
+                f"{match.group(0)[:60]}"
+            )
+    return problems
+
+
+# ---------------------------------------------------------------------------
+# 6. assets — is the split honest?
+
+ASSETS_BLOCK = re.compile(r"^## Assets\s*$(.*?)(?=^## )", re.M | re.S)
+TABLE_ROW = re.compile(r"^\|(?P<first>[^|]*)\|(?P<kind>[^|]*)\|", re.M)
+HEADING = re.compile(r"^(##+)\s+(.*?)\s*$", re.M)
+
+KINDS = {source.SECTION, source.COMPANION}
+
+
+def read(path: Path) -> str:
+    return path.read_text(encoding="utf-8")
+
+
+def declared_rows(prompt_text: str) -> list[tuple[str, str]]:
+    """Every row of the asset table as ``(first cell, kind)``, header and rule
+    excluded — read generically, so a row whose kind is a typo is *seen* and
+    rejected rather than skipped by a stricter pattern."""
+    block = ASSETS_BLOCK.search(prompt_text)
+    if not block:
+        return []
+    rows = []
+    for match in TABLE_ROW.finditer(block.group(1)):
+        first, kind = match.group("first").strip(), match.group("kind").strip()
+        if not first or set(first) <= {"-", ":"} or first.lower() == "asset":
+            continue
+        rows.append((first, kind))
+    return rows
+
+
+def check_assets(_text: str = "") -> list[str]:
+    prompt_text = read(PROMPT)
+    rows = declared_rows(prompt_text)
+    problems = []
+    if not rows:
+        return ["assets: the prompt declares no asset table, so it binds nothing"]
+
+    seen: dict[str, int] = {}
+    paths = []
+    for first, kind in rows:
+        name = first.strip("`")
+        seen[name] = seen.get(name, 0) + 1
+        if kind not in KINDS:
+            problems.append(
+                f"assets: {name} is declared {kind!r}, which is neither section nor "
+                "companion; a kind nothing recognises composes into nothing"
+            )
+        if not name.startswith(source.ASSETS_REL + "/"):
+            problems.append(
+                f"assets: {name} is listed but does not live under {source.ASSETS_REL}/, "
+                "so the no-orphan rule below can never cover it"
+            )
+        if not (REPO / name).exists():
+            problems.append(f"assets: {name} is declared but does not exist")
+        paths.append(name)
+    for name, count in sorted(seen.items()):
+        if count > 1:
+            problems.append(f"assets: {name} is listed {count} times; one file, one row")
+
+    if not source.assets_of_kind(prompt_text, source.SECTION):
+        problems.append(
+            "assets: no row is a section, so the composed contract is the short file "
+            "alone and every rule moved out of it is unbound"
+        )
+
+    # No orphans. A rule moved into a file the table does not name is a rule no
+    # reader of this contract will ever see, and every other check would still pass.
+    for path in sorted(ASSETS.glob("*")):
+        if path.name.startswith("."):
+            continue
+        name = str(path.relative_to(REPO))
+        if name not in paths:
+            problems.append(
+                f"assets: {name} is in ASSETS but no row names it — unowned prose is how "
+                "a contract acquires a second author"
+            )
+
+    # One rule, one home: a heading owned by two sources is two authors again.
+    owners: dict[str, list[str]] = {}
+    for path in source.sources():
+        for _, title in HEADING.findall(read(path)):
+            owners.setdefault(title, []).append(str(path.relative_to(REPO)))
+    for title, where in sorted(owners.items()):
+        if len(where) > 1:
+            problems.append(f"assets: heading {title!r} is stated in {', '.join(where)}")
+
+    # The claim that the prompt is small, made checkable: it is the index, so it is
+    # smaller than what it indexes.
+    prompt_lines = len(prompt_text.splitlines())
+    section_lines = sum(
+        len(read(REPO / rel).splitlines())
+        for rel in source.assets_of_kind(prompt_text, source.SECTION)
+        if (REPO / rel).is_file()
+    )
+    if prompt_lines >= section_lines:
+        problems.append(
+            f"assets: the prompt is {prompt_lines} lines and the sections it binds are "
+            f"{section_lines}; a prompt no smaller than its assets has not been split, "
+            "it has been copied"
+        )
+    return problems
 
 
 def main() -> int:
@@ -314,14 +447,15 @@ def main() -> int:
     parser.add_argument("--output-root", type=Path, default=None,
                         help="where a run would write; checked for the V7 precondition")
     args = parser.parse_args()
-    text = PROMPT.read_text(encoding="utf-8")
+    text = source.compose()
 
     parts = [
         ("anchoring", check_anchoring(text, args.output_root)),
         ("inputs", check_inputs(text)),
         ("write order", check_write_order(text)),
         ("no dangling", check_no_dangling(text)),
-        ("portability", check_portability(text)),
+        ("portability", check_portability()),
+        ("assets", check_assets()),
     ]
     failed = 0
     for name, problems in parts:
@@ -335,6 +469,8 @@ def main() -> int:
     verdict = "EXECUTABLE" if not failed else "NOT EXECUTABLE"
     print(f"\nmeta prompt: {verdict} ({len(parts) - failed}/{len(parts)} checks pass)")
     if not failed:
+        sources = ", ".join(str(p.relative_to(REPO)) for p in source.sources())
+        print(f"Read as one contract: {sources}")
         print("This says the prompt can be started and its inputs resolve.")
         print("It says nothing about whether the generator it describes can be built.")
     return 0 if not failed else 1
