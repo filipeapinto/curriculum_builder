@@ -7,39 +7,75 @@
 
 failures_version: '1.0'
 
+# The contract this manifest is validated against. FR-P4-ALL-VALIDATE resolves the
+# pairing from this pointer rather than from a list held in the gate, so a new
+# manifest cannot be added without one.
+schema: schemas/failures.schema.v1.json
+
+
 # ---------------------------------------------------------------------------
 # A — defects in the v3 generator, which never produced an accepted lab across
 # eight overnight runs. Cite a path and line from plans/legacy_v3/ for each.
 # ---------------------------------------------------------------------------
 generator_defects:
   - id: A1
+    correction: >-
+      Decompose a lab into separately checkable artifacts, each with its own worker, schema and acceptance decision.
+    verified_by: RT-5
     defect: an entire lab is delegated to one monolithic model run
     consequence: nothing is separately checkable, so nothing can be separately revised
   - id: A2
+    correction: >-
+      Checkpoint after every state with input and output hashes, and resume at the first missing or invalid checkpoint.
+    verified_by: RT-5
     defect: cannot reliably checkpoint, resume, or recover after interruption
     consequence: any interruption restarts from zero
   - id: A3
+    correction: >-
+      Route a failed check to targeted revision of the named artifacts only, never to regeneration of the lab.
+    verified_by: RT-5
     defect: targeted revisions are not executed outside the model
     consequence: a whole lab is regenerated to fix one caption
   - id: A4
+    correction: >-
+      Audit every terminal decision independently — revision, block and system failure, not only acceptance.
+    verified_by: RT-5
     defect: non-accepted terminal decisions receive weaker audits than acceptances
     consequence: bad outcomes pass as progress
   - id: A5
+    correction: >-
+      Label every result with its evidence category, and never describe static or simulated coverage as generated-lab coverage.
+    verified_by: RT-5
     defect: static whole-curriculum coverage is reported as if it were live generation
     consequence: '"the system can handle every lab" is read as "every lab exists"'
   - id: A6
+    correction: >-
+      Make machine-readable circuit and experiment data the single parent of every fact, and generate prose and diagrams from it.
+    verified_by: RT-5
     defect: L01 data contradicts its own disconnected, polarity-neutral activity
     consequence: the foundation lab asserts what it cannot evidence
   - id: A7
+    correction: >-
+      Prove every route by one real execution in preflight, under the exact recorded invocation, before generation begins.
+    verified_by: RT-5
     defect: preflight checks tool presence rather than real execution
     consequence: capability failures surface mid-run instead of before it
   - id: A8
+    correction: >-
+      Run an artifact-consistency state before any reviewer sees the dossier, so no review is spent on a lab that contradicts itself.
+    verified_by: RT-5
     defect: text, circuit data and visuals can contradict one another
     consequence: a correct diagram beside incorrect prose, with nothing to arbitrate
   - id: A9
+    correction: >-
+      Render and inspect the shipped PDF before final acceptance, while revision is still cheap.
+    verified_by: RT-5
     defect: PDF and visual inspection occur too late to matter
     consequence: layout defects are found after acceptance
   - id: A10
+    correction: >-
+      Report progress only as accepted labs; partial activity is recorded but never counted as output.
+    verified_by: RT-5
     defect: partial activity is reported as progress without an accepted lab
     consequence: effort is mistaken for output
 
@@ -54,6 +90,7 @@ v5_gate_failures:
   gates:
 
   - id: B1
+    verified_by: RT-5
     gate: DRIFT-LOG-NONMONOTONIC-OR-UNPAIRED
     observed: 28 ACT records with 6 unpaired starts (ACT-011, ACT-016, and four controller-generated records)
     location: templates_v5/automation/run_curriculum_v5.py:36
@@ -76,6 +113,7 @@ v5_gate_failures:
     checks: [LOG-APPEND-ONLY, LOG-IDS-MONOTONIC, LOG-PAIRED, LOG-CONCURRENT-SAFE, LOG-COVERAGE, LOG-NO-ORPHAN-OPERATION]
 
   - id: B2
+    verified_by: RT-5
     gate: GOLDEN-REVIEWER-INDEPENDENCE
     observed: independence was required but never proven
     diagnosis: >-
@@ -89,6 +127,7 @@ v5_gate_failures:
     checks: [REV-COUNT-TWELVE, REV-ISOLATED]
 
   - id: B3
+    verified_by: FR-P4-CHECK-MAPPING
     gate: STATIC-CONTRACT-COVERAGE
     observed: six checks advertised, two asserted
     location: templates_v5/automation/run_curriculum_v5.py:47
@@ -104,6 +143,7 @@ v5_gate_failures:
     checks: [DRIFT-NO-MISREPORTING]
 
   - id: B4
+    verified_by: RT-5
     gate: GOLDEN-VISUAL-RECEIPT-CONSISTENCY
     observed: provenance receipts did not demonstrably resolve to the assets embedded in the rendered PDF
     diagnosis: >-
@@ -118,10 +158,18 @@ v5_gate_failures:
 # ---------------------------------------------------------------------------
 capability_failures:
   - id: EXEC-001
+    verified_by: RT-2
     observed: reportlab, pypdf and the PIL capability set could not be imported; only PIL is present
+    correction: >-
+      Record the one engine proven to work by real execution, and forbid the bare
+      fallback that cannot work in this environment.
     resolution: see policy/routes.v1.yaml → route "pdf"
   - id: EXEC-002
+    verified_by: RT-2
     observed: codex exec exited 1 because the sandbox denied initialization of its in-process app-server client
+    correction: >-
+      Record the flags the invocation actually requires, so a missing flag stops
+      looking like a model outage.
     resolution: see policy/routes.v1.yaml → route "worker"
 
 traceability_rule: >-
@@ -138,11 +186,15 @@ traceability_rule: >-
 # policy/controller.v1.yaml maps each condition id to its terminal state.
 runtime_obligations:
   - id: C1
+    verified_by: RT-4
     condition: >-
       a model call was made although the rule that every model call emits a
       schema-valid routing decision was in force, and no decision_id was recorded
     outcome: META_SYSTEM_FAILURE
     prose_pattern: '(?i)every model call emits a schema-valid routing decision'
+    correction: >-
+      Require a typed action_kind on every act record and make decision_id
+      conditional on it, so a model call cannot escape the requirement by rewording.
     representable_by: schemas/execution_log.schema.v2.json → $defs.act action_kind model_call requires decision_id
     enforced_at_runtime: false
     deferred: RT-4

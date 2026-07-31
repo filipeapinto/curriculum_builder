@@ -69,7 +69,7 @@
       ],
       "properties": {
         "learning_objectives": {
-          "description": "Bloom's revised taxonomy. Each objective states an observable behaviour and pairs with a child-facing success criterion (Black & Wiliam). At least one objective must reach 'understand' or higher \u2014 identification alone is not a lab.",
+          "description": "Bloom's revised taxonomy. Each objective states an observable behaviour and pairs with a child-facing success criterion (Black & Wiliam). At least one objective must reach the level policy/calibration.v1.yaml floors in pedagogy_caps.bloom_floor \u2014 identification alone is not a lab. The floor is a premise; this contract enforces it and never restates it.",
           "type": "array",
           "minItems": 1,
           "maxItems": 3,

@@ -1,0 +1,9 @@
+# Negative fixture for FR-P4-ALL-VALIDATE. A manifest under policy/ that names no
+# contract. Code reads policy/, so a file here can be malformed without anything
+# noticing — the pairing is resolved from the manifest's own pointer precisely so a
+# new manifest cannot be added without one.
+thresholds_version: '1.0'
+thresholds:
+  max_open_findings:
+    value: 5
+    flag: --max-open-findings

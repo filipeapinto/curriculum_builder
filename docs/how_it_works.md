@@ -350,7 +350,7 @@ In order:
 |---|---|---|
 | 0 | **Logger** | append-only ordering, start/completion pairing, monotonic IDs, concurrent-append safety, failure when an operation lacks its record |
 | 1 | **Static all-35** | canonical schema, L01 contradiction checks, prerequisites, orientations, visual roles, bounded prompt contracts — every *advertised* check ID backed by an *executed* assertion |
-| 2 | **Deterministic** | state transitions, aggregation, block eligibility, failure classification, checkpoints, hashes, selector enforcement, resource limits, circuit/prose/render consistency, terminal audits |
+| 2 | **Deterministic** | state transitions, aggregation, block eligibility, failure classification, checkpoints, hashes, resource limits, circuit/prose/render consistency, terminal audits. **Not** selector enforcement: the routing rules are stated, owned and representable in a record a validator can check, and nothing executes them. `policy/checks.v1.yaml` records those ids `MAPPED, NOT EXECUTED` against `RT-3` and `RT-5`. |
 | 3 | **Simulated all-35** | fake workers drive clean acceptance, plan and artifact revisions, malformed output, transient retry, repeated failure, legal block, system failure, interrupt/resume, then a clean L01–L35 pass |
 | 4 | **Live capability** | real structured workers, real electronics review, real ImageGen, real renderer, real PDF, real page rendering |
 | 5 | **Golden L01** | one complete lab, four plan reviews, four QA/PDF reviews, sources, child and adult documents, source-backed unpowered data, visuals with resolving receipts, targeted revision evidence, forced interrupt and resume, every page inspected |

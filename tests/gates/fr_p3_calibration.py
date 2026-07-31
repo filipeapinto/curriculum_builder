@@ -38,6 +38,16 @@ SCHEMAS_DIR = REPO_ROOT / "schemas"
 # kit's facts are *for*. Every other schema naming it is defect F03.
 NO_LITERALS_EXEMPT = {"kit_calibration.schema.v1.json"}
 
+# Retained under section 6, and exempt for that reason alone. Both v1 contracts are
+# frozen byte-unchanged so records already accepted under them keep validating, so
+# the vendor namespace in their $id cannot be edited out without invalidating
+# accepted work. Named here rather than left unreachable: the exemption is the
+# statement that a known coupling survives, and RT-6 is what retires it.
+FROZEN_CONTRACTS_EXEMPT = {
+    "execution_log.schema.v1.json": "retained under section 6; retirable under RT-6",
+    "routing_decision.schema.v1.json": "retained under section 6; retirable under RT-6",
+}
+
 # Where a cap could be copied into prose. The cap entries themselves are excluded
 # below: pedagogy_caps is where the cap is owned, so a gate that flagged it would
 # forbid the manifest from stating the fact it exists to state.
@@ -157,9 +167,8 @@ def check_literals(ev: Evidence):
         f"{rel(CALIBRATION)} and {rel(KIT_CALIBRATION)}",
         "the contracts under schemas/",
     )
-    targets = ev.select(
-        p for p in SCHEMAS_DIR.rglob("*.json") if p.name not in NO_LITERALS_EXEMPT
-    )
+    exempt = set(NO_LITERALS_EXEMPT) | set(FROZEN_CONTRACTS_EXEMPT)
+    targets = ev.select(p for p in SCHEMAS_DIR.rglob("*.json") if p.name not in exempt)
     problems = []
     for path in targets:
         text = ev.text_of(path)
@@ -174,8 +183,9 @@ def check_literals(ev: Evidence):
 
     line = (
         f"FR-P3-NO-LITERALS {'PASS' if not problems else 'FAIL'} "
-        f"({len(targets)} contracts scanned, {len(terms)} terms, 0 hits; "
-        f"{sorted(NO_LITERALS_EXEMPT)[0]} exempt as the kit's own contract)"
+        f"({len(targets)} contracts scanned, {len(terms)} terms, 0 hits; exempt: "
+        f"{sorted(NO_LITERALS_EXEMPT)[0]} as the kit's own contract, and "
+        f"{', '.join(f'{k} ({v})' for k, v in sorted(FROZEN_CONTRACTS_EXEMPT.items()))})"
     )
     reject = FIXTURES / "schema_with_learner_literal.reject.json"
     accept = FIXTURES / "schema_incidental_digit.accept.json"
@@ -271,11 +281,11 @@ def _constraint_agrees(name: str, value, constraint) -> bool:
     if isinstance(constraint, str) and value == "first_person":
         return bool(re.match(r"\^\s*I can", constraint))
 
-    # A scalar cap, carried directly by maxItems / minItems / const.
+    # A scalar cap must resolve to the scalar that carries it. Accepting a dict here
+    # and hunting it for any equal keyword let a ceiling agree with a floor: pointing
+    # a cap of 2 at a subschema with `minItems: 2` passed while naming the wrong
+    # constraint entirely. The pointer must name the constraint, not its neighbourhood.
     if isinstance(constraint, dict):
-        for key in ("maxItems", "minItems", "const", "maximum", "minimum"):
-            if key in constraint and constraint[key] == value:
-                return True
         return False
 
     return constraint == value
@@ -333,6 +343,26 @@ def check_cal_agree(ev: Evidence):
     return gate_result(not problems, detail, fixtures, stdout=line)
 
 
+def without_cap_entries(text: str) -> str:
+    """The calibration file with only its ``pedagogy_caps`` block blanked out.
+
+    Section 8 (c) excludes ``pedagogy_caps[*].value``, ``enforced_by`` and
+    ``prose_pattern`` — where the cap is *owned* — and nothing else. Excluding the
+    whole file would let an unowned copy hide in the same manifest's prose. Line
+    numbers are preserved so a hit still reports where it is.
+    """
+    out, inside = [], False
+    for line in text.splitlines():
+        if re.match(r"^pedagogy_caps:\s*$", line):
+            inside = True
+            out.append("")
+            continue
+        if inside and line and not line[0].isspace() and not line.startswith("#"):
+            inside = False
+        out.append("" if inside else line)
+    return "\n".join(out)
+
+
 def cap_copy_violations(paths, caps: dict) -> list[str]:
     """(c) A cap stated anywhere but where it is owned has two owners."""
     problems = []
@@ -376,12 +406,12 @@ def check_caps(ev: Evidence):
         p
         for root in CAP_SCAN_ROOTS
         for p in (REPO_ROOT / root).rglob("*")
-        if p.is_file()
-        and p.suffix.lower() not in common.BINARY_SUFFIXES
-        and p != CALIBRATION
+        if p.is_file() and p.suffix.lower() not in common.BINARY_SUFFIXES
     )
     for path in targets:
         text = ev.text_of(path)
+        if path == CALIBRATION:
+            text = without_cap_entries(text)
         for name, cap in caps.items():
             pattern = (cap or {}).get("prose_pattern") if isinstance(cap, dict) else None
             if pattern and ev.search(pattern, text):
@@ -452,7 +482,7 @@ def kit_source_violations(curriculum, kit_doc) -> list[str]:
 def check_kit_source(ev: Evidence):
     curriculum = ev.parse(CURRICULUM)
     kit_doc = ev.parse(KIT_CALIBRATION)
-    ev.text_of(KIT_CALIBRATION)
+    kit_text = ev.text_of(KIT_CALIBRATION)
     problems = []
 
     checks = ev.read_for_resolution(REPO_ROOT / "policy" / "checks.v1.yaml")
@@ -471,11 +501,20 @@ def check_kit_source(ev: Evidence):
         if (lab.get("core_activity") or {}).get("mode") != "unpowered"
     ]
     for lab in powered:
+        cited = (lab.get("core_activity") or {}).get("power_input")
         ev.resolve(
             f"{lab.get('id')}.core_activity.power_input",
             rel(CURRICULUM),
             rel(KIT_CALIBRATION) + " power.permitted_inputs",
         )
+        # The structure can carry an id the file never states — a YAML alias
+        # resolves to a value no reader of the manifest would find. The citation
+        # must be legible in the text that owns it, not only in the parse tree.
+        if cited and not ev.search(rf"\bid:\s*{re.escape(str(cited))}\b", kit_text):
+            problems.append(
+                f"unverified-source-cited:{lab.get('id')} cites {cited!r}, which "
+                f"{rel(KIT_CALIBRATION)} never states as an input id"
+            )
     problems += kit_source_violations(curriculum, kit_doc)
 
     line = (

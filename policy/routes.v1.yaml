@@ -9,6 +9,12 @@
 # Every route in this file was proven by real execution on 2026-07-29 in ROOT.
 
 routes_version: '1.0'
+
+# The contract this manifest is validated against. FR-P4-ALL-VALIDATE resolves the
+# pairing from this pointer rather than from a list held in the gate, so a new
+# manifest cannot be added without one.
+schema: schemas/routes.schema.v1.json
+
 proven_on: '2026-07-29'
 environment_note: >-
   ROOT is not a git repository and has trust_level "untrusted" inherited from the

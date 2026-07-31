@@ -1,0 +1,11 @@
+# Negative fixture for FR-P4-CHECK-MAPPING. A check id advertised with no owner:
+# nothing states the rule, so nothing can ever verify it, and a result naming it
+# would be reporting a check that does not exist. That is gate B3 in the form this
+# plan can close — the stronger form, an id whose owner exists but which nothing
+# executes, is reported as a count with its RT- identifier instead.
+checks_version: '1.0'
+schema: schemas/checks.schema.v1.json
+drift:
+  - id: DRIFT-NO-MISREPORTING
+    asserts: no check was reported as present without executing
+    stage: static

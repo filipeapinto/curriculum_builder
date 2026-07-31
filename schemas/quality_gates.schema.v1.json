@@ -1,0 +1,51 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://example.invalid/curriculum_builder/quality_gates.schema.v1.json",
+  "title": "Quality gates v1",
+  "description": "Validates policy/routing/quality_gates.v1.yaml. Acceptance is decided by observable gates and independent review, never by a model's own confidence, so every gate names what it requires and what happens when it fails.",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "version",
+    "schema",
+    "gates"
+  ],
+  "properties": {
+    "version": {
+      "const": 1
+    },
+    "schema": {
+      "const": "schemas/quality_gates.schema.v1.json"
+    },
+    "gates": {
+      "type": "object",
+      "minProperties": 1,
+      "additionalProperties": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": [
+          "requires",
+          "fail_action"
+        ],
+        "properties": {
+          "requires": {
+            "type": "array",
+            "minItems": 1,
+            "items": {
+              "type": "string",
+              "minLength": 3
+            }
+          },
+          "fail_action": {
+            "type": "string",
+            "minLength": 5
+          },
+          "conditional_requirement": {
+            "type": "string",
+            "minLength": 5
+          }
+        }
+      }
+    }
+  }
+}

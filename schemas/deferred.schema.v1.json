@@ -1,0 +1,76 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://example.invalid/curriculum_builder/deferred.schema.v1.json",
+  "title": "Deferred register v1",
+  "description": "Validates policy/deferred.v1.yaml. These ids are what makes 'MAPPED, NOT EXECUTED' a verifiable statement rather than a phrase: three gates cite them as evidence that an unexecuted obligation is recorded rather than forgotten. promotes_gate names a gate that exists and is resolved against the registry; promoted_id names the gate one would become once discharged, does not exist yet, and is never resolved.",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "deferred_version",
+    "schema",
+    "deferred"
+  ],
+  "properties": {
+    "deferred_version": {
+      "const": "1.0"
+    },
+    "schema": {
+      "const": "schemas/deferred.schema.v1.json"
+    },
+    "deferred": {
+      "type": "array",
+      "minItems": 1,
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": [
+          "id",
+          "obligation",
+          "acceptance_criterion",
+          "blocked_by"
+        ],
+        "properties": {
+          "id": {
+            "type": "string",
+            "pattern": "^RT-[0-9]+$"
+          },
+          "obligation": {
+            "type": "string",
+            "minLength": 10
+          },
+          "acceptance_criterion": {
+            "type": "string",
+            "minLength": 30
+          },
+          "blocked_by": {
+            "type": "string",
+            "minLength": 5
+          },
+          "promotes_gate": {
+            "type": "string",
+            "pattern": "^FR-[A-Z0-9-]+$"
+          },
+          "promoted_id": {
+            "type": "string",
+            "pattern": "^FR-[A-Z0-9-]+$"
+          }
+        },
+        "allOf": [
+          {
+            "if": {
+              "required": [
+                "promoted_id"
+              ]
+            },
+            "then": {
+              "required": [
+                "promotes_gate"
+              ],
+              "description": "A promoted name without the gate it promotes points at nothing."
+            }
+          }
+        ]
+      }
+    }
+  }
+}

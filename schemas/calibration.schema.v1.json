@@ -10,7 +10,8 @@
     "learner",
     "pedagogy_caps",
     "safety_floor",
-    "learner_terms"
+    "learner_terms",
+    "schema"
   ],
   "properties": {
     "calibration_version": {
@@ -311,6 +312,10 @@
       "additionalProperties": {
         "$ref": "#/$defs/term"
       }
+    },
+    "schema": {
+      "description": "The contract this manifest is validated against. FR-P4-ALL-VALIDATE resolves the pairing from here rather than from a list held in the gate.",
+      "const": "schemas/calibration.schema.v1.json"
     }
   },
   "$defs": {

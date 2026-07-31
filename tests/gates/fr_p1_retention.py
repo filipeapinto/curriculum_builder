@@ -18,7 +18,7 @@ from pathlib import Path
 sys.path.insert(0, str(Path(__file__).resolve().parent))
 
 import common  # noqa: E402
-from common import Evidence, Fixture, REPO_ROOT, gate_result, rel  # noqa: E402
+from common import Evidence, Fixture, GateFailure, REPO_ROOT, gate_result, rel  # noqa: E402
 
 FIXTURES = common.FIXTURES_DIR
 
@@ -57,7 +57,15 @@ def gitkeep_violations(folders, tracked: set[str], ev: Evidence | None = None) -
 
 
 def check_gitkeep(ev: Evidence):
+    ev.note("gate_impl_fix: reads git's exit status — a failed `git ls-files` had "
+            "read as 'the convention exists but git does not track it', naming an "
+            "external fault as a repository defect")
     listing = ev.run(["git", "ls-files"])
+    if listing.returncode != 0:
+        raise GateFailure(
+            f"external: git ls-files could not be run — {listing.stderr.strip()}. Whether the "
+            "convention is tracked is unproven; this is the environment, not the repository."
+        )
     tracked = set(listing.stdout.splitlines())
     problems = gitkeep_violations([REPO_ROOT / f for f in DEPRECATED_FOLDERS], tracked, ev)
     line = (

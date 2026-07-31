@@ -1,0 +1,109 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://example.invalid/curriculum_builder/model_registry.schema.v1.json",
+  "title": "Model registry v1",
+  "description": "Validates policy/routing/model_registry.v1.yaml. A policy input, not a guarantee of entitlement \u2014 the active runtime is authoritative. It also owns the anchored prose_pattern for every value the meta prompt must never inline: FR-P2-NOVALUES matches those patterns and never the bare values, because an effort level of `high` or `low` scanned literally flags ordinary prose across the whole repository.",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "version",
+    "schema",
+    "last_verified",
+    "selection_rule",
+    "models",
+    "prose_patterns"
+  ],
+  "properties": {
+    "version": {
+      "const": 1
+    },
+    "schema": {
+      "const": "schemas/model_registry.schema.v1.json"
+    },
+    "last_verified": {
+      "type": "string",
+      "format": "date"
+    },
+    "selection_rule": {
+      "type": "string",
+      "minLength": 20
+    },
+    "availability_note": {
+      "type": "string"
+    },
+    "models": {
+      "type": "object",
+      "minProperties": 1,
+      "additionalProperties": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": [
+          "provider",
+          "role",
+          "strengths",
+          "reasoning_efforts",
+          "supports_pro_mode",
+          "allowed_for"
+        ],
+        "properties": {
+          "provider": {
+            "type": "string",
+            "minLength": 2
+          },
+          "role": {
+            "type": "string",
+            "minLength": 3
+          },
+          "strengths": {
+            "type": "array",
+            "minItems": 1,
+            "items": {
+              "type": "string"
+            }
+          },
+          "reasoning_efforts": {
+            "type": "array",
+            "minItems": 1,
+            "uniqueItems": true,
+            "items": {
+              "type": "string"
+            }
+          },
+          "supports_pro_mode": {
+            "type": "boolean"
+          },
+          "allowed_for": {
+            "type": "array",
+            "minItems": 1,
+            "items": {
+              "type": "string"
+            }
+          }
+        }
+      }
+    },
+    "prose_patterns": {
+      "type": "object",
+      "minProperties": 1,
+      "additionalProperties": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": [
+          "kind",
+          "prose_pattern"
+        ],
+        "properties": {
+          "kind": {
+            "type": "string",
+            "minLength": 3
+          },
+          "prose_pattern": {
+            "type": "string",
+            "minLength": 4
+          }
+        }
+      },
+      "description": "One entry per routing value the prompt must not inline. A term with no pattern is a FAIL, never a skip \u2014 authoring the pattern is part of authoring the term."
+    }
+  }
+}

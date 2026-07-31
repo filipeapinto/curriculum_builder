@@ -1,4 +1,10 @@
 version: 2
+
+# The contract this manifest is validated against. FR-P4-ALL-VALIDATE resolves the
+# pairing from this pointer rather than from a list held in the gate, so a new
+# manifest cannot be added without one.
+schema: schemas/task_taxonomy.schema.v2.json
+
 tasks:
   component_research: {risk: high, evidence_required: [primary_sources, kit_reference, claim_log, source_manifest]}
   deterministic_circuit_design: {risk: safety_critical, evidence_required: [structured_circuit_data, component_profiles, component_constraints, hazard_analysis]}

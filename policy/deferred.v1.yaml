@@ -24,6 +24,12 @@
 
 deferred_version: '1.0'
 
+# The contract this manifest is validated against. FR-P4-ALL-VALIDATE resolves the
+# pairing from this pointer rather than from a list held in the gate, so a new
+# manifest cannot be added without one.
+schema: schemas/deferred.schema.v1.json
+
+
 deferred:
 
   - id: RT-1

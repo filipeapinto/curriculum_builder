@@ -1,0 +1,169 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://example.invalid/curriculum_builder/limits.schema.v1.json",
+  "title": "Resource limits v1",
+  "description": "Validates policy/limits.v1.yaml. Every limit carries a number and the flag that overrides it. This file's own header states the consequence of failing to: a limit without a number cannot be exceeded, so the drift rule that halts on exceeding it never fires, and a limit with no flag cannot be reported as the one that bound a stopped run.",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "limits_version",
+    "schema",
+    "per_lab",
+    "per_phase",
+    "per_run",
+    "convergence",
+    "retry",
+    "behaviour_on_limit"
+  ],
+  "properties": {
+    "limits_version": {
+      "const": "1.0"
+    },
+    "schema": {
+      "const": "schemas/limits.schema.v1.json"
+    },
+    "behaviour_on_limit": {
+      "type": "array",
+      "minItems": 3,
+      "items": {
+        "type": "string",
+        "minLength": 20
+      }
+    },
+    "per_lab": {
+      "type": "object",
+      "minProperties": 1,
+      "additionalProperties": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": [
+          "value",
+          "flag"
+        ],
+        "properties": {
+          "value": {
+            "type": "number",
+            "exclusiveMinimum": 0,
+            "description": "A limit without a number can never be exceeded, so the drift rule that halts on exceeding it never fires."
+          },
+          "flag": {
+            "type": "string",
+            "pattern": "^--[a-z0-9-]+$"
+          },
+          "rationale": {
+            "type": "string",
+            "minLength": 10
+          }
+        }
+      }
+    },
+    "per_phase": {
+      "type": "object",
+      "minProperties": 1,
+      "additionalProperties": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": [
+          "value",
+          "flag"
+        ],
+        "properties": {
+          "value": {
+            "type": "number",
+            "exclusiveMinimum": 0,
+            "description": "A limit without a number can never be exceeded, so the drift rule that halts on exceeding it never fires."
+          },
+          "flag": {
+            "type": "string",
+            "pattern": "^--[a-z0-9-]+$"
+          },
+          "rationale": {
+            "type": "string",
+            "minLength": 10
+          }
+        }
+      }
+    },
+    "per_run": {
+      "type": "object",
+      "minProperties": 1,
+      "additionalProperties": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": [
+          "value",
+          "flag"
+        ],
+        "properties": {
+          "value": {
+            "type": "number",
+            "exclusiveMinimum": 0,
+            "description": "A limit without a number can never be exceeded, so the drift rule that halts on exceeding it never fires."
+          },
+          "flag": {
+            "type": "string",
+            "pattern": "^--[a-z0-9-]+$"
+          },
+          "rationale": {
+            "type": "string",
+            "minLength": 10
+          }
+        }
+      }
+    },
+    "convergence": {
+      "type": "object",
+      "minProperties": 1,
+      "additionalProperties": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": [
+          "value",
+          "flag"
+        ],
+        "properties": {
+          "value": {
+            "type": "number",
+            "exclusiveMinimum": 0,
+            "description": "A limit without a number can never be exceeded, so the drift rule that halts on exceeding it never fires."
+          },
+          "flag": {
+            "type": "string",
+            "pattern": "^--[a-z0-9-]+$"
+          },
+          "rationale": {
+            "type": "string",
+            "minLength": 10
+          }
+        }
+      }
+    },
+    "retry": {
+      "type": "object",
+      "minProperties": 1,
+      "additionalProperties": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": [
+          "value",
+          "flag"
+        ],
+        "properties": {
+          "value": {
+            "type": "number",
+            "exclusiveMinimum": 0,
+            "description": "A limit without a number can never be exceeded, so the drift rule that halts on exceeding it never fires."
+          },
+          "flag": {
+            "type": "string",
+            "pattern": "^--[a-z0-9-]+$"
+          },
+          "rationale": {
+            "type": "string",
+            "minLength": 10
+          }
+        }
+      }
+    }
+  }
+}

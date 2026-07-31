@@ -3,23 +3,47 @@
 # A check named in a result record but never executed is evidence misreporting —
 # that is gate B3, and it is a drift stop, not a bug. So this file is the single
 # list, and a meta-test asserts that every id advertised by a result appears here
-# with a real assertion behind it, and that every id here is executed by the suite.
+# with a real assertion behind it.
+#
+# Being listed here is not being executed, and the two are never conflated. Every id
+# names the file that states its rule and the method that verifies it, and resolves
+# either to a gate that runs it — recorded VERIFIED HERE — or to the deferred
+# obligation that would, recorded MAPPED, NOT EXECUTED with its RT- id. Most ids are
+# the second kind today: no controller, logger, renderer or live route exists.
 
 checks_version: '1.0'
+
+# The contract this manifest is validated against. FR-P4-ALL-VALIDATE resolves the
+# pairing from this pointer rather than from a list held in the gate, so a new
+# manifest cannot be added without one.
+schema: schemas/checks.schema.v1.json
+
 
 # ---------------------------------------------------------------------------
 calibration:
   - id: CAL-VALID
+    owner: policy/calibration.v1.yaml
+    method: schema
+    artifact: schemas/calibration.schema.v1.json
+    verified_by: FR-P0-SCHEMA
     asserts: policy/calibration.v1.yaml validates against schemas/calibration.schema.v1.json
     stage: static
     note: run first — every later check reads values from calibration
   - id: CAL-SCHEMA-AGREE
+    owner: policy/calibration.v1.yaml
+    method: mapping
+    artifact: schemas/lab.schema.v3.json
+    verified_by: FR-P3-CAL-AGREE
     asserts: >-
       every value in calibration.pedagogy_caps equals the schema constraint named in
-      calibration.enforced_by
+      that cap's own enforced_by pointer
     stage: static
     note: a schema cap that drifts from its premise fails the build
   - id: CAL-SOURCE-VERIFIED
+    owner: curricula/arduino_kit/kit_calibration.v1.yaml
+    method: mapping
+    artifact: curricula/arduino_kit/arduino_kit_curriculum.v4.yaml
+    verified_by: FR-P3-KIT-SOURCE
     asserts: >-
       every powered lab declares exactly one input by id from its curriculum's
       kit_calibration power.permitted_inputs, and that input's verification is
@@ -30,35 +54,65 @@ calibration:
 # ---------------------------------------------------------------------------
 curriculum:
   - id: CUR-SCHEMA-VALID
+    owner: curricula/arduino_kit/arduino_kit_curriculum.v4.yaml
+    method: schema
+    artifact: schemas/curriculum.schema.v4.json
+    verified_by: FR-P0-SCHEMA
     asserts: the curriculum validates against schemas/curriculum.schema.v4.json
     stage: static
   - id: CUR-COUNT-DERIVED
+    owner: meta_prompt/meta_curriculum_builder.prompt.v5.md
+    method: execution
+    deferred: RT-5
     asserts: >-
       the lab count used by every test and command was read from the manifest at run
       time, and no fixed count appears in code, schema, CLI default or report text
     stage: static
   - id: CUR-IDS-CONTIGUOUS
+    owner: curricula/arduino_kit/arduino_kit_curriculum.v4.yaml
+    method: execution
+    deferred: RT-5
     asserts: lab ids are unique, ascending and contiguous from L01
     stage: static
   - id: CUR-PREREQS-RESOLVE
+    owner: curricula/arduino_kit/arduino_kit_curriculum.v4.yaml
+    method: execution
+    deferred: RT-5
     asserts: every prerequisite names a lab that exists and precedes it
     stage: static
   - id: CUR-ORIENTATIONS
+    owner: curricula/arduino_kit/arduino_kit_curriculum.v4.yaml
+    method: execution
+    deferred: RT-5
     asserts: every lab declaring an orientation cue has one, or states the part has none
     stage: static
   - id: CUR-VISUAL-ROLES
+    owner: curricula/arduino_kit/arduino_kit_curriculum.v4.yaml
+    method: execution
+    deferred: RT-5
     asserts: every lab declares its visual roles, or a documented reviewer finding omits one
     stage: static
   - id: CUR-BOUNDED-PROMPTS
+    owner: meta_prompt/meta_curriculum_builder.prompt.v5.md
+    method: execution
+    deferred: RT-5
     asserts: every worker prompt declares role, check ids, authorized paths and one output schema
     stage: static
 
 # ---------------------------------------------------------------------------
 l01:
   - id: L01-DISCONNECTED
+    owner: curricula/arduino_kit/l01_unpowered_power_path.json
+    method: execution
+    artifact: schemas/circuit_data.schema.v1.json
+    deferred: RT-5
     asserts: all objects disconnected and unpowered; no selected or live rail
     stage: static
   - id: L01-POLARITY-NEUTRAL
+    owner: curricula/arduino_kit/l01_unpowered_power_path.json
+    method: schema
+    artifact: schemas/circuit_data.schema.v1.json
+    verified_by: FR-P4-FIXTURE-BITES
     asserts: >-
       no connector-polarity claim without exact primary evidence. Proven by
       curricula/arduino_kit/fixtures/l01_polarity_asserted.reject.json, which must be REJECTED
@@ -66,18 +120,34 @@ l01:
     fixture: curricula/arduino_kit/fixtures/l01_polarity_asserted.reject.json
     fixture_expectation: reject
   - id: L01-NO-INVENTED-SUPPLY
-    asserts: no wall adapter or supply that is not in calibration.power.permitted_inputs
+    owner: curricula/arduino_kit/kit_calibration.v1.yaml
+    method: execution
+    deferred: RT-5
+    asserts: >-
+      no wall adapter or supply that is not in the curriculum's own kit_calibration
+      power.permitted_inputs
     stage: static
   - id: L01-NO-UNPERFORMED-OBSERVATION
+    owner: curricula/arduino_kit/l01_unpowered_power_path.json
+    method: execution
+    deferred: RT-5
     asserts: no claim that a physical observation occurred when it did not
     stage: static
 
 # ---------------------------------------------------------------------------
 lab_document:
   - id: LAB-SCHEMA-VALID
+    owner: schemas/lab.schema.v3.json
+    method: execution
+    artifact: schemas/lab.schema.v3.json
+    deferred: RT-5
     asserts: the lab dossier validates against schemas/lab.schema.v3.json, all seven blocks present
     stage: golden
   - id: LAB-BLOOM-DEPTH
+    owner: schemas/lab.schema.v3.json
+    method: execution
+    artifact: schemas/lab.schema.v3.json
+    deferred: RT-5
     asserts: >-
       at least one learning objective reaches the Bloom level floored by
       calibration.pedagogy_caps.bloom_floor. The floor is a premise and is never
@@ -86,17 +156,29 @@ lab_document:
     fixture_expectation: reject
     rejects: a lab whose objectives sit entirely at the lowest Bloom level — identification alone is not a lab
   - id: LAB-POE-ORDER
+    owner: schemas/lab.schema.v3.json
+    method: execution
+    artifact: schemas/lab.schema.v3.json
+    deferred: RT-5
     asserts: the prediction is recorded before the observation
     stage: deterministic
     fixture_expectation: reject
     rejects: recorded_before_observing false or absent
   - id: LAB-CURRENT-MARGIN
+    owner: schemas/lab.schema.v3.json
+    method: execution
+    artifact: schemas/lab.schema.v3.json
+    deferred: RT-5
     asserts: >-
       a circuit at designed_verified carries calculations and measurements, and every
       calculation states its margin_to_rating
     stage: deterministic
     fixture_expectation: reject
   - id: LAB-VALUE-SOURCED
+    owner: schemas/lab.schema.v3.json
+    method: execution
+    artifact: schemas/lab.schema.v3.json
+    deferred: RT-5
     asserts: >-
       every component_spec.parameters entry and every ratings_and_limits entry carries
       a source
@@ -107,57 +189,96 @@ lab_document:
 # ---------------------------------------------------------------------------
 pdf:
   - id: PDF-PAGE-COUNT
+    owner: meta_prompt/meta_curriculum_builder.prompt.v5.md
+    method: execution
+    deferred: RT-5
     asserts: rendered page count equals the count recorded at assembly
     stage: golden
   - id: PDF-PAGE-NONBLANK
+    owner: meta_prompt/meta_curriculum_builder.prompt.v5.md
+    method: execution
+    deferred: RT-5
     asserts: no page is uniform within 1% of a single colour
     stage: golden
     rejects: blank or all-black pages
   - id: PDF-ASSET-RESOLVES
+    owner: policy/failures.v1.yaml
+    method: execution
+    deferred: RT-5
     asserts: >-
       every visual receipt's recorded hash matches an asset actually embedded in this
       PDF
     stage: golden
     note: corrects B4 — a receipt that does not resolve is a failed gate, not a warning
   - id: PDF-TEXT-LEGIBLE
+    owner: meta_prompt/meta_curriculum_builder.prompt.v5.md
+    method: execution
+    deferred: RT-5
     asserts: body text renders at 9 pt or above effective at 200 dpi and is not clipped
     stage: golden
   - id: PDF-VISUAL-REVIEW
+    owner: meta_prompt/meta_curriculum_builder.prompt.v5.md
+    method: execution
+    deferred: RT-5
     asserts: all four PDF reviewers pass against the rasterized pages
     stage: golden
 
 # ---------------------------------------------------------------------------
 log:
   - id: LOG-APPEND-ONLY
+    owner: schemas/execution_log.schema.v2.json
+    method: execution
+    deferred: RT-5
     asserts: no record is rewritten, reordered or deleted once on disk
     stage: logger
   - id: LOG-IDS-MONOTONIC
+    owner: policy/failures.v1.yaml
+    method: execution
+    deferred: RT-5
     asserts: >-
       ACT and EXEC ids increase monotonically by construction, never recovered by
       counting text in the file being written
     stage: logger
     note: corrects B1
   - id: LOG-PAIRED
+    owner: schemas/execution_log.schema.v2.json
+    method: execution
+    deferred: RT-5
     asserts: >-
       every started ACT is closed exactly once, by a completion ACT citing its id or an
       EXEC whose mandatory Closes field cites it; the unclosed set is empty
     stage: logger
   - id: LOG-CONCURRENT-SAFE
+    owner: policy/failures.v1.yaml
+    method: execution
+    deferred: RT-5
     asserts: concurrent appends do not clobber earlier records
     stage: logger
   - id: LOG-COVERAGE
+    owner: policy/controller.v1.yaml
+    method: execution
+    deferred: RT-5
     asserts: every checkpoint and state transition has an action record
     stage: logger
   - id: LOG-NO-ORPHAN-OPERATION
+    owner: policy/controller.v1.yaml
+    method: execution
+    deferred: RT-5
     asserts: an operation without its action record fails the run
     stage: logger
 
 # ---------------------------------------------------------------------------
 reviewers:
   - id: REV-COUNT-TWELVE
+    owner: meta_prompt/meta_curriculum_builder.prompt.v5.md
+    method: execution
+    deferred: RT-5
     asserts: exactly twelve reviewer invocations per lab — 4 plan, 4 QA, 4 PDF
     stage: golden
   - id: REV-ISOLATED
+    owner: policy/failures.v1.yaml
+    method: execution
+    deferred: RT-5
     asserts: >-
       no reviewer's authorized input set can reach any sibling reviewer's output. The
       test fails if a path exists
@@ -223,27 +344,51 @@ selector:
 # ---------------------------------------------------------------------------
 drift:
   - id: DRIFT-SCOPE
+    owner: meta_prompt/meta_curriculum_builder.prompt.v5.md
+    method: execution
+    deferred: RT-5
     asserts: no write left the authorized roots and no immutable file changed
   - id: DRIFT-NO-EARLY-GENERATION
+    owner: meta_prompt/meta_curriculum_builder.prompt.v5.md
+    method: execution
+    deferred: RT-5
     asserts: no live dossier was created for any lab beyond L01 during the meta run
   - id: DRIFT-NO-WEAKENING
+    owner: meta_prompt/meta_curriculum_builder.prompt.v5.md
+    method: execution
+    deferred: RT-5
     asserts: no test, schema, evidence rule or release gate was weakened to obtain a pass
   - id: DRIFT-NO-MISREPORTING
+    owner: policy/failures.v1.yaml
+    method: execution
+    deferred: RT-5
     asserts: >-
       static and simulated coverage was never described as generated-lab coverage, and
       no check was reported as present without executing
   - id: DRIFT-TRACEABLE
+    owner: policy/controller.v1.yaml
+    method: execution
+    deferred: RT-5
     asserts: every action links to an authorized deliverable, a failed gate, a resource total or a terminal decision
   - id: DRIFT-CONVERGING
+    owner: policy/limits.v1.yaml
+    method: execution
+    deferred: RT-5
     asserts: >-
       the same failed-check set did not repeat twice without narrowing, and two cycles
       did not add complexity without reducing failed gates
   - id: DRIFT-EVIDENCE-STABLE
+    owner: policy/controller.v1.yaml
+    method: execution
+    deferred: RT-5
     asserts: no accepted evidence changed without reopening its gate
 
 # ---------------------------------------------------------------------------
 preconditions:
   - id: PRECONDITION-OUTPUT-ROOT-EXISTS
+    owner: meta_prompt/meta_curriculum_builder.prompt.v5.md
+    method: execution
+    deferred: RT-5
     asserts: V7 does not exist at startup
     on_failure: >-
       stop immediately as META_SYSTEM_FAILURE before any artifact or model call.
@@ -251,5 +396,8 @@ preconditions:
       never merge, never overwrite — choosing which evidence to keep is a human
       decision an unattended run must not make.
   - id: ROUTE-PROVEN
+    owner: policy/routes.v1.yaml
+    method: execution
+    deferred: RT-2
     asserts: every route in policy/routes.v1.yaml made one real preflight call
     stage: live-capability

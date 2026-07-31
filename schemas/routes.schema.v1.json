@@ -1,0 +1,138 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://example.invalid/curriculum_builder/routes.schema.v1.json",
+  "title": "Execution routes v1",
+  "description": "Validates policy/routes.v1.yaml. Help text, installed binaries and configuration files are never capability proof: each route carries the command actually executed and what it returned, or is explicitly UNPROVEN. Whether the recorded proof came from a real run is RT-2 \u2014 nothing here re-executes it.",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "routes_version",
+    "schema",
+    "proven_on",
+    "routes",
+    "preflight"
+  ],
+  "properties": {
+    "routes_version": {
+      "const": "1.0"
+    },
+    "schema": {
+      "const": "schemas/routes.schema.v1.json"
+    },
+    "proven_on": {
+      "type": "string",
+      "format": "date"
+    },
+    "environment_note": {
+      "type": "string"
+    },
+    "preflight": {
+      "type": "object",
+      "required": [
+        "rule",
+        "on_failure"
+      ],
+      "properties": {
+        "rule": {
+          "type": "string",
+          "minLength": 20
+        },
+        "on_failure": {
+          "type": "string",
+          "minLength": 20
+        }
+      }
+    },
+    "routes": {
+      "type": "array",
+      "minItems": 1,
+      "items": {
+        "type": "object",
+        "required": [
+          "id",
+          "purpose",
+          "command",
+          "proof"
+        ],
+        "properties": {
+          "id": {
+            "type": "string",
+            "pattern": "^[a-z0-9_]+$"
+          },
+          "purpose": {
+            "type": "string",
+            "minLength": 10
+          },
+          "command": {
+            "type": [
+              "string",
+              "null"
+            ]
+          },
+          "proof": {
+            "type": [
+              "object",
+              "null"
+            ],
+            "properties": {
+              "executed": {
+                "type": "string",
+                "minLength": 5
+              },
+              "returned": {
+                "type": "string",
+                "minLength": 3
+              }
+            },
+            "required": [
+              "executed",
+              "returned"
+            ]
+          },
+          "status": {
+            "enum": [
+              "UNPROVEN"
+            ]
+          },
+          "constraints": {
+            "type": "array",
+            "minItems": 1,
+            "items": {
+              "type": "string",
+              "minLength": 10
+            }
+          },
+          "failure_without_flags": {
+            "type": "object"
+          },
+          "parameters": {
+            "type": "object"
+          },
+          "unavailable_alternatives": {
+            "type": "object"
+          }
+        },
+        "allOf": [
+          {
+            "if": {
+              "properties": {
+                "proof": {
+                  "type": "null"
+                }
+              },
+              "required": [
+                "proof"
+              ]
+            },
+            "then": {
+              "required": [
+                "status"
+              ],
+              "description": "A route with no proof must say so. An unproven route that looks proven is the capability failure this file exists to stop."
+            }
+          }
+        ]
+      }
+    }
+  }
+}

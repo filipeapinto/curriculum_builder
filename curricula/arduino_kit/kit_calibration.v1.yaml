@@ -60,6 +60,9 @@ enforced_by:
 # contract that names a kit cannot serve a different one. A term with no pattern is
 # a failure, not a skip: authoring the pattern is part of authoring the term.
 kit_terms:
+  elegoo:
+    kind: kit_vendor
+    prose_pattern: '(?i)\belegoo\b'
   elegoo_uno_r3_super_starter_kit:
     kind: kit_id
     prose_pattern: '\belegoo_uno_r3_super_starter_kit\b'

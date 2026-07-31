@@ -1,0 +1,122 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://example.invalid/curriculum_builder/routing_policy.schema.v1.json",
+  "title": "Routing policy v1",
+  "description": "Validates policy/routing/routing_policy.v1.yaml. Hard safety rules constrain the eligible pool before quality, cost or speed are considered; task classification then chooses among the eligible. Whether escalation actually stops where this file says is observable only in a run, which is why SEL-ESCALATION-BOUNDED is recorded MAPPED, NOT EXECUTED.",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "version",
+    "schema",
+    "objective_order",
+    "selection_method",
+    "hard_rules",
+    "escalation_rules",
+    "quality_estimation",
+    "check_ids"
+  ],
+  "properties": {
+    "version": {
+      "const": 1
+    },
+    "schema": {
+      "const": "schemas/routing_policy.schema.v1.json"
+    },
+    "objective_order": {
+      "type": "array",
+      "minItems": 2,
+      "items": {
+        "type": "string"
+      }
+    },
+    "selection_method": {
+      "type": "array",
+      "minItems": 2,
+      "items": {
+        "type": "string"
+      }
+    },
+    "hard_rules": {
+      "type": "object",
+      "minProperties": 1,
+      "additionalProperties": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": [
+          "allowed_models",
+          "minimum_reasoning_effort",
+          "independent_qa_required"
+        ],
+        "properties": {
+          "allowed_models": {
+            "type": "array",
+            "minItems": 1,
+            "items": {
+              "type": "string"
+            }
+          },
+          "minimum_reasoning_effort": {
+            "type": "string",
+            "minLength": 3
+          },
+          "independent_qa_required": {
+            "type": "boolean"
+          },
+          "pro_mode_for_final_judgment": {
+            "type": "boolean"
+          }
+        }
+      }
+    },
+    "escalation_rules": {
+      "type": "array",
+      "minItems": 1,
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": [
+          "condition",
+          "action"
+        ],
+        "properties": {
+          "condition": {
+            "type": "string",
+            "minLength": 5
+          },
+          "action": {
+            "type": "string",
+            "minLength": 5
+          }
+        }
+      }
+    },
+    "quality_estimation": {
+      "type": "object",
+      "required": [
+        "rule",
+        "accepted_signals"
+      ],
+      "properties": {
+        "rule": {
+          "type": "string",
+          "minLength": 20
+        },
+        "accepted_signals": {
+          "type": "array",
+          "minItems": 1,
+          "items": {
+            "type": "string"
+          }
+        }
+      }
+    },
+    "check_ids": {
+      "type": "array",
+      "minItems": 1,
+      "items": {
+        "type": "string",
+        "pattern": "^SEL-[A-Z0-9-]+$"
+      }
+    }
+  }
+}

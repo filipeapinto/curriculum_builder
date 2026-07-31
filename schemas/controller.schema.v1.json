@@ -1,0 +1,217 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://example.invalid/curriculum_builder/controller.schema.v1.json",
+  "title": "Controller contract v1",
+  "description": "Validates policy/controller.v1.yaml. Python owns lab order, transitions, routing, retries, checkpoints, revision targeting, every audit and every acceptance decision; a model never chooses a transition. This contract fixes the shape of that statement. It does not prove any of it runs \u2014 no controller exists, which is RT-1.",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "controller_version",
+    "schema",
+    "owned_by_code",
+    "never_uses_a_model_for",
+    "states",
+    "terminal_states",
+    "ordering_rules",
+    "checkpointing",
+    "resume",
+    "review_aggregation",
+    "blocked_eligibility",
+    "repeat_failure",
+    "full_run",
+    "cli",
+    "selector_rules",
+    "terminal_conditions"
+  ],
+  "properties": {
+    "controller_version": {
+      "const": "1.0"
+    },
+    "schema": {
+      "const": "schemas/controller.schema.v1.json"
+    },
+    "owned_by_code": {
+      "type": "array",
+      "minItems": 1,
+      "items": {
+        "type": "string",
+        "minLength": 3
+      }
+    },
+    "never_uses_a_model_for": {
+      "type": "array",
+      "minItems": 1,
+      "items": {
+        "type": "string",
+        "minLength": 3
+      }
+    },
+    "states": {
+      "type": "array",
+      "minItems": 1,
+      "uniqueItems": true,
+      "items": {
+        "type": "string",
+        "pattern": "^[A-Z][A-Z_]*$"
+      }
+    },
+    "terminal_states": {
+      "type": "array",
+      "minItems": 1,
+      "uniqueItems": true,
+      "items": {
+        "type": "string",
+        "pattern": "^[A-Z][A-Z_]*$"
+      }
+    },
+    "ordering_rules": {
+      "type": "array",
+      "minItems": 1,
+      "items": {
+        "type": "object",
+        "required": [
+          "id",
+          "rule"
+        ],
+        "properties": {
+          "id": {
+            "type": "string"
+          },
+          "rule": {
+            "type": "string",
+            "minLength": 20
+          },
+          "corrects": {}
+        }
+      }
+    },
+    "checkpointing": {
+      "type": "object"
+    },
+    "resume": {
+      "type": "object"
+    },
+    "review_aggregation": {
+      "type": "object"
+    },
+    "blocked_eligibility": {
+      "type": "object"
+    },
+    "repeat_failure": {
+      "type": "object"
+    },
+    "full_run": {
+      "type": "object"
+    },
+    "cli": {
+      "type": "object",
+      "required": [
+        "required_flags",
+        "model_flag"
+      ],
+      "properties": {
+        "required_flags": {
+          "type": "array",
+          "minItems": 1,
+          "items": {
+            "type": "string",
+            "minLength": 3
+          }
+        },
+        "limit_flags": {
+          "type": "string"
+        },
+        "note": {
+          "type": "string"
+        },
+        "model_flag": {
+          "type": "object",
+          "required": [
+            "name",
+            "rule"
+          ],
+          "properties": {
+            "name": {
+              "const": "--model"
+            },
+            "rule": {
+              "type": "string",
+              "pattern": "may not bypass the selector",
+              "description": "The prohibition is stated here and promoted into the meta prompt's Routing section. Stating it is not enforcing it: nothing executes --model today, and refusing the call at runtime is RT-3."
+            }
+          }
+        }
+      }
+    },
+    "selector_rules": {
+      "type": "array",
+      "minItems": 1,
+      "items": {
+        "type": "object",
+        "required": [
+          "id",
+          "rule",
+          "enforced_at_runtime",
+          "deferred"
+        ],
+        "properties": {
+          "id": {
+            "type": "string",
+            "pattern": "^SEL-[A-Z0-9-]+$"
+          },
+          "rule": {
+            "type": "string",
+            "minLength": 20
+          },
+          "enforced_at_runtime": {
+            "const": false,
+            "description": "False, and not by oversight: no controller exists to enforce any of these. A schema that permitted true here would let a document claim enforcement this repository cannot deliver."
+          },
+          "deferred": {
+            "type": "string",
+            "pattern": "^RT-[0-9]+$"
+          }
+        }
+      }
+    },
+    "terminal_conditions": {
+      "type": "array",
+      "minItems": 1,
+      "items": {
+        "type": "object",
+        "required": [
+          "condition_id",
+          "condition",
+          "terminal_state",
+          "owned_by",
+          "enforced_at_runtime",
+          "deferred"
+        ],
+        "properties": {
+          "condition_id": {
+            "type": "string",
+            "minLength": 1
+          },
+          "condition": {
+            "type": "string",
+            "minLength": 20
+          },
+          "terminal_state": {
+            "type": "string",
+            "pattern": "^[A-Z][A-Z_]*$"
+          },
+          "owned_by": {
+            "const": "code"
+          },
+          "enforced_at_runtime": {
+            "const": false
+          },
+          "deferred": {
+            "type": "string",
+            "pattern": "^RT-[0-9]+$"
+          }
+        }
+      }
+    }
+  }
+}

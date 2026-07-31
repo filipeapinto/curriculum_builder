@@ -18,6 +18,12 @@
 
 calibration_version: '1.0'
 
+# The contract this manifest is validated against. FR-P4-ALL-VALIDATE resolves the
+# pairing from this pointer rather than from a list held in the gate, so a new
+# manifest cannot be added without one.
+schema: schemas/calibration.schema.v1.json
+
+
 learner:
   age_band: '9+'
   description: Supervised beginners aged nine and above, with no assumed electronics knowledge.

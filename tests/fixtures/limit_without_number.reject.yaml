@@ -1,0 +1,10 @@
+# Negative fixture for FR-P4-AGREEMENT (a). A limit with a flag and no number.
+# limits.v1.yaml's own header states the consequence: a limit without a number can
+# never be exceeded, so the drift rule that halts on exceeding it never fires. The
+# limit is advertised, the flag exists, and the gate behind it is inert.
+limits_version: '1.0'
+schema: schemas/limits.schema.v1.json
+per_lab:
+  max_model_calls:
+    flag: --max-model-calls-per-lab
+    rationale: the number was never written down

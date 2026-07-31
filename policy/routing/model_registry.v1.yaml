@@ -1,5 +1,11 @@
 version: 1
-last_verified: 2026-07-27
+
+# The contract this manifest is validated against. FR-P4-ALL-VALIDATE resolves the
+# pairing from this pointer rather than from a list held in the gate, so a new
+# manifest cannot be added without one.
+schema: schemas/model_registry.schema.v1.json
+
+last_verified: '2026-07-27'
 selection_rule: "Only choose models available in the active runtime. Record any substitution."
 models:
   gpt-5.6-sol:

@@ -568,7 +568,15 @@ def check_deps(ev: Evidence):
 
 
 def check_clean(ev: Evidence):
+    ev.note("gate_impl_fix: reads git's exit status — an empty result from a failed "
+            "`git status` had read as a clean worktree, which is a false PASS on the "
+            "one gate that guards APPROVED")
     proc = ev.run(["git", "status", "--porcelain"])
+    if proc.returncode != 0:
+        raise GateFailure(
+            f"external: git status could not be run — {proc.stderr.strip()}. The worktree is "
+            "unproven, not clean; an empty result from a failed git is never a pass."
+        )
     dirty = [ln for ln in proc.stdout.splitlines() if ln.strip()]
     detail = "FR-P0-CLEAN PASS (worktree clean)" if not dirty else (
         "FR-P0-CLEAN FAIL — " + "; ".join(dirty[:20])

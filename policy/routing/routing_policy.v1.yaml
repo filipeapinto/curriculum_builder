@@ -1,4 +1,10 @@
 version: 1
+
+# The contract this manifest is validated against. FR-P4-ALL-VALIDATE resolves the
+# pairing from this pointer rather than from a list held in the gate, so a new
+# manifest cannot be added without one.
+schema: schemas/routing_policy.schema.v1.json
+
 objective_order:
   - safety_and_evidence
   - task_success

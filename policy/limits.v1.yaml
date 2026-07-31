@@ -7,6 +7,12 @@
 
 limits_version: '1.0'
 
+# The contract this manifest is validated against. FR-P4-ALL-VALIDATE resolves the
+# pairing from this pointer rather than from a list held in the gate, so a new
+# manifest cannot be added without one.
+schema: schemas/limits.schema.v1.json
+
+
 per_lab:
   max_model_calls:
     value: 60
@@ -52,18 +58,30 @@ per_run:
 convergence:
   max_meta_revision_cycles:
     value: 6
+    flag: --max-meta-revision-cycles
     rationale: beyond six the loop is not converging, it is thrashing
   repeat_failure_threshold:
     value: 2
+    flag: --repeat-failure-threshold
     rationale: the same failed-check set twice without narrowing ends the loop
   complexity_without_progress_cycles:
     value: 2
+    flag: --complexity-without-progress-cycles
     rationale: two cycles adding calls or code while failed gates do not fall
 
+# One retry distinguishes a blip from a defect; a second hides the defect. These
+# were bare integers until phase 4: a limit with no flag cannot be overridden and a
+# limit with no recorded value cannot be reported as the one that bound a run, which
+# is the same defect this file's own header describes.
 retry:
-  malformed_structured_output: 1
-  transient_worker_source_or_image_failure: 1
-  rationale: one retry distinguishes a blip from a defect; a second hides the defect
+  malformed_structured_output:
+    value: 1
+    flag: --retry-malformed-output
+    rationale: one retry distinguishes a blip from a defect; a second hides the defect
+  transient_worker_source_or_image_failure:
+    value: 1
+    flag: --retry-transient-failure
+    rationale: one retry distinguishes a transient source or image failure from a real one
 
 behaviour_on_limit:
   - Stop before exceeding the limit, never after.

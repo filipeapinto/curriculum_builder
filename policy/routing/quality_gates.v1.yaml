@@ -1,4 +1,10 @@
 version: 1
+
+# The contract this manifest is validated against. FR-P4-ALL-VALIDATE resolves the
+# pairing from this pointer rather than from a list held in the gate, so a new
+# manifest cannot be added without one.
+schema: schemas/quality_gates.schema.v1.json
+
 gates:
   electronics:
     requires: [circuit_data_valid, component_orientation_checked, supply_limit_checked, hazard_checked, meter_setup_checked]
