@@ -9,6 +9,16 @@ in-pipeline sign-off gate that hung off decision (b) is removed. Everything else
 the objective, the leak inventory, the verifier precondition, the phase structure —
 carries forward unchanged.
 **Evidence:** `../research/conclusions.v1.md` and the five reports beside it.
+**Amended in place, 2026-08-01.** §2 gains a seventh leak row, `G7`, and §6 phase 3
+gains the sentence that retires it. The leak was found by `FR-P5-ENGINE-GENERIC` and
+recorded in `simplification.phase0.result.v1.md`, which states plainly that the table
+was incomplete by one. This is an amendment and **not** a v4: §7 forbids further
+specification work before phase 6 produces a unit, and a plan that cannot absorb its
+own measurement is the failure mode this project is named after. The amendment adds
+no phase, changes no phase's meaning, and leaves §9 untouched. Two consequential
+sentences move with it and nothing else does: §6 phase 0 now asks whether §2's table is
+complete rather than whether a fixed range of ids is, and §7's first acceptance
+criterion reads `G1`–`G7`.
 
 ---
 
@@ -49,7 +59,10 @@ That is the whole architecture, and it needs only to be finished:
 | **engine** — `policy/`, `schemas/`, the prompt | premises, precedence, unit contract, generic checks, routing, the run | never |
 | **curriculum** — `curricula/<name>/` | its manifest, its domain data, its calibration, its evidence, **its domain verifier** | entirely |
 
-**Six places leak the domain into the engine.** Each is a defect id used by §5.
+**Seven places leak the domain into the engine.** Each is a defect id used by §5.
+`G1`–`G6` were read out of the repository; `G7` was **measured** out of it by
+`FR-P5-ENGINE-GENERIC` and is marked as such, because the difference between a leak
+someone noticed and a leak a gate reports is the difference this plan exists to make.
 
 | # | Where | Leak |
 |---|---|---|
@@ -59,6 +72,7 @@ That is the whole architecture, and it needs only to be finished:
 | **G4** | `meta_prompt/assets/component_lab_template.v1.md` | *"Component-Oriented Electronics Lab Template"* — the prose contract for a unit is written for one domain |
 | **G5** | `curricula/arduino_kit/arduino_kit_curriculum.v4.yaml`, `schemas/curriculum.schema.v4.json` | `kit_power_profile` and `visual_system` are top-level curriculum-schema concepts; "kit" and "power" are electronics words in an engine contract |
 | **G6** | `policy/routes.v1.yaml` | route names are generic, but `RESEARCH` — the datasheet fetch — is described as a component-datasheet capability rather than "the domain's primary-source capability" |
+| **G7** | `policy/calibration.v1.yaml:9-10,15` | the engine-wide premise manifest's own header comments name one curriculum's files: the precedence rule outranks `lab_brief.md`, `teacher_framework.md`, `teacher_audit.md` and `roster.md` under `curricula/arduino_kit/` by path rather than outranking *the curriculum's* prose, and the "what is NOT here" note names `curricula/arduino_kit/kit_calibration.v1.yaml` as where the supplies went. Mild — comments, stating a rule correct in general and written in the particular — and still a binding a second curriculum falls outside of. **Measured, not read:** reported by `FR-P5-ENGINE-GENERIC` (§9) and recorded in `simplification.phase0.result.v1.md`. Retired by §6 phase 3. |
 
 **What is already generic and must not be disturbed.** `meta_prompt/assets/pedagogy.v1.md`
 is domain-independent as written — 5E, Bloom, Predict-Observe-Explain, cognitive load
@@ -173,9 +187,12 @@ built, they have no subject.
 ## 6. The work
 
 **Phase 0 — prove the split.** Inventory every electronics-bound assumption in the
-engine layer and confirm G1–G6 is the complete set. A gate asserts that no engine file
-names a curriculum directory, and no engine check id encodes a domain term. This is
-cheap, executable today, and it is what stops the split being a claim.
+engine layer and confirm §2's leak table is the complete set — the table as it stands,
+not a fixed range of ids, because a phase whose job is to find the leaks may not assume
+their number. It found one the table did not name, and §2 now names it as `G7`. A gate
+asserts that no engine file names a curriculum directory, and no engine check id encodes
+a domain term. This is cheap, executable today, and it is what stops the split being a
+claim.
 
 **Phase 1 — generalise the unit contract (G1, G5).** `lab.schema.v4.json`: six engine
 blocks plus a `domain` block validated against a schema the curriculum supplies and
@@ -191,9 +208,14 @@ declares ERC — current-limit presence, polarity, shorts, floating inputs, supp
 refuses to start when the declaration is missing or its fixtures have not been
 executed.**
 
-**Phase 3 — separate the check inventory (G3).** `policy/checks.v1.yaml` keeps engine
+**Phase 3 — separate the check inventory (G3, G7).** `policy/checks.v1.yaml` keeps engine
 checks. Domain checks move to `curricula/<name>/checks.v1.yaml`. Both validate against
-the same schema; only the owner changes.
+the same schema; only the owner changes. **In the same phase, `G7`:**
+`policy/calibration.v1.yaml`'s header comments are rewritten to state precedence over
+*the curriculum's* prose documents and premises rather than over four files under
+`curricula/arduino_kit/` by name — the same edit in the same layer for the same reason,
+which is why this phase owns it and no new phase is created for it. The rule is
+generalised, never deleted, and never exempted from the gate.
 
 **Phase 4 — generic checks (V1, V3).** Readability against a band in
 `policy/calibration.v1.yaml`; Bloom verbs against the declared level; cross-document
@@ -252,7 +274,7 @@ consequences, and they bind:
 
 **Acceptance:**
 
-1. G1–G6 resolved, and a gate fails if an engine file names a curriculum directory or an
+1. G1–G7 resolved, and a gate fails if an engine file names a curriculum directory or an
    engine check id encodes a domain term.
 2. Every Phase 4 check executes and rejects the fixture built to break it — no id
    advertised without an executed assertion, per B3.
