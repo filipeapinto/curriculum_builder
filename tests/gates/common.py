@@ -41,6 +41,12 @@ RESULTS_DIR = Path(os.environ.get("FR_RESULTS_DIR", str(TESTS_DIR / "results")))
 
 PLAN_DIR = REPO_ROOT / "plans" / "folder_refactoring"
 
+# Gate-family ownership is declared data, not a constant in a gate — see the manifest
+# for why. ``FOLDER_FAMILY`` is named here only so the folder family's resolution can
+# be shown to be unchanged; every other consumer asks the manifest.
+GATE_FAMILIES_MANIFEST = GATES_DIR / "gate_families.v1.yaml"
+FOLDER_FAMILY = "folder_refactoring"
+
 # Rule 7 — the production scan root set, stated by exclusion and never
 # re-enumerated. A second hand-maintained copy is the defect this plan keeps
 # closing, so this is exactly rule 7's list and nothing else: adding a root here
@@ -385,29 +391,108 @@ def gate_result(ok: bool, detail: str, fixtures: Optional[list[Fixture]] = None,
 
 
 # ---------------------------------------------------------------------------
-# Reading the active plan — named files under plans/, never a glob (rule 7)
+# Gate families — which plan owns which gate ids
 
 
-def active_plan_path() -> Path:
-    """The highest-versioned plan at the folder root. Named, then opened."""
+def load_gate_families() -> list[dict]:
+    """The declared gate families, validated against their own schema first.
+
+    Validation happens here, without an :class:`Evidence`, on purpose. Every manifest
+    in this repository is validated against a contract before it is trusted, and this
+    one decides which plan a gate is checked against — an invalid one would not fail a
+    gate, it would silently compare the registry to the wrong document. Doing it in
+    the loader means the harness refuses to run rather than reporting a comparison it
+    could not make, and it does not add a ``schema`` leg to the claim class of every
+    gate that happens to need a plan path.
+    """
+    doc = _deserialize(GATE_FAMILIES_MANIFEST)
+    pointer = (doc or {}).get("schema")
+    if not pointer:
+        raise GateFailure(
+            f"gate-families-manifest-invalid: {rel(GATE_FAMILIES_MANIFEST)} names no schema"
+        )
+    schema_path = REPO_ROOT / pointer
+    if not schema_path.exists():
+        raise GateFailure(
+            f"gate-families-manifest-invalid: it names {pointer}, which does not exist"
+        )
+    error = _validate_obj(doc, _deserialize(schema_path))
+    if error:
+        raise GateFailure(f"gate-families-manifest-invalid: {error}")
+
+    families = doc["families"]
+    seen: dict[str, str] = {}
+    for family in families:
+        for prefix in family["id_prefixes"]:
+            if prefix in seen:
+                raise GateFailure(
+                    f"gate-families-manifest-invalid: prefix {prefix!r} is claimed by both "
+                    f"{seen[prefix]!r} and {family['family']!r}"
+                )
+            seen[prefix] = family["family"]
+    return families
+
+
+def family_by_name(name: str, families: Optional[list[dict]] = None) -> dict:
+    for family in families if families is not None else load_gate_families():
+        if family["family"] == name:
+            return family
+    raise GateFailure(f"no gate family named {name!r} is declared")
+
+
+def family_of_gate_id(gate_id: str, families: list[dict]) -> Optional[dict]:
+    """The family owning a gate id, by longest matching prefix, or ``None``.
+
+    ``None`` is a reportable state, never a default owner: a gate nobody's plan
+    declares must fail loudly rather than be filed under whichever family sorts first.
+    """
+    best: Optional[tuple[int, dict]] = None
+    for family in families:
+        for prefix in family["id_prefixes"]:
+            if gate_id.startswith(prefix) and (best is None or len(prefix) > best[0]):
+                best = (len(prefix), family)
+    return best[1] if best else None
+
+
+# ---------------------------------------------------------------------------
+# Reading a family's plan — named files under plans/, never a glob (rule 7)
+
+
+def family_plan_path(family: dict) -> Path:
+    """The highest-versioned plan at that family's plan folder root. Named, then
+    opened. The glob is non-recursive, so a superseded plan under ``deprecated/`` is
+    never resolved as the owner."""
+    directory = REPO_ROOT / family["plan_dir"]
+    stem = family["plan_stem"]
     versions = sorted(
         int(m.group(1))
         for m in (
-            re.match(r"folder_refactoring\.plan\.v(\d+)\.md$", p.name)
-            for p in PLAN_DIR.glob("folder_refactoring.plan.v*.md")
+            re.match(rf"{re.escape(stem)}\.v(\d+)\.md$", p.name)
+            for p in directory.glob(f"{stem}.v*.md")
         )
         if m
     )
     if not versions:
-        raise GateFailure("no folder_refactoring.plan.v*.md at the plan folder root")
-    return PLAN_DIR / f"folder_refactoring.plan.v{versions[-1]}.md"
+        raise GateFailure(f"no {stem}.v*.md at the {family['family']} plan folder root")
+    return directory / f"{stem}.v{versions[-1]}.md"
+
+
+def active_plan_path() -> Path:
+    """The folder family's active plan.
+
+    Behaviour is unchanged — the highest-versioned ``folder_refactoring.plan.v*.md``
+    at ``plans/folder_refactoring/`` — but the folder name and the stem are now read
+    from the family manifest rather than written here, so the folder family is
+    resolved by exactly the code every other family is.
+    """
+    return family_plan_path(family_by_name(FOLDER_FAMILY))
 
 
 def plan_section(text: str, number: int) -> str:
     """The body of ``## <number>. ...`` up to the next ``## `` heading."""
     match = re.search(rf"^## {number}\. .*$", text, re.M)
     if not match:
-        raise GateFailure(f"section {number} not found in the active plan")
+        raise GateFailure(f"section {number} not found in the plan")
     start = match.end()
     nxt = re.search(r"^## \d+\. ", text[start:], re.M)
     return text[start : start + nxt.start()] if nxt else text[start:]

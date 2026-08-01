@@ -1,4 +1,10 @@
-"""The single gate registry — every gate in the plan's section 8, declared once.
+"""The single gate registry — every gate its owning plan's catalogue declares, once.
+
+The registry composes from **several** plans. ``tests/gates/gate_families.v1.yaml``
+maps each gate-id prefix to the plan that owns that family and to the section of that
+plan holding its catalogue, and ``FR-P0-REGISTRY`` compares each family against its
+own plan's section rather than comparing everything against one. A gate whose prefix
+no family claims is ``gate-family-unowned`` and fails.
 
 Harness rule 2: this file lists **every** gate with its ``activation_phase``, its
 claim class and its ``depends_on`` list from the first commit onward, so a later
@@ -278,6 +284,19 @@ GATES = [
         "depends_on": ["FR-P2-DEFERRED"],
         "command": "python3 tests/gates/fr_p4_policy_schemas.py --check mapping",
         "impl": "fr_p4_policy_schemas:check_mapping",
+    },
+
+    # --- Phase 5 — the engine/domain boundary -----------------------------------
+    # A different family, owned by a different plan. See
+    # tests/gates/gate_families.v1.yaml: the FR-P5- prefix belongs to
+    # plans/simplification/plan/, whose section 9 is this gate's catalogue.
+    {
+        "id": "FR-P5-ENGINE-GENERIC",
+        "activation_phase": 5,
+        "claim_class": "tree+parse+text+mapping",
+        "depends_on": ["FR-P0-HARNESS"],
+        "command": "python3 tests/gates/fr_p5_engine.py --check engine-generic",
+        "impl": "fr_p5_engine:check_engine_generic",
     },
 ]
 

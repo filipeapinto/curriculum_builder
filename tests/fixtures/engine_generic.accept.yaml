@@ -1,0 +1,35 @@
+# Positive fixture for FR-P5-ENGINE-GENERIC — the same shape, with the domain removed.
+#
+# The point of an accept fixture here is that the gate must not fire on an engine
+# contract merely for mentioning units, curricula in general, or a check id that reads
+# like a domain assertion. It fires on a *named* curriculum directory and on a
+# curriculum's *declared* term, and on nothing else.
+#
+# Never read by a production scan. Only FR-P5-ENGINE-GENERIC's fixture invocation
+# points a detector at this path.
+
+checks_version: '1.0'
+schema: schemas/checks.schema.v1.json
+
+unit_document:
+  - id: UNIT-SCHEMA-VALID
+    owner: schemas/lab.schema.v3.json
+    method: schema
+    asserts: >-
+      the unit validates against the contract the engine declares, whichever
+      curriculum root the run was given
+    stage: static
+  - id: UNIT-DOMAIN-BLOCK-DECLARED
+    owner: schemas/lab.schema.v3.json
+    method: mapping
+    asserts: >-
+      the unit's domain block validates against the schema its own curriculum
+      supplies and names, which the engine resolves without reading
+    stage: static
+  - id: UNIT-SOURCE-CITED
+    owner: policy/checks.v1.yaml
+    method: mapping
+    asserts: >-
+      every value carries the primary source it was retrieved from, by identifier,
+      retrieved during the run rather than recalled
+    stage: static

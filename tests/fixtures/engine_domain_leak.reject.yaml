@@ -1,0 +1,27 @@
+# Negative fixture for FR-P5-ENGINE-GENERIC — both legs, in one file.
+#
+# It is shaped as a check inventory because that is what leg (b) reads, and it carries
+# a curriculum path in its prose because that is what leg (a) reads. Its declared
+# expected_error names both codes, so a fixture that stopped tripping either leg is
+# recorded FAIL rather than passing on the strength of the other.
+#
+# Never read by a production scan. Only FR-P5-ENGINE-GENERIC's fixture invocation
+# points a detector at this path.
+
+checks_version: '1.0'
+schema: schemas/checks.schema.v1.json
+
+lab_document:
+  # (b) — owner is an engine contract, so the id is engine-owned, and the id carries
+  # the kit vendor name that curricula/arduino_kit/kit_calibration.v1.yaml declares as
+  # one of its own terms. An engine-owned id may not encode a curriculum's word.
+  - id: LAB-ELEGOO-MARGIN
+    owner: schemas/lab.schema.v3.json
+    method: mapping
+    # (a) — an engine file naming one curriculum's directory. The engine may know that
+    # curricula exist; it may not know which one.
+    artifact: curricula/arduino_kit/kit_calibration.v1.yaml
+    asserts: >-
+      every powered unit stays inside the margin one kit's own calibration states,
+      asserted by the engine rather than by the curriculum that owns the fact
+    stage: static

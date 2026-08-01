@@ -6,9 +6,12 @@ detector must contain the literals it hunts, so scanning its own source would ma
 ``FR-P0-NOSTALE`` flag itself on the first run.
 
 Reading a **named** file under an excluded root is not a scan (rule 7). This module
-opens the active plan's sections 4, 5 and 8 and ``tests/gates/registry.py`` by name,
-and ``FR-P0-PLANREF`` deliberately globs ``plans/folder_refactoring/`` — for version
-relationships only, never for path literals.
+opens the folder plan's sections 4 and 5, **each gate family's catalogue section** and
+``tests/gates/registry.py`` by name, and ``FR-P0-PLANREF`` deliberately globs
+``plans/folder_refactoring/`` — for version relationships only, never for path
+literals. Which plan owns which gate family, and which of its sections holds the
+catalogue, is read from ``tests/gates/gate_families.v1.yaml`` rather than written
+here: a folder name in a detector is what made every gate belong to one plan.
 """
 
 from __future__ import annotations
@@ -621,33 +624,64 @@ def parse_gate_catalogue(section8: str) -> dict[str, dict]:
     return catalogue
 
 
-def compare_registry(catalogue: dict[str, dict], gates: list[dict], phase: int) -> list[str]:
-    """(a)-(c): the registry against section 8."""
+def compare_registry(
+    catalogues: dict[str, dict[str, dict]], families: list[dict], gates: list[dict]
+) -> list[str]:
+    """(a)-(c): the registry against **each family's** catalogue section.
+
+    The registry composes from several plans, each owning the gate-id prefixes the
+    family manifest gives it. A registered gate is compared against the catalogue of
+    the family its id belongs to — never against the union — so a gate declared by one
+    plan and prefixed for another is a reported mismatch rather than an accidental
+    pass, and a gate no family owns is reported rather than filed somewhere.
+    """
     problems = []
     registered = {g["id"]: g for g in gates}
-    for gate_id, declared in catalogue.items():
-        entry = registered.get(gate_id)
-        if entry is None:
-            problems.append(f"gate-declared-in-plan-not-registered:{gate_id}")
-            continue
-        if entry["activation_phase"] != declared["activation_phase"]:
-            problems.append(
-                f"phase-mismatch:{gate_id} registry={entry['activation_phase']} "
-                f"plan={declared['activation_phase']}"
-            )
-        if set(entry["claim_class"].split("+")) != set(declared["claim_class"].split("+")):
-            problems.append(
-                f"class-mismatch:{gate_id} registry={entry['claim_class']} "
-                f"plan={declared['claim_class']}"
-            )
-        if set(entry["depends_on"]) != set(declared["depends_on"]):
-            problems.append(
-                f"depends-mismatch:{gate_id} registry={sorted(entry['depends_on'])} "
-                f"plan={declared['depends_on']}"
-            )
+    for family in families:
+        name = family["family"]
+        for gate_id, declared in catalogues.get(name, {}).items():
+            owner = common.family_of_gate_id(gate_id, families)
+            if owner is None or owner["family"] != name:
+                problems.append(
+                    f"gate-family-mismatch:{gate_id} is declared by {name} but its id prefix "
+                    f"is owned by {owner['family'] if owner else 'no family'}"
+                )
+            entry = registered.get(gate_id)
+            if entry is None:
+                problems.append(f"gate-declared-in-plan-not-registered:{gate_id}")
+                continue
+            problems += _compare_one(gate_id, entry, declared)
     for gate_id in registered:
-        if gate_id not in catalogue:
+        owner = common.family_of_gate_id(gate_id, families)
+        if owner is None:
+            problems.append(f"gate-family-unowned:{gate_id}")
+        elif gate_id not in catalogues.get(owner["family"], {}):
             problems.append(f"gate-registered-not-in-plan:{gate_id}")
+    return problems
+
+
+def _compare_one(gate_id: str, entry: dict, declared: dict) -> list[str]:
+    """One registered gate against the catalogue entry that declares it.
+
+    Unchanged from the single-family form: phase equal, claim class equal **as a
+    set**, ``depends_on`` equal as a set.
+    """
+    problems = []
+    if entry["activation_phase"] != declared["activation_phase"]:
+        problems.append(
+            f"phase-mismatch:{gate_id} registry={entry['activation_phase']} "
+            f"plan={declared['activation_phase']}"
+        )
+    if set(entry["claim_class"].split("+")) != set(declared["claim_class"].split("+")):
+        problems.append(
+            f"class-mismatch:{gate_id} registry={entry['claim_class']} "
+            f"plan={declared['claim_class']}"
+        )
+    if set(entry["depends_on"]) != set(declared["depends_on"]):
+        problems.append(
+            f"depends-mismatch:{gate_id} registry={sorted(entry['depends_on'])} "
+            f"plan={declared['depends_on']}"
+        )
     return problems
 
 
@@ -677,17 +711,38 @@ def load_registry_module(path: Path):
     return module
 
 
+def family_catalogues(ev: Evidence) -> tuple[list[dict], dict[str, dict[str, dict]]]:
+    """Every declared family, and the gate catalogue its own plan states.
+
+    Each family's plan is a **named** file opened under an excluded root (rule 7),
+    resolved through the family manifest rather than through a folder name written
+    into this module.
+    """
+    families = common.load_gate_families()
+    catalogues: dict[str, dict[str, dict]] = {}
+    for family in families:
+        plan_path = common.family_plan_path(family)
+        section = plan_section(ev.text_of(plan_path), family["catalogue_section"])
+        catalogues[family["family"]] = parse_gate_catalogue(section)
+        ev.resolve(
+            f"the {family['family']} family's gate ids",
+            f"{rel(plan_path)} section {family['catalogue_section']}",
+            "tests/gates/registry.py",
+        )
+    return families, catalogues
+
+
 def check_registry(ev: Evidence):
-    section8 = plan_section(ev.text_of(active_plan_path()), 8)
-    catalogue = parse_gate_catalogue(section8)
+    families, catalogues = family_catalogues(ev)
     registry = ev.import_gate_module("registry")
     gates = registry.GATES
     phase = common.RUN_STATE.get("phase")
     phase = int(os.environ.get("FR_PHASE", 0)) if phase is None else phase
 
-    problems = compare_registry(catalogue, gates, phase)
+    problems = compare_registry(catalogues, families, gates)
 
     implemented = 0
+    implemented_by_family: dict[str, int] = {f["family"]: 0 for f in families}
     for gate in gates:
         if gate["activation_phase"] > phase:
             continue
@@ -701,26 +756,49 @@ def check_registry(ev: Evidence):
             problems.append(f"gate-not-implemented:{gate['id']} ({gate['impl']})")
         else:
             implemented += 1
+            owner = common.family_of_gate_id(gate["id"], families)
+            if owner is not None:
+                implemented_by_family[owner["family"]] += 1
 
     problems += compare_claim_classes(gates, common.RUN_STATE.get("mechanisms", {}))
 
-    declared_count = len(catalogue)
+    declared_count = sum(len(c) for c in catalogues.values())
+    breakdown = ", ".join(
+        f"{f['family']} {len(catalogues.get(f['family'], {}))} declared/"
+        f"{implemented_by_family[f['family']]} implemented"
+        for f in families
+    )
     line = (
         f"FR-P0-REGISTRY {'PASS' if not problems else 'FAIL'} "
         f"({declared_count} declared, {implemented} implemented, "
         f"{declared_count - implemented} pending, "
-        f"{sum(1 for p in problems if p.startswith('claim-class-drift'))} class drift)"
+        f"{sum(1 for p in problems if p.startswith('claim-class-drift'))} class drift; "
+        f"families: {breakdown})"
     )
 
     missing_fixture = FIXTURES / "registry_missing_gate.reject.py"
     drift_fixture = FIXTURES / "registry_class_drift.reject.py"
+    unowned_fixture = FIXTURES / "registry_unowned_family.reject.py"
     fixtures = [
         Fixture(
             name=rel(missing_fixture),
             kind="reject",
             expected_error="gate-declared-in-plan-not-registered",
             detector=lambda: (
-                compare_registry(catalogue, load_registry_module(missing_fixture).GATES, phase)
+                compare_registry(
+                    catalogues, families, load_registry_module(missing_fixture).GATES
+                )
+                or [None]
+            )[0],
+        ),
+        Fixture(
+            name=rel(unowned_fixture),
+            kind="reject",
+            expected_error="gate-family-unowned",
+            detector=lambda: (
+                compare_registry(
+                    catalogues, families, load_registry_module(unowned_fixture).GATES
+                )
                 or [None]
             )[0],
         ),

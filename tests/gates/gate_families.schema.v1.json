@@ -1,0 +1,73 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://example.invalid/curriculum_builder/gate_families.schema.v1.json",
+  "title": "Gate-family ownership v1",
+  "description": "Validates tests/gates/gate_families.v1.yaml, the mapping from gate-id prefix to the plan that owns that family and to the catalogue section of that plan which FR-P0-REGISTRY compares the family against. A family whose plan cannot be resolved, or whose prefixes overlap another family's, would silently reassign a gate's owner and make the registry agree with a section nobody maintains.",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "gate_families_version",
+    "schema",
+    "families"
+  ],
+  "properties": {
+    "gate_families_version": {
+      "const": "1.0"
+    },
+    "schema": {
+      "const": "tests/gates/gate_families.schema.v1.json"
+    },
+    "families": {
+      "type": "array",
+      "minItems": 1,
+      "uniqueItems": true,
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": [
+          "family",
+          "id_prefixes",
+          "plan_dir",
+          "plan_stem",
+          "catalogue_section"
+        ],
+        "properties": {
+          "family": {
+            "description": "The family's name. Used in gate output and in FR-P0-REGISTRY's problem codes, never as a path.",
+            "type": "string",
+            "pattern": "^[a-z][a-z0-9_]*$"
+          },
+          "id_prefixes": {
+            "description": "Every gate-id prefix this family owns. A registered gate matching no prefix is gate-family-unowned; the longest matching prefix wins, so a family may be carved out of another's range by declaring a longer prefix.",
+            "type": "array",
+            "minItems": 1,
+            "uniqueItems": true,
+            "items": {
+              "type": "string",
+              "pattern": "^[A-Z][A-Z0-9]*(-[A-Z0-9]+)*-$"
+            }
+          },
+          "plan_dir": {
+            "description": "The repository-relative folder holding the owning plan. Versioned plans are resolved at this folder's root only; a superseded plan under deprecated/ is never the owner.",
+            "type": "string",
+            "pattern": "^[A-Za-z0-9_./-]+$"
+          },
+          "plan_stem": {
+            "description": "The plan's filename stem. The owner is <plan_stem>.v<N>.md with the highest N at plan_dir's root.",
+            "type": "string",
+            "pattern": "^[A-Za-z0-9_.-]+$"
+          },
+          "catalogue_section": {
+            "description": "The numbered section of that plan holding its gate catalogue, in the encoding section 8 of the folder plan fixes. Keyed by heading number, which is why a plan appends a catalogue section rather than renumbering.",
+            "type": "integer",
+            "minimum": 1
+          },
+          "note": {
+            "type": "string",
+            "minLength": 10
+          }
+        }
+      }
+    }
+  }
+}

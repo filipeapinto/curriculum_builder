@@ -281,3 +281,75 @@ sequence change, and is in scope. The registry generalisation, which belongs to
 `plans/fix_meta_prompt/`. Deciding P2, P7 or P12. Any claim about learning outcomes: no
 evidence was found that an LLM-generated multi-unit curriculum produces sound learning
 in children, and this plan does not create any.
+
+---
+
+## 9. Gate catalogue
+
+This plan's own gate family. It exists because the harness now composes its registry
+from several plans — `plans/fix_meta_prompt/fix_meta_prompt.plan.v1.md` §5's
+recommendation **(iii)**, performed — and `tests/gates/gate_families.v1.yaml` gives
+this plan the `FR-P5-` prefix and names **this section** as its catalogue.
+
+The section number is 9 and not 8 because §8 is *Out of scope* and the harness's
+section parser keys on the literal heading number. Sections 1–8 are cited by other
+documents and are not renumbered.
+
+Format: **ID** · activation phase · claim class · depends on · command · pass criteria ·
+fixtures · failure meaning. **1 gate.**
+
+**Parsing this section** — `FR-P0-REGISTRY` reads it, so the encoding is the one §8 of
+`plans/folder_refactoring/folder_refactoring.plan.v6.md` fixes: everything after an em
+dash in any header field is rationale for a human, and `depends_on` is the set of
+backticked `FR-` ids appearing anywhere in that field.
+
+**Activation phase 5** puts this family above the folder family's range, which ends at
+4. `./tests/run_gates.sh 4` is therefore unchanged at 31 gates, and this gate is
+reached only by `./tests/run_gates.sh 5`. That is deliberate: the folder plan is
+finished and accepted, and its regression run must not start reporting a failure that
+belongs to a different plan.
+
+### Phase 5 — the engine/domain boundary (§6 phase 0)
+
+**`FR-P5-ENGINE-GENERIC`** · 5 · `tree+parse+text+mapping` · depends on:
+`FR-P0-HARNESS` — it needs a trustworthy harness and nothing else; it reads manifests
+and files, and no earlier gate establishes anything it consumes
+`python3 tests/gates/fr_p5_engine.py --check engine-generic`
+**Pass:** two relations over the **engine layer** — `policy/**`, `schemas/**`, the meta
+prompt named by `tests/meta_prompt_source.py`, and `meta_prompt/assets/*.md`, excluding
+every `deprecated/` —
+ (a) **no engine file names a `curricula/<name>/` path.** The curriculum names are the
+ directories under `curricula/`, minus `deprecated/`, read at run time; the engine may
+ know that curricula exist and must not know which one. This is `G2` in §2's leak
+ table, and it is what makes the input set one curriculum's rather than any
+ curriculum's;
+ (b) **no check id declared in `policy/checks.v1.yaml` as engine-owned encodes a domain
+ term.** Engine-owned is `owner` not under `curricula/`. The domain terms are **not a
+ list in the gate** — a gate that hard-codes `circuit` is the leak it was written to
+ detect. They are the terms a curriculum declares about itself, in the `*_terms` blocks
+ of the curriculum manifests `policy/checks.v1.yaml` itself names as owners, each with
+ the anchored `prose_pattern` that `FR-P3-SPLIT` and `FR-P3-NO-LITERALS` already match
+ on. A declared term without a pattern is a failure, never a skip, and a run in which
+ **no** curriculum declares any term fails as unmeasurable rather than passing empty.
+Prints
+`FR-P5-ENGINE-GENERIC <verdict> (C curricula, T declared domain terms, F engine files; (a) N files name a curriculum directory, (b) M of K engine-owned check ids carry a domain term)`.
+**Fixtures:** `engine_domain_leak.reject.yaml` — a manifest that both names
+`curricula/arduino_kit/` and declares an engine-owned check id carrying that kit's
+vendor name; its `expected_error` is **both** codes,
+`engine-check-id-domain-term + engine-names-curriculum-path`, so a fixture that trips
+only one leg is `FAIL`, and each leg of the detector is proven to bite by its own code.
+`engine_generic.accept.yaml` — the same shape with no curriculum path and no domain
+term in any id; it must pass.
+**Failure means:** the engine layer is not yet indifferent to electronics, and the
+report names every file and every id that binds it. **This is a measurement, not a
+regression.** The gate is expected to fail against the working tree on the day it is
+written; §6 phase 0 is the inventory, and phases 1–5 are what make it pass. A green
+result obtained by editing `policy/`, `schemas/` or `meta_prompt/` content ahead of
+those phases destroys the measurement and is failure A5.
+
+**What this gate does not assert.** It does not check `meta_prompt/docs/`, which
+AGENTS.md declares orientation only, nor `docs/`, nor `curricula/**`, which is the
+layer that is *supposed* to know its domain. It does not decide whether `G1`–`G6` is
+complete — it produces the evidence §6 phase 0 needs in order to decide, and the
+completeness of `G1`–`G6` is stated in the result note beside this plan, not inferred
+from a green gate.

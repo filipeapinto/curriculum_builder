@@ -1,0 +1,58 @@
+# Gate-family ownership — which plan owns which gate ids, and where its catalogue is.
+#
+# Until this manifest existed, `FR-P0-REGISTRY` compared the whole of
+# `tests/gates/registry.py` against section 8 of one plan, resolved by a function that
+# knew that plan's folder by name. Every gate therefore had to belong to the
+# folder-refactoring plan, and a gate written for any other plan was reported
+# `gate-registered-not-in-plan` and failed — correctly, and uselessly. That is the
+# constraint `plans/fix_meta_prompt/fix_meta_prompt.plan.v1.md` section 5 documents,
+# and recommendation (iii) is what this file performs: the registry composes from
+# several plans, each owning its own family, and `FR-P0-REGISTRY` checks each family
+# against its own plan's catalogue section.
+#
+# Ownership is by gate-id prefix, and the mapping is data here rather than a constant
+# inside a gate for the reason every other manifest in this repository exists: a
+# second hand-maintained copy of a rule is how the rule and its enforcement drift
+# apart. It is versioned, it names the contract it validates against, and the harness
+# refuses to run against an invalid one.
+#
+# Adding a family is three things and no code: an entry here, a catalogue section in
+# that plan encoded as the folder plan's section 8 documents, and the gates in
+# `registry.py`.
+
+gate_families_version: '1.0'
+
+# The contract this manifest is validated against. `common.load_gate_families()`
+# resolves the pairing from this pointer and validates before returning, so a family
+# manifest that does not satisfy its own schema stops the harness rather than
+# silently reassigning ownership of a gate.
+schema: tests/gates/gate_families.schema.v1.json
+
+families:
+  - family: folder_refactoring
+    # Phases 0-4 are the folder plan's own phase range. Its section 9 declares no
+    # phase beyond 4, so no later prefix belongs to it.
+    id_prefixes:
+      - FR-P0-
+      - FR-P1-
+      - FR-P2-
+      - FR-P3-
+      - FR-P4-
+    plan_dir: plans/folder_refactoring
+    plan_stem: folder_refactoring.plan
+    catalogue_section: 8
+    note: >-
+      The 31 original gates. Resolution is unchanged: the highest-versioned
+      `folder_refactoring.plan.v*.md` at the folder root, section 8, in the encoding
+      that section fixes.
+
+  - family: simplification
+    id_prefixes:
+      - FR-P5-
+    plan_dir: plans/simplification/plan
+    plan_stem: simplification.plan
+    catalogue_section: 9
+    note: >-
+      The simplification plan's own gates. Its section 8 is `Out of scope` and the
+      section parser keys on the literal heading number, so its catalogue is section
+      9 — appended, never renumbered, because other documents cite its sections.
