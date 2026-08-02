@@ -111,8 +111,9 @@ def under_deprecated(path: Path) -> bool:
     directory nothing reads, so a citation of an old basename found there is not a
     live reference. Shared by every gate that scans ``production_files()`` for
     citations of a superseded name, so the definition of "live" cannot drift
-    between them."""
-    return "deprecated" in Path(path).resolve().relative_to(REPO_ROOT).parts
+    between them. Works on any path, repo-relative or not, so a synthesized fixture
+    outside the repository (e.g. a scratch directory) can exercise it directly."""
+    return "deprecated" in Path(path).parts
 
 
 def read_named(path: Path | str) -> str:

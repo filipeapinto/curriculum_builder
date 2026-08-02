@@ -143,10 +143,50 @@ def citations_of(basename: str, scan_files, ev: Evidence | None = None) -> list[
     return found
 
 
+def deprecated_narrowing_still_bites() -> str | None:
+    """Proves excluding deprecated/ from the scan does not go further than that: a
+    citation from a file that is not under any deprecated/ is still caught, and a
+    citation buried inside one is the only thing the narrowing actually drops."""
+    import shutil
+
+    scratch = Path(tempfile.mkdtemp(prefix="fr-retention-narrowing-"))
+    try:
+        basename = "retired_but_referenced.reject.json"
+        live = scratch / "live_manifest.yaml"
+        live.write_text(f"owner: {basename}\n", encoding="utf-8")
+        buried = scratch / "deprecated" / "old_manifest.yaml"
+        buried.parent.mkdir()
+        buried.write_text(f"owner: {basename}\n", encoding="utf-8")
+
+        scan_files = [p for p in (live, buried) if not common.under_deprecated(p)]
+        if buried in scan_files:
+            return "narrowing-broken:a deprecated/ citation was still scanned"
+        if live not in scan_files:
+            return "narrowing-broken:a live citation was excluded from the scan"
+
+        # Mirrors retention_gate_violations' own match, without its rel() call: a
+        # scratch tree lives outside REPO_ROOT, same as FR-P1-GITKEEP's synthesized
+        # fixture above, and rel() is repo-relative by contract (rule 7).
+        hits = [p for p in scan_files if basename in p.read_text(encoding="utf-8")]
+        if not hits:
+            return "narrowing-broken:the live citation went uncaught"
+        return f"retired-schema-still-referenced:{basename} at {hits[0].name}"
+    finally:
+        shutil.rmtree(scratch, ignore_errors=True)
+
+
 def check_schema_gate(ev: Evidence):
     deprecated = REPO_ROOT / "schemas" / "deprecated"
     retired = [p for p in ev.listdir(deprecated) if p.is_file() and p.name != ".gitkeep"]
-    scan_files = [p for p in common.production_files() if deprecated not in p.parents]
+    # Every deprecated/ folder is excluded from the scan, not only schemas/deprecated/:
+    # meta_prompt/deprecated/ and policy/deprecated/ hold retired assets nothing may
+    # read (rule 3), so a basename surviving in their prose is not a live reference —
+    # the file citing it is itself unread. common.under_deprecated is shared with
+    # fr_p2_selector.py's live_v1_references for the same reason: two independent
+    # "what counts as live" definitions would drift. The negative fixture below
+    # (fr_p1_deprecated_narrowing_still_bites) proves this does not go further than
+    # that: a citation from a file that is *not* under any deprecated/ is still caught.
+    scan_files = [p for p in common.production_files() if not common.under_deprecated(p)]
     problems = retention_gate_violations(retired, scan_files, ev)
 
     # The other half of section 6's rule: a contract stays outside deprecated/ for as
@@ -188,6 +228,13 @@ def check_schema_gate(ev: Evidence):
             name=rel(accept),
             kind="accept",
             detector=lambda: (retention_gate_violations([accept], [citing]) or [None])[0],
+        ),
+        Fixture(
+            name="synthesized live-vs-deprecated citation",
+            kind="reject",
+            expected_error="retired-schema-still-referenced",
+            detector=deprecated_narrowing_still_bites,
+            synthesized=True,
         ),
     ]
     detail = line if not problems else line + " — " + "; ".join(problems)
