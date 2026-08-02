@@ -54,6 +54,12 @@ generator_defects:
     verified_by: RT-5
     defect: L01 data contradicts its own disconnected, polarity-neutral activity
     consequence: the foundation lab asserts what it cannot evidence
+    checks: [DOC-DERIVED-FROM-SOURCE]
+    note: >-
+      the correction is stated for one domain and holds in every domain — the single
+      parent is the unit's domain block, whatever that block turns out to hold.
+      DOC-DERIVED-FROM-SOURCE is the generic form and it executes; verified_by stays
+      RT-5 because the defect is about a generated lab and none exists.
   - id: A7
     correction: >-
       Prove every route by one real execution in preflight, under the exact recorded invocation, before generation begins.
@@ -66,6 +72,7 @@ generator_defects:
     verified_by: RT-5
     defect: text, circuit data and visuals can contradict one another
     consequence: a correct diagram beside incorrect prose, with nothing to arbitrate
+    checks: [DOC-DERIVED-FROM-SOURCE]
   - id: A9
     correction: >-
       Render and inspect the shipped PDF before final acceptance, while revision is still cheap.
@@ -153,7 +160,12 @@ v5_gate_failures:
       Rasterize the shipped PDF and assert that every receipt hash matches an asset
       actually embedded in it. A receipt that does not resolve is a failed gate, not a
       warning. Never inspect a re-render from source in its place.
-    checks: [PDF-ASSET-RESOLVES, PDF-PAGE-COUNT, PDF-PAGE-NONBLANK, PDF-TEXT-LEGIBLE, PDF-VISUAL-REVIEW]
+    checks: [RECEIPT-HASH-RESOLVES, PDF-ASSET-RESOLVES, PDF-PAGE-COUNT, PDF-PAGE-NONBLANK, PDF-TEXT-LEGIBLE, PDF-VISUAL-REVIEW]
+    note: >-
+      RECEIPT-HASH-RESOLVES is the half of this correction that needs only bytes, and it
+      executes. The other half needs a renderer and does not. A receipt proven against
+      the source artifact is not a receipt proven against the shipped one, and the two
+      are never reported as each other.
 
 # ---------------------------------------------------------------------------
 capability_failures:

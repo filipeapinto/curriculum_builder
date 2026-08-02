@@ -298,6 +298,40 @@ GATES = [
         "command": "python3 tests/gates/fr_p5_engine.py --check engine-generic",
         "impl": "fr_p5_engine:check_engine_generic",
     },
+
+    # --- Phase 5 — the four generic checks a unit owes (plan phase 4) ------------
+    {
+        "id": "FR-P5-READABILITY",
+        "activation_phase": 5,
+        "claim_class": "tree+mapping",
+        "depends_on": ["FR-P0-SCHEMA"],
+        "command": "python3 tests/gates/fr_p5_unit.py --check readability",
+        "impl": "fr_p5_unit:check_readability",
+    },
+    {
+        "id": "FR-P5-BLOOM-VERBS",
+        "activation_phase": 5,
+        "claim_class": "tree+mapping",
+        "depends_on": ["FR-P0-SCHEMA"],
+        "command": "python3 tests/gates/fr_p5_unit.py --check bloom-verbs",
+        "impl": "fr_p5_unit:check_bloom_verbs",
+    },
+    {
+        "id": "FR-P5-DERIVATION",
+        "activation_phase": 5,
+        "claim_class": "tree+mapping",
+        "depends_on": ["FR-P0-HARNESS"],
+        "command": "python3 tests/gates/fr_p5_unit.py --check derivation",
+        "impl": "fr_p5_unit:check_derivation",
+    },
+    {
+        "id": "FR-P5-RECEIPT-HASH",
+        "activation_phase": 5,
+        "claim_class": "tree+mapping",
+        "depends_on": ["FR-P0-HARNESS"],
+        "command": "python3 tests/gates/fr_p5_unit.py --check receipt-hash",
+        "impl": "fr_p5_unit:check_receipt_hash",
+    },
 ]
 
 GATES_BY_ID = {gate["id"]: gate for gate in GATES}

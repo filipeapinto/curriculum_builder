@@ -1,0 +1,21 @@
+{
+  "_fixture": "Every objective opens with a verb the declared level's own list claims. No flag is raised, and the gate records none.",
+  "identity": {
+    "unit_id": "U01",
+    "slug": "first-look"
+  },
+  "pedagogy": {
+    "learning_objectives": [
+      {
+        "statement": "Explain why the same part behaves differently in two arrangements",
+        "bloom_level": "understand",
+        "success_criterion": "I can explain the difference in my own words"
+      },
+      {
+        "statement": "Identify the part by the marking printed on it",
+        "bloom_level": "remember",
+        "success_criterion": "I can find the part from its marking"
+      }
+    ]
+  }
+}

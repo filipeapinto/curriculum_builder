@@ -187,6 +187,77 @@ lab_document:
     rejects: a forward voltage recalled rather than cited
 
 # ---------------------------------------------------------------------------
+# The generic checks the engine owes every curriculum. Each operates on a unit file
+# and knows nothing about what the unit teaches, which is why each is executable
+# before any generator exists: a hand-written fixture exercises it.
+#
+# Each is VERIFIED HERE against its fixtures and against zero generated units, because
+# none exists. RT-7 is that gap recorded. "Executed against a fixture" and "executed
+# against generated work" are different claims and are never merged.
+unit:
+  - id: TEXT-READABILITY-BAND
+    owner: policy/calibration.v1.yaml
+    method: mapping
+    artifact: schemas/calibration.schema.v1.json
+    verified_by: FR-P5-READABILITY
+    asserts: >-
+      every unit's child-facing text scores inside the band policy/calibration.v1.yaml
+      declares under readability, by the metric that block names. A band and not a
+      ceiling: text far below it is as wrong as text far above it.
+    stage: deterministic
+    fixture: tests/fixtures/unit_readability_above_band.reject.json
+    fixture_expectation: reject
+    note: >-
+      zero generated units exist to score today; the executed assertion is the fixture
+      pair, and RT-7 is the coverage that is missing
+  - id: TEXT-BLOOM-VERBS
+    owner: policy/calibration.v1.yaml
+    method: mapping
+    artifact: schemas/calibration.schema.v1.json
+    verified_by: FR-P5-BLOOM-VERBS
+    asserts: >-
+      every disagreement between an objective's declared bloom_level and the verb that
+      opens its statement is raised and recorded against the ordered bloom_verbs table.
+      This check FLAGS and NEVER BLOCKS — human raters agree with each other on Bloom
+      level only 46.58% of the time, so what is asserted is that the disagreement was
+      reported, never that the verdict is right.
+    stage: deterministic
+    fixture: tests/fixtures/unit_bloom_verb_below_level.reject.json
+    fixture_expectation: reject
+    note: >-
+      LAB-BLOOM-DEPTH checks the declared field against the floor; this reads the
+      sentence beneath it. Two different questions, and neither answers the other.
+  - id: DOC-DERIVED-FROM-SOURCE
+    owner: policy/failures.v1.yaml
+    method: mapping
+    artifact: tests/fixtures/unit_derivation_one_parent.accept.json
+    verified_by: FR-P5-DERIVATION
+    asserts: >-
+      every fact a unit renders names the pointer into its own domain block that it came
+      from, that pointer resolves, and the rendered string equals what is there. A unit
+      that renders no fact from its domain data fails: prose with no parent is the
+      defect, not the absence of a check.
+    stage: deterministic
+    fixture: tests/fixtures/unit_derivation_unparented.reject.json
+    fixture_expectation: reject
+    note: corrects A6 and A8 — one parent, checked mechanically rather than asserted
+  - id: RECEIPT-HASH-RESOLVES
+    owner: policy/failures.v1.yaml
+    method: mapping
+    artifact: tests/fixtures/unit_receipt_resolves.accept/unit.json
+    verified_by: FR-P5-RECEIPT-HASH
+    asserts: >-
+      every visual's recorded provenance hash equals the SHA-256 recomputed from the
+      bytes of the artifact it names. The hash is recomputed and never trusted as
+      recorded.
+    stage: deterministic
+    fixture: tests/fixtures/unit_receipt_unresolved.reject/unit.json
+    fixture_expectation: reject
+    note: >-
+      B4 generalised out of PDFs. PDF-ASSET-RESOLVES is the same rule against a rendered
+      artifact and needs a renderer; this one needs only bytes, so it runs today.
+
+# ---------------------------------------------------------------------------
 pdf:
   - id: PDF-PAGE-COUNT
     owner: meta_prompt/assets/proving.v1.md

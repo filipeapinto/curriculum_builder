@@ -9,6 +9,8 @@
     "calibration_version",
     "learner",
     "pedagogy_caps",
+    "readability",
+    "bloom_verbs",
     "safety_floor",
     "learner_terms",
     "schema"
@@ -280,6 +282,69 @@
         }
       }
     },
+    "readability": {
+      "description": "The band the generated child-facing text must land in, and the metric that decides it. A band and not a ceiling: text far below it is as wrong as text far above it. The metric is named rather than assumed, because a score is only comparable to a band computed the same way.",
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "metric",
+        "band",
+        "applies_to"
+      ],
+      "properties": {
+        "metric": {
+          "description": "Named so a score and a band are never compared across two different formulas.",
+          "enum": [
+            "flesch_kincaid_grade"
+          ]
+        },
+        "band": {
+          "$ref": "#/$defs/range"
+        },
+        "applies_to": {
+          "description": "Which part of a unit is scored. Adult-facing technical text is deliberately not in the band.",
+          "type": "string",
+          "minLength": 5
+        },
+        "rationale": {
+          "type": "string",
+          "minLength": 8
+        }
+      }
+    },
+    "bloom_verbs": {
+      "description": "Which verbs belong to which level of Bloom's revised taxonomy, in order from the lowest. Engine-wide: the taxonomy is a property of how people learn rather than of what is taught. It flags and never blocks \u2014 human raters agree with each other on the level of a given objective only 46.58% of the time \u2014 so a verb below the declared level is reported and is never a failed gate.",
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "remember",
+        "understand",
+        "apply",
+        "analyse",
+        "evaluate",
+        "create"
+      ],
+      "properties": {
+        "remember": {
+          "$ref": "#/$defs/verbs"
+        },
+        "understand": {
+          "$ref": "#/$defs/verbs"
+        },
+        "apply": {
+          "$ref": "#/$defs/verbs"
+        },
+        "analyse": {
+          "$ref": "#/$defs/verbs"
+        },
+        "evaluate": {
+          "$ref": "#/$defs/verbs"
+        },
+        "create": {
+          "$ref": "#/$defs/verbs"
+        }
+      }
+    },
     "safety_floor": {
       "description": "Applies to every lab regardless of age band. Each is required or the calibration is invalid \u2014 these are not tunable.",
       "type": "object",
@@ -335,6 +400,16 @@
       "minItems": 2,
       "maxItems": 2,
       "items": false
+    },
+    "verbs": {
+      "description": "The verbs one level claims. A level with an empty list would silently classify nothing, so at least one is required.",
+      "type": "array",
+      "minItems": 1,
+      "uniqueItems": true,
+      "items": {
+        "type": "string",
+        "minLength": 3
+      }
     },
     "term": {
       "type": "object",

@@ -318,7 +318,7 @@ section parser keys on the literal heading number. Sections 1–8 are cited by o
 documents and are not renumbered.
 
 Format: **ID** · activation phase · claim class · depends on · command · pass criteria ·
-fixtures · failure meaning. **1 gate.**
+fixtures · failure meaning. **5 gates.**
 
 **Parsing this section** — `FR-P0-REGISTRY` reads it, so the encoding is the one §8 of
 `plans/folder_refactoring/folder_refactoring.plan.v6.md` fixes: everything after an em
@@ -375,3 +375,81 @@ layer that is *supposed* to know its domain. It does not decide whether `G1`–`
 complete — it produces the evidence §6 phase 0 needs in order to decide, and the
 completeness of `G1`–`G6` is stated in the result note beside this plan, not inferred
 from a green gate.
+
+### Phase 5 — the generic checks (§6 phase 4)
+
+Four gates, one per check §6 phase 4 names. **What they cover today is stated in each
+of them and must not be over-read:** a unit is a file under `curricula/<name>/units/`,
+there are none, and the executed assertion is the fixture pair. Real coverage over
+generated work is `RT-7`. Reporting fixture coverage as generated-lab coverage is
+failure A5.
+
+The subject is read from the curricula directory at run time rather than from a name
+written into a gate, so none of these knows which curriculum exists — the same rule
+`FR-P5-ENGINE-GENERIC` follows and for the same reason.
+
+**`FR-P5-READABILITY`** · 5 · `tree+mapping` · depends on: `FR-P0-SCHEMA` — the band is
+read out of a manifest, so the manifest must be known to validate first
+`python3 tests/gates/fr_p5_unit.py --check readability`
+**Pass:** every unit's `child_facing_text` scores inside the band
+`policy/calibration.v1.yaml` declares under `readability`, by the metric that block
+names. A band and not a ceiling: text far below it is as wrong as text far above it. A
+missing band is `readability-band-missing` and fails — a check with no premise is not a
+check — and a unit with nothing to score is `readability-no-subject`, never a skip.
+Prints `FR-P5-READABILITY <verdict> (N units scanned, band B, metric M; …)`.
+**Fixtures:** `unit_readability_above_band.reject.json` — child-facing text written for
+an adult; `expected_error` is `readability-out-of-band`.
+`unit_readability_in_band.accept.json` — the same shape, inside the band.
+**Failure means:** the generated text is not addressed to the learner
+`policy/calibration.v1.yaml` describes. Both directions are defects.
+
+**`FR-P5-BLOOM-VERBS`** · 5 · `tree+mapping` · depends on: `FR-P0-SCHEMA` — the verb
+table is read out of a manifest
+`python3 tests/gates/fr_p5_unit.py --check bloom-verbs`
+**Pass:** the flagging machinery is present and usable — `policy/calibration.v1.yaml`
+declares an ordered `bloom_verbs` table and no level lists no verbs — and every
+disagreement between an objective's declared `bloom_level` and the verb that opens its
+statement is **raised and recorded**. **A flag never blocks and never fails this gate.**
+Human raters agree with each other on Bloom level only 46.58% of the time, so what is
+asserted here is that the disagreement was reported, never that the verdict is right.
+The strict check on the declared field is the schema's; this one reads the sentence.
+Prints `FR-P5-BLOOM-VERBS <verdict> (N units scanned, L levels, F flags raised …)`.
+**Fixtures:** `unit_bloom_verb_below_level.reject.json` — an objective declaring `apply`
+whose verb is a `remember` verb, the cognitive leap a declared-field check cannot see;
+`expected_error` is `bloom-verb-below-declared-level`.
+`unit_bloom_verb_matches_level.accept.json` — verbs agreeing with their declared levels,
+raising nothing.
+**Failure means:** the table that makes the flag possible is gone, so a unit could
+declare any level and nothing would read the sentence beneath it.
+
+**`FR-P5-DERIVATION`** · 5 · `tree+mapping` · depends on: `FR-P0-HARNESS` — it reads one
+unit against itself and consumes nothing an earlier gate establishes
+`python3 tests/gates/fr_p5_unit.py --check derivation`
+**Pass:** one parent, checked rather than asserted. Every entry of a unit's `derived`
+list names a pointer into that unit's own `domain` block, that pointer resolves, and the
+rendered string equals what is there. A unit that renders no fact from its domain data
+is `derivation-absent` and fails: prose with no parent is the defect, not the absence of
+a check. The pointer walk is strict — a segment is a mapping key or a list index and
+nothing else — because a fuzzy walk lets a wrong pointer resolve to a
+coincidentally-named neighbour, which is the drift this gate exists to catch.
+Prints `FR-P5-DERIVATION <verdict> (N units scanned; …)`.
+**Fixtures:** `unit_derivation_unparented.reject.json` — prose stating a number its own
+domain data contradicts, and a pointer resolving to nothing; `expected_error` is
+`derivation-value-mismatch`. `unit_derivation_one_parent.accept.json` — every rendered
+fact resolving to the value it cites.
+**Failure means:** a fact in the unit has a second author, which is `A6` and `A8`.
+
+**`FR-P5-RECEIPT-HASH`** · 5 · `tree+mapping` · depends on: `FR-P0-HARNESS` — it hashes
+bytes and consumes nothing an earlier gate establishes
+`python3 tests/gates/fr_p5_unit.py --check receipt-hash`
+**Pass:** `B4` generalised out of PDFs. Every visual's `provenance.file_hash` equals the
+SHA-256 recomputed from the artifact its `embedded_as` names, resolved under the unit's
+`artifact_root`. The hash is recomputed from the bytes and never trusted as recorded. A
+unit shipping no receipt at all is `receipt-absent` and fails.
+Prints `FR-P5-RECEIPT-HASH <verdict> (N units scanned; …)`.
+**Fixtures:** `unit_receipt_unresolved.reject/` — a receipt recording a hash, an artifact
+shipped, and nothing in agreement between them, which is `B4` as it was observed;
+`expected_error` is `receipt-hash-mismatch`. `unit_receipt_resolves.accept/` — the same
+shape whose receipt resolves.
+**Failure means:** provenance that does not resolve to the shipped artifact, which
+proves nothing and is recorded as a failed gate rather than a warning.

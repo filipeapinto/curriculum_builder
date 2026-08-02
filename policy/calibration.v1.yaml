@@ -81,6 +81,43 @@ pedagogy_caps:
     prose_pattern: '(?i)\bconcrete[- ]before[- ]abstract\s+is\s+(?:required|mandatory)\b'
     rationale: the physical object and action come before any schematic symbol
 
+# The reading level the generated child-facing text must land in, and the metric that
+# decides it. Check id TEXT-READABILITY-BAND, executed by FR-P5-READABILITY.
+#
+# A band and not a ceiling: text far below the band is as wrong as text far above it,
+# because a workbook written three grades under its reader teaches nothing. The metric
+# is named rather than assumed — a score is only comparable to a band computed the same
+# way — and it is the engine's, not any curriculum's. A five-model study of generated
+# lesson plans measured this metric from 8.64 to 19.89 across models on one topic, which
+# is why it is a gate and not a style note.
+readability:
+  metric: flesch_kincaid_grade
+  band: [2, 6]
+  applies_to: child_facing_text
+  rationale: >-
+    derived from learner.age_band. Change the band above and this must be re-derived
+    with it, never edited on its own.
+
+# Which verbs belong to which level of Bloom's revised taxonomy, in order from the
+# lowest. Check id TEXT-BLOOM-VERBS, executed by FR-P5-BLOOM-VERBS.
+#
+# This table is engine-wide: the taxonomy is a property of how people learn, not of
+# what is being taught, and a curriculum that had to supply its own verb list would be
+# supplying pedagogy rather than a domain.
+#
+# It **flags and never blocks**, and the order below is the whole of its judgement.
+# Human raters agree with each other on the level of a given objective only 46.58% of
+# the time, so a verb sitting below the level a unit declares is reported for a human
+# to look at, and is never a failed gate. The check that *is* strict about the level
+# lives in the schema, against the declared field; this one reads the sentence.
+bloom_verbs:
+  remember: [identify, name, list, recall, label, find, match, state, recognise, define]
+  understand: [explain, describe, compare, summarise, classify, illustrate, interpret, paraphrase]
+  apply: [use, build, demonstrate, solve, measure, calculate, trace, operate, carry]
+  analyse: [analyse, distinguish, examine, contrast, investigate, deduce, differentiate]
+  evaluate: [evaluate, judge, justify, critique, defend, argue, appraise, recommend]
+  create: [create, design, compose, invent, plan, construct, devise, formulate]
+
 # Applies to the whole workbook regardless of age band.
 safety_floor:
   power_off_before_rewiring: required

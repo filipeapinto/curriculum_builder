@@ -1288,9 +1288,12 @@ mapped, and representable in records a validator can check. It cannot make them
 *executed*, because no controller, execution-log writer, renderer or live route exists
 (§3). The follow-up needs an implementation.
 
-These six ids are the authoritative deferral list. They are mirrored **exactly** in
+This table is the authoritative deferral list. It is mirrored **exactly** in
 `policy/deferred.v1.yaml`, which is what gates read; `FR-P2-DEFERRED` proves the two
-agree in both directions and that every citation elsewhere resolves.
+agree in both directions and that every citation elsewhere resolves. `RT-1`–`RT-6` are
+this plan's own; ids from `RT-7` are appended by later plans whose gates compose into
+the same registry, and they are listed here because the mirror is one list and a second
+one would be a second answer to what has been deferred.
 
 Column names match the manifest's fields exactly: `blocked_by` is what the obligation
 waits on, `promotes_gate` is an **existing** gate id (which `FR-P2-DEFERRED` (c)
@@ -1305,6 +1308,7 @@ discharged — a gate that does not exist yet and is never resolved.
 | **RT-4** | An unrecorded call is fatal | a model call with no `decision_id` **terminates** the run as `META_SYSTEM_FAILURE`, rather than failing schema validation after the fact | no controller implementation | `FR-P2-UNRECORDED-DECLARED` | `FR-P2-UNRECORDED-FATAL` |
 | **RT-5** | Advertised checks are executed | every id `FR-P4-CHECK-MAPPING` reports as `MAPPED, NOT EXECUTED` becomes executed, and every A-series id in `policy/failures.v1.yaml` gains a proving test | no controller, logger, renderer or live route | `FR-P4-CHECK-MAPPING` | — |
 | **RT-6** | The v1 contracts are retirable | the logger emits `execution_log.schema.v2.json`-valid records and the selector emits `routing_decision.schema.v2.json`-valid decisions, after which both v1 schemas may enter `schemas/deprecated/` under §6's gate | no logger emitting v2 records | `FR-P1-SCHEMA-RETENTION` | — |
+| **RT-7** | The unit checks have a generated subject | at least one unit exists under `curricula/<name>/units/`, produced by a real run rather than written by hand, so that `FR-P5-READABILITY`, `FR-P5-BLOOM-VERBS`, `FR-P5-DERIVATION` and `FR-P5-RECEIPT-HASH` assert over generated work instead of over their own fixtures alone | nothing in this repository executes a model, renders an artifact or fetches a source, so no unit has ever been generated. Until then each of those four gates reports the number of units it scanned, and that number is zero. Reporting their fixture coverage as generated-lab coverage would be failure A5. | — | — |
 
 Until each is discharged, no document, gate name or report may state that the selector is
 enforced or that the check suite is fully executed.

@@ -1,0 +1,19 @@
+{
+  "_fixture": "Every receipt hash is recomputed from the bytes of the artifact it names, and matches. B4 generalised: a receipt that resolves is the only kind that proves anything.",
+  "identity": {
+    "unit_id": "U01",
+    "slug": "first-look"
+  },
+  "artifact_root": ".",
+  "visuals": [
+    {
+      "role": "identification",
+      "source_kind": "deterministic_render",
+      "provenance": {
+        "embedded_as": "figures/diagram.svg",
+        "file_hash": "cd6f085f85886cf75bbea907095ef572bd2f103c670090b9d8d8baf6a13de748",
+        "access_date": "2026-08-01"
+      }
+    }
+  ]
+}

@@ -85,3 +85,16 @@ deferred:
       schemas may enter schemas/deprecated/ under the retention gate
     blocked_by: no logger emitting v2 records
     promotes_gate: FR-P1-SCHEMA-RETENTION
+
+  - id: RT-7
+    obligation: The unit checks have a generated subject
+    acceptance_criterion: >-
+      at least one unit exists under curricula/<name>/units/, produced by a real run
+      rather than written by hand, so that FR-P5-READABILITY, FR-P5-BLOOM-VERBS,
+      FR-P5-DERIVATION and FR-P5-RECEIPT-HASH assert over generated work instead of
+      over their own fixtures alone
+    blocked_by: >-
+      nothing in this repository executes a model, renders an artifact or fetches a
+      source, so no unit has ever been generated. Until then each of those four gates
+      reports the number of units it scanned, and that number is zero. Reporting their
+      fixture coverage as generated-lab coverage would be failure A5.

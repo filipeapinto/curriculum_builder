@@ -1,0 +1,11 @@
+{
+  "_fixture": "A unit whose child-facing text is written for an adult. It must be rejected as readability-out-of-band; the band is a premise in policy/calibration.v1.yaml and this fixture is what proves the detector bites.",
+  "identity": {
+    "unit_id": "U01",
+    "slug": "first-look"
+  },
+  "child_facing_text": [
+    "Notwithstanding the preliminary observational methodology articulated previously, participants should systematically enumerate the discriminating morphological characteristics manifested by the presented specimen, subsequently documenting comparative interpretations in the accompanying evidentiary apparatus provided alongside this instructional material.",
+    "Interpretative reconciliation of contradictory observational documentation necessitates methodical reconsideration of antecedent assumptions, particularly where experimental instrumentation demonstrates variability exceeding conventionally established tolerances applicable to comparable investigative circumstances."
+  ]
+}

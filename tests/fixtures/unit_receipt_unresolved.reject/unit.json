@@ -1,0 +1,19 @@
+{
+  "_fixture": "A receipt recording a hash, an artifact shipped, and nothing in agreement between them. This is B4 exactly as it was observed, and the detector must report receipt-hash-mismatch rather than accepting provenance nobody resolved.",
+  "identity": {
+    "unit_id": "U01",
+    "slug": "first-look"
+  },
+  "artifact_root": ".",
+  "visuals": [
+    {
+      "role": "identification",
+      "source_kind": "deterministic_render",
+      "provenance": {
+        "embedded_as": "figures/diagram.svg",
+        "file_hash": "0000000000000000000000000000000000000000000000000000000000000000",
+        "access_date": "2026-08-01"
+      }
+    }
+  ]
+}

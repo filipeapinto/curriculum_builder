@@ -1,0 +1,16 @@
+{
+  "_fixture": "An objective declaring `apply` whose verb is a `remember` verb — the cognitive-leap defect a declared-field check cannot see, because the field says `apply` and validates. The detector must raise bloom-verb-below-declared-level. It is a flag: it is recorded, and it never blocks.",
+  "identity": {
+    "unit_id": "U01",
+    "slug": "first-look"
+  },
+  "pedagogy": {
+    "learning_objectives": [
+      {
+        "statement": "Identify the part by the marking printed on it",
+        "bloom_level": "apply",
+        "success_criterion": "I can find the part from its marking"
+      }
+    ]
+  }
+}

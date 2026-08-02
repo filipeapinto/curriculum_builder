@@ -1,0 +1,28 @@
+{
+  "_fixture": "Prose that states a number its own domain data contradicts, and a pointer that resolves to nothing. Both are the same defect — a fact with a second author — and the detector must report the mismatch by its own code.",
+  "identity": {
+    "unit_id": "U01",
+    "slug": "first-look"
+  },
+  "domain": {
+    "items": [
+      {
+        "label": "A",
+        "count": 3
+      }
+    ],
+    "total": 3
+  },
+  "derived": [
+    {
+      "target": "prose.step_1",
+      "from": "domain.items.0.count",
+      "rendered": "7"
+    },
+    {
+      "target": "table.total_row",
+      "from": "domain.grand_total",
+      "rendered": "3"
+    }
+  ]
+}

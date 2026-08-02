@@ -1,0 +1,37 @@
+{
+  "_fixture": "Every rendered fact names the pointer into the domain block it came from, and equals what is there. One parent, checked mechanically rather than asserted.",
+  "identity": {
+    "unit_id": "U01",
+    "slug": "first-look"
+  },
+  "domain": {
+    "items": [
+      {
+        "label": "A",
+        "count": 3
+      },
+      {
+        "label": "B",
+        "count": 5
+      }
+    ],
+    "total": 8
+  },
+  "derived": [
+    {
+      "target": "prose.step_1",
+      "from": "domain.items.0.count",
+      "rendered": "3"
+    },
+    {
+      "target": "table.total_row",
+      "from": "domain.total",
+      "rendered": "8"
+    },
+    {
+      "target": "diagram.caption",
+      "from": "domain.items.1.label",
+      "rendered": "B"
+    }
+  ]
+}

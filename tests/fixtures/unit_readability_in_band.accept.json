@@ -1,0 +1,13 @@
+{
+  "_fixture": "A unit whose child-facing text scores inside the band policy/calibration.v1.yaml declares. Deliberately domain-neutral: the check is the engine's, and a fixture written about one subject would make the engine look like it knows one.",
+  "identity": {
+    "unit_id": "U01",
+    "slug": "first-look"
+  },
+  "child_facing_text": [
+    "Every part in this box has a different job.",
+    "Look closely at the marking printed along one side.",
+    "Draw the shape you see, and label each part you recognise.",
+    "Ask an adult to check the drawing before you carry on."
+  ]
+}
