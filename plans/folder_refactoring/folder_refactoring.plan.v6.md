@@ -931,8 +931,26 @@ it, or the discriminator is missing so wording can dodge it. Runtime termination
 release table maps to a check id in `policy/checks.v1.yaml`, **and** every check id the
 release table is responsible for appears in that table. A check id advertised by no gate
 item is as invisible as a gate item backed by no check.
-**Fixture:** `gate_item_without_check.reject.md`, `expected_error: gate-item-unbacked`.
-**Failure means:** the build advertises coverage it does not have.
+
+**Second leg, added when the inventory split.** `simplification.plan.v3.md` §6 phase 3
+moved twelve ids out of the engine's inventory into each curriculum's own, and removed the
+`L01-*` row from the release table. This gate read only `policy/checks.v1.yaml` and so
+reported nothing while four ids — `L01-DISCONNECTED`, `L01-POLARITY-NEUTRAL`,
+`L01-NO-INVENTED-SUPPLY`, `L01-NO-UNPERFORMED-OBSERVATION` — were advertised by nothing at
+all. A scan root that stops covering live files is the defect, not the repair, so the gate
+now reads every inventory: the engine's against the release table as before, and each
+curriculum's against the `release` surface that curriculum declares in its own inventory.
+Putting one curriculum's ids back into an engine file would be the leak phase 3 closed, so
+the surface moves with the ids and is held to the same two directions — every pattern
+advertised matches an id that inventory stages **at that stage**, and every staged id is
+matched by a pattern at its own stage. An id advertised under the wrong gate item is
+claimed by a stage that does not run it.
+**Fixtures:** `gate_item_without_check.reject.md`, `expected_error: gate-item-unbacked`.
+`curriculum_release_unadvertised.reject.yaml` — a staged id no pattern claims at its
+stage, `expected_error: check-id-unadvertised`. `curriculum_release_advertised.accept.yaml`
+— the same inventory with every staged id covered.
+**Failure means:** the build advertises coverage it does not have, or holds coverage it no
+longer advertises.
 
 ### Phase 3 — calibration boundaries
 

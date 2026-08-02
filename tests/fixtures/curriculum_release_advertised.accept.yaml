@@ -1,0 +1,35 @@
+# Positive fixture for FR-P2-GATEITEMS, second leg. The same inventory with a release
+# surface that covers every staged id at the stage it declared: two static ids and one
+# deterministic id, each matched by a pattern advertised at its own stage.
+#
+# A positive fixture is what stops the detector from being satisfied by rejecting
+# everything, and this one is in a subject the engine has never heard of, so the rule it
+# demonstrates is the rule and not one curriculum's arrangement. Never an input to a run.
+checks_version: '1.0'
+schema: schemas/checks.schema.v1.json
+release:
+- stage: static
+  gate_item: Static — this curriculum's own inventory
+  advertises:
+  - LAT-LEMMA-SOURCED
+  - LAT-MACRON-CONSISTENT
+- stage: deterministic
+  gate_item: Deterministic — this curriculum's own inventory
+  advertises:
+  - LAT-PASSAGE-ATTESTED
+lexicon:
+- id: LAT-LEMMA-SOURCED
+  owner: curricula/latin_reading/lexicon.v1.yaml
+  method: mapping
+  asserts: every lemma cites the dictionary entry it was taken from
+  stage: static
+- id: LAT-MACRON-CONSISTENT
+  owner: curricula/latin_reading/lexicon.v1.yaml
+  method: execution
+  asserts: vowel length is marked or unmarked consistently across a unit, never mixed
+  stage: static
+- id: LAT-PASSAGE-ATTESTED
+  owner: curricula/latin_reading/corpus.v1.yaml
+  method: execution
+  asserts: every passage a unit sets resolves to a line range in the declared corpus
+  stage: deterministic

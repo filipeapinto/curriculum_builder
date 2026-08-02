@@ -834,11 +834,24 @@ def check_unrecorded_declared(ev: Evidence):
 # FR-P2-GATEITEMS
 
 
+# The release surface an inventory may carry for its own ids, which is not a group of
+# check ids and is skipped when the ids are read. Only a curriculum's inventory has one:
+# the engine's ids are advertised by the composed contract's release table.
+RELEASE_KEY = "release"
+
+
+def _check_groups(checks_doc) -> list[list]:
+    return [
+        value
+        for key, value in (checks_doc or {}).items()
+        if key != RELEASE_KEY and isinstance(value, list)
+    ]
+
+
 def _check_ids(checks_doc) -> set[str]:
     ids = set()
-    for value in (checks_doc or {}).values():
-        if isinstance(value, list):
-            ids.update(e["id"] for e in value if isinstance(e, dict) and "id" in e)
+    for value in _check_groups(checks_doc):
+        ids.update(e["id"] for e in value if isinstance(e, dict) and "id" in e)
     return ids
 
 
@@ -846,13 +859,61 @@ RELEASE_STAGES = {"logger", "static", "deterministic", "golden", "live-capabilit
 
 
 def _staged_ids(checks_doc) -> set[str]:
-    ids = set()
-    for value in (checks_doc or {}).values():
-        if isinstance(value, list):
-            for entry in value:
-                if isinstance(entry, dict) and entry.get("stage") in RELEASE_STAGES:
-                    ids.add(entry["id"])
-    return ids
+    return set(_staged_by_id(checks_doc))
+
+
+def _staged_by_id(checks_doc) -> dict[str, str]:
+    """Every id the release surface is responsible for, with the stage it declared."""
+    staged: dict[str, str] = {}
+    for value in _check_groups(checks_doc):
+        for entry in value:
+            if isinstance(entry, dict) and entry.get("stage") in RELEASE_STAGES and "id" in entry:
+                staged[entry["id"]] = entry["stage"]
+    return staged
+
+
+def _matches(pattern: str, ids) -> set[str]:
+    regex = re.compile("^" + re.escape(pattern).replace(r"\*", ".*") + "$")
+    return {cid for cid in ids if regex.match(cid)}
+
+
+def curriculum_release_violations(checks_doc, label: str) -> list[str]:
+    """The same two directions as the engine's release table, for an inventory that is
+    not in it.
+
+    gate_impl_fix, `simplification.plan.v3.md` §6 phase 3. Phase 3 moved twelve ids out
+    of the engine's inventory and removed the `L01-*` row from the composed contract's
+    release table. This gate read only `policy/checks.v1.yaml`, so it reported nothing:
+    four ids had left the engine's list, gained no surface of their own, and were
+    advertised by nothing. That is a scan root that stopped covering live files, not a
+    criterion that was met — so the surface moves with the ids and is held to the same
+    rule. An id is covered only by a pattern advertised at *its own* stage: an id
+    advertised under the wrong gate item is claimed by a stage that does not run it.
+    """
+    staged = _staged_by_id(checks_doc)
+    ids = _check_ids(checks_doc)
+    rows = (checks_doc or {}).get(RELEASE_KEY) or []
+    problems, covered = [], set()
+    if staged and not rows:
+        return [
+            f"check-id-unadvertised:{cid} — {label} stages it and declares no release "
+            "surface at all"
+            for cid in sorted(staged)
+        ]
+    for row in rows:
+        stage = row.get("stage")
+        at_stage = {cid for cid in ids if staged.get(cid) == stage}
+        for pattern in row.get("advertises") or []:
+            matched = _matches(pattern, at_stage)
+            if not matched:
+                problems.append(
+                    f"gate-item-unbacked:{row.get('gate_item')} advertises {pattern} at "
+                    f"stage {stage}, which matches no id {label} stages there"
+                )
+            covered |= matched
+    for cid in sorted(set(staged) - covered):
+        problems.append(f"check-id-unadvertised:{cid} in {label}")
+    return problems
 
 
 def gate_item_violations(prompt_text: str, checks_doc) -> list[str]:
@@ -883,18 +944,57 @@ def check_gate_items(ev: Evidence):
         ev.resolve(row[1].strip("*"), "the composed contract's release table",
                    f"the check ids in {rel(CHECKS)}")
     problems = gate_item_violations(text, checks_doc)
+
+    # Every other inventory is a curriculum's own, and is advertised by its own surface
+    # rather than by the engine's table. Read from the directory at run time, never by
+    # name.
+    staged = len(_staged_ids(checks_doc))
+    surfaces = 0
+    for path in common.check_inventories():
+        if path == common.CHECKS_MANIFEST:
+            continue
+        doc = ev.read_for_resolution(path)
+        label = rel(path)
+        for row in (doc or {}).get(RELEASE_KEY) or []:
+            ev.resolve(str(row.get("gate_item")), label + " release", f"the check ids in {label}")
+        problems += curriculum_release_violations(doc, label)
+        staged += len(_staged_ids(doc))
+        surfaces += len((doc or {}).get(RELEASE_KEY) or [])
+
     line = (
         f"FR-P2-GATEITEMS {'PASS' if not problems else 'FAIL'} "
-        f"({len(release_table_rows(text))} gate items, {len(_staged_ids(checks_doc))} staged check ids)"
+        f"({len(release_table_rows(text))} gate items in the engine's release table plus "
+        f"{surfaces} declared by curricula, {staged} staged check ids)"
     )
     reject = FIXTURES / "gate_item_without_check.reject.md"
+    unadvertised = FIXTURES / "curriculum_release_unadvertised.reject.yaml"
+    advertised = FIXTURES / "curriculum_release_advertised.accept.yaml"
     fixtures = [
         Fixture(
             name=rel(reject),
             kind="reject",
             expected_error="gate-item-unbacked",
             detector=lambda: (gate_item_violations(read_named(reject), checks_doc) or [None])[0],
-        )
+        ),
+        Fixture(
+            name=rel(unadvertised),
+            kind="reject",
+            expected_error="check-id-unadvertised",
+            detector=lambda: (
+                curriculum_release_violations(
+                    common._deserialize(unadvertised), rel(unadvertised)
+                )
+                or [None]
+            )[0],
+        ),
+        Fixture(
+            name=rel(advertised),
+            kind="accept",
+            detector=lambda: (
+                curriculum_release_violations(common._deserialize(advertised), rel(advertised))
+                or [None]
+            )[0],
+        ),
     ]
     detail = line if not problems else line + " — " + "; ".join(problems)
     return gate_result(not problems, detail, fixtures, stdout=line)

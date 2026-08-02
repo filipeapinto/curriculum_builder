@@ -15,10 +15,47 @@
     },
     "schema": {
       "const": "schemas/checks.schema.v1.json"
+    },
+    "release": {
+      "description": "The release surface for the ids in this inventory: which gate item advertises them, and at which stage. The engine's own inventory is advertised by the release table in the composed contract, and needs none of this. A curriculum's inventory is not in that table — phase 3 moved its ids out of the engine's list, and an id that leaves the engine's list and gains no surface of its own has quietly stopped being advertised, which is exactly what happened to the four `L01-*` ids. So the surface moves with the ids rather than disappearing: the curriculum names its own gate items, and `FR-P2-GATEITEMS` holds it to the same two directions it holds the engine's table to — every pattern advertised matches an id in this file, and every staged id in this file is matched by a pattern at its own stage.",
+      "type": "array",
+      "minItems": 1,
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": [
+          "stage",
+          "gate_item",
+          "advertises"
+        ],
+        "properties": {
+          "stage": {
+            "enum": [
+              "logger",
+              "static",
+              "deterministic",
+              "golden",
+              "live-capability"
+            ]
+          },
+          "gate_item": {
+            "type": "string",
+            "minLength": 3
+          },
+          "advertises": {
+            "type": "array",
+            "minItems": 1,
+            "items": {
+              "type": "string",
+              "pattern": "^[A-Z][A-Z0-9-]*\\*?$"
+            }
+          }
+        }
+      }
     }
   },
   "patternProperties": {
-    "^(?!checks_version$|schema$)[a-z_0-9]+$": {
+    "^(?!checks_version$|schema$|release$)[a-z_0-9]+$": {
       "type": "array",
       "minItems": 1,
       "items": {

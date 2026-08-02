@@ -1,0 +1,33 @@
+# Negative fixture for FR-P2-GATEITEMS, second leg. A curriculum inventory that stages
+# three ids and advertises two of them: LAT-PASSAGE-ATTESTED is staged `deterministic`
+# and the only pattern that could match it is advertised at `static`, so nothing claims
+# it at the stage that would run it.
+#
+# This is the defect the gate could not see. Phase 3 moved twelve ids out of the engine's
+# inventory and removed the `L01-*` row from the release table; the gate read only
+# policy/checks.v1.yaml and went green while four ids were advertised by nothing. An id
+# that leaves one surface and gains no other has stopped being claimed. Never an input to
+# a run.
+checks_version: '1.0'
+schema: schemas/checks.schema.v1.json
+release:
+- stage: static
+  gate_item: Static — this curriculum's own inventory
+  advertises:
+  - LAT-*
+lexicon:
+- id: LAT-LEMMA-SOURCED
+  owner: curricula/latin_reading/lexicon.v1.yaml
+  method: mapping
+  asserts: every lemma cites the dictionary entry it was taken from
+  stage: static
+- id: LAT-MACRON-CONSISTENT
+  owner: curricula/latin_reading/lexicon.v1.yaml
+  method: execution
+  asserts: vowel length is marked or unmarked consistently across a unit, never mixed
+  stage: static
+- id: LAT-PASSAGE-ATTESTED
+  owner: curricula/latin_reading/corpus.v1.yaml
+  method: execution
+  asserts: every passage a unit sets resolves to a line range in the declared corpus
+  stage: deterministic

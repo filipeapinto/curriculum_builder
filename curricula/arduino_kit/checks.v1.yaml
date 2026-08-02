@@ -21,6 +21,29 @@
 # supplies in domain.schema.v1.json.
 checks_version: '1.0'
 schema: schemas/checks.schema.v1.json
+
+# This curriculum's release surface. The engine's inventory is advertised by the release
+# table in the composed contract; these ids are not in that table and must not be, because
+# putting one curriculum's ids back into an engine file is the leak phase 3 closed. The
+# surface moves with the ids instead. FR-P2-GATEITEMS reads this the same way it reads the
+# engine's table, in both directions: every pattern here matches an id below at the stage
+# it is advertised under, and every staged id below is matched by a pattern at its own
+# stage. The four L01- ids were advertised by the engine's table until phase 3 removed
+# that row, and nothing advertised them afterwards — a de-advertised id is a check that
+# has stopped being claimed, and the gate could not see it because it read only the
+# engine's half.
+release:
+- stage: static
+  gate_item: Static — arduino_kit's own inventory
+  advertises:
+  - CAL-*
+  - CUR-*
+  - L01-*
+- stage: deterministic
+  gate_item: Deterministic — arduino_kit's own inventory
+  advertises:
+  - L01-*
+  - LAB-*
 calibration:
 - id: CAL-SOURCE-VERIFIED
   owner: curricula/arduino_kit/kit_calibration.v1.yaml
