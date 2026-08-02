@@ -1,0 +1,25 @@
+{
+  "$comment": "G1 through the side door. The six engine blocks plus `domain` are required and additional properties are closed, so a detector reading only `required` finds nothing wrong — and the contract still states a seventh engine block, `electronics`, as an optional property. Optional or not, it is a name the engine fixes about one subject, and a curriculum in another subject validates against a contract that has an electronics block in it. Only a fixed expectation over the full property set catches a seventh arriving. Must be refused as `unit-block-set-wrong`. Never an input to a run.",
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "identity",
+    "pedagogy",
+    "sequence",
+    "content",
+    "safety",
+    "visuals",
+    "domain"
+  ],
+  "properties": {
+    "identity": { "type": "object" },
+    "pedagogy": { "type": "object" },
+    "sequence": { "type": "object" },
+    "content": { "type": "object" },
+    "safety": { "type": "object" },
+    "visuals": { "type": "array" },
+    "domain": { "type": "object", "minProperties": 1 },
+    "electronics": { "type": "object" }
+  }
+}

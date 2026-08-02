@@ -1,0 +1,36 @@
+{
+  "$comment": "The block set is exactly right and the `domain` block states none of the five keywords this leg used to refuse — no `properties`, no `required`, no `$ref`, no `patternProperties`, and additional properties are not closed. It constrains the block's contents anyway, with `allOf` and a `propertyNames` pattern: every curriculum's domain block must now carry a `circuit` key whose siblings match one subject's naming. A blacklist names the ways back in somebody thought of; this is one of the ones they did not. Must be refused as `unit-domain-block-constrained`. Never an input to a run.",
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "identity",
+    "pedagogy",
+    "sequence",
+    "content",
+    "safety",
+    "visuals",
+    "domain"
+  ],
+  "properties": {
+    "identity": { "type": "object" },
+    "pedagogy": { "type": "object" },
+    "sequence": { "type": "object" },
+    "content": { "type": "object" },
+    "safety": { "type": "object" },
+    "visuals": { "type": "array" },
+    "domain": {
+      "type": "object",
+      "minProperties": 1,
+      "propertyNames": { "pattern": "^[a-z_]+$" },
+      "allOf": [
+        {
+          "anyOf": [
+            { "required": ["circuit"] },
+            { "required": ["build_map"] }
+          ]
+        }
+      ]
+    }
+  }
+}

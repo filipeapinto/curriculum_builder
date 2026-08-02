@@ -460,11 +460,14 @@ proves nothing and is recorded as a failed gate rather than a warning.
 two contracts as data, so they must be known to parse before their shape means anything
 `python3 tests/gates/fr_p5_unit.py --check unit-contract`
 **Pass:** four relations over the two contracts §6 phase 1 authors —
- (a) `schemas/lab.schema.v4.json` requires **exactly** the engine's six blocks —
- `identity`, `pedagogy`, `sequence`, `content`, `safety`, `visuals` — plus `domain`, and
- closes additional properties. The six are written into the gate on purpose: they are the
- engine's own, and only a fixed expectation catches a seventh arriving. `G1` was that
- seventh block, and it was called `electronics`;
+ (a) `schemas/lab.schema.v4.json` **states** exactly the engine's six blocks —
+ `identity`, `pedagogy`, `sequence`, `content`, `safety`, `visuals` — plus `domain`,
+ **requires** the same seven, and closes additional properties. The six are written into
+ the gate on purpose: they are the engine's own, and only a fixed expectation catches a
+ seventh arriving. `G1` was that seventh block, and it was called `electronics`. The
+ property set and the required list are asserted separately, because a contract may state
+ a block it does not require and an *optional* `electronics` block is `G1` exactly as much
+ as a required one — reading `required` alone was how the leg came to admit it;
  (b) **no name the contract states — at any depth — is a term a curriculum declares
  about itself.** The vocabulary is the `*_terms` blocks, exactly as `FR-P5-ENGINE-GENERIC`
  reads them, so there is one declared vocabulary and not two. Its reach is the same and
@@ -474,17 +477,29 @@ two contracts as data, so they must be known to parse before their shape means a
  `visual_system` at the top level — `G5` — and requires a `domain` block whose `schema`
  pointer is constrained to `curricula/`, because an engine-held domain schema is the same
  leak wearing a different name;
- (d) the `domain` block of the unit contract **fixes nothing about its own contents** —
- no `properties`, no `required`, no `$ref`, no closed additional properties. A curriculum
- supplies that shape. An engine contract that fixed it would have re-created `G1` inside
- the block written to end it.
+ (d) the `domain` block of the unit contract **fixes nothing about its own contents**,
+ checked as a permission list rather than as a list of refusals. The block may say that it
+ is an object, that it must carry at least one property, and what it is for — `type`,
+ `minProperties: 1`, `description`, `title`, `$comment` — and **any** other keyword is
+ shape. Naming the leaks instead (`properties`, `required`, `$ref`, `patternProperties`,
+ closed additional properties) let `allOf`, `anyOf`, `oneOf`, `not`, `propertyNames`,
+ `if`/`then`, `dependentSchemas`, `enum` and `const` straight through, each of which fixes
+ the block's contents just as firmly. A curriculum supplies that shape. An engine contract
+ that fixed it would have re-created `G1` inside the block written to end it.
 Prints
 `FR-P5-UNIT-CONTRACT <verdict> (6 engine blocks plus domain, N names checked against T declared domain terms; …)`.
 **Fixtures:** `unit_contract_domain_block.reject.json` — a contract requiring a seventh
 block named `electronics` and stating a property carrying one kit's supply id; its
 `expected_error` is **both** codes, `unit-block-named-for-domain + unit-block-set-wrong`,
 so a fixture tripping one leg is `FAIL`. `unit_contract_generic.accept.json` — the six
-blocks plus `domain`, and no subject named. `curriculum_contract_kit_concept.reject.json`
+blocks plus `domain`, and no subject named.
+`unit_contract_optional_seventh_block.reject.json` — the seven required and closed, and
+`electronics` stated as an *optional* eighth property, which reading `required` alone
+called generic; `expected_error` `unit-block-set-wrong`.
+`unit_contract_domain_constrained_sideways.reject.json` — a `domain` block carrying none
+of the five keywords the old blacklist named and constraining its contents with `allOf`
+and `propertyNames` anyway; `expected_error` `unit-domain-block-constrained`.
+`curriculum_contract_kit_concept.reject.json`
 — `G5` as it stood, `expected_error` `curriculum-schema-domain-concept`.
 `curriculum_contract_generic.accept.json` — the same shape with the domain declared
 rather than assumed.

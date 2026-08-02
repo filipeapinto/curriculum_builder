@@ -467,18 +467,61 @@ def _named_properties(node, found=None) -> list[str]:
     return found
 
 
+# The only keywords the engine's `domain` block may carry, and a permission list rather
+# than a blacklist on purpose.
+#
+# gate_impl_fix. This leg used to name five keywords it refused — `properties`,
+# `required`, `$ref`, `patternProperties` and `additionalProperties: false` — which is a
+# list of the ways back in that somebody thought of. `allOf`, `anyOf`, `oneOf`, `not`,
+# `if`/`then`, `dependentSchemas`, `propertyNames`, `unevaluatedProperties`, `enum` and
+# `const` all constrain the block's contents and all passed. `G1` walking back in through
+# a side door is still `G1`, so the question is inverted: the engine may say the block is
+# an object, that it must say *something*, and what it is for. Anything else is shape,
+# and shape is the curriculum's.
+DOMAIN_BLOCK_KEYWORDS = {"type", "description", "title", "$comment", "minProperties"}
+
+
+def domain_block_violations(block) -> list[str]:
+    """(d) the domain block's contents are the curriculum's to fix, not this contract's."""
+    problems: list[str] = []
+    fixed = sorted(k for k in (block or {}) if k not in DOMAIN_BLOCK_KEYWORDS)
+    if block.get("type") not in (None, "object"):
+        fixed.append(f"type: {block.get('type')!r}")
+    # `minProperties: 1` is presence, not shape — the block must say something. Any
+    # higher floor is a statement about how much a subject has to carry.
+    if isinstance(block.get("minProperties"), int) and block["minProperties"] > 1:
+        fixed.append(f"minProperties: {block['minProperties']}")
+    if fixed:
+        problems.append(
+            f"unit-domain-block-constrained: the engine contract fixes {', '.join(fixed)} "
+            f"on the {DOMAIN_BLOCK} block, which is the curriculum's shape to supply"
+        )
+    return problems
+
+
 def unit_contract_violations(schema, terms) -> list[str]:
     """(a) exactly the six engine blocks plus `domain`, (b) no name in the contract is
     a term a curriculum declares about itself, (d) the domain block's contents are
     the curriculum's to fix and not this contract's."""
     problems: list[str] = []
     required = list((schema or {}).get("required") or [])
+    stated = list(((schema or {}).get("properties") or {}))
     expected = list(ENGINE_BLOCKS) + [DOMAIN_BLOCK]
-    if sorted(required) != sorted(expected) or (schema or {}).get("additionalProperties") is not False:
+    # gate_impl_fix: `required` alone was the wrong subject. A contract may state a
+    # property it does not require, and an *optional* `electronics` block is `G1` exactly
+    # as much as a required one — it is a seventh engine block, and only a fixed
+    # expectation over the full property set catches a seventh arriving. The two lists
+    # are compared separately so the report names which one moved.
+    if (
+        sorted(stated) != sorted(expected)
+        or sorted(required) != sorted(expected)
+        or (schema or {}).get("additionalProperties") is not False
+    ):
         problems.append(
-            f"unit-block-set-wrong: the contract requires {sorted(required)} and closes "
-            f"additional properties {(schema or {}).get('additionalProperties')!r}; the "
-            f"engine's blocks are {sorted(expected)}, closed"
+            f"unit-block-set-wrong: the contract states {sorted(stated)}, requires "
+            f"{sorted(required)} and closes additional properties "
+            f"{(schema or {}).get('additionalProperties')!r}; the engine's blocks are "
+            f"{sorted(expected)}, stated, required and closed"
         )
 
     for name in sorted(set(_named_properties(schema))):
@@ -489,15 +532,9 @@ def unit_contract_violations(schema, terms) -> list[str]:
                     f"term {term!r}, so a curriculum in another subject cannot validate"
                 )
 
-    block = ((schema or {}).get("properties") or {}).get(DOMAIN_BLOCK) or {}
-    fixed = [k for k in ("properties", "required", "$ref", "patternProperties") if k in block]
-    if block.get("additionalProperties") is False:
-        fixed.append("additionalProperties: false")
-    if fixed:
-        problems.append(
-            f"unit-domain-block-constrained: the engine contract fixes {', '.join(fixed)} "
-            f"on the {DOMAIN_BLOCK} block, which is the curriculum's shape to supply"
-        )
+    problems += domain_block_violations(
+        ((schema or {}).get("properties") or {}).get(DOMAIN_BLOCK) or {}
+    )
     return problems
 
 
@@ -562,6 +599,8 @@ def check_unit_contract(ev: Evidence):
     )
     unit_reject = FIXTURES / "unit_contract_domain_block.reject.json"
     unit_accept = FIXTURES / "unit_contract_generic.accept.json"
+    seventh_block = FIXTURES / "unit_contract_optional_seventh_block.reject.json"
+    sideways = FIXTURES / "unit_contract_domain_constrained_sideways.reject.json"
     cur_reject = FIXTURES / "curriculum_contract_kit_concept.reject.json"
     cur_accept = FIXTURES / "curriculum_contract_generic.accept.json"
     fixtures = [
@@ -577,6 +616,20 @@ def check_unit_contract(ev: Evidence):
             name=rel(unit_accept),
             kind="accept",
             detector=lambda: (unit_contract_violations(_load(unit_accept), terms) or [None])[0],
+        ),
+        # gate_impl_fix: the two shapes the legs above used to admit. Each is a contract
+        # a reading of `required` alone, or of a five-keyword blacklist, called generic.
+        Fixture(
+            name=rel(seventh_block),
+            kind="reject",
+            expected_error="unit-block-set-wrong",
+            detector=lambda: _codes(unit_contract_violations(_load(seventh_block), terms)),
+        ),
+        Fixture(
+            name=rel(sideways),
+            kind="reject",
+            expected_error="unit-domain-block-constrained",
+            detector=lambda: _codes(unit_contract_violations(_load(sideways), terms)),
         ),
         Fixture(
             name=rel(cur_reject),
