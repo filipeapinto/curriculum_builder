@@ -46,28 +46,34 @@ and report it: the goal is wrong and the two `v1` contracts stay.
 
 ## Starting state
 
-`HEAD` is `9e6d005`. The worktree is **dirty**, from two different sources:
+Every tracked change is committed; `HEAD` is the commit titled *plans: point the
+schema-retirement prompt at the committed base*. `./tests/run_gates.sh 4`
+reports 30 PASS / 0 FAIL and `run_gates.sh 5` reports 38 PASS / 0 FAIL.
 
-1. **Committed-worthy work, done and verified:** `FR-P1-DOC` was retired (it checked that
-   a root document listed every top-level folder — ceremony, and its document had been
-   deleted), the contract-shape declaration moved to `tests/contract_assets.v1.md`, and
-   `AGENTS.md` was deleted with every live reference to it repointed or removed.
-2. **Four untracked copies** at `schemas/deprecated/*.json` — an attempt to move the four
-   superseded schemas that was reverted in `schemas/` but left the copies behind.
+One thing is untracked: four copies at `schemas/deprecated/*.json`, left over from an
+attempt to move the four superseded schemas before their references were removed. That
+attempt was reverted in `schemas/`; the copies are byte-identical duplicates of the live
+files and nothing reads them.
 
-**Step 0.** Commit (1) and delete (2), then confirm a clean base before touching anything:
+**Step 0.** Delete them and confirm the base:
 
 ```sh
 rm schemas/deprecated/curriculum.schema.v4.json schemas/deprecated/execution_log.schema.v1.json \
    schemas/deprecated/lab.schema.v3.json schemas/deprecated/routing_decision.schema.v1.json
-git add -A && git commit -m "tests: retire FR-P1-DOC and move the contract-shape declaration into tests/"
-./tests/run_gates.sh 4    # expect 30 PASS, 0 FAIL
-./tests/run_gates.sh 5    # expect 38 PASS, 0 FAIL
+./tests/run_gates.sh 4               # expect 30 PASS, 0 FAIL, 0 BLOCKED
+./tests/run_gates.sh 5               # expect 38 PASS, 0 FAIL, 0 BLOCKED
 python3 tests/check_meta_prompt.py   # expect EXECUTABLE (6/6)
+git status --porcelain               # expect empty
 ```
 
 If that base is not green, fix it before starting. Gates run against a **commit**;
 `FR-P0-CLEAN` fails on a dirty tree, so commit between steps.
+
+Recent history worth knowing: `FR-P1-DOC` was retired one commit earlier (it read a root
+document that had been deleted, and asserted only that a prose table listed the top-level
+folders), which is why the accepted phase-4 set is 30 and not the 31 named throughout
+`plans/folder_refactoring/`. Before that, five audited defects from the simplification run
+were fixed — see `plans/simplification/simplification.handoff.v1.md`, which is accurate.
 
 ---
 
