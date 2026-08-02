@@ -735,17 +735,26 @@ plan's gate count falls from 31 to 30 and its phase-1 count from 3 to 2. Recorde
 rather than deleted, because a retired gate is a decision and a silently removed gate is
 a gap.
 
-**`FR-P1-SCHEMA-RETENTION`** · 1 · `tree+text+mapping` · depends on: `FR-P1-GITKEEP`
+**`FR-P1-SCHEMA-RETENTION`** · 1 · `tree` · depends on: `FR-P1-GITKEEP`
 `python3 tests/gates/fr_p1_retention.py --check schema-gate`
 **Pass:** for every file in `schemas/deprecated/`, a repository-wide search for its
-basename returns zero hits outside that folder. Vacuously true while empty — recorded as
-`PASS (0 files, gate armed)`, not skipped. Both `v1` contracts must be **outside**
-`deprecated/` for as long as any accepted record cites them (§6).
+basename — excluding every `deprecated/` directory, not only this one
+(`common.under_deprecated`) — returns zero hits outside that folder. Vacuously true
+while empty — recorded as `PASS (0 files, gate armed)`, not skipped, and the only
+mechanism a run in that state actually exercises is the `tree` listing of
+`schemas/deprecated/` itself; the basename search only runs once something is retired.
+(Through the schema retirement plan: a second condition held both `v1` contracts
+outside `deprecated/` for as long as any accepted record cited them. `RT-6` recorded
+that no record was ever accepted under either, so that condition — and the `text`/
+`mapping` mechanisms it alone produced — is gone.)
 **Fixtures:** `retired_but_referenced.reject.json` plus a manifest citing it
 (`expected_error: retired-schema-still-referenced`); and
 `schema_retired_unreferenced.accept.json` — a file in `deprecated/` that nothing cites,
 which must pass, since the gate is conditional and rule 3 requires the accepting case be
-shown too.
+shown too. A third, synthesized fixture (`deprecated_narrowing_still_bites`) builds a
+scratch tree with a live citation and a `deprecated/` citation of the same basename and
+asserts the scan drops only the buried one — proof that excluding every `deprecated/`
+directory does not also blind the gate to a live citation.
 **Failure means:** a schema was retired while an accepted artifact still depends on it,
 breaking the audit trail `--resume` relies on.
 

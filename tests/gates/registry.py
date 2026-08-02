@@ -122,7 +122,7 @@ GATES = [
     {
         "id": "FR-P1-SCHEMA-RETENTION",
         "activation_phase": 1,
-        "claim_class": "tree+text+mapping",
+        "claim_class": "tree",
         "depends_on": ["FR-P1-GITKEEP"],
         "command": "python3 tests/gates/fr_p1_retention.py --check schema-gate",
         "impl": "fr_p1_retention:check_schema_gate",

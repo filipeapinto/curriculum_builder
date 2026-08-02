@@ -30,13 +30,6 @@ DEPRECATED_FOLDERS = [
     "meta_prompt/deprecated",
 ]
 
-# Retained, never authorized: both v1 contracts stay in schemas/ for as long as any
-# accepted record cites them (section 6). RT-6 is what eventually retires them.
-RETAINED_CONTRACTS = [
-    "schemas/execution_log.schema.v1.json",
-    "schemas/routing_decision.schema.v1.json",
-]
-
 
 # ---------------------------------------------------------------------------
 # FR-P1-GITKEEP
@@ -126,23 +119,6 @@ def retention_gate_violations(retired, scan_files, ev: Evidence | None = None) -
     return problems
 
 
-def citations_of(basename: str, scan_files, ev: Evidence | None = None) -> list[str]:
-    """Every production file naming ``basename``. The scan root set is rule 7's."""
-    found = []
-    for path in scan_files:
-        try:
-            text = ev.text_of(path) if ev is not None else common.read_named(path)
-        except (OSError, UnicodeDecodeError):
-            continue
-        hits = (
-            ev.search(re.escape(basename), text) if ev is not None
-            else re.findall(re.escape(basename), text)
-        )
-        if hits:
-            found.append(rel(path))
-    return found
-
-
 def deprecated_narrowing_still_bites() -> str | None:
     """Proves excluding deprecated/ from the scan does not go further than that: a
     citation from a file that is not under any deprecated/ is still caught, and a
@@ -189,29 +165,10 @@ def check_schema_gate(ev: Evidence):
     scan_files = [p for p in common.production_files() if not common.under_deprecated(p)]
     problems = retention_gate_violations(retired, scan_files, ev)
 
-    # The other half of section 6's rule: a contract stays outside deprecated/ for as
-    # long as anything still cites it, so the citations are counted, not assumed.
-    still_cited = {}
-    for contract in RETAINED_CONTRACTS:
-        if not ev.exists(REPO_ROOT / contract):
-            problems.append(f"retained-contract-missing:{contract}")
-        if ev.exists(deprecated / Path(contract).name):
-            problems.append(f"retained-contract-deprecated:{contract}")
-        citing = citations_of(Path(contract).name, scan_files, ev)
-        citing = [c for c in citing if c != contract]
-        still_cited[Path(contract).name] = citing
-    for contract in RETAINED_CONTRACTS:
-        ev.resolve(
-            Path(contract).name,
-            "the retained-contract list section 6 defines",
-            "schemas/, schemas/deprecated/ and every production file citing it",
-        )
-
     state = "gate armed" if not retired else f"{len(retired)} retired"
-    cited = ", ".join(f"{name} cited by {len(paths)}" for name, paths in still_cited.items())
     line = (
         f"FR-P1-SCHEMA-RETENTION {'PASS' if not problems else 'FAIL'} "
-        f"({len(retired)} files, {state}; retained: {cited})"
+        f"({len(retired)} files, {state})"
     )
 
     reject = FIXTURES / "retired_but_referenced.reject.json"
