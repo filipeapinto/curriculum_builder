@@ -1,0 +1,24 @@
+{
+  "$comment": "The engine's six blocks plus the domain block, closed, with the domain block's contents left to the curriculum. This is the shape lab.schema.v4.json must keep; a positive fixture is what stops the detector from being satisfied by rejecting everything.",
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "identity",
+    "pedagogy",
+    "sequence",
+    "content",
+    "safety",
+    "visuals",
+    "domain"
+  ],
+  "properties": {
+    "identity": { "type": "object" },
+    "pedagogy": { "type": "object" },
+    "sequence": { "type": "object" },
+    "content": { "type": "object" },
+    "safety": { "type": "object" },
+    "visuals": { "type": "array" },
+    "domain": { "type": "object", "minProperties": 1 }
+  }
+}

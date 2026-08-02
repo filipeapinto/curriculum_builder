@@ -1,0 +1,250 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://example.invalid/curriculum_builder/curriculum.schema.v5.json",
+  "title": "Curriculum manifest v5 — one curriculum, no subject named",
+  "description": "v4 required `kit_power_profile` and `visual_system` at the top level. \"kit\" and \"power\" are one subject's words in an engine contract, and a curriculum in an unrelated subject could not satisfy either — that is `G5`. Both are now the curriculum's own domain configuration, held under `domain.config` and shaped by the schema `domain.schema` names. What stays here is what is true of every curriculum: who it is for, what it declares about its own domain, and the human-authored sequence of units.",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "manifest_version",
+    "curriculum",
+    "domain",
+    "labs"
+  ],
+  "properties": {
+    "manifest_version": {
+      "const": "5.0"
+    },
+    "curriculum": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "title",
+        "learner",
+        "delivery",
+        "design_rule"
+      ],
+      "properties": {
+        "title": {
+          "type": "string",
+          "minLength": 1
+        },
+        "learner": {
+          "type": "string",
+          "minLength": 1
+        },
+        "delivery": {
+          "type": "string",
+          "minLength": 1
+        },
+        "design_rule": {
+          "const": "Component first; a problem is an application, never the organising principle."
+        }
+      }
+    },
+    "domain": {
+      "description": "What this curriculum declares about its own subject. `schema` is the contract every unit's `domain` block is validated against, supplied and named by the curriculum because the engine cannot know the shape of a subject it has never heard of. `config` is the domain configuration v4 carried at the top level under one subject's names.",
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "schema",
+        "config"
+      ],
+      "properties": {
+        "schema": {
+          "description": "Repository-relative path to the schema this curriculum supplies for its units' domain block. It must live under this curriculum's own directory: an engine-held domain schema is the leak again.",
+          "type": "string",
+          "pattern": "^curricula/[a-z0-9_]+/[A-Za-z0-9_.-]+\\.json$"
+        },
+        "config": {
+          "type": "object",
+          "minProperties": 1,
+          "description": "The curriculum's domain configuration, shaped by its own contract and never by this one."
+        }
+      }
+    },
+    "labs": {
+      "type": "array",
+      "minItems": 1,
+      "items": {
+        "$ref": "#/$defs/lab"
+      },
+      "description": "The curriculum defines how many labs exist. The schema does not fix a count — it requires at least one lab, ascending, contiguous from L01, with unique ids."
+    },
+    "lab_count": {
+      "description": "Optional declared count. When present it must equal len(labs); the controller asserts this.",
+      "type": "integer",
+      "minimum": 1
+    }
+  },
+  "$defs": {
+    "lab": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "id",
+        "slug",
+        "kind",
+        "title",
+        "subject_set",
+        "sequence",
+        "subject_job",
+        "learner_outcome",
+        "required_explanation",
+        "core_activity",
+        "applications",
+        "visual_roles",
+        "safety_focus",
+        "qa_focus"
+      ],
+      "properties": {
+        "id": {
+          "type": "string",
+          "pattern": "^L[0-9]{2,3}$"
+        },
+        "slug": {
+          "type": "string",
+          "pattern": "^[a-z0-9]+(?:-[a-z0-9]+)*$"
+        },
+        "kind": {
+          "enum": [
+            "foundation",
+            "component",
+            "application",
+            "integration",
+            "diagnostic"
+          ]
+        },
+        "title": {
+          "type": "string",
+          "minLength": 1
+        },
+        "sequence": {
+          "type": "object",
+          "additionalProperties": false,
+          "required": [
+            "prerequisites",
+            "prepares_for"
+          ],
+          "properties": {
+            "prerequisites": {
+              "type": "array",
+              "items": {
+                "type": "string",
+                "pattern": "^L(0[1-9]|[12][0-9]|3[0-5])$"
+              }
+            },
+            "prepares_for": {
+              "type": "array",
+              "items": {
+                "type": "string",
+                "pattern": "^L(0[1-9]|[12][0-9]|3[0-5])$"
+              }
+            }
+          }
+        },
+        "learner_outcome": {
+          "type": "string",
+          "minLength": 20
+        },
+        "required_explanation": {
+          "type": "array",
+          "minItems": 2,
+          "items": {
+            "type": "string",
+            "minLength": 10
+          }
+        },
+        "core_activity": {
+          "type": "object",
+          "additionalProperties": false,
+          "required": [
+            "mode",
+            "question",
+            "domain_state"
+          ],
+          "properties": {
+            "mode": {
+              "type": "string",
+              "minLength": 3,
+              "description": "The unit's hazard class, from the set its curriculum declares."
+            },
+            "question": {
+              "type": "string",
+              "minLength": 10
+            },
+            "domain_state": {
+              "type": "string",
+              "minLength": 3,
+              "description": "How ready this unit's domain data is, in the curriculum's own vocabulary."
+            },
+            "domain_activity": {
+              "type": "object",
+              "minProperties": 1,
+              "description": "Whatever else this unit's activity needs the curriculum to state — the supply it draws on, the corpus it reads, the interval set it uses. Validated against the curriculum's own domain schema, never against this one. `kit_power_profile` and `power_input` lived at this level in v4 and are why a second curriculum could not use this contract."
+            }
+          },
+          "description": "What the learner does. `mode` is the hazard class, from the set the curriculum declares; `domain_state` is what the curriculum's own contract says about how ready this unit's subject data is. Neither list is fixed here — a fixed list would be one subject's list."
+        },
+        "applications": {
+          "type": "array",
+          "minItems": 2,
+          "items": {
+            "type": "string",
+            "minLength": 3
+          }
+        },
+        "visual_roles": {
+          "type": "array",
+          "minItems": 3,
+          "items": {
+            "type": "string",
+            "minLength": 3
+          }
+        },
+        "safety_focus": {
+          "type": "array",
+          "minItems": 1,
+          "items": {
+            "type": "string",
+            "minLength": 6
+          }
+        },
+        "qa_focus": {
+          "type": "array",
+          "minItems": 2,
+          "items": {
+            "type": "string",
+            "minLength": 6
+          }
+        },
+        "subject_set": {
+          "type": "object",
+          "additionalProperties": false,
+          "required": [
+            "primary",
+            "supporting"
+          ],
+          "properties": {
+            "primary": {
+              "type": "string",
+              "minLength": 1,
+              "description": "What this unit is about."
+            },
+            "supporting": {
+              "type": "array",
+              "items": {
+                "type": "string",
+                "minLength": 1
+              }
+            }
+          }
+        },
+        "subject_job": {
+          "type": "string",
+          "minLength": 20
+        }
+      }
+    }
+  }
+}

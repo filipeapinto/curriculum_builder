@@ -1,0 +1,29 @@
+{
+  "$comment": "A curriculum contract that carries no subject concept of its own and requires the curriculum to name the schema its units' domain block is validated against, under its own directory.",
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "manifest_version",
+    "curriculum",
+    "domain",
+    "labs"
+  ],
+  "properties": {
+    "manifest_version": { "const": "5.0" },
+    "curriculum": { "type": "object" },
+    "domain": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["schema", "config"],
+      "properties": {
+        "schema": {
+          "type": "string",
+          "pattern": "^curricula/[a-z0-9_]+/[A-Za-z0-9_.-]+\\.json$"
+        },
+        "config": { "type": "object", "minProperties": 1 }
+      }
+    },
+    "labs": { "type": "array" }
+  }
+}

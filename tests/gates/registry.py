@@ -332,6 +332,16 @@ GATES = [
         "command": "python3 tests/gates/fr_p5_unit.py --check receipt-hash",
         "impl": "fr_p5_unit:check_receipt_hash",
     },
+
+    # --- Phase 5 — the unit contract (plan phase 1) ------------------------------
+    {
+        "id": "FR-P5-UNIT-CONTRACT",
+        "activation_phase": 5,
+        "claim_class": "parse+mapping",
+        "depends_on": ["FR-P0-PARSE"],
+        "command": "python3 tests/gates/fr_p5_unit.py --check unit-contract",
+        "impl": "fr_p5_unit:check_unit_contract",
+    },
 ]
 
 GATES_BY_ID = {gate["id"]: gate for gate in GATES}

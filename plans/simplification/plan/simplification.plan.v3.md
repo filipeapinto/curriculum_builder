@@ -318,7 +318,7 @@ section parser keys on the literal heading number. Sections 1–8 are cited by o
 documents and are not renumbered.
 
 Format: **ID** · activation phase · claim class · depends on · command · pass criteria ·
-fixtures · failure meaning. **5 gates.**
+fixtures · failure meaning. **6 gates.**
 
 **Parsing this section** — `FR-P0-REGISTRY` reads it, so the encoding is the one §8 of
 `plans/folder_refactoring/folder_refactoring.plan.v6.md` fixes: everything after an em
@@ -453,3 +453,40 @@ shipped, and nothing in agreement between them, which is `B4` as it was observed
 shape whose receipt resolves.
 **Failure means:** provenance that does not resolve to the shipped artifact, which
 proves nothing and is recorded as a failed gate rather than a warning.
+
+### Phase 5 — the unit contract (§6 phase 1)
+
+**`FR-P5-UNIT-CONTRACT`** · 5 · `parse+mapping` · depends on: `FR-P0-PARSE` — it reads
+two contracts as data, so they must be known to parse before their shape means anything
+`python3 tests/gates/fr_p5_unit.py --check unit-contract`
+**Pass:** four relations over the two contracts §6 phase 1 authors —
+ (a) `schemas/lab.schema.v4.json` requires **exactly** the engine's six blocks —
+ `identity`, `pedagogy`, `sequence`, `content`, `safety`, `visuals` — plus `domain`, and
+ closes additional properties. The six are written into the gate on purpose: they are the
+ engine's own, and only a fixed expectation catches a seventh arriving. `G1` was that
+ seventh block, and it was called `electronics`;
+ (b) **no name the contract states — at any depth — is a term a curriculum declares
+ about itself.** The vocabulary is the `*_terms` blocks, exactly as `FR-P5-ENGINE-GENERIC`
+ reads them, so there is one declared vocabulary and not two. Its reach is the same and
+ is reported the same way: the declarations are anchored for prose, so an identifier-style
+ name matches only where a curriculum declared an identifier-style term;
+ (c) `schemas/curriculum.schema.v5.json` carries neither `kit_power_profile` nor
+ `visual_system` at the top level — `G5` — and requires a `domain` block whose `schema`
+ pointer is constrained to `curricula/`, because an engine-held domain schema is the same
+ leak wearing a different name;
+ (d) the `domain` block of the unit contract **fixes nothing about its own contents** —
+ no `properties`, no `required`, no `$ref`, no closed additional properties. A curriculum
+ supplies that shape. An engine contract that fixed it would have re-created `G1` inside
+ the block written to end it.
+Prints
+`FR-P5-UNIT-CONTRACT <verdict> (6 engine blocks plus domain, N names checked against T declared domain terms; …)`.
+**Fixtures:** `unit_contract_domain_block.reject.json` — a contract requiring a seventh
+block named `electronics` and stating a property carrying one kit's supply id; its
+`expected_error` is **both** codes, `unit-block-named-for-domain + unit-block-set-wrong`,
+so a fixture tripping one leg is `FAIL`. `unit_contract_generic.accept.json` — the six
+blocks plus `domain`, and no subject named. `curriculum_contract_kit_concept.reject.json`
+— `G5` as it stood, `expected_error` `curriculum-schema-domain-concept`.
+`curriculum_contract_generic.accept.json` — the same shape with the domain declared
+rather than assumed.
+**Failure means:** the unit contract still cannot describe a unit in a second subject,
+so the prompt §6 phase 5 writes would be generic over a contract that is not.

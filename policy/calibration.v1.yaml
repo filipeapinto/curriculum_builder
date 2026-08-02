@@ -1,6 +1,6 @@
 # Calibration — the premises every other rule derives from.
 #
-# The pedagogy caps in schemas/lab.schema.v3.json are not universal truths. They are
+# The pedagogy caps in schemas/lab.schema.v4.json are not universal truths. They are
 # what follows from the learner this file describes. This file states that premise
 # once so nothing downstream has to guess it, and so no document can quietly assume
 # a different one.
@@ -47,37 +47,37 @@ learner:
 pedagogy_caps:
   new_terms_per_lab:
     value: 2
-    enforced_by: schemas/lab.schema.v3.json → pedagogy.vocabulary.maxItems
+    enforced_by: schemas/lab.schema.v4.json → pedagogy.vocabulary.maxItems
     prose_pattern: '(?i)\b(?:no more than|at most|capped at|maximum of|limit of)\s+(?:two|2)\s+new\s+(?:terms?|words?|vocabulary)\b'
     rationale: cognitive load — the working-memory limit at this age band
   segments_per_lab:
     value: [2, 6]
-    enforced_by: schemas/lab.schema.v3.json → pedagogy.cognitive_load.segments
+    enforced_by: schemas/lab.schema.v4.json → pedagogy.cognitive_load.segments
     prose_pattern: '(?i)\b(?:no more than|at most|capped at|maximum of|limit of)\s+(?:six|6)\s+(?:segments?|chunks?)\b'
     rationale: segmenting — more than six chunks overloads
   bloom_floor:
     value: understand
-    enforced_by: schemas/lab.schema.v3.json → pedagogy.learning_objectives.contains.bloom_level.enum
+    enforced_by: schemas/lab.schema.v4.json → pedagogy.learning_objectives.contains.bloom_level.enum
     prose_pattern: '(?i)\b(?:one|at least one)\s+(?:learning\s+)?objective\s+(?:must\s+)?(?:reach|reaches|be|sit at)\s+["\x27`]?understand\b'
     rationale: at least one objective above recall
   objectives_per_lab:
     value: [1, 3]
-    enforced_by: schemas/lab.schema.v3.json → pedagogy.learning_objectives
+    enforced_by: schemas/lab.schema.v4.json → pedagogy.learning_objectives
     prose_pattern: '(?i)\b(?:between\s+)?(?:one|1)\s+(?:to|and|-)\s+(?:three|3)\s+(?:learning\s+)?objectives\b'
     rationale: enough to structure a lab, few enough to assess
   success_criterion_voice:
     value: first_person
-    enforced_by: schemas/lab.schema.v3.json → pedagogy.learning_objectives.items.success_criterion.pattern
+    enforced_by: schemas/lab.schema.v4.json → pedagogy.learning_objectives.items.success_criterion.pattern
     prose_pattern: '(?i)\bsuccess\s+criteri(?:on|a)\b[^.\n]{0,40}?(?:first[- ]person|I can\b)'
     rationale: '"I can ..." — the child must be able to judge their own work'
   misconceptions_per_lab_min:
     value: 1
-    enforced_by: schemas/lab.schema.v3.json → pedagogy.misconceptions.minItems
+    enforced_by: schemas/lab.schema.v4.json → pedagogy.misconceptions.minItems
     prose_pattern: '(?i)\b(?:requires|at least|no fewer than|minimum of)\s+(?:one|1)\s+misconception\b'
     rationale: conceptual change — an untouched misconception survives a good explanation
   concrete_before_abstract:
     value: required
-    enforced_by: schemas/lab.schema.v3.json → pedagogy.cognitive_load.required
+    enforced_by: schemas/lab.schema.v4.json → pedagogy.cognitive_load.required
     prose_pattern: '(?i)\bconcrete[- ]before[- ]abstract\s+is\s+(?:required|mandatory)\b'
     rationale: the physical object and action come before any schematic symbol
 

@@ -1,0 +1,31 @@
+{
+  "$comment": "G1 as it actually stood: a seventh required block named for one subject, plus a property carrying one kit's own supply id. Its expected_error names both codes, so a fixture tripping only one leg is FAIL and each leg is proven to bite by its own code.",
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "identity",
+    "pedagogy",
+    "sequence",
+    "electronics",
+    "content",
+    "safety",
+    "visuals",
+    "domain"
+  ],
+  "properties": {
+    "identity": { "type": "object" },
+    "pedagogy": { "type": "object" },
+    "sequence": { "type": "object" },
+    "electronics": {
+      "type": "object",
+      "properties": {
+        "kit_battery_9v": { "type": "object" }
+      }
+    },
+    "content": { "type": "object" },
+    "safety": { "type": "object" },
+    "visuals": { "type": "array" },
+    "domain": { "type": "object", "minProperties": 1 }
+  }
+}

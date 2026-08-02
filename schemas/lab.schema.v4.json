@@ -1,0 +1,799 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://example.invalid/curriculum_builder/lab.schema.v4.json",
+  "title": "Unit document v4 — six engine blocks and the domain block",
+  "description": "The structure of one finished unit, in any subject. v3 required a block literally named `electronics`, so a music or chemistry unit could not validate against it; that block is now `domain`, and its shape is supplied by the curriculum rather than by this contract. The six engine blocks are identity, pedagogy, sequence, content, safety and visuals: how the unit is named, how it teaches, the 5E lesson, what the learner meets, what an adult must verify, and what is shown. None of them names a subject area.",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "identity",
+    "pedagogy",
+    "sequence",
+    "content",
+    "safety",
+    "visuals",
+    "domain"
+  ],
+  "properties": {
+    "identity": {
+      "description": "What this unit is. Nothing here names a subject area: the engine knows a unit has a subject and never which.",
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "unit_id",
+        "slug",
+        "kind",
+        "title",
+        "subject_job_sentence"
+      ],
+      "properties": {
+        "unit_id": {
+          "type": "string",
+          "pattern": "^L[0-9]{2,3}$"
+        },
+        "slug": {
+          "type": "string",
+          "pattern": "^[a-z0-9]+(?:-[a-z0-9]+)*$"
+        },
+        "kind": {
+          "enum": [
+            "foundation",
+            "component",
+            "application",
+            "integration",
+            "diagnostic"
+          ]
+        },
+        "title": {
+          "description": "The unit's subject is the title. A problem is an application, never the organising principle.",
+          "type": "string",
+          "minLength": 5
+        },
+        "subject_job_sentence": {
+          "description": "What this unit's subject does, in one sentence the calibrated learner can repeat. Who that learner is comes from policy/calibration.v1.yaml, never from this contract.",
+          "type": "string",
+          "minLength": 20
+        }
+      }
+    },
+    "pedagogy": {
+      "description": "How this lab teaches. Every field here implements a named, evidence-based method; see meta_prompt/assets/pedagogy.v1.md.",
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "learning_objectives",
+        "prior_knowledge",
+        "misconceptions",
+        "vocabulary",
+        "scaffolding",
+        "cognitive_load"
+      ],
+      "properties": {
+        "learning_objectives": {
+          "description": "Bloom's revised taxonomy. Each objective states an observable behaviour and pairs with a child-facing success criterion (Black & Wiliam). At least one objective must reach the level policy/calibration.v1.yaml floors in pedagogy_caps.bloom_floor — identification alone is not a unit. The floor is a premise; this contract enforces it and never restates it. The verb that opens the statement is read separately by TEXT-BLOOM-VERBS, which flags and never blocks.",
+          "type": "array",
+          "minItems": 1,
+          "maxItems": 3,
+          "items": {
+            "type": "object",
+            "additionalProperties": false,
+            "required": [
+              "statement",
+              "bloom_level",
+              "success_criterion"
+            ],
+            "properties": {
+              "statement": {
+                "description": "Begins with an observable verb: identify, describe, predict, explain, compare, trace, test.",
+                "type": "string",
+                "minLength": 20
+              },
+              "bloom_level": {
+                "enum": [
+                  "remember",
+                  "understand",
+                  "apply",
+                  "analyse",
+                  "evaluate",
+                  "create"
+                ]
+              },
+              "success_criterion": {
+                "description": "Child-facing, first person: 'I can …'. The child must be able to judge this themselves.",
+                "type": "string",
+                "pattern": "^I can .+",
+                "minLength": 15
+              }
+            }
+          },
+          "contains": {
+            "properties": {
+              "bloom_level": {
+                "enum": [
+                  "understand",
+                  "apply",
+                  "analyse",
+                  "evaluate",
+                  "create"
+                ]
+              }
+            }
+          }
+        },
+        "prior_knowledge": {
+          "description": "What the lab assumes, stated rather than implied. Undeclared prior knowledge is a pedagogy-QA rejection.",
+          "type": "object",
+          "additionalProperties": false,
+          "required": [
+            "prerequisite_labs",
+            "assumed_ideas",
+            "retrieval_prompt"
+          ],
+          "properties": {
+            "prerequisite_labs": {
+              "type": "array",
+              "items": {
+                "type": "string",
+                "pattern": "^L[0-9]{2,3}$"
+              }
+            },
+            "assumed_ideas": {
+              "description": "Every idea taken as already known. Empty only for L01.",
+              "type": "array",
+              "items": {
+                "type": "string",
+                "minLength": 10
+              }
+            },
+            "retrieval_prompt": {
+              "description": "Retrieval practice (Roediger & Karpicke): the child recalls a prior idea from memory before new material is introduced. Not a re-read, a recall.",
+              "type": "string",
+              "minLength": 20
+            }
+          }
+        },
+        "misconceptions": {
+          "description": "Conceptual change (Posner et al.): a wrong idea must be surfaced and confronted with evidence, not merely avoided. At least one — every subject a unit teaches has a common alternative conception.",
+          "type": "array",
+          "minItems": 1,
+          "items": {
+            "type": "object",
+            "additionalProperties": false,
+            "required": [
+              "misconception",
+              "why_it_is_common",
+              "confronted_by"
+            ],
+            "properties": {
+              "misconception": {
+                "type": "string",
+                "minLength": 15
+              },
+              "why_it_is_common": {
+                "type": "string",
+                "minLength": 20
+              },
+              "confronted_by": {
+                "description": "The specific observation, comparison or step in this lab that makes the wrong idea untenable.",
+                "type": "string",
+                "minLength": 20
+              }
+            }
+          }
+        },
+        "vocabulary": {
+          "description": "Cognitive load theory (Sweller): at most two new technical terms per lab, each defined at first use, beside its first useful visual.",
+          "type": "array",
+          "maxItems": 2,
+          "items": {
+            "type": "object",
+            "additionalProperties": false,
+            "required": [
+              "term",
+              "child_definition",
+              "introduced_in"
+            ],
+            "properties": {
+              "term": {
+                "type": "string",
+                "minLength": 2
+              },
+              "child_definition": {
+                "type": "string",
+                "minLength": 15
+              },
+              "introduced_in": {
+                "enum": [
+                  "engage",
+                  "explore",
+                  "explain",
+                  "elaborate",
+                  "evaluate"
+                ]
+              }
+            }
+          }
+        },
+        "scaffolding": {
+          "description": "Guided participation with planned fading (Wood, Bruner & Ross; Vygotsky). The adult's role must shrink across the workbook, not stay constant.",
+          "type": "object",
+          "additionalProperties": false,
+          "required": [
+            "adult_does",
+            "child_does",
+            "fading_note"
+          ],
+          "properties": {
+            "adult_does": {
+              "type": "array",
+              "minItems": 1,
+              "items": {
+                "type": "string",
+                "minLength": 10
+              }
+            },
+            "child_does": {
+              "type": "array",
+              "minItems": 1,
+              "items": {
+                "type": "string",
+                "minLength": 10
+              }
+            },
+            "fading_note": {
+              "description": "What the child now does alone that an adult did in an earlier lab.",
+              "type": "string",
+              "minLength": 15
+            }
+          }
+        },
+        "cognitive_load": {
+          "description": "Segmenting and worked-example effect (Mayer; Sweller). Concrete object and action before abstract symbol (CRA sequence).",
+          "type": "object",
+          "additionalProperties": false,
+          "required": [
+            "segments",
+            "concrete_before_abstract"
+          ],
+          "properties": {
+            "segments": {
+              "description": "The lab broken into learner-paced chunks. More than six is overload for this age.",
+              "type": "array",
+              "minItems": 2,
+              "maxItems": 6,
+              "items": {
+                "type": "string",
+                "minLength": 5
+              }
+            },
+            "concrete_before_abstract": {
+              "description": "The physical object or action the child meets before any schematic symbol or abstract term.",
+              "type": "string",
+              "minLength": 15
+            },
+            "worked_example": {
+              "description": "Optional. A fully worked instance shown before the child attempts one alone.",
+              "type": "string",
+              "minLength": 20
+            }
+          }
+        }
+      }
+    },
+    "sequence": {
+      "description": "The 5E instructional model (Bybee/BSCS). Order is fixed; the child reads it in this order.",
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "engage",
+        "explore",
+        "explain",
+        "elaborate",
+        "evaluate"
+      ],
+      "properties": {
+        "engage": {
+          "description": "5E-1. Surface curiosity and elicit what the child already thinks. Not a summary of what is coming.",
+          "type": "object",
+          "additionalProperties": false,
+          "required": [
+            "hook",
+            "eliciting_question"
+          ],
+          "properties": {
+            "hook": {
+              "type": "string",
+              "minLength": 30
+            },
+            "eliciting_question": {
+              "description": "Draws out the child's existing idea — including a wrong one — before teaching begins.",
+              "type": "string",
+              "minLength": 15
+            }
+          }
+        },
+        "explore": {
+          "description": "5E-2. Hands-on, structured as Predict-Observe-Explain (White & Gunstone). The prediction is committed before the observation, or the cycle does nothing.",
+          "type": "object",
+          "additionalProperties": false,
+          "required": [
+            "predict",
+            "observe",
+            "steps",
+            "expected_observation",
+            "not_yet_outcome"
+          ],
+          "properties": {
+            "predict": {
+              "type": "object",
+              "additionalProperties": false,
+              "required": [
+                "question",
+                "recorded_before_observing"
+              ],
+              "properties": {
+                "question": {
+                  "type": "string",
+                  "minLength": 15
+                },
+                "options": {
+                  "type": "array",
+                  "items": {
+                    "type": "string",
+                    "minLength": 2
+                  }
+                },
+                "recorded_before_observing": {
+                  "const": true
+                }
+              }
+            },
+            "observe": {
+              "type": "object",
+              "additionalProperties": false,
+              "required": [
+                "what_to_observe",
+                "record_method"
+              ],
+              "properties": {
+                "what_to_observe": {
+                  "type": "string",
+                  "minLength": 20
+                },
+                "record_method": {
+                  "enum": [
+                    "evidence_table",
+                    "drawing_prompt",
+                    "tick_or_circle",
+                    "adult_read_measurement"
+                  ]
+                },
+                "evidence_fields": {
+                  "type": "array",
+                  "items": {
+                    "type": "string",
+                    "minLength": 2
+                  }
+                }
+              }
+            },
+            "steps": {
+              "description": "One physical action per numbered step.",
+              "type": "array",
+              "minItems": 2,
+              "items": {
+                "type": "object",
+                "additionalProperties": false,
+                "required": [
+                  "number",
+                  "action"
+                ],
+                "properties": {
+                  "number": {
+                    "type": "integer",
+                    "minimum": 1
+                  },
+                  "action": {
+                    "type": "string",
+                    "minLength": 10
+                  }
+                }
+              }
+            },
+            "expected_observation": {
+              "type": "string",
+              "minLength": 15
+            },
+            "not_yet_outcome": {
+              "description": "A safe 'not yet' result is a legitimate outcome, not a failure. Troubleshooting always starts with power off.",
+              "type": "object",
+              "additionalProperties": false,
+              "required": [
+                "symptom",
+                "first_check"
+              ],
+              "properties": {
+                "symptom": {
+                  "type": "string",
+                  "minLength": 10
+                },
+                "first_check": {
+                  "type": "string",
+                  "minLength": 10
+                }
+              }
+            }
+          }
+        },
+        "explain": {
+          "description": "5E-3. Mechanism, after the child has evidence to attach it to. Observation and deeper mechanism must be distinguishable.",
+          "type": "object",
+          "additionalProperties": false,
+          "required": [
+            "what_you_saw",
+            "why_it_happened",
+            "self_explanation_prompt"
+          ],
+          "properties": {
+            "what_you_saw": {
+              "description": "The observable level, in the child's own terms.",
+              "type": "string",
+              "minLength": 40
+            },
+            "why_it_happened": {
+              "description": "The mechanism level. Scientifically honest, no metaphor-only explanation, using only vocabulary already introduced.",
+              "type": "string",
+              "minLength": 120
+            },
+            "self_explanation_prompt": {
+              "description": "Self-explanation effect (Chi): the child restates the mechanism in their own words before moving on.",
+              "type": "string",
+              "minLength": 15
+            }
+          }
+        },
+        "elaborate": {
+          "description": "5E-4. Transfer. Near transfer applies the idea in a familiar setting; far transfer shows it in the world beyond the kit.",
+          "type": "object",
+          "additionalProperties": false,
+          "required": [
+            "near_transfer",
+            "far_transfer"
+          ],
+          "properties": {
+            "near_transfer": {
+              "description": "Applications of this component, changing one variable or adding one tightly scoped part at a time.",
+              "type": "array",
+              "minItems": 1,
+              "items": {
+                "type": "string",
+                "minLength": 15
+              }
+            },
+            "far_transfer": {
+              "description": "Two or three real-world uses. Applications of the component, never replacement lab themes.",
+              "type": "array",
+              "minItems": 2,
+              "maxItems": 3,
+              "items": {
+                "type": "string",
+                "minLength": 10
+              }
+            }
+          }
+        },
+        "evaluate": {
+          "description": "5E-5. Formative assessment (Black & Wiliam). The child can tell whether they succeeded without being told.",
+          "type": "object",
+          "additionalProperties": false,
+          "required": [
+            "success_criteria_checklist",
+            "hinge_question"
+          ],
+          "properties": {
+            "success_criteria_checklist": {
+              "description": "Mirrors the 'I can …' criteria from learning_objectives, as a child-tickable list.",
+              "type": "array",
+              "minItems": 1,
+              "items": {
+                "type": "string",
+                "pattern": "^I can .+"
+              }
+            },
+            "hinge_question": {
+              "description": "One question whose answer reveals whether the key idea landed or a misconception survived.",
+              "type": "object",
+              "additionalProperties": false,
+              "required": [
+                "question",
+                "reveals"
+              ],
+              "properties": {
+                "question": {
+                  "type": "string",
+                  "minLength": 15
+                },
+                "reveals": {
+                  "type": "string",
+                  "minLength": 15
+                }
+              }
+            },
+            "next_lab_link": {
+              "description": "Optional. How this lab's idea is picked up next — spacing the practice rather than closing the topic.",
+              "type": "string",
+              "minLength": 15
+            }
+          }
+        }
+      }
+    },
+    "content": {
+      "description": "What the learner meets and what to do when it does not work. Every field here is generated from the domain block, never from prose and never from a generated image — DOC-DERIVED-FROM-SOURCE is what proves it. The assembly authority itself lives in the domain block, because what counts as an assembly differs by subject.",
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "identification",
+        "troubleshooting"
+      ],
+      "properties": {
+        "identification": {
+          "type": "object",
+          "additionalProperties": false,
+          "required": [
+            "child_name",
+            "technical_name",
+            "distinguishing_features",
+            "parts"
+          ],
+          "properties": {
+            "child_name": {
+              "type": "string",
+              "minLength": 2
+            },
+            "technical_name": {
+              "type": "string",
+              "minLength": 2
+            },
+            "distinguishing_features": {
+              "type": "string",
+              "minLength": 20
+            },
+            "orientation_cue": {
+              "description": "The orientation cue, or an explicit statement that the subject has none. Required wherever orientation can be got wrong, which the curriculum's own checks decide.",
+              "type": "string",
+              "minLength": 10
+            },
+            "parts": {
+              "type": "array",
+              "minItems": 1,
+              "items": {
+                "type": "object",
+                "additionalProperties": false,
+                "required": [
+                  "label",
+                  "role"
+                ],
+                "properties": {
+                  "label": {
+                    "type": "string",
+                    "minLength": 1
+                  },
+                  "role": {
+                    "type": "string",
+                    "minLength": 3
+                  }
+                }
+              }
+            }
+          }
+        },
+        "troubleshooting": {
+          "description": "What to notice, why it happens, and the safe first check. Presented as normal practice, not as failure.",
+          "type": "array",
+          "minItems": 1,
+          "items": {
+            "type": "object",
+            "additionalProperties": false,
+            "required": [
+              "what_you_notice",
+              "likely_reason",
+              "safe_first_check"
+            ],
+            "properties": {
+              "what_you_notice": {
+                "type": "string",
+                "minLength": 5
+              },
+              "likely_reason": {
+                "type": "string",
+                "minLength": 5
+              },
+              "safe_first_check": {
+                "type": "string",
+                "minLength": 5
+              }
+            }
+          }
+        }
+      }
+    },
+    "safety": {
+      "description": "Kept structurally separate from every child-facing section. The engine requires that a unit declares its hazard class and that an adult verified it; what the classes are, and what verifying one means, is the curriculum's — a list fixed here would be one subject's list.",
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "hazard_mode",
+        "adult_verification"
+      ],
+      "properties": {
+        "hazard_mode": {
+          "description": "The unit's hazard class, from the set its curriculum declares. The engine requires one and never fixes the list: what is hazardous in one subject is meaningless in another.",
+          "type": "string",
+          "minLength": 3
+        },
+        "adult_verification": {
+          "type": "object",
+          "additionalProperties": false,
+          "required": [
+            "variant",
+            "marking",
+            "verified_configuration",
+            "limits",
+            "endpoint_check",
+            "signoff_required"
+          ],
+          "properties": {
+            "variant": {
+              "type": "string",
+              "minLength": 3
+            },
+            "marking": {
+              "type": "string",
+              "minLength": 1
+            },
+            "verified_configuration": {
+              "type": "string",
+              "minLength": 5
+            },
+            "limits": {
+              "type": "string",
+              "minLength": 5
+            },
+            "endpoint_check": {
+              "type": "string",
+              "minLength": 10
+            },
+            "signoff_required": {
+              "type": "boolean"
+            }
+          }
+        }
+      }
+    },
+    "visuals": {
+      "description": "Dual coding (Paivio; Mayer): every visual is tied to the section it supports, so words and pictures are processed together rather than competing. Exact domain fact comes only from verified photographs or deterministic renders.",
+      "type": "array",
+      "minItems": 3,
+      "items": {
+        "$ref": "#/$defs/visual"
+      }
+    },
+    "domain": {
+      "description": "The subject. This is the one block whose shape the engine does not fix: it is validated against the schema the curriculum names in its own manifest's domain.schema, and an engine contract that constrained its contents would be the leak this block exists to close. The engine requires only that it is present and says something — it is the single parent every rendered fact in this unit derives from, which DOC-DERIVED-FROM-SOURCE checks by pointer.",
+      "type": "object",
+      "minProperties": 1
+    }
+  },
+  "$defs": {
+    "visual": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "role",
+        "source_kind",
+        "supports_section",
+        "provenance"
+      ],
+      "properties": {
+        "role": {
+          "enum": [
+            "subject_identification",
+            "purpose_or_application",
+            "orientation_and_parts",
+            "mechanism",
+            "assembly_or_path_map",
+            "expected_result",
+            "safety_or_troubleshooting"
+          ]
+        },
+        "source_kind": {
+          "description": "verified_photograph and deterministic_render may carry exact domain fact. imagegen may not — it is limited to context, mechanism illustration, observation support and polish.",
+          "enum": [
+            "verified_photograph",
+            "deterministic_render",
+            "imagegen"
+          ]
+        },
+        "supports_section": {
+          "description": "Dual coding requires the visual to sit with the text it explains, not float free.",
+          "enum": [
+            "engage",
+            "explore",
+            "explain",
+            "elaborate",
+            "evaluate",
+            "identification",
+            "assembly",
+            "troubleshooting",
+            "adult_verification"
+          ]
+        },
+        "carries_exact_domain_fact": {
+          "type": "boolean"
+        },
+        "provenance": {
+          "description": "The receipt. RECEIPT-HASH-RESOLVES recomputes file_hash from the bytes of the artifact embedded_as names, so a receipt that does not resolve is a failed check and never a warning.",
+          "type": "object",
+          "additionalProperties": false,
+          "required": [
+            "file_hash",
+            "access_date",
+            "embedded_as"
+          ],
+          "properties": {
+            "url": {
+              "type": "string"
+            },
+            "publisher": {
+              "type": "string"
+            },
+            "item_or_family": {
+              "type": "string"
+            },
+            "access_date": {
+              "type": "string",
+              "format": "date"
+            },
+            "file_hash": {
+              "type": "string",
+              "pattern": "^[a-f0-9]{64}$"
+            },
+            "embedded_as": {
+              "description": "Where the artifact ships, relative to the unit's artifact_root. Without it a hash resolves to nothing.",
+              "type": "string",
+              "minLength": 3
+            },
+            "crop_transform_history": {
+              "type": "array",
+              "items": {
+                "type": "string"
+              }
+            },
+            "reused_from": {
+              "type": "string"
+            }
+          }
+        },
+        "omission_finding": {
+          "type": "string",
+          "minLength": 10
+        }
+      },
+      "if": {
+        "properties": {
+          "source_kind": {
+            "const": "imagegen"
+          }
+        }
+      },
+      "then": {
+        "properties": {
+          "carries_exact_domain_fact": {
+            "const": false
+          }
+        }
+      }
+    }
+  }
+}

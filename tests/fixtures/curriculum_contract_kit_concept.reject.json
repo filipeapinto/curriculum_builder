@@ -1,0 +1,33 @@
+{
+  "$comment": "The v4 defect, G5: `kit_power_profile` and `visual_system` as top-level concepts of the engine's curriculum contract. \"kit\" and \"power\" are one subject's words, and a curriculum in an unrelated subject can satisfy neither. The detector must report curriculum-schema-domain-concept.",
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "manifest_version",
+    "curriculum",
+    "kit_power_profile",
+    "visual_system",
+    "domain",
+    "labs"
+  ],
+  "properties": {
+    "manifest_version": { "const": "5.0" },
+    "curriculum": { "type": "object" },
+    "kit_power_profile": { "type": "object" },
+    "visual_system": { "type": "object" },
+    "domain": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["schema", "config"],
+      "properties": {
+        "schema": {
+          "type": "string",
+          "pattern": "^curricula/[a-z0-9_]+/[A-Za-z0-9_.-]+\\.json$"
+        },
+        "config": { "type": "object", "minProperties": 1 }
+      }
+    },
+    "labs": { "type": "array" }
+  }
+}

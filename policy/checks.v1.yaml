@@ -32,7 +32,7 @@ calibration:
   - id: CAL-SCHEMA-AGREE
     owner: policy/calibration.v1.yaml
     method: mapping
-    artifact: schemas/lab.schema.v3.json
+    artifact: schemas/lab.schema.v4.json
     verified_by: FR-P3-CAL-AGREE
     asserts: >-
       every value in calibration.pedagogy_caps equals the schema constraint named in
@@ -137,16 +137,19 @@ l01:
 # ---------------------------------------------------------------------------
 lab_document:
   - id: LAB-SCHEMA-VALID
-    owner: schemas/lab.schema.v3.json
+    owner: schemas/lab.schema.v4.json
     method: execution
-    artifact: schemas/lab.schema.v3.json
+    artifact: schemas/lab.schema.v4.json
     deferred: RT-5
-    asserts: the lab dossier validates against schemas/lab.schema.v3.json, all seven blocks present
+    asserts: >-
+      the unit validates against schemas/lab.schema.v4.json — the six engine blocks and
+      the domain block — and its domain block validates against the schema its own
+      curriculum names in manifest domain.schema
     stage: golden
   - id: LAB-BLOOM-DEPTH
-    owner: schemas/lab.schema.v3.json
+    owner: schemas/lab.schema.v4.json
     method: execution
-    artifact: schemas/lab.schema.v3.json
+    artifact: schemas/lab.schema.v4.json
     deferred: RT-5
     asserts: >-
       at least one learning objective reaches the Bloom level floored by
@@ -156,9 +159,9 @@ lab_document:
     fixture_expectation: reject
     rejects: a lab whose objectives sit entirely at the lowest Bloom level — identification alone is not a lab
   - id: LAB-POE-ORDER
-    owner: schemas/lab.schema.v3.json
+    owner: schemas/lab.schema.v4.json
     method: execution
-    artifact: schemas/lab.schema.v3.json
+    artifact: schemas/lab.schema.v4.json
     deferred: RT-5
     asserts: the prediction is recorded before the observation
     stage: deterministic
@@ -174,6 +177,11 @@ lab_document:
       calculation states its margin_to_rating
     stage: deterministic
     fixture_expectation: reject
+    note: >-
+      still pointed at v3 deliberately. This is a domain assertion about the block v4
+      replaced with `domain`, so v4 does not carry the fields it names. It is one of the
+      two ids section 2's G3 names as domain assertions living in the engine's
+      inventory, and phase 3 is where it moves to the curriculum that owns it.
   - id: LAB-VALUE-SOURCED
     owner: schemas/lab.schema.v3.json
     method: execution
@@ -185,6 +193,9 @@ lab_document:
     stage: deterministic
     fixture_expectation: reject
     rejects: a forward voltage recalled rather than cited
+    note: >-
+      still pointed at v3 for the same reason as LAB-CURRENT-MARGIN, and moved by the
+      same phase.
 
 # ---------------------------------------------------------------------------
 # The generic checks the engine owes every curriculum. Each operates on a unit file
