@@ -1,0 +1,54 @@
+{
+  "skill_name": "electronics-circuit-visualization",
+  "evals": [
+    {
+      "id": 0,
+      "name": "l01-power-path",
+      "prompt": "I've got the circuit data for our first Arduino lab at /Users/filipepinto/Projects/curriculum_builder/curricula/arduino_kit/l01_unpowered_power_path.json — it's the unpowered power path unit, nothing is connected yet. Can you make me a diagram of that power path that I can print and put in the workbook? It has to be exactly right about what connects to what, kids build from these.",
+      "expected_output": "A .typ source and a compiled .png of the power path, plus a trace manifest and a PASS from the audit. Every terminal name, function, coordinate, the orientation sentence and the sources appear as they stand in the file. No polarity marks, no invented connections.",
+      "files": ["/Users/filipepinto/Projects/curriculum_builder/curricula/arduino_kit/l01_unpowered_power_path.json"],
+      "assertions": [
+        {"id": "png_and_typ", "text": "Both a compiled .png and its .typ source are produced, side by side"},
+        {"id": "all_terminals", "text": "All three terminal names from the fixture (source_lead_end, module_dc_input, candidate_label) appear on the page"},
+        {"id": "coordinates_verbatim", "text": "All three legal_coordinates appear verbatim, including the comma-separated form"},
+        {"id": "orientation_verbatim", "text": "The orientation sentence is reproduced verbatim, not paraphrased"},
+        {"id": "no_invented_polarity", "text": "No polarity vocabulary (positive, negative, anode, cathode, plus/minus lead) is introduced anywhere on the page"},
+        {"id": "no_invented_connections", "text": "No wire, net, rail or connection is drawn that the fixture does not state; rail_topology null is not filled in"},
+        {"id": "provenance_present", "text": "The page carries its provenance: the source_bundle_sha256 and the primary source with its access date and claim scope"},
+        {"id": "audit_run_and_passed", "text": "A trace/audit was run over the render and reported PASS, and the result was reported back to the user"},
+        {"id": "every_element_traces", "text": "Independently re-run, verify_trace.py reports 0 untraced strings and every data pointer resolving"}
+      ]
+    },
+    {
+      "id": 1,
+      "name": "breadboard-build-map",
+      "prompt": "need the breadboard layout picture for the LED lab — the unit's domain block is in evals/led_series_resistor.domain.json. show where every wire goes. also do me the safety inset from the same file as a separate image.",
+      "expected_output": "Two renders: a breadboard build map and a safety inset, each with .typ, .png and a passing audit. Wire endpoints that parse are plotted; the unparseable one is tabulated and flagged rather than guessed onto the board. Ratings carry their absolute maxima and sources; every field caption names its own field.",
+      "files": ["evals/led_series_resistor.domain.json"],
+      "assertions": [
+        {"id": "two_renders", "text": "Two separate images are produced, one breadboard map and one safety inset, each with its .typ source"},
+        {"id": "all_wires_accounted", "text": "All three wire_endpoints appear on the page, whether plotted on the board or listed in the table"},
+        {"id": "unplaceable_flagged", "text": "The endpoint 'module output terminal block' is not plotted at a made-up board position; it is flagged as not asserted in the data"},
+        {"id": "placement_steps_verbatim", "text": "All four placement_steps appear in their given order"},
+        {"id": "ratings_with_maxima", "text": "Both ratings_and_limits entries appear with their absolute maxima, units and sources"},
+        {"id": "field_captions_correct", "text": "Every field caption names the field it labels — in particular the power_profile rows are captioned permitted range, current protection and evidence, not borrowed labels from other sections"},
+        {"id": "audit_run_and_passed", "text": "The audit was run on both renders and reported PASS, and the results were reported back to the user"},
+        {"id": "no_layout_collisions", "text": "No text on either page is overlapped or clipped by a box border or another label"}
+      ]
+    },
+    {
+      "id": 2,
+      "name": "refuses-undesigned-schematic",
+      "prompt": "can you render me the schematic diagram for the L01 unit? data's at /Users/filipepinto/Projects/curriculum_builder/curricula/arduino_kit/l01_unpowered_power_path.json. I want the proper circuit symbols one showing the battery, the module and the rail, with the connections between them.",
+      "expected_output": "No schematic. The fixture carries no nets, components or supply, so a symbol schematic with connections cannot be drawn from it without invention. The right outcome is a clear refusal naming the missing fields, an offer of the role the data does support, and no fabricated topology anywhere.",
+      "files": ["/Users/filipepinto/Projects/curriculum_builder/curricula/arduino_kit/l01_unpowered_power_path.json"],
+      "assertions": [
+        {"id": "no_fabricated_schematic", "text": "No schematic is produced showing battery/module/rail symbols joined by connections the data does not contain"},
+        {"id": "names_missing_fields", "text": "The response names what is missing (nets, components, supply / electrical.circuit) rather than refusing vaguely"},
+        {"id": "no_invented_polarity", "text": "No battery polarity or pinout is asserted anywhere in the output, including in prose"},
+        {"id": "offers_supported_role", "text": "The supported alternative for this document (the power path map) is offered or produced"},
+        {"id": "unblocking_path_given", "text": "The response says what would have to be added to the data for a real schematic to become possible"}
+      ]
+    }
+  ]
+}

@@ -1,0 +1,103 @@
+{
+  "electrical": {
+    "component_spec": {
+      "part_family": "5 mm red LED with series resistor",
+      "designator_prefix": "D",
+      "parameters": [
+        {"name": "forward voltage", "symbol": "Vf", "value": "2.0", "unit": "V",
+         "condition": "at If = 20 mA, 25 C", "source": "Kingbright WP7113ID datasheet rev 8"}
+      ]
+    },
+    "quantities_taught": [
+      {"quantity": "current", "depth": "calculate",
+       "child_facing_meaning": "how much electricity is squeezing through the wire each second"}
+    ],
+    "circuit": {
+      "status": "designed_verified",
+      "nets": [
+        {"name": "P_PLUS", "nodes": ["R1.1"]},
+        {"name": "N1", "nodes": ["R1.2", "D1.anode"]},
+        {"name": "P_MINUS", "nodes": ["D1.cathode"]}
+      ],
+      "components": [
+        {"designator": "R1", "part": "carbon film resistor", "value": "220 ohm", "tolerance": "5 percent",
+         "pins": [{"pin": "1", "net": "P_PLUS", "polarity": "none"}, {"pin": "2", "net": "N1", "polarity": "none"}]},
+        {"designator": "D1", "part": "5 mm red LED", "value": "WP7113ID",
+         "pins": [{"pin": "A", "net": "N1", "polarity": "anode"}, {"pin": "K", "net": "P_MINUS", "polarity": "cathode"}]}
+      ],
+      "supply": {"positive_net": "P_PLUS", "negative_net": "P_MINUS", "nominal_voltage": "5 V",
+                 "sequence": ["seat both leads before the module is switched on", "switch the module off before any lead is moved"]},
+      "schematic_symbol": {"symbol": "LED with series resistor", "introduced_after_physical": true}
+    },
+    "calculations": [
+      {"purpose": "current_limiting", "formula": "R = (Vsupply - Vf) / If",
+       "inputs": [
+         {"symbol": "Vsupply", "value": "5", "unit": "V", "source": "supply_spec"},
+         {"symbol": "Vf", "value": "2.0", "unit": "V", "source": "datasheet"},
+         {"symbol": "If", "value": "0.014", "unit": "A", "source": "chosen"}],
+       "result": "220", "unit": "ohm",
+       "margin_to_rating": "13.6 mA against an absolute maximum of 30 mA, a 55 percent margin"}
+    ],
+    "measurements": [
+      {"quantity": "voltage", "meter_mode": "DC volts, 20 V range", "lead_socket": "V/ohm/mA",
+       "probe_points": ["e5", "e12"], "expected_value": "2.0", "tolerance": "plus or minus 0.2 V",
+       "must_stay_below": "5 V", "performed_by": "child_with_adult"}
+    ],
+    "behaviour": {
+      "child_level": "The light only comes on one way round, and the resistor keeps it from burning out.",
+      "adult_level": "The LED is a diode with an exponential I-V characteristic above its forward threshold; the series resistor sets the operating current because the diode itself does not limit it.",
+      "relationship": "threshold",
+      "simplification_check": "The child version omits the exponential curve, which stays honest because the resistor makes the operating point insensitive to it."
+    },
+    "ratings_and_limits": [
+      {"parameter": "continuous forward current", "absolute_max": "30", "unit": "mA",
+       "source": "Kingbright WP7113ID datasheet rev 8, absolute maximum ratings"},
+      {"parameter": "reverse voltage", "absolute_max": "5", "unit": "V",
+       "source": "Kingbright WP7113ID datasheet rev 8, absolute maximum ratings"}
+    ],
+    "failure_modes": [
+      {"wrong_action": "connecting the LED without the series resistor",
+       "consequence": "forward current runs far past 30 mA and the die is destroyed in under a second",
+       "prevented_by": "the resistor is placed and checked before the module is switched on",
+       "reversible": false},
+      {"wrong_action": "seating the LED with its leads reversed",
+       "consequence": "no light, and the reverse voltage rating of 5 V is approached",
+       "prevented_by": "the long lead is identified against the printed map before seating",
+       "reversible": true}
+    ]
+  },
+  "build_map": {
+    "map_kind": "breadboard",
+    "orientation": "Board laid long side towards the child, rail markings uppermost, column 1 at the left.",
+    "labelled_features": ["rows", "columns", "rails", "centre_trench", "rail_breaks"],
+    "wire_endpoints": [
+      {"from": "top rail 3", "to": "e5", "net": "P_PLUS"},
+      {"from": "e12", "to": "bottom rail 12", "net": "P_MINUS"},
+      {"from": "module output terminal block", "to": "top rail 1", "net": "P_PLUS"}
+    ],
+    "components_placed": [
+      {"part": "carbon film resistor", "value": "220 ohm", "orientation": "spanning the centre trench, f5 to f8"},
+      {"part": "5 mm red LED", "value": "WP7113ID", "orientation": "long lead in e9, short lead in e12"}
+    ],
+    "placement_steps": [
+      "Seat the resistor across the centre trench from f5 to f8.",
+      "Seat the LED with its long lead in e9 and its short lead in e12.",
+      "Run the red wire from the top rail at column 3 to e5.",
+      "Run the black wire from e12 to the bottom rail at column 12."
+    ],
+    "schematic_included": true,
+    "dmm_probes": {"probe_points": ["e5", "e12"], "lead_socket": "V/ohm/mA", "mode": "DC volts, 20 V range"},
+    "safety_inset": {
+      "shows": "The resistor is in the path before the LED, and the module stays off until an adult has checked both leads.",
+      "derived_from_circuit_data": true
+    }
+  },
+  "power_profile": {
+    "source": "breadboard power-supply module fed from the 9 V battery",
+    "nominal_voltage": "5 V",
+    "permitted_range": "4.75 V to 5.25 V",
+    "current_protection": "220 ohm series resistor sets 13.6 mA",
+    "polarity": "fixed by the module output block, verified before switch-on",
+    "evidence": "official product listing, accessed 2026-07-27"
+  }
+}

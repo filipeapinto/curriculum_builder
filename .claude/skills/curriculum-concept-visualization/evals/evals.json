@@ -1,0 +1,160 @@
+{
+  "skill_name": "curriculum-concept-visualization",
+  "evals": [
+    {
+      "id": 0,
+      "name": "5e-instructional-model",
+      "prompt": "I'm putting together a training pack for the teachers using our curriculum and I need a one-page visual of the 5E instructional model — engage, explore, explain, elaborate, evaluate. Something I can print on A3 and pin up in the staff room. It should make clear that it isn't just a checklist you tick off top to bottom.",
+      "expected_output": "A .typ source and a compiled landscape PNG on white, A3-ish and print-legible in Helvetica. All five E phases appear with a short gloss each, drawn as a cycle rather than a top-to-bottom list, since the prompt explicitly asks for the non-linearity to be visible. One clear claim carried by a title/subtitle. No emoji, no network assets, one page.",
+      "files": [],
+      "assertions": [
+        {
+          "id": "typ_and_png",
+          "text": "Both a .typ source and a compiled .png are produced, side by side in the same directory"
+        },
+        {
+          "id": "landscape_print_size",
+          "text": "The PNG is landscape (wider than tall) and at least 2000px wide"
+        },
+        {
+          "id": "all_five_phases",
+          "text": "All five phases — Engage, Explore, Explain, Elaborate, Evaluate — appear on the page"
+        },
+        {
+          "id": "cyclical_not_linear",
+          "text": "The layout shows the model as a cycle or loop returning to its start, not as a one-way top-to-bottom or left-to-right list"
+        },
+        {
+          "id": "single_claim_stated",
+          "text": "The page states one governing claim in a title and subtitle, rather than being an unlabelled arrangement of boxes"
+        },
+        {
+          "id": "phase_glosses",
+          "text": "Each phase carries a short explanatory gloss saying what the teacher actually does in it, not just the phase name"
+        },
+        {
+          "id": "helvetica_white_no_network",
+          "text": "The source sets a white page and Helvetica, and references no http/https asset"
+        },
+        {
+          "id": "one_page_no_overflow",
+          "text": "The document compiles to exactly one page with no content clipped or spilled"
+        },
+        {
+          "id": "no_collisions",
+          "text": "No text on the page is overlapped, clipped by a box border, or running off the sheet"
+        },
+        {
+          "id": "relation_is_drawn",
+          "text": "Any relation the page claims is important is carried by marks on the diagram (arrows, chords, struck-through alternatives, to-scale geometry), not only by prose in a side panel"
+        },
+        {
+          "id": "fills_the_sheet",
+          "text": "No band of the sheet is left conspicuously empty; the page size fits the amount of content"
+        },
+        {
+          "id": "no_literal_markup",
+          "text": "No literal '--' or '*asterisk*' markup prints on the page (typst applies neither smart punctuation nor markup inside quoted strings)"
+        }
+      ]
+    },
+    {
+      "id": 1,
+      "name": "lever-explainer",
+      "prompt": "can you make me a diagram that explains how a lever works? it's for year 7 science. the thing they always get wrong is they think a lever gives you free energy, so i'd really like that addressed on the page. needs to print ok in black and white-ish on a normal school printer.",
+      "expected_output": "A .typ and a landscape PNG explaining the lever: fulcrum, effort, load, the two arms, and the force-for-distance trade. The 'free energy' misconception is called out explicitly as a distinct element on the page, not buried in a caption. Print-legible, white background, Helvetica, one page.",
+      "files": [],
+      "assertions": [
+        {
+          "id": "typ_and_png",
+          "text": "Both a .typ source and a compiled .png are produced, side by side in the same directory"
+        },
+        {
+          "id": "landscape_print_size",
+          "text": "The PNG is landscape (wider than tall) and at least 2000px wide"
+        },
+        {
+          "id": "lever_parts_named",
+          "text": "The parts of a lever are named: fulcrum/pivot, effort, load, and the arm or distance from the pivot"
+        },
+        {
+          "id": "trade_off_explained",
+          "text": "The page explains the trade — force is multiplied at the cost of distance moved — rather than only naming the parts"
+        },
+        {
+          "id": "misconception_prominent",
+          "text": "The 'a lever gives you free energy / free work' misconception is addressed as its own visible element on the page, not merely implied"
+        },
+        {
+          "id": "no_false_precision",
+          "text": "No specific measurements, masses or ratios are asserted as facts about a real object; any numbers used are clearly illustrative"
+        },
+        {
+          "id": "helvetica_white_no_network",
+          "text": "The source sets a white page and Helvetica, and references no http/https asset"
+        },
+        {
+          "id": "one_page_no_overflow",
+          "text": "The document compiles to exactly one page with no content clipped or spilled"
+        },
+        {
+          "id": "no_collisions",
+          "text": "No text on the page is overlapped, clipped by a box border, or running off the sheet"
+        },
+        {
+          "id": "relation_is_drawn",
+          "text": "Any relation the page claims is important is carried by marks on the diagram (arrows, chords, struck-through alternatives, to-scale geometry), not only by prose in a side panel"
+        },
+        {
+          "id": "fills_the_sheet",
+          "text": "No band of the sheet is left conspicuously empty; the page size fits the amount of content"
+        },
+        {
+          "id": "no_literal_markup",
+          "text": "No literal '--' or '*asterisk*' markup prints on the page (typst applies neither smart punctuation nor markup inside quoted strings)"
+        },
+        {
+          "id": "survives_greyscale",
+          "text": "Converted to greyscale, no distinction the page makes is lost — colour is never the only carrier"
+        }
+      ]
+    },
+    {
+      "id": 2,
+      "name": "routes-fact-bearing-wiring-away",
+      "prompt": "For our LED lab I need two pictures for the handout. First, a diagram explaining the idea of current limiting — why a resistor in series stops the LED burning out. Second, the actual wiring diagram showing which breadboard holes the LED legs and the resistor go into and which pin on the board the wire runs to, so the kids can build it. Same visual style for both please.",
+      "expected_output": "The conceptual current-limiting explainer is produced here as a .typ plus landscape PNG. The build wiring diagram is NOT freehanded: it is identified as fact-bearing circuit content that has to come from structured circuit data via the electronics-circuit-visualization skill, and the user is told what data would be needed. No invented breadboard coordinates or pin numbers appear anywhere in the output.",
+      "files": [],
+      "assertions": [
+        {
+          "id": "concept_page_produced",
+          "text": "A conceptual current-limiting explainer is produced as a .typ plus a compiled landscape .png"
+        },
+        {
+          "id": "no_invented_wiring",
+          "text": "No breadboard hole coordinates, pin numbers, or specific wire routings are drawn or stated anywhere in the output"
+        },
+        {
+          "id": "boundary_named",
+          "text": "The response explains that the wiring diagram is a different kind of artefact because a learner builds from it, rather than just declining"
+        },
+        {
+          "id": "routes_to_electronics_skill",
+          "text": "The response points at the electronics-circuit-visualization skill (or equivalently, at deterministic rendering from structured circuit data) for the wiring diagram"
+        },
+        {
+          "id": "unblocking_path_given",
+          "text": "The response says what would be needed to produce the wiring diagram — the circuit data / netlist / build map for the lab"
+        },
+        {
+          "id": "concept_page_is_correct_physics",
+          "text": "The current-limiting explanation itself is sound: the resistor limits current through the LED, and the page does not assert a specific resistor value as fact for an unspecified build"
+        },
+        {
+          "id": "one_page_no_overflow",
+          "text": "The concept page compiles to exactly one page with no content clipped or spilled"
+        }
+      ]
+    }
+  ]
+}
