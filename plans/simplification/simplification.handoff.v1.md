@@ -1,8 +1,8 @@
 # Handoff — simplification plan v3, after execution and independent audit
 
-**Written:** 2026-08-02
+**Written:** 2026-08-02, and updated the same day as each defect was fixed
 **Repo:** `/Users/filipepinto/Projects/curriculum_builder` (moved off OneDrive on this date)
-**HEAD:** `0c47dc4`, worktree clean, branch `master`, nothing pushed
+**HEAD:** `4bc3146`, worktree clean, branch `master`, nothing pushed
 **Read this first, then `plans/simplification/prompt/simplification.prompt.v3.md`.**
 
 ---
@@ -13,7 +13,7 @@
 `plans/simplification/plan/simplification.plan.v3.md`. Plan phases 0–5 were completed
 and validated; plan phase 6 was not. Then five independent **Codex** reviews were fanned
 out over the result, because the executing agent's judgement was not trusted. They found
-**five defects the agent had missed**. None is fixed yet.
+**five defects the agent had missed**. All five are now fixed (§5); plan phase 6 is not.
 
 **The state to hold in mind: the engine genuinely did become generic, and five things
 were damaged on the way there.** Both halves are true and neither cancels the other.
@@ -31,7 +31,7 @@ environment rather than for the repository. **That is over.** After the move:
 | `git status` | 2 min | 0.012 s |
 | `git log --follow` one path | 20+ min | 0.016 s |
 | `./tests/run_gates.sh 4` | minutes, often failing | **2.4 s**, 31 PASS |
-| `./tests/run_gates.sh 5` | minutes, often failing | **2.8 s**, 38 PASS |
+| `./tests/run_gates.sh 5` | minutes, often failing | **2.8 s**, 39 PASS |
 
 `.git` is a real directory inside the repo again. **Delete these two leftovers when
 convenient — they are byte-identical copies of the same git dir and nothing reads them:**
@@ -48,13 +48,15 @@ environment and should no longer occur. If it does, it is not a repository defec
 
     ./tests/run_gates.sh 4   ->  31 PASS, 0 FAIL, 0 BLOCKED, 8 SKIPPED
     ./tests/run_gates.sh 5   ->  39 PASS, 0 FAIL, 0 BLOCKED, 0 SKIPPED
-
-(38 -> 39 on 2026-08-02: `FR-P5-DOMAIN-CONSTRAINED`, added by the defect-1 fix.)
     python3 tests/check_meta_prompt.py  ->  EXECUTABLE (6/6)
-    63/63 fixtures pass.  Worktree clean.
+    70/70 fixtures pass.  Worktree clean.
+
+38 -> 39 gates and 63 -> 70 fixtures on 2026-08-02, from the defect fixes:
+`FR-P5-DOMAIN-CONSTRAINED` is new, and defects 3 and 4 each added fixtures to a gate that
+had been passing while blind.
 
 `run_gates.sh 4` is the **folder-refactoring** family's regression run — a finished,
-accepted plan. Its 31 must never move. `run_gates.sh 5` adds this plan's 7 gates.
+accepted plan. Its 31 must never move. `run_gates.sh 5` adds this plan's 8 gates.
 
 Six commits, in the plan's own execution order (0, 4, 1, 2, 3, 5, 6):
 
@@ -78,14 +80,15 @@ Baseline before any of it: `875c6b9`. Use `git diff 875c6b9..HEAD` for the whole
 - **`schemas/lab.schema.v4.json`** — six engine blocks plus `domain`, whose shape the
   engine deliberately does not fix. Closes `G1`.
 - **`schemas/curriculum.schema.v5.json`** — no `kit_power_profile`, no `visual_system`.
-  Closes `G5`. **See defect 1 below: this went too far.**
+  Closes `G5`. It went too far — see defect 1 — and now requires a `domain.manifest_schema`
+  the curriculum supplies, which is where the removed constraints live.
 - **`curricula/arduino_kit/verify_domain.py`** — a real domain verifier. Seven electrical
   rules, no model call. Codex confirmed it is not a stub.
 - **The check inventory is now two files** — `policy/checks.v1.yaml` (engine) and
   `curricula/<name>/checks.v1.yaml` (that curriculum's). Closes `G3`. Twelve ids moved.
 - **`policy/calibration.v1.yaml`** — precedence comments generalised. Closes `G7`. Also
   gained the readability band and the Bloom verb table.
-- **Seven gates in the `FR-P5-` family**, up from one. `FR-P5-ENGINE-GENERIC` now
+- **Eight gates in the `FR-P5-` family**, up from one. `FR-P5-ENGINE-GENERIC` now
   **passes**: zero engine files name a curriculum directory.
 
 Result notes worth reading, in this order:
@@ -97,8 +100,10 @@ Result notes worth reading, in this order:
 
 ## 5. THE FIVE DEFECTS — this is the work queue
 
-All five were found by Codex, not by the executing agent. Listed worst first. Nothing
-has been fixed.
+All five were found by Codex, not by the executing agent. Listed worst first. **All five
+were fixed on 2026-08-02**; each entry keeps the finding as written and records what the
+fix was, so the record of what went wrong is not overwritten by the record of it being
+put right. What remains open is plan phase 6.
 
 ### Defect 1 — `curriculum.schema.v5.json` is materially looser than v4 — **FIXED 2026-08-02**
 
@@ -118,6 +123,14 @@ contract — `curricula/arduino_kit/domain.schema.v1.json` or a sibling that val
 engine must require *that the curriculum constrains them*, not shrug. Moving a
 constraint out of the engine is the plan's intent; dropping it is not.
 
+**Fixed by `efc191f`.** The manifest declares `domain.manifest_schema`, a contract under
+its own directory; `schemas/manifest_domain.metaschema.v1.json` is what the engine
+requires of that contract — a closed `config` with a required key, and enumerated `mode`
+and `domain_state` — and names no subject term;
+`curricula/arduino_kit/manifest.domain.schema.v1.json` carries v4's four constraints and
+its power-presence rule unchanged. `FR-P5-DOMAIN-CONSTRAINED` validates the contract
+against the metaschema and then the manifest against the contract, all 35 labs.
+
 ### Defect 2 — `simplification.phase6.result.v1.md` is a false record — **FIXED 2026-08-02**
 
 It says five of eight conditions have no executable path, no rasterizer, no second model
@@ -135,7 +148,11 @@ which the agent never read.
 Keeping `HALTED` as the run-level outcome is defensible. Keeping the retracted blocker
 analysis is not.
 
-### Defect 3 — `L01-*` de-advertised, and the gate cannot see it
+**Fixed by `8d2a561`.** The note now carries Codex's wording, keeps `HALTED`, records that
+the halt was ruled unjustified, and retracts the "static coverage" reasoning. Every
+retracted claim was re-checked against the live environment first.
+
+### Defect 3 — `L01-*` de-advertised, and the gate cannot see it — **FIXED 2026-08-02**
 
 Plan phase 3 moved four `L01-*` ids to the curriculum inventory and removed `L01-*` from
 the release table. `FR-P2-GATEITEMS` reads only `policy/checks.v1.yaml`
@@ -146,7 +163,13 @@ four unadvertised ids: `L01-DISCONNECTED`, `L01-POLARITY-NEUTRAL`,
 **Fix:** point `FR-P2-GATEITEMS` at `common.merged_check_inventory()` like the other five
 gates, and give each curriculum's staged ids a release surface that advertises them.
 
-### Defect 4 — `FR-P5-UNIT-CONTRACT` under-asserts
+**Fixed by `38ff087`.** The gate reads every inventory. Re-advertising the ids in an engine
+file would be the leak phase 3 closed, so a curriculum's inventory now carries its own
+`release` block and is held to the same two directions — and to the stage, so an id
+advertised under the wrong gate item is claimed by a stage that does not run it. With that
+block removed the gate reports all twelve moved ids, including the four `L01-*`.
+
+### Defect 4 — `FR-P5-UNIT-CONTRACT` under-asserts — **FIXED 2026-08-02**
 
 It compares only `required` and `additionalProperties`
 (`tests/gates/fr_p5_unit.py:475-481`) and blacklists only five domain constraints
@@ -156,7 +179,13 @@ domain block, would pass** — which is `G1` walking back in through a side door
 **Fix:** assert over the full property set, not just `required`; reject any keyword that
 constrains `domain`'s contents, not a blacklist of five.
 
-### Defect 5 — a silenced cross-check
+**Fixed by `61bb25f`.** Both, exactly as stated: the property set and the required list are
+asserted separately, and the domain block is checked against a permission list —
+`type`, `minProperties: 1`, `description`, `title`, `$comment` — so `allOf`, `anyOf`,
+`propertyNames`, `if`/`then`, `enum` and the rest are refused. One fixture per side
+door.
+
+### Defect 5 — a silenced cross-check — **FIXED 2026-08-02**
 
 `tests/meta_prompt_source.py` sets `CROSS_CHECK_PLAN_TREE = False`, making
 `shape_problems()` return immediately (`:187-230`) — even though its own docstring says
@@ -168,6 +197,12 @@ obsolete v6 asset shape (`folder_refactoring.plan.v6.md:204-218`).
 **Fix:** restore a real independent shape authority. Either update the folder plan's §4
 tree to the current asset set, or move the shape declaration to a document maintained by
 a different gate. A flag set to `False` is not a replacement.
+
+**Fixed by `4bc3146`.** The second option: `AGENTS.md` gains a `### Contract assets` table,
+`shape_problems()` compares `EXPECTED` against it in both directions, and the flag is
+gone. A finished plan's tree is not edited to track the present, so the folder plan now
+says in the file that it is history and that neither reader reads it. Verified by negative
+control — dropping a row, adding a row, and removing the table each produce a problem.
 
 ---
 
@@ -249,7 +284,9 @@ The five Codex audits can be resumed for detail:
     codex resume 019fc237-e745-7732-b1bf-ab0b39bc33db   # phase 5 and Finish
     codex resume 019fc237-fd59-7f30-8011-1fa66b0c1b98   # phase 6 verdict
 
-**Suggested order:** defect 2 first (it is a false statement sitting in the repo and
-costs ten minutes), then 1 (the real loss of rigour), then 3, 4, 5. Only then phase 6,
-and per Codex that means writing the controller and logger first rather than another
-prose stop.
+**All five defects are fixed.** They were taken in the order 2, 1, 3, 4, 5 — the false
+statement first, then the real loss of rigour, then the three narrower ones. The
+remaining work is plan phase 6, and per Codex that means writing the smallest
+deterministic controller and append-only v2 logger first, then rerunning stage B from
+condition 1 — not another prose stop. The five fixes are commits `8d2a561`, `efc191f`,
+`f3ea34e`, and the two that follow them; `git log 4139112..HEAD` is the whole of it.
