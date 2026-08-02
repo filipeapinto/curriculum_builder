@@ -98,3 +98,28 @@ deferred:
       source, so no unit has ever been generated. Until then each of those four gates
       reports the number of units it scanned, and that number is zero. Reporting their
       fixture coverage as generated-lab coverage would be failure A5.
+
+  # The next free number after the last id below is 9, and it has to stay free.
+  # tests/fixtures/deferred_reference_dangling.reject.yaml cites it as its canonical
+  # unresolved reference, so defining it here would make that fixture accepted and
+  # FR-P2-DEFERRED would fail for exactly the reason the fixture exists to prove. Skip
+  # it. Renumbering the fixture instead would be moving a detector to suit the data.
+  #
+  # This comment states the number and never the id: a citation is a citation wherever
+  # it is written, and FR-P2-DEFERRED reads comments too — correctly, because a dangling
+  # reference in a comment is still a reference a reader will try to follow.
+  - id: RT-8
+    obligation: A curriculum declares its domain vocabulary
+    acceptance_criterion: >-
+      every curriculum declares the terms of its own domain — not only its proper nouns —
+      each with an anchored prose_pattern, so that leg (b) of FR-P5-ENGINE-GENERIC and
+      leg (b) of FR-P5-UNIT-CONTRACT can see a domain word that is not a vendor name
+    blocked_by: >-
+      nothing blocks it technically; it is not in this plan. simplification.plan.v3.md
+      section 6 phase 2 declares a verifier and no vocabulary, and
+      simplification.phase0.result.v1.md reasons that a domain_terms block belongs beside
+      the verifier declaration. Until it exists, leg (b) is armed and near-blind: the only
+      declaration is kit_terms, seven proper nouns, and LAB-CURRENT-MARGIN and
+      LAB-VALUE-SOURCED are engine-owned domain assertions the detector cannot see. Zero
+      is a bound, not a clean bill, and this id is where that is written down.
+    promotes_gate: FR-P5-ENGINE-GENERIC

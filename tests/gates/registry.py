@@ -342,6 +342,16 @@ GATES = [
         "command": "python3 tests/gates/fr_p5_unit.py --check unit-contract",
         "impl": "fr_p5_unit:check_unit_contract",
     },
+
+    # --- Phase 5 — the verifier precondition (plan phase 2) ----------------------
+    {
+        "id": "FR-P5-VERIFIER-REQUIRED",
+        "activation_phase": 5,
+        "claim_class": "tree+parse+mapping+execution",
+        "depends_on": ["FR-P0-SCHEMA"],
+        "command": "python3 tests/gates/fr_p5_verifier.py --check verifier-required",
+        "impl": "fr_p5_verifier:check_verifier_required",
+    },
 ]
 
 GATES_BY_ID = {gate["id"]: gate for gate in GATES}

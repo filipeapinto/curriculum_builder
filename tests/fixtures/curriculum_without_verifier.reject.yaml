@@ -1,0 +1,16 @@
+# A curriculum that declares its domain's shape and nothing that checks it. The engine
+# must refuse to start: with no verifier, nothing but a human or a model can tell
+# whether the content is right, and a model checking a model is the one role the
+# evidence specifically rules out. This is the precondition being exercised rather than
+# stated — a precondition nothing exercises is a sentence.
+manifest_version: '5.0'
+curriculum:
+  title: A curriculum with no verifier
+  learner: any
+  delivery: one unit at a time
+  design_rule: Component first; a problem is an application, never the organising principle.
+domain:
+  schema: curricula/somewhere/domain.schema.v1.json
+  config:
+    something: declared
+labs: []

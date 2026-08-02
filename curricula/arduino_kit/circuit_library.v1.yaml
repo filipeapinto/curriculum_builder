@@ -1,0 +1,27 @@
+# The vetted circuit library — the whole of what `circuit_policy: composed` means.
+#
+# Decision 2026-08-01, recorded in plans/simplification/plan/simplification.plan.v3.md
+# section 4(a): CIRCUIT selects from this file and never invents a topology. The
+# closest published proxy to inventing one, verified by simulation, has a top-model
+# pass rate of 8.15%; the expert work is done once, here, rather than once per run.
+#
+# An entry enters this file only after simulation, and `simulated_on` is the record of
+# that. verify_domain.py refuses a designed circuit that cites no entry here, and
+# refuses an entry that is not recorded as simulated — an unsimulated library entry is
+# an invented circuit that has been filed.
+#
+# One entry today. That is not a gap in this file: L01 is unpowered, no later unit has
+# been written, and a library populated ahead of the units that need it would be the
+# specification work section 7 forbids before a unit exists.
+
+circuit_library_version: '1.0'
+
+circuits:
+  - id: unpowered_path_trace
+    title: Disconnected source-to-rail path, nothing selected and nothing live
+    simulated_on: null
+    simulation_note: >-
+      Nothing to simulate: no supply is connected, no rail is selected and no current
+      flows. Recorded as null rather than as a date, because a simulation that did not
+      happen must not be written down as one. A powered entry without a date is refused.
+    used_by: [L01]

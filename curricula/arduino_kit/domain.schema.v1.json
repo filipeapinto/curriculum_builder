@@ -1,0 +1,883 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://example.invalid/curriculum_builder/curricula/arduino_kit/domain.schema.v1.json",
+  "title": "arduino_kit — the shape of this curriculum's domain block",
+  "description": "The engine's unit contract requires a `domain` block and deliberately says nothing about what is in one. This is what is in one here, and it is this curriculum's to state: the electrical model, the assembly map and the power profile that schemas/lab.schema.v3.json carried in the engine layer under the names `electronics`, `content.build_map` and `safety.power_profile`. A curriculum in another subject supplies a different file and never edits the engine's.",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "electrical",
+    "build_map"
+  ],
+  "properties": {
+    "electrical": {
+      "description": "The electrical model of the lab. This is the domain spine: what the component IS electrically, what it does to a circuit, what may be measured, and what must never be exceeded. Every value is datasheet- or measurement-backed; a guessed electrical value is a failed gate.",
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "component_spec",
+        "quantities_taught",
+        "circuit",
+        "behaviour",
+        "ratings_and_limits",
+        "failure_modes"
+      ],
+      "properties": {
+        "component_spec": {
+          "description": "What the part is, from primary sources.",
+          "type": "object",
+          "additionalProperties": false,
+          "required": [
+            "part_family",
+            "designator_prefix",
+            "parameters"
+          ],
+          "properties": {
+            "part_family": {
+              "type": "string",
+              "minLength": 2
+            },
+            "package": {
+              "type": "string",
+              "minLength": 1
+            },
+            "designator_prefix": {
+              "description": "R, C, D, Q, U, LS, M …",
+              "type": "string",
+              "pattern": "^[A-Z]{1,3}$"
+            },
+            "parameters": {
+              "description": "Datasheet parameters that matter in this lab — forward voltage, max current, resistance tolerance, logic thresholds, coil voltage, etc. Each carries its measurement condition and its source.",
+              "type": "array",
+              "minItems": 1,
+              "items": {
+                "type": "object",
+                "additionalProperties": false,
+                "required": [
+                  "name",
+                  "value",
+                  "unit",
+                  "source"
+                ],
+                "properties": {
+                  "name": {
+                    "type": "string",
+                    "minLength": 2
+                  },
+                  "symbol": {
+                    "description": "Vf, If, Rds(on), Vih …",
+                    "type": "string"
+                  },
+                  "value": {
+                    "type": "string",
+                    "minLength": 1
+                  },
+                  "unit": {
+                    "enum": [
+                      "V",
+                      "mV",
+                      "A",
+                      "mA",
+                      "uA",
+                      "ohm",
+                      "kohm",
+                      "Mohm",
+                      "F",
+                      "uF",
+                      "nF",
+                      "pF",
+                      "Hz",
+                      "kHz",
+                      "MHz",
+                      "s",
+                      "ms",
+                      "us",
+                      "W",
+                      "mW",
+                      "C",
+                      "percent",
+                      "ratio",
+                      "none"
+                    ]
+                  },
+                  "tolerance": {
+                    "type": "string"
+                  },
+                  "condition": {
+                    "description": "The test condition the value holds under, e.g. 'at If = 20 mA, 25 C'.",
+                    "type": "string"
+                  },
+                  "source": {
+                    "description": "Datasheet or official listing. Not a recollection.",
+                    "type": "string",
+                    "minLength": 8
+                  }
+                }
+              }
+            }
+          }
+        },
+        "quantities_taught": {
+          "description": "Which electrical quantities this lab actually teaches, and how far. 'observe' is qualitative, 'measure' puts a meter on it, 'calculate' means the child or adult computes a value.",
+          "type": "array",
+          "minItems": 1,
+          "items": {
+            "type": "object",
+            "additionalProperties": false,
+            "required": [
+              "quantity",
+              "depth"
+            ],
+            "properties": {
+              "quantity": {
+                "enum": [
+                  "voltage",
+                  "current",
+                  "resistance",
+                  "capacitance",
+                  "inductance",
+                  "frequency",
+                  "period",
+                  "duty_cycle",
+                  "logic_level",
+                  "time_constant",
+                  "power",
+                  "continuity",
+                  "polarity"
+                ]
+              },
+              "depth": {
+                "enum": [
+                  "observe",
+                  "compare",
+                  "measure",
+                  "calculate"
+                ]
+              },
+              "child_facing_meaning": {
+                "description": "How this quantity is described to the calibrated learner without falsifying it. The age band is a premise in policy/calibration.v1.yaml, not a constant here.",
+                "type": "string",
+                "minLength": 15
+              }
+            }
+          }
+        },
+        "circuit": {
+          "description": "The machine-readable circuit. Prose steps, connection tables, maps and schematics are all generated from this — never written independently.",
+          "type": "object",
+          "additionalProperties": false,
+          "required": [
+            "status"
+          ],
+          "properties": {
+            "status": {
+              "enum": [
+                "not_designed",
+                "designed_verified"
+              ]
+            },
+            "nets": {
+              "type": "array",
+              "items": {
+                "type": "object",
+                "additionalProperties": false,
+                "required": [
+                  "name",
+                  "nodes"
+                ],
+                "properties": {
+                  "name": {
+                    "description": "Named net, e.g. P_PLUS, P_MINUS, N1. Rail colour is never an electrical identity.",
+                    "type": "string",
+                    "pattern": "^[A-Z][A-Z0-9_]*$"
+                  },
+                  "nodes": {
+                    "type": "array",
+                    "minItems": 1,
+                    "items": {
+                      "type": "string",
+                      "minLength": 1
+                    }
+                  }
+                }
+              }
+            },
+            "components": {
+              "type": "array",
+              "items": {
+                "type": "object",
+                "additionalProperties": false,
+                "required": [
+                  "designator",
+                  "part",
+                  "pins"
+                ],
+                "properties": {
+                  "designator": {
+                    "type": "string",
+                    "pattern": "^[A-Z]{1,3}[0-9]+$"
+                  },
+                  "part": {
+                    "type": "string",
+                    "minLength": 1
+                  },
+                  "value": {
+                    "type": "string"
+                  },
+                  "tolerance": {
+                    "type": "string"
+                  },
+                  "pins": {
+                    "type": "array",
+                    "minItems": 2,
+                    "items": {
+                      "type": "object",
+                      "additionalProperties": false,
+                      "required": [
+                        "pin",
+                        "net"
+                      ],
+                      "properties": {
+                        "pin": {
+                          "type": "string",
+                          "minLength": 1
+                        },
+                        "net": {
+                          "type": "string",
+                          "pattern": "^[A-Z][A-Z0-9_]*$"
+                        },
+                        "polarity": {
+                          "enum": [
+                            "anode",
+                            "cathode",
+                            "positive",
+                            "negative",
+                            "none"
+                          ]
+                        }
+                      }
+                    }
+                  }
+                }
+              }
+            },
+            "supply": {
+              "type": "object",
+              "additionalProperties": false,
+              "required": [
+                "positive_net",
+                "negative_net",
+                "nominal_voltage"
+              ],
+              "properties": {
+                "positive_net": {
+                  "type": "string",
+                  "pattern": "^[A-Z][A-Z0-9_]*$"
+                },
+                "negative_net": {
+                  "type": "string",
+                  "pattern": "^[A-Z][A-Z0-9_]*$"
+                },
+                "nominal_voltage": {
+                  "type": "string",
+                  "minLength": 2
+                },
+                "sequence": {
+                  "description": "Power-on and power-off order where it matters.",
+                  "type": "array",
+                  "items": {
+                    "type": "string"
+                  }
+                }
+              }
+            },
+            "schematic_symbol": {
+              "type": "object",
+              "additionalProperties": false,
+              "required": [
+                "symbol",
+                "introduced_after_physical"
+              ],
+              "properties": {
+                "symbol": {
+                  "type": "string",
+                  "minLength": 1
+                },
+                "introduced_after_physical": {
+                  "description": "CRA sequence: the child meets the object before the symbol. Always true.",
+                  "const": true
+                }
+              }
+            }
+          },
+          "if": {
+            "properties": {
+              "status": {
+                "const": "designed_verified"
+              }
+            }
+          },
+          "then": {
+            "required": [
+              "status",
+              "nets",
+              "components",
+              "supply",
+              "schematic_symbol"
+            ]
+          }
+        },
+        "calculations": {
+          "description": "Every electrical value that is derived rather than measured. Current limiting is mandatory wherever current flows through a rated part.",
+          "type": "array",
+          "items": {
+            "type": "object",
+            "additionalProperties": false,
+            "required": [
+              "purpose",
+              "formula",
+              "inputs",
+              "result",
+              "unit",
+              "margin_to_rating"
+            ],
+            "properties": {
+              "purpose": {
+                "enum": [
+                  "current_limiting",
+                  "power_dissipation",
+                  "total_current_budget",
+                  "divider_ratio",
+                  "time_constant",
+                  "logic_level_check",
+                  "other"
+                ]
+              },
+              "formula": {
+                "description": "Written out, e.g. 'R = (Vsupply - Vf) / If'.",
+                "type": "string",
+                "minLength": 5
+              },
+              "inputs": {
+                "type": "array",
+                "minItems": 1,
+                "items": {
+                  "type": "object",
+                  "additionalProperties": false,
+                  "required": [
+                    "symbol",
+                    "value",
+                    "unit",
+                    "source"
+                  ],
+                  "properties": {
+                    "symbol": {
+                      "type": "string",
+                      "minLength": 1
+                    },
+                    "value": {
+                      "type": "string",
+                      "minLength": 1
+                    },
+                    "unit": {
+                      "type": "string",
+                      "minLength": 1
+                    },
+                    "source": {
+                      "enum": [
+                        "datasheet",
+                        "measured",
+                        "supply_spec",
+                        "chosen"
+                      ]
+                    }
+                  }
+                }
+              },
+              "result": {
+                "type": "string",
+                "minLength": 1
+              },
+              "unit": {
+                "type": "string",
+                "minLength": 1
+              },
+              "margin_to_rating": {
+                "description": "How far the result sits below the absolute maximum, and against which rating. 'None' is not an acceptable answer for a powered lab.",
+                "type": "string",
+                "minLength": 5
+              }
+            }
+          }
+        },
+        "measurements": {
+          "description": "What is actually measured, with the meter set up explicitly. An expected value without a tolerance is not a measurement.",
+          "type": "array",
+          "items": {
+            "type": "object",
+            "additionalProperties": false,
+            "required": [
+              "quantity",
+              "meter_mode",
+              "probe_points",
+              "expected_value",
+              "tolerance",
+              "performed_by"
+            ],
+            "properties": {
+              "quantity": {
+                "enum": [
+                  "voltage",
+                  "current",
+                  "resistance",
+                  "continuity",
+                  "frequency",
+                  "duty_cycle",
+                  "logic_level"
+                ]
+              },
+              "meter_mode": {
+                "type": "string",
+                "minLength": 2
+              },
+              "lead_socket": {
+                "description": "Which socket the red lead occupies — the current range is a different socket, and getting it wrong is how meters and supplies die.",
+                "type": "string"
+              },
+              "probe_points": {
+                "type": "array",
+                "minItems": 2,
+                "maxItems": 2,
+                "items": {
+                  "type": "string",
+                  "minLength": 1
+                }
+              },
+              "expected_value": {
+                "type": "string",
+                "minLength": 1
+              },
+              "tolerance": {
+                "type": "string",
+                "minLength": 1
+              },
+              "must_stay_below": {
+                "description": "The rating this reading must not exceed, where one applies.",
+                "type": "string"
+              },
+              "performed_by": {
+                "enum": [
+                  "adult",
+                  "child_with_adult",
+                  "child"
+                ]
+              }
+            }
+          }
+        },
+        "behaviour": {
+          "description": "How the component responds electrically — the thing the lab is actually teaching. Two levels, kept distinct so the child's version is a simplification and never a falsehood.",
+          "type": "object",
+          "additionalProperties": false,
+          "required": [
+            "child_level",
+            "adult_level"
+          ],
+          "properties": {
+            "child_level": {
+              "description": "Observable cause and effect, in the child's terms.",
+              "type": "string",
+              "minLength": 40
+            },
+            "adult_level": {
+              "description": "The correct electrical account — I-V relationship, threshold, timing, logic behaviour.",
+              "type": "string",
+              "minLength": 80
+            },
+            "relationship": {
+              "enum": [
+                "linear",
+                "threshold",
+                "exponential",
+                "switching",
+                "timing",
+                "logic",
+                "transducer",
+                "electromechanical",
+                "none"
+              ]
+            },
+            "simplification_check": {
+              "description": "What the child version leaves out, and confirmation that it does not make the child version wrong. Electronics QA rejects false simplification.",
+              "type": "string",
+              "minLength": 25
+            }
+          }
+        },
+        "ratings_and_limits": {
+          "description": "Absolute maxima that must never be exceeded. Fail closed: a missing rating blocks the lab.",
+          "type": "array",
+          "minItems": 1,
+          "items": {
+            "type": "object",
+            "additionalProperties": false,
+            "required": [
+              "parameter",
+              "absolute_max",
+              "unit",
+              "source"
+            ],
+            "properties": {
+              "parameter": {
+                "type": "string",
+                "minLength": 2
+              },
+              "absolute_max": {
+                "type": "string",
+                "minLength": 1
+              },
+              "unit": {
+                "type": "string",
+                "minLength": 1
+              },
+              "source": {
+                "type": "string",
+                "minLength": 8
+              }
+            }
+          }
+        },
+        "failure_modes": {
+          "description": "What breaks the part or the circuit, and what in this lab prevents it. Teaching a component without teaching how it dies leaves the child to find out.",
+          "type": "array",
+          "minItems": 1,
+          "items": {
+            "type": "object",
+            "additionalProperties": false,
+            "required": [
+              "wrong_action",
+              "consequence",
+              "prevented_by"
+            ],
+            "properties": {
+              "wrong_action": {
+                "type": "string",
+                "minLength": 10
+              },
+              "consequence": {
+                "type": "string",
+                "minLength": 10
+              },
+              "prevented_by": {
+                "type": "string",
+                "minLength": 10
+              },
+              "reversible": {
+                "type": "boolean"
+              }
+            }
+          }
+        }
+      },
+      "allOf": [
+        {
+          "if": {
+            "properties": {
+              "circuit": {
+                "properties": {
+                  "status": {
+                    "const": "designed_verified"
+                  }
+                }
+              }
+            }
+          },
+          "then": {
+            "required": [
+              "component_spec",
+              "quantities_taught",
+              "circuit",
+              "behaviour",
+              "ratings_and_limits",
+              "failure_modes",
+              "calculations",
+              "measurements"
+            ]
+          }
+        }
+      ]
+    },
+    "build_map": {
+      "description": "The authority for physical assembly, deterministically rendered, never generated by ImageGen. A component unit carries a breadboard map; a foundation unit carries an unpowered path map.",
+      "oneOf": [
+        {
+          "$ref": "#/$defs/breadboard_build_map"
+        },
+        {
+          "$ref": "#/$defs/unpowered_path_map"
+        }
+      ]
+    },
+    "power_profile": {
+      "description": "Required whenever mode is not 'unpowered'. Every value comes from verified evidence; a guessed value is not allowed.",
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "source",
+        "nominal_voltage",
+        "permitted_range",
+        "current_protection",
+        "polarity",
+        "evidence"
+      ],
+      "properties": {
+        "source": {
+          "type": "string",
+          "minLength": 5
+        },
+        "nominal_voltage": {
+          "type": "string",
+          "minLength": 2
+        },
+        "permitted_range": {
+          "type": "string",
+          "minLength": 2
+        },
+        "current_protection": {
+          "type": "string",
+          "minLength": 5
+        },
+        "polarity": {
+          "type": "string",
+          "minLength": 3
+        },
+        "evidence": {
+          "type": "string",
+          "minLength": 10
+        }
+      }
+    },
+    "circuit_reference": {
+      "description": "Which pre-vetted circuit this unit wires pedagogy around. Required whenever the curriculum declares circuit_policy: composed and the circuit is designed — under that policy CIRCUIT selects from a library of vetted, simulated circuits and never invents a topology. The closest published proxy to inventing one, verified by simulation, has a top-model pass rate of 8.15%.",
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "library_id",
+        "simulated"
+      ],
+      "properties": {
+        "library_id": {
+          "type": "string",
+          "minLength": 3
+        },
+        "simulated": {
+          "const": true
+        }
+      }
+    }
+  },
+  "$defs": {
+    "breadboard_build_map": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "map_kind",
+        "orientation",
+        "labelled_features",
+        "wire_endpoints",
+        "placement_steps",
+        "schematic_included",
+        "safety_inset"
+      ],
+      "properties": {
+        "map_kind": {
+          "const": "breadboard"
+        },
+        "orientation": {
+          "type": "string",
+          "minLength": 3
+        },
+        "labelled_features": {
+          "type": "array",
+          "minItems": 5,
+          "items": {
+            "enum": [
+              "rows",
+              "columns",
+              "rails",
+              "centre_trench",
+              "rail_breaks"
+            ]
+          },
+          "uniqueItems": true
+        },
+        "wire_endpoints": {
+          "type": "array",
+          "minItems": 1,
+          "items": {
+            "type": "object",
+            "additionalProperties": false,
+            "required": [
+              "from",
+              "to"
+            ],
+            "properties": {
+              "from": {
+                "type": "string",
+                "minLength": 2
+              },
+              "to": {
+                "type": "string",
+                "minLength": 2
+              },
+              "net": {
+                "type": "string",
+                "minLength": 1
+              }
+            }
+          }
+        },
+        "components_placed": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "additionalProperties": false,
+            "required": [
+              "part",
+              "value",
+              "orientation"
+            ],
+            "properties": {
+              "part": {
+                "type": "string",
+                "minLength": 1
+              },
+              "value": {
+                "type": "string",
+                "minLength": 1
+              },
+              "orientation": {
+                "type": "string",
+                "minLength": 1
+              }
+            }
+          }
+        },
+        "placement_steps": {
+          "description": "Numbered, matching the written steps one-to-one — spatial contiguity, so the child never holds two orderings in mind.",
+          "type": "array",
+          "minItems": 1,
+          "items": {
+            "type": "string",
+            "minLength": 5
+          }
+        },
+        "schematic_included": {
+          "const": true
+        },
+        "dmm_probes": {
+          "type": "object",
+          "additionalProperties": false,
+          "required": [
+            "probe_points",
+            "lead_socket",
+            "mode"
+          ],
+          "properties": {
+            "probe_points": {
+              "type": "array",
+              "minItems": 2,
+              "items": {
+                "type": "string"
+              }
+            },
+            "lead_socket": {
+              "type": "string",
+              "minLength": 1
+            },
+            "mode": {
+              "type": "string",
+              "minLength": 1
+            }
+          }
+        },
+        "safety_inset": {
+          "type": "object",
+          "additionalProperties": false,
+          "required": [
+            "shows",
+            "derived_from_circuit_data"
+          ],
+          "properties": {
+            "shows": {
+              "type": "string",
+              "minLength": 10
+            },
+            "derived_from_circuit_data": {
+              "const": true
+            }
+          }
+        }
+      }
+    },
+    "unpowered_path_map": {
+      "description": "Foundation-lab replacement for the breadboard map. States what the child can see, point to, trace or record while everything is disconnected. Never imitates a powered build.",
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "map_kind",
+        "traced_path",
+        "evidence_card",
+        "power_on_release"
+      ],
+      "properties": {
+        "map_kind": {
+          "enum": [
+            "power_path",
+            "connectivity"
+          ]
+        },
+        "traced_path": {
+          "type": "array",
+          "minItems": 2,
+          "items": {
+            "type": "string",
+            "minLength": 2
+          }
+        },
+        "evidence_card": {
+          "type": "object",
+          "additionalProperties": false,
+          "required": [
+            "prompt",
+            "child_records"
+          ],
+          "properties": {
+            "prompt": {
+              "type": "string",
+              "minLength": 15
+            },
+            "child_records": {
+              "type": "array",
+              "minItems": 1,
+              "items": {
+                "type": "string",
+                "minLength": 3
+              }
+            }
+          }
+        },
+        "power_on_release": {
+          "const": false
+        }
+      }
+    }
+  },
+  "patternProperties": {
+    "^_(fixture|note)$": {
+      "description": "An annotation channel, and only these two names. Fixtures in this repository carry their own explanation inline, and a fixture that had to be explained elsewhere is one nobody reads the explanation of. Nothing reads these.",
+      "type": "string",
+      "minLength": 10
+    }
+  }
+}

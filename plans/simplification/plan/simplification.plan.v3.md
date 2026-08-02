@@ -318,7 +318,7 @@ section parser keys on the literal heading number. Sections 1–8 are cited by o
 documents and are not renumbered.
 
 Format: **ID** · activation phase · claim class · depends on · command · pass criteria ·
-fixtures · failure meaning. **6 gates.**
+fixtures · failure meaning. **7 gates.**
 
 **Parsing this section** — `FR-P0-REGISTRY` reads it, so the encoding is the one §8 of
 `plans/folder_refactoring/folder_refactoring.plan.v6.md` fixes: everything after an em
@@ -490,3 +490,39 @@ blocks plus `domain`, and no subject named. `curriculum_contract_kit_concept.rej
 rather than assumed.
 **Failure means:** the unit contract still cannot describe a unit in a second subject,
 so the prompt §6 phase 5 writes would be generic over a contract that is not.
+
+### Phase 5 — the verifier precondition (§6 phase 2)
+
+**`FR-P5-VERIFIER-REQUIRED`** · 5 · `tree+parse+mapping+execution` · depends on:
+`FR-P0-SCHEMA` — the declaration is a manifest field, so the manifest must be known to
+validate before its contents are executed
+`python3 tests/gates/fr_p5_verifier.py --check verifier-required`
+**Pass:** §3's precondition, exercised rather than stated. Every curriculum under
+`curricula/` — read from the directory at run time, never by name — declares
+`domain.verifier` with an entry point that exists under **its own** directory, fixtures
+it must refuse each with the code it must refuse them for, at least one fixture it must
+accept, and a `proven` record. Then the gate **runs the declared verifier against every
+one of those fixtures** and requires each rejection to carry its declared code. A
+detector that only ever accepts is not a verifier; one that rejects for the wrong reason
+has stopped seeing what it was written to see; and one that refuses everything would
+satisfy `must_reject` entirely, which is what `must_accept` is for. The `proven` block is
+re-executed rather than believed — what it adds is the curriculum's own claim, so a
+curriculum recording `not_executed` is refused before the engine spends anything on it.
+Prints
+`FR-P5-VERIFIER-REQUIRED <verdict> (C curricula, each declaring a verifier; N declared fixtures executed against it, each refused for its own declared code)`.
+**Fixtures:** `curriculum_without_verifier.reject.yaml` — a curriculum declaring its
+domain's shape and nothing that checks it; `expected_error` is `verifier-undeclared`.
+`curriculum_verifier_unproven.reject.yaml` — a verifier declared and never run;
+`expected_error` is `verifier-unproven`, because "declared" and "proven" are different
+words and `B2` is what happens when they are treated as one.
+`curriculum_verifier_declared.accept.yaml` — the shape the precondition accepts.
+**Failure means:** the engine would start on a curriculum where nothing but a human or a
+model can tell whether the content is right. A model checking a model's work in this
+domain is the one role the evidence specifically rules out, so this is the failure that
+makes genericity unsafe rather than merely incomplete.
+
+**What this gate does not assert.** It does not judge a verifier's rules — it cannot,
+and a gate that tried would be the engine learning the domain. It asserts that one
+exists, that it is code, that it runs, and that it refuses what its curriculum says it
+refuses. Whether those are the right rules is the curriculum's responsibility and a
+human's.

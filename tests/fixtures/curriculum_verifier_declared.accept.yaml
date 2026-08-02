@@ -1,0 +1,25 @@
+# The shape the precondition accepts: a verifier that exists, fixtures it must refuse
+# and fixtures it must accept, and a record that they were executed. A positive fixture
+# is what stops the detector from being satisfied by refusing every curriculum.
+manifest_version: '5.0'
+curriculum:
+  title: A curriculum with a proven verifier
+  learner: any
+  delivery: one unit at a time
+  design_rule: Component first; a problem is an application, never the organising principle.
+domain:
+  schema: curricula/arduino_kit/domain.schema.v1.json
+  verifier:
+    entry_point: curricula/arduino_kit/verify_domain.py
+    invocation: python3 curricula/arduino_kit/verify_domain.py --domain <domain>
+    must_reject:
+      - fixture: curricula/arduino_kit/fixtures/domain_polarity_asserted.reject.json
+        expected_code: polarity-unevidenced
+    must_accept:
+      - curricula/arduino_kit/fixtures/domain_unpowered_path.accept.json
+    proven:
+      executed_utc: '2026-08-01T00:00:00Z'
+      result: all_fixtures_behaved
+  config:
+    something: declared
+labs: []

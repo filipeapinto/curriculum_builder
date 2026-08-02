@@ -30,7 +30,15 @@ CALIBRATION = REPO_ROOT / "policy" / "calibration.v1.yaml"
 KIT_CALIBRATION = REPO_ROOT / "curricula" / "arduino_kit" / "kit_calibration.v1.yaml"
 CALIBRATION_SCHEMA = REPO_ROOT / "schemas" / "calibration.schema.v1.json"
 KIT_SCHEMA = REPO_ROOT / "schemas" / "kit_calibration.schema.v1.json"
-CURRICULUM = REPO_ROOT / "curricula" / "arduino_kit" / "arduino_kit_curriculum.v4.yaml"
+CURRICULUM = REPO_ROOT / "curricula" / "arduino_kit" / "arduino_kit_curriculum.v5.yaml"
+
+# gate_impl_fix: the same facts, read where the v5 contract holds them. `power_input`
+# was a top-level field of a unit's `core_activity` while the engine's contract carried
+# one subject's words; under v5 it is one of the things the curriculum states about its
+# own domain, so it lives under `core_activity.domain_activity`. The criterion is
+# unchanged — every powered unit cites exactly one verified_official permitted input by
+# id — and reading only the old location would have reported every unit as citing none.
+DOMAIN_ACTIVITY = "domain_activity"
 
 SCHEMAS_DIR = REPO_ROOT / "schemas"
 
@@ -444,6 +452,22 @@ def check_caps(ev: Evidence):
 # FR-P3-KIT-SOURCE
 
 
+def _cited_input(activity: dict) -> tuple[dict, bool]:
+    """The domain activity a unit declares, and whether it cites a supply at all.
+
+    v5 moved the citation from `core_activity.power_input` into the curriculum's own
+    `core_activity.domain_activity`, because a supply is one subject's concept and the
+    engine's unit contract had no business fixing it. Both readings are accepted so the
+    criterion does not depend on which contract version a manifest is written against.
+    """
+    domain = activity.get(DOMAIN_ACTIVITY) or {}
+    if "power_input" in domain:
+        return domain, True
+    if "power_input" in activity:
+        return activity, True
+    return domain, False
+
+
 def kit_source_violations(curriculum, kit_doc) -> list[str]:
     """Every powered lab cites exactly one verified input, by id."""
     inputs = {
@@ -454,13 +478,14 @@ def kit_source_violations(curriculum, kit_doc) -> list[str]:
     problems = []
     for lab in (curriculum or {}).get("labs", []):
         activity = lab.get("core_activity") or {}
+        holder, cites = _cited_input(activity)
         if activity.get("mode") == "unpowered":
-            if "power_input" in activity:
+            if cites:
                 problems.append(
                     f"unverified-source-cited:{lab.get('id')} is unpowered but cites a supply"
                 )
             continue
-        cited = activity.get("power_input")
+        cited = holder.get("power_input")
         if not cited:
             problems.append(f"unverified-source-cited:{lab.get('id')} cites no input id")
             continue
@@ -501,7 +526,7 @@ def check_kit_source(ev: Evidence):
         if (lab.get("core_activity") or {}).get("mode") != "unpowered"
     ]
     for lab in powered:
-        cited = (lab.get("core_activity") or {}).get("power_input")
+        cited = _cited_input(lab.get("core_activity") or {})[0].get("power_input")
         ev.resolve(
             f"{lab.get('id')}.core_activity.power_input",
             rel(CURRICULUM),

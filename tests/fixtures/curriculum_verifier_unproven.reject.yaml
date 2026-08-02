@@ -1,0 +1,28 @@
+# A curriculum that declares a verifier and never ran it. "Declared" and "proven" are
+# different words, and B2 is what happens when they are treated as the same one:
+# isolation was required, nothing structurally prevented its absence, and no test
+# demonstrated it. A verifier whose fixtures have not been executed is a verifier
+# nobody has seen refuse anything.
+manifest_version: '5.0'
+curriculum:
+  title: A curriculum whose verifier has never run
+  learner: any
+  delivery: one unit at a time
+  design_rule: Component first; a problem is an application, never the organising principle.
+domain:
+  schema: curricula/somewhere/domain.schema.v1.json
+  verifier:
+    entry_point: curricula/arduino_kit/verify_domain.py
+    invocation: python3 curricula/arduino_kit/verify_domain.py --domain <domain>
+    must_reject:
+      - fixture: curricula/arduino_kit/fixtures/domain_polarity_asserted.reject.json
+        expected_code: polarity-unevidenced
+    must_accept:
+      - curricula/arduino_kit/fixtures/domain_unpowered_path.accept.json
+    proven:
+      executed_utc: '2026-08-01T00:00:00Z'
+      result: not_executed
+      note: the fixtures are listed and have never been run
+  config:
+    something: declared
+labs: []

@@ -11,7 +11,7 @@ from it; the prose inputs have no schema and cannot have one — read them as pr
 |---|---|
 | `policy/calibration.v1.yaml` | **the engine-wide premises** — learner age band, the pedagogy caps derived from it, safety floor. Never the supplies: those belong to one kit |
 | `curricula/arduino_kit/kit_calibration.v1.yaml` | **that kit's premises** — permitted supplies, power envelope, the evidence each is verified against. Outranked by the engine-wide premises, and outranks the curriculum |
-| `curricula/arduino_kit/arduino_kit_curriculum.v4.yaml` | the curriculum — which labs exist, in order, and **how many** |
+| `curricula/arduino_kit/arduino_kit_curriculum.v5.yaml` | the curriculum — which labs exist, in order, and **how many** |
 | `policy/limits.v1.yaml` | every resource limit, with its numeric default and flag |
 | `policy/routes.v1.yaml` | every external capability, with the exact proven invocation |
 | `policy/checks.v1.yaml` | every stable check id and what it asserts |
@@ -66,7 +66,7 @@ When sources disagree, this order settles it — always, and without averaging:
 
 1. `policy/calibration.v1.yaml` — the premises
 2. `curricula/arduino_kit/kit_calibration.v1.yaml` — that kit's supplies and evidence
-3. `curricula/arduino_kit/arduino_kit_curriculum.v4.yaml` — which labs exist
+3. `curricula/arduino_kit/arduino_kit_curriculum.v5.yaml` — which labs exist
 4. `schemas/` — the shapes those must take
 5. the remaining `policy/` manifests — checks, controller, limits, routes, failures,
    deferred, and `policy/routing/`

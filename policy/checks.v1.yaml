@@ -42,7 +42,7 @@ calibration:
   - id: CAL-SOURCE-VERIFIED
     owner: curricula/arduino_kit/kit_calibration.v1.yaml
     method: mapping
-    artifact: curricula/arduino_kit/arduino_kit_curriculum.v4.yaml
+    artifact: curricula/arduino_kit/arduino_kit_curriculum.v5.yaml
     verified_by: FR-P3-KIT-SOURCE
     asserts: >-
       every powered lab declares exactly one input by id from its curriculum's
@@ -54,11 +54,15 @@ calibration:
 # ---------------------------------------------------------------------------
 curriculum:
   - id: CUR-SCHEMA-VALID
-    owner: curricula/arduino_kit/arduino_kit_curriculum.v4.yaml
+    owner: curricula/arduino_kit/arduino_kit_curriculum.v5.yaml
     method: schema
-    artifact: schemas/curriculum.schema.v4.json
+    artifact: schemas/curriculum.schema.v5.json
     verified_by: FR-P0-SCHEMA
-    asserts: the curriculum validates against schemas/curriculum.schema.v4.json
+    asserts: >-
+      the curriculum validates against schemas/curriculum.schema.v5.json, which requires
+      it to declare its own domain — the schema its units' domain block is checked
+      against, the verifier that checks the content, and the domain configuration v4
+      carried at the top level under one kit's names
     stage: static
   - id: CUR-COUNT-DERIVED
     owner: meta_prompt/assets/inputs.v1.md
@@ -69,25 +73,25 @@ curriculum:
       time, and no fixed count appears in code, schema, CLI default or report text
     stage: static
   - id: CUR-IDS-CONTIGUOUS
-    owner: curricula/arduino_kit/arduino_kit_curriculum.v4.yaml
+    owner: curricula/arduino_kit/arduino_kit_curriculum.v5.yaml
     method: execution
     deferred: RT-5
     asserts: lab ids are unique, ascending and contiguous from L01
     stage: static
   - id: CUR-PREREQS-RESOLVE
-    owner: curricula/arduino_kit/arduino_kit_curriculum.v4.yaml
+    owner: curricula/arduino_kit/arduino_kit_curriculum.v5.yaml
     method: execution
     deferred: RT-5
     asserts: every prerequisite names a lab that exists and precedes it
     stage: static
   - id: CUR-ORIENTATIONS
-    owner: curricula/arduino_kit/arduino_kit_curriculum.v4.yaml
+    owner: curricula/arduino_kit/arduino_kit_curriculum.v5.yaml
     method: execution
     deferred: RT-5
     asserts: every lab declaring an orientation cue has one, or states the part has none
     stage: static
   - id: CUR-VISUAL-ROLES
-    owner: curricula/arduino_kit/arduino_kit_curriculum.v4.yaml
+    owner: curricula/arduino_kit/arduino_kit_curriculum.v5.yaml
     method: execution
     deferred: RT-5
     asserts: every lab declares its visual roles, or a documented reviewer finding omits one

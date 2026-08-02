@@ -1,34 +1,48 @@
-# Negative fixture for FR-P0-SCHEMA. Identical to the curriculum manifest except
-# that the `labs` array is absent, so the one validation error it produces is the
-# declared expected_error. Never an input to a run.
-manifest_version: '4.0'
+# Negative fixture for FR-P0-SCHEMA. Identical to the curriculum manifest except that
+# the `labs` array is absent, so the one validation error it produces is the declared
+# expected_error. Never an input to a run.
+#
+# Rewritten against the v5 contract with the manifest it mirrors. A fixture left at v4
+# would still have been rejected — by the two subject concepts v5 removed, not by the
+# defect it was built to carry. A fixture rejected for the wrong reason is a check that
+# has stopped seeing what it was written to see, and rule 3 fails it for exactly that.
+manifest_version: '5.0'
 curriculum:
   title: Electronics Discoveries — Component-Oriented Workbook
   learner: Supervised beginners aged 9+, with no assumed electronics knowledge
   delivery: One lab is generated, technically checked, pedagogically checked, and accepted before the
     next lab begins.
   design_rule: Component first; a problem is an application, never the organising principle.
-kit_power_profile:
-  id: elegoo-uno-r3-super-starter-kit-power-system
-  reference_verification: verified_official
-  local_inspection: not_available
-  input:
-    description: Included 9 V battery with DC connector feeding the kit power-supply module. This is the
-      supplied source identified by the official Super Starter Kit listing and product photograph; it
-      is not a 9 V/1 A wall adapter.
-    evidence: 'Official listing: https://www.elegoo.com/en-gb/products/elegoo-uno-r3-super-starter-kit
-      ; cached photograph: curricula/arduino_kit/official_kit_photo.jpg'
-  rail_choices:
-  - 'OFF'
-  - 3.3 V
-  - 5 V
-  release_rule: Reference evidence authorises curriculum drafting. Every powered technical map must cite
-    the verified kit photo, the selected physical jumper position, the module orientation, the circuit
-    current calculation, and component/load ratings. Generated imagery never supplies those facts.
-visual_system:
-  photorealistic_roles:
-  - component identification
-  - safe working context
-  - expected observation or before-after comparison
-  technical_map_rule: Technical build maps are deterministically rendered from verified circuit data;
-    generative images are never the connection authority.
+domain:
+  schema: curricula/arduino_kit/domain.schema.v1.json
+  verifier:
+    entry_point: curricula/arduino_kit/verify_domain.py
+    invocation: python3 curricula/arduino_kit/verify_domain.py --domain <domain>
+    must_reject:
+    - fixture: curricula/arduino_kit/fixtures/domain_polarity_asserted.reject.json
+      expected_code: polarity-unevidenced
+    must_accept:
+    - curricula/arduino_kit/fixtures/domain_unpowered_path.accept.json
+    proven:
+      executed_utc: '2026-08-01T00:00:00Z'
+      result: all_fixtures_behaved
+  config:
+    circuit_policy: composed
+    kit_power_profile:
+      id: elegoo-uno-r3-super-starter-kit-power-system
+      reference_verification: verified_official
+      local_inspection: not_available
+      input:
+        description: Included 9 V battery with DC connector feeding the kit power-supply module.
+        evidence: 'Official listing: https://www.elegoo.com/en-gb/products/elegoo-uno-r3-super-starter-kit'
+      rail_choices:
+      - 'OFF'
+      - 3.3 V
+      - 5 V
+      release_rule: Reference evidence authorises curriculum drafting.
+    visual_system:
+      photorealistic_roles:
+      - component identification
+      - safe working context
+      technical_map_rule: Technical build maps are deterministically rendered from verified circuit
+        data; generative images are never the connection authority.

@@ -1,0 +1,159 @@
+{
+  "electrical": {
+    "component_spec": {
+      "part_family": "breadboard power-supply module",
+      "designator_prefix": "PS",
+      "parameters": [
+        {
+          "name": "rail selector positions",
+          "value": "OFF / 3.3 / 5",
+          "unit": "V",
+          "condition": "as printed on the module body",
+          "source": "https://www.elegoo.com/en-gb/products/elegoo-uno-r3-super-starter-kit, accessed 2026-07-27"
+        }
+      ]
+    },
+    "quantities_taught": [
+      {
+        "quantity": "continuity",
+        "depth": "observe",
+        "child_facing_meaning": "whether the path from one end to the other is joined up"
+      }
+    ],
+    "circuit": {
+      "status": "designed_verified",
+      "nets": [
+        {
+          "name": "P_PLUS",
+          "nodes": [
+            "PS1.out",
+            "D1.a"
+          ]
+        },
+        {
+          "name": "P_MINUS",
+          "nodes": [
+            "PS1.gnd",
+            "D1.k"
+          ]
+        }
+      ],
+      "components": [
+        {
+          "designator": "D1",
+          "part": "indicator",
+          "pins": [
+            {
+              "pin": "a",
+              "net": "P_PLUS"
+            },
+            {
+              "pin": "k",
+              "net": "P_MINUS"
+            }
+          ]
+        }
+      ],
+      "supply": {
+        "positive_net": "P_PLUS",
+        "negative_net": "P_MINUS",
+        "nominal_voltage": "5 V"
+      },
+      "schematic_symbol": {
+        "symbol": "indicator",
+        "introduced_after_physical": true
+      }
+    },
+    "behaviour": {
+      "child_level": "The module sits between the source and the board, and nothing moves through it until an adult connects it.",
+      "adult_level": "With no source attached the module is an unenergised passive assembly; the selector position determines nothing until an input is present, and no rail can be characterised by inspection alone.",
+      "relationship": "none",
+      "simplification_check": "The child version omits regulation entirely, which is honest here because nothing is regulated while nothing is connected."
+    },
+    "ratings_and_limits": [
+      {
+        "parameter": "forward current",
+        "absolute_max": "20",
+        "unit": "mA",
+        "source": "device datasheet, accessed 2026-07-27"
+      }
+    ],
+    "failure_modes": [
+      {
+        "wrong_action": "connecting the source before an adult has checked the selector",
+        "consequence": "a rail at a value nobody verified reaches the board",
+        "prevented_by": "the source stays disconnected for the whole of this unit",
+        "reversible": true
+      }
+    ],
+    "calculations": [
+      {
+        "purpose": "power_dissipation",
+        "formula": "P = V * I",
+        "inputs": [
+          {
+            "symbol": "V",
+            "value": "5",
+            "unit": "V",
+            "source": "supply_spec"
+          }
+        ],
+        "result": "0.1",
+        "unit": "W",
+        "margin_to_rating": "well under the 0.25 W part rating"
+      }
+    ],
+    "measurements": [
+      {
+        "quantity": "voltage",
+        "meter_mode": "DC V",
+        "probe_points": [
+          "P_PLUS",
+          "P_MINUS"
+        ],
+        "expected_value": "5",
+        "tolerance": "0.25 V",
+        "performed_by": "adult"
+      }
+    ]
+  },
+  "build_map": {
+    "map_kind": "breadboard",
+    "orientation": "notch to the left",
+    "labelled_features": [
+      "rows",
+      "columns",
+      "rails",
+      "centre_trench",
+      "rail_breaks"
+    ],
+    "wire_endpoints": [
+      {
+        "from": "PS1.out",
+        "to": "row 5",
+        "net": "P_PLUS"
+      }
+    ],
+    "placement_steps": [
+      "Place the part across the trench."
+    ],
+    "schematic_included": true,
+    "safety_inset": {
+      "shows": "where not to bridge the rails",
+      "derived_from_circuit_data": true
+    }
+  },
+  "_fixture": "A designed circuit through a current-rated part whose only calculation is not a limiting one. Omission of the current-limiting resistor is one of the two LLM failure modes CircuitLM catalogues, and it is the canonical way a child's circuit becomes hot.",
+  "circuit_reference": {
+    "library_id": "unpowered_path_trace",
+    "simulated": true
+  },
+  "power_profile": {
+    "source": "kit_battery_9v",
+    "nominal_voltage": "9 V",
+    "permitted_range": "3-5 V at the rail",
+    "current_protection": "module output limiting",
+    "polarity": "set by the adult at the input side",
+    "evidence": "official listing and the cached kit photograph"
+  }
+}

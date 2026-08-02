@@ -452,8 +452,13 @@ def check_parse(ev: Evidence):
 # FR-P0-SCHEMA
 
 
-CURRICULUM_INSTANCE = "curricula/arduino_kit/arduino_kit_curriculum.v4.yaml"
-CURRICULUM_SCHEMA = "schemas/curriculum.schema.v4.json"
+# gate_impl_fix: the pairing follows the live contract rather than a constant naming
+# the one this repository started with. A gate pinned to a superseded pairing validates
+# a retired contract and reports it as the live one — a wrong subject, not a weakened
+# criterion, and the criterion is unchanged: the live curriculum validates against the
+# contract it declares, and the calibration against its own.
+CURRICULUM_INSTANCE = "curricula/arduino_kit/arduino_kit_curriculum.v5.yaml"
+CURRICULUM_SCHEMA = "schemas/curriculum.schema.v5.json"
 CALIBRATION_INSTANCE = "policy/calibration.v1.yaml"
 CALIBRATION_SCHEMA = "schemas/calibration.schema.v1.json"
 

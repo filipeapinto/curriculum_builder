@@ -1,0 +1,67 @@
+{
+  "electrical": {
+    "component_spec": {
+      "part_family": "breadboard power-supply module",
+      "designator_prefix": "PS",
+      "parameters": [
+        {
+          "name": "rail selector positions",
+          "value": "OFF / 3.3 / 5",
+          "unit": "V",
+          "condition": "as printed on the module body",
+          "source": "https://www.elegoo.com/en-gb/products/elegoo-uno-r3-super-starter-kit, accessed 2026-07-27"
+        }
+      ]
+    },
+    "quantities_taught": [
+      {
+        "quantity": "continuity",
+        "depth": "observe",
+        "child_facing_meaning": "whether the path from one end to the other is joined up"
+      }
+    ],
+    "circuit": {
+      "status": "not_designed"
+    },
+    "behaviour": {
+      "child_level": "The module sits between the source and the board, and nothing moves through it until an adult connects it.",
+      "adult_level": "With no source attached the module is an unenergised passive assembly; the selector position determines nothing until an input is present, and no rail can be characterised by inspection alone.",
+      "relationship": "none",
+      "simplification_check": "The child version omits regulation entirely, which is honest here because nothing is regulated while nothing is connected."
+    },
+    "ratings_and_limits": [
+      {
+        "parameter": "input voltage",
+        "absolute_max": "12",
+        "unit": "V",
+        "source": "official product listing, accessed 2026-07-27"
+      }
+    ],
+    "failure_modes": [
+      {
+        "wrong_action": "connecting the source before an adult has checked the selector",
+        "consequence": "a rail at a value nobody verified reaches the board",
+        "prevented_by": "the source stays disconnected for the whole of this unit",
+        "reversible": true
+      }
+    ]
+  },
+  "build_map": {
+    "map_kind": "power_path",
+    "traced_path": [
+      "source positive_terminal",
+      "module dc input",
+      "candidate output"
+    ],
+    "evidence_card": {
+      "prompt": "Trace the path with your finger and tick each place you reach.",
+      "child_records": [
+        "source lead end",
+        "module input",
+        "candidate output"
+      ]
+    },
+    "power_on_release": false
+  },
+  "_fixture": "A build map naming a connector terminal by polarity while no parameter carries a source that establishes one. This is A6, the foundation unit asserting what it cannot evidence."
+}
