@@ -227,17 +227,27 @@ def _fixture_codes(path: Path, names: list[str], terms) -> str | None:
 def check_engine_generic(ev: Evidence):
     names = curriculum_names(ev)
     checks_doc = ev.parse(CHECKS)
-    sources = curriculum_owned_paths(checks_doc)
+
+    # gate_impl_fix, §6 phase 3. (b)'s vocabulary is what a curriculum declares about
+    # itself, and it was reached through the owners under `curricula/` that the engine's
+    # own inventory named. Phase 3 moves exactly those entries to the curricula that own
+    # them, which is the leak this gate reported — so reading only the engine's half
+    # would leave the detector with no vocabulary at all, on the day the leak closed.
+    # The inventory is now two kinds of file and is read as both. (b)'s *subject* is
+    # unchanged and still the engine's ids alone: `engine_owned_checks` below reads
+    # `policy/checks.v1.yaml`, never the merge.
+    inventory = common.merged_check_inventory()
+    sources = curriculum_owned_paths(inventory)
     ev.resolve(
         "every check owner under curricula/",
-        rel(CHECKS),
+        "the check inventory — " + ", ".join(rel(p) for p in common.check_inventories()),
         "the curriculum manifests that declare the domain's own terms",
     )
     terms, problems = declared_domain_terms(sources, ev)
     if not terms:
         problems.append(
-            "no-domain-terms-declared: no curriculum manifest named as an owner in "
-            f"{rel(CHECKS)} declares a *_terms block, so (b) is unmeasurable and is "
+            "no-domain-terms-declared: no curriculum manifest named as an owner in the "
+            "check inventory declares a *_terms block, so (b) is unmeasurable and is "
             "reported as such rather than as a pass"
         )
 

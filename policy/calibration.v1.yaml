@@ -5,16 +5,24 @@
 # once so nothing downstream has to guess it, and so no document can quietly assume
 # a different one.
 #
-# Precedence: this file outranks every prose document in the project. Where
-# curricula/arduino_kit/lab_brief.md, curricula/arduino_kit/teacher_framework.md,
-# curricula/arduino_kit/teacher_audit.md or curricula/arduino_kit/roster.md state a
-# learner age, a supply, or a supervision rule that differs from the values below,
-# this file wins and the difference is a defect to be reported, not resolved silently.
+# Precedence: this file outranks every prose document in the project. Where **the
+# curriculum's** prose — its brief, its teaching framework, its audit, its roster —
+# states a learner age, a supply, or a supervision rule that differs from the values
+# below, this file wins and the difference is a defect to be reported, not resolved
+# silently.
 #
-# What is NOT here: the permitted supplies. They belong to one kit, not to the
-# engine, and they moved to curricula/arduino_kit/kit_calibration.v1.yaml in phase 3
-# of the folder-refactoring plan. policy/ binds every run regardless of curriculum;
-# a second curriculum would otherwise have inherited one kit's supplies in silence.
+# That rule used to be written with four file paths under one curriculum's directory.
+# It was correct in general and written in the particular, which is a binding a second
+# curriculum falls outside of: its prose has different filenames and would have been
+# outranked by nothing. FR-P5-ENGINE-GENERIC measured it, the phase-0 result note
+# recorded it as G7, and section 6 phase 3 of
+# plans/simplification/plan/simplification.plan.v3.md generalised it. The rule is
+# unchanged; only its reach is. Nothing was exempted from the gate.
+#
+# What is NOT here: the permitted supplies. They belong to one curriculum's kit, not to
+# the engine, and they live in that curriculum's own kit calibration. policy/ binds
+# every run regardless of curriculum; a second curriculum would otherwise have
+# inherited the first one's supplies in silence.
 
 calibration_version: '1.0'
 

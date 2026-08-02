@@ -1,0 +1,122 @@
+# arduino_kit's own check inventory — the checks whose subject is this curriculum.
+#
+# Split out of policy/checks.v1.yaml by
+# plans/simplification/plan/simplification.plan.v3.md section 6 phase 3. That file is
+# the engine's inventory and binds every run regardless of curriculum; every id below
+# names a file under curricula/arduino_kit/ as its owner or its artifact, or asserts
+# something only electronics means. Holding them in the engine's list is G3, and the
+# form G3 actually took is stronger than "shared namespace": the engine's inventory
+# held the *paths* of one curriculum's files as the subjects of its checks.
+#
+# Both inventories validate against the same contract, schemas/checks.schema.v1.json.
+# Only the owner changes. Nothing here is weakened, and no id was dropped rather than
+# moved — the split is a move, and FR-P4-CHECK-MAPPING reads the two as one inventory
+# so that every id still resolves to a gate that runs it or an RT- id that records why
+# not.
+#
+# LAB-CURRENT-MARGIN and LAB-VALUE-SOURCED are the two ids section 2 names as domain
+# assertions living in the engine's inventory. They still point at
+# schemas/lab.schema.v3.json, which is the contract that carries the fields they name;
+# the engine's v4 replaced that block with `domain`, whose shape this curriculum
+# supplies in domain.schema.v1.json.
+checks_version: '1.0'
+schema: schemas/checks.schema.v1.json
+calibration:
+- id: CAL-SOURCE-VERIFIED
+  owner: curricula/arduino_kit/kit_calibration.v1.yaml
+  method: mapping
+  artifact: curricula/arduino_kit/arduino_kit_curriculum.v5.yaml
+  verified_by: FR-P3-KIT-SOURCE
+  asserts: every powered lab declares exactly one input by id from its curriculum's kit_calibration
+    power.permitted_inputs, and that input's verification is verified_official. The permitted supplies
+    belong to one kit, not to the engine, which is why they left policy/calibration.v1.yaml in phase
+    3.
+  stage: static
+curriculum:
+- id: CUR-SCHEMA-VALID
+  owner: curricula/arduino_kit/arduino_kit_curriculum.v5.yaml
+  method: schema
+  artifact: schemas/curriculum.schema.v5.json
+  verified_by: FR-P0-SCHEMA
+  asserts: the curriculum validates against schemas/curriculum.schema.v5.json, which requires it to
+    declare its own domain — the schema its units' domain block is checked against, the verifier that
+    checks the content, and the domain configuration v4 carried at the top level under one kit's names
+  stage: static
+- id: CUR-IDS-CONTIGUOUS
+  owner: curricula/arduino_kit/arduino_kit_curriculum.v5.yaml
+  method: execution
+  deferred: RT-5
+  asserts: lab ids are unique, ascending and contiguous from L01
+  stage: static
+- id: CUR-PREREQS-RESOLVE
+  owner: curricula/arduino_kit/arduino_kit_curriculum.v5.yaml
+  method: execution
+  deferred: RT-5
+  asserts: every prerequisite names a lab that exists and precedes it
+  stage: static
+- id: CUR-ORIENTATIONS
+  owner: curricula/arduino_kit/arduino_kit_curriculum.v5.yaml
+  method: execution
+  deferred: RT-5
+  asserts: every lab declaring an orientation cue has one, or states the part has none
+  stage: static
+- id: CUR-VISUAL-ROLES
+  owner: curricula/arduino_kit/arduino_kit_curriculum.v5.yaml
+  method: execution
+  deferred: RT-5
+  asserts: every lab declares its visual roles, or a documented reviewer finding omits one
+  stage: static
+l01:
+- id: L01-DISCONNECTED
+  owner: curricula/arduino_kit/l01_unpowered_power_path.json
+  method: execution
+  artifact: schemas/circuit_data.schema.v1.json
+  deferred: RT-5
+  asserts: all objects disconnected and unpowered; no selected or live rail
+  stage: static
+- id: L01-POLARITY-NEUTRAL
+  owner: curricula/arduino_kit/l01_unpowered_power_path.json
+  method: schema
+  artifact: schemas/circuit_data.schema.v1.json
+  verified_by: FR-P4-FIXTURE-BITES
+  asserts: no connector-polarity claim without exact primary evidence. Proven by curricula/arduino_kit/fixtures/l01_polarity_asserted.reject.json,
+    which must be REJECTED
+  stage: deterministic
+  fixture: curricula/arduino_kit/fixtures/l01_polarity_asserted.reject.json
+  fixture_expectation: reject
+- id: L01-NO-INVENTED-SUPPLY
+  owner: curricula/arduino_kit/kit_calibration.v1.yaml
+  method: execution
+  deferred: RT-5
+  asserts: no wall adapter or supply that is not in the curriculum's own kit_calibration power.permitted_inputs
+  stage: static
+- id: L01-NO-UNPERFORMED-OBSERVATION
+  owner: curricula/arduino_kit/l01_unpowered_power_path.json
+  method: execution
+  deferred: RT-5
+  asserts: no claim that a physical observation occurred when it did not
+  stage: static
+lab_document:
+- id: LAB-CURRENT-MARGIN
+  owner: schemas/lab.schema.v3.json
+  method: execution
+  artifact: schemas/lab.schema.v3.json
+  deferred: RT-5
+  asserts: a circuit at designed_verified carries calculations and measurements, and every calculation
+    states its margin_to_rating
+  stage: deterministic
+  fixture_expectation: reject
+  note: still pointed at v3 deliberately. This is a domain assertion about the block v4 replaced with
+    `domain`, so v4 does not carry the fields it names. It is one of the two ids section 2's G3 names
+    as domain assertions living in the engine's inventory, and phase 3 is where it moves to the curriculum
+    that owns it.
+- id: LAB-VALUE-SOURCED
+  owner: schemas/lab.schema.v3.json
+  method: execution
+  artifact: schemas/lab.schema.v3.json
+  deferred: RT-5
+  asserts: every component_spec.parameters entry and every ratings_and_limits entry carries a source
+  stage: deterministic
+  fixture_expectation: reject
+  rejects: a forward voltage recalled rather than cited
+  note: still pointed at v3 for the same reason as LAB-CURRENT-MARGIN, and moved by the same phase.

@@ -1,9 +1,19 @@
-# Every stable check id, what it asserts, and where it is enforced.
+# The engine's check inventory — every stable check id that binds every run regardless
+# of curriculum, what it asserts, and where it is enforced.
 #
 # A check named in a result record but never executed is evidence misreporting —
-# that is gate B3, and it is a drift stop, not a bug. So this file is the single
-# list, and a meta-test asserts that every id advertised by a result appears here
-# with a real assertion behind it.
+# that is gate B3, and it is a drift stop, not a bug. So the inventory is exhaustive,
+# and a meta-test asserts that every id advertised by a result appears in it with a
+# real assertion behind it.
+#
+# **The inventory is two kinds of file, and this is the engine's.** A check whose
+# subject is one curriculum's file lives with that curriculum, in
+# curricula/<name>/checks.v1.yaml, validated against this same contract. Until
+# plans/simplification/plan/simplification.plan.v3.md section 6 phase 3 they were all
+# here, and that is G3: not only that domain checks shared the engine's id namespace,
+# but that the engine's inventory held the *paths* of one curriculum's files as the
+# subjects of its checks. FR-P4-CHECK-MAPPING reads both halves as one inventory, so
+# nothing was dropped rather than moved.
 #
 # Being listed here is not being executed, and the two are never conflated. Every id
 # names the file that states its rule and the method that verifies it, and resolves
@@ -19,484 +29,306 @@ checks_version: '1.0'
 schema: schemas/checks.schema.v1.json
 
 
-# ---------------------------------------------------------------------------
 calibration:
-  - id: CAL-VALID
-    owner: policy/calibration.v1.yaml
-    method: schema
-    artifact: schemas/calibration.schema.v1.json
-    verified_by: FR-P0-SCHEMA
-    asserts: policy/calibration.v1.yaml validates against schemas/calibration.schema.v1.json
-    stage: static
-    note: run first — every later check reads values from calibration
-  - id: CAL-SCHEMA-AGREE
-    owner: policy/calibration.v1.yaml
-    method: mapping
-    artifact: schemas/lab.schema.v4.json
-    verified_by: FR-P3-CAL-AGREE
-    asserts: >-
-      every value in calibration.pedagogy_caps equals the schema constraint named in
-      that cap's own enforced_by pointer
-    stage: static
-    note: a schema cap that drifts from its premise fails the build
-  - id: CAL-SOURCE-VERIFIED
-    owner: curricula/arduino_kit/kit_calibration.v1.yaml
-    method: mapping
-    artifact: curricula/arduino_kit/arduino_kit_curriculum.v5.yaml
-    verified_by: FR-P3-KIT-SOURCE
-    asserts: >-
-      every powered lab declares exactly one input by id from its curriculum's
-      kit_calibration power.permitted_inputs, and that input's verification is
-      verified_official. The permitted supplies belong to one kit, not to the
-      engine, which is why they left policy/calibration.v1.yaml in phase 3.
-    stage: static
-
-# ---------------------------------------------------------------------------
+- id: CAL-VALID
+  owner: policy/calibration.v1.yaml
+  method: schema
+  artifact: schemas/calibration.schema.v1.json
+  verified_by: FR-P0-SCHEMA
+  asserts: policy/calibration.v1.yaml validates against schemas/calibration.schema.v1.json
+  stage: static
+  note: run first — every later check reads values from calibration
+- id: CAL-SCHEMA-AGREE
+  owner: policy/calibration.v1.yaml
+  method: mapping
+  artifact: schemas/lab.schema.v4.json
+  verified_by: FR-P3-CAL-AGREE
+  asserts: every value in calibration.pedagogy_caps equals the schema constraint named in that cap's
+    own enforced_by pointer
+  stage: static
+  note: a schema cap that drifts from its premise fails the build
 curriculum:
-  - id: CUR-SCHEMA-VALID
-    owner: curricula/arduino_kit/arduino_kit_curriculum.v5.yaml
-    method: schema
-    artifact: schemas/curriculum.schema.v5.json
-    verified_by: FR-P0-SCHEMA
-    asserts: >-
-      the curriculum validates against schemas/curriculum.schema.v5.json, which requires
-      it to declare its own domain — the schema its units' domain block is checked
-      against, the verifier that checks the content, and the domain configuration v4
-      carried at the top level under one kit's names
-    stage: static
-  - id: CUR-COUNT-DERIVED
-    owner: meta_prompt/assets/inputs.v1.md
-    method: execution
-    deferred: RT-5
-    asserts: >-
-      the lab count used by every test and command was read from the manifest at run
-      time, and no fixed count appears in code, schema, CLI default or report text
-    stage: static
-  - id: CUR-IDS-CONTIGUOUS
-    owner: curricula/arduino_kit/arduino_kit_curriculum.v5.yaml
-    method: execution
-    deferred: RT-5
-    asserts: lab ids are unique, ascending and contiguous from L01
-    stage: static
-  - id: CUR-PREREQS-RESOLVE
-    owner: curricula/arduino_kit/arduino_kit_curriculum.v5.yaml
-    method: execution
-    deferred: RT-5
-    asserts: every prerequisite names a lab that exists and precedes it
-    stage: static
-  - id: CUR-ORIENTATIONS
-    owner: curricula/arduino_kit/arduino_kit_curriculum.v5.yaml
-    method: execution
-    deferred: RT-5
-    asserts: every lab declaring an orientation cue has one, or states the part has none
-    stage: static
-  - id: CUR-VISUAL-ROLES
-    owner: curricula/arduino_kit/arduino_kit_curriculum.v5.yaml
-    method: execution
-    deferred: RT-5
-    asserts: every lab declares its visual roles, or a documented reviewer finding omits one
-    stage: static
-  - id: CUR-BOUNDED-PROMPTS
-    owner: meta_prompt/assets/architecture.v1.md
-    method: execution
-    deferred: RT-5
-    asserts: every worker prompt declares role, check ids, authorized paths and one output schema
-    stage: static
-
-# ---------------------------------------------------------------------------
-l01:
-  - id: L01-DISCONNECTED
-    owner: curricula/arduino_kit/l01_unpowered_power_path.json
-    method: execution
-    artifact: schemas/circuit_data.schema.v1.json
-    deferred: RT-5
-    asserts: all objects disconnected and unpowered; no selected or live rail
-    stage: static
-  - id: L01-POLARITY-NEUTRAL
-    owner: curricula/arduino_kit/l01_unpowered_power_path.json
-    method: schema
-    artifact: schemas/circuit_data.schema.v1.json
-    verified_by: FR-P4-FIXTURE-BITES
-    asserts: >-
-      no connector-polarity claim without exact primary evidence. Proven by
-      curricula/arduino_kit/fixtures/l01_polarity_asserted.reject.json, which must be REJECTED
-    stage: deterministic
-    fixture: curricula/arduino_kit/fixtures/l01_polarity_asserted.reject.json
-    fixture_expectation: reject
-  - id: L01-NO-INVENTED-SUPPLY
-    owner: curricula/arduino_kit/kit_calibration.v1.yaml
-    method: execution
-    deferred: RT-5
-    asserts: >-
-      no wall adapter or supply that is not in the curriculum's own kit_calibration
-      power.permitted_inputs
-    stage: static
-  - id: L01-NO-UNPERFORMED-OBSERVATION
-    owner: curricula/arduino_kit/l01_unpowered_power_path.json
-    method: execution
-    deferred: RT-5
-    asserts: no claim that a physical observation occurred when it did not
-    stage: static
-
-# ---------------------------------------------------------------------------
+- id: CUR-COUNT-DERIVED
+  owner: meta_prompt/assets/inputs.v1.md
+  method: execution
+  deferred: RT-5
+  asserts: the lab count used by every test and command was read from the manifest at run time, and
+    no fixed count appears in code, schema, CLI default or report text
+  stage: static
+- id: CUR-BOUNDED-PROMPTS
+  owner: meta_prompt/assets/architecture.v1.md
+  method: execution
+  deferred: RT-5
+  asserts: every worker prompt declares role, check ids, authorized paths and one output schema
+  stage: static
 lab_document:
-  - id: LAB-SCHEMA-VALID
-    owner: schemas/lab.schema.v4.json
-    method: execution
-    artifact: schemas/lab.schema.v4.json
-    deferred: RT-5
-    asserts: >-
-      the unit validates against schemas/lab.schema.v4.json — the six engine blocks and
-      the domain block — and its domain block validates against the schema its own
-      curriculum names in manifest domain.schema
-    stage: golden
-  - id: LAB-BLOOM-DEPTH
-    owner: schemas/lab.schema.v4.json
-    method: execution
-    artifact: schemas/lab.schema.v4.json
-    deferred: RT-5
-    asserts: >-
-      at least one learning objective reaches the Bloom level floored by
-      calibration.pedagogy_caps.bloom_floor. The floor is a premise and is never
-      restated here; this check asserts the lab meets it.
-    stage: deterministic
-    fixture_expectation: reject
-    rejects: a lab whose objectives sit entirely at the lowest Bloom level — identification alone is not a lab
-  - id: LAB-POE-ORDER
-    owner: schemas/lab.schema.v4.json
-    method: execution
-    artifact: schemas/lab.schema.v4.json
-    deferred: RT-5
-    asserts: the prediction is recorded before the observation
-    stage: deterministic
-    fixture_expectation: reject
-    rejects: recorded_before_observing false or absent
-  - id: LAB-CURRENT-MARGIN
-    owner: schemas/lab.schema.v3.json
-    method: execution
-    artifact: schemas/lab.schema.v3.json
-    deferred: RT-5
-    asserts: >-
-      a circuit at designed_verified carries calculations and measurements, and every
-      calculation states its margin_to_rating
-    stage: deterministic
-    fixture_expectation: reject
-    note: >-
-      still pointed at v3 deliberately. This is a domain assertion about the block v4
-      replaced with `domain`, so v4 does not carry the fields it names. It is one of the
-      two ids section 2's G3 names as domain assertions living in the engine's
-      inventory, and phase 3 is where it moves to the curriculum that owns it.
-  - id: LAB-VALUE-SOURCED
-    owner: schemas/lab.schema.v3.json
-    method: execution
-    artifact: schemas/lab.schema.v3.json
-    deferred: RT-5
-    asserts: >-
-      every component_spec.parameters entry and every ratings_and_limits entry carries
-      a source
-    stage: deterministic
-    fixture_expectation: reject
-    rejects: a forward voltage recalled rather than cited
-    note: >-
-      still pointed at v3 for the same reason as LAB-CURRENT-MARGIN, and moved by the
-      same phase.
-
-# ---------------------------------------------------------------------------
-# The generic checks the engine owes every curriculum. Each operates on a unit file
-# and knows nothing about what the unit teaches, which is why each is executable
-# before any generator exists: a hand-written fixture exercises it.
-#
-# Each is VERIFIED HERE against its fixtures and against zero generated units, because
-# none exists. RT-7 is that gap recorded. "Executed against a fixture" and "executed
-# against generated work" are different claims and are never merged.
+- id: LAB-SCHEMA-VALID
+  owner: schemas/lab.schema.v4.json
+  method: execution
+  artifact: schemas/lab.schema.v4.json
+  deferred: RT-5
+  asserts: the unit validates against schemas/lab.schema.v4.json — the six engine blocks and the domain
+    block — and its domain block validates against the schema its own curriculum names in manifest domain.schema
+  stage: golden
+- id: LAB-BLOOM-DEPTH
+  owner: schemas/lab.schema.v4.json
+  method: execution
+  artifact: schemas/lab.schema.v4.json
+  deferred: RT-5
+  asserts: at least one learning objective reaches the Bloom level floored by calibration.pedagogy_caps.bloom_floor.
+    The floor is a premise and is never restated here; this check asserts the lab meets it.
+  stage: deterministic
+  fixture_expectation: reject
+  rejects: a lab whose objectives sit entirely at the lowest Bloom level — identification alone is not
+    a lab
+- id: LAB-POE-ORDER
+  owner: schemas/lab.schema.v4.json
+  method: execution
+  artifact: schemas/lab.schema.v4.json
+  deferred: RT-5
+  asserts: the prediction is recorded before the observation
+  stage: deterministic
+  fixture_expectation: reject
+  rejects: recorded_before_observing false or absent
 unit:
-  - id: TEXT-READABILITY-BAND
-    owner: policy/calibration.v1.yaml
-    method: mapping
-    artifact: schemas/calibration.schema.v1.json
-    verified_by: FR-P5-READABILITY
-    asserts: >-
-      every unit's child-facing text scores inside the band policy/calibration.v1.yaml
-      declares under readability, by the metric that block names. A band and not a
-      ceiling: text far below it is as wrong as text far above it.
-    stage: deterministic
-    fixture: tests/fixtures/unit_readability_above_band.reject.json
-    fixture_expectation: reject
-    note: >-
-      zero generated units exist to score today; the executed assertion is the fixture
-      pair, and RT-7 is the coverage that is missing
-  - id: TEXT-BLOOM-VERBS
-    owner: policy/calibration.v1.yaml
-    method: mapping
-    artifact: schemas/calibration.schema.v1.json
-    verified_by: FR-P5-BLOOM-VERBS
-    asserts: >-
-      every disagreement between an objective's declared bloom_level and the verb that
-      opens its statement is raised and recorded against the ordered bloom_verbs table.
-      This check FLAGS and NEVER BLOCKS — human raters agree with each other on Bloom
-      level only 46.58% of the time, so what is asserted is that the disagreement was
-      reported, never that the verdict is right.
-    stage: deterministic
-    fixture: tests/fixtures/unit_bloom_verb_below_level.reject.json
-    fixture_expectation: reject
-    note: >-
-      LAB-BLOOM-DEPTH checks the declared field against the floor; this reads the
-      sentence beneath it. Two different questions, and neither answers the other.
-  - id: DOC-DERIVED-FROM-SOURCE
-    owner: policy/failures.v1.yaml
-    method: mapping
-    artifact: tests/fixtures/unit_derivation_one_parent.accept.json
-    verified_by: FR-P5-DERIVATION
-    asserts: >-
-      every fact a unit renders names the pointer into its own domain block that it came
-      from, that pointer resolves, and the rendered string equals what is there. A unit
-      that renders no fact from its domain data fails: prose with no parent is the
-      defect, not the absence of a check.
-    stage: deterministic
-    fixture: tests/fixtures/unit_derivation_unparented.reject.json
-    fixture_expectation: reject
-    note: corrects A6 and A8 — one parent, checked mechanically rather than asserted
-  - id: RECEIPT-HASH-RESOLVES
-    owner: policy/failures.v1.yaml
-    method: mapping
-    artifact: tests/fixtures/unit_receipt_resolves.accept/unit.json
-    verified_by: FR-P5-RECEIPT-HASH
-    asserts: >-
-      every visual's recorded provenance hash equals the SHA-256 recomputed from the
-      bytes of the artifact it names. The hash is recomputed and never trusted as
-      recorded.
-    stage: deterministic
-    fixture: tests/fixtures/unit_receipt_unresolved.reject/unit.json
-    fixture_expectation: reject
-    note: >-
-      B4 generalised out of PDFs. PDF-ASSET-RESOLVES is the same rule against a rendered
-      artifact and needs a renderer; this one needs only bytes, so it runs today.
-
-# ---------------------------------------------------------------------------
+- id: TEXT-READABILITY-BAND
+  owner: policy/calibration.v1.yaml
+  method: mapping
+  artifact: schemas/calibration.schema.v1.json
+  verified_by: FR-P5-READABILITY
+  asserts: 'every unit''s child-facing text scores inside the band policy/calibration.v1.yaml declares
+    under readability, by the metric that block names. A band and not a ceiling: text far below it is
+    as wrong as text far above it.'
+  stage: deterministic
+  fixture: tests/fixtures/unit_readability_above_band.reject.json
+  fixture_expectation: reject
+  note: zero generated units exist to score today; the executed assertion is the fixture pair, and RT-7
+    is the coverage that is missing
+- id: TEXT-BLOOM-VERBS
+  owner: policy/calibration.v1.yaml
+  method: mapping
+  artifact: schemas/calibration.schema.v1.json
+  verified_by: FR-P5-BLOOM-VERBS
+  asserts: every disagreement between an objective's declared bloom_level and the verb that opens its
+    statement is raised and recorded against the ordered bloom_verbs table. This check FLAGS and NEVER
+    BLOCKS — human raters agree with each other on Bloom level only 46.58% of the time, so what is asserted
+    is that the disagreement was reported, never that the verdict is right.
+  stage: deterministic
+  fixture: tests/fixtures/unit_bloom_verb_below_level.reject.json
+  fixture_expectation: reject
+  note: LAB-BLOOM-DEPTH checks the declared field against the floor; this reads the sentence beneath
+    it. Two different questions, and neither answers the other.
+- id: DOC-DERIVED-FROM-SOURCE
+  owner: policy/failures.v1.yaml
+  method: mapping
+  artifact: tests/fixtures/unit_derivation_one_parent.accept.json
+  verified_by: FR-P5-DERIVATION
+  asserts: 'every fact a unit renders names the pointer into its own domain block that it came from,
+    that pointer resolves, and the rendered string equals what is there. A unit that renders no fact
+    from its domain data fails: prose with no parent is the defect, not the absence of a check.'
+  stage: deterministic
+  fixture: tests/fixtures/unit_derivation_unparented.reject.json
+  fixture_expectation: reject
+  note: corrects A6 and A8 — one parent, checked mechanically rather than asserted
+- id: RECEIPT-HASH-RESOLVES
+  owner: policy/failures.v1.yaml
+  method: mapping
+  artifact: tests/fixtures/unit_receipt_resolves.accept/unit.json
+  verified_by: FR-P5-RECEIPT-HASH
+  asserts: every visual's recorded provenance hash equals the SHA-256 recomputed from the bytes of the
+    artifact it names. The hash is recomputed and never trusted as recorded.
+  stage: deterministic
+  fixture: tests/fixtures/unit_receipt_unresolved.reject/unit.json
+  fixture_expectation: reject
+  note: B4 generalised out of PDFs. PDF-ASSET-RESOLVES is the same rule against a rendered artifact
+    and needs a renderer; this one needs only bytes, so it runs today.
 pdf:
-  - id: PDF-PAGE-COUNT
-    owner: meta_prompt/assets/proving.v1.md
-    method: execution
-    deferred: RT-5
-    asserts: rendered page count equals the count recorded at assembly
-    stage: golden
-  - id: PDF-PAGE-NONBLANK
-    owner: meta_prompt/assets/proving.v1.md
-    method: execution
-    deferred: RT-5
-    asserts: no page is uniform within 1% of a single colour
-    stage: golden
-    rejects: blank or all-black pages
-  - id: PDF-ASSET-RESOLVES
-    owner: policy/failures.v1.yaml
-    method: execution
-    deferred: RT-5
-    asserts: >-
-      every visual receipt's recorded hash matches an asset actually embedded in this
-      PDF
-    stage: golden
-    note: corrects B4 — a receipt that does not resolve is a failed gate, not a warning
-  - id: PDF-TEXT-LEGIBLE
-    owner: meta_prompt/assets/proving.v1.md
-    method: execution
-    deferred: RT-5
-    asserts: body text renders at 9 pt or above effective at 200 dpi and is not clipped
-    stage: golden
-  - id: PDF-VISUAL-REVIEW
-    owner: meta_prompt/assets/proving.v1.md
-    method: execution
-    deferred: RT-5
-    asserts: all four PDF reviewers pass against the rasterized pages
-    stage: golden
-
-# ---------------------------------------------------------------------------
+- id: PDF-PAGE-COUNT
+  owner: meta_prompt/assets/proving.v1.md
+  method: execution
+  deferred: RT-5
+  asserts: rendered page count equals the count recorded at assembly
+  stage: golden
+- id: PDF-PAGE-NONBLANK
+  owner: meta_prompt/assets/proving.v1.md
+  method: execution
+  deferred: RT-5
+  asserts: no page is uniform within 1% of a single colour
+  stage: golden
+  rejects: blank or all-black pages
+- id: PDF-ASSET-RESOLVES
+  owner: policy/failures.v1.yaml
+  method: execution
+  deferred: RT-5
+  asserts: every visual receipt's recorded hash matches an asset actually embedded in this PDF
+  stage: golden
+  note: corrects B4 — a receipt that does not resolve is a failed gate, not a warning
+- id: PDF-TEXT-LEGIBLE
+  owner: meta_prompt/assets/proving.v1.md
+  method: execution
+  deferred: RT-5
+  asserts: body text renders at 9 pt or above effective at 200 dpi and is not clipped
+  stage: golden
+- id: PDF-VISUAL-REVIEW
+  owner: meta_prompt/assets/proving.v1.md
+  method: execution
+  deferred: RT-5
+  asserts: all four PDF reviewers pass against the rasterized pages
+  stage: golden
 log:
-  - id: LOG-APPEND-ONLY
-    owner: schemas/execution_log.schema.v2.json
-    method: execution
-    deferred: RT-5
-    asserts: no record is rewritten, reordered or deleted once on disk
-    stage: logger
-  - id: LOG-IDS-MONOTONIC
-    owner: policy/failures.v1.yaml
-    method: execution
-    deferred: RT-5
-    asserts: >-
-      ACT and EXEC ids increase monotonically by construction, never recovered by
-      counting text in the file being written
-    stage: logger
-    note: corrects B1
-  - id: LOG-PAIRED
-    owner: schemas/execution_log.schema.v2.json
-    method: execution
-    deferred: RT-5
-    asserts: >-
-      every started ACT is closed exactly once, by a completion ACT citing its id or an
-      EXEC whose mandatory Closes field cites it; the unclosed set is empty
-    stage: logger
-  - id: LOG-CONCURRENT-SAFE
-    owner: policy/failures.v1.yaml
-    method: execution
-    deferred: RT-5
-    asserts: concurrent appends do not clobber earlier records
-    stage: logger
-  - id: LOG-COVERAGE
-    owner: policy/controller.v1.yaml
-    method: execution
-    deferred: RT-5
-    asserts: every checkpoint and state transition has an action record
-    stage: logger
-  - id: LOG-NO-ORPHAN-OPERATION
-    owner: policy/controller.v1.yaml
-    method: execution
-    deferred: RT-5
-    asserts: an operation without its action record fails the run
-    stage: logger
-
-# ---------------------------------------------------------------------------
+- id: LOG-APPEND-ONLY
+  owner: schemas/execution_log.schema.v2.json
+  method: execution
+  deferred: RT-5
+  asserts: no record is rewritten, reordered or deleted once on disk
+  stage: logger
+- id: LOG-IDS-MONOTONIC
+  owner: policy/failures.v1.yaml
+  method: execution
+  deferred: RT-5
+  asserts: ACT and EXEC ids increase monotonically by construction, never recovered by counting text
+    in the file being written
+  stage: logger
+  note: corrects B1
+- id: LOG-PAIRED
+  owner: schemas/execution_log.schema.v2.json
+  method: execution
+  deferred: RT-5
+  asserts: every started ACT is closed exactly once, by a completion ACT citing its id or an EXEC whose
+    mandatory Closes field cites it; the unclosed set is empty
+  stage: logger
+- id: LOG-CONCURRENT-SAFE
+  owner: policy/failures.v1.yaml
+  method: execution
+  deferred: RT-5
+  asserts: concurrent appends do not clobber earlier records
+  stage: logger
+- id: LOG-COVERAGE
+  owner: policy/controller.v1.yaml
+  method: execution
+  deferred: RT-5
+  asserts: every checkpoint and state transition has an action record
+  stage: logger
+- id: LOG-NO-ORPHAN-OPERATION
+  owner: policy/controller.v1.yaml
+  method: execution
+  deferred: RT-5
+  asserts: an operation without its action record fails the run
+  stage: logger
 reviewers:
-  - id: REV-COUNT-TWELVE
-    owner: meta_prompt/assets/architecture.v1.md
-    method: execution
-    deferred: RT-5
-    asserts: exactly twelve reviewer invocations per lab — 4 plan, 4 QA, 4 PDF
-    stage: golden
-  - id: REV-ISOLATED
-    owner: policy/failures.v1.yaml
-    method: execution
-    deferred: RT-5
-    asserts: >-
-      no reviewer's authorized input set can reach any sibling reviewer's output. The
-      test fails if a path exists
-    stage: deterministic
-    note: corrects B2 — structural isolation, not instructed isolation
-
-# ---------------------------------------------------------------------------
-# Model selection. Deliberately not ROUTE-*: "route" already means an external
-# capability proven by preflight, and these are about which model serves which
-# task. Each id names the file that states the rule and the method that verifies
-# it. An id whose method is `execution` needs a runtime nobody has built yet; it
-# carries the deferred id that would discharge it and is recorded
-# MAPPED, NOT EXECUTED — never as covered.
+- id: REV-COUNT-TWELVE
+  owner: meta_prompt/assets/architecture.v1.md
+  method: execution
+  deferred: RT-5
+  asserts: exactly twelve reviewer invocations per lab — 4 plan, 4 QA, 4 PDF
+  stage: golden
+- id: REV-ISOLATED
+  owner: policy/failures.v1.yaml
+  method: execution
+  deferred: RT-5
+  asserts: no reviewer's authorized input set can reach any sibling reviewer's output. The test fails
+    if a path exists
+  stage: deterministic
+  note: corrects B2 — structural isolation, not instructed isolation
 selector:
-  - id: SEL-DECISION-VALID
-    asserts: >-
-      every routing decision validates against
-      schemas/routing_decision.schema.v2.json with all ten required fields, and its
-      decided_model is a member of policy/routing/model_registry.v1.yaml
-    stage: static
-    owner: meta_prompt/assets/routing.v1.md
-    method: schema
-    artifact: schemas/routing_decision.schema.v2.json
-    verified_by: FR-P2-DECISION-VALID
-  - id: SEL-NO-MODEL-BYPASS
-    asserts: >-
-      --model is a fallback only and may not bypass the selector in
-      policy/routing/; a record whose executed_model differs from its
-      decided_model is a violation
-    stage: static
-    owner: policy/controller.v1.yaml
-    method: declaration
-    artifact: schemas/routing_decision.schema.v2.json
-    verified_by: FR-P2-BYPASS-DECLARED
-    note: >-
-      stated, representable and compared in gate code. Refusing the call at runtime
-      is RT-3; nothing executes --model today.
-  - id: SEL-NO-MODEL-FOR-DETERMINISTIC
-    asserts: >-
-      no model is used for merge, validation, hashing, rendering, aggregation,
-      audits or the logger
-    stage: static
-    owner: policy/controller.v1.yaml
-    method: execution
-    deferred: RT-5
-  - id: SEL-ESCALATION-BOUNDED
-    asserts: >-
-      maximum reasoning effort is reached only through a failed safety escalation,
-      and escalation stops at the convergence limits in policy/limits.v1.yaml
-    stage: static
-    owner: policy/routing/routing_policy.v1.yaml
-    method: execution
-    deferred: RT-5
-  - id: SEL-EXECUTED-MATCHES-DECIDED
-    asserts: >-
-      the model a call actually ran on equals the model its routing decision
-      decided on
-    stage: static
-    owner: meta_prompt/assets/routing.v1.md
-    method: execution
-    deferred: RT-3
-
-# ---------------------------------------------------------------------------
+- id: SEL-DECISION-VALID
+  asserts: every routing decision validates against schemas/routing_decision.schema.v2.json with all
+    ten required fields, and its decided_model is a member of policy/routing/model_registry.v1.yaml
+  stage: static
+  owner: meta_prompt/assets/routing.v1.md
+  method: schema
+  artifact: schemas/routing_decision.schema.v2.json
+  verified_by: FR-P2-DECISION-VALID
+- id: SEL-NO-MODEL-BYPASS
+  asserts: --model is a fallback only and may not bypass the selector in policy/routing/; a record whose
+    executed_model differs from its decided_model is a violation
+  stage: static
+  owner: policy/controller.v1.yaml
+  method: declaration
+  artifact: schemas/routing_decision.schema.v2.json
+  verified_by: FR-P2-BYPASS-DECLARED
+  note: stated, representable and compared in gate code. Refusing the call at runtime is RT-3; nothing
+    executes --model today.
+- id: SEL-NO-MODEL-FOR-DETERMINISTIC
+  asserts: no model is used for merge, validation, hashing, rendering, aggregation, audits or the logger
+  stage: static
+  owner: policy/controller.v1.yaml
+  method: execution
+  deferred: RT-5
+- id: SEL-ESCALATION-BOUNDED
+  asserts: maximum reasoning effort is reached only through a failed safety escalation, and escalation
+    stops at the convergence limits in policy/limits.v1.yaml
+  stage: static
+  owner: policy/routing/routing_policy.v1.yaml
+  method: execution
+  deferred: RT-5
+- id: SEL-EXECUTED-MATCHES-DECIDED
+  asserts: the model a call actually ran on equals the model its routing decision decided on
+  stage: static
+  owner: meta_prompt/assets/routing.v1.md
+  method: execution
+  deferred: RT-3
 drift:
-  - id: DRIFT-SCOPE
-    owner: meta_prompt/meta_curriculum_builder.prompt.v6.md
-    method: execution
-    deferred: RT-5
-    asserts: no write left the authorized roots and no immutable file changed
-  - id: DRIFT-NO-EARLY-GENERATION
-    owner: meta_prompt/meta_curriculum_builder.prompt.v6.md
-    method: execution
-    deferred: RT-5
-    asserts: no live dossier was created for any lab beyond L01 during the meta run
-  - id: DRIFT-NO-WEAKENING
-    owner: meta_prompt/assets/logging.v1.md
-    method: execution
-    deferred: RT-5
-    asserts: no test, schema, evidence rule or release gate was weakened to obtain a pass
-  - id: DRIFT-NO-MISREPORTING
-    owner: policy/failures.v1.yaml
-    method: execution
-    deferred: RT-5
-    asserts: >-
-      static and simulated coverage was never described as generated-lab coverage, and
-      no check was reported as present without executing
-  - id: DRIFT-TRACEABLE
-    owner: policy/controller.v1.yaml
-    method: execution
-    deferred: RT-5
-    asserts: every action links to an authorized deliverable, a failed gate, a resource total or a terminal decision
-  - id: DRIFT-CONVERGING
-    owner: policy/limits.v1.yaml
-    method: execution
-    deferred: RT-5
-    asserts: >-
-      the same failed-check set did not repeat twice without narrowing, and two cycles
-      did not add complexity without reducing failed gates
-  - id: DRIFT-EVIDENCE-STABLE
-    owner: policy/controller.v1.yaml
-    method: execution
-    deferred: RT-5
-    asserts: no accepted evidence changed without reopening its gate
-
-# ---------------------------------------------------------------------------
+- id: DRIFT-SCOPE
+  owner: meta_prompt/meta_curriculum_builder.prompt.v6.md
+  method: execution
+  deferred: RT-5
+  asserts: no write left the authorized roots and no immutable file changed
+- id: DRIFT-NO-EARLY-GENERATION
+  owner: meta_prompt/meta_curriculum_builder.prompt.v6.md
+  method: execution
+  deferred: RT-5
+  asserts: no live dossier was created for any lab beyond L01 during the meta run
+- id: DRIFT-NO-WEAKENING
+  owner: meta_prompt/assets/logging.v1.md
+  method: execution
+  deferred: RT-5
+  asserts: no test, schema, evidence rule or release gate was weakened to obtain a pass
+- id: DRIFT-NO-MISREPORTING
+  owner: policy/failures.v1.yaml
+  method: execution
+  deferred: RT-5
+  asserts: static and simulated coverage was never described as generated-lab coverage, and no check
+    was reported as present without executing
+- id: DRIFT-TRACEABLE
+  owner: policy/controller.v1.yaml
+  method: execution
+  deferred: RT-5
+  asserts: every action links to an authorized deliverable, a failed gate, a resource total or a terminal
+    decision
+- id: DRIFT-CONVERGING
+  owner: policy/limits.v1.yaml
+  method: execution
+  deferred: RT-5
+  asserts: the same failed-check set did not repeat twice without narrowing, and two cycles did not
+    add complexity without reducing failed gates
+- id: DRIFT-EVIDENCE-STABLE
+  owner: policy/controller.v1.yaml
+  method: execution
+  deferred: RT-5
+  asserts: no accepted evidence changed without reopening its gate
 preconditions:
-  - id: PRECONDITION-OUTPUT-ROOT-EXISTS
-    owner: meta_prompt/meta_curriculum_builder.prompt.v6.md
-    method: execution
-    deferred: RT-5
-    asserts: V7 does not exist at startup
-    on_failure: >-
-      stop immediately as META_SYSTEM_FAILURE before any artifact or model call.
-      Report the occupied path and the next free version name. Never auto-increment,
-      never merge, never overwrite — choosing which evidence to keep is a human
-      decision an unattended run must not make.
-  - id: PRECONDITION-ASSETS-RESOLVE
-    owner: meta_prompt/meta_curriculum_builder.prompt.v6.md
-    method: execution
-    deferred: RT-5
-    asserts: >-
-      every row of the meta prompt's asset table resolves, every asset it declares a
-      section carries the banner naming this prompt, every companion carries none, and
-      every heading a banner claims is stated in the file claiming it
-    on_failure: >-
-      stop as META_SYSTEM_FAILURE before any artifact or model call. The contract read
-      is not the contract written: a section that has left the composition takes its
-      rules with it, and an unattended run cannot tell a shorter contract from a
-      satisfied one.
-  - id: ROUTE-PROVEN
-    owner: policy/routes.v1.yaml
-    method: execution
-    deferred: RT-2
-    asserts: every route in policy/routes.v1.yaml made one real preflight call
-    stage: live-capability
+- id: PRECONDITION-OUTPUT-ROOT-EXISTS
+  owner: meta_prompt/meta_curriculum_builder.prompt.v6.md
+  method: execution
+  deferred: RT-5
+  asserts: V7 does not exist at startup
+  on_failure: stop immediately as META_SYSTEM_FAILURE before any artifact or model call. Report the
+    occupied path and the next free version name. Never auto-increment, never merge, never overwrite
+    — choosing which evidence to keep is a human decision an unattended run must not make.
+- id: PRECONDITION-ASSETS-RESOLVE
+  owner: meta_prompt/meta_curriculum_builder.prompt.v6.md
+  method: execution
+  deferred: RT-5
+  asserts: every row of the meta prompt's asset table resolves, every asset it declares a section carries
+    the banner naming this prompt, every companion carries none, and every heading a banner claims is
+    stated in the file claiming it
+  on_failure: 'stop as META_SYSTEM_FAILURE before any artifact or model call. The contract read is not
+    the contract written: a section that has left the composition takes its rules with it, and an unattended
+    run cannot tell a shorter contract from a satisfied one.'
+- id: ROUTE-PROVEN
+  owner: policy/routes.v1.yaml
+  method: execution
+  deferred: RT-2
+  asserts: every route in policy/routes.v1.yaml made one real preflight call
+  stage: live-capability

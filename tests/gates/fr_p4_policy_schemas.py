@@ -50,7 +50,18 @@ RT_ID = re.compile(r"^RT-[0-9]+$")
 
 
 def policy_manifests() -> list[Path]:
-    return sorted(POLICY.rglob("*.yaml"))
+    """Every manifest that names its own contract.
+
+    gate_impl_fix, `simplification.plan.v3.md` §6 phase 3: the check inventory split in
+    two, and the half that moved is a manifest like any other. Both halves validate
+    against the same schema — only the owner changes — and a gate that validated one of
+    them would be validating half an inventory. Curriculum inventories are reached by
+    name under a directory read at run time, never by a glob over `curricula/**`: the
+    other files there declare no contract pointer and are not manifests of this kind.
+    """
+    return sorted(POLICY.rglob("*.yaml")) + [
+        p for p in common.check_inventories() if p != common.CHECKS_MANIFEST
+    ]
 
 
 def check_entries(doc) -> list[dict]:
@@ -157,7 +168,17 @@ def mapping_violations(doc, gate_ids: set[str], deferred_ids: set[str]) -> tuple
 
 
 def check_mapping(ev: Evidence):
+    # gate_impl_fix, §6 phase 3: the inventory is the engine's file and each
+    # curriculum's own, read as one. Reading only the engine's half would report every
+    # id the split moved as undeclared, and would report the harness naming those ids as
+    # naming undeclared checks — a wrong scan root, not a weakened criterion. Nothing
+    # was dropped rather than moved, and this is what proves it in both directions.
     doc = ev.read_for_resolution(CHECKS)
+    for path in common.check_inventories():
+        if path != CHECKS:
+            doc = {**doc, **{k: doc.get(k, []) + v
+                             for k, v in (ev.read_for_resolution(path) or {}).items()
+                             if isinstance(v, list)}}
     registry = ev.import_gate_module("registry")
     gate_ids = {g["id"] for g in registry.GATES}
     deferred_ids = {
@@ -279,8 +300,10 @@ def check_agreement(ev: Evidence):
             fid, owner = entry.split("→")
             ev.resolve(fid, rel(FAILURES), f"{owner} ({'a gate here' if kind == 'gate' else 'a deferred obligation'})")
 
-    # (c) the checks.v1.yaml mapping relation, asserted from the manifest side.
-    checks_doc = ev.parse(CHECKS)
+    # (c) the check-inventory mapping relation, asserted from the manifest side.
+    # Both halves, for the reason FR-P4-CHECK-MAPPING states.
+    ev.parse(CHECKS)
+    checks_doc = common.merged_check_inventory()
     mapping_problems, verified, mapped = mapping_violations(checks_doc, gate_ids, deferred_ids)
     problems += mapping_problems
 

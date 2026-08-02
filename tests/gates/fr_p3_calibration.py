@@ -510,7 +510,14 @@ def check_kit_source(ev: Evidence):
     kit_text = ev.text_of(KIT_CALIBRATION)
     problems = []
 
-    checks = ev.read_for_resolution(REPO_ROOT / "policy" / "checks.v1.yaml")
+    # gate_impl_fix, simplification plan section 6 phase 3: CAL-SOURCE-VERIFIED is a
+    # check whose subject is one curriculum's file, so the split moved it to that
+    # curriculum's own inventory. The criterion is unchanged — the id must be declared
+    # somewhere in the inventory — and reading only the engine's half would have failed
+    # this gate for the id having been moved to where it belongs.
+    checks = common.merged_check_inventory()
+    for path in common.check_inventories():
+        ev.read_for_resolution(path)
     ids = {
         entry["id"]
         for value in (checks or {}).values()

@@ -533,8 +533,9 @@ def curriculum_contract_violations(schema) -> list[str]:
 
 
 def check_unit_contract(ev: Evidence):
-    checks_doc = ev.read_for_resolution(fr_p5_engine.CHECKS)
-    sources = fr_p5_engine.curriculum_owned_paths(checks_doc)
+    # The same declared vocabulary FR-P5-ENGINE-GENERIC reads, from the same two-file
+    # inventory, so there is one declared vocabulary in this repository and not two.
+    sources = fr_p5_engine.curriculum_owned_paths(common.merged_check_inventory())
     terms, problems = fr_p5_engine.declared_domain_terms(sources, ev)
     if not terms:
         problems.append(

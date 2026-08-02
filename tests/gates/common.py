@@ -391,6 +391,59 @@ def gate_result(ok: bool, detail: str, fixtures: Optional[list[Fixture]] = None,
 
 
 # ---------------------------------------------------------------------------
+# The check inventory, which is two kinds of file
+
+
+CHECKS_MANIFEST = REPO_ROOT / "policy" / "checks.v1.yaml"
+CURRICULA_DIR = REPO_ROOT / "curricula"
+
+# What a curriculum's own inventory is called. Resolved by convention under a
+# directory read at run time, never by curriculum name: the engine may know that
+# curricula own checks and must not know which curriculum is there.
+CURRICULUM_CHECKS_NAME = "checks.v1.yaml"
+
+
+def check_inventories() -> list[Path]:
+    """Every check inventory: the engine's, and each curriculum's own.
+
+    gate_impl_fix, `simplification.plan.v3.md` §6 phase 3. The inventory used to be one
+    file, so every gate that needed it opened `policy/checks.v1.yaml` and was right.
+    Phase 3 splits it: engine checks stay, and the checks whose subject is one
+    curriculum's file move to that curriculum, which is `G3`. A gate left reading only
+    the engine's half would report every moved id as undeclared — a wrong scan root, not
+    a weakened criterion. Both halves validate against the same schema; only the owner
+    changes, which is the whole of what the split does.
+    """
+    found = [CHECKS_MANIFEST]
+    if CURRICULA_DIR.is_dir():
+        for entry in sorted(CURRICULA_DIR.iterdir()):
+            if not entry.is_dir() or entry.name == "deprecated":
+                continue
+            candidate = entry / CURRICULUM_CHECKS_NAME
+            if candidate.is_file():
+                found.append(candidate)
+    return found
+
+
+def merged_check_inventory() -> dict:
+    """The inventories read as one document, groups concatenated in file order.
+
+    The merge is for *reading* only. Nothing writes it back, and the two halves stay
+    two files with two owners — which is the point of having split them.
+    """
+    merged: dict = {}
+    for path in check_inventories():
+        doc = _deserialize(path) or {}
+        for key, value in doc.items():
+            if isinstance(value, list):
+                merged.setdefault(key, [])
+                merged[key] = merged[key] + value
+            else:
+                merged.setdefault(key, value)
+    return merged
+
+
+# ---------------------------------------------------------------------------
 # Gate families — which plan owns which gate ids
 
 
