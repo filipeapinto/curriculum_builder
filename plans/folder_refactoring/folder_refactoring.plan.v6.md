@@ -201,7 +201,7 @@ curriculum_builder/
 │   ├── quality_gates.schema.v1.json            NEW (phase 4) ┘
 │   └── deprecated/.gitkeep                     gated — see §6
 │
-├── meta_prompt/                                PROSE A MODEL READS
+├── meta_prompt/                                PROSE A MODEL READS — see the note below
 │   ├── meta_curriculum_builder.prompt.v6.md    the contract: mission, boundary, assets, order of work
 │   ├── assets/                                 the rest of that contract, and its companions
 │   │   ├── inputs.v1.md                        section: inputs, retained contracts, precedence
@@ -247,6 +247,14 @@ curriculum_builder/
 
 `meta_prompt/routing/` ceases to exist: its four YAMLs and its readme go to
 `policy/routing/`, its prompt to `meta_prompt/`, its schema to `schemas/`.
+
+**The `meta_prompt/` block above is this plan's record and is not the live asset set.**
+`simplification.plan.v3.md` §6 phase 5 replaced the v6 prompt and its six `section`
+assets with one file, `meta_prompt/curriculum.prompt.v1.md`, and retired the rest under
+`meta_prompt/deprecated/`. A finished plan's tree records what was true when that plan
+completed, so it is left as written. The live shape is declared in two places that are
+compared against each other — `EXPECTED` in `tests/meta_prompt_source.py` and the
+`### Contract assets` table in `AGENTS.md` — and this tree is read by neither.
 
 Both `v1` contracts stay in `schemas/`, never in `schemas/deprecated/` (§6) — and, per
 fix 3, neither may appear in the meta prompt's authorized-input table.

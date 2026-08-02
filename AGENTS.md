@@ -9,6 +9,24 @@
 - `tests/` is the gate harness: `tests/run_gates.sh <phase>` runs every gate registered in `tests/gates/registry.py` with an activation phase at or below `<phase>`, in dependency order. `tests/fixtures/` and `tests/selftest/` are never read by a production check.
 - Treat `plans/legacy_v3/` as archival reference only. Its runner targets a retired external directory layout and is not the local build entry point.
 
+### Contract assets
+
+The live asset set, stated here because a shape declared in one place is
+self-certifying: whoever deletes an asset and its row in the prompt's own table can
+delete its line in `tests/meta_prompt_source.py` in the same edit, and every check stays
+green. This table is maintained for a human reader and is compared against that module
+in both directions, so agreeing with it is evidence rather than restatement. Adding or
+retiring a companion is an edit in three places, and that is the discipline, not an
+oversight. `section` assets compose into the contract; `companion` assets are inputs a
+worker reads. `curriculum.prompt.v1.md` states its own rules, so there are no `section`
+rows to state — a `section` row appearing here is a contract that has been split again.
+
+| Asset | Kind |
+|---|---|
+| `meta_prompt/assets/unit_prose.v1.md` | companion |
+| `meta_prompt/assets/pedagogy.v1.md` | companion |
+| `meta_prompt/assets/model_selector_prompt.v1.md` | companion |
+
 ## Retention
 
 Three words, three meanings, and none of them is a synonym for the others.

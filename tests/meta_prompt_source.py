@@ -184,66 +184,64 @@ def compose(read=None) -> str:
     return "\n".join(_read(path, read) for path in sources(read))
 
 
-PLAN = REPO / "plans" / "folder_refactoring" / "folder_refactoring.plan.v6.md"
+# The second authority the contract's shape is compared against.
+#
+# It used to be the folder plan's §4 target tree, and the comparison was switched off
+# with a module-level flag when `simplification.plan.v3.md` §6 phase 5 retired most of
+# that asset set and the two stopped agreeing. A flag set to `False` is not a
+# replacement, and the reasons offered for it were not either: `FR-P1-GITKEEP` checks
+# only that four `.gitkeep` files exist, and the pinned headings check the inside of a
+# file that is still listed, never whether the list is right. With the comparison off,
+# `EXPECTED` certified itself — whoever deleted an asset and its row in the prompt's own
+# table could delete its line in this module in the same edit, and everything stayed
+# green. That is precisely the failure this module's docstring describes.
+#
+# So the authority moves rather than disappearing. A finished plan's tree records what
+# was true when that plan completed and must not be edited to track the present; AGENTS.md
+# is the live map of the repository, written for a human reader, maintained for a
+# different purpose, and read by a different gate (`FR-P1-DOC`). Its `### Contract assets`
+# table is the declaration, and the two are compared in both directions.
+DOC = REPO / "AGENTS.md"
 
-# The folder plan's §4 tree is a *finished* plan's record of the asset set as it stood
-# when that plan completed. `simplification.plan.v3.md` §6 phase 5 retired most of that
-# set, so the two no longer agree and are not meant to: the tree is history, and
-# `EXPECTED` above is the live shape. Comparing them would report a completed migration
-# as a defect every time it ran. What replaces the cross-check is the retention rule —
-# every retired asset is under `meta_prompt/deprecated/`, which `FR-P1-GITKEEP` and the
-# tree gate still hold — plus the pinned headings above.
-CROSS_CHECK_PLAN_TREE = False
+ASSET_DOC_HEADING = r"^### Contract assets\s*$"
+DOC_ROW = re.compile(r"^\|\s*`(?P<path>[^`]+)`\s*\|\s*(?P<kind>\w+)\s*\|\s*$", re.M)
 
 
-def plan_assets(read=None) -> list[tuple[str, str]]:
-    """The assets §4's target tree names under ``meta_prompt/assets/``, with the kind
-    each annotation declares — ``section: …`` or ``companion: …``."""
-    if not PLAN.exists():
+def documented_assets(read=None) -> list[tuple[str, str]]:
+    """The assets AGENTS.md declares, with the kind each row states."""
+    if not DOC.exists():
         return []
-    text = _read(PLAN, read)
-    rows = []
-    inside = False
-    for line in text.splitlines():
-        if re.search(r"├── assets/", line):
-            inside = True
-            continue
-        if inside:
-            match = re.search(r"[├└]── ([A-Za-z0-9_.-]+\.md)\s+(\w+):", line)
-            if not match:
-                if re.search(r"[├└]── ", line) and "│   │" not in line:
-                    break  # left the assets/ block
-                continue
-            rows.append((f"{ASSETS_REL}/{match.group(1)}", match.group(2)))
-    return rows
+    text = _read(DOC, read)
+    block = re.search(ASSET_DOC_HEADING + r"(.*?)(?=^#{2,3} )", text, re.M | re.S)
+    if not block:
+        return []
+    return [(m.group("path"), m.group("kind")) for m in DOC_ROW.finditer(block.group(1))]
 
 
 def shape_problems(read=None) -> list[str]:
-    """``EXPECTED`` against the plan's tree, both directions.
+    """``EXPECTED`` against AGENTS.md's asset table, both directions.
 
-    Without this the shape is self-certifying: whoever deletes a section asset and
-    its table row can delete its line here in the same edit, and every check stays
-    green. The plan is maintained for a different purpose by a different gate, so
+    Without this the shape is self-certifying: whoever deletes an asset and its table
+    row can delete its line here in the same edit, and every check stays green. The
+    document is maintained for a different purpose and read by a different gate, so
     agreeing with it is evidence rather than restatement.
     """
-    if not CROSS_CHECK_PLAN_TREE:
-        return []
     expected = [(path, kind) for path, kind, _ in EXPECTED]
-    declared = plan_assets(read)
+    declared = documented_assets(read)
     problems = []
     if not declared:
-        return ["assets: the plan's §4 tree names no assets, so the contract's shape rests "
-                "on nothing but its own word"]
+        return ["assets: AGENTS.md's `### Contract assets` table names no assets, so the "
+                "contract's shape rests on nothing but its own word"]
     for row in expected:
         if row not in declared:
             problems.append(
-                f"assets: {row[0]} ({row[1]}) is part of the contract's shape and the plan's "
-                f"§4 tree does not name it as such"
+                f"assets: {row[0]} ({row[1]}) is part of the contract's shape and AGENTS.md "
+                f"does not name it as such"
             )
     for row in declared:
         if row not in expected:
             problems.append(
-                f"assets: the plan's §4 tree names {row[0]} ({row[1]}) and the contract's "
-                "shape does not"
+                f"assets: AGENTS.md names {row[0]} ({row[1]}) and the contract's shape does "
+                "not"
             )
     return problems
