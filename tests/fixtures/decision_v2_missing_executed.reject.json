@@ -1,5 +1,5 @@
 {
-  "_fixture": "Negative fixture for FR-P2-CONTRACT-VERSIONED (a). A v2 decision omitting executed_model. Under v1 this record was complete; under v2 the route actually executed must be recorded, or 'the executed route differs from the decided route' stays inexpressible.",
+  "_fixture": "Negative fixture for FR-P2-CONTRACT-VERSIONED (b). A v2 decision omitting executed_model. Under v1 this record was complete; under v2 the route actually executed must be recorded, or 'the executed route differs from the decided route' stays inexpressible.",
   "task_id": "L01-deterministic-circuit-design",
   "task_class": "deterministic_circuit_design",
   "risk": "safety_critical",

@@ -49,7 +49,7 @@ power:
 # Where the kit's power premise is enforced, so a change here has a known blast
 # radius. Same form as the caps in policy/calibration.v1.yaml.
 enforced_by:
-  power.permitted_inputs: schemas/lab.schema.v3.json → safety.power_profile.source
+  power.permitted_inputs: curricula/arduino_kit/domain.schema.v1.json → power_profile.source
 
 # Every fact in this file that is *this kit's* rather than any kit's, and the
 # anchored pattern that matches it as it would be written in prose.

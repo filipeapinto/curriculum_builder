@@ -146,7 +146,7 @@
       #set text(size: 8.3pt)
       #set par(leading: 0.62em)
       #box(width: 100%)[• curriculum.v4.yaml — which labs, how many]  \
-      #box(width: 100%)[• lab.schema.v3.json]  \
+      #box(width: 100%)[• lab.schema.v4.json]  \
       #box(width: 100%)[• component\_lab\_template]  \
       #box(width: 100%)[• routing/ — model policy]  \
       #box(width: 100%)[• legacy v3 generator — evidence]
@@ -427,7 +427,7 @@
     #text(weight: "bold", fill: gen-c)[After the last lab:]  assemble workbook  →  4 workbook reviews  →  final PDF  →  #text(weight: "bold")[done]
   ])
   #ntext(CW * 0.56, 0.6mm, CW * 0.44, align-h: right, text(size: 7.6pt, fill: grey)[
-    every lab validates against #text(style: "italic")[lab.schema.v3.json] — seven blocks: identity · pedagogy · sequence (5E) · electronics · content · safety · visuals
+    every lab validates against #text(style: "italic")[lab.schema.v4.json] — seven blocks: identity · pedagogy · sequence (5E) · electronics · content · safety · visuals
   ])
 ]
 #v(2mm)
@@ -480,5 +480,5 @@
 
 #v(6mm)
 #align(right)[
-  #text(size: 7.2pt, fill: grey-lt)[curriculum\_creator  ·  meta prompt v6  ·  lab schema v3]
+  #text(size: 7.2pt, fill: grey-lt)[curriculum\_creator  ·  meta prompt v6  ·  lab schema v4]
 ]

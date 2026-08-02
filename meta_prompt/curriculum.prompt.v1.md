@@ -79,23 +79,6 @@ capability gate proves those four and cannot preflight this. That is a known div
 not a detail: record it in the run's report, and never report the route set as fully
 proven while it stands.
 
-### Retained contracts
-
-These are **not** authorized inputs. Each is a superseded version kept so that work
-already accepted under it still validates; a validator checking an old record may
-read one, and nothing else may. A new run is never validated against a superseded
-contract. Both are retirable under `RT-6` in `policy/deferred.v1.yaml`, once a
-logger emits `v2`-valid records and a selector emits `v2`-valid decisions.
-
-| Retained contract | Readable only to |
-|---|---|
-| `schemas/execution_log.schema.v1.json` | validate execution logs already accepted under v1 |
-| `schemas/routing_decision.schema.v1.json` | validate routing decisions already accepted under v1 |
-
-`schemas/lab.schema.v3.json` and `schemas/curriculum.schema.v4.json` are retained on the
-same terms. Both name one subject where the contract should have named none, which is
-why v4 and v5 replaced them; zero units were ever accepted under either.
-
 ## Precedence
 
 When sources disagree, this order settles it — always, and without averaging:

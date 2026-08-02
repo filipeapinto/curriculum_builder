@@ -757,36 +757,39 @@ None of these claims execution of a selector: there is none (§3).
 they author. Under ID order alone, `FR-P2-BYPASS-DECLARED` would have run first — the v5
 defect.
 
-**`FR-P2-CONTRACT-VERSIONED`** · 2 · `tree+text+schema+mapping+execution` · depends on:
+**`FR-P2-CONTRACT-VERSIONED`** · 2 · `tree+text+schema+parse` · depends on:
 `FR-P0-SCHEMA`
 `python3 tests/gates/fr_p2_selector.py --check contract-versioned`
-**Pass:** six conditions.
- (a) `schemas/routing_decision.schema.v2.json` exists and is a valid JSON Schema; its
- required list is v1's nine fields with `selected_model` **renamed** `decided_model`,
- plus `executed_model` — ten in all.
- (b) `schemas/execution_log.schema.v2.json` exists and is a valid JSON Schema; its `act`
- required set is **v1's nine fields plus `action_kind`** — a typed discriminator whose
- enum members include `model_call` — with `decision_id` required conditionally per (c).
- Free-text `action` is retained, as description only.
- (c) The `decision_id` requirement is conditional **on the discriminator**:
+**Pass:** five conditions. (Through the schema retirement plan: this gate compared v2's
+shape against v1's by reading both, and asserted v1 stayed byte-unchanged in `schemas/`
+for as long as work accepted under it might need it. `RT-7`/`RT-5` and the confirmed
+finding in `plans/schema_retirement/prompt/schema_retirement.prompt.v1.md` established
+that nothing was ever accepted under v1, so that leg is gone and v2's required shape is
+asserted directly instead of derived from a file about to move to `schemas/deprecated/`.)
+ (a) `schemas/routing_decision.schema.v2.json` and `schemas/execution_log.schema.v2.json`
+ both exist and are valid JSON Schema.
+ (b) The decision contract's required list is exactly `candidate_pool`,
+ `decision_rationale`, `quality_gate`, `reasoning_effort`, `risk`, `status`,
+ `task_class`, `task_id`, `decided_model` and `executed_model` — ten fields,
+ `decided_model`/`executed_model` in place of the single `selected_model` no version of
+ this contract carries any longer.
+ (c) The log contract's `act` required set is exactly those ten fields — a typed
+ discriminator whose enum members include `model_call` — with `decision_id` required
+ conditionally per (d). Free-text `action` is retained, as description only.
+ (d) The `decision_id` requirement is conditional **on the discriminator**:
  `if: {properties: {action_kind: {const: model_call}}}, then: {required:
  ["decision_id"]}`. It must not key on any substring of `action`.
- (d) Both **v1 files remain in `schemas/`**, byte-unchanged from `HEAD~`, and neither is
- in `schemas/deprecated/` (§6).
- (e) A v1-shaped record still validates against v1, and a v2-shaped record against v2.
- (f) Every live manifest reference names `v2`; the only surviving `v1` references are in
- audit records of already-accepted work and in the retained-contracts table (§6).
-**Fixtures:** `contract_v1_edited_in_place.reject.json` (`expected_error:
-v1-contract-mutated`); `decision_v2_missing_executed.reject.json` (`expected_error:
-'executed_model' is a required property`); `act_model_call_wordplay.reject.json` — an act
-whose `action` reads "consulted the assistant" with `action_kind: model_call` and no
-`decision_id`, which must still be rejected (`expected_error: 'decision_id' is a required
-property`). Positive fixtures for (e): `act_v1_shaped.accept.json` must validate against
-v1, and `decision_v2_valid.accept.json` against v2 — without them (e) asserts an
-acceptance nothing demonstrates.
+ (e) Every live manifest reference names `v2`; a citation of a `v1` basename survives
+ only inside a `deprecated/` directory, which nothing reads (`common.under_deprecated`).
+**Fixtures:** `decision_v2_missing_executed.reject.json` (`expected_error:
+'executed_model' is a required property`) for (b); `act_model_call_wordplay.reject.json`
+— an act whose `action` reads "consulted the assistant" with `action_kind: model_call`
+and no `decision_id`, which must still be rejected (`expected_error: 'decision_id' is a
+required property`) for (d); `decision_v2_valid.accept.json` — a well-formed v2 record,
+which must **pass**, so (b) asserts an acceptance something demonstrates.
 **Failure means:** the gates below are checking fields nobody authored (the v4 defect), or
-the discriminator is dodgeable by wording (the v5 defect), or v1 was mutated —
-retroactively invalidating accepted records.
+the discriminator is dodgeable by wording (the v5 defect), or a live file still points at
+a schema this repository retired.
 
 **`FR-P2-DEFERRED`** · 2 · `parse+text+mapping` · depends on: `FR-P0-PARSE`
 `python3 tests/gates/fr_p2_selector.py --check deferred`
@@ -803,8 +806,8 @@ retroactively invalidating accepted records.
  defined here; an unresolvable reference is a failure, not a warning. The scan root is
  that set as rule 7 defines it — by exclusion, never re-enumerated here, since a second
  hand-maintained copy is the defect this plan keeps closing. It is deliberately wider
- than `policy/**`: the retained-contracts table `FR-P2-BOUND` (c) requires lives in the
- meta prompt and cites `RT-6`.
+ than `policy/**`: `RT-` references also appear in prose outside `policy/`, for example
+ in `curricula/arduino_kit/checks.v1.yaml` and `docs/how_it_works.md`.
 Prints `FR-P2-DEFERRED PASS (6 ids, 6 mirrored, 0 dangling)`.
 **Not a `schema` check, deliberately.** `schemas/deferred.schema.v1.json` is authored in
 phase 4; this gate activates in phase 2 and would fail on a contract that does not yet
@@ -819,20 +822,20 @@ gates below and one in phase 4 accept a `§12 follow-up id` as evidence; without
 ids their acceptance criteria are not evaluable twice the same way — the v5 defect.
 
 **`FR-P2-BOUND`** · 2 · `text+mapping` · depends on: `FR-P2-CONTRACT-VERSIONED`,
-`FR-P2-DEFERRED` — (c) cites `RT-6`, so the registry must exist first
+`FR-P2-DEFERRED`
 `python3 tests/gates/fr_p2_selector.py --check bound`
-**Pass:** three conditions.
+**Pass:** two conditions. (Through the schema retirement plan: a third condition required
+a "retained contracts" table naming the two `v1` schemas and citing `RT-6`. `RT-6` is
+discharged — nothing was ever accepted under `v1`, so there is nothing left to retain —
+and the table is gone from the meta prompt along with the condition that checked for it.)
  (a) The meta prompt's **authorized-input table** names all six of: the **four**
  `policy/routing/*.yaml` manifests, `schemas/routing_decision.schema.v2.json` and
  `schemas/execution_log.schema.v2.json`. Not "exactly": the table legitimately carries
  other inputs (`policy/calibration.v1.yaml`, the curriculum and lab schemas), and a
  whitelist reading would delist them. `policy/routing/readme.md` is a folder index, not
  a model input, and is not required here.
- (b) **Neither v1 contract appears in that table.** A retained contract is readable for
- historical validation and is not an authorized input to a new run (§6).
- (c) Both v1 files appear in a separate **retained-contracts** table that states they
- validate already-accepted records only, and cites `RT-6` as the condition for retiring
- them.
+ (b) **Neither v1 contract appears in that table.** A retired schema is never an
+ authorized input to a new run.
 **Fixtures:** `prompt_missing_routing_input.reject.md` (`expected_error:
 unbound-input:model_registry.v1.yaml`); `prompt_authorizes_v1_contract.reject.md` — a
 table listing `routing_decision.schema.v1.json` as an authorized input

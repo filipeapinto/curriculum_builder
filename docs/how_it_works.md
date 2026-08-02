@@ -78,7 +78,7 @@ canonical_curriculum.yaml      the single authority for the run
 ```
 
 `curricula/arduino_kit/arduino_kit_curriculum.v4.yaml` is the input;
-`schemas/lab.schema.v3.json` (section 5)
+`schemas/lab.schema.v4.json` (section 5)
 is the output contract. There is one curriculum file and it is already resolved. Earlier versions shipped a
 base plus an override layer that patched 11 labs, and the two disagreed on
 `component_set`, `core_activity` and `safety_focus` for labs like L14, L20, L21 and
@@ -104,7 +104,7 @@ system rather than by asking a model to behave.
 
 ## 5. What a lab must contain
 
-The curriculum says *which* labs exist. `schemas/lab.schema.v3.json` says what a
+The curriculum says *which* labs exist. `schemas/lab.schema.v4.json` says what a
 finished lab **is** — seven blocks, none optional. A lab that misses any of them
 fails validation before a reviewer ever sees it.
 

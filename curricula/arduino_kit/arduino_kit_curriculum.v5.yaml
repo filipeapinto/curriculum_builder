@@ -2,11 +2,12 @@
 # v5 = v4 with the two engine-contract concepts that were one subject's words moved into
 # this curriculum's own `domain` block, and the domain verifier declared.
 #
-# `kit_power_profile` and `visual_system` were top-level concepts of
-# schemas/curriculum.schema.v4.json. "kit" and "power" are electronics words in an
-# engine contract, and a curriculum in an unrelated subject could satisfy neither —
-# that is G5 in plans/simplification/plan/simplification.plan.v3.md section 2. They are
-# unchanged below; only their owner is.
+# `kit_power_profile` and `visual_system` were top-level concepts of the predecessor
+# engine curriculum contract, superseded by v5 and now retired. "kit" and "power" are
+# electronics words in an engine contract, and a curriculum in an unrelated subject
+# could satisfy neither — that is G5 in
+# plans/simplification/plan/simplification.plan.v3.md section 2. They are unchanged
+# below; only their owner is.
 #
 # `domain.verifier` is the declaration that makes the engine's genericity safe rather
 # than merely broad: this curriculum states what checks its own domain, and the engine

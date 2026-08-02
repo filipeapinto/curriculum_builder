@@ -45,11 +45,12 @@ DEFERRED = REPO_ROOT / "policy" / "deferred.v1.yaml"
 ROUTING_DIR = REPO_ROOT / "policy" / "routing"
 MODEL_REGISTRY = ROUTING_DIR / "model_registry.v1.yaml"
 
-DECISION_V1 = REPO_ROOT / "schemas" / "routing_decision.schema.v1.json"
 DECISION_V2 = REPO_ROOT / "schemas" / "routing_decision.schema.v2.json"
-LOG_V1 = REPO_ROOT / "schemas" / "execution_log.schema.v1.json"
 LOG_V2 = REPO_ROOT / "schemas" / "execution_log.schema.v2.json"
 
+# The two retired basenames: not because a validator still reads them (RT-6, none
+# ever did), but because a live file naming one — as an authorized input or by any
+# other citation — is a defect regardless of where the file itself now lives.
 V1_CONTRACTS = ["execution_log.schema.v1.json", "routing_decision.schema.v1.json"]
 
 # The six entries FR-P2-BOUND (a) requires. Not a whitelist: the table legitimately
@@ -102,10 +103,6 @@ def authorized_input_rows(prompt_text: str) -> list[str]:
             for cell in re.findall(r"`([^`]+)`", row.split("|")[1] if len(row.split("|")) > 1 else "")]
 
 
-def retained_contracts_section(prompt_text: str) -> str:
-    return _slice(prompt_text, r"^### Retained contracts\s*$", r"^## ")
-
-
 def routing_section(prompt_text: str) -> str:
     return _slice(prompt_text, r"^## Routing\s*$", r"^## ")
 
@@ -129,7 +126,7 @@ def release_table_rows(prompt_text: str) -> list[list[str]]:
 def check_contract_versioned(ev: Evidence):
     problems: list[str] = []
 
-    # (a) the decision contract
+    # (a) both v2 contracts exist and are valid JSON Schema
     for path in (DECISION_V2, LOG_V2):
         if not ev.exists(path):
             problems.append(f"missing-contract:{rel(path)}")
@@ -141,27 +138,29 @@ def check_contract_versioned(ev: Evidence):
         if error:
             problems.append(f"invalid-schema:{rel(path)} {error}")
 
-    d1 = ev.read_for_resolution(DECISION_V1)
-    d2 = ev.read_for_resolution(DECISION_V2)
-    expected = [f for f in d1["required"] if f != "selected_model"] + ["decided_model", "executed_model"]
-    ev.resolve(
-        "the nine required fields of routing_decision v1",
-        rel(DECISION_V1),
-        f"the ten required fields of {rel(DECISION_V2)}",
-    )
-    if set(d2["required"]) != set(expected) or len(d2["required"]) != 10:
+    # (b) its own required shape: ten fields, decided_model and executed_model in
+    # place of the single selected_model no successor of v1 carries any longer
+    d2 = ev.parse(DECISION_V2)
+    expected_decision = {
+        "candidate_pool", "decision_rationale", "quality_gate", "reasoning_effort",
+        "risk", "status", "task_class", "task_id", "decided_model", "executed_model",
+    }
+    if set(d2["required"]) != expected_decision or len(d2["required"]) != 10:
         problems.append(
-            f"decision-required-mismatch: v2 requires {sorted(d2['required'])}, expected {sorted(expected)}"
+            f"decision-required-mismatch: v2 requires {sorted(d2['required'])}, "
+            f"expected {sorted(expected_decision)}"
         )
 
-    # (b) the log contract
-    l1 = ev.read_for_resolution(LOG_V1)
-    l2 = ev.read_for_resolution(LOG_V2)
-    act1 = set(l1["$defs"]["act"]["required"])
+    # (c) the log contract's own required shape: a typed action_kind discriminator
+    l2 = ev.parse(LOG_V2)
+    expected_act = {
+        "action", "authorized_paths", "date", "expected", "id", "input_quality",
+        "result", "status", "trigger", "action_kind",
+    }
     act2 = set(l2["$defs"]["act"]["required"])
-    if act2 != act1 | {"action_kind"}:
+    if act2 != expected_act:
         problems.append(
-            f"act-required-mismatch: v2 requires {sorted(act2)}, expected {sorted(act1 | {'action_kind'})}"
+            f"act-required-mismatch: v2 requires {sorted(act2)}, expected {sorted(expected_act)}"
         )
     kind = l2["$defs"]["act"]["properties"].get("action_kind", {})
     if "model_call" not in kind.get("enum", []):
@@ -169,7 +168,7 @@ def check_contract_versioned(ev: Evidence):
     if "decision_id" not in l2["$defs"]["act"]["properties"]:
         problems.append("decision_id is not a property of the v2 act record")
 
-    # (c) the conditional keys on the discriminator, never on free-text action
+    # (d) the conditional keys on the discriminator, never on free-text action
     conditionals = [
         clause for clause in l2["$defs"]["act"].get("allOf", [])
         if "decision_id" in clause.get("then", {}).get("required", [])
@@ -183,31 +182,14 @@ def check_contract_versioned(ev: Evidence):
         if "action" in condition:
             problems.append("the decision_id condition keys on free-text action — a record could reword")
 
-    # (d) both v1 files remain in schemas/, byte-unchanged from HEAD~
-    for path in (LOG_V1, DECISION_V1):
-        if not ev.exists(path):
-            problems.append(f"retained-contract-missing:{rel(path)}")
-            continue
-        if ev.exists(REPO_ROOT / "schemas" / "deprecated" / path.name):
-            problems.append(f"retained-contract-deprecated:{path.name}")
-        error = v1_mutation(path, ev)
-        if error:
-            problems.append(error)
-
-    # (e) shown by the positive fixtures below, and asserted here too
-    # (f) every live manifest reference names v2
+    # (e) every live manifest reference names v2, never a retired v1 basename —
+    # RT-6 in policy/deferred.v1.yaml records that nothing ever emitted a v1
+    # record, so there is no "v1 retained unchanged" leg left to check here
     problems += live_v1_references(ev)
 
-    line = f"FR-P2-CONTRACT-VERSIONED {'PASS' if not problems else 'FAIL'} (v2 authored, v1 retained unchanged)"
+    line = f"FR-P2-CONTRACT-VERSIONED {'PASS' if not problems else 'FAIL'} (v2 authored, no live v1 reference)"
 
-    mutated = FIXTURES / "contract_v1_edited_in_place.reject.json"
     fixtures = [
-        Fixture(
-            name=rel(mutated),
-            kind="reject",
-            expected_error="v1-contract-mutated",
-            detector=lambda: v1_mutation(mutated, None, compare_to="schemas/execution_log.schema.v1.json"),
-        ),
         Fixture(
             name=rel(FIXTURES / "decision_v2_missing_executed.reject.json"),
             kind="reject",
@@ -224,13 +206,6 @@ def check_contract_versioned(ev: Evidence):
             detector=lambda: common._validate_obj(
                 common._deserialize(FIXTURES / "act_model_call_wordplay.reject.json"),
                 _act_schema(LOG_V2),
-            ),
-        ),
-        Fixture(
-            name=rel(FIXTURES / "act_v1_shaped.accept.json"),
-            kind="accept",
-            detector=lambda: common._validate_obj(
-                common._deserialize(FIXTURES / "act_v1_shaped.accept.json"), _act_schema(LOG_V1)
             ),
         ),
         Fixture(
@@ -251,37 +226,23 @@ def _act_schema(path: Path) -> dict:
     return {**schema["$defs"]["act"], "$defs": schema["$defs"]}
 
 
-def v1_mutation(path: Path, ev: Evidence | None, compare_to: str | None = None) -> str | None:
-    """A retained contract must be byte-identical to its state in the parent commit."""
-    tracked = compare_to or rel(path)
-    args = ["git", "show", f"HEAD~:{tracked}"]
-    proc = ev.run(args) if ev is not None else __import__("subprocess").run(
-        args, cwd=str(REPO_ROOT), capture_output=True, text=True, check=False
-    )
-    if proc.returncode != 0:
-        return f"v1-contract-unreadable:{tracked} {proc.stderr.strip()}"
-    if proc.stdout != read_named(path):
-        return f"v1-contract-mutated:{rel(path)} differs from HEAD~"
-    return None
-
-
 def live_v1_references(ev: Evidence | None = None) -> list[str]:
-    """(f) The only surviving v1 references are the files themselves and the
-    retained-contracts table; a live manifest reference must name v2."""
+    """(e) The only surviving v1 references are the files themselves; a live
+    manifest reference must name v2. A file under ``deprecated/`` is retired prose
+    nothing reads, so a citation there is not live (``common.under_deprecated``)."""
     problems = []
-    retained = retained_contracts_section(
-        contract_text(ev)
-    )
     for path in common.production_files():
         if path.name in V1_CONTRACTS:
             continue  # the file itself
+        if common.under_deprecated(path):
+            continue
         try:
             text = ev.text_of(path) if ev is not None else read_named(path)
         except (OSError, UnicodeDecodeError):
             continue
         for name in V1_CONTRACTS:
             for line in text.splitlines():
-                if name in line and line.strip() not in retained:
+                if name in line:
                     problems.append(f"live-v1-reference:{name} at {rel(path)}")
                     break
     return problems
@@ -412,14 +373,6 @@ def bound_violations(prompt_text: str) -> list[str]:
     for name in V1_CONTRACTS:
         if any(name in entry for entry in authorized):
             problems.append(f"retired-version-authorized:{name}")
-    retained = retained_contracts_section(prompt_text)
-    for name in V1_CONTRACTS:
-        if name not in retained:
-            problems.append(f"retained-contract-untabled:{name}")
-    if not re.search(r"already accepted|accepted under", retained, re.I):
-        problems.append("retained-contract-untabled: the table does not restrict them to accepted work")
-    if "RT-6" not in retained:
-        problems.append("retained-contract-untabled: the table does not cite RT-6")
     return problems
 
 
@@ -431,7 +384,7 @@ def check_bound(ev: Evidence):
     problems = bound_violations(text)
     line = (
         f"FR-P2-BOUND {'PASS' if not problems else 'FAIL'} "
-        f"({len(REQUIRED_AUTHORIZED)} required inputs bound, 2 contracts retained)"
+        f"({len(REQUIRED_AUTHORIZED)} required inputs bound, 2 retired contracts excluded)"
     )
     fixtures = [
         Fixture(

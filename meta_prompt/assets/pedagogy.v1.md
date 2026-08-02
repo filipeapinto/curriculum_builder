@@ -1,6 +1,6 @@
 # The teaching methods behind the lab schema
 
-Every pedagogical field in `schemas/lab.schema.v3.json` implements a named,
+Every pedagogical field in `schemas/lab.schema.v4.json` implements a named,
 evidence-based method. This file says which, and why it is in the schema rather
 than in a style guide.
 

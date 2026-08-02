@@ -106,6 +106,15 @@ def rel(path: Path | str) -> str:
     return Path(path).resolve().relative_to(REPO_ROOT).as_posix()
 
 
+def under_deprecated(path: Path) -> bool:
+    """True if any path component is literally ``deprecated`` — a retired archive
+    directory nothing reads, so a citation of an old basename found there is not a
+    live reference. Shared by every gate that scans ``production_files()`` for
+    citations of a superseded name, so the definition of "live" cannot drift
+    between them."""
+    return "deprecated" in Path(path).resolve().relative_to(REPO_ROOT).parts
+
+
 def read_named(path: Path | str) -> str:
     """Open one **named** file, including under an excluded root (rule 7)."""
     return Path(path).read_text(encoding="utf-8", errors="replace")

@@ -2,7 +2,7 @@
   "$schema": "https://json-schema.org/draft/2020-12/schema",
   "$id": "https://example.invalid/curriculum_builder/curricula/arduino_kit/domain.schema.v1.json",
   "title": "arduino_kit — the shape of this curriculum's domain block",
-  "description": "The engine's unit contract requires a `domain` block and deliberately says nothing about what is in one. This is what is in one here, and it is this curriculum's to state: the electrical model, the assembly map and the power profile that schemas/lab.schema.v3.json carried in the engine layer under the names `electronics`, `content.build_map` and `safety.power_profile`. A curriculum in another subject supplies a different file and never edits the engine's.",
+  "description": "The engine's unit contract requires a `domain` block and deliberately says nothing about what is in one. This is what is in one here, and it is this curriculum's to state: the electrical model, the assembly map and the power profile that the predecessor lab schema carried in the engine layer under the names `electronics`, `content.build_map` and `safety.power_profile`. A curriculum in another subject supplies a different file and never edits the engine's.",
   "type": "object",
   "additionalProperties": false,
   "required": [

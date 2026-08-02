@@ -139,7 +139,7 @@ safety_floor:
 # FR-P3-NO-LITERALS matches the pattern and never the bare value: an age of `9`
 # scanned literally would flag every `9` in every schema, including `"maxItems": 9`.
 # A contract that hard-codes the learner cannot serve a different one — that is
-# defect F03, and lab.schema.v3.json carried it in two descriptions.
+# defect F03, and the predecessor lab schema carried it in two descriptions.
 learner_terms:
   nine-year-old:
     kind: learner_age_prose

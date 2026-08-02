@@ -88,7 +88,6 @@ PROMPT_HEADINGS = (
     "# Curriculum Prompt — v1",
     "## Mission",
     "## Inputs",
-    "### Retained contracts",
     "## Precedence",
     "## What a unit is",
     "## One parent",

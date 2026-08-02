@@ -132,7 +132,7 @@ GATES = [
     {
         "id": "FR-P2-CONTRACT-VERSIONED",
         "activation_phase": 2,
-        "claim_class": "tree+text+schema+mapping+execution",
+        "claim_class": "tree+text+schema+parse",
         "depends_on": ["FR-P0-SCHEMA"],
         "command": "python3 tests/gates/fr_p2_selector.py --check contract-versioned",
         "impl": "fr_p2_selector:check_contract_versioned",

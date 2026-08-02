@@ -1,5 +1,5 @@
 {
-  "_fixture": "Positive fixture for FR-P2-CONTRACT-VERSIONED (e). A v2-shaped decision that must validate against routing_decision.schema.v2.json, so the acceptance half of (e) is demonstrated rather than assumed. Its counterpart is act_v1_shaped.accept.json, which must still validate against v1.",
+  "_fixture": "Positive fixture for FR-P2-CONTRACT-VERSIONED (d). A v2-shaped decision that must validate against routing_decision.schema.v2.json, so the acceptance half of (d) is demonstrated rather than assumed.",
   "task_id": "L01-component-research",
   "task_class": "component_research",
   "risk": "high",
