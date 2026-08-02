@@ -1,0 +1,32 @@
+{
+  "$comment": "The defect this gate exists for, as a fixture: a curriculum contract that declares the two definitions and constrains neither. `config` is any object at all, `mode` and `domain_state` are any string. This is exactly what `curriculum.schema.v5.json` did to `kit_power_profile`, `visual_system`, `mode` and `circuit_status` when `G5` was closed by deleting them — a constraint removed from the engine and never landed anywhere. It must be refused as `domain-unconstrained`. Never an input to a run.",
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$defs": {
+    "config": {
+      "type": "object",
+      "minProperties": 1
+    },
+    "core_activity": {
+      "type": "object",
+      "required": [
+        "mode",
+        "question",
+        "domain_state"
+      ],
+      "properties": {
+        "mode": {
+          "type": "string",
+          "minLength": 3
+        },
+        "question": {
+          "type": "string",
+          "minLength": 10
+        },
+        "domain_state": {
+          "type": "string",
+          "minLength": 3
+        }
+      }
+    }
+  }
+}

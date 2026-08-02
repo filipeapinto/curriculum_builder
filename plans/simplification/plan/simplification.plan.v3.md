@@ -526,3 +526,35 @@ and a gate that tried would be the engine learning the domain. It asserts that o
 exists, that it is code, that it runs, and that it refuses what its curriculum says it
 refuses. Whether those are the right rules is the curriculum's responsibility and a
 human's.
+
+### Phase 5 — the constraints `G5` moved out of the engine (§6 phase 0)
+
+**`FR-P5-DOMAIN-CONSTRAINED`** · 5 · `tree+parse+mapping+schema` · depends on:
+`FR-P0-SCHEMA` — the declaration is a manifest field, so the manifest must be known to
+validate before the contract it names is resolved
+`python3 tests/gates/fr_p5_manifest.py --check domain-constrained`
+**Pass:** `G5` removed `kit_power_profile` and `visual_system` from the engine's manifest
+contract. A constraint that leaves the engine has to arrive somewhere, and this gate is
+what requires it to have arrived. Every curriculum under `curricula/` — read from the
+directory at run time, never by name — declares `domain.manifest_schema`, a real JSON
+Schema **under its own directory**, because an engine-held one is `G5` wearing a different
+name. That contract is then validated against `schemas/manifest_domain.metaschema.v1.json`,
+which requires the *shape of constraining* and names no subject term: a closed
+`$defs/config` with at least one required key, and a closed `$defs/core_activity` that
+requires and **enumerates** `mode` and `domain_state`. Only then is the manifest's own
+content read against it — `domain.config` against `$defs/config`, every lab's
+`core_activity` against `$defs/core_activity`. A curriculum whose contract accepts anything
+fails the second step and never reaches the third. Prints
+`FR-P5-DOMAIN-CONSTRAINED <verdict> (C curricula, each declaring a constraining manifest contract; N curriculum-declared terms enumerated, L core_activity blocks validated against them)`.
+**Fixtures:** `manifest_domain_unconstrained.reject.json` — both definitions declared and
+neither constraining, `config` as any object and `mode` as any string, which is what v5
+did when `G5` was closed by deleting rather than relocating; `expected_error` is
+`domain-unconstrained`. `manifest_domain_constrained.accept.json` — the same two
+definitions, constraining, for a Latin reading curriculum, so the positive fixture also
+demonstrates that nothing here is electronics.
+`core_activity_mode_undeclared.reject.json` — a lab naming a `mode` its curriculum never
+declared, refused as `core-activity-invalid`; under v5 as first written it passed.
+**Failure means:** the engine's contract is looser than the one it replaced and calls the
+looseness genericity. Moving a constraint out of the engine is this plan's intent;
+dropping it is the failure this plan is named after, arriving through the schema instead
+of through a gate.

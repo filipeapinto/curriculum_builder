@@ -1,0 +1,202 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://example.invalid/curriculum_builder/curricula/arduino_kit/manifest.domain.schema.v1.json",
+  "title": "arduino_kit — the shape of this curriculum's manifest domain surfaces",
+  "description": "The engine's manifest contract requires a `domain.config` and a `core_activity` per lab, and deliberately says nothing about what is in either. This is what is in them here, and it is this curriculum's to state. `$defs.config` is `schemas/curriculum.schema.v4.json`'s `kit_power_profile` and `visual_system`, moved rather than deleted; `$defs.core_activity` is v4's `mode`/`circuit_status` enums and its power-presence rule, moved the same way. `schemas/manifest_domain.metaschema.v1.json` is what the engine requires of this file — that it constrains, not what it constrains. A curriculum in another subject supplies a different file with different values and never edits the engine's.",
+  "$defs": {
+    "config": {
+      "description": "This curriculum's domain configuration: the one power system its labs may draw on, the roles generated imagery may play, and the circuit-sourcing policy.",
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "circuit_policy",
+        "kit_power_profile",
+        "visual_system"
+      ],
+      "properties": {
+        "circuit_policy": {
+          "description": "`composed` means CIRCUIT selects from a library of vetted, simulated circuits and never invents a topology. The closest published proxy to inventing one, verified by simulation, has a top-model pass rate of 8.15%.",
+          "enum": [
+            "composed"
+          ]
+        },
+        "circuit_library": {
+          "description": "The vetted circuit library, required under `composed`.",
+          "type": "string",
+          "pattern": "^curricula/[a-z0-9_]+/[A-Za-z0-9_.-]+\\.yaml$"
+        },
+        "kit_power_profile": {
+          "type": "object",
+          "additionalProperties": false,
+          "required": [
+            "id",
+            "reference_verification",
+            "local_inspection",
+            "input",
+            "rail_choices",
+            "release_rule"
+          ],
+          "properties": {
+            "id": {
+              "type": "string",
+              "minLength": 1
+            },
+            "reference_verification": {
+              "enum": [
+                "unverified",
+                "verified_official"
+              ]
+            },
+            "local_inspection": {
+              "enum": [
+                "not_available",
+                "verified"
+              ]
+            },
+            "input": {
+              "type": "object",
+              "additionalProperties": false,
+              "required": [
+                "description",
+                "evidence"
+              ],
+              "properties": {
+                "description": {
+                  "type": "string",
+                  "minLength": 1
+                },
+                "evidence": {
+                  "type": "string",
+                  "minLength": 1
+                }
+              }
+            },
+            "rail_choices": {
+              "type": "array",
+              "minItems": 1,
+              "items": {
+                "type": "string",
+                "minLength": 1
+              }
+            },
+            "release_rule": {
+              "type": "string",
+              "minLength": 1
+            }
+          }
+        },
+        "visual_system": {
+          "type": "object",
+          "additionalProperties": false,
+          "required": [
+            "photorealistic_roles",
+            "technical_map_rule"
+          ],
+          "properties": {
+            "photorealistic_roles": {
+              "type": "array",
+              "minItems": 2,
+              "items": {
+                "type": "string",
+                "minLength": 1
+              }
+            },
+            "technical_map_rule": {
+              "const": "Technical build maps are deterministically rendered from verified circuit data; generative images are never the connection authority."
+            }
+          }
+        }
+      },
+      "allOf": [
+        {
+          "if": {
+            "properties": {
+              "circuit_policy": {
+                "const": "composed"
+              }
+            },
+            "required": [
+              "circuit_policy"
+            ]
+          },
+          "then": {
+            "required": [
+              "circuit_library"
+            ]
+          }
+        }
+      ]
+    },
+    "core_activity": {
+      "description": "What the learner does, in this curriculum's own vocabulary. `mode` is the hazard class and `domain_state` is how ready the lab's circuit data is — v4's `mode` and `circuit_status`, unchanged in content and no longer held by the engine.",
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "mode",
+        "question",
+        "domain_state"
+      ],
+      "properties": {
+        "mode": {
+          "enum": [
+            "unpowered",
+            "powered_pending_physical_check",
+            "adult_led_controller_station",
+            "diagnostic"
+          ]
+        },
+        "question": {
+          "type": "string",
+          "minLength": 10
+        },
+        "domain_state": {
+          "enum": [
+            "not_designed",
+            "requires_verified_circuit_data"
+          ]
+        },
+        "domain_activity": {
+          "description": "What a powered lab needs this curriculum to state. `power_input` is the id of the one permitted supply the lab draws on, from this curriculum's own `kit_calibration.v1.yaml` `power.permitted_inputs`. \"All available sources\" is a kit-level statement and is never a lab-level answer; `FR-P3-KIT-SOURCE` additionally resolves the id and refuses one whose verification is not `verified_official`, so a lab cannot cite a supply nobody photographed.",
+          "type": "object",
+          "additionalProperties": false,
+          "required": [
+            "power_input"
+          ],
+          "properties": {
+            "power_input": {
+              "type": "string",
+              "pattern": "^[a-z0-9_]+$"
+            }
+          }
+        }
+      },
+      "allOf": [
+        {
+          "description": "v4's power-presence rule: an unpowered lab may not name a supply, and every lab that is not unpowered must name one. Losing this was how `mode` stopped meaning anything.",
+          "if": {
+            "properties": {
+              "mode": {
+                "const": "unpowered"
+              }
+            },
+            "required": [
+              "mode"
+            ]
+          },
+          "then": {
+            "not": {
+              "required": [
+                "domain_activity"
+              ]
+            }
+          },
+          "else": {
+            "required": [
+              "domain_activity"
+            ]
+          }
+        }
+      ]
+    }
+  }
+}

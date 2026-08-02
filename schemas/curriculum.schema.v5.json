@@ -48,6 +48,7 @@
       "additionalProperties": false,
       "required": [
         "schema",
+        "manifest_schema",
         "verifier",
         "config"
       ],
@@ -57,10 +58,15 @@
           "type": "string",
           "pattern": "^curricula/[a-z0-9_]+/[A-Za-z0-9_.-]+\\.json$"
         },
+        "manifest_schema": {
+          "description": "Repository-relative path to the schema this curriculum supplies for its own manifest surfaces — `domain.config` under `$defs/config`, and every lab's `core_activity` under `$defs/core_activity`. This is where v4's `kit_power_profile`, `visual_system`, `mode` and `circuit_status` constraints went. They were moved, not dropped: a constraint that leaves the engine has to arrive somewhere, and the somewhere is the curriculum's own contract. The engine requires the declaration and validates that contract against `schemas/manifest_domain.metaschema.v1.json` — that it closes `config` and enumerates `mode` and `domain_state` — and never reads the values. `FR-P5-DOMAIN-CONSTRAINED` enforces both halves.",
+          "type": "string",
+          "pattern": "^curricula/[a-z0-9_]+/[A-Za-z0-9_.-]+\\.json$"
+        },
         "config": {
           "type": "object",
           "minProperties": 1,
-          "description": "The curriculum's domain configuration, shaped by its own contract and never by this one."
+          "description": "The curriculum's domain configuration, shaped by its own contract and never by this one. The shape is real and lives at `manifest_schema#/$defs/config`; what the engine states here is only that the block exists and is not empty."
         },
         "verifier": {
           "description": "The curriculum's domain verifier, and the whole reason the engine can be generic without being unsafe. A domain is generatable exactly to the extent that it has a verifier which is not a model — electrical rule checking over a netlist, a dictionary lookup, an interval checker. The engine never knows what it checks. It knows the verifier must exist, must be code, must be executable, and must have been proven against fixtures before any unit is generated. **A curriculum that declares none does not run**, and that is a refusal rather than a warning.",

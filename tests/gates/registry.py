@@ -352,6 +352,16 @@ GATES = [
         "command": "python3 tests/gates/fr_p5_verifier.py --check verifier-required",
         "impl": "fr_p5_verifier:check_verifier_required",
     },
+
+    # --- Phase 5 — the constraints G5 moved out of the engine --------------------
+    {
+        "id": "FR-P5-DOMAIN-CONSTRAINED",
+        "activation_phase": 5,
+        "claim_class": "tree+parse+mapping+schema",
+        "depends_on": ["FR-P0-SCHEMA"],
+        "command": "python3 tests/gates/fr_p5_manifest.py --check domain-constrained",
+        "impl": "fr_p5_manifest:check_domain_constrained",
+    },
 ]
 
 GATES_BY_ID = {gate["id"]: gate for gate in GATES}

@@ -1,0 +1,67 @@
+{
+  "$comment": "A curriculum-supplied manifest contract that constrains its own domain surfaces, in a subject the engine has never heard of — a Latin reading curriculum. It closes `config` and requires two keys of its own, and it enumerates `mode` and `domain_state` in its own vocabulary. Nothing here is electronics, which is the point: the engine metaschema requires the shape of constraining and never a subject term. A positive fixture is what stops the detector from being satisfied by rejecting everything.",
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$defs": {
+    "config": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "corpus",
+        "orthography"
+      ],
+      "properties": {
+        "corpus": {
+          "type": "string",
+          "minLength": 1
+        },
+        "orthography": {
+          "enum": [
+            "classical",
+            "ecclesiastical"
+          ]
+        }
+      }
+    },
+    "core_activity": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "mode",
+        "question",
+        "domain_state"
+      ],
+      "properties": {
+        "mode": {
+          "enum": [
+            "sight_reading",
+            "recitation",
+            "written_parsing"
+          ]
+        },
+        "question": {
+          "type": "string",
+          "minLength": 10
+        },
+        "domain_state": {
+          "enum": [
+            "unattested",
+            "attested_in_corpus"
+          ]
+        },
+        "domain_activity": {
+          "type": "object",
+          "additionalProperties": false,
+          "required": [
+            "passage_id"
+          ],
+          "properties": {
+            "passage_id": {
+              "type": "string",
+              "pattern": "^[a-z0-9_.]+$"
+            }
+          }
+        }
+      }
+    }
+  }
+}

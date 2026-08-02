@@ -15,6 +15,7 @@ curriculum:
   design_rule: Component first; a problem is an application, never the organising principle.
 domain:
   schema: curricula/arduino_kit/domain.schema.v1.json
+  manifest_schema: curricula/arduino_kit/manifest.domain.schema.v1.json
   verifier:
     entry_point: curricula/arduino_kit/verify_domain.py
     invocation: python3 curricula/arduino_kit/verify_domain.py --domain <domain>

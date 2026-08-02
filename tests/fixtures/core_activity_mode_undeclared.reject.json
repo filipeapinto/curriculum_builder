@@ -1,0 +1,33 @@
+{
+  "_comment": "A manifest fragment read against `manifest_domain_constrained.accept.json`. Its `domain.config` is valid under that contract, so the one thing wrong with it is the second lab's `mode`: `improvised_lecture` is not a term the curriculum declared. Under the contract as `curriculum.schema.v5.json` first wrote it — `mode` as any string of three characters or more — this document passed, which is the whole defect. It must be refused as `core-activity-invalid`. Never an input to a run.",
+  "domain": {
+    "config": {
+      "corpus": "Caesar, De Bello Gallico I",
+      "orthography": "classical"
+    }
+  },
+  "labs": [
+    {
+      "id": "L01",
+      "core_activity": {
+        "mode": "recitation",
+        "question": "Can the learner read the first period aloud without stopping?",
+        "domain_state": "attested_in_corpus",
+        "domain_activity": {
+          "passage_id": "bg.1.1"
+        }
+      }
+    },
+    {
+      "id": "L02",
+      "core_activity": {
+        "mode": "improvised_lecture",
+        "question": "Which case does the preposition govern here?",
+        "domain_state": "attested_in_corpus",
+        "domain_activity": {
+          "passage_id": "bg.1.2"
+        }
+      }
+    }
+  ]
+}

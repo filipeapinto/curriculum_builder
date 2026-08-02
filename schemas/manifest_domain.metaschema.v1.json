@@ -1,0 +1,107 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://example.invalid/curriculum_builder/manifest_domain.metaschema.v1.json",
+  "title": "What a curriculum's manifest-domain contract must constrain",
+  "description": "`G5` removed `kit_power_profile` and `visual_system` from the engine contract because they are one subject's words. Removing them is only half the move: a constraint that leaves the engine has to arrive somewhere, and v5 as first written let `domain.config` be any nonempty object and `mode` and `domain_state` be any string. That is not genericity, it is the absence of a contract. This metaschema is the other half. The engine does not know what a curriculum's configuration contains, what hazard classes it has, or what its domain states are called — and it does know that a curriculum must **say**. Every curriculum names a contract of its own under `domain.manifest_schema`, and that contract is validated against this file before its content is validated against it. What is required here is the *shape of constraining*, never a subject term: a closed `config` with at least one required key, and a closed `core_activity` whose `mode` and `domain_state` are enumerated. The values in those enums are the curriculum's and appear nowhere in the engine layer.",
+  "type": "object",
+  "required": [
+    "$defs"
+  ],
+  "properties": {
+    "$defs": {
+      "type": "object",
+      "required": [
+        "config",
+        "core_activity"
+      ],
+      "properties": {
+        "config": {
+          "description": "The contract for this curriculum's `domain.config` — what v4 carried at the engine's top level under one subject's names. Closed, because an open configuration object is the engine shrugging in a different file; and at least one required key, because a contract that requires nothing is satisfied by `{}`.",
+          "type": "object",
+          "required": [
+            "type",
+            "additionalProperties",
+            "required"
+          ],
+          "properties": {
+            "type": {
+              "const": "object"
+            },
+            "additionalProperties": {
+              "const": false
+            },
+            "required": {
+              "type": "array",
+              "minItems": 1
+            }
+          }
+        },
+        "core_activity": {
+          "description": "The contract for every lab's `core_activity`. The engine states that a unit has a hazard class and a domain readiness state; only the curriculum can state what they may be. Both must be enumerated — an unenumerated `mode` cannot be checked against anything, and v4's `mode`/`circuit_status` enums were real constraints that had to land somewhere.",
+          "type": "object",
+          "required": [
+            "type",
+            "additionalProperties",
+            "required",
+            "properties"
+          ],
+          "properties": {
+            "type": {
+              "const": "object"
+            },
+            "additionalProperties": {
+              "const": false
+            },
+            "required": {
+              "type": "array",
+              "minItems": 1,
+              "allOf": [
+                {
+                  "contains": {
+                    "const": "mode"
+                  }
+                },
+                {
+                  "contains": {
+                    "const": "domain_state"
+                  }
+                }
+              ]
+            },
+            "properties": {
+              "type": "object",
+              "required": [
+                "mode",
+                "domain_state"
+              ],
+              "properties": {
+                "mode": {
+                  "$ref": "#/$defs/enumerated"
+                },
+                "domain_state": {
+                  "$ref": "#/$defs/enumerated"
+                }
+              }
+            }
+          }
+        }
+      }
+    }
+  },
+  "$defs": {
+    "enumerated": {
+      "description": "A property the curriculum has to enumerate. The engine requires the enum; it never reads what is in it.",
+      "type": "object",
+      "required": [
+        "enum"
+      ],
+      "properties": {
+        "enum": {
+          "type": "array",
+          "minItems": 1,
+          "uniqueItems": true
+        }
+      }
+    }
+  }
+}
