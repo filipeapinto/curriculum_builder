@@ -198,7 +198,7 @@ obsolete v6 asset shape (`folder_refactoring.plan.v6.md:204-218`).
 tree to the current asset set, or move the shape declaration to a document maintained by
 a different gate. A flag set to `False` is not a replacement.
 
-**Fixed by `4bc3146`.** The second option: `AGENTS.md` gains a `### Contract assets` table,
+**Fixed by `4bc3146`.** The second option: `readme.md` gains a `### Contract assets` table,
 `shape_problems()` compares `EXPECTED` against it in both directions, and the flag is
 gone. A finished plan's tree is not edited to track the present, so the folder plan now
 says in the file that it is history and that neither reader reads it. Verified by negative

@@ -24,7 +24,7 @@ separate.
 
 ## Loop
 
-Read `AGENTS.md` and the complete v6 plan. For each phase `N`:
+Read `readme.md` and the complete v6 plan. For each phase `N`:
 
 1. The implementer completes phase `N`. In phase 0, follow §9's seven steps in order —
    write `tests/gates/registry.py` declaring **all 31 gates with their `depends_on`**

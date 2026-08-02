@@ -100,64 +100,6 @@ def check_gitkeep(ev: Evidence):
 
 
 # ---------------------------------------------------------------------------
-# FR-P1-DOC
-
-
-RETENTION_ROW = re.compile(r"^\|(?P<folder>[^|]+)\|(?P<answer>[^|]+)\|(?P<reason>[^|]+)\|\s*$", re.M)
-
-
-def top_level_folders(ev: Evidence | None = None) -> list[str]:
-    entries = ev.listdir(REPO_ROOT) if ev is not None else sorted(REPO_ROOT.iterdir())
-    return sorted(p.name for p in entries if p.is_dir() and not p.name.startswith("."))
-
-
-def retention_violations(doc_text: str, folders: list[str], ev: Evidence | None = None) -> list[str]:
-    """Every top-level folder answered explicitly, with a reason."""
-    rows = {}
-    for match in RETENTION_ROW.finditer(doc_text):
-        name = match.group("folder").strip().strip("`").rstrip("/")
-        rows[name] = (match.group("answer").strip(), match.group("reason").strip())
-    if ev is not None:
-        for folder in folders:
-            ev.resolve(f"{folder}/", "the repository root", "a row of AGENTS.md's retention table")
-    problems = []
-    for folder in folders:
-        if folder not in rows:
-            problems.append(f"retention-unanswered:{folder}")
-            continue
-        answer, reason = rows[folder]
-        if not re.match(r"^(yes|no)\b", answer, re.I):
-            problems.append(f"retention-unanswered:{folder} — '{answer}' is not an explicit yes/no")
-        elif not reason:
-            problems.append(f"retention-unanswered:{folder} — no reason given")
-    return problems
-
-
-def check_agents_doc(ev: Evidence):
-    folders = top_level_folders(ev)
-    text = ev.text_of(REPO_ROOT / "AGENTS.md")
-    problems = retention_violations(text, folders, ev)
-    line = (
-        f"FR-P1-DOC {'PASS' if not problems else 'FAIL'} "
-        f"({len(folders)} top-level folders, {len(folders) - len(problems)} answered)"
-    )
-
-    fixture = FIXTURES / "agents_missing_folder.reject.md"
-    fixtures = [
-        Fixture(
-            name=rel(fixture),
-            kind="reject",
-            expected_error="retention-unanswered:docs",
-            detector=lambda: (
-                retention_violations(common.read_named(fixture), folders) or [None]
-            )[0],
-        )
-    ]
-    detail = line if not problems else line + " — " + "; ".join(problems)
-    return gate_result(not problems, detail, fixtures, stdout=line)
-
-
-# ---------------------------------------------------------------------------
 # FR-P1-SCHEMA-RETENTION
 
 
@@ -256,7 +198,6 @@ def check_schema_gate(ev: Evidence):
 
 CHECKS = {
     "gitkeep": check_gitkeep,
-    "agents-doc": check_agents_doc,
     "schema-gate": check_schema_gate,
 }
 

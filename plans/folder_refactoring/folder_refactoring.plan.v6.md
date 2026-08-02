@@ -723,14 +723,17 @@ empty directory cannot be committed, which is the defect under test. Recorded as
 **Failure means:** the convention vanishes on clone — the defect `meta_prompt/deprecated/`
 exhibits today.
 
-**`FR-P1-DOC`** · 1 · `tree+text+mapping` · depends on: `FR-P0-HARNESS`
-`python3 tests/gates/fr_p1_retention.py --check agents-doc`
-**Pass:** `AGENTS.md` contains a retention table naming every top-level folder with an
-explicit yes/no and a reason.
-**Fixture:** `agents_missing_folder.reject.md` — a table omitting `docs/`;
-`expected_error: retention-unanswered:docs`.
-**Failure means:** a folder's retention answer is left to inference, which is how three
-conventions (`deprecated/`, `legacy/`, `vN`) accumulated.
+**`FR-P1-DOC` — RETIRED 2026-08-02.** It asserted that a root document contained a
+retention table naming every top-level folder with an explicit yes/no and a reason. The
+document it read was `AGENTS.md`, which was deleted; the gate was briefly repointed at
+`readme.md` and then retired outright, because checking that a prose table lists seven
+directory names is ceremony rather than a criterion — no run, no artifact and no other
+gate depends on that table existing. The retention *rule* is unaffected and still
+enforced where it bites: `FR-P1-GITKEEP`, and `FR-P1-SCHEMA-RETENTION`, which is the one
+that refuses a schema entering `deprecated/` while anything still references it. This
+plan's gate count falls from 31 to 30 and its phase-1 count from 3 to 2. Recorded here
+rather than deleted, because a retired gate is a decision and a silently removed gate is
+a gap.
 
 **`FR-P1-SCHEMA-RETENTION`** · 1 · `tree+text+mapping` · depends on: `FR-P1-GITKEEP`
 `python3 tests/gates/fr_p1_retention.py --check schema-gate`
@@ -1147,8 +1150,8 @@ amended, never appended to.
 
 | Phase | Work | Gates run | New gates |
 |---|---|---|---|
-| **0** | every move in §5 plus every fix in §10, one atomic commit; create `tests/` with `registry.py` declaring **all 31 gates** and their `depends_on`, `common.py`, `run_gates.sh`, `selftest.py`, `.gitignore`, and the ten phase-0 gates | `run_gates.sh 0` | 10 |
-| **1** | the four `deprecated/` folders, `.gitkeep`s, retention rule written into `AGENTS.md` | `run_gates.sh 1` | 3 |
+| **0** | every move in §5 plus every fix in §10, one atomic commit; create `tests/` with `registry.py` declaring **all 30 gates** and their `depends_on`, `common.py`, `run_gates.sh`, `selftest.py`, `.gitignore`, and the ten phase-0 gates | `run_gates.sh 0` | 10 |
+| **1** | the four `deprecated/` folders and their `.gitkeep`s | `run_gates.sh 1` | 2 |
 | **2** | **both contract v2 schemas** with `action_kind`; **`policy/deferred.v1.yaml`** (RT-1…RT-6); **a `prose_pattern` on every model id, effort level and candidate-pool entry in `policy/routing/*.yaml`** — `FR-P2-NOVALUES` fails an entry without one — **and on the `META_SYSTEM_FAILURE` entry in `policy/failures.v1.yaml`** (`FR-P2-UNRECORDED-DECLARED` (a)); **retarget every live manifest reference from the v1 contracts to the v2 contracts** (`FR-P2-CONTRACT-VERSIONED` (f)); `§ Routing` in the meta prompt, authorizing v2 only and retaining v1 separately; the five `SEL-*` ids with owner and method | `run_gates.sh 2` | 9 |
 | **3** | calibration split **plus `schemas/kit_calibration.schema.v1.json` (new) and an update to `schemas/calibration.schema.v1.json` for the removed `power` block and the newly required `prose_pattern`** — without it phase 3 breaks the cumulative `FR-P0-SCHEMA`; a `prose_pattern` on every cap **and on every learner-age term in `policy/calibration.v1.yaml` and every kit term in `kit_calibration.v1.yaml`** — `FR-P3-NO-LITERALS` and `FR-P3-SPLIT` fail a term without one; strip data literals from `schemas/`; reduce `pedagogy.v1.md` to rationale | `run_gates.sh 3` | 5 |
 | **4** | a schema per `policy/*.yaml` (seven, incl. `deferred`) + `circuit_data` + one per routing manifest (four); agreement and check mapping | `run_gates.sh 4` | 4 |

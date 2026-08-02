@@ -464,7 +464,7 @@ CALIBRATION_SCHEMA = "schemas/calibration.schema.v1.json"
 
 
 def check_schema(ev: Evidence):
-    """AGENTS.md's validation command at the new paths. Both schema paths are
+    """readme.md's validation command at the new paths. Both schema paths are
     literals here, so no cross-file resolution occurs and the class is ``schema``
     alone, deliberately."""
     problems = []

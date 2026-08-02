@@ -108,7 +108,7 @@ under it has measured nothing.
 
 ## Loop — stage A, plan phases 0, 4, 1, 2, 3, 5
 
-Read `AGENTS.md`, the complete v3 plan, `../plan/simplification.phase0.result.v1.md`,
+Read `readme.md`, the complete v3 plan, `../plan/simplification.phase0.result.v1.md`,
 `../research/conclusions.v1.md`, `tests/gates/gate_families.v1.yaml` and
 `tests/gates/registry.py` before starting.
 

@@ -23,7 +23,7 @@ see to what a curriculum has bothered to declare — a real limit, reported in t
 gate's own output rather than hidden by it.
 
 It contains **no version literal for the meta prompt**. ``tests/meta_prompt_source.py``
-is, per AGENTS.md, the only definition of "the meta prompt" any checker uses, so the
+is, per readme.md, the only definition of "the meta prompt" any checker uses, so the
 engine's prompt file is asked of that module rather than spelled here.
 """
 
@@ -46,7 +46,7 @@ FIXTURES = common.FIXTURES_DIR
 CHECKS = REPO_ROOT / "policy" / "checks.v1.yaml"
 CURRICULA_DIR = REPO_ROOT / "curricula"
 
-# The engine layer, by root. `meta_prompt/docs/` is orientation only (AGENTS.md) and
+# The engine layer, by root. `meta_prompt/docs/` is orientation only (readme.md) and
 # `docs/` is regenerated explainer prose; neither is a contract, and neither is here.
 ENGINE_ROOTS = ("policy", "schemas")
 

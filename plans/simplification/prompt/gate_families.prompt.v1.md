@@ -51,7 +51,7 @@ Only the coordinator changes Git history. Keep the three roles separate.
 
 ## Loop
 
-Read `AGENTS.md`, `plans/fix_meta_prompt/fix_meta_prompt.plan.v1.md` §5,
+Read `readme.md`, `plans/fix_meta_prompt/fix_meta_prompt.plan.v1.md` §5,
 `plans/simplification/plan/simplification.plan.v3.md` §§2, 6, 7, and
 `plans/folder_refactoring/folder_refactoring.plan.v6.md` §8 before step 1.
 

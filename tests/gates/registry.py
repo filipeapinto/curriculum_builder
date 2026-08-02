@@ -120,14 +120,6 @@ GATES = [
         "impl": "fr_p1_retention:check_gitkeep",
     },
     {
-        "id": "FR-P1-DOC",
-        "activation_phase": 1,
-        "claim_class": "tree+text+mapping",
-        "depends_on": ["FR-P0-HARNESS"],
-        "command": "python3 tests/gates/fr_p1_retention.py --check agents-doc",
-        "impl": "fr_p1_retention:check_agents_doc",
-    },
-    {
         "id": "FR-P1-SCHEMA-RETENTION",
         "activation_phase": 1,
         "claim_class": "tree+text+mapping",

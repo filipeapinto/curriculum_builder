@@ -189,37 +189,33 @@ def compose(read=None) -> str:
 # It used to be the folder plan's §4 target tree, and the comparison was switched off
 # with a module-level flag when `simplification.plan.v3.md` §6 phase 5 retired most of
 # that asset set and the two stopped agreeing. A flag set to `False` is not a
-# replacement, and the reasons offered for it were not either: `FR-P1-GITKEEP` checks
-# only that four `.gitkeep` files exist, and the pinned headings check the inside of a
-# file that is still listed, never whether the list is right. With the comparison off,
-# `EXPECTED` certified itself — whoever deleted an asset and its row in the prompt's own
-# table could delete its line in this module in the same edit, and everything stayed
-# green. That is precisely the failure this module's docstring describes.
+# replacement: with the comparison off, `EXPECTED` certified itself — whoever deleted an
+# asset and its row in the prompt's own table could delete its line here in the same
+# edit, and everything stayed green.
 #
-# So the authority moves rather than disappearing. A finished plan's tree records what
-# was true when that plan completed and must not be edited to track the present; AGENTS.md
-# is the live map of the repository, written for a human reader, maintained for a
-# different purpose, and read by a different gate (`FR-P1-DOC`). Its `### Contract assets`
-# table is the declaration, and the two are compared in both directions.
-DOC = REPO / "AGENTS.md"
+# The declaration now lives in `tests/contract_assets.v1.md`, beside this module. That is
+# a weaker authority than a document maintained for another purpose, and it is stated as
+# such in the file itself; what it keeps is that the shape is declared twice and the two
+# must agree.
+DOC = REPO / "tests" / "contract_assets.v1.md"
 
-ASSET_DOC_HEADING = r"^### Contract assets\s*$"
+ASSET_DOC_HEADING = r"^# The contract's asset set\s*$"
 DOC_ROW = re.compile(r"^\|\s*`(?P<path>[^`]+)`\s*\|\s*(?P<kind>\w+)\s*\|\s*$", re.M)
 
 
 def documented_assets(read=None) -> list[tuple[str, str]]:
-    """The assets AGENTS.md declares, with the kind each row states."""
+    """The assets tests/contract_assets.v1.md declares, with the kind each row states."""
     if not DOC.exists():
         return []
     text = _read(DOC, read)
-    block = re.search(ASSET_DOC_HEADING + r"(.*?)(?=^#{2,3} )", text, re.M | re.S)
+    block = re.search(ASSET_DOC_HEADING + r"(.*)", text, re.M | re.S)
     if not block:
         return []
     return [(m.group("path"), m.group("kind")) for m in DOC_ROW.finditer(block.group(1))]
 
 
 def shape_problems(read=None) -> list[str]:
-    """``EXPECTED`` against AGENTS.md's asset table, both directions.
+    """``EXPECTED`` against ``tests/contract_assets.v1.md``, both directions.
 
     Without this the shape is self-certifying: whoever deletes an asset and its table
     row can delete its line here in the same edit, and every check stays green. The
@@ -230,18 +226,18 @@ def shape_problems(read=None) -> list[str]:
     declared = documented_assets(read)
     problems = []
     if not declared:
-        return ["assets: AGENTS.md's `### Contract assets` table names no assets, so the "
+        return ["assets: tests/contract_assets.v1.md names no assets, so the "
                 "contract's shape rests on nothing but its own word"]
     for row in expected:
         if row not in declared:
             problems.append(
-                f"assets: {row[0]} ({row[1]}) is part of the contract's shape and AGENTS.md "
+                f"assets: {row[0]} ({row[1]}) is part of the contract's shape and tests/contract_assets.v1.md "
                 f"does not name it as such"
             )
     for row in declared:
         if row not in expected:
             problems.append(
-                f"assets: AGENTS.md names {row[0]} ({row[1]}) and the contract's shape does "
+                f"assets: tests/contract_assets.v1.md names {row[0]} ({row[1]}) and the contract's shape does "
                 "not"
             )
     return problems

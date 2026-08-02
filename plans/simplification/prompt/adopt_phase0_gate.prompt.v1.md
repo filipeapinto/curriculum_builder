@@ -59,7 +59,7 @@ Three defects to close, and they are the whole job.
   reports `gate-family-unowned` and fails — which is the reject fixture doing its job,
   not a defect. v3 must say this where it tells a phase to add a gate.
 - **Superseded prompts are archived.** `plans/simplification/prompt/v1` and `v2` move to
-  `plans/simplification/prompt/deprecated/` when v3 becomes active, per AGENTS.md's
+  `plans/simplification/prompt/deprecated/` when v3 becomes active, per readme.md's
   retention table.
 
 ## Non-goals, stated so they are not drifted into
@@ -85,7 +85,7 @@ Only the coordinator changes Git history. Keep the three roles separate.
 
 ## Loop
 
-Read `AGENTS.md`, `../plan/simplification.plan.v3.md` §§2, 6, 7, 9,
+Read `readme.md`, `../plan/simplification.plan.v3.md` §§2, 6, 7, 9,
 `../plan/simplification.phase0.result.v1.md`, `simplification.prompt.v2.md`,
 `tests/gates/gate_families.v1.yaml` and `tests/gates/registry.py` before step 1.
 

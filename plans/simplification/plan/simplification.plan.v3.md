@@ -370,7 +370,7 @@ result obtained by editing `policy/`, `schemas/` or `meta_prompt/` content ahead
 those phases destroys the measurement and is failure A5.
 
 **What this gate does not assert.** It does not check `meta_prompt/docs/`, which
-AGENTS.md declares orientation only, nor `docs/`, nor `curricula/**`, which is the
+readme.md declares orientation only, nor `docs/`, nor `curricula/**`, which is the
 layer that is *supposed* to know its domain. It does not decide whether `G1`–`G6` is
 complete — it produces the evidence §6 phase 0 needs in order to decide, and the
 completeness of `G1`–`G6` is stated in the result note beside this plan, not inferred
