@@ -131,7 +131,7 @@ v5_gate_failures:
       Enforce isolation through path authorization — a reviewer's authorized input set
       must not include any sibling's verdict file — and prove it with a test that fails
       if any such path exists.
-    checks: [REV-COUNT-TWELVE, REV-ISOLATED]
+    checks: [REV-JUDGE-SINGLE-CROSS-FAMILY, REV-ISOLATED]
 
   - id: B3
     verified_by: FR-P4-CHECK-MAPPING

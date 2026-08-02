@@ -10,16 +10,16 @@ This checker asks only that question, in six parts:
 
   1. **anchoring**    every variable in the write boundary is a path, not prose,
                       and resolves — or is explicitly supplied at invocation.
-                      CREATOR is proved derivable by an *anchor*: some other
-                      boundary line must equal CREATOR/<rel> where <rel> is this
+                      ENGINE is proved derivable by an *anchor*: some other
+                      boundary line must equal ENGINE/<rel> where <rel> is this
                       file, so the derivation is subtraction and not a guess. A
-                      CREATOR defined in terms of a variable supplied at
+                      ENGINE defined in terms of a variable supplied at
                       invocation is circular and fails. A name defined twice
                       fails: dict-building silently keeps the last.
-  2. **inputs**       every path the contract names under CREATOR exists.
+  2. **inputs**       every path the contract names under ENGINE exists.
   3. **write order**  no step writes before the only authorized root exists, no
                       model is called before the logger, the startup precondition
-                      is actually checked, and nothing is written outside V7.
+                      is actually checked, and nothing is written outside OUTPUT_ROOT.
   4. **no dangling**  every variable the prose names is defined in the boundary.
   5. **portability**  no absolute path is hard-coded in any source of the contract —
                       any filesystem root, not just /Users, and Windows drives.
@@ -84,12 +84,12 @@ ASSETS = source.ASSETS
 
 # Variables the prompt is allowed to leave unresolved because the invocation supplies
 # them. Anything else in the boundary must resolve on disk.
-SUPPLIED_AT_INVOCATION = {"OUTPUT_ROOT", "V7"}
+SUPPLIED_AT_INVOCATION = {"OUTPUT_ROOT", "CURRICULUM"}
 
 
 def boundary_pairs(text: str) -> list[tuple[str, str]]:
     """In file order, so a name defined twice stays visible."""
-    block = re.search(r"## Write boundary\s*\n+```text\n(.*?)```", text, re.S)
+    block = re.search(r"## Mission\s*\n+```text\n(.*?)```", text, re.S)
     if not block:
         raise SystemExit("FAIL anchoring: no write-boundary block")
     pairs = []
@@ -105,35 +105,35 @@ def boundary(text: str) -> dict[str, str]:
 
 
 def creator_derivable(value: str, variables: dict[str, str]) -> list[str]:
-    """CREATOR is only derivable if some other line pins this file underneath it.
+    """ENGINE is only derivable if some other line pins this file underneath it.
 
     Prose saying "derive it" proves nothing — the old check accepted any value
     containing the word "containing", which a circular definition also does. What
     makes the derivation mechanical is an anchor: a boundary line equal to
-    CREATOR/<rel> where <rel> is this very file. Then CREATOR is this file's path
+    ENGINE/<rel> where <rel> is this very file. Then ENGINE is this file's path
     minus <rel> — subtraction, not a guess.
     """
     problems = []
     if not re.search(r"\bthis (?:file|prompt)\b", value):
         problems.append(
-            "anchoring: CREATOR does not resolve from this file's own location; a value "
+            "anchoring: ENGINE does not resolve from this file's own location; a value "
             "that does not say so leaves the reader to choose a directory"
         )
-    circular = sorted(n for n in SUPPLIED_AT_INVOCATION | {"CREATOR"}
+    circular = sorted(n for n in SUPPLIED_AT_INVOCATION | {"ENGINE"}
                       if re.search(rf"\b{n}\b", value))
     if circular:
         problems.append(
-            f"anchoring: CREATOR is defined in terms of {', '.join(circular)}, which is "
-            "supplied at invocation or is CREATOR itself — the derivation is circular"
+            f"anchoring: ENGINE is defined in terms of {', '.join(circular)}, which is "
+            "supplied at invocation or is ENGINE itself — the derivation is circular"
         )
     anchored = [
         n for n, v in variables.items()
-        if n != "CREATOR" and v.startswith("CREATOR/")
-        and (REPO / v[len("CREATOR/"):]) == PROMPT
+        if n != "ENGINE" and v.startswith("ENGINE/")
+        and (REPO / v[len("ENGINE/"):]) == PROMPT
     ]
     if not anchored:
         problems.append(
-            "anchoring: no boundary line pins this file as CREATOR/<path>, so CREATOR "
+            "anchoring: no boundary line pins this file as ENGINE/<path>, so ENGINE "
             "can only be guessed at, never derived by subtraction"
         )
     return problems
@@ -163,10 +163,10 @@ def check_anchoring(text: str, output_root: Path | None) -> list[str]:
         if value.startswith("/"):
             problems.append(f"anchoring: {name} is an absolute path; it resolves on one machine only")
             continue
-        if name == "CREATOR":
+        if name == "ENGINE":
             problems += creator_derivable(value, variables)
             continue
-        resolved = value.replace("CREATOR/", "")
+        resolved = value.replace("ENGINE/", "")
         if not (REPO / resolved).exists():
             problems.append(f"anchoring: {name} = {value} does not resolve ({resolved})")
 
@@ -183,11 +183,10 @@ def check_anchoring(text: str, output_root: Path | None) -> list[str]:
             )
 
     if output_root is not None:
-        v7 = output_root / "templates_v7"
-        if v7.exists():
+        if output_root.exists() and any(output_root.iterdir()):
             problems.append(
-                f"precondition: {v7} already exists — a real run must stop here as "
-                "META_SYSTEM_FAILURE, which is correct behaviour, not a defect"
+                f"precondition: {output_root} already holds a run — a real run must stop "
+                "here as SYSTEM_FAILURE, which is correct behaviour, not a defect"
             )
     return problems
 
@@ -200,7 +199,7 @@ def check_inputs(text: str) -> list[str]:
         m for m in re.findall(r"`((?:policy|schemas|curricula|meta_prompt|docs|plans|tests)/[a-z_/]*)`", text)
     })
     for path in named:
-        if path.startswith(("V7/", "templates_v7")) or path in ("remediation_report.md",):
+        if path.startswith("OUTPUT_ROOT/") or path in ("remediation_report.md",):
             continue  # produced by the run, not read by it
         if not (REPO / path).exists():
             problems.append(f"inputs: {path} is named but does not exist")
@@ -216,7 +215,7 @@ SOURCE_PREP = {"from", "of", "for", "in", "under", "within", "against", "beside"
 
 
 def writes_outside_v7(order: list[tuple[int, str]]) -> list[str]:
-    """"Write only to `V7`" — the one boundary rule the Execution list could break.
+    """"Write only to `OUTPUT_ROOT`" — the one boundary rule the Execution list could break.
 
     A path is this verb's target if it follows it directly or after to/into/onto; it
     is a source if it follows from/of/for/in. That distinction is what keeps step 7
@@ -244,10 +243,10 @@ def writes_outside_v7(order: list[tuple[int, str]]) -> list[str]:
                         break  # too far from the verb to be its object
                     continue
                 path = hit.group(1)
-                if (i == 0 or prep == "target") and not path.startswith(("V7", "OUTPUT_ROOT")):
+                if (i == 0 or prep == "target") and not path.startswith("OUTPUT_ROOT"):
                     problems.append(
-                        f"write order: step {n} writes outside V7 — "
-                        f"{verb.group(0).lower()} {path!r}. Everything but V7 is immutable."
+                        f"write order: step {n} writes outside OUTPUT_ROOT — "
+                        f"{verb.group(0).lower()} {path!r}. Everything but OUTPUT_ROOT is immutable."
                     )
                 prep = None
     return problems
@@ -268,13 +267,13 @@ def check_write_order(text: str) -> list[str]:
                 return n
         return None
 
-    creates_root = first(r"create `?V7`?")
+    creates_root = first(r"create `?OUTPUT_ROOT`?")
     builds_logger = first(r"build the logger")
-    precondition = first(r"precondition|V7` exists")
+    precondition = first(r"precondition|OUTPUT_ROOT` must not")
     calls_model = first(r"\b(?:call|invoke)s?\s+(?:the\s+)?[\w-]*\s*model\b")
 
     if creates_root is None:
-        problems.append("write order: no step creates V7")
+        problems.append("write order: no step creates OUTPUT_ROOT")
     if builds_logger is None:
         problems.append("write order: no step builds the logger")
     if precondition is None:
@@ -301,20 +300,20 @@ def check_write_order(text: str) -> list[str]:
             )
     if creates_root and builds_logger and creates_root > builds_logger:
         problems.append(
-            f"write order: the logger is built at step {builds_logger} but V7 — the only "
+            f"write order: the logger is built at step {builds_logger} but OUTPUT_ROOT — the only "
             f"authorized write target — is not created until step {creates_root}. The "
             "first record has nowhere legal to go."
         )
     if precondition and creates_root and precondition > creates_root:
         problems.append(
             f"write order: the startup precondition is checked at step {precondition}, "
-            f"after V7 is created at step {creates_root}; it can then never fire."
+            f"after OUTPUT_ROOT is created at step {creates_root}; it can then never fire."
         )
     return problems
 
 
 def check_no_dangling(text: str) -> list[str]:
-    defined = set(boundary(text)) | {"CREATOR", "RESEARCH"}
+    defined = set(boundary(text)) | {"ENGINE", "RESEARCH"}
     body = text.split("```", 2)[-1]
     problems = []
     if "`RESEARCH`" in body and RESEARCH_DEFINED not in text:
@@ -365,13 +364,13 @@ def check_portability(_text: str = "") -> list[str]:
 # ---------------------------------------------------------------------------
 # 6. assets — is the split honest?
 
-ASSETS_BLOCK = re.compile(r"^## Assets\s*$(.*?)(?=^## )", re.M | re.S)
+ASSETS_BLOCK = re.compile(source.ASSET_TABLE_HEADING + r"(.*?)(?=^## )", re.M | re.S)
 TABLE_ROW = re.compile(r"^ {0,3}\|(?P<first>[^|]*)\|(?P<kind>[^|]*)\|", re.M)
 HEADING = re.compile(r"^(#+)\s+(.*?)\s*$", re.M)
 # Each section asset names the headings it owns, so the file itself says what it
 # is and what it carries. Companions never carry it.
 SECTION_BANNER = re.compile(
-    r"<!--\s*section asset of meta_curriculum_builder\.prompt\.v6\.md"
+    r"<!--\s*section asset of curriculum\.prompt\.v1\.md"
     r"[^-]*?·\s*owns:\s*(.*?)\s*-->", re.S)
 
 KINDS = {source.SECTION, source.COMPANION}
@@ -384,7 +383,7 @@ RESEARCH_DEFINED = "`RESEARCH` — the network capability"
 # § Assets paragraph and execution step 2 can both be deleted: the mechanism
 # survives, the instruction to the agent that must run it does not, and the
 # check id's owner claim in policy/checks.v1.yaml quietly becomes false.
-BANNER_RULE_STATED = ("`PRECONDITION-ASSETS-RESOLVE`", "banner")
+BANNER_RULE_STATED = ("`PRECONDITION-ASSETS-RESOLVE`", "no owner")
 
 
 def read(path: Path) -> str:
@@ -448,11 +447,15 @@ def check_assets(_text: str = "") -> list[str]:
         if count > 1:
             problems.append(f"assets: {name} is listed {count} times; one file, one row")
 
-    if not source.assets_of_kind(prompt_text, source.SECTION):
-        problems.append(
-            "assets: no row is a section, so the composed contract is the short file "
-            "alone and every rule moved out of it is unbound"
-        )
+    # A contract with no section rows is a contract in one file, which is what
+    # `curriculum.prompt.v1.md` is. What made the *old* zero-section state a defect was
+    # that the prompt was an index — it stated a mission and delegated its rules — so a
+    # composition with nothing in it meant the rules were unbound. That is not a
+    # property of the row count; it is a property of whether the prompt states its own
+    # rules, and `PROMPT_HEADINGS` is what pins that. It is checked below, against every
+    # heading the contract's shape requires, and a prompt that had shed its rules would
+    # fail there rather than here.
+    sections = source.assets_of_kind(prompt_text, source.SECTION)
 
     # No orphans. A rule moved into a file the table does not name is a rule no
     # reader of this contract will ever see, and every other check would still pass.
@@ -475,20 +478,21 @@ def check_assets(_text: str = "") -> list[str]:
         if len(where) > 1:
             problems.append(f"assets: heading {title!r} is stated in {', '.join(where)}")
 
-    # The claim that the prompt is small, made checkable: it is the index, so it is
-    # smaller than what it indexes.
-    prompt_lines = len(prompt_text.splitlines())
-    section_lines = sum(
-        len(read(REPO / rel).splitlines())
-        for rel in source.assets_of_kind(prompt_text, source.SECTION)
-        if (REPO / rel).is_file()
-    )
-    if prompt_lines >= section_lines:
-        problems.append(
-            f"assets: the prompt is {prompt_lines} lines and the sections it binds are "
-            f"{section_lines}; a prompt no smaller than its assets has not been split, "
-            "it has been copied"
+    # The claim that a *split* prompt is small, made checkable: an index is smaller
+    # than what it indexes. It applies only where there is a split — with no section
+    # rows the comparison has no second operand, and asserting it anyway would forbid
+    # the one-file contract rather than check it.
+    if sections:
+        prompt_lines = len(prompt_text.splitlines())
+        section_lines = sum(
+            len(read(REPO / rel).splitlines()) for rel in sections if (REPO / rel).is_file()
         )
+        if prompt_lines >= section_lines:
+            problems.append(
+                f"assets: the prompt is {prompt_lines} lines and the sections it binds are "
+                f"{section_lines}; a prompt no smaller than its assets has not been split, "
+                "it has been copied"
+            )
 
     problems += source.table_problems(prompt_text)
     problems += source.shape_problems()
@@ -586,7 +590,7 @@ def banner_problems(rows: list[tuple[str, str]]) -> list[str]:
 def main() -> int:
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument("--output-root", type=Path, default=None,
-                        help="where a run would write; checked for the V7 precondition")
+                        help="where a run would write; checked for the OUTPUT_ROOT precondition")
     args = parser.parse_args()
     text = source.compose()
 

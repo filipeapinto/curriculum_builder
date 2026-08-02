@@ -49,14 +49,14 @@ calibration:
   note: a schema cap that drifts from its premise fails the build
 curriculum:
 - id: CUR-COUNT-DERIVED
-  owner: meta_prompt/assets/inputs.v1.md
+  owner: meta_prompt/curriculum.prompt.v1.md
   method: execution
   deferred: RT-5
   asserts: the lab count used by every test and command was read from the manifest at run time, and
     no fixed count appears in code, schema, CLI default or report text
   stage: static
 - id: CUR-BOUNDED-PROMPTS
-  owner: meta_prompt/assets/architecture.v1.md
+  owner: meta_prompt/curriculum.prompt.v1.md
   method: execution
   deferred: RT-5
   asserts: every worker prompt declares role, check ids, authorized paths and one output schema
@@ -144,13 +144,13 @@ unit:
     and needs a renderer; this one needs only bytes, so it runs today.
 pdf:
 - id: PDF-PAGE-COUNT
-  owner: meta_prompt/assets/proving.v1.md
+  owner: meta_prompt/curriculum.prompt.v1.md
   method: execution
   deferred: RT-5
   asserts: rendered page count equals the count recorded at assembly
   stage: golden
 - id: PDF-PAGE-NONBLANK
-  owner: meta_prompt/assets/proving.v1.md
+  owner: meta_prompt/curriculum.prompt.v1.md
   method: execution
   deferred: RT-5
   asserts: no page is uniform within 1% of a single colour
@@ -164,13 +164,13 @@ pdf:
   stage: golden
   note: corrects B4 — a receipt that does not resolve is a failed gate, not a warning
 - id: PDF-TEXT-LEGIBLE
-  owner: meta_prompt/assets/proving.v1.md
+  owner: meta_prompt/curriculum.prompt.v1.md
   method: execution
   deferred: RT-5
   asserts: body text renders at 9 pt or above effective at 200 dpi and is not clipped
   stage: golden
 - id: PDF-VISUAL-REVIEW
-  owner: meta_prompt/assets/proving.v1.md
+  owner: meta_prompt/curriculum.prompt.v1.md
   method: execution
   deferred: RT-5
   asserts: all four PDF reviewers pass against the rasterized pages
@@ -216,12 +216,20 @@ log:
   asserts: an operation without its action record fails the run
   stage: logger
 reviewers:
-- id: REV-COUNT-TWELVE
-  owner: meta_prompt/assets/architecture.v1.md
+- id: REV-JUDGE-SINGLE-CROSS-FAMILY
+  owner: meta_prompt/curriculum.prompt.v1.md
   method: execution
   deferred: RT-5
-  asserts: exactly twelve reviewer invocations per lab — 4 plan, 4 QA, 4 PDF
+  asserts: exactly one judge invocation per pass, from a different model family than the generator,
+    with an explicit rubric and a randomised presentation order, and its verdict recorded with both
   stage: golden
+  note: >-
+    replaces REV-COUNT-TWELVE, retired by section 6 phase 5 of the simplification plan. Nine
+    cross-family judges provide 2.18 effective votes and the best single judge matched the full
+    panel, so twelve invocations bought roughly two independent opinions at twelve times the cost.
+    The recovered budget goes to deterministic checks, which beat judges by 1.2x to 7x where both
+    were measured. Self-preference bias is -38% to +90% and survives hiding authorship, which is
+    why the family must differ rather than merely the instance.
 - id: REV-ISOLATED
   owner: policy/failures.v1.yaml
   method: execution
@@ -235,7 +243,7 @@ selector:
   asserts: every routing decision validates against schemas/routing_decision.schema.v2.json with all
     ten required fields, and its decided_model is a member of policy/routing/model_registry.v1.yaml
   stage: static
-  owner: meta_prompt/assets/routing.v1.md
+  owner: meta_prompt/curriculum.prompt.v1.md
   method: schema
   artifact: schemas/routing_decision.schema.v2.json
   verified_by: FR-P2-DECISION-VALID
@@ -265,22 +273,22 @@ selector:
 - id: SEL-EXECUTED-MATCHES-DECIDED
   asserts: the model a call actually ran on equals the model its routing decision decided on
   stage: static
-  owner: meta_prompt/assets/routing.v1.md
+  owner: meta_prompt/curriculum.prompt.v1.md
   method: execution
   deferred: RT-3
 drift:
 - id: DRIFT-SCOPE
-  owner: meta_prompt/meta_curriculum_builder.prompt.v6.md
+  owner: meta_prompt/curriculum.prompt.v1.md
   method: execution
   deferred: RT-5
   asserts: no write left the authorized roots and no immutable file changed
 - id: DRIFT-NO-EARLY-GENERATION
-  owner: meta_prompt/meta_curriculum_builder.prompt.v6.md
+  owner: meta_prompt/curriculum.prompt.v1.md
   method: execution
   deferred: RT-5
   asserts: no live dossier was created for any lab beyond L01 during the meta run
 - id: DRIFT-NO-WEAKENING
-  owner: meta_prompt/assets/logging.v1.md
+  owner: meta_prompt/curriculum.prompt.v1.md
   method: execution
   deferred: RT-5
   asserts: no test, schema, evidence rule or release gate was weakened to obtain a pass
@@ -309,7 +317,7 @@ drift:
   asserts: no accepted evidence changed without reopening its gate
 preconditions:
 - id: PRECONDITION-OUTPUT-ROOT-EXISTS
-  owner: meta_prompt/meta_curriculum_builder.prompt.v6.md
+  owner: meta_prompt/curriculum.prompt.v1.md
   method: execution
   deferred: RT-5
   asserts: V7 does not exist at startup
@@ -317,7 +325,7 @@ preconditions:
     occupied path and the next free version name. Never auto-increment, never merge, never overwrite
     — choosing which evidence to keep is a human decision an unattended run must not make.
 - id: PRECONDITION-ASSETS-RESOLVE
-  owner: meta_prompt/meta_curriculum_builder.prompt.v6.md
+  owner: meta_prompt/curriculum.prompt.v1.md
   method: execution
   deferred: RT-5
   asserts: every row of the meta prompt's asset table resolves, every asset it declares a section carries

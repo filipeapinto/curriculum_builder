@@ -1,26 +1,30 @@
-"""Where the meta prompt is, and what counts as the meta prompt.
+"""Where the prompt is, and what counts as the prompt.
 
-Until v5 the contract was one file, so every reader could slice a section out of it
-and be right. v6 split it: a short prompt that states the mission, the boundary and
-the order of work, plus the `section` assets its own asset table names. `## Routing`
-is no longer *in* the prompt — it is in an asset the prompt binds, and it binds with
-the same force. A checker that kept reading the short file alone would report a
-5/5 pass on a document with most of its rules removed, which is the exact shape of
-the misreporting `policy/failures.v1.yaml` calls B3.
+Until v5 the contract was one file. v6 split it: a short prompt plus the `section`
+assets its own asset table named, because it was building a *generator* and the
+generator's rules needed room. `curriculum.prompt.v1.md` is not building anything — it
+runs a curriculum — and it is one file again, with **no section assets at all**.
 
-So the subject of every check is the **composed contract**: the prompt followed by
-its section assets, in the order the table gives. There is one place that says how
-that composition is formed, and this is it — a second copy would be a second answer
-to "what does the prompt say".
+That is not a return to v5. What made v5 unsafe was that a reader could slice a section
+out of the short file and be right about a contract most of whose rules lived elsewhere;
+a checker reading the short file alone would report a full pass on a gutted document,
+which is the misreporting `policy/failures.v1.yaml` calls B3. The composition machinery
+below is what closed that, and it stays: it is what makes "the contract" a single
+computable thing rather than whichever file a reader opened. With no section rows it
+composes to the prompt itself, and the day a section row is added it composes to more.
+
+So the subject of every check is still the **composed contract**. There is one place
+that says how that composition is formed, and this is it — a second copy would be a
+second answer to "what does the prompt say".
 
 An asset row is ``| `path` | kind | role |`` with ``kind`` in {section, companion}.
 A `section` composes. A `companion` never does: it is an input a worker or reviewer
-reads, and treating it as contract text would let a lab-writing guide be read as a
-rule binding the generator.
+reads, and treating it as contract text would let a unit-writing guide be read as a
+rule binding the run.
 
 Nothing here validates the manifest — see ``tests/check_meta_prompt.py``, which owns
-the question of whether the split is honest (every row resolving, no orphan asset,
-no heading owned twice, the prompt smaller than the assets it binds).
+the question of whether the contract is honest (every row resolving, no orphan asset,
+no heading owned twice).
 """
 
 from __future__ import annotations
@@ -30,13 +34,13 @@ from pathlib import Path
 
 REPO = Path(__file__).resolve().parents[1]
 
-PROMPT_REL = "meta_prompt/meta_curriculum_builder.prompt.v6.md"
+PROMPT_REL = "meta_prompt/curriculum.prompt.v1.md"
 ASSETS_REL = "meta_prompt/assets"
 
 PROMPT = REPO / PROMPT_REL
 ASSETS = REPO / ASSETS_REL
 
-# ``| `meta_prompt/assets/inputs.v1.md` | section | … |`` — the kind is a fixed word
+# ``| `meta_prompt/assets/pedagogy.v1.md` | companion | … |`` — the kind is a fixed word
 # in its own column, never inferred from the role text beside it.
 ASSET_ROW = re.compile(r"^ {0,3}\|\s*`([^`]+)`\s*\|\s*(section|companion)\s*\|", re.M)
 
@@ -58,20 +62,12 @@ COMPANION = "companion"
 # edit here too — that is the same discipline ``tests/gates/registry.py`` keeps
 # with the plan's gate catalogue.
 EXPECTED: tuple[tuple[str, str, tuple[str, ...]], ...] = (
-    ("meta_prompt/assets/inputs.v1.md", SECTION,
-     ("## Inputs", "### Retained contracts", "## Precedence")),
-    ("meta_prompt/assets/architecture.v1.md", SECTION,
-     ("## What the generator must be", "## What a lab must be")),
-    ("meta_prompt/assets/routing.v1.md", SECTION, ("## Routing",)),
-    ("meta_prompt/assets/proving.v1.md", SECTION, ("## Proving it", "## Release gates")),
-    ("meta_prompt/assets/logging.v1.md", SECTION,
-     ("## The action log", "## Convergence and drift")),
-    ("meta_prompt/assets/deliverables.v1.md", SECTION, ("## Deliverables",)),
-    # A companion carries no banner — it is not contract text — so what is pinned
-    # here is its top-level structure, the floor below which it has been gutted
-    # rather than edited. Its `###` detail is free to change.
-    ("meta_prompt/assets/component_lab_template.v1.md", COMPANION,
-     ("## Purpose", "## Required lab structure", "## Visual standard",
+    # Every row is a companion. `curriculum.prompt.v1.md` carries its own rules, so
+    # there is nothing to compose and no `section` row to state. The three that remain
+    # are inputs: how a unit reads, why each pedagogy field exists, and how the selector
+    # decides. Deleting one is still visible here, which is the point of pinning them.
+    ("meta_prompt/assets/unit_prose.v1.md", COMPANION,
+     ("## Purpose", "## Required unit structure", "## Visual standard",
       "## Child-language rules", "## Safety baseline")),
     ("meta_prompt/assets/pedagogy.v1.md", COMPANION,
      ("## The spine: 5E instructional model", "## Inside Explore: Predict–Observe–Explain",
@@ -89,18 +85,33 @@ EXPECTED_HEADINGS = {path: headings for path, _, headings in EXPECTED}
 # are pinned here. Without this the file at the top of the contract was the easiest
 # to gut: deleting `## Final response`, the entire reporting contract, passed.
 PROMPT_HEADINGS = (
-    "# ELEGOO Meta-Curriculum Prompt — v6",
+    "# Curriculum Prompt — v1",
     "## Mission",
-    "## Write boundary",
-    "## Assets",
+    "## Inputs",
+    "### Retained contracts",
+    "## Precedence",
+    "## What a unit is",
+    "## One parent",
+    "## Grounding",
+    "## The domain verifier",
+    "## Generic checks",
+    "## Review",
+    "## Routing",
+    "## Proving it",
+    "## Acceptance",
+    "## Never hardcode",
+    "## Companions",
     "## Execution",
     "## Final response",
 )
 
 
+ASSET_TABLE_HEADING = r"^## Companions\s*$"
+
+
 def table_rows_loose(prompt_text: str) -> list[tuple[str, str]]:
     """Every row of the asset table, read without requiring backticks."""
-    block = re.search(r"^## Assets\s*$(.*?)(?=^## )", prompt_text, re.M | re.S)
+    block = re.search(ASSET_TABLE_HEADING + r"(.*?)(?=^## )", prompt_text, re.M | re.S)
     if not block:
         return []
     rows = []
@@ -175,6 +186,15 @@ def compose(read=None) -> str:
 
 PLAN = REPO / "plans" / "folder_refactoring" / "folder_refactoring.plan.v6.md"
 
+# The folder plan's §4 tree is a *finished* plan's record of the asset set as it stood
+# when that plan completed. `simplification.plan.v3.md` §6 phase 5 retired most of that
+# set, so the two no longer agree and are not meant to: the tree is history, and
+# `EXPECTED` above is the live shape. Comparing them would report a completed migration
+# as a defect every time it ran. What replaces the cross-check is the retention rule —
+# every retired asset is under `meta_prompt/deprecated/`, which `FR-P1-GITKEEP` and the
+# tree gate still hold — plus the pinned headings above.
+CROSS_CHECK_PLAN_TREE = False
+
 
 def plan_assets(read=None) -> list[tuple[str, str]]:
     """The assets §4's target tree names under ``meta_prompt/assets/``, with the kind
@@ -206,6 +226,8 @@ def shape_problems(read=None) -> list[str]:
     green. The plan is maintained for a different purpose by a different gate, so
     agreeing with it is evidence rather than restatement.
     """
+    if not CROSS_CHECK_PLAN_TREE:
+        return []
     expected = [(path, kind) for path, kind, _ in EXPECTED]
     declared = plan_assets(read)
     problems = []

@@ -123,3 +123,17 @@ deferred:
       LAB-VALUE-SOURCED are engine-owned domain assertions the detector cannot see. Zero
       is a bound, not a clean bill, and this id is where that is written down.
     promotes_gate: FR-P5-ENGINE-GENERIC
+
+  - id: RT-10
+    obligation: Genericity is demonstrated, not only enforced
+    acceptance_criterion: >-
+      a second curriculum in an unrelated subject, with a trivially checkable verifier,
+      runs to completion under meta_prompt/curriculum.prompt.v1.md with no edit to that
+      file, and FR-P5-ENGINE-GENERIC passes with more than one curriculum present
+    blocked_by: >-
+      section 6 phase 7 of the simplification plan, which is out of scope for the run
+      that wrote this entry. Until it happens, genericity is structurally enforced and
+      not demonstrated: every gate says the engine names no curriculum, and exactly one
+      curriculum has ever existed. "The engine handles any curriculum" and "a curriculum
+      exists" are different claims and are never reported as each other.
+    promotes_gate: FR-P5-ENGINE-GENERIC

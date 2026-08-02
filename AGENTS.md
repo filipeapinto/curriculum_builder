@@ -4,7 +4,7 @@
 
 - `policy/` contains the calibration, controller, route, limit, failure, and check manifests — the data code reads. `policy/routing/` holds the model-routing manifests. Put curriculum-specific rejection fixtures in `curricula/<name>/fixtures/`.
 - `schemas/` holds the JSON Schemas that define valid YAML/JSON inputs. Keep a manifest and its matching schema version aligned.
-- `meta_prompt/` contains the generator contract and the prose a model reads. Since v6 that contract is `meta_curriculum_builder.prompt.v6.md` plus the assets its own asset table names: a `section` asset is part of the contract, a `companion` is an input a worker reads. Both live in `meta_prompt/assets/` — `meta_prompt/assets/pedagogy.v1.md` records the teaching rationale — and a file there that no table row names is unowned. `tests/check_meta_prompt.py` composes the prompt with its sections and is the only definition of "the meta prompt" any checker uses. `meta_prompt/docs/` explains that contract in diagrams and is orientation only — where it and the contract disagree, the contract wins.
+- `meta_prompt/` contains the run contract and the prose a model reads. That contract is `curriculum.prompt.v1.md`, one file: given a curriculum root it produces that curriculum, and it does not know what subject it is teaching. It has no `section` assets — it states its own rules — and three `companion` assets its own table names, which are inputs a worker reads rather than contract text. Companions live in `meta_prompt/assets/`, and a file there that no table row names is unowned. `tests/meta_prompt_source.py` is the only definition of "the prompt" any checker uses, and `tests/check_meta_prompt.py` asks the separate question of whether an agent handed it could start. `meta_prompt/docs/` explains the contract in diagrams and is orientation only — where it and the contract disagree, the contract wins. The v6 meta prompt built a *generator* and is retired under `meta_prompt/deprecated/` with the six section assets it composed; nothing may read them.
 - `curricula/<name>/` holds one curriculum's facts and evidence. `docs/` contains the explainer Markdown, Typst source, and rendered graphic. `plans/` is remediation/design history.
 - `tests/` is the gate harness: `tests/run_gates.sh <phase>` runs every gate registered in `tests/gates/registry.py` with an activation phase at or below `<phase>`, in dependency order. `tests/fixtures/` and `tests/selftest/` are never read by a production check.
 - Treat `plans/legacy_v3/` as archival reference only. Its runner targets a retired external directory layout and is not the local build entry point.
@@ -38,7 +38,7 @@ to inference:
 There is no package manifest or build system. The committed automated checks are the gate harness under `tests/`. Validate every edited manifest against its schema before review. For the two top-level manifests the harness itself validates:
 
 ```sh
-python3 -c "import json,yaml; from jsonschema import Draft202012Validator as V; V(json.load(open('schemas/curriculum.schema.v4.json'))).validate(yaml.safe_load(open('curricula/arduino_kit/arduino_kit_curriculum.v4.yaml'))); V(json.load(open('schemas/calibration.schema.v1.json'))).validate(yaml.safe_load(open('policy/calibration.v1.yaml')))"
+python3 -c "import json,yaml; from jsonschema import Draft202012Validator as V; V(json.load(open('schemas/curriculum.schema.v5.json'))).validate(yaml.safe_load(open('curricula/arduino_kit/arduino_kit_curriculum.v5.yaml'))); V(json.load(open('schemas/calibration.schema.v1.json'))).validate(yaml.safe_load(open('policy/calibration.v1.yaml')))"
 ```
 
 Render the architecture explainer after changing its Typst source:
@@ -47,7 +47,7 @@ Render the architecture explainer after changing its Typst source:
 typst compile docs/how_it_works.typ /tmp/how_it_works.pdf
 ```
 
-Do not present an unexecuted check as a passing test; `policy/checks.v1.yaml` is the authoritative check inventory.
+Do not present an unexecuted check as a passing test. The check inventory is **two kinds of file**: `policy/checks.v1.yaml` holds the checks that bind every run regardless of curriculum, and `curricula/<name>/checks.v1.yaml` holds the checks whose subject is that curriculum's own files. Both validate against `schemas/checks.schema.v1.json`; only the owner differs, and the gates read them as one inventory.
 
 ## Style and Naming
 
