@@ -89,7 +89,7 @@ Baseline before any of it: `875c6b9`. Use `git diff 875c6b9..HEAD` for the whole
 Result notes worth reading, in this order:
 `plans/simplification/plan/simplification.phase0.result.v1.md` (the original measurement),
 `…phase5.result.v1.md` (the six extracted rules, resolved one by one),
-`…phase6.result.v1.md` (**currently wrong — see defect 2**).
+`…phase6.result.v1.md` (rewritten 2026-08-02 — defect 2 fixed).
 
 ---
 
@@ -116,7 +116,7 @@ contract — `curricula/arduino_kit/domain.schema.v1.json` or a sibling that val
 engine must require *that the curriculum constrains them*, not shrug. Moving a
 constraint out of the engine is the plan's intent; dropping it is not.
 
-### Defect 2 — `simplification.phase6.result.v1.md` is a false record
+### Defect 2 — `simplification.phase6.result.v1.md` is a false record — **FIXED 2026-08-02**
 
 It says five of eight conditions have no executable path, no rasterizer, no second model
 family. All three are wrong: `typst` 0.15.0 renders and rasterises to PNG, Poppler
