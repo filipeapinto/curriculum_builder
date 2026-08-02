@@ -336,11 +336,14 @@ under must keep resolving at a stable path. Supersession happens in place via th
 version suffix. The folder starts empty and stays empty until a retirement is provably
 safe — enforced by `FR-P1-SCHEMA-RETENTION`.
 
-**Retained is not authorized.** A `vN` kept for historical validation is readable by a
-validator checking old records and by nothing else. It must not appear in the meta
+**Retained is not authorized.** A `vN` kept for historical validation would be readable
+by a validator checking old records and by nothing else, and must not appear in the meta
 prompt's authorized-input table, because a new run may not be validated against a
-superseded contract. `FR-P2-BOUND` enforces the distinction; §12's `RT-6` is what
-eventually retires v1.
+superseded contract. `FR-P2-BOUND` (b) still enforces the second half of that — a
+superseded contract is never an authorized input, retained or not. The first half never
+had a case to protect: §12's `RT-6`, discharged through the schema retirement plan,
+records that no record was ever accepted under either `v1` contract, so retention itself
+was never load-bearing and both move to `schemas/deprecated/` outright.
 
 **This is why phase 2 adds `v2` contracts instead of editing `v1`.** Any execution log or
 routing decision already accepted was validated against `v1`; editing `v1` in place would
@@ -1348,7 +1351,7 @@ discharged — a gate that does not exist yet and is never resolved.
 | **RT-3** | Bypass is refused, not just detected | a call whose `executed_model` differs from its `decided_model` is rejected **at runtime**, not merely by a gate reading a static fixture | no selector implementation | `FR-P2-BYPASS-DECLARED` | `FR-P2-BYPASS-ENFORCED` |
 | **RT-4** | An unrecorded call is fatal | a model call with no `decision_id` **terminates** the run as `META_SYSTEM_FAILURE`, rather than failing schema validation after the fact | no controller implementation | `FR-P2-UNRECORDED-DECLARED` | `FR-P2-UNRECORDED-FATAL` |
 | **RT-5** | Advertised checks are executed | every id `FR-P4-CHECK-MAPPING` reports as `MAPPED, NOT EXECUTED` becomes executed, and every A-series id in `policy/failures.v1.yaml` gains a proving test | no controller, logger, renderer or live route | `FR-P4-CHECK-MAPPING` | — |
-| **RT-6** | The v1 contracts are retirable | the logger emits `execution_log.schema.v2.json`-valid records and the selector emits `routing_decision.schema.v2.json`-valid decisions, after which both v1 schemas may enter `schemas/deprecated/` under §6's gate | no logger emitting v2 records | `FR-P1-SCHEMA-RETENTION` | — |
+| **RT-6** | The v1 contracts are retirable | discharged by obsolescence, not by the logger and selector this obligation originally named — no record was ever accepted under either v1 contract (`RT-5`: no logger ever existed; `RT-7`: no unit was ever generated), so retirement under `FR-P1-SCHEMA-RETENTION` never actually needed a v2-emitting logger | nothing — discharged; see `policy/deferred.v1.yaml` | `FR-P1-SCHEMA-RETENTION` | — |
 | **RT-8** | A curriculum declares its domain vocabulary | every curriculum declares the terms of its own domain — not only its proper nouns — each with an anchored `prose_pattern`, so that leg (b) of `FR-P5-ENGINE-GENERIC` and leg (b) of `FR-P5-UNIT-CONTRACT` can see a domain word that is not a vendor name | nothing blocks it technically; it is not in this plan. `simplification.plan.v3.md` section 6 phase 2 declares a verifier and no vocabulary, and `simplification.phase0.result.v1.md` reasons that a `domain_terms` block belongs beside the verifier declaration. Until it exists, leg (b) is armed and near-blind: the only declaration is `kit_terms`, seven proper nouns, and `LAB-CURRENT-MARGIN` and `LAB-VALUE-SOURCED` are engine-owned domain assertions the detector cannot see. Zero is a bound, not a clean bill, and this id is where that is written down. | `FR-P5-ENGINE-GENERIC` | — |
 | **RT-7** | The unit checks have a generated subject | at least one unit exists under `curricula/<name>/units/`, produced by a real run rather than written by hand, so that `FR-P5-READABILITY`, `FR-P5-BLOOM-VERBS`, `FR-P5-DERIVATION` and `FR-P5-RECEIPT-HASH` assert over generated work instead of over their own fixtures alone | nothing in this repository executes a model, renders an artifact or fetches a source, so no unit has ever been generated. Until then each of those four gates reports the number of units it scanned, and that number is zero. Reporting their fixture coverage as generated-lab coverage would be failure A5. | — | — |
 | **RT-10** | Genericity is demonstrated, not only enforced | a second curriculum in an unrelated subject, with a trivially checkable verifier, runs to completion under `meta_prompt/curriculum.prompt.v1.md` with no edit to that file, and `FR-P5-ENGINE-GENERIC` passes with more than one curriculum present | section 6 phase 7 of the simplification plan, which is out of scope for the run that wrote this entry. Until it happens, genericity is structurally enforced and not demonstrated: every gate says the engine names no curriculum, and exactly one curriculum has ever existed. "The engine handles any curriculum" and "a curriculum exists" are different claims and are never reported as each other. | `FR-P5-ENGINE-GENERIC` | — |

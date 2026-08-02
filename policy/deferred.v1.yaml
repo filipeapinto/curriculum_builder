@@ -80,10 +80,19 @@ deferred:
   - id: RT-6
     obligation: The v1 contracts are retirable
     acceptance_criterion: >-
-      the logger emits execution_log.schema.v2.json-valid records and the selector
-      emits routing_decision.schema.v2.json-valid decisions, after which both v1
-      schemas may enter schemas/deprecated/ under the retention gate
-    blocked_by: no logger emitting v2 records
+      discharged by obsolescence, not by the logger and selector this obligation
+      originally named. No record was ever accepted under either superseded v1
+      contract: RT-5 records that no logger or execution log has ever existed, and
+      RT-7 records that no unit has ever been generated, so neither one validated
+      anything a --resume would ever need to keep resolving. Retirement under
+      FR-P1-SCHEMA-RETENTION never actually needed a v2-emitting logger; it needed
+      only that no v1 record existed to protect, which was already true when this
+      obligation was written.
+    blocked_by: >-
+      nothing — discharged. It originally waited on a logger and a selector
+      emitting v2-valid records for the two contracts this obligation names; that
+      wait was never the real condition, since the actual requirement — no
+      accepted v1 record — was met from the start.
     promotes_gate: FR-P1-SCHEMA-RETENTION
 
   - id: RT-7
