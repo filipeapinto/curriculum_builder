@@ -46,8 +46,10 @@ environment and should no longer occur. If it does, it is not a repository defec
 
 ## 3. Verified current state
 
-    ./tests/run_gates.sh 4   ->  31 PASS, 0 FAIL, 0 BLOCKED, 7 SKIPPED
-    ./tests/run_gates.sh 5   ->  38 PASS, 0 FAIL, 0 BLOCKED, 0 SKIPPED
+    ./tests/run_gates.sh 4   ->  31 PASS, 0 FAIL, 0 BLOCKED, 8 SKIPPED
+    ./tests/run_gates.sh 5   ->  39 PASS, 0 FAIL, 0 BLOCKED, 0 SKIPPED
+
+(38 -> 39 on 2026-08-02: `FR-P5-DOMAIN-CONSTRAINED`, added by the defect-1 fix.)
     python3 tests/check_meta_prompt.py  ->  EXECUTABLE (6/6)
     63/63 fixtures pass.  Worktree clean.
 
@@ -98,7 +100,7 @@ Result notes worth reading, in this order:
 All five were found by Codex, not by the executing agent. Listed worst first. Nothing
 has been fixed.
 
-### Defect 1 — `curriculum.schema.v5.json` is materially looser than v4
+### Defect 1 — `curriculum.schema.v5.json` is materially looser than v4 — **FIXED 2026-08-02**
 
 **The worst one.** `G5` was closed by *deleting* constraints rather than relocating them.
 
