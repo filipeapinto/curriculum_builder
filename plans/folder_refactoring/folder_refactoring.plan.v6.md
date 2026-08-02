@@ -179,14 +179,14 @@ curriculum_builder/
 │   └── deprecated/.gitkeep
 │
 ├── schemas/                                    CONTRACTS A VALIDATOR READS
-│   ├── curriculum.schema.v4.json
-│   ├── lab.schema.v3.json
+│   ├── curriculum.schema.v4.json               RETIRED — schemas/deprecated/, schema retirement plan
+│   ├── lab.schema.v3.json                      RETIRED — schemas/deprecated/, schema retirement plan
 │   ├── calibration.schema.v1.json              EDITED (phase 3) — power block out,
 │   │                                           prose_pattern required
 │   ├── kit_calibration.schema.v1.json          NEW (phase 3)
-│   ├── execution_log.schema.v1.json            RETAINED — accepted work validates here
+│   ├── execution_log.schema.v1.json            RETIRED — schemas/deprecated/, schema retirement plan
 │   ├── execution_log.schema.v2.json            NEW (phase 2) — action_kind + decision_id
-│   ├── routing_decision.schema.v1.json         ← meta_prompt/routing/   RETAINED
+│   ├── routing_decision.schema.v1.json         ← meta_prompt/routing/   RETIRED — schemas/deprecated/
 │   ├── routing_decision.schema.v2.json         NEW (phase 2) — decided + executed model
 │   ├── checks.schema.v1.json                   NEW (phase 4) ┐
 │   ├── controller.schema.v1.json               NEW (phase 4) │ one per policy/*.yaml;
@@ -738,14 +738,15 @@ plan's gate count falls from 31 to 30 and its phase-1 count from 3 to 2. Recorde
 rather than deleted, because a retired gate is a decision and a silently removed gate is
 a gap.
 
-**`FR-P1-SCHEMA-RETENTION`** · 1 · `tree` · depends on: `FR-P1-GITKEEP`
+**`FR-P1-SCHEMA-RETENTION`** · 1 · `tree+text` · depends on: `FR-P1-GITKEEP`
 `python3 tests/gates/fr_p1_retention.py --check schema-gate`
 **Pass:** for every file in `schemas/deprecated/`, a repository-wide search for its
 basename — excluding every `deprecated/` directory, not only this one
 (`common.under_deprecated`) — returns zero hits outside that folder. Vacuously true
-while empty — recorded as `PASS (0 files, gate armed)`, not skipped, and the only
-mechanism a run in that state actually exercises is the `tree` listing of
-`schemas/deprecated/` itself; the basename search only runs once something is retired.
+while empty — recorded as `PASS (0 files, gate armed)`, `tree` only, since the basename
+search only runs once something is retired. Four files are retired as of the schema
+retirement plan — `PASS (4 files, 4 retired)`, `tree+text` — so `text` is now part of
+this gate's steady-state claim, not only a hypothetical one.
 (Through the schema retirement plan: a second condition held both `v1` contracts
 outside `deprecated/` for as long as any accepted record cited them. `RT-6` recorded
 that no record was ever accepted under either, so that condition — and the `text`/
@@ -999,8 +1000,10 @@ of the three.
 
 **`FR-P3-NO-LITERALS`** · 3 · `text+mapping` · depends on: `FR-P3-SPLIT`
 `python3 tests/gates/fr_p3_calibration.py --check literals`
-**Pass:** no file in `schemas/` contains a learner-age literal or a kit name. Both term
-lists are read from `policy/calibration.v1.yaml` and
+**Pass:** no live schema contains a learner-age literal or a kit name — `schemas/`,
+excluding `schemas/deprecated/` (`common.under_deprecated`), since nothing validates
+against a retired contract and a literal frozen there before retirement is history, not
+a live coupling. Both term lists are read from `policy/calibration.v1.yaml` and
 `curricula/arduino_kit/kit_calibration.v1.yaml`, never hard-coded here — and per rule 7
 each term is matched by its declared `prose_pattern`, not its bare value: an age of `9`
 scanned literally would flag every `9` in every schema. `schemas/kit_calibration.schema.v1.json`

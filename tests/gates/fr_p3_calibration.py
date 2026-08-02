@@ -46,16 +46,6 @@ SCHEMAS_DIR = REPO_ROOT / "schemas"
 # kit's facts are *for*. Every other schema naming it is defect F03.
 NO_LITERALS_EXEMPT = {"kit_calibration.schema.v1.json"}
 
-# Retained under section 6, and exempt for that reason alone. Both v1 contracts are
-# frozen byte-unchanged so records already accepted under them keep validating, so
-# the vendor namespace in their $id cannot be edited out without invalidating
-# accepted work. Named here rather than left unreachable: the exemption is the
-# statement that a known coupling survives, and RT-6 is what retires it.
-FROZEN_CONTRACTS_EXEMPT = {
-    "execution_log.schema.v1.json": "retained under section 6; retirable under RT-6",
-    "routing_decision.schema.v1.json": "retained under section 6; retirable under RT-6",
-}
-
 # Where a cap could be copied into prose. The cap entries themselves are excluded
 # below: pedagogy_caps is where the cap is owned, so a gate that flagged it would
 # forbid the manifest from stating the fact it exists to state.
@@ -175,8 +165,14 @@ def check_literals(ev: Evidence):
         f"{rel(CALIBRATION)} and {rel(KIT_CALIBRATION)}",
         "the contracts under schemas/",
     )
-    exempt = set(NO_LITERALS_EXEMPT) | set(FROZEN_CONTRACTS_EXEMPT)
-    targets = ev.select(p for p in SCHEMAS_DIR.rglob("*.json") if p.name not in exempt)
+    # A retired schema under schemas/deprecated/ is not a live contract for this
+    # gate to police — nothing validates against it (common.under_deprecated), so
+    # a vendor-namespace literal frozen in its $id from before it was retired is
+    # history, not a live coupling.
+    targets = ev.select(
+        p for p in SCHEMAS_DIR.rglob("*.json")
+        if p.name not in NO_LITERALS_EXEMPT and not common.under_deprecated(p)
+    )
     problems = []
     for path in targets:
         text = ev.text_of(path)
@@ -192,8 +188,8 @@ def check_literals(ev: Evidence):
     line = (
         f"FR-P3-NO-LITERALS {'PASS' if not problems else 'FAIL'} "
         f"({len(targets)} contracts scanned, {len(terms)} terms, 0 hits; exempt: "
-        f"{sorted(NO_LITERALS_EXEMPT)[0]} as the kit's own contract, and "
-        f"{', '.join(f'{k} ({v})' for k, v in sorted(FROZEN_CONTRACTS_EXEMPT.items()))})"
+        f"{sorted(NO_LITERALS_EXEMPT)[0]} as the kit's own contract, and every "
+        f"schema under schemas/deprecated/)"
     )
     reject = FIXTURES / "schema_with_learner_literal.reject.json"
     accept = FIXTURES / "schema_incidental_digit.accept.json"

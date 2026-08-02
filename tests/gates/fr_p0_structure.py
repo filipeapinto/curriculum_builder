@@ -225,7 +225,18 @@ def check_tree(ev: Evidence):
         if entry["path"] not in destinations:
             problems.append(f"{entry['path']} carries a ← marker but no rule claims it")
 
-    missing = [p for p in sorted(destinations) if not ev.exists(REPO_ROOT / p)]
+    # A schemas/ destination this plan placed may since have been retired to
+    # schemas/deprecated/ under §6's own gate (FR-P1-SCHEMA-RETENTION) — most
+    # recently by the schema retirement plan. That is still this file, just moved
+    # again by a later, separately-authorized plan; it is not this plan's move
+    # having failed to stick, so it is not "missing" here.
+    def _relocated_to_deprecated(p: str) -> bool:
+        return p.startswith("schemas/") and ev.exists(REPO_ROOT / "schemas" / "deprecated" / Path(p).name)
+
+    missing = [
+        p for p in sorted(destinations)
+        if not ev.exists(REPO_ROOT / p) and not _relocated_to_deprecated(p)
+    ]
     problems.extend(f"missing destination: {p}" for p in missing)
 
     legacy = [p for p in RETIRED_PATHS if ev.exists(REPO_ROOT / p)]
