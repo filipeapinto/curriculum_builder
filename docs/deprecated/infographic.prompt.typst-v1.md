@@ -1,9 +1,5 @@
 # Infographic build prompt — current curriculum pipeline
 
-> Superseded by the polished ImageGen production prompt at
-> `docs/prompts/curriculum_pipeline_infographic.v2.prompt.md`. Retained here and under
-> `docs/deprecated/`; do not use this file for the canonical PNG.
-
 Produce a polished landscape PNG that explains the active contract in
 `meta_prompt/curriculum.prompt.v1.md` and distinguishes required runtime behavior from
 what the repository currently implements.

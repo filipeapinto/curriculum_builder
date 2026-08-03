@@ -7,3 +7,9 @@ tests/results/*.json
 # Python bytecode from the gate harness.
 __pycache__/
 *.pyc
+
+# Run output. runtime/io.py's require_internal_output requires every --output-root
+# to resolve beneath outputs/, so every run — including test scratch space — writes
+# here now. Generated curriculum artifacts are drafts pending review, never
+# committed history.
+outputs/

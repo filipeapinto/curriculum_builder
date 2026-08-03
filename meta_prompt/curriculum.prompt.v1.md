@@ -9,7 +9,7 @@ ENGINE      = the directory containing this prompt's `meta_prompt/` folder
 PROMPT      = ENGINE/meta_prompt/curriculum.prompt.v1.md
 COMPANIONS  = ENGINE/meta_prompt/assets
 CURRICULUM  = supplied by --curriculum; required, no default
-OUTPUT_ROOT = supplied by --output-root; required, no default
+OUTPUT_ROOT = supplied by --output-root; required, no default, and must resolve beneath ENGINE/outputs/
 ```
 
 `ENGINE` is **derived, never written down**: resolve it from this file's own location.
@@ -25,12 +25,18 @@ unrelated subject with no edit to it.
 Read `CURRICULUM`'s manifest. Produce every unit it declares, in the order it declares
 them, then the assembled product. Never hardcode how many there are.
 
-Write only under `OUTPUT_ROOT`. Everything else is immutable, `ENGINE` and `CURRICULUM`
-included. If `OUTPUT_ROOT` already holds a run, stop as `SYSTEM_FAILURE` with failure id
-`PRECONDITION-OUTPUT-ROOT-EXISTS`, before any artifact and before any model call. Report
-the occupied path and the next free version name. Never auto-increment, merge or
-replace: choosing which evidence to keep is a human decision an unattended run must not
-make. Fail closed rather than ask.
+Write only under `OUTPUT_ROOT`, and `OUTPUT_ROOT` itself is required to resolve
+beneath `ENGINE/outputs/` — a supplied path outside it is refused before any artifact
+and before any model call, the same boundary error a path outside `ENGINE` entirely
+would raise. `ENGINE`'s own contract — `meta_prompt/`, `policy/`, `schemas/`,
+`curricula/` — remains immutable; `ENGINE/outputs/` is the one designated subtree
+carved out of it for writes, and nothing under `meta_prompt/`, `policy/`, `schemas/`
+or `curricula/` is ever written by a run. If `OUTPUT_ROOT` already holds a run, stop
+as `SYSTEM_FAILURE` with failure id `PRECONDITION-OUTPUT-ROOT-EXISTS`, before any
+artifact and before any model call. Report the occupied path and the next free
+version name. Never auto-increment, merge or replace: choosing which evidence to
+keep is a human decision an unattended run must not make. Fail closed rather than
+ask.
 
 ## Inputs
 
