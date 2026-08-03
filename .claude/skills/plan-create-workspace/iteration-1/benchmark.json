@@ -1,0 +1,419 @@
+{
+  "metadata": {
+    "skill_name": "plan-create",
+    "skill_path": ".claude/skills/plan-create",
+    "executor_model": "<model-name>",
+    "analyzer_model": "<model-name>",
+    "timestamp": "2026-08-03T16:21:50Z",
+    "evals_run": [
+      0,
+      1,
+      2
+    ],
+    "runs_per_configuration": 3
+  },
+  "runs": [
+    {
+      "eval_id": 2,
+      "configuration": "with_skill",
+      "run_number": 1,
+      "result": {
+        "pass_rate": 0.625,
+        "passed": 5,
+        "failed": 3,
+        "total": 8,
+        "time_seconds": 0.0,
+        "tokens": 0,
+        "tool_calls": 0,
+        "errors": 0
+      },
+      "expectations": [
+        {
+          "text": "six-artifact package present (plan, plan_qa, execution_test.plan, prompt, final_audit, plans.log.md)",
+          "passed": false,
+          "evidence": "Only plan.v1.md, plans.log.md, and three plan_qa rounds exist. By design: Critical+High went 7, 3, 3 -- round 3 plateaued exactly at round 2's count, so Step 4 correctly halted before Steps 5-7."
+        },
+        {
+          "text": "validate_plan_package.py exits 0 against the output directory",
+          "passed": false,
+          "evidence": "Fails with 3 missing-artifact errors, consistent with the by-design incompleteness."
+        },
+        {
+          "text": "plan_qa verdict well-formed and Findings are Critical/High only, no style/low-severity items",
+          "passed": true,
+          "evidence": "All three rounds carry well-formed verdict lines with severity-scoped Findings and a separate non-blocking Observations section; round 2 and 3 both include an explicit 'prior-round remediation' section distinguishing confirmed fixes from new findings."
+        },
+        {
+          "text": "every test id in the prompt's TEST section matches the execution test plan's ids, and vice versa",
+          "passed": false,
+          "evidence": "Not applicable -- no prompt or execution test plan was produced, since the pipeline correctly stopped before Step 5."
+        },
+        {
+          "text": "QA and final audit performed by fresh, independent subagents, not the authoring pass grading itself",
+          "passed": true,
+          "evidence": "Three rounds, each a fresh subagent with no prior context. This was the most empirically rigorous QA of the three evals: round 1 reproduced 88 timeout runs and exact per-gate transient tallies from tests/results/, round 3 applied the Phase C scan-root change live in a scratch copy and confirmed production_files() dropped from 671 to 110 paths with zero tracked-path loss."
+        },
+        {
+          "text": "plan is grounded in real gate-running mechanism rather than an invented root cause",
+          "passed": true,
+          "evidence": "Despite the deliberately vague, investigative prompt, the plan and every QA round root-cause the flakiness in tests/gates/common.py, runner.py, and specific gate modules with exact call sites and drift-count data -- never a guessed or generic explanation."
+        },
+        {
+          "text": "no file outside the scratch plan directory modified",
+          "passed": true,
+          "evidence": "Confirmed via the global git status/diff check."
+        },
+        {
+          "text": "revision loop bounded at the convergence rule; honest blocker over forced pass",
+          "passed": true,
+          "evidence": "Round-over-round Critical+High: 7, 3, 3. The plateau rule correctly fired at round 3 (3 is not lower than 3), even though the log transparently notes severity composition improved (the round-2 Critical finding was confirmed resolved). The rule keys on the raw sum, which is a defensible simplicity trade-off worth flagging to the user as a possible future refinement, not a bug in this run."
+        }
+      ],
+      "notes": []
+    },
+    {
+      "eval_id": 1,
+      "configuration": "with_skill",
+      "run_number": 1,
+      "result": {
+        "pass_rate": 0.625,
+        "passed": 5,
+        "failed": 3,
+        "total": 8,
+        "time_seconds": 0.0,
+        "tokens": 0,
+        "tool_calls": 0,
+        "errors": 0
+      },
+      "expectations": [
+        {
+          "text": "six-artifact package present (plan, plan_qa, execution_test.plan, prompt, final_audit, plans.log.md)",
+          "passed": false,
+          "evidence": "Only plan.v1.md, plans.log.md, and three plan_qa rounds exist -- execution_test.plan, prompt, and final_audit were never authored. This is by design: the QA loop plateaued (Critical+High went 2, 1, 2 -- round 3 did not improve on round 2) and the skill's Step 4 correctly halts before Steps 5-7 in that case rather than building on an unclean plan."
+        },
+        {
+          "text": "validate_plan_package.py exits 0 against the output directory",
+          "passed": false,
+          "evidence": "Fails with 3 missing-artifact errors, consistent with the by-design incompleteness above -- not a defect in the validator or the skill."
+        },
+        {
+          "text": "plan_qa verdict well-formed and Findings are Critical/High only, no style/low-severity items",
+          "passed": true,
+          "evidence": "All three rounds carry well-formed verdict lines and severity-scoped Findings sections; round 3 even separates a 'Prior High 2' remediation-confirmation section from its new finding, keeping the two concerns legible."
+        },
+        {
+          "text": "every test id in the prompt's TEST section matches the execution test plan's ids, and vice versa",
+          "passed": false,
+          "evidence": "Not applicable -- no prompt or execution test plan was produced, since the pipeline correctly stopped before Step 5."
+        },
+        {
+          "text": "QA and final audit performed by fresh, independent subagents, not the authoring pass grading itself",
+          "passed": true,
+          "evidence": "Three rounds, each a fresh subagent with no prior context; round 3 notably implemented the whole plan on two scratch copies (/tmp/mpsqa/base, /tmp/mpsqa/repo) and ran real gate/test comparisons rather than reading the diff."
+        },
+        {
+          "text": "plan is grounded in real controller.py version-resolution and check_meta_prompt.py expectations",
+          "passed": true,
+          "evidence": "Every finding across all three rounds cites specific runtime/controller.py and tests/check_meta_prompt.py line numbers and was independently re-derived from the files each round, including a subtle sys.path package-shadowing bug and a regex-escaped third version literal the plan's own author missed."
+        },
+        {
+          "text": "no file outside the scratch plan directory modified",
+          "passed": true,
+          "evidence": "Confirmed via the global git status/diff check across all six eval runs."
+        },
+        {
+          "text": "revision loop bounded at the convergence rule; honest blocker over forced pass",
+          "passed": true,
+          "evidence": "Round-over-round Critical+High: 2, 1, 2. Round 3 introduced a genuinely new regression (a real NameError in the plan's own prescribed line insertion) that round 2 had not caught, so 2 is not lower than 1's decrease trend and the plateau rule correctly fired at round 3, two rounds short of the 5-round ceiling. The stop is honest and well-evidenced, not a cop-out."
+        }
+      ],
+      "notes": []
+    },
+    {
+      "eval_id": 0,
+      "configuration": "with_skill",
+      "run_number": 1,
+      "result": {
+        "pass_rate": 1.0,
+        "passed": 8,
+        "failed": 0,
+        "total": 8,
+        "time_seconds": 0.0,
+        "tokens": 0,
+        "tool_calls": 0,
+        "errors": 0
+      },
+      "expectations": [
+        {
+          "text": "six-artifact package present (plan, plan_qa, execution_test.plan, prompt, final_audit, plans.log.md)",
+          "passed": true,
+          "evidence": "All six exist under plans/_eval_rtd_ws/ at v1: _eval_rtd_ws.plan.v1.md, qa/plan_qa.v1-v4.md, qa/execution_test.plan.v1.md, prompts/_eval_rtd_ws.prompt.v1.md, qa/final_audit.v1.md, plans.log.md."
+        },
+        {
+          "text": "validate_plan_package.py exits 0 against the output directory",
+          "passed": true,
+          "evidence": "python3 scripts/validate_plan_package.py plans/_eval_rtd_ws -> 'OK \u2014 plans/_eval_rtd_ws v1 package is structurally valid', exit 0."
+        },
+        {
+          "text": "plan_qa verdict well-formed and Findings are Critical/High only, no style/low-severity items",
+          "passed": true,
+          "evidence": "All four rounds carry a well-formed verdict line; findings are numbered Critical/High only with a separate non-blocking 'Observations' section used for low-severity notes (e.g. dead-code disclosure), never mixed into Findings."
+        },
+        {
+          "text": "every test id in the prompt's TEST section matches the execution test plan's ids, and vice versa",
+          "passed": true,
+          "evidence": "Validator's cross-reference check reported no orphans; RTD-T00 through RTD-T13 appear identically and in the same order in both documents."
+        },
+        {
+          "text": "QA and final audit performed by fresh, independent subagents, not the authoring pass grading itself",
+          "passed": true,
+          "evidence": "Log names four distinct QA rounds and one final-audit stage, each explicitly 'a fresh subagent with no prior context'; each round applies the plan to an independent scratch copy (/tmp/rtqa, rtqa2, rtqa3, rtqa4) and runs real commands rather than reasoning about the diff."
+        },
+        {
+          "text": "plan is grounded in the real defect: names RetryTracker, revision(), and self.failures in runtime/retry.py rather than a generic retry-cap description",
+          "passed": true,
+          "evidence": "Plan and all QA rounds cite runtime/retry.py line numbers, RetryTracker.revision(), and self.failures directly, and QA independently re-derives these facts from the file each round rather than trusting the plan's prose."
+        },
+        {
+          "text": "no file outside plans/_eval_rtd_ws/ was modified",
+          "passed": true,
+          "evidence": "git status/diff at the end of all six eval runs shows only pre-existing changes from session start plus the plans/_eval_*/ and .claude/skills/plan-create* scratch/workspace paths; runtime/retry.py remains a staged addition with an empty working-tree diff."
+        },
+        {
+          "text": "QA/audit revision loop stayed within the skill's stated cap; an honest blocker was reported rather than a forced false PASS if still failing",
+          "passed": true,
+          "evidence": "Round-over-round Critical+High: 3, 2, 1, 0 \u2014 strictly decreasing at every step, converging to APPROVED at round 4 within the 5-round ceiling. Final audit and validator both confirm a genuine clean state, not a forced one."
+        }
+      ],
+      "notes": []
+    },
+    {
+      "eval_id": 2,
+      "configuration": "without_skill",
+      "run_number": 1,
+      "result": {
+        "pass_rate": 0.625,
+        "passed": 5,
+        "failed": 3,
+        "total": 8,
+        "time_seconds": 0.0,
+        "tokens": 0,
+        "tool_calls": 0,
+        "errors": 0
+      },
+      "expectations": [
+        {
+          "text": "six-artifact package present (plan, plan_qa, execution_test.plan, prompt, final_audit, plans.log.md)",
+          "passed": true,
+          "evidence": "Baseline produced all six documents (gate_flakiness.plan.v1.md, qa/plan_qa.v1.md, qa/execution_test.plan.v1.md, prompts/gate_flakiness.prompt.v1.md, qa/final_audit.v1.md, plans.log.md) in one pass."
+        },
+        {
+          "text": "validate_plan_package.py exits 0 against the output directory",
+          "passed": false,
+          "evidence": "Fails on naming/slug mismatch against the skill's convention -- expected."
+        },
+        {
+          "text": "plan_qa verdict line is well-formed and Findings are Critical/High only, no style/low-severity items",
+          "passed": true,
+          "evidence": "Verdict and findings are well-formed and severity-scoped (format not independently re-read in full depth for this eval; structure matches the other two baselines)."
+        },
+        {
+          "text": "every test id in the prompt's TEST section matches the execution test plan's ids, and vice versa",
+          "passed": true,
+          "evidence": "GF-T00 through GF-T09 appear identically as '###'-level headings in both prompts/gate_flakiness.prompt.v1.md and qa/execution_test.plan.v1.md, checked directly."
+        },
+        {
+          "text": "QA and final audit performed by fresh, independent subagents, not the authoring pass grading itself",
+          "passed": false,
+          "evidence": "Same pattern as the other two baselines: single plan version, no evidenced separate subagent invocation for QA or audit, no shown command execution distinct from the plan's own claims."
+        },
+        {
+          "text": "plan is grounded in real gate-running mechanism rather than an invented root cause",
+          "passed": true,
+          "evidence": "Baseline read plans/provider_correction/ and the real gate-running code before writing, consistent with the other baselines' grounding quality."
+        },
+        {
+          "text": "no file outside the scratch plan directory modified",
+          "passed": true,
+          "evidence": "Confirmed via the global git status/diff check."
+        },
+        {
+          "text": "revision loop bounded at the convergence rule; honest blocker over forced pass",
+          "passed": false,
+          "evidence": "Not applicable in the intended sense -- for the hardest of the three evals, the with-skill run needed 3 independently-verified rounds and still didn't fully converge, while this baseline reached a self-declared clean PASS in a single unverified pass. That gap is itself informative: it suggests the baseline's single-pass QA is not catching problems at the same depth the with-skill run's genuinely independent, execution-verified rounds did."
+        }
+      ],
+      "notes": []
+    },
+    {
+      "eval_id": 1,
+      "configuration": "without_skill",
+      "run_number": 1,
+      "result": {
+        "pass_rate": 0.625,
+        "passed": 5,
+        "failed": 3,
+        "total": 8,
+        "time_seconds": 0.0,
+        "tokens": 0,
+        "tool_calls": 0,
+        "errors": 0
+      },
+      "expectations": [
+        {
+          "text": "six-artifact package present (plan, plan_qa, execution_test.plan, prompt, final_audit, plans.log.md)",
+          "passed": true,
+          "evidence": "Baseline produced all six documents (meta_prompt_activation.plan.v1.md, qa/plan_qa.v1.md, qa/execution_test.plan.v1.md, prompts/meta_prompt_activation.prompt.v1.md, qa/final_audit.v1.md, plans.log.md) in one pass."
+        },
+        {
+          "text": "validate_plan_package.py exits 0 against the output directory",
+          "passed": false,
+          "evidence": "Fails on naming/slug mismatch against the skill's convention -- expected, since the baseline was not following it."
+        },
+        {
+          "text": "plan_qa verdict well-formed and Findings are Critical/High only, no style/low-severity items",
+          "passed": true,
+          "evidence": "Verdict line and four numbered High findings are well-formed and severity-scoped."
+        },
+        {
+          "text": "every test id in the prompt's TEST section matches the execution test plan's ids, and vice versa",
+          "passed": true,
+          "evidence": "MP-T00 through MP-T07 appear identically in both documents (checked by hand); the test plan uses '##' headings rather than the skill's '###' convention, a cosmetic difference only."
+        },
+        {
+          "text": "QA and final audit performed by fresh, independent subagents, not the authoring pass grading itself",
+          "passed": false,
+          "evidence": "No second plan version and no evidence of a separate agent invocation -- plan_qa.v1.md and final_audit.v1.md read as a single continuous narrative with no shown command execution beyond what the plan's own prose already claims."
+        },
+        {
+          "text": "plan is grounded in real controller.py version-resolution and check_meta_prompt.py expectations",
+          "passed": true,
+          "evidence": "Well grounded with specific line citations for runtime/controller.py and tests/check_meta_prompt.py, and the QA pass independently finds real issues (sys.path import fragility, an fnmatch pattern that would break the planned v2 retention case, simulate() left unprotected) -- comparable depth to the with-skill run's round 1."
+        },
+        {
+          "text": "no file outside the scratch plan directory modified",
+          "passed": true,
+          "evidence": "Confirmed via the global git status/diff check."
+        },
+        {
+          "text": "revision loop bounded at the convergence rule; honest blocker over forced pass",
+          "passed": false,
+          "evidence": "Not applicable in the intended sense -- one QA pass with 4 High findings is followed directly by a self-declared 'PASS -- 0 Critical, 0 High remaining' final audit, with no second QA round evidenced to have actually re-verified the fixes independently."
+        }
+      ],
+      "notes": []
+    },
+    {
+      "eval_id": 0,
+      "configuration": "without_skill",
+      "run_number": 1,
+      "result": {
+        "pass_rate": 0.625,
+        "passed": 5,
+        "failed": 3,
+        "total": 8,
+        "time_seconds": 0.0,
+        "tokens": 0,
+        "tool_calls": 0,
+        "errors": 0
+      },
+      "expectations": [
+        {
+          "text": "six-artifact package present (plan, plan_qa, execution_test.plan, prompt, final_audit, plans.log.md)",
+          "passed": true,
+          "evidence": "Baseline independently produced all six documents (retry_scope.plan.v1.md, qa/plan_qa.v1.md, qa/execution_test.plan.v1.md, prompts/retry_scope.prompt.v1.md, qa/final_audit.v1.md, plans.log.md) after reading plans/provider_correction/ as a template -- the shape is largely reproducible from the reference example alone."
+        },
+        {
+          "text": "validate_plan_package.py exits 0 against the output directory",
+          "passed": false,
+          "evidence": "Not naming-compatible: files use a self-chosen slug (retry_scope) that doesn't match the directory name (_eval_rtd_bl) the skill's convention requires; validator reports 'no _eval_rtd_bl.plan.vN.md found'. Expected -- baseline has no naming contract to follow."
+        },
+        {
+          "text": "plan_qa verdict line is well-formed and Findings are Critical/High only, no style/low-severity items",
+          "passed": true,
+          "evidence": "Verdict line and four numbered High findings are well-formed and severity-scoped, with a separate 'Notes carried forward, not findings' section for non-blocking items -- format is comparable to the with-skill output."
+        },
+        {
+          "text": "every test id in the prompt's TEST section matches the execution test plan's ids, and vice versa",
+          "passed": true,
+          "evidence": "RS-T00 through RS-T09 appear identically in both prompts/retry_scope.prompt.v1.md and qa/execution_test.plan.v1.md with no orphans, checked by hand."
+        },
+        {
+          "text": "QA and final audit were performed by fresh, independent subagents, not the authoring pass grading itself",
+          "passed": false,
+          "evidence": "No second plan version exists and no independent agent invocation is evidenced -- plan_qa.v1.md narrates findings as already 'remediated in the current v1' with no separate revision artifact, and neither plan_qa.v1.md nor final_audit.v1.md shows any executed command, grep, or scratch-copy verification. This is a single self-consistent narrative, not a genuinely separate adversarial pass -- the exact failure mode the skill's independent-subagent design exists to prevent."
+        },
+        {
+          "text": "plan is grounded in the real defect: names RetryTracker, revision(), and self.failures in runtime/retry.py rather than a generic retry-cap description",
+          "passed": true,
+          "evidence": "Well grounded, with real line citations -- and notably broader than the with-skill run: it also catches that self.used/self.revisions share the same defect and that RetryTracker has no production caller (the live enforcement path is a second, diverging implementation in controller.py). Whether that additional scope is a virtue (thorough root-causing) or scope creep beyond the literal report is a judgment call worth raising with the user."
+        },
+        {
+          "text": "no file outside plans/_eval_rtd_bl/ was modified",
+          "passed": true,
+          "evidence": "Confirmed via the same global git status/diff check as the with-skill run."
+        },
+        {
+          "text": "QA/audit revision loop stayed within the skill's stated cap; an honest blocker was reported rather than a forced false PASS if still failing",
+          "passed": false,
+          "evidence": "Not applicable in the intended sense -- there is no genuine multi-round loop at all. The baseline goes from a single QA pass straight to a self-declared 'PASS -- 0 Critical, 0 High remaining' with no second author/QA cycle to have converged, which is a weaker guarantee than the with-skill package's four independently-verified rounds."
+        }
+      ],
+      "notes": []
+    }
+  ],
+  "run_summary": {
+    "with_skill": {
+      "pass_rate": {
+        "mean": 0.75,
+        "stddev": 0.2165,
+        "min": 0.625,
+        "max": 1.0
+      },
+      "time_seconds": {
+        "mean": 0.0,
+        "stddev": 0.0,
+        "min": 0.0,
+        "max": 0.0
+      },
+      "tokens": {
+        "mean": 0.0,
+        "stddev": 0.0,
+        "min": 0,
+        "max": 0
+      }
+    },
+    "without_skill": {
+      "pass_rate": {
+        "mean": 0.625,
+        "stddev": 0.0,
+        "min": 0.625,
+        "max": 0.625
+      },
+      "time_seconds": {
+        "mean": 0.0,
+        "stddev": 0.0,
+        "min": 0.0,
+        "max": 0.0
+      },
+      "tokens": {
+        "mean": 0.0,
+        "stddev": 0.0,
+        "min": 0,
+        "max": 0
+      }
+    },
+    "delta": {
+      "pass_rate": "+0.12",
+      "time_seconds": "+0.0",
+      "tokens": "+0"
+    }
+  },
+  "notes": [
+    "Pass-rate parity (75% vs 62%) undersells the qualitative gap: every with-skill 'failure' on the two harder evals (meta-prompt-staleness, gate-flakiness) is honest by-design incompleteness -- the QA convergence rule correctly detected a plateau (findings stopped decreasing round-over-round) and withheld the test-plan/prompt/final-audit artifacts rather than build on an unclean plan. Every baseline 'failure' is a structural risk instead: no genuinely independent QA pass was evidenced (single narrative, no second plan version, no shown command execution), which is the exact failure mode the skill's fresh-subagent design exists to prevent.",
+    "retry-tracker-defect is the cleanest comparison: the with-skill run reached a fully validated, independently-audited package (8/8, converging 3 High -> 2 -> 1 -> 0 across four independently-verified QA rounds, each of which actually patched a scratch copy and ran the real test suite/gates) while the baseline reached a superficially similar-looking package (5/8) whose QA and final audit were a single self-consistent narrative with no independent verification shown.",
+    "gate-flakiness (the hardest, most investigative eval) is a useful warning about the pass-rate number itself: the with-skill run's three independently-verified QA rounds could not fully converge on this genuinely hard plan (7 -> 3 -> 3 Critical+High, correctly stopped at the plateau), while the baseline reached a self-declared clean PASS in a single unverified pass. The baseline's apparent 'success' here is less trustworthy, not more -- a single-pass, non-independent review that never got contradicted is not the same as a plan that was actually pressure-tested.",
+    "Time and token metrics are 0/null throughout: this environment's background-agent notifications (idle_notification) do not surface total_tokens or duration_ms, so those columns could not be populated. plans.log.md timestamps (real UTC, written by scripts/append_log.py) offer a rough wall-clock proxy for with-skill runs only; baseline log timestamps are model-narrated, not measured, and were not used for timing.",
+    "This iteration's most important finding was mid-run, not in the final numbers: all three initial with-skill runs hit SKILL.md's original hard 2-round QA cap and stopped despite findings strictly decreasing round over round (real convergence). Step 4 was rewritten to continue while the Critical+High count keeps strictly decreasing (5-round ceiling), and the three runs were resumed under the corrected rule before this benchmark was produced -- the numbers above already reflect the corrected skill, not the original draft."
+  ]
+}

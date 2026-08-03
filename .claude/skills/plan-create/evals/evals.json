@@ -1,0 +1,53 @@
+{
+  "skill_name": "plan-create",
+  "evals": [
+    {
+      "id": 1,
+      "prompt": "There's a defect in runtime/retry.py: RetryTracker's revision() method raises RetryLimit when failed_checks doesn't shrink from the previous attempt, but self.failures is never reset between different curriculum units. So a unit that legitimately hits the same two failing checks twice in a row on completely unrelated content gets permanently blocked for the rest of the run, even though it's a fresh unit. I want a full plan for this: fix it properly, QA the plan, write an execution test plan, and a Claude Code prompt I can hand off, like we did in plans/provider_correction.",
+      "expected_output": "A plans/<slug>/ package (plan, plan_qa, execution_test.plan, prompt, final_audit, plans.log.md) whose plan correctly locates and reasons about RetryTracker in runtime/retry.py, proposes a real fix (e.g. keying/resetting failures per unit), and whose QA/audit verdicts and test-id cross-references are internally consistent.",
+      "assertions": [
+        "six-artifact package present",
+        "validate_plan_package.py exits 0",
+        "plan_qa verdict well-formed, Critical/High only",
+        "prompt TEST ids match execution test plan ids exactly",
+        "QA and final audit run by fresh independent subagents",
+        "plan grounded in real RetryTracker/revision()/self.failures defect",
+        "no file outside the scratch plan directory modified",
+        "revision loop bounded at 2 rounds; honest blocker over forced pass"
+      ],
+      "files": []
+    },
+    {
+      "id": 2,
+      "prompt": "We don't have anything that stops meta_prompt/curriculum.prompt.v1.md from silently going stale relative to what runtime/controller.py resolves as the active version. Plan an improvement that adds a check ensuring the active meta-prompt version the controller resolves actually exists and matches what tests/check_meta_prompt.py expects. Same plan+QA+test-plan+prompt package as provider_correction, please.",
+      "expected_output": "A plans/<slug>/ package grounded in the real runtime/controller.py and tests/check_meta_prompt.py, with a plan whose acceptance criteria are checkable, a focused Critical/High-only QA pass, and a prompt whose TEST ids match the execution test plan exactly.",
+      "assertions": [
+        "six-artifact package present",
+        "validate_plan_package.py exits 0",
+        "plan_qa verdict well-formed, Critical/High only",
+        "prompt TEST ids match execution test plan ids exactly",
+        "QA and final audit run by fresh independent subagents",
+        "plan grounded in real controller.py version-resolution and check_meta_prompt.py expectations",
+        "no file outside the scratch plan directory modified",
+        "revision loop bounded at 2 rounds; honest blocker over forced pass"
+      ],
+      "files": []
+    },
+    {
+      "id": 3,
+      "prompt": "hey we keep hitting weird flakiness in the gates around phase 4/5 -- sometimes a gate that passed on one run fails on a rerun with no code changes in between. can you put together a proper plan for tracking this down and fixing it, with the qa loop and test plan and everything, the way you did for the provider correction work",
+      "expected_output": "Given the vaguer, investigative framing, the skill should ground itself in the real gate-running code (e.g. tests/run_gates.sh, runtime/checks.py) before writing the plan rather than inventing a root cause, and should still produce the full six-artifact package with the same structural guarantees as the other evals.",
+      "assertions": [
+        "six-artifact package present",
+        "validate_plan_package.py exits 0",
+        "plan_qa verdict well-formed, Critical/High only",
+        "prompt TEST ids match execution test plan ids exactly",
+        "QA and final audit run by fresh independent subagents",
+        "plan grounded in real gate-running mechanism, no invented root cause",
+        "no file outside the scratch plan directory modified",
+        "revision loop bounded at 2 rounds; honest blocker over forced pass"
+      ],
+      "files": []
+    }
+  ]
+}

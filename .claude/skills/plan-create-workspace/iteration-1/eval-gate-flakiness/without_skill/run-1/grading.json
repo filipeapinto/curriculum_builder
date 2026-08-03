@@ -1,0 +1,51 @@
+{
+  "run_id": "eval-gate-flakiness-without_skill",
+  "expectations": [
+    {
+      "text": "six-artifact package present (plan, plan_qa, execution_test.plan, prompt, final_audit, plans.log.md)",
+      "passed": true,
+      "evidence": "Baseline produced all six documents (gate_flakiness.plan.v1.md, qa/plan_qa.v1.md, qa/execution_test.plan.v1.md, prompts/gate_flakiness.prompt.v1.md, qa/final_audit.v1.md, plans.log.md) in one pass."
+    },
+    {
+      "text": "validate_plan_package.py exits 0 against the output directory",
+      "passed": false,
+      "evidence": "Fails on naming/slug mismatch against the skill's convention -- expected."
+    },
+    {
+      "text": "plan_qa verdict line is well-formed and Findings are Critical/High only, no style/low-severity items",
+      "passed": true,
+      "evidence": "Verdict and findings are well-formed and severity-scoped (format not independently re-read in full depth for this eval; structure matches the other two baselines)."
+    },
+    {
+      "text": "every test id in the prompt's TEST section matches the execution test plan's ids, and vice versa",
+      "passed": true,
+      "evidence": "GF-T00 through GF-T09 appear identically as '###'-level headings in both prompts/gate_flakiness.prompt.v1.md and qa/execution_test.plan.v1.md, checked directly."
+    },
+    {
+      "text": "QA and final audit performed by fresh, independent subagents, not the authoring pass grading itself",
+      "passed": false,
+      "evidence": "Same pattern as the other two baselines: single plan version, no evidenced separate subagent invocation for QA or audit, no shown command execution distinct from the plan's own claims."
+    },
+    {
+      "text": "plan is grounded in real gate-running mechanism rather than an invented root cause",
+      "passed": true,
+      "evidence": "Baseline read plans/provider_correction/ and the real gate-running code before writing, consistent with the other baselines' grounding quality."
+    },
+    {
+      "text": "no file outside the scratch plan directory modified",
+      "passed": true,
+      "evidence": "Confirmed via the global git status/diff check."
+    },
+    {
+      "text": "revision loop bounded at the convergence rule; honest blocker over forced pass",
+      "passed": false,
+      "evidence": "Not applicable in the intended sense -- for the hardest of the three evals, the with-skill run needed 3 independently-verified rounds and still didn't fully converge, while this baseline reached a self-declared clean PASS in a single unverified pass. That gap is itself informative: it suggests the baseline's single-pass QA is not catching problems at the same depth the with-skill run's genuinely independent, execution-verified rounds did."
+    }
+  ],
+  "summary": {
+    "pass_rate": 0.625,
+    "passed": 5,
+    "failed": 3,
+    "total": 8
+  }
+}

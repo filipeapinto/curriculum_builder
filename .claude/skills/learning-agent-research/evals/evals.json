@@ -1,0 +1,51 @@
+{
+  "skill_name": "learning-agent-research",
+  "note": "Test prompts for the learning-agent-research skill. Fixture is the real pipeline output at outputs/arduino_kit_run_v2/ (4 lesson documents plus a QA report). Because these evals run live web research, do NOT assert on specific papers, vendors or URLs — those change run to run. Assert on methodology and artifact integrity instead: was the scan grounded in the fixture, is every citation traceable to a fetch that was logged before it was cited, does the output match the contract. scripts/validate_outputs.py mechanically checks the citation-traceability and schema assertions.",
+  "evals": [
+    {
+      "id": 1,
+      "prompt": "We just finished a run of the curriculum pipeline and the output was rough — the lessons are in outputs/arduino_kit_run_v2/ (L01 through L04, each with a document folder) and there's a QA report under outputs/arduino_kit_run_v2/QA/. I want to know what the current state of the art says we should have had reviewing this before it shipped. Write the research up under docs/research/sota_scan_test/ and give me a machine-readable list of the agents you'd add, with sources I can actually click through.",
+      "expected_output": "A scan directory at docs/research/sota_scan_test/ containing 5-8 thread .md files, a sota_agents.v1.json array of recommended reviewer agents matching the six-key schema, and an action_log.jsonl. The lesson documents and QA report are read before any web search is run, threads are derived from defects actually present in that fixture (the raw-JSON rendering bug, the skipped cross-family judge, missing readability/Bloom gates, vocabulary-cap violations), and every cited URL was fetched and logged with a keep decision before being cited.",
+      "files": [],
+      "expectations": [
+        "The fixture lesson documents under outputs/arduino_kit_run_v2/ and the QA report were read before the first web search was issued (verifiable from the ordering of read_file and web_search entries in action_log.jsonl)",
+        "The output directory contains at least 5 thread .md files, exactly one sota_agents.v<N>.json, and an action_log.jsonl",
+        "Every element of the sota_agents JSON array has exactly the six keys agent, function, what_makes_it_sota, role_in_curriculum_builder, issues_resolved, and sources, with no empty string values",
+        "Every URL cited in the JSON or in a thread file (outside a Discarded section) appears in action_log.jsonl in an entry with a keep decision — i.e. scripts/validate_outputs.py exits zero on the output directory",
+        "For each cited URL, the web_fetch_verify log entry that verified it is timestamped before the write_file entry for the artifact that cites it",
+        "At least one issues_resolved field quotes or precisely references a defect that is actually present in the fixture QA report, rather than a generic quality concern",
+        "At least one thread file covers commercial or production practice rather than only academic papers",
+        "Each thread .md file contains all four required sections: why this thread, findings, sources, and discarded",
+        "The action log records at least one source that was fetched and then discarded or corrected, with a stated reason"
+      ]
+    },
+    {
+      "id": 2,
+      "prompt": "Quick sanity check before I take this to my team — our AI lesson generator shipped four labs where the entire lesson body came out as a raw JSON dump instead of prose, and nothing in our pipeline caught it. What kind of reviewer would have caught that, and is there actual published evidence for it or is it just my intuition? Ground it in the real run under outputs/arduino_kit_run_v2/ and put whatever you write under docs/research/rendering_gap_scan/.",
+      "expected_output": "A grounded scan that reads the fixture before searching, produces at least one thread on structured-output/rendering conformance validation, and recommends a deterministic pre-emission rendering check as its own reviewer agent. Every claim about published evidence is attributed to a source that was fetched and logged as kept; any source that could not be retrieved is named in a Discarded section rather than cited anyway.",
+      "files": [],
+      "expectations": [
+        "The fixture output under outputs/arduino_kit_run_v2/ was read before any web search was issued",
+        "At least one thread file addresses validating rendered output shape (structured data leaking into prose fields) as distinct from validating the upstream schema",
+        "The recommendation array includes an agent whose function is a deterministic or pre-emission check on the rendered document, and whose role_in_curriculum_builder names where in the pipeline it runs",
+        "scripts/validate_outputs.py exits zero on the output directory, meaning no citation lacks a kept verification entry in the action log",
+        "No source is cited whose action_log.jsonl entry records a FAILED result or a DISCARD decision",
+        "The response distinguishes claims backed by a fetched source from the assistant's own inference, rather than presenting both in the same register"
+      ]
+    },
+    {
+      "id": 3,
+      "prompt": "The SOTA research under docs/research/sota_agents_research/ is getting stale and I'm not confident all those links still resolve. Re-run the scan fresh against the same labs in outputs/arduino_kit_run_v2/, write it to docs/research/sota_agents_research_refresh/, and tell me which of the previously cited sources no longer hold up.",
+      "expected_output": "A fresh scan in a new directory (the previous one is left untouched), with a re-verification pass over the prior scan's cited URLs. Sources that now 404, paywall, or no longer support the claim are reported as such and appear in Discarded sections rather than being silently carried forward. The prior scan's sota_agents.v1.json is not overwritten.",
+      "files": [],
+      "expectations": [
+        "The pre-existing docs/research/sota_agents_research/ directory and its sota_agents.v1.json are left unmodified",
+        "The action log contains web_fetch_verify entries for URLs cited by the previous scan, each with an explicit result and keep-or-discard decision",
+        "Any previously cited source that failed re-verification is named in the response and does not appear as a citation in the new artifacts",
+        "The new scan writes its own action_log.jsonl rather than appending to the previous scan's log",
+        "scripts/validate_outputs.py exits zero on the new output directory",
+        "The response states which specific prior sources no longer hold up, rather than only reporting that the refresh completed"
+      ]
+    }
+  ]
+}

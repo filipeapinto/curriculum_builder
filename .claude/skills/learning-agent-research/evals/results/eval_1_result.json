@@ -1,0 +1,55 @@
+{
+  "eval_id": 1,
+  "prompt_summary": "Rough pipeline run (outputs/arduino_kit_run_v2/, L01-L04 + QA report): what does the state of the art say should have reviewed this before it shipped? Write to docs/research/sota_scan_test/ with a machine-readable agent list and clickable sources.",
+  "output_dir": "docs/research/sota_scan_test/",
+  "validator_exit_code": 0,
+  "expectations": [
+    {
+      "expectation": "The fixture lesson documents under outputs/arduino_kit_run_v2/ and the QA report were read before the first web search was issued (verifiable from the ordering of read_file and web_search entries in action_log.jsonl)",
+      "pass": true,
+      "evidence": "action_log.jsonl indices 0-3 are read_file entries for L01/document/L01.md through L04/document/L04.md; index 11 is the QA report; the first web_search entry is index 14. Every read_file entry whose path is under outputs/arduino_kit_run_v2/ precedes it. Stronger than required: index 11 (QA) is greater than max(0,1,2,3), so the QA report was also read AFTER all four lesson documents, which is the skill's Step 1 instruction and is what produced the four defects QA missed."
+    },
+    {
+      "expectation": "The output directory contains at least 5 thread .md files, exactly one sota_agents.v<N>.json, and an action_log.jsonl",
+      "pass": true,
+      "evidence": "ls docs/research/sota_scan_test/ returns 9 entries: 7 thread .md files (structured_output_rendering_conformance, multi_agent_llm_judge_review, readability_and_vocabulary_control, bloom_alignment_objective_validation, multimodal_asset_grounding_review, curriculum_sequence_coherence, commercial_platform_qa_practice), exactly one sota_agents.v1.json, and action_log.jsonl. 7 threads is inside the skill's stated 5-8 band."
+    },
+    {
+      "expectation": "Every element of the sota_agents JSON array has exactly the six keys agent, function, what_makes_it_sota, role_in_curriculum_builder, issues_resolved, and sources, with no empty string values",
+      "pass": true,
+      "evidence": "Independent check over all 6 array elements: set(element.keys()) == the required six for every element (no missing, no extra), every non-sources value is a non-empty stripped string, and every sources value is a non-empty list of non-empty strings. Agents: Rendered Document Conformance Reviewer, Reading-Level and Vocabulary Budget Gate, Learning-Objective and Bloom Alignment Reviewer, Visual Grounding Reviewer, Curriculum Sequence Coherence Reviewer, Independent Cross-Family Lesson Judge."
+    },
+    {
+      "expectation": "Every URL cited in the JSON or in a thread file (outside a Discarded section) appears in action_log.jsonl in an entry with a keep decision — i.e. scripts/validate_outputs.py exits zero on the output directory",
+      "pass": true,
+      "evidence": "python3 .claude/skills/llm_driven_learning/scripts/validate_outputs.py docs/research/sota_scan_test/ printed 'threads: 7  log entries: 58  citations checked: 33  verified URLs in log: 16' then 'PASS: every citation traces to a kept verification; schema and log are well-formed.' Exit code 0."
+    },
+    {
+      "expectation": "For each cited URL, the web_fetch_verify log entry that verified it is timestamped before the write_file entry for the artifact that cites it",
+      "pass": true,
+      "evidence": "Checked independently of the validator by parsing ISO-8601 ts fields rather than line order: for all 33 citations across the 8 written artifacts, the keep-decision web_fetch_verify ts is strictly less than the citing artifact's write_file ts. Zero violations. This is a stricter test than validate_outputs.py performs, since the validator checks set membership only and ignores time."
+    },
+    {
+      "expectation": "At least one issues_resolved field quotes or precisely references a defect that is actually present in the fixture QA report, rather than a generic quality concern",
+      "pass": true,
+      "evidence": "All six do; four verified by grep against the fixture. 'Document renderer dumps raw JSON as lesson body' and 'the pipeline's sole subjective gate was inert for the entire run' and '4+ undefined terms against a cap of 2' each appear verbatim in outputs/arduino_kit_run_v2/QA/arduino_kit_run_v2.qa_report.v1.md. The Bloom quote matches with markdown backticks stripped. The Independent Cross-Family Lesson Judge entry additionally quotes acceptance.json verbatim: '\"routing_divergence\": \"USER_AUTHORIZED_IN_SESSION_MODEL; cross-family judge bypassed\"', confirmed present in all four unit acceptance.json files."
+    },
+    {
+      "expectation": "At least one thread file covers commercial or production practice rather than only academic papers",
+      "pass": true,
+      "evidence": "commercial_platform_qa_practice.md cites two primary vendor sources (blog.duolingo.com/how-duolingo-experts-work-with-ai/ and blog.khanacademy.org/khan-academys-framework-for-responsible-ai-in-education/). It also produced the run's most useful correction: Duolingo's own page does not support the 'a qualified linguist approves every AI-generated exercise' workflow that its secondary coverage asserts."
+    },
+    {
+      "expectation": "Each thread .md file contains all four required sections: why this thread, findings, sources, and discarded",
+      "pass": true,
+      "evidence": "validate_outputs.py checks REQUIRED_SECTIONS = ['why this thread','findings','sources','discarded'] case-insensitively against all 7 *.md files and reported no missing-section errors before exiting 0. Manually confirmed the sections appear in contract order in each file."
+    },
+    {
+      "expectation": "The action log records at least one source that was fetched and then discarded or corrected, with a stated reason",
+      "pass": true,
+      "evidence": "Nine such entries. Three CORRECTED: arXiv 2410.21819 (snippet claimed it recommends cross-family judges; abstract proposes no mitigation at all), arXiv 2605.09635 (snippet claimed DAG validation of prerequisite relations; abstract does not state it), and blog.duolingo.com (snippet workflow not supported by the primary page). One explicit DISCARD after correction: arXiv 2508.15866, 'snippet claim unverified and the paper is off-topic for a document-rendering thread'. Four FAILED fetches with retry-ladder reasoning: ecva.net PDF and files.eric.ed.gov PDF (both undecodable, both retried successfully via alternate arXiv/ERIC-record forms), and two support.khanacademy.org 403s ending in 'DISCARD - do not cite either'."
+    }
+  ],
+  "overall_pass": true,
+  "notes": "Skill performed as designed; the two rules it advertises both earned their keep in this run. (1) 'Ground before you search' produced four defects the QA report does not contain, all found by reading the artifacts and workers/lab.json before reading QA: assets/official_reference.jpg is byte-identical (sha256 8f9ab6c8...) across all four units while captioned 'Subject Identification' for four different subjects, and RECEIPT-HASH-RESOLVES passes on it; L03's next_lab_link hands off to L05 skipping L04, and L04 also claims L05; all four units declare the identical bloom_level triple [remember, understand, apply]; and the placeholder '*Draft pending downstream human review.*' is hard-coded at runtime/session_bridge.py:203 into every shipped document. Two of the six recommended agents exist only because of these. (2) 'Fetch before you cite' caught two live snippet errors that would have shipped as confident wrong claims — notably that arXiv 2410.21819 recommends cross-family judging, which is the exact trap SKILL.md warns about and which the search snippet asserted anyway.\n\nCaveats a variance reader should weigh. (a) Verification depth was abstract-level for every arXiv source: WebFetch was pointed at /abs/ pages, so quotes in the log are the abstract as rendered by the fetch summariser, not byte-verified against the paper body. Under the skill's own vocabulary several of these arguably deserved PARTIALLY VERIFIED rather than VERIFIED; source_verification.md says an abstract is enough to verify most topical claims, so this is defensible but is a judgement call that could differ between runs and between graders. (b) Thread depth is uneven: 2 sources for the rendering thread versus 4 for the judge thread. The rendering thread declares its own thinness in-file rather than padding, which is what the methodology asks for, but it means the flagship defect of this run has the least external support. (c) The action log contains 3 duplicated entries (one web_search, plus web_fetch_verify for nciea.org and files.eric.ed.gov). Cause: a chain of log_action.py calls joined with && was aborted mid-chain by zsh 'no matches found' when a URL containing '?' (eric.ed.gov/?id=EJ1118467) hit glob expansion, and the chain was then re-run whole. The duplicates were left in place rather than edited out, since rewriting the log would be a worse failure than an over-inclusive one, but the log is therefore not a perfectly faithful action record. Worth a note in the skill's Logging section that URLs passed to log_action.py must be quoted. (d) Six agents from seven threads is a higher recommendation-to-thread ratio than the reference run's five-from-seven; the commercial thread was folded into the judge and sequence agents rather than justifying its own, but a stricter reviewer might merge the readability and Bloom gates, which run at the same gate-2 point though on different inputs and for different reasons."
+}

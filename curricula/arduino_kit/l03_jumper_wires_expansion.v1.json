@@ -1,0 +1,25 @@
+{
+  "id": "l03_jumper_wires_expansion.v1",
+  "component_identity": {
+    "kit_roster_name": "ELEGOO UNO R3 Super Starter Kit jumper wires and breadboard expansion",
+    "part_marking": null,
+    "kit_photo_or_listing": "curricula/arduino_kit/official_kit_photo.jpg"
+  },
+  "primary_sources": [
+    {
+      "url_or_path": "https://protosupplies.com/guide-to-solderless-breadboards/",
+      "access_date": "2026-08-02",
+      "claim_scope": "Jumper wire types (Dupont male/male, male/female, female/female) and their use to connect breadboard nodes; disconnected identification and planning only."
+    }
+  ],
+  "orientation": "Disconnected conceptual connection plan; a wire's two named endpoints are identified without asserting any powered state.",
+  "terminals": [
+    {"name": "wire_endpoint_a", "function": "first named endpoint a jumper wire would join", "coordinate": "jumper,endpoint,a"},
+    {"name": "wire_endpoint_b", "function": "second named endpoint a jumper wire would join", "coordinate": "jumper,endpoint,b"},
+    {"name": "expansion_board_row", "function": "a grouped connection row on the expansion board reachable via jumpers", "coordinate": "expansion_board,row"}
+  ],
+  "legal_coordinates": ["jumper,endpoint,a", "jumper,endpoint,b", "expansion_board,row"],
+  "rail_topology": null,
+  "ratings": [],
+  "source_bundle_sha256": null
+}

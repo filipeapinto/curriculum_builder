@@ -1,0 +1,51 @@
+{
+  "run_id": "eval-retry-tracker-defect-without_skill",
+  "expectations": [
+    {
+      "text": "six-artifact package present (plan, plan_qa, execution_test.plan, prompt, final_audit, plans.log.md)",
+      "passed": true,
+      "evidence": "Baseline independently produced all six documents (retry_scope.plan.v1.md, qa/plan_qa.v1.md, qa/execution_test.plan.v1.md, prompts/retry_scope.prompt.v1.md, qa/final_audit.v1.md, plans.log.md) after reading plans/provider_correction/ as a template -- the shape is largely reproducible from the reference example alone."
+    },
+    {
+      "text": "validate_plan_package.py exits 0 against the output directory",
+      "passed": false,
+      "evidence": "Not naming-compatible: files use a self-chosen slug (retry_scope) that doesn't match the directory name (_eval_rtd_bl) the skill's convention requires; validator reports 'no _eval_rtd_bl.plan.vN.md found'. Expected -- baseline has no naming contract to follow."
+    },
+    {
+      "text": "plan_qa verdict line is well-formed and Findings are Critical/High only, no style/low-severity items",
+      "passed": true,
+      "evidence": "Verdict line and four numbered High findings are well-formed and severity-scoped, with a separate 'Notes carried forward, not findings' section for non-blocking items -- format is comparable to the with-skill output."
+    },
+    {
+      "text": "every test id in the prompt's TEST section matches the execution test plan's ids, and vice versa",
+      "passed": true,
+      "evidence": "RS-T00 through RS-T09 appear identically in both prompts/retry_scope.prompt.v1.md and qa/execution_test.plan.v1.md with no orphans, checked by hand."
+    },
+    {
+      "text": "QA and final audit were performed by fresh, independent subagents, not the authoring pass grading itself",
+      "passed": false,
+      "evidence": "No second plan version exists and no independent agent invocation is evidenced -- plan_qa.v1.md narrates findings as already 'remediated in the current v1' with no separate revision artifact, and neither plan_qa.v1.md nor final_audit.v1.md shows any executed command, grep, or scratch-copy verification. This is a single self-consistent narrative, not a genuinely separate adversarial pass -- the exact failure mode the skill's independent-subagent design exists to prevent."
+    },
+    {
+      "text": "plan is grounded in the real defect: names RetryTracker, revision(), and self.failures in runtime/retry.py rather than a generic retry-cap description",
+      "passed": true,
+      "evidence": "Well grounded, with real line citations -- and notably broader than the with-skill run: it also catches that self.used/self.revisions share the same defect and that RetryTracker has no production caller (the live enforcement path is a second, diverging implementation in controller.py). Whether that additional scope is a virtue (thorough root-causing) or scope creep beyond the literal report is a judgment call worth raising with the user."
+    },
+    {
+      "text": "no file outside plans/_eval_rtd_bl/ was modified",
+      "passed": true,
+      "evidence": "Confirmed via the same global git status/diff check as the with-skill run."
+    },
+    {
+      "text": "QA/audit revision loop stayed within the skill's stated cap; an honest blocker was reported rather than a forced false PASS if still failing",
+      "passed": false,
+      "evidence": "Not applicable in the intended sense -- there is no genuine multi-round loop at all. The baseline goes from a single QA pass straight to a self-declared 'PASS -- 0 Critical, 0 High remaining' with no second author/QA cycle to have converged, which is a weaker guarantee than the with-skill package's four independently-verified rounds."
+    }
+  ],
+  "summary": {
+    "pass_rate": 0.625,
+    "passed": 5,
+    "failed": 3,
+    "total": 8
+  }
+}

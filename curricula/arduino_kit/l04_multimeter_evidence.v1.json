@@ -1,0 +1,26 @@
+{
+  "id": "l04_multimeter_evidence.v1",
+  "component_identity": {
+    "kit_roster_name": "ELEGOO UNO R3 Super Starter Kit digital multimeter (or equivalent DMM used with the kit)",
+    "part_marking": null,
+    "kit_photo_or_listing": "curricula/arduino_kit/official_kit_photo.jpg"
+  },
+  "primary_sources": [
+    {
+      "url_or_path": "https://learn.sparkfun.com/tutorials/how-to-use-a-multimeter/all",
+      "access_date": "2026-08-02",
+      "claim_scope": "Digital multimeter probe socket layout (COM, VΩmA, 10A), and the distinction between voltage, continuity, and current measurement modes; unpowered identification and mode-selection only, no live measurement taken."
+    }
+  ],
+  "orientation": "Disconnected conceptual mode-and-socket map; no probe is placed on a live circuit and no measurement is taken.",
+  "terminals": [
+    {"name": "com_socket", "function": "common/ground probe socket, always used for the black probe", "coordinate": "multimeter,socket,com"},
+    {"name": "v_omega_ma_socket", "function": "voltage, resistance, continuity and low-current socket for the red probe", "coordinate": "multimeter,socket,vomega_ma"},
+    {"name": "ten_a_socket", "function": "dedicated high-current socket for the red probe above the low-current jack's rated limit", "coordinate": "multimeter,socket,ten_a"},
+    {"name": "mode_dial", "function": "selector choosing voltage, continuity, or current measurement mode", "coordinate": "multimeter,dial,mode"}
+  ],
+  "legal_coordinates": ["multimeter,socket,com", "multimeter,socket,vomega_ma", "multimeter,socket,ten_a", "multimeter,dial,mode"],
+  "rail_topology": null,
+  "ratings": [],
+  "source_bundle_sha256": null
+}

@@ -1,0 +1,51 @@
+{
+  "run_id": "eval-meta-prompt-staleness-without_skill",
+  "expectations": [
+    {
+      "text": "six-artifact package present (plan, plan_qa, execution_test.plan, prompt, final_audit, plans.log.md)",
+      "passed": true,
+      "evidence": "Baseline produced all six documents (meta_prompt_activation.plan.v1.md, qa/plan_qa.v1.md, qa/execution_test.plan.v1.md, prompts/meta_prompt_activation.prompt.v1.md, qa/final_audit.v1.md, plans.log.md) in one pass."
+    },
+    {
+      "text": "validate_plan_package.py exits 0 against the output directory",
+      "passed": false,
+      "evidence": "Fails on naming/slug mismatch against the skill's convention -- expected, since the baseline was not following it."
+    },
+    {
+      "text": "plan_qa verdict well-formed and Findings are Critical/High only, no style/low-severity items",
+      "passed": true,
+      "evidence": "Verdict line and four numbered High findings are well-formed and severity-scoped."
+    },
+    {
+      "text": "every test id in the prompt's TEST section matches the execution test plan's ids, and vice versa",
+      "passed": true,
+      "evidence": "MP-T00 through MP-T07 appear identically in both documents (checked by hand); the test plan uses '##' headings rather than the skill's '###' convention, a cosmetic difference only."
+    },
+    {
+      "text": "QA and final audit performed by fresh, independent subagents, not the authoring pass grading itself",
+      "passed": false,
+      "evidence": "No second plan version and no evidence of a separate agent invocation -- plan_qa.v1.md and final_audit.v1.md read as a single continuous narrative with no shown command execution beyond what the plan's own prose already claims."
+    },
+    {
+      "text": "plan is grounded in real controller.py version-resolution and check_meta_prompt.py expectations",
+      "passed": true,
+      "evidence": "Well grounded with specific line citations for runtime/controller.py and tests/check_meta_prompt.py, and the QA pass independently finds real issues (sys.path import fragility, an fnmatch pattern that would break the planned v2 retention case, simulate() left unprotected) -- comparable depth to the with-skill run's round 1."
+    },
+    {
+      "text": "no file outside the scratch plan directory modified",
+      "passed": true,
+      "evidence": "Confirmed via the global git status/diff check."
+    },
+    {
+      "text": "revision loop bounded at the convergence rule; honest blocker over forced pass",
+      "passed": false,
+      "evidence": "Not applicable in the intended sense -- one QA pass with 4 High findings is followed directly by a self-declared 'PASS -- 0 Critical, 0 High remaining' final audit, with no second QA round evidenced to have actually re-verified the fixes independently."
+    }
+  ],
+  "summary": {
+    "pass_rate": 0.625,
+    "passed": 5,
+    "failed": 3,
+    "total": 8
+  }
+}

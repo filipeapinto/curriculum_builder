@@ -1,0 +1,29 @@
+{
+  "id": "l02_breadboard_connectivity.v1",
+  "component_identity": {
+    "kit_roster_name": "ELEGOO UNO R3 Super Starter Kit breadboard",
+    "part_marking": null,
+    "kit_photo_or_listing": "curricula/arduino_kit/official_kit_photo.jpg"
+  },
+  "primary_sources": [
+    {
+      "url_or_path": "https://protosupplies.com/guide-to-solderless-breadboards/",
+      "access_date": "2026-08-02",
+      "claim_scope": "Generic solderless breadboard internal connectivity: five-hole terminal strips, the centre trench separating the two sides, and split power rails; disconnected identification only."
+    }
+  ],
+  "orientation": "Disconnected conceptual connectivity map; no power is applied and no rail is asserted to carry any particular voltage.",
+  "terminals": [
+    {"name": "terminal_strip_group", "function": "one five-hole group joined by a single internal spring clip", "coordinate": "breadboard,terminal_strip,row,five_hole_group"},
+    {"name": "centre_trench", "function": "gap separating the two terminal-strip halves; nothing here is joined", "coordinate": "breadboard,centre_trench"},
+    {"name": "power_rail_segment", "function": "one labelled rail segment; the rail may be split and must be checked, not assumed continuous", "coordinate": "breadboard,power_rail,segment"}
+  ],
+  "legal_coordinates": [
+    "breadboard,terminal_strip,row,five_hole_group",
+    "breadboard,centre_trench",
+    "breadboard,power_rail,segment"
+  ],
+  "rail_topology": null,
+  "ratings": [],
+  "source_bundle_sha256": null
+}

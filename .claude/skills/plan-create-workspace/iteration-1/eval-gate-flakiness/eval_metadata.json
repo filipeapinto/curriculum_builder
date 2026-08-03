@@ -1,0 +1,15 @@
+{
+  "eval_id": 2,
+  "eval_name": "gate-flakiness",
+  "prompt": "hey we keep hitting weird flakiness in the gates around phase 4/5 -- sometimes a gate that passed on one run fails on a rerun with no code changes in between. can you put together a proper plan for tracking this down and fixing it, with the qa loop and test plan and everything, the way you did for the provider correction work",
+  "assertions": [
+    {"text": "six-artifact package present (plan, plan_qa, execution_test.plan, prompt, final_audit, plans.log.md)"},
+    {"text": "validate_plan_package.py exits 0 against the output directory"},
+    {"text": "plan_qa verdict line is well-formed and Findings are Critical/High only, no style/low-severity items"},
+    {"text": "every test id in the prompt's TEST section matches the execution test plan's ids, and vice versa"},
+    {"text": "QA and final audit were performed by fresh, independent subagents (not the authoring pass grading itself), evidenced by the log and the run report"},
+    {"text": "plan is grounded in the real gate-running mechanism (e.g. tests/run_gates.sh, runtime/checks.py) rather than inventing an unfounded root cause for a vague, investigative report"},
+    {"text": "no file outside plans/_eval_gf_ws/ was modified (git status/diff clean elsewhere)"},
+    {"text": "QA/audit revision loop stayed within the skill's stated cap of 2 rounds; an honest blocker was reported rather than a forced false PASS if still failing"}
+  ]
+}

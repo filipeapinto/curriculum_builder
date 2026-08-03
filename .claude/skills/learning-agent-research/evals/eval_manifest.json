@@ -1,0 +1,35 @@
+{
+  "phase": 3,
+  "skill_under_test": "learning-agent-research",
+  "agents": [
+    {
+      "name": "phase3-eval-1",
+      "eval_id": 1,
+      "role": "eval-runner",
+      "action_log": ".claude/skills/learning-agent-research/evals/workspaces/eval_1/action_log.jsonl",
+      "result": ".claude/skills/learning-agent-research/evals/results/eval_1_result.json"
+    },
+    {
+      "name": "phase3-eval-2",
+      "eval_id": 2,
+      "role": "eval-runner",
+      "action_log": ".claude/skills/learning-agent-research/evals/workspaces/eval_2/action_log.jsonl",
+      "result": ".claude/skills/learning-agent-research/evals/results/eval_2_result.json"
+    },
+    {
+      "name": "phase3-eval-3",
+      "eval_id": 3,
+      "role": "eval-runner",
+      "action_log": ".claude/skills/learning-agent-research/evals/workspaces/eval_3/action_log.jsonl",
+      "result": ".claude/skills/learning-agent-research/evals/results/eval_3_result.json"
+    },
+    {
+      "name": "phase3-variance-report",
+      "role": "aggregator",
+      "action_log": ".claude/skills/learning-agent-research/evals/action_log.jsonl",
+      "depends_on": ["phase3-eval-1", "phase3-eval-2", "phase3-eval-3"],
+      "status": "not_started"
+    }
+  ],
+  "gate": "Phase 4 does not start until every eval-runner agent above has a status:done entry in its own action_log, and phase3-variance-report has run and has a status:done entry in its action_log."
+}

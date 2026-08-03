@@ -1,0 +1,15 @@
+{
+  "eval_id": 1,
+  "eval_name": "meta-prompt-staleness",
+  "prompt": "We don't have anything that stops meta_prompt/curriculum.prompt.v1.md from silently going stale relative to what runtime/controller.py resolves as the active version. Plan an improvement that adds a check ensuring the active meta-prompt version the controller resolves actually exists and matches what tests/check_meta_prompt.py expects. Same plan+QA+test-plan+prompt package as provider_correction, please.",
+  "assertions": [
+    {"text": "six-artifact package present (plan, plan_qa, execution_test.plan, prompt, final_audit, plans.log.md)"},
+    {"text": "validate_plan_package.py exits 0 against the output directory"},
+    {"text": "plan_qa verdict line is well-formed and Findings are Critical/High only, no style/low-severity items"},
+    {"text": "every test id in the prompt's TEST section matches the execution test plan's ids, and vice versa"},
+    {"text": "QA and final audit were performed by fresh, independent subagents (not the authoring pass grading itself), evidenced by the log and the run report"},
+    {"text": "plan is grounded in the real code: references runtime/controller.py's actual version-resolution mechanism and tests/check_meta_prompt.py's actual expectations, not a generic staleness description"},
+    {"text": "no file outside plans/_eval_mps_ws/ was modified (git status/diff clean elsewhere)"},
+    {"text": "QA/audit revision loop stayed within the skill's stated cap of 2 rounds; an honest blocker was reported rather than a forced false PASS if still failing"}
+  ]
+}

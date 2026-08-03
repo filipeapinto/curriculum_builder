@@ -1,0 +1,51 @@
+{
+  "run_id": "eval-gate-flakiness-with_skill",
+  "expectations": [
+    {
+      "text": "six-artifact package present (plan, plan_qa, execution_test.plan, prompt, final_audit, plans.log.md)",
+      "passed": false,
+      "evidence": "Only plan.v1.md, plans.log.md, and three plan_qa rounds exist. By design: Critical+High went 7, 3, 3 -- round 3 plateaued exactly at round 2's count, so Step 4 correctly halted before Steps 5-7."
+    },
+    {
+      "text": "validate_plan_package.py exits 0 against the output directory",
+      "passed": false,
+      "evidence": "Fails with 3 missing-artifact errors, consistent with the by-design incompleteness."
+    },
+    {
+      "text": "plan_qa verdict well-formed and Findings are Critical/High only, no style/low-severity items",
+      "passed": true,
+      "evidence": "All three rounds carry well-formed verdict lines with severity-scoped Findings and a separate non-blocking Observations section; round 2 and 3 both include an explicit 'prior-round remediation' section distinguishing confirmed fixes from new findings."
+    },
+    {
+      "text": "every test id in the prompt's TEST section matches the execution test plan's ids, and vice versa",
+      "passed": false,
+      "evidence": "Not applicable -- no prompt or execution test plan was produced, since the pipeline correctly stopped before Step 5."
+    },
+    {
+      "text": "QA and final audit performed by fresh, independent subagents, not the authoring pass grading itself",
+      "passed": true,
+      "evidence": "Three rounds, each a fresh subagent with no prior context. This was the most empirically rigorous QA of the three evals: round 1 reproduced 88 timeout runs and exact per-gate transient tallies from tests/results/, round 3 applied the Phase C scan-root change live in a scratch copy and confirmed production_files() dropped from 671 to 110 paths with zero tracked-path loss."
+    },
+    {
+      "text": "plan is grounded in real gate-running mechanism rather than an invented root cause",
+      "passed": true,
+      "evidence": "Despite the deliberately vague, investigative prompt, the plan and every QA round root-cause the flakiness in tests/gates/common.py, runner.py, and specific gate modules with exact call sites and drift-count data -- never a guessed or generic explanation."
+    },
+    {
+      "text": "no file outside the scratch plan directory modified",
+      "passed": true,
+      "evidence": "Confirmed via the global git status/diff check."
+    },
+    {
+      "text": "revision loop bounded at the convergence rule; honest blocker over forced pass",
+      "passed": true,
+      "evidence": "Round-over-round Critical+High: 7, 3, 3. The plateau rule correctly fired at round 3 (3 is not lower than 3), even though the log transparently notes severity composition improved (the round-2 Critical finding was confirmed resolved). The rule keys on the raw sum, which is a defensible simplicity trade-off worth flagging to the user as a possible future refinement, not a bug in this run."
+    }
+  ],
+  "summary": {
+    "pass_rate": 0.625,
+    "passed": 5,
+    "failed": 3,
+    "total": 8
+  }
+}

@@ -1,0 +1,15 @@
+{
+  "eval_id": 0,
+  "eval_name": "retry-tracker-defect",
+  "prompt": "There's a defect in runtime/retry.py: RetryTracker's revision() method raises RetryLimit when failed_checks doesn't shrink from the previous attempt, but self.failures is never reset between different curriculum units. So a unit that legitimately hits the same two failing checks twice in a row on completely unrelated content gets permanently blocked for the rest of the run, even though it's a fresh unit. I want a full plan for this: fix it properly, QA the plan, write an execution test plan, and a Claude Code prompt I can hand off, like we did in plans/provider_correction.",
+  "assertions": [
+    {"text": "six-artifact package present (plan, plan_qa, execution_test.plan, prompt, final_audit, plans.log.md)"},
+    {"text": "validate_plan_package.py exits 0 against the output directory"},
+    {"text": "plan_qa verdict line is well-formed and Findings are Critical/High only, no style/low-severity items"},
+    {"text": "every test id in the prompt's TEST section matches the execution test plan's ids, and vice versa"},
+    {"text": "QA and final audit were performed by fresh, independent subagents (not the authoring pass grading itself), evidenced by the log and the run report"},
+    {"text": "plan is grounded in the real defect: names RetryTracker, revision(), and self.failures in runtime/retry.py rather than a generic retry-cap description"},
+    {"text": "no file outside plans/_eval_rtd_ws/ was modified (git status/diff clean elsewhere)"},
+    {"text": "QA/audit revision loop stayed within the skill's stated cap of 2 rounds; an honest blocker was reported rather than a forced false PASS if still failing"}
+  ]
+}

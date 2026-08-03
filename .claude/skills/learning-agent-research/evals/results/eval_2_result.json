@@ -1,0 +1,40 @@
+{
+  "eval_id": 2,
+  "prompt_summary": "Sanity check: four labs shipped with raw JSON dumps as the lesson body and nothing caught it — what reviewer would have, and is there published evidence? Ground in outputs/arduino_kit_run_v2/, write to docs/research/rendering_gap_scan/.",
+  "output_dir": "docs/research/rendering_gap_scan",
+  "validator_exit_code": 0,
+  "expectations": [
+    {
+      "expectation": "The fixture output under outputs/arduino_kit_run_v2/ was read before any web search was issued",
+      "pass": true,
+      "evidence": "Mechanical check over action_log.jsonl: all 9 read_file entries whose path contains arduino_kit_run_v2 sit at indices 0-6 and 10-11; the first web_search is index 13. Last fixture read (the QA report, 15:03:02.018031Z) precedes the first search (15:03:53.917161Z) by 52s. The skill's stricter ordering rule was also honoured — the QA report is the last fixture read, after all four documents, so the defect list was formed independently and includes two defects the QA report does not name (the emitter root cause at runtime/session_bridge.py:207-215 and the weakness of rasterize_and_check_nonblank)."
+    },
+    {
+      "expectation": "At least one thread file addresses validating rendered output shape (structured data leaking into prose fields) as distinct from validating the upstream schema",
+      "pass": true,
+      "evidence": "structured_output_rendering_conformance.md is entirely this thread and states the distinction concretely rather than abstractly: 'The upstream workers/lab.json was well-formed; the defect is entirely downstream of it', and notes the violated contract (inputs/unit_prose.v1.md) is one the pipeline's own prompt.md:44-45 says 'cannot have' a schema. A second thread, schema_validity_vs_semantic_quality.md, carries the empirical half separately."
+    },
+    {
+      "expectation": "The recommendation array includes an agent whose function is a deterministic or pre-emission check on the rendered document, and whose role_in_curriculum_builder names where in the pipeline it runs",
+      "pass": true,
+      "evidence": "sota_agents.v1.json[0] 'Rendered Document Conformance Auditor' — function is a 'Deterministic, non-model check that reads the emitted learner-facing document ... immediately after runtime/session_bridge.py:_markdown() writes it and before the PDF is built'. role_in_curriculum_builder names a real, verified insertion point: 'inside runtime/session_bridge.py:finalize() between the markdown write at line 269 and the pandoc PDF render at line 271', ordered before ARTIFACT_CONSISTENCY / QA_COMMUNICATION / LAB_PDF / PDF_RENDER / PDF_VISUAL_QA — all real state names read from policy/controller.v1.yaml, not invented."
+    },
+    {
+      "expectation": "scripts/validate_outputs.py exits zero on the output directory, meaning no citation lacks a kept verification entry in the action log",
+      "pass": true,
+      "evidence": "Exit 0: 'threads: 6  log entries: 46  citations checked: 22  verified URLs in log: 11 / PASS: every citation traces to a kept verification; schema and log are well-formed.' Run twice (before and after the final log entries), zero both times."
+    },
+    {
+      "expectation": "No source is cited whose action_log.jsonl entry records a FAILED result or a DISCARD decision",
+      "pass": true,
+      "evidence": "Independent check, not relying on the skill's own validator: 4 URLs in the log carry a FAILED result or DISCARD decision (applitools.com/blog/3-steps-visual-testing-pdf, arxiv.org/abs/2001.03830, arxiv.org/abs/2606.05405, blog.duolingo.com/how-duolingo-experts-work-with-ai). Intersection with the 10 URLs cited in sota_agents.v1.json or outside a Discarded heading in any thread file is empty. All four appear only in Discarded sections. Additionally checked timestamp ordering: every URL in a write_file entry's sources_cited had a keep-decision web_fetch_verify entry strictly earlier — zero violations."
+    },
+    {
+      "expectation": "The response distinguishes claims backed by a fetched source from the assistant's own inference, rather than presenting both in the same register",
+      "pass": true,
+      "evidence": "Every thread carries an explicitly marked inference. structured_output_rendering_conformance.md: 'No source in this scan studies this exact defect ... This is my inference, not a cited finding'. readability_metrics_as_rendering_canary.md marks the would-have-fired claim as inference and admits 'I have not executed the check against these files to confirm which'. rendered_page_visual_qa.md uses the label against its own thread's interest, conceding a pixel-snapshot check 'would not reliably have caught this defect either'. Three sources also carry explicit SCOPE NOTES limiting them (arXiv:2607.18261 is about ordering agents not documents; arXiv:2604.25359 is extraction accuracy not rendering; the Frontiers study is Mandarin skin-cancer patient education not K-12 STEM), and arXiv:2406.12787 is cited conservatively with a note that no readability formula may be attributed to it."
+    }
+  ],
+  "overall_pass": true,
+  "notes": "Skill performed as designed on this prompt; the grounding rule did real work — the emitter root cause (runtime/session_bridge.py:207-215) and the inertness of rasterize_and_check_nonblank were found in code and are not in the QA report, so the scan was not merely reflecting the fixture's own framing back. Verification also did real work: 3 of 12 fetches were discarded, two of them because the fetched page contradicted the snippet (arXiv:2001.03830 lacked the content-planning/surface-realization claim; blog.duolingo.com/how-duolingo-experts-work-with-ai describes authoring, not the review gate its title and snippet implied) and one after two 403s. The retry ladder recovered arXiv:2606.05405 (abs -> html) and the html form supplied the single most load-bearing quote in the scan. FINDINGS FOR THE VARIANCE READER, none of which changed this eval's verdict: (1) validate_outputs.py:77 treats a decision beginning 'pending' as kept, the same as 'keep'. That is a real loophole — a scan could log 'pending' for an unverified URL and still pass. I hit it honestly (a pending entry written mid-retry-ladder) and closed it by appending an explicit DISCARD resolution entry, but the validator would not have caught me. Worth tightening. (2) The skill's Step 3 tells you to log a failed search and refine rather than retry silently; one WebSearch returned 'Web search error: unavailable' with no results, and the skill gives no guidance distinguishing a tool failure from an off-target result set — logged as result_count 0 with the error text. (3) The genuine methodological strain in this eval is that no published source studies this exact defect. The skill's anti-patterns section ('padding a thin thread with weak sources') pushed toward saying so explicitly rather than dressing adjacent papers up as direct support, which is the right outcome, but a less careful run would very plausibly have cited arXiv:2607.18261 as if it were about document rendering — its abstract is quotable enough to look like support. (4) Thread count was 6 and agent count 4; the skill's 'keep the recommendation count honest' guidance was load-bearing, since threads 5 and 6 did not justify standalone agents."
+}

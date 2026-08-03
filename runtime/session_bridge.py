@@ -265,9 +265,9 @@ def finalize(engine: Path, output: Path) -> dict[str, Any]:
     document = output / "document"
     document.mkdir()
     shutil.copytree(output / "assets", document / "assets")
-    markdown = document / "L01.md"
+    markdown = document / f"{lab['identity']['unit_id']}.md"
     markdown.write_text(_markdown(lab), encoding="utf-8")
-    pdf = document / "L01.pdf"
+    pdf = document / f"{lab['identity']['unit_id']}.pdf"
     render = subprocess.run(["pandoc", str(markdown), "--resource-path", str(document),
                              "--pdf-engine=typst", "-V", "mainfont=Helvetica",
                              "-o", str(pdf)], cwd=output, capture_output=True, text=True)

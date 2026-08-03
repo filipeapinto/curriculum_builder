@@ -1,0 +1,60 @@
+{
+  "skill_name": "learning-agent-create",
+  "notes": "Each eval hands the skill one recommendation object from docs/research/sota_agents_research/sota_agents.v1.json and asks for the agent to be built. Expectations assert on the artifact set and on the four verdict-design decisions, not on exact wording — two competent runs will name an id differently and both be right. Each eval should run in a workspace copy of the repo, since building an agent writes into policy/, tests/ and docs/.",
+  "evals": [
+    {
+      "id": 1,
+      "name": "deterministic-agent-built-and-executed",
+      "prompt": "Our curriculum pipeline shipped four lessons where the renderer dumped raw JSON as the lesson body and nothing caught it. The SOTA scan in docs/research/sota_agents_research/sota_agents.v1.json recommends a 'Structured-Output Rendering Conformance Gate' for exactly this. Build that agent into the repo properly.",
+      "expected_output": "A complete agent artifact set: a failure-ledger entry, a check-inventory entry in the engine's inventory, a release surface, an accept/reject fixture pair where the reject fixture is a unit whose child-facing section is a serialized object, a detector plus a registered gate that executes against that pair, an RT- obligation recording that no rendered subject exists, and a dossier carrying the recommendation's sources verbatim.",
+      "files": [],
+      "expectations": [
+        "The check id is added to policy/checks.v1.yaml, not to a curriculum's inventory, because the check asserts a shape rather than anything subject-specific.",
+        "The inventory entry carries exactly one of verified_by or deferred, and whichever it carries resolves — a verified_by to a gate id present in tests/gates/registry.py, a deferred to an id in policy/deferred.v1.yaml.",
+        "A corresponding entry is added to policy/failures.v1.yaml describing the raw-JSON defect, and it names the new check id in a checks list.",
+        "A reject fixture is created under tests/fixtures/ in which a child-facing section actually parses as a JSON object or array — it reproduces the named defect rather than being generically malformed.",
+        "An accept fixture is created that differs from the reject fixture only in that the defect is removed.",
+        "The gate registration asserts a specific expected_error string on the reject fixture, not merely that the fixture fails.",
+        "The agent is built as a deterministic check that blocks, and the run states why a judge was not used for a defect a parser settles.",
+        "The gate's summary line reports the count of real generated units scanned (zero today) and cites the RT- obligation that records why it is zero, rather than reporting fixture coverage as coverage of generated work.",
+        "A dossier is written at docs/agents/<CHECK-ID>.md carrying the recommendation's what_makes_it_sota text and its source URLs, attributed to the scan and explicitly marked as not re-verified.",
+        "No new web search or source fetch is performed — the sources are carried across from the recommendation unchanged and none are added.",
+        "scripts/validate_agent.py is run against the new check id and reports no failures."
+      ]
+    },
+    {
+      "id": 2,
+      "name": "conflict-with-existing-decision-is-surfaced",
+      "prompt": "Please implement the first recommendation from docs/research/sota_agents_research/sota_agents.v1.json — the Cross-Family Structured Judge Panel — in our repo.",
+      "expected_output": "The run discovers that this repo already retired a multi-judge panel with recorded measurements and already has REV-JUDGE-SINGLE-CROSS-FAMILY, surfaces that conflict explicitly, amends the existing id rather than adding a competing one, and designs the verdict as flagging rather than blocking given the reported judge bias.",
+      "files": [],
+      "expectations": [
+        "The run reads policy/checks.v1.yaml and finds the existing REV-JUDGE-SINGLE-CROSS-FAMILY entry before creating anything.",
+        "The conflict between the recommendation's judge panel and this repo's recorded decision to retire a twelve-judge panel is stated explicitly, citing the repo's own measurements (effective votes, cost, deterministic checks outperforming judges).",
+        "The existing check id is amended rather than a second competing judge id being added alongside it.",
+        "The reconciliation — what the recommendation argues, what the repo already decided, and which evidence won — is written into the dossier rather than left in conversation.",
+        "The verdict is designed to flag or to escalate rather than to block, and the reason given is the unreliability of judge verdicts rather than an unexplained preference.",
+        "The model-call cost is reconciled against policy/limits.v1.yaml per_lab.max_model_calls rather than being left unbudgeted.",
+        "No limit value in policy/limits.v1.yaml is raised to accommodate the agent; if it does not fit, that is recorded as a finding.",
+        "The execution status is honest: if no second model family is available to this repo today, the entry is deferred with a blocked_by that names that, rather than claiming a gate executes it."
+      ]
+    },
+    {
+      "id": 3,
+      "name": "curriculum-scoped-placement-and-safety-verdict",
+      "prompt": "Build the Domain-Fact Safeguard Reviewer from our SOTA scan (docs/research/sota_agents_research/sota_agents.v1.json) — it's meant to catch wrong domain claims like the multimeter fuse-sharing behaviour that nothing currently verifies.",
+      "expected_output": "An agent whose subject is one curriculum's domain facts, correctly placed in that curriculum's own check inventory with its own release surface, with a safety-relevant judged verdict designed to escalate to a human rather than to block, and an honest execution status.",
+      "files": [],
+      "expectations": [
+        "The check is added to curricula/arduino_kit/checks.v1.yaml rather than to policy/checks.v1.yaml, and the reason given is that its subject is one curriculum's files or subject-specific claims.",
+        "A release row in that curriculum's inventory advertises the new id at the stage the entry declares, or the run confirms an existing wildcard pattern already covers it.",
+        "The run distinguishes this check from the existing DOMAIN-VERIFIER / DOMAIN-SCHEMA-VALID checks, which confirm schema validity rather than factual correctness.",
+        "Because the verdict is a model judgement on safety-relevant content, the design escalates to a named human reviewer rather than silently blocking, and the reasoning for that choice is recorded.",
+        "The asserts string states plainly whether the check blocks or flags, so a report quoting it cannot over-read it.",
+        "The execution status is deferred with a truthful blocked_by, or verified by a gate that executes against a fixture pair — never advertised as executed with nothing behind it.",
+        "The reject fixture encodes an actually-wrong domain claim of the kind the recommendation names, not a schema violation.",
+        "The dossier carries the recommendation's two source URLs verbatim, attributed to the scan, with no additional sources introduced."
+      ]
+    }
+  ]
+}

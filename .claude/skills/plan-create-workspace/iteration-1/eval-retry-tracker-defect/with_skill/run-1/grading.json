@@ -1,0 +1,51 @@
+{
+  "run_id": "eval-retry-tracker-defect-with_skill",
+  "expectations": [
+    {
+      "text": "six-artifact package present (plan, plan_qa, execution_test.plan, prompt, final_audit, plans.log.md)",
+      "passed": true,
+      "evidence": "All six exist under plans/_eval_rtd_ws/ at v1: _eval_rtd_ws.plan.v1.md, qa/plan_qa.v1-v4.md, qa/execution_test.plan.v1.md, prompts/_eval_rtd_ws.prompt.v1.md, qa/final_audit.v1.md, plans.log.md."
+    },
+    {
+      "text": "validate_plan_package.py exits 0 against the output directory",
+      "passed": true,
+      "evidence": "python3 scripts/validate_plan_package.py plans/_eval_rtd_ws -> 'OK \u2014 plans/_eval_rtd_ws v1 package is structurally valid', exit 0."
+    },
+    {
+      "text": "plan_qa verdict well-formed and Findings are Critical/High only, no style/low-severity items",
+      "passed": true,
+      "evidence": "All four rounds carry a well-formed verdict line; findings are numbered Critical/High only with a separate non-blocking 'Observations' section used for low-severity notes (e.g. dead-code disclosure), never mixed into Findings."
+    },
+    {
+      "text": "every test id in the prompt's TEST section matches the execution test plan's ids, and vice versa",
+      "passed": true,
+      "evidence": "Validator's cross-reference check reported no orphans; RTD-T00 through RTD-T13 appear identically and in the same order in both documents."
+    },
+    {
+      "text": "QA and final audit performed by fresh, independent subagents, not the authoring pass grading itself",
+      "passed": true,
+      "evidence": "Log names four distinct QA rounds and one final-audit stage, each explicitly 'a fresh subagent with no prior context'; each round applies the plan to an independent scratch copy (/tmp/rtqa, rtqa2, rtqa3, rtqa4) and runs real commands rather than reasoning about the diff."
+    },
+    {
+      "text": "plan is grounded in the real defect: names RetryTracker, revision(), and self.failures in runtime/retry.py rather than a generic retry-cap description",
+      "passed": true,
+      "evidence": "Plan and all QA rounds cite runtime/retry.py line numbers, RetryTracker.revision(), and self.failures directly, and QA independently re-derives these facts from the file each round rather than trusting the plan's prose."
+    },
+    {
+      "text": "no file outside plans/_eval_rtd_ws/ was modified",
+      "passed": true,
+      "evidence": "git status/diff at the end of all six eval runs shows only pre-existing changes from session start plus the plans/_eval_*/ and .claude/skills/plan-create* scratch/workspace paths; runtime/retry.py remains a staged addition with an empty working-tree diff."
+    },
+    {
+      "text": "QA/audit revision loop stayed within the skill's stated cap; an honest blocker was reported rather than a forced false PASS if still failing",
+      "passed": true,
+      "evidence": "Round-over-round Critical+High: 3, 2, 1, 0 \u2014 strictly decreasing at every step, converging to APPROVED at round 4 within the 5-round ceiling. Final audit and validator both confirm a genuine clean state, not a forced one."
+    }
+  ],
+  "summary": {
+    "pass_rate": 1.0,
+    "passed": 8,
+    "failed": 0,
+    "total": 8
+  }
+}

@@ -1,0 +1,62 @@
+[
+  {
+    "agent": "Cross-Family Structured Judge Panel",
+    "function": "Runs a small panel of judge LLMs, deliberately from a different model family than the authoring model and empirically checked for low self-preference bias, to score each rendered lesson on named structured dimensions (readability fit, prose coherence, domain-claim plausibility, safety-block completeness) rather than one holistic pass/fail, and blocks acceptance on low agreement or low per-dimension scores.",
+    "what_makes_it_sota": "2025-2026 research shows self-preference bias is widespread even in capable judges (17 of 20 models tested in arXiv:2604.22891), that judge selection should be based on verified low bias rather than family alone, and that forcing structured per-dimension scoring instead of a single holistic score reduces bias by ~31.5% on average. Production teams in 2026 (Zylos Research) now treat small, specialized judge models as standard runtime infrastructure (Galileo Luna-2, 3B-8B, matches large-generalist accuracy at a 97% cost reduction) rather than an optional eval step, and explicitly warn that intrinsic self-correction without external grounding does not reliably work -- ruling out the authoring model marking its own homework. Unsupervised group-based polling (Genii, arXiv:2510.08145) further shows judge-panel bias can be mitigated without any human-labeled calibration set.",
+    "role_in_curriculum_builder": "Replaces the currently deferred RT-5 / REV-JUDGE-SINGLE-CROSS-FAMILY check in policy/checks.v1.yaml with an always-on gate-3 panel-judge step that runs on every rendered lab document before acceptance, using a judge model family distinct from the authoring model and structured per-dimension scoring rather than a single verdict.",
+    "issues_resolved": "QA report Critical #3: 'the one subjective quality check was bypassed identically on all 4 units' because 'the user authorized the current in-session LLM as the model worker; no separate API' -- meaning the pipeline's sole check that 'reads output like a human would' was inert for the entire run and could not have caught the JSON-dump-as-prose bug even in principle.",
+    "sources": [
+      "https://arxiv.org/html/2604.22891v4",
+      "https://arxiv.org/pdf/2505.19477",
+      "https://arxiv.org/abs/2510.08145",
+      "https://zylos.ai/research/2026-04-10-llm-as-judge-production-agent-verification-2026/"
+    ]
+  },
+  {
+    "agent": "Bloom's-Level and Vocabulary-Cap Verifier",
+    "function": "Reads the fully rendered lesson prose (not the source lab.json) and checks that (a) cognitive verbs used in objectives/hinge questions match the lesson's targeted Bloom's level, (b) measured readability lands within the target Flesch-Kincaid band, and (c) no more than the declared cap of new/undefined vocabulary terms appears outside the lesson's declared vocabulary list, flagging every undefined term by name.",
+    "what_makes_it_sota": "Research on automated Bloom's-level classification (arXiv:2408.04394) shows LLMs can hit target cognitive levels with adequate prompting but that 'automated evaluation is not on par with human evaluation' -- justifying a cheap automated first-pass gate rather than trusting the generation prompt alone. Readability-control research (ReadCtrl, arXiv:2406.09205) shows dedicated readability-controlled generation/verification substantially outperforms plain prompting at hitting a target grade band (52.1% vs 35.7% human-eval win rate over GPT-4), and a 2026 multi-dimensional CEFR-readability study (arXiv:2606.21981) confirms that even capable LLMs need explicit structural/lexical-constraint checking, not a single aggregate score, to reliably comply with a target level.",
+    "role_in_curriculum_builder": "Implements the currently-missing TEXT-BLOOM-VERBS check and reinstates TEXT-READABILITY-BAND at gate-2, running against the post-templating rendered document rather than lab.json -- which also means it transitively catches unrendered-JSON output, since JSON does not parse as prose or score on any readability band.",
+    "issues_resolved": "QA report Critical #2 (missing gate-2 checks: 'No TEXT-READABILITY-BAND, no TEXT-BLOOM-VERBS, despite prompt.md naming both as mandatory') and the High-severity finding that vocabulary caps were violated wherever prose existed at all (L04: mAVΩ, 10A socket, mode dial, fuse -- 4+ undefined terms against a cap of 2; L01: rail/module/low-voltage used before definition).",
+    "sources": [
+      "https://arxiv.org/abs/2408.04394",
+      "https://arxiv.org/abs/2406.09205",
+      "https://arxiv.org/pdf/2606.21981",
+      "https://arxiv.org/pdf/2503.11733"
+    ]
+  },
+  {
+    "agent": "Domain-Fact Safeguard Reviewer (electronics)",
+    "function": "Checks specific domain-factual claims in the rendered lesson (e.g. multimeter socket/fuse behavior, breadboard clip/trench topology, power-rail continuity caveats) against a verified domain reference/fact pack, scores the content on a factual-accuracy dimension, and feeds any unresolved or ungrounded claim back into a targeted regeneration pass rather than a bare pass/fail.",
+    "what_makes_it_sota": "Educational-agent surveys (arXiv:2503.11733) treat content generation and error/fact detection as distinct specialized agent roles rather than one generic reviewer. A verified 2026 K-12 content pipeline (arXiv:2604.04728) implements exactly this pattern with a 'Safeguard Agent' that scores generated content on named dimensions including factual accuracy and, on failure, has 'the pipeline re-enter the generation stage, using safeguard feedback to guide the next attempt' -- a generation-revision loop, which is a stronger design than accept/reject for catching and fixing domain errors before human review.",
+    "role_in_curriculum_builder": "New gate-2/gate-3 check run per-lesson that cross-checks rendered domain claims against the kit's domain_pack reference facts (e.g. ELEGOO kit multimeter/breadboard specifications), positioned after DOMAIN-VERIFIER (which only confirms schema validity) and before human review, escalating unresolved claims to a human electronics reviewer.",
+    "issues_resolved": "The pipeline's own framing (quoted in the QA report) that '100% schema validity has been measured alongside 2.0% semantic success. A valid unit is a shaped unit, not a correct one' -- nothing in the current check set (DOMAIN-SCHEMA-VALID, DOMAIN-VERIFIER, LAB-SCHEMA-VALID, RECEIPT-HASH-RESOLVES) verifies that safety-relevant domain claims like fuse-sharing across multimeter modes are actually correct.",
+    "sources": [
+      "https://arxiv.org/pdf/2503.11733",
+      "https://arxiv.org/html/2604.04728"
+    ]
+  },
+  {
+    "agent": "Hands-On Physical/Child-Safety Dry-Run Reviewer",
+    "function": "Walks through the rendered Explore steps and the 'Adult safety verification' block as if performing the lab, checking internal consistency (every step referenced in endpoint_check appears in the numbered steps above it; the stated hazard_mode matches what the steps actually ask the child to do; no step implies contact with an energized or connected part) and scores the block on named safety dimensions, with a regenerate-on-fail loop.",
+    "what_makes_it_sota": "NSTA's Science Activity Safety Checklist requires 'the teacher performs [the] lab, activity, or demonstration prior to its use with students' as the pre-release safety gate -- a live rehearsal, not a document read-through -- which maps directly onto an agent that walks the steps rather than only checking that JSON fields are present. The verified K-12 Safeguard Agent pattern (arXiv:2604.04728) already implements named-dimension safety scoring (age-appropriateness, absence of disturbing content, educational alignment) with a generation-revision loop rather than a static template, directly transferable to a hands-on-hardware safety dimension. Layered/adversarial oversight architectures for reliability (arXiv:2512.22496) are an active 2026 direction supporting treating physical safety as its own review layer distinct from pedagogy or domain-fact review.",
+    "role_in_curriculum_builder": "New safety-specific gate that runs on the rendered document (after the rendering-conformance gate, so it operates on real prose) prior to the QA/human-review stage, specifically validating L01-L04-style Adult-safety-verification blocks for completeness and internal consistency with the steps they describe.",
+    "issues_resolved": "The QA report shows the entire document -- including the safety-critical Adult-safety-verification block every lesson depends on for adult signoff -- rendered as unreadable raw JSON, and no existing check (schema-valid, domain-verifier) verifies that this block is behaviorally consistent with the steps above it or legible to the adult who must act on it.",
+    "sources": [
+      "https://www.nsta.org/blog/science-activity-safety-checklist",
+      "https://arxiv.org/html/2604.04728",
+      "https://www.arxiv.org/pdf/2512.22496"
+    ]
+  },
+  {
+    "agent": "Structured-Output Rendering Conformance Gate",
+    "function": "A cheap, deterministic pre-emission check that runs immediately after document assembly, before any LLM-judge or human-review step, and verifies that no section of the assembled document is unrendered structured data (e.g. a section under Engage/Explore/Explain that still parses as a JSON object/array when it is supposed to be prose).",
+    "what_makes_it_sota": "2026 production guidance (waxell.ai) argues deterministic pre-emission checks should run first because they are 'fast, cheap, and catch a large category of failures -- structured output failures, format errors, and obvious hallucinations' before any expensive semantic LLM-judge runs, since LLM-as-judge has inherent circularity and latency limitations. An empirically validated release-gate framework (arXiv:2603.15676) demonstrates the same principle in production: pairing structural checks with content evaluation because 'automated gates surfaced structural failures... that content-only assessment missed' -- i.e. a semantic judge reading for meaning will not reliably catch a shape failure like raw JSON in a prose field.",
+    "role_in_curriculum_builder": "Earliest possible gate-1/gate-2 check in the pipeline, positioned immediately after document assembly/templating and before any other check spends compute reviewing content that is not yet prose.",
+    "issues_resolved": "QA report Critical #1, the single systemic root cause of the entire failed run: 'Document renderer dumps raw JSON as lesson body. All 4 lessons (L01-L04)... Single templating bug, not four independent failures.' No existing check (schema validity, domain verifier) inspects the shape of the rendered output, only the upstream JSON's schema validity, so this bug reached all four lessons identically and undetected.",
+    "sources": [
+      "https://waxell.ai/blog/ai-agent-output-validation-production",
+      "https://arxiv.org/html/2603.15676v1"
+    ]
+  }
+]

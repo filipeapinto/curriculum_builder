@@ -1,0 +1,36 @@
+[
+  {
+    "agent": "Domain Content Schema Sweep",
+    "function": "Reads every domain content file under a curriculum's content directory (e.g. curricula/arduino_kit/l*.json), not only the ones a manifest currently references, and runs both the curriculum's declared JSON Schema (domain.schema.v1.json) and its declared non-model verifier (verify_domain.py) against each one. Emits one PASS/FAIL per file with the exact rule code that fired. Blocks the commit/run if any file fails, including files that are drafted but not yet wired into a manifest.",
+    "what_makes_it_sota": "Mirrors Confluent Schema Registry's compatibility gate, which 'checks compatibility before accepting the new version' by comparing candidate schemas against existing registered ones under a configurable compatibility mode (Confluent, Schema Evolution & Compatibility Types) - except run in the direction this repo actually needs: gating existing content against a changed schema, not a new schema against existing data. Also reflects Pact's consumer-driven contract testing model, where the fixture is 'contract by example' and must be continuously re-verified against the real provider rather than trusted once it happens to pass (Pact Docs).",
+    "role_in_curriculum_builder": "A new sweep step alongside FR-P4-ALL-VALIDATE in tests/gates/fr_p4_policy_schemas.py, extended from 'validate manifest-declared schema pairs' to 'validate every content file under curricula/<subject>/ against that subject's own declared domain schema and verifier,' run on every commit touching a curriculum directory or its schema/verifier files - independent of whether the file is registered in arduino_kit_curriculum.v5.yaml yet.",
+    "issues_resolved": "Running curricula/arduino_kit/verify_domain.py by hand against l01_unpowered_power_path.json, l02_breadboard_connectivity.v1.json, l03_jumper_wires_expansion.v1.json, and l04_multimeter_evidence.v1.json shows all four fail identically: 'domain-schema-invalid' for the superseded top-level keys plus missing required 'electrical' and 'build_map' properties. None of this was caught because nothing runs the verifier against these files outside a live pipeline run, and L02-L04 aren't even registered in the manifest yet.",
+    "sources": [
+      "https://docs.confluent.io/platform/current/schema-registry/fundamentals/schema-evolution.html",
+      "https://docs.pact.io/"
+    ]
+  },
+  {
+    "agent": "Post-Generation Domain Validator with Regenerate-on-Fail",
+    "function": "Immediately after any model-authored draft of a domain content file (new or edited), validates it against the curriculum's current domain schema and verifier and, on failure, feeds the exact rejected fields and rule codes back to the generator for a bounded number of regeneration attempts before surfacing a hard failure to the author - rather than allowing an unvalidated draft to be saved as if it were finished content.",
+    "what_makes_it_sota": "JSONSchemaBench found that even the best constrained-decoding framework tested (Guidance) drops to 30-41% empirical coverage on harder real-world schemas, while unconstrained generation manages only 13-21% on the same datasets (arXiv:2501.10868) - schema conformance is not a solved default for LLM output, constrained or not. Let Me Speak Freely? shows forcing rigid format constraints at generation time costs reasoning quality (arXiv:2408.02442), so the fix is post-hoc validation plus regeneration, not just tighter grammar constraints. Do LLMs Overcome Shortcut Learning? found LLMs are more likely to rely on shortcuts under few-shot in-context prompting specifically, and that few-shot underperforms zero-shot on shortcut-sensitive tasks (arXiv:2410.13343) - directly relevant since l02-l04 appear to have been drafted using l01 as an implicit few-shot example of the wrong, superseded shape.",
+    "role_in_curriculum_builder": "Sits at the point a domain file is authored or edited, before it is saved under curricula/<subject>/ - the same validate_unit()/verify_domain.py invocation runtime/session_bridge.py already performs at session_bridge.py:238 and :248 during a live run, but triggered at authoring/draft time rather than only when a unit is actually run through the pipeline.",
+    "issues_resolved": "l02_breadboard_connectivity.v1.json, l03_jumper_wires_expansion.v1.json, and l04_multimeter_evidence.v1.json were all newly authored on 2026-08-02 - after domain.schema.v1.json had already been rewritten to require 'electrical' and 'build_map' - yet all three reproduce l01's older, superseded field shape (component_identity/primary_sources/terminals/legal_coordinates/rail_topology/ratings/source_bundle_sha256) rather than the current schema or the already-correct curricula/arduino_kit/fixtures/domain_unpowered_path.accept.json fixture.",
+    "sources": [
+      "https://arxiv.org/abs/2501.10868",
+      "https://arxiv.org/abs/2408.02442",
+      "https://arxiv.org/abs/2410.13343"
+    ]
+  },
+  {
+    "agent": "Schema Migration Completeness Auditor",
+    "function": "Triggers whenever a curriculum's own schema file (e.g. domain.schema.v1.json) changes in a commit. Diffs the old and new schema for newly-required properties or newly-disallowed keys, then runs every existing content file that the old schema used to accept against the new schema. If any existing file would newly fail, the commit must either migrate that file in the same change or add an explicit, named deferred-obligation record for it - it may not simply leave the file silently invalid.",
+    "what_makes_it_sota": "Reflects the expand/contract (parallel change) pattern for breaking changes: introduce the new shape, migrate every existing reader/writer, and only then remove the old shape - moving through the phases briskly rather than lingering in a mixed state (Pete Hodgson, Expand/Contract: making a breaking change without a big bang). Sanity's own content-migration documentation treats 'the schema changed' and 'the content is migrated' as two separate, explicitly-gated steps, running validation before any migration and never silently auto-updating existing content (Sanity, Migrating your schema and content) - the commercial version of exactly the check this pipeline lacks.",
+    "role_in_curriculum_builder": "A gate alongside FR-P4-AGREEMENT / FR-P4-ALL-VALIDATE in tests/gates/fr_p4_policy_schemas.py that specifically activates on diffs to any *.schema.v1.json under curricula/<subject>/, rather than only validating current content against the current schema as those checks already do.",
+    "issues_resolved": "The commit that rewrote domain.schema.v1.json to require 'electrical' and 'build_map' left l01_unpowered_power_path.json (the only content file that existed at the time) on the old, now-rejected shape, with no migration and no recorded deferred obligation for it - unlike this repo's own established pattern of tracked deferred obligations (e.g. the RT-* codes recorded in outputs/arduino_kit_run_v1/run_report.md) elsewhere in the project.",
+    "sources": [
+      "https://blog.thepete.net/blog/2023/12/05/expand/contract-making-a-breaking-change-without-a-big-bang/",
+      "https://www.sanity.io/docs/content-lake/schema-and-content-migrations"
+    ]
+  }
+]
