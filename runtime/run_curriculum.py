@@ -27,8 +27,10 @@ def parser_for(runtime: CurriculumRuntime) -> argparse.ArgumentParser:
     parser.add_argument("--test-live-capabilities", action="store_true")
     parser.add_argument("--test-golden-l01", action="store_true")
     parser.add_argument("--model")
-    for section in ("per_lab", "per_phase", "per_run", "convergence", "retry"):
-        for value in runtime.limit_policy[section].values():
+    for entries in runtime.limit_policy.values():
+        if not isinstance(entries, dict):
+            continue
+        for value in entries.values():
             parser.add_argument(value["flag"], type=int, default=value["value"])
     parser.add_argument("--interrupt-after", choices=runtime.states)
     return parser

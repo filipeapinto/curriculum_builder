@@ -119,7 +119,6 @@ external root after tests pass.
 These limits cover the complete outer development task, not each individual L01 run:
 
 - Maximum clean live L01 attempts: **3**.
-- Maximum total wall time after implementation begins: **36,000 seconds**.
 - Maximum live model calls across preflights, generation, revisions, and judges: **60**.
 - Maximum cross-family CLI calls: **16**: one capability proof plus, for each of three
   attempts, one route preflight and at most four judge passes under the active
@@ -136,7 +135,7 @@ Maintain cumulative counters in `TASK_LEDGER` only between attempts. Before an a
 copy its starting counters into that attempt's `OUTPUT_ROOT`; during the attempt update
 only the run-local copy. After the attempt reaches a terminal state, freeze it and update
 `TASK_LEDGER` during the development interval. Check the envelope before every costly
-action and stop before exceeding it. The active per-lab, per-state, retry, and
+action and stop before exceeding it. The active per-lab, retry, and
 convergence limits remain binding inside each attempt and may only make this envelope
 stricter.
 

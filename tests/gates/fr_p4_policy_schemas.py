@@ -39,6 +39,7 @@ POLARITY_FIXTURE = (
 # about what it accepts: without this, a schema that rejected every circuit would
 # pass FR-P4-FIXTURE-BITES. This is the real L01 path, not a synthetic one.
 POLARITY_ACCEPT = REPO_ROOT / "curricula" / "arduino_kit" / "l01_unpowered_power_path.json"
+TIME_LIMIT_FIXTURE = FIXTURES / "time_limit_present.reject.yaml"
 
 # Rule 1: a refactor gate never appears in the check inventory, and a curriculum
 # check never lives in tests/gates/. The prefixes are what keeps the two apart.
@@ -234,8 +235,43 @@ def check_mapping(ev: Evidence):
 # FR-P4-AGREEMENT
 
 
+def names_duration_governance(value: str) -> bool:
+    """Recognize duration semantics even when a cap is renamed."""
+    camel_split = re.sub(r"(?<=[a-z0-9])(?=[A-Z])", "_", value)
+    tokens = [token for token in re.split(r"[^a-z0-9]+", camel_split.lower()) if token]
+    token_set = set(tokens)
+    if token_set & {
+        "second", "seconds", "sec", "secs", "millisecond", "milliseconds",
+        "minute", "minutes", "min", "mins", "hour", "hours", "hr", "hrs",
+        "timeout", "deadline", "duration", "ttl",
+    }:
+        return True
+    pairs = set(zip(tokens, tokens[1:]))
+    if pairs & {("wall", "clock"), ("wall", "time")}:
+        return True
+    return bool(
+        token_set & {"limit", "cap", "budget", "maximum", "max"}
+        and token_set & {"time", "runtime", "elapsed"}
+    )
+
+
+def forbidden_time_limit_violations(doc) -> list[str]:
+    """Reject duration-governing keys or flags without constraining telemetry prose."""
+    problems = []
+    for group, entries in (doc or {}).items():
+        if not isinstance(entries, dict) or group == "schema":
+            continue
+        for name, spec in entries.items():
+            if not isinstance(spec, dict):
+                continue
+            flag = str(spec.get("flag", ""))
+            if names_duration_governance(str(name)) or names_duration_governance(flag):
+                problems.append(f"forbidden-time-limit:{group}.{name} ({flag or 'no flag'})")
+    return problems
+
+
 def limit_violations(doc) -> list[str]:
-    """(a) Every limits entry carries both a number and a flag."""
+    """(a) Every limits entry is numeric/flagged and is not duration governance."""
     problems = []
     for group, entries in (doc or {}).items():
         if not isinstance(entries, dict) or group == "schema":
@@ -249,6 +285,7 @@ def limit_violations(doc) -> list[str]:
                 problems.append(f"limit-missing-value:{where} states no number")
             if not str(spec.get("flag", "")).startswith("--"):
                 problems.append(f"limit-missing-value:{where} names no flag")
+    problems += forbidden_time_limit_violations(doc)
     return problems
 
 
@@ -309,7 +346,7 @@ def check_agreement(ev: Evidence):
 
     line = (
         f"FR-P4-AGREEMENT {'PASS' if not problems else 'FAIL'} "
-        f"(limits: every entry numbered and flagged; failures: "
+        f"(limits: every entry numbered and flagged, with no duration governors; failures: "
         f"{len(owners['gate'])} proven here, {len(owners['deferred'])} deferred; "
         f"checks: {len(verified)} VERIFIED HERE, {len(mapped)} MAPPED, NOT EXECUTED). "
         f"Out of scope by design: controller states vs implemented states (RT-1) and "
@@ -322,7 +359,15 @@ def check_agreement(ev: Evidence):
             kind="reject",
             expected_error="limit-missing-value",
             detector=lambda: (limit_violations(common._deserialize(reject)) or [None])[0],
-        )
+        ),
+        Fixture(
+            name=rel(TIME_LIMIT_FIXTURE),
+            kind="reject",
+            expected_error="forbidden-time-limit",
+            detector=lambda: (
+                forbidden_time_limit_violations(common._deserialize(TIME_LIMIT_FIXTURE)) or [None]
+            )[0],
+        ),
     ]
     detail = line if not problems else line + " — " + "; ".join(problems)
     return gate_result(not problems, detail, fixtures, stdout=line)

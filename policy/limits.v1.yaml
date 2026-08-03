@@ -26,30 +26,16 @@ per_lab:
     value: 12
     flag: --max-images-per-lab
     rationale: seven visual roles plus revisions
-  max_seconds:
-    value: 5400
-    flag: --max-lab-seconds
-    rationale: 90 minutes wall clock for one lab
   max_storage_mb:
     value: 250
     flag: --max-lab-storage-mb
     rationale: one lab's dossier, visuals and rendered PDF
-
-per_phase:
-  timeout_seconds:
-    value: 900
-    flag: --phase-timeout-seconds
-    rationale: 15 minutes per state; longer is a stall, not slow work
 
 per_run:
   max_concurrency:
     value: 1
     flag: --max-concurrency
     rationale: serial by default; reviewer isolation is easier to prove
-  max_seconds:
-    value: 36000
-    flag: --max-run-seconds
-    rationale: 10 hours for the whole meta run
   max_storage_mb:
     value: 10000
     flag: --max-run-storage-mb

@@ -9,7 +9,6 @@
     "limits_version",
     "schema",
     "per_lab",
-    "per_phase",
     "per_run",
     "convergence",
     "retry",
@@ -31,33 +30,6 @@
       }
     },
     "per_lab": {
-      "type": "object",
-      "minProperties": 1,
-      "additionalProperties": {
-        "type": "object",
-        "additionalProperties": false,
-        "required": [
-          "value",
-          "flag"
-        ],
-        "properties": {
-          "value": {
-            "type": "number",
-            "exclusiveMinimum": 0,
-            "description": "A limit without a number can never be exceeded, so the drift rule that halts on exceeding it never fires."
-          },
-          "flag": {
-            "type": "string",
-            "pattern": "^--[a-z0-9-]+$"
-          },
-          "rationale": {
-            "type": "string",
-            "minLength": 10
-          }
-        }
-      }
-    },
-    "per_phase": {
       "type": "object",
       "minProperties": 1,
       "additionalProperties": {

@@ -1,0 +1,5 @@
+per_run:
+  wall_clock_minutes:
+    value: 600
+    flag: --deadline-minutes
+    rationale: renamed duration governance must remain forbidden
