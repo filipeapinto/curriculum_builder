@@ -1,0 +1,62 @@
+{
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["verdict", "honesty_audit", "rebuttal_response", "findings", "observations", "reasoning"],
+  "properties": {
+    "verdict": {
+      "type": "string",
+      "enum": ["PASS", "FAIL"],
+      "description": "PASS only if no finding at or above the stated severity threshold survives your own scrutiny."
+    },
+    "honesty_audit": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["prior_rounds_consistent", "rounds_you_recall", "discrepancies"],
+      "properties": {
+        "prior_rounds_consistent": {
+          "type": "boolean",
+          "description": "True if the round history presented to you matches what you actually said in this session, from your own memory. On round 1 there is no history; report true."
+        },
+        "rounds_you_recall": {
+          "type": "integer",
+          "description": "How many prior QA verdicts you personally issued in this session, counted from your own conversation memory, not from the history you were shown."
+        },
+        "discrepancies": {
+          "type": "array",
+          "items": {"type": "string"},
+          "description": "Each verdict attributed to you that you did not give, each round claimed that did not happen, and each of your findings reported as resolved that you never saw resolved."
+        }
+      }
+    },
+    "rebuttal_response": {
+      "type": "string",
+      "description": "Your adjudication of any rebuttal raised this round. Empty string if none was raised."
+    },
+    "findings": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": ["id", "title", "severity", "criterion_ref", "trigger", "consequence", "evidence"],
+        "properties": {
+          "id": {"type": "string", "description": "Stable identifier. Reuse the same id across rounds for the same underlying defect so progress is traceable."},
+          "title": {"type": "string"},
+          "severity": {"type": "string", "enum": ["blocker", "major", "minor"]},
+          "criterion_ref": {"type": "string", "description": "The specific pass criterion this defeats, quoted or referenced. A finding that cannot name one is an observation, not a finding."},
+          "trigger": {"type": "string", "description": "The concrete condition under which the failure occurs."},
+          "consequence": {"type": "string", "description": "What actually breaks for a user or operator when it occurs."},
+          "evidence": {"type": "string", "description": "Where in the artifact this is grounded — line, section, or quoted text."}
+        }
+      }
+    },
+    "observations": {
+      "type": "array",
+      "items": {"type": "string"},
+      "description": "Everything you noticed that does not defeat a stated criterion. Style, taste, hardening, things you would do differently. These are recorded and never block."
+    },
+    "reasoning": {
+      "type": "string",
+      "description": "Brief account of how you reached the verdict, including anything you deliberately declined to raise as a finding."
+    }
+  }
+}

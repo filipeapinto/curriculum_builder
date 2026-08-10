@@ -1,0 +1,14 @@
+{
+  "state": "QA_FAILED",
+  "reason": "INTEGRITY_BREACH",
+  "chain_valid": false,
+  "rounds_claimed": 1,
+  "rounds_witnessed_by_codex": 0,
+  "session_id": "019fdead-beef-7000-a000-000000000000",
+  "rollout_file": "",
+  "problems": [
+    "no Codex session file found for 019fdead-beef-7000-a000-000000000000; the rounds cannot be independently witnessed"
+  ],
+  "artifact": "/Users/filipepinto/Projects/llabsai/biz/.claude/skills/qa-gate-codex-workspace/attack-a/thing.v1.md",
+  "qa_dir": "/Users/filipepinto/Projects/llabsai/biz/.claude/skills/qa-gate-codex-workspace/attack-a/QA"
+}

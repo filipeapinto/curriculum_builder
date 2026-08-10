@@ -1,0 +1,39 @@
+{
+  "eval_name": "deploy-config",
+  "config": "with_skill",
+  "expectations": [
+    {
+      "text": "The wrong CMD path (/app/server/main.py, which does not exist after COPY src/ .) is identified as a blocking finding",
+      "passed": true,
+      "evidence": "matched ['/app/server/main.py', 'server/main.py']"
+    },
+    {
+      "text": "Version pinning, root user, and image-hardening concerns are NOT raised as blocking findings",
+      "passed": true,
+      "evidence": "no blocking finding mentions ['pin', 'root user', 'non-root', 'hardening', 'dockerignore']"
+    },
+    {
+      "text": "A Codex session id is reported and a matching rollout file exists under ~/.codex/sessions",
+      "passed": true,
+      "evidence": "session 019fa9c8-8d0f-7813-a8c9-66168783cd4f has a Codex rollout file at rollout-2026-07-28T13-32-00-019fa9c8-8d0f-7813-a8c9-66168783cd4f.jsonl"
+    },
+    {
+      "text": "A QA/ directory of logs exists beside the artifact",
+      "passed": true,
+      "evidence": "2 request file(s), 2 response file(s) at /Users/filipepinto/Projects/llabsai/biz/.claude/skills/qa-gate-codex-workspace/iteration-1/eval-1-deploy-config/with_skill/outputs/work-final/QA"
+    },
+    {
+      "text": "The final verdict is stated as one of QA_PASSED, QA_FAILED, or QA_ERROR rather than an informal summary",
+      "passed": true,
+      "evidence": "report states QA_PASSED"
+    }
+  ],
+  "passed": 5,
+  "total": 5,
+  "summary": {
+    "passed": 5,
+    "failed": 0,
+    "total": 5,
+    "pass_rate": 1.0
+  }
+}

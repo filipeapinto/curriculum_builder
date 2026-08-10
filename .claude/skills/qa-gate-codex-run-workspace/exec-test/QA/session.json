@@ -1,0 +1,50 @@
+{
+  "opened_at": "2026-07-28T17-48-36.551274+00-00",
+  "artifact_original": "/Users/filipepinto/Projects/llabsai/biz/.claude/skills/qa-gate-codex-workspace/exec-test/money.v1.py",
+  "artifact_current": "/Users/filipepinto/Projects/llabsai/biz/.claude/skills/qa-gate-codex-workspace/exec-test/money.v1.py",
+  "session_id": "019fa9d7-c176-7691-90c2-2851735d3a46",
+  "chain": "2c721b374e8fd4f94775670e12311db45cb3ad7c21c2dc4d6ecbd5df849e7054",
+  "rounds_completed": 1,
+  "rounds": [
+    {
+      "round": 1,
+      "timestamp": "2026-07-28T17:49:31.710133+00:00",
+      "verdict": "FAIL",
+      "artifact_path": "/Users/filipepinto/Projects/llabsai/biz/.claude/skills/qa-gate-codex-workspace/exec-test/money.v1.py",
+      "artifact_sha256": "2bf00d4ef348ec5a4d8384dcdb77ebe6518f608bb488b26aec6e96fbab62161e",
+      "findings_at_threshold": [
+        {
+          "id": "NEGATIVE_REMAINDER_ORDER",
+          "title": "Negative remainder cents are assigned to the latest parts",
+          "severity": "blocker",
+          "criterion_ref": "Criterion 3: “Distribute any remainder cents one per part, earliest parts first. This must hold for negative totals as well as positive ones.”"
+        },
+        {
+          "id": "SUBCENT_TOTAL_NOT_PRESERVED",
+          "title": "Totals containing fractional cents are rounded before splitting",
+          "severity": "blocker",
+          "criterion_ref": "Criterion 2: “Guarantee the parts sum exactly to total, with no lost or invented cents.”"
+        }
+      ],
+      "observations_count": 0,
+      "chain": "2c721b374e8fd4f94775670e12311db45cb3ad7c21c2dc4d6ecbd5df849e7054"
+    }
+  ],
+  "stall_count": 0,
+  "last_fingerprint": "f816aabdebac598ccf65d55312d4a87baead2b90b0351fb00de870ab7127e3c6",
+  "exec_copied": [
+    "criteria.md",
+    "money.v1.py"
+  ],
+  "terminal": null,
+  "config": {
+    "criteria": "split_evenly(total, ways) must:\n1. Return a list of `ways` Decimal amounts.\n2. Guarantee the parts sum exactly to total, with no lost or invented cents.\n3. Distribute any remainder cents one per part, earliest parts first. This must hold\n   for negative totals as well as positive ones.\n4. Raise ValueError when ways < 1.\n",
+    "focus": "",
+    "threshold": "blocker",
+    "max_iterations": 3,
+    "timeout_seconds": 900,
+    "retries": 2,
+    "model": null,
+    "allow_execution": true
+  }
+}

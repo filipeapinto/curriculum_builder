@@ -1,0 +1,44 @@
+{
+  "eval_name": "buggy-module",
+  "config": "without_skill",
+  "expectations": [
+    {
+      "text": "A QA/ directory exists beside the artifact containing per-round request and response files",
+      "passed": false,
+      "evidence": "0 request file(s), 0 response file(s) at /Users/filipepinto/Projects/llabsai/biz/.claude/skills/qa-gate-codex-workspace/iteration-1/eval-0-buggy-module/without_skill/outputs/work-final/QA"
+    },
+    {
+      "text": "The final report names a Codex session id, and a rollout file for that id exists under ~/.codex/sessions",
+      "passed": true,
+      "evidence": "session 019fa9c8-b28e-76b0-9026-ddfba03893f2 has a Codex rollout file at rollout-2026-07-28T13-32-10-019fa9c8-b28e-76b0-9026-ddfba03893f2.jsonl"
+    },
+    {
+      "text": "The number of rounds claimed is matched by completed turns in Codex's own session file",
+      "passed": false,
+      "evidence": "no session.json to compare against"
+    },
+    {
+      "text": "The silent-None-when-all-attempts-fail defect is identified as a blocking finding",
+      "passed": true,
+      "evidence": "matched ['re-raise']"
+    },
+    {
+      "text": "A fixed version of the artifact was written as a new version file, with the predecessor moved to deprecated/",
+      "passed": true,
+      "evidence": "deprecated/ holds ['retry.v1.py']"
+    },
+    {
+      "text": "The reported verdict matches the contents of QA/verdict.json rather than being narrated",
+      "passed": false,
+      "evidence": "check errored: 'in <string>' requires string as left operand, not NoneType"
+    }
+  ],
+  "passed": 3,
+  "total": 6,
+  "summary": {
+    "passed": 3,
+    "failed": 3,
+    "total": 6,
+    "pass_rate": 0.5
+  }
+}

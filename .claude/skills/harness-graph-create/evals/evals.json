@@ -1,0 +1,23 @@
+{
+  "skill_name": "harness-graph-create",
+  "evals": [
+    {
+      "id": 1,
+      "prompt": "Diagram the execution graph for the harness in plans/22_graph_eng_evol_01/run.prompt.md — I want something like plans/22_graph_eng_evol_01/graph.v1.png but reproducible and on a white background.",
+      "expected_output": "A JSON graph spec, a white-background PNG rendered from it via scripts/render_graph.py, and a .prompt.md documenting the spec + a prose brief — all sharing one version number, written beside run.prompt.md unless told otherwise. The PNG should show the EVALUATION / EVOLUTION / EXTERNAL REVIEW lanes, at least one gate (decide_generation or similar), the select_parents fan-out into repair/mutate/recombine and back into merge_offspring, and at least one dashed loop-back edge (e.g. 'next generation' or a review-findings reject path).",
+      "files": []
+    },
+    {
+      "id": 2,
+      "prompt": "Here's our retry harness: a controller dispatches `validate_batch`, which either passes to `commit_batch` (done) or fails to `quarantine_batch`, which loops back to `validate_batch` up to 3 times before giving up at `escalate`. Also `commit_batch` and `quarantine_batch` both report to a `metrics_lane` in parallel. Can you draw this as a graph?",
+      "expected_output": "Since the user described the harness in prose rather than pointing at a file, the assistant should restate the extracted lanes/nodes/edges back before rendering, then produce the same three-file deliverable set (spec JSON, white-background PNG, prompt.md) with a gate at validate_batch, a dashed loop edge from quarantine_batch back to validate_batch, an escalate terminal, and the metrics_lane fan-out drawn as a separate lane.",
+      "files": []
+    },
+    {
+      "id": 3,
+      "prompt": "We already have evals/fixtures/plan22.harness_graph.v1.json and evals/fixtures/plan22.harness_graph.v1.png in this skill folder from an earlier run — regenerate the PNG because I tweaked a label in the JSON.",
+      "expected_output": "The assistant should NOT overwrite the v1 PNG. It should resolve v2 via scripts/outpath.py (or notice render_graph.py refuses the overwrite and follow its suggested command), write plan22.harness_graph.v2.png, and tell the user v1 is untouched.",
+      "files": ["evals/fixtures/plan22.harness_graph.v1.json", "evals/fixtures/plan22.harness_graph.v1.png"]
+    }
+  ]
+}

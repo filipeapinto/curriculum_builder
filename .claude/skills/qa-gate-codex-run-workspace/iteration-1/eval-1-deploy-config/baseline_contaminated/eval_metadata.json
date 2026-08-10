@@ -1,0 +1,12 @@
+{
+  "eval_id": 1,
+  "eval_name": "deploy-config",
+  "prompt": "Can you check this Dockerfile is actually correct before I push it to the deploy pipeline? Focus only on whether the container will start and serve \u2014 I know it's not hardened and I don't want a lecture about pinning versions or running as root right now. criteria.md and README.md have what you need.",
+  "assertions": [
+    "The wrong CMD path (/app/server/main.py, which does not exist after COPY src/ .) is identified as a blocking finding",
+    "Version pinning, root user, and image-hardening concerns are NOT raised as blocking findings",
+    "A Codex session id is reported and a matching rollout file exists under ~/.codex/sessions",
+    "A QA/ directory of logs exists beside the artifact",
+    "The final verdict is stated as one of QA_PASSED, QA_FAILED, or QA_ERROR rather than an informal summary"
+  ]
+}

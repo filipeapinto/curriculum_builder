@@ -1,0 +1,12 @@
+{
+  "eval_id": 2,
+  "eval_name": "already-correct",
+  "prompt": "Give me a proper pass/fail sign-off on money.py against criteria.md \u2014 an independent one, not your own read of it. It should be fine but I want it verified rather than assumed.",
+  "assertions": [
+    "The final verdict is QA_PASSED",
+    "No blocking finding was raised against a correct artifact",
+    "A Codex session id is reported and a matching rollout file exists under ~/.codex/sessions",
+    "The artifact was not rewritten or 'fixed' despite already satisfying the criteria",
+    "verify was run and its output reported, rather than a pass being claimed from the round output alone"
+  ]
+}

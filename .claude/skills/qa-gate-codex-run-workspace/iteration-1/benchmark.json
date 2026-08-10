@@ -1,0 +1,333 @@
+{
+  "metadata": {
+    "skill_name": "qa-gate-codex",
+    "skill_path": "<path/to/skill>",
+    "executor_model": "<model-name>",
+    "analyzer_model": "<model-name>",
+    "timestamp": "2026-07-28T17:39:08Z",
+    "evals_run": [
+      0,
+      1,
+      2
+    ],
+    "runs_per_configuration": 3
+  },
+  "runs": [
+    {
+      "eval_id": 0,
+      "configuration": "with_skill",
+      "run_number": 1,
+      "result": {
+        "pass_rate": 1.0,
+        "passed": 6,
+        "failed": 0,
+        "total": 6,
+        "time_seconds": 170.9,
+        "tokens": 51620,
+        "tool_calls": 0,
+        "errors": 0
+      },
+      "expectations": [
+        {
+          "text": "A QA/ directory exists beside the artifact containing per-round request and response files",
+          "passed": true,
+          "evidence": "2 request file(s), 2 response file(s) at /Users/filipepinto/Projects/llabsai/biz/.claude/skills/qa-gate-codex-workspace/iteration-1/eval-0-buggy-module/with_skill/outputs/work-final/QA"
+        },
+        {
+          "text": "The final report names a Codex session id, and a rollout file for that id exists under ~/.codex/sessions",
+          "passed": true,
+          "evidence": "session 019fa9c8-5e44-7a22-bc90-1474a354a424 has a Codex rollout file at rollout-2026-07-28T13-31-48-019fa9c8-5e44-7a22-bc90-1474a354a424.jsonl"
+        },
+        {
+          "text": "The number of rounds claimed is matched by completed turns in Codex's own session file",
+          "passed": true,
+          "evidence": "2 round(s) claimed, 2 turn(s) completed in Codex's own file"
+        },
+        {
+          "text": "The silent-None-when-all-attempts-fail defect is identified as a blocking finding",
+          "passed": true,
+          "evidence": "matched ['re-raise', 'returns none', 'return none', 'silently']"
+        },
+        {
+          "text": "A fixed version of the artifact was written as a new version file, with the predecessor moved to deprecated/",
+          "passed": true,
+          "evidence": "deprecated/ holds ['retry.py']"
+        },
+        {
+          "text": "The reported verdict matches the contents of QA/verdict.json rather than being narrated",
+          "passed": true,
+          "evidence": "report contains QA_PASSED as recorded in verdict.json"
+        }
+      ],
+      "notes": []
+    },
+    {
+      "eval_id": 1,
+      "configuration": "with_skill",
+      "run_number": 1,
+      "result": {
+        "pass_rate": 1.0,
+        "passed": 5,
+        "failed": 0,
+        "total": 5,
+        "time_seconds": 176.0,
+        "tokens": 54806,
+        "tool_calls": 0,
+        "errors": 0
+      },
+      "expectations": [
+        {
+          "text": "The wrong CMD path (/app/server/main.py, which does not exist after COPY src/ .) is identified as a blocking finding",
+          "passed": true,
+          "evidence": "matched ['/app/server/main.py', 'server/main.py']"
+        },
+        {
+          "text": "Version pinning, root user, and image-hardening concerns are NOT raised as blocking findings",
+          "passed": true,
+          "evidence": "no blocking finding mentions ['pin', 'root user', 'non-root', 'hardening', 'dockerignore']"
+        },
+        {
+          "text": "A Codex session id is reported and a matching rollout file exists under ~/.codex/sessions",
+          "passed": true,
+          "evidence": "session 019fa9c8-8d0f-7813-a8c9-66168783cd4f has a Codex rollout file at rollout-2026-07-28T13-32-00-019fa9c8-8d0f-7813-a8c9-66168783cd4f.jsonl"
+        },
+        {
+          "text": "A QA/ directory of logs exists beside the artifact",
+          "passed": true,
+          "evidence": "2 request file(s), 2 response file(s) at /Users/filipepinto/Projects/llabsai/biz/.claude/skills/qa-gate-codex-workspace/iteration-1/eval-1-deploy-config/with_skill/outputs/work-final/QA"
+        },
+        {
+          "text": "The final verdict is stated as one of QA_PASSED, QA_FAILED, or QA_ERROR rather than an informal summary",
+          "passed": true,
+          "evidence": "report states QA_PASSED"
+        }
+      ],
+      "notes": []
+    },
+    {
+      "eval_id": 2,
+      "configuration": "with_skill",
+      "run_number": 1,
+      "result": {
+        "pass_rate": 1.0,
+        "passed": 5,
+        "failed": 0,
+        "total": 5,
+        "time_seconds": 157.0,
+        "tokens": 45740,
+        "tool_calls": 0,
+        "errors": 0
+      },
+      "expectations": [
+        {
+          "text": "The final verdict is QA_PASSED",
+          "passed": true,
+          "evidence": "verdict.json says QA_PASSED"
+        },
+        {
+          "text": "No blocking finding was raised against a correct artifact",
+          "passed": true,
+          "evidence": "blocking findings: none"
+        },
+        {
+          "text": "A Codex session id is reported and a matching rollout file exists under ~/.codex/sessions",
+          "passed": true,
+          "evidence": "session 019fa9c8-7ce6-7283-a82b-ee1c267bc3c1 has a Codex rollout file at rollout-2026-07-28T13-31-56-019fa9c8-7ce6-7283-a82b-ee1c267bc3c1.jsonl"
+        },
+        {
+          "text": "The artifact was not rewritten or 'fixed' despite already satisfying the criteria",
+          "passed": true,
+          "evidence": "artifact left as-is (no deprecated/ contents); versions seen: original only"
+        },
+        {
+          "text": "verify was run and its output reported, rather than a pass being claimed from the round output alone",
+          "passed": true,
+          "evidence": "verification.json present: 1 round(s) witnessed, chain_valid=True"
+        }
+      ],
+      "notes": []
+    },
+    {
+      "eval_id": 0,
+      "configuration": "without_skill",
+      "run_number": 1,
+      "result": {
+        "pass_rate": 0.5,
+        "passed": 3,
+        "failed": 3,
+        "total": 6,
+        "time_seconds": 376.0,
+        "tokens": 50991,
+        "tool_calls": 0,
+        "errors": 0
+      },
+      "expectations": [
+        {
+          "text": "A QA/ directory exists beside the artifact containing per-round request and response files",
+          "passed": false,
+          "evidence": "0 request file(s), 0 response file(s) at /Users/filipepinto/Projects/llabsai/biz/.claude/skills/qa-gate-codex-workspace/iteration-1/eval-0-buggy-module/without_skill/outputs/work-final/QA"
+        },
+        {
+          "text": "The final report names a Codex session id, and a rollout file for that id exists under ~/.codex/sessions",
+          "passed": true,
+          "evidence": "session 019fa9c8-b28e-76b0-9026-ddfba03893f2 has a Codex rollout file at rollout-2026-07-28T13-32-10-019fa9c8-b28e-76b0-9026-ddfba03893f2.jsonl"
+        },
+        {
+          "text": "The number of rounds claimed is matched by completed turns in Codex's own session file",
+          "passed": false,
+          "evidence": "no session.json to compare against"
+        },
+        {
+          "text": "The silent-None-when-all-attempts-fail defect is identified as a blocking finding",
+          "passed": true,
+          "evidence": "matched ['re-raise']"
+        },
+        {
+          "text": "A fixed version of the artifact was written as a new version file, with the predecessor moved to deprecated/",
+          "passed": true,
+          "evidence": "deprecated/ holds ['retry.v1.py']"
+        },
+        {
+          "text": "The reported verdict matches the contents of QA/verdict.json rather than being narrated",
+          "passed": false,
+          "evidence": "check errored: 'in <string>' requires string as left operand, not NoneType"
+        }
+      ],
+      "notes": []
+    },
+    {
+      "eval_id": 1,
+      "configuration": "without_skill",
+      "run_number": 1,
+      "result": {
+        "pass_rate": 0.4,
+        "passed": 2,
+        "failed": 3,
+        "total": 5,
+        "time_seconds": 166.0,
+        "tokens": 39421,
+        "tool_calls": 0,
+        "errors": 0
+      },
+      "expectations": [
+        {
+          "text": "The wrong CMD path (/app/server/main.py, which does not exist after COPY src/ .) is identified as a blocking finding",
+          "passed": true,
+          "evidence": "matched ['/app/server/main.py', 'server/main.py']"
+        },
+        {
+          "text": "Version pinning, root user, and image-hardening concerns are NOT raised as blocking findings",
+          "passed": true,
+          "evidence": "no blocking finding mentions ['pin', 'root user', 'non-root', 'hardening', 'dockerignore']"
+        },
+        {
+          "text": "A Codex session id is reported and a matching rollout file exists under ~/.codex/sessions",
+          "passed": false,
+          "evidence": "no Codex session id appears in the report or logs"
+        },
+        {
+          "text": "A QA/ directory of logs exists beside the artifact",
+          "passed": false,
+          "evidence": "no QA/ directory in the preserved outputs"
+        },
+        {
+          "text": "The final verdict is stated as one of QA_PASSED, QA_FAILED, or QA_ERROR rather than an informal summary",
+          "passed": false,
+          "evidence": "no QA_* verdict in the report"
+        }
+      ],
+      "notes": []
+    },
+    {
+      "eval_id": 2,
+      "configuration": "without_skill",
+      "run_number": 1,
+      "result": {
+        "pass_rate": 0.6,
+        "passed": 3,
+        "failed": 2,
+        "total": 5,
+        "time_seconds": 256.8,
+        "tokens": 44120,
+        "tool_calls": 0,
+        "errors": 0
+      },
+      "expectations": [
+        {
+          "text": "The final verdict is QA_PASSED",
+          "passed": false,
+          "evidence": "report states none stated, no verdict.json present"
+        },
+        {
+          "text": "No blocking finding was raised against a correct artifact",
+          "passed": true,
+          "evidence": "blocking findings: none"
+        },
+        {
+          "text": "A Codex session id is reported and a matching rollout file exists under ~/.codex/sessions",
+          "passed": true,
+          "evidence": "session 019fa9c8-ad66-7350-ac69-70a53fc4d81c has a Codex rollout file at rollout-2026-07-28T13-32-08-019fa9c8-ad66-7350-ac69-70a53fc4d81c.jsonl"
+        },
+        {
+          "text": "The artifact was not rewritten or 'fixed' despite already satisfying the criteria",
+          "passed": true,
+          "evidence": "artifact left as-is (no deprecated/ contents); versions seen: original only"
+        },
+        {
+          "text": "verify was run and its output reported, rather than a pass being claimed from the round output alone",
+          "passed": false,
+          "evidence": "verify was never run (no verification.json)"
+        }
+      ],
+      "notes": []
+    }
+  ],
+  "run_summary": {
+    "with_skill": {
+      "pass_rate": {
+        "mean": 1.0,
+        "stddev": 0.0,
+        "min": 1.0,
+        "max": 1.0
+      },
+      "time_seconds": {
+        "mean": 167.9667,
+        "stddev": 9.8338,
+        "min": 157.0,
+        "max": 176.0
+      },
+      "tokens": {
+        "mean": 50722.0,
+        "stddev": 4599.2273,
+        "min": 45740,
+        "max": 54806
+      }
+    },
+    "without_skill": {
+      "pass_rate": {
+        "mean": 0.5,
+        "stddev": 0.1,
+        "min": 0.4,
+        "max": 0.6
+      },
+      "time_seconds": {
+        "mean": 266.2667,
+        "stddev": 105.3196,
+        "min": 166.0,
+        "max": 376.0
+      },
+      "tokens": {
+        "mean": 44844.0,
+        "stddev": 5818.8794,
+        "min": 39421,
+        "max": 50991
+      }
+    },
+    "delta": {
+      "pass_rate": "+0.50",
+      "time_seconds": "-98.3",
+      "tokens": "+5878"
+    }
+  },
+  "notes": []
+}

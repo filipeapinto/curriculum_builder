@@ -1,0 +1,13 @@
+{
+  "eval_id": 0,
+  "eval_name": "buggy-module",
+  "prompt": "I need this retry helper QA'd properly before it goes in \u2014 I don't want you marking your own homework on it. criteria.md says what it's supposed to do. Only flag things that would actually break it for a caller; I don't care about type hints or logging.",
+  "assertions": [
+    "A QA/ directory exists beside the artifact containing per-round request and response files",
+    "The final report names a Codex session id, and a rollout file for that id exists under ~/.codex/sessions",
+    "The number of rounds claimed is matched by completed turns in Codex's own session file",
+    "The silent-None-when-all-attempts-fail defect is identified as a blocking finding",
+    "A fixed version of the artifact was written as a new version file, with the predecessor moved to deprecated/",
+    "The reported verdict matches the contents of QA/verdict.json rather than being narrated"
+  ]
+}

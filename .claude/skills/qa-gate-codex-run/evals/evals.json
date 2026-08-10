@@ -1,0 +1,76 @@
+{
+  "skill_name": "qa-gate-codex-run",
+  "evals": [
+    {
+      "id": 0,
+      "eval_name": "buggy-module",
+      "prompt": "I need this retry helper QA'd properly before it goes in — I don't want you marking your own homework on it. criteria.md says what it's supposed to do. Only flag things that would actually break it for a caller; I don't care about type hints or logging.",
+      "expected_output": "The silent-None-on-total-failure defect is identified and fixed, verified by an independent Codex session, with a QA/ folder of logs, a reported session id whose Codex rollout file exists, and a final QA_PASSED verdict from verify.",
+      "files": ["inputs/buggy-module/retry.py", "inputs/buggy-module/criteria.md"],
+      "assertions": [
+        "A QA/ directory exists beside the artifact containing per-round request and response files",
+        "The final report names a Codex session id, and a rollout file for that id exists under ~/.codex/sessions",
+        "The number of rounds claimed is matched by completed turns in Codex's own session file",
+        "The silent-None-when-all-attempts-fail defect is identified as a blocking finding",
+        "A fixed version of the artifact was written as a new version file, with the predecessor moved to deprecated/",
+        "The reported verdict matches the contents of QA/verdict.json rather than being narrated"
+      ]
+    },
+    {
+      "id": 1,
+      "eval_name": "deploy-config",
+      "prompt": "Can you check this Dockerfile is actually correct before I push it to the deploy pipeline? Focus only on whether the container will start and serve — I know it's not hardened and I don't want a lecture about pinning versions or running as root right now. criteria.md and README.md have what you need.",
+      "expected_output": "The CMD path pointing at a non-existent /app/server/main.py is caught as a blocker; hardening nits (unpinned base image, root user, missing .dockerignore) do not block and appear as observations if at all.",
+      "files": ["inputs/deploy-config/Dockerfile", "inputs/deploy-config/README.md", "inputs/deploy-config/criteria.md"],
+      "assertions": [
+        "The wrong CMD path (/app/server/main.py, which does not exist after COPY src/ .) is identified as a blocking finding",
+        "Version pinning, root user, and image-hardening concerns are NOT raised as blocking findings",
+        "A Codex session id is reported and a matching rollout file exists under ~/.codex/sessions",
+        "A QA/ directory of logs exists beside the artifact",
+        "The final verdict is stated as one of QA_PASSED, QA_FAILED, or QA_ERROR rather than an informal summary"
+      ]
+    },
+    {
+      "id": 2,
+      "eval_name": "already-correct",
+      "prompt": "Give me a proper pass/fail sign-off on money.py against criteria.md — an independent one, not your own read of it. It should be fine but I want it verified rather than assumed.",
+      "expected_output": "A clean QA_PASSED on the first round, with no invented blockers, backed by a verifiable Codex session.",
+      "files": ["inputs/already-correct/money.py", "inputs/already-correct/criteria.md"],
+      "assertions": [
+        "The final verdict is QA_PASSED",
+        "No blocking finding was raised against a correct artifact",
+        "A Codex session id is reported and a matching rollout file exists under ~/.codex/sessions",
+        "The artifact was not rewritten or 'fixed' despite already satisfying the criteria",
+        "verify was run and its output reported, rather than a pass being claimed from the round output alone"
+      ]
+    },
+    {
+      "id": 3,
+      "eval_name": "grounded-claim",
+      "prompt": "QA pricing.py against criteria.md. tax_schedule.md is the authoritative source for what rate is correct, ground the review against it with --ground so the reviewer checks the hardcoded rate against the real one instead of just taking the code's comment at face value.",
+      "expected_output": "The hardcoded 6% rate is caught as a blocker because it contradicts the 7.25% rate in the grounding tax schedule, the artifact is fixed to use the correct rate, and the passing verdict is verified with the grounding source hashed and folded into the chain.",
+      "files": ["inputs/grounded-claim/pricing.py", "inputs/grounded-claim/criteria.md", "inputs/grounded-claim/tax_schedule.md"],
+      "assertions": [
+        "The wrong tax rate (0.06 instead of the grounding source's 0.0725) is identified as a blocking finding, citing the grounding source rather than outside knowledge",
+        "--ground was passed pointing at tax_schedule.md, not the file's contents pasted into --criteria",
+        "The round meta or QA log shows a grounding entry with a sha256 hash for tax_schedule.md",
+        "A fixed version using 0.0725 was written as a new version file",
+        "The final verdict is QA_PASSED and verify reports chain_valid: true with no GROUNDING_CHANGED problem"
+      ]
+    },
+    {
+      "id": 4,
+      "eval_name": "execution-sandboxed",
+      "prompt": "QA chunk_list in chunking.py against criteria.md with --allow-execution — I want the reviewer to actually run it against a few input sizes, not just read it, and I want confirmation the review ran in an isolated sandbox rather than against the real file.",
+      "expected_output": "The trailing-empty-chunk defect (chunk_list returns an extra [] when len(items) is an exact multiple of size) is caught and fixed, with --allow-execution used, and verify confirms the review ran under QA/exec/ with a read-only-scoped or explicitly writable sandbox matching what was requested, not a broader working directory.",
+      "files": ["inputs/execution-sandboxed/chunking.py", "inputs/execution-sandboxed/criteria.md"],
+      "assertions": [
+        "The empty-chunk-on-exact-multiple defect is identified as a blocking finding, with a concrete input/output pair as evidence",
+        "--allow-execution was passed to start",
+        "A fixed version was written as a new version file and the defect no longer reproduces",
+        "verify reports chain_valid: true with no SANDBOX_MISMATCH problem",
+        "The real chunking.py and QA/ log were never themselves in the reviewer's writable path — only the QA/exec/ copy was"
+      ]
+    }
+  ]
+}

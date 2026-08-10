@@ -1,0 +1,28 @@
+{
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["classification", "confidence", "reasoning", "evidence", "recommendation"],
+  "properties": {
+    "classification": {
+      "type": "string",
+      "enum": [
+        "ARTIFACT_DEFICIENT",
+        "SPECIFICATION_DEFICIENT",
+        "PROCESS_FAILURE",
+        "INTEGRITY_BREACH"
+      ],
+      "description": "ARTIFACT_DEFICIENT: the findings were real and unresolved — the work needs more attention. SPECIFICATION_DEFICIENT: the pass criteria were vague, contradictory, or unreachable, so no artifact could have passed. PROCESS_FAILURE: the two parties failed to converge on something they could have resolved — talking past each other, reopening settled points, drifting scope, or a reviewer escalating preferences past the stated threshold. INTEGRITY_BREACH: the record and the reviewer's memory disagreed."
+    },
+    "confidence": {"type": "string", "enum": ["high", "medium", "low"]},
+    "reasoning": {"type": "string"},
+    "evidence": {
+      "type": "array",
+      "items": {"type": "string"},
+      "description": "Each claim tied to a specific round and quoted text. A conclusion nobody can trace back to the transcript is not usable here."
+    },
+    "recommendation": {
+      "type": "string",
+      "description": "What should happen next, concretely: what to change about the artifact, the criteria, or how the review was framed."
+    }
+  }
+}

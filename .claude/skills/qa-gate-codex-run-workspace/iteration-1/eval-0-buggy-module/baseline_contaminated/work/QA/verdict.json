@@ -1,0 +1,38 @@
+{
+  "gate": "codex-independent-qa",
+  "artifact": "retry.v2.py",
+  "artifact_sha256": "a96c8ff31df66c231856ffb3e7ad48f14c373ef9df95e2f12eb82592bf3ce329",
+  "criteria": "criteria.md",
+  "verdict": "QA_PASSED",
+  "rounds_completed": 2,
+  "codex_session_id": "019fa9c8-b28e-76b0-9026-ddfba03893f2",
+  "codex_rollout_file": "/Users/filipepinto/.codex/sessions/2026/07/28/rollout-2026-07-28T13-32-10-019fa9c8-b28e-76b0-9026-ddfba03893f2.jsonl",
+  "codex_turns_in_rollout": 2,
+  "round_verdicts": [
+    {
+      "round": 1,
+      "verdict": "QA_FAILED",
+      "request": "QA/round-1.request.md",
+      "response": "QA/round-1.response.md"
+    },
+    {
+      "round": 2,
+      "verdict": "QA_PASSED",
+      "request": "QA/round-2.request.md",
+      "response": "QA/round-2.response.json"
+    }
+  ],
+  "author_claims_audit": "Round 2 follows exactly one prior round. QG-01 and QG-02 are exactly the two findings raised in round 1, with none omitted or invented. All five author claims were verified. deprecated/retry.v1.py is byte-identical to the 313-byte round-1 artifact, including SHA-256 da9f2e76c699326fded5106028edc6d7b59b493631827ffd5ae79c2b8b89fffc; retry.py is absent and retry.v2.py is separate.",
+  "findings_open": [],
+  "findings_resolved": [
+    {
+      "id": "QG-01",
+      "how_verified": "Three consecutive failures re-raised the final KeyError rather than returning None. Additional probes confirmed the re-raised object was identical to the last exception raised and its traceback retained the original failing-function frame."
+    },
+    {
+      "id": "QG-02",
+      "how_verified": "The round-1 exhaustion case now slept exactly [0.5, 1.0]. Probes with 1, 2, 3, and 5 attempts matched [backoff * 2**i for i in range(attempts-1)] exactly."
+    }
+  ],
+  "notes": "Criteria 1 and 2 were retested successfully. The attempts < 1 ValueError is acceptable defensive validation for an invalid configuration and does not violate the contract; fn is not called and no sleep occurs."
+}

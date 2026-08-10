@@ -1,0 +1,39 @@
+{
+  "eval_name": "already-correct",
+  "config": "with_skill",
+  "expectations": [
+    {
+      "text": "The final verdict is QA_PASSED",
+      "passed": true,
+      "evidence": "verdict.json says QA_PASSED"
+    },
+    {
+      "text": "No blocking finding was raised against a correct artifact",
+      "passed": true,
+      "evidence": "blocking findings: none"
+    },
+    {
+      "text": "A Codex session id is reported and a matching rollout file exists under ~/.codex/sessions",
+      "passed": true,
+      "evidence": "session 019fa9c8-7ce6-7283-a82b-ee1c267bc3c1 has a Codex rollout file at rollout-2026-07-28T13-31-56-019fa9c8-7ce6-7283-a82b-ee1c267bc3c1.jsonl"
+    },
+    {
+      "text": "The artifact was not rewritten or 'fixed' despite already satisfying the criteria",
+      "passed": true,
+      "evidence": "artifact left as-is (no deprecated/ contents); versions seen: original only"
+    },
+    {
+      "text": "verify was run and its output reported, rather than a pass being claimed from the round output alone",
+      "passed": true,
+      "evidence": "verification.json present: 1 round(s) witnessed, chain_valid=True"
+    }
+  ],
+  "passed": 5,
+  "total": 5,
+  "summary": {
+    "passed": 5,
+    "failed": 0,
+    "total": 5,
+    "pass_rate": 1.0
+  }
+}
