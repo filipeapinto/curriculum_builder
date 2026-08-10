@@ -1,0 +1,9 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema", "$id": "phase_ledger.schema.v3.json",
+  "type": "object", "additionalProperties": false,
+  "required": ["version", "run_id", "node_id", "phase_attempt", "phase_key", "execution_contract_digest", "admitted_event_id", "evidence_manifest_id", "required_subtask_ids", "subtasks", "complete"],
+  "properties": {
+    "version": {"const": "3.0"}, "run_id": {"type": "string", "minLength": 8}, "node_id": {"type": "string", "pattern": "^P[0-6]$"}, "phase_attempt": {"type": "integer", "minimum": 1}, "phase_key": {"type": "string", "pattern": "^[a-f0-9]{64}:P[0-6]:[1-9][0-9]*$"}, "execution_contract_digest": {"$ref": "#/$defs/sha"}, "admitted_event_id": {"$ref": "#/$defs/sha"}, "evidence_manifest_id": {"$ref": "#/$defs/sha"}, "required_subtask_ids": {"type": "array", "minItems": 5, "uniqueItems": true, "items": {"type": "string", "pattern": "^[a-z0-9-]+$"}},
+    "subtasks": {"type": "array", "minItems": 5, "items": {"type": "object", "additionalProperties": false, "required": ["subtask_id", "idempotency_key", "input_digest", "receipt_path", "receipt_sha256", "receipt_size", "state"], "properties": {"subtask_id": {"type": "string", "pattern": "^[a-z0-9-]+$"}, "idempotency_key": {"type": "string", "minLength": 20}, "input_digest": {"$ref": "#/$defs/sha"}, "receipt_path": {"type": "string", "minLength": 1}, "receipt_sha256": {"$ref": "#/$defs/sha"}, "receipt_size": {"type": "integer", "minimum": 1}, "state": {"const": "COMMITTED"}}}}, "complete": {"const": true}
+  }, "$defs": {"sha": {"type": "string", "pattern": "^[a-f0-9]{64}$"}}
+}

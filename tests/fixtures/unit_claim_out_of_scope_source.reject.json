@@ -1,0 +1,38 @@
+{
+  "safety": {
+    "adult_verification": {
+      "limits": "No energized work in this fixture."
+    }
+  },
+  "domain": {
+    "electrical": {
+      "ratings_and_limits": [
+        {
+          "parameter": "expansion rows",
+          "absolute_max": "5",
+          "unit": "none",
+          "source": "sources/source_01.html"
+        }
+      ],
+      "component_spec": {
+        "parameters": []
+      }
+    }
+  },
+  "content": {
+    "sourced_claims": [
+      {
+        "claim": "A breadboard expansion board is included in this kit.",
+        "source_locator": {
+          "path": "sources/source_01.html",
+          "section_or_line": "the kit includes a breadboard expansion board"
+        },
+        "subject_scope": {
+          "model_independent": true,
+          "justification": "What ships in a kit is not a property of one board."
+        },
+        "evidence_scope": "Kit contents."
+      }
+    ]
+  }
+}

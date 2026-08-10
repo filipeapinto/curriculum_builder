@@ -1,0 +1,18 @@
+version: "1.0"
+drivers:
+  claude_code:
+    provider: Anthropic
+    family: Claude
+    roles: [authoring]
+    minimum_assurance: NATIVE_OBSERVED
+    auth_class: claude_subscription_entitlement
+    metering_mode: INCLUDED_SUBSCRIPTION_ONLY
+    forbid_separately_billed_credits: true
+  codex_cli:
+    provider: OpenAI
+    family: GPT
+    roles: [judge, review, acceptance]
+    minimum_assurance: DRIVER_BOUND_REQUEST
+    auth_class: chatgpt_login
+    metering_mode: INCLUDED_SUBSCRIPTION_ONLY
+    forbid_separately_billed_credits: true

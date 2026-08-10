@@ -1,0 +1,12 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema", "$id": "baseline_assurance_addendum.schema.v2.json",
+  "type": "object", "additionalProperties": false,
+  "required": ["version", "base_contract_hash", "sandbox_profile", "operator_authority", "observed_unit_states"],
+  "properties": {
+    "version": {"const": "2.0"}, "base_contract_hash": {"$ref": "#/$defs/sha"},
+    "sandbox_profile": {"type": "object", "additionalProperties": false, "required": ["profile_path", "profile_sha256", "engine_binary_path", "engine_binary_sha256", "expected_owner_uid", "expected_mode", "engine_expected_owner_uid", "engine_expected_mode", "root_resolution_evidence_path", "root_resolution_evidence_sha256", "expected_resolved_roots_digest"], "properties": {"profile_path": {"$ref": "#/$defs/path"}, "profile_sha256": {"$ref": "#/$defs/sha"}, "engine_binary_path": {"$ref": "#/$defs/path"}, "engine_binary_sha256": {"$ref": "#/$defs/sha"}, "expected_owner_uid": {"type": "integer", "minimum": 0}, "expected_mode": {"type": "string", "pattern": "^0[0-7]{3}$"}, "engine_expected_owner_uid": {"type": "integer", "minimum": 0}, "engine_expected_mode": {"type": "string", "pattern": "^0[0-7]{3}$"}, "root_resolution_evidence_path": {"$ref": "#/$defs/path"}, "root_resolution_evidence_sha256": {"$ref": "#/$defs/sha"}, "expected_resolved_roots_digest": {"$ref": "#/$defs/sha"}}},
+    "operator_authority": {"type": "object", "additionalProperties": false, "required": ["authorization_root", "pinned_public_key_path", "pinned_public_key_sha256", "signature_algorithm"], "properties": {"authorization_root": {"$ref": "#/$defs/absolute"}, "pinned_public_key_path": {"$ref": "#/$defs/absolute"}, "pinned_public_key_sha256": {"$ref": "#/$defs/sha"}, "signature_algorithm": {"const": "Ed25519"}}},
+    "observed_unit_states": {"const": ["ACCEPTED", "ACCEPTED_PENDING_REVIEW", "BLOCKED", "SYSTEM_FAILURE"]}
+  },
+  "$defs": {"sha": {"type": "string", "pattern": "^[a-f0-9]{64}$"}, "path": {"type": "string", "minLength": 1, "pattern": "^(?:/|(?!.*(?:^|/)\\.\\.(?:/|$)))[A-Za-z0-9._{}:/-]+$"}, "absolute": {"type": "string", "pattern": "^/[^\\u0000]+$"}}
+}

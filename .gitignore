@@ -13,3 +13,6 @@ __pycache__/
 # here now. Generated curriculum artifacts are drafts pending review, never
 # committed history.
 outputs/
+
+# macOS
+.DS_Store

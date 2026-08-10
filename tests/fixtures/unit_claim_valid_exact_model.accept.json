@@ -1,0 +1,37 @@
+{
+  "safety": {
+    "adult_verification": {
+      "limits": "No energized work in this fixture."
+    }
+  },
+  "domain": {
+    "electrical": {
+      "ratings_and_limits": [
+        {
+          "parameter": "high-current socket",
+          "absolute_max": "10",
+          "unit": "A",
+          "source": "sources/source_01.html"
+        }
+      ],
+      "component_spec": {
+        "parameters": []
+      }
+    }
+  },
+  "content": {
+    "sourced_claims": [
+      {
+        "claim": "On the ACME DM-100 the 10 A socket is used when measuring large currents.",
+        "source_locator": {
+          "path": "sources/source_01.html",
+          "section_or_line": "the 10 a socket is used when measuring large currents"
+        },
+        "subject_scope": {
+          "exact_model": "ACME DM-100"
+        },
+        "evidence_scope": "Socket use for large currents on this exact meter, and nothing wider."
+      }
+    ]
+  }
+}

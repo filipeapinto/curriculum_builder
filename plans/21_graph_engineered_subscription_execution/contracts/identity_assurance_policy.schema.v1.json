@@ -1,0 +1,17 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "identity_assurance_policy.schema.v1.json",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["version", "drivers"],
+  "properties": {
+    "version": {"const": "1.0"},
+    "drivers": {
+      "type": "object", "additionalProperties": false, "required": ["claude_code", "codex_cli"],
+      "properties": {
+        "claude_code": {"type": "object", "additionalProperties": false, "required": ["provider", "family", "roles", "minimum_assurance", "auth_class", "metering_mode", "forbid_separately_billed_credits"], "properties": {"provider": {"const": "Anthropic"}, "family": {"const": "Claude"}, "roles": {"const": ["authoring"]}, "minimum_assurance": {"const": "NATIVE_OBSERVED"}, "auth_class": {"const": "claude_subscription_entitlement"}, "metering_mode": {"const": "INCLUDED_SUBSCRIPTION_ONLY"}, "forbid_separately_billed_credits": {"const": true}}},
+        "codex_cli": {"type": "object", "additionalProperties": false, "required": ["provider", "family", "roles", "minimum_assurance", "auth_class", "metering_mode", "forbid_separately_billed_credits"], "properties": {"provider": {"const": "OpenAI"}, "family": {"const": "GPT"}, "roles": {"const": ["judge", "review", "acceptance"]}, "minimum_assurance": {"const": "DRIVER_BOUND_REQUEST"}, "auth_class": {"const": "chatgpt_login"}, "metering_mode": {"const": "INCLUDED_SUBSCRIPTION_ONLY"}, "forbid_separately_billed_credits": {"const": true}}}
+      }
+    }
+  }
+}

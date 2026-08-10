@@ -817,6 +817,29 @@
               "const": true
             }
           }
+        },
+        "evidence_card": {
+          "description": "The same shape `unpowered_path_map` declares. A breadboard unit records what the learner found for the same reason a path-map unit does, and the card generator reads one field either way.",
+          "type": "object",
+          "additionalProperties": false,
+          "required": [
+            "prompt",
+            "child_records"
+          ],
+          "properties": {
+            "prompt": {
+              "type": "string",
+              "minLength": 15
+            },
+            "child_records": {
+              "type": "array",
+              "minItems": 1,
+              "items": {
+                "type": "string",
+                "minLength": 3
+              }
+            }
+          }
         }
       }
     },
@@ -835,6 +858,13 @@
           "enum": [
             "power_path",
             "connectivity"
+          ]
+        },
+        "relationship": {
+          "description": "What a `connectivity` map's traced_path items are to each other. `same_wire` means the first two items are the two ends of one physical wire and are electrically joined; any further items are separate, unjoined locations. `enumeration` means every item is a distinct thing to find, joined to nothing. Rendering an enumeration with a wire-pair template would falsely show unconnected points as electrically continuous, so the discriminator is required rather than guessed.",
+          "enum": [
+            "same_wire",
+            "enumeration"
           ]
         },
         "traced_path": {
@@ -870,6 +900,21 @@
         "power_on_release": {
           "const": false
         }
+      },
+      "if": {
+        "properties": {
+          "map_kind": {
+            "const": "connectivity"
+          }
+        },
+        "required": [
+          "map_kind"
+        ]
+      },
+      "then": {
+        "required": [
+          "relationship"
+        ]
       }
     }
   },

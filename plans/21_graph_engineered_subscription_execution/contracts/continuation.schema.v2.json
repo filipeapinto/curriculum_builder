@@ -1,0 +1,5 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema", "$id": "continuation.schema.v2.json",
+  "$comment": "The v2 controller couples this immutable capability to external authorization and an atomic durable consumed-set transition.",
+  "$ref": "continuation.schema.v1.json"
+}

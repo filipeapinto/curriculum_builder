@@ -1,0 +1,61 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "phase_result.schema.v1.json",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["version", "event_id", "run_id", "node_id", "attempt", "graph_digest", "prompt_digest", "policy_digest", "schema_digest", "route_digest", "execution_contract_digest", "predecessor_event_hash", "checkpoint_hash", "required_test_set_digest", "required_artifact_set_digest", "outcome", "failure_class", "repeat_signature", "reason_id", "pause_reason", "test_results", "artifact_hashes", "resume_node_id", "continuation_hash", "resume_command_hash", "admission_status", "binding_valid", "evidence_complete", "continuation_valid", "failure_mapping_valid", "controller_validation"],
+  "properties": {
+    "version": {"const": "1.0"},
+    "event_id": {"type": "string", "pattern": "^[a-f0-9]{64}$"},
+    "run_id": {"type": "string", "minLength": 8},
+    "node_id": {"type": "string", "pattern": "^P[0-9]+$"},
+    "attempt": {"type": "integer", "minimum": 1},
+    "graph_digest": {"$ref": "#/$defs/sha256"},
+    "prompt_digest": {"$ref": "#/$defs/sha256"},
+    "policy_digest": {"$ref": "#/$defs/sha256"},
+    "schema_digest": {"$ref": "#/$defs/sha256"},
+    "route_digest": {"$ref": "#/$defs/sha256"},
+    "execution_contract_digest": {"$ref": "#/$defs/sha256"},
+    "predecessor_event_hash": {"anyOf": [{"$ref": "#/$defs/sha256"}, {"type": "null"}]},
+    "checkpoint_hash": {"$ref": "#/$defs/sha256"},
+    "required_test_set_digest": {"$ref": "#/$defs/sha256"},
+    "required_artifact_set_digest": {"$ref": "#/$defs/sha256"},
+    "outcome": {"enum": ["START", "PASS", "REVISABLE", "PAUSED_PREREQUISITE", "SYSTEM_FAILURE", "INTERRUPTED", "CONVERGENCE_EXHAUSTED", "RESUME"]},
+    "failure_class": {"enum": [null, "TRANSIENT_TOOL_FAILURE", "INVALID_MODEL_OUTPUT", "POLICY_VIOLATION", "CHECK_FAILED_REVISABLE", "EXTERNAL_FACT_BLOCK", "FACTORY_DEFECT", "CONVERGENCE_EXHAUSTED", "AUTHENTICATION_MISSING", "SUBSCRIPTION_ENTITLEMENT_UNPROVEN", "PROTECTED_DIRTY_OVERLAP", "INTERRUPTED_EXTERNAL"]},
+    "repeat_signature": {"type": ["string", "null"]},
+    "reason_id": {"type": "string", "minLength": 4},
+    "pause_reason": {"anyOf": [{"type": "null"}, {"type": "object", "additionalProperties": false, "required": ["kind", "evidence_hash", "authorized_path"], "properties": {"kind": {"enum": ["AUTHENTICATION_MISSING", "SUBSCRIPTION_ENTITLEMENT_UNPROVEN", "PROTECTED_DIRTY_OVERLAP"]}, "evidence_hash": {"$ref": "#/$defs/sha256"}, "authorized_path": {"type": ["string", "null"]}}}]},
+    "test_results": {"type": "array", "minItems": 1, "items": {"type": "object", "additionalProperties": false, "required": ["id", "status", "evidence_hash"], "properties": {"id": {"type": "string", "minLength": 4}, "status": {"enum": ["PASS", "FAIL", "NOT_RUN"]}, "evidence_hash": {"anyOf": [{"$ref": "#/$defs/sha256"}, {"type": "null"}]}}}},
+    "artifact_hashes": {"type": "object", "minProperties": 1, "additionalProperties": {"$ref": "#/$defs/sha256"}},
+    "resume_node_id": {"type": ["string", "null"], "pattern": "^P[0-9]+$"},
+    "continuation_hash": {"anyOf": [{"$ref": "#/$defs/sha256"}, {"type": "null"}]},
+    "resume_command_hash": {"anyOf": [{"$ref": "#/$defs/sha256"}, {"type": "null"}]},
+    "admission_status": {"const": "CONTROLLER_VERIFIED"},
+    "binding_valid": {"const": true},
+    "evidence_complete": {"type": "boolean"},
+    "continuation_valid": {"type": "boolean"},
+    "failure_mapping_valid": {"const": true},
+    "controller_validation": {"type": "object", "additionalProperties": false, "required": ["binding_valid", "test_set_exact", "all_tests_pass", "artifact_set_exact", "artifact_hashes_valid", "failure_mapping_valid", "continuation_valid"], "properties": {"binding_valid": {"const": true}, "test_set_exact": {"type": "boolean"}, "all_tests_pass": {"type": "boolean"}, "artifact_set_exact": {"type": "boolean"}, "artifact_hashes_valid": {"type": "boolean"}, "failure_mapping_valid": {"const": true}, "continuation_valid": {"type": "boolean"}}}
+  },
+  "allOf": [
+    {
+      "if": {"properties": {"outcome": {"const": "PASS"}}},
+      "then": {"properties": {
+        "failure_class": {"type": "null"}, "repeat_signature": {"type": "null"}, "pause_reason": {"type": "null"}, "resume_node_id": {"type": "null"}, "continuation_hash": {"type": "null"}, "resume_command_hash": {"type": "null"}, "evidence_complete": {"const": true}, "continuation_valid": {"const": true},
+        "test_results": {"items": {"properties": {"status": {"const": "PASS"}, "evidence_hash": {"$ref": "#/$defs/sha256"}}}},
+        "controller_validation": {"properties": {"test_set_exact": {"const": true}, "all_tests_pass": {"const": true}, "artifact_set_exact": {"const": true}, "artifact_hashes_valid": {"const": true}, "continuation_valid": {"const": true}}}
+      }}
+    },
+    {"if": {"properties": {"outcome": {"const": "REVISABLE"}}}, "then": {"properties": {"failure_class": {"enum": ["INVALID_MODEL_OUTPUT", "CHECK_FAILED_REVISABLE"]}, "repeat_signature": {"type": "string", "minLength": 8}, "pause_reason": {"type": "null"}, "resume_node_id": {"type": "null"}, "continuation_hash": {"type": "null"}, "resume_command_hash": {"type": "null"}}}},
+    {"if": {"properties": {"outcome": {"const": "PAUSED_PREREQUISITE"}}}, "then": {"properties": {"failure_class": {"enum": ["AUTHENTICATION_MISSING", "SUBSCRIPTION_ENTITLEMENT_UNPROVEN", "PROTECTED_DIRTY_OVERLAP"]}, "repeat_signature": {"type": "null"}, "resume_node_id": {"type": "null"}, "continuation_hash": {"$ref": "#/$defs/sha256"}, "resume_command_hash": {"type": "null"}, "pause_reason": {"type": "object"}, "evidence_complete": {"const": true}, "continuation_valid": {"const": true}}}},
+    {"if": {"properties": {"outcome": {"const": "SYSTEM_FAILURE"}}}, "then": {"properties": {"failure_class": {"enum": ["TRANSIENT_TOOL_FAILURE", "POLICY_VIOLATION", "FACTORY_DEFECT"]}, "pause_reason": {"type": "null"}, "resume_node_id": {"type": "null"}, "continuation_hash": {"type": "null"}, "resume_command_hash": {"type": "null"}}}},
+    {"if": {"properties": {"outcome": {"const": "CONVERGENCE_EXHAUSTED"}}}, "then": {"properties": {"failure_class": {"const": "CONVERGENCE_EXHAUSTED"}, "repeat_signature": {"type": "string", "minLength": 8}, "pause_reason": {"type": "null"}, "resume_node_id": {"type": "null"}, "continuation_hash": {"type": "null"}, "resume_command_hash": {"type": "null"}}}},
+    {"if": {"properties": {"outcome": {"const": "INTERRUPTED"}}}, "then": {"properties": {"failure_class": {"const": "INTERRUPTED_EXTERNAL"}, "pause_reason": {"type": "null"}, "resume_node_id": {"type": "null"}, "continuation_hash": {"$ref": "#/$defs/sha256"}, "resume_command_hash": {"type": "null"}, "evidence_complete": {"const": true}, "continuation_valid": {"const": true}}}},
+    {"if": {"properties": {"outcome": {"const": "RESUME"}}}, "then": {"properties": {"failure_class": {"type": "null"}, "repeat_signature": {"type": "null"}, "pause_reason": {"type": "null"}, "resume_node_id": {"type": "string", "pattern": "^P[0-9]+$"}, "continuation_hash": {"$ref": "#/$defs/sha256"}, "resume_command_hash": {"$ref": "#/$defs/sha256"}, "continuation_valid": {"const": true}, "controller_validation": {"properties": {"continuation_valid": {"const": true}}}}}},
+    {"if": {"properties": {"outcome": {"const": "START"}}}, "then": {"properties": {"failure_class": {"type": "null"}, "repeat_signature": {"type": "null"}, "pause_reason": {"type": "null"}, "resume_node_id": {"type": "null"}, "continuation_hash": {"type": "null"}, "resume_command_hash": {"type": "null"}}}},
+    {"if": {"properties": {"failure_class": {"const": "AUTHENTICATION_MISSING"}}}, "then": {"properties": {"reason_id": {"const": "AUTHENTICATION_MISSING"}, "pause_reason": {"properties": {"kind": {"const": "AUTHENTICATION_MISSING"}, "authorized_path": {"type": "null"}}}}}},
+    {"if": {"properties": {"failure_class": {"const": "SUBSCRIPTION_ENTITLEMENT_UNPROVEN"}}}, "then": {"properties": {"reason_id": {"const": "SUBSCRIPTION_ENTITLEMENT_UNPROVEN"}, "pause_reason": {"properties": {"kind": {"const": "SUBSCRIPTION_ENTITLEMENT_UNPROVEN"}, "authorized_path": {"type": "null"}}}}}},
+    {"if": {"properties": {"failure_class": {"const": "PROTECTED_DIRTY_OVERLAP"}}}, "then": {"properties": {"reason_id": {"const": "PROTECTED_RT7_OVERLAP"}, "pause_reason": {"properties": {"kind": {"const": "PROTECTED_DIRTY_OVERLAP"}, "authorized_path": {"type": "string", "minLength": 1}}}}}}
+  ],
+  "$defs": {"sha256": {"type": "string", "pattern": "^[a-f0-9]{64}$"}}
+}

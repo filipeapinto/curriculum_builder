@@ -1,0 +1,82 @@
+plan_version: "2.0"
+id: graph_engineered_subscription_execution
+status: qa
+base:
+  path: graph_engineered_subscription_execution.plan.v1.yaml
+  sha256: 171af5dff71d33331f263bf73c84219790209700cd15d403f63ee207805b561e
+supersedes_versions: ["1.0"]
+bootstrap:
+  validator: tools/validate_plan_v2.py
+  command: python3 plans/21_graph_engineered_subscription_execution/tools/validate_plan_v2.py
+  self_test_command: python3 plans/21_graph_engineered_subscription_execution/tools/validate_plan_v2.py --self-test
+contract_overrides:
+  phase_result: contracts/phase_result.schema.v2.json
+  evidence_manifest: contracts/evidence_manifest.schema.v2.json
+  phase_ledger: contracts/phase_ledger.schema.v2.json
+  continuation: contracts/continuation.schema.v2.json
+  resume_authorization: contracts/resume_authorization.schema.v2.json
+  resume_command: contracts/resume_command.schema.v2.json
+  baseline_assurance: contracts/baseline_assurance_addendum.schema.v2.json
+  sandbox_profile: contracts/sandbox_profile.schema.v2.json
+  sandbox_root_evidence: contracts/sandbox_root_evidence.schema.v2.json
+controller_overrides:
+  evidence_admission:
+    owner: PHASE_CONTROLLER
+    manifest_path_template: plans/21_graph_engineered_subscription_execution/results/evidence/{run_id}/{node_id}.attempt-{attempt}.manifest.v2.yaml
+    rules: [manifest_schema_valid, sources_exist_and_are_regular_files, sources_inside_resolved_authorized_roots, no_symlink_escape, sha256_recomputed_from_bytes, exact_compiled_test_denominator, exact_compiled_artifact_denominator, event_hashes_equal_recomputed_manifest]
+  resume_admission:
+    continuation_owner: PHASE_CONTROLLER
+    authorization_owner: OPERATOR_AUTHORITY
+    authorization_root_class: os_owned_read_only_outside_model_workspace
+    atomic_transition: compare_and_swap_checkpoint_and_append_consumed_continuation_id
+    rules: [authorization_record_exists, authorization_signature_verified_against_pinned_key, exact_run_node_attempt_and_continuation, continuation_not_consumed, command_not_consumed, atomic_consume_before_activation]
+  contract_resolution:
+    rules: [every_registry_entry_used, schema_ref_exists_and_is_meta_valid, resolver_exists_in_owner_schema, owner_precedes_every_consumer, resolved_value_matches_declared_schema]
+  sandbox_admission:
+    rules: [profile_file_exists, engine_binary_exists, owner_and_mode_match, profile_and_engine_hashes_recompute, roots_recompute_from_profile, root_evidence_hash_recomputes, escape_probes_execute_before_model_launch]
+node_contract_overrides:
+  P0:
+    required_subtask_ids: [repository-inventory, historical-census, coverage-denominator, baseline-contract, assurance-addendum, evidence-commit]
+    prompt_addendum: prompts/v2/P0_contract_and_evidence_freeze.addendum.v2.md
+    additional_outputs: [plans/21_graph_engineered_subscription_execution/results/P0.assurance_addendum.v2.yaml]
+  P1:
+    required_subtask_ids: [ir-schema, compiler, registry-resolver, static-mutations, self-compile, evidence-commit]
+    prompt_addendum: prompts/v2/P1_graph_ir_and_static_compiler.addendum.v2.md
+    additional_outputs: []
+  P2:
+    required_subtask_ids: [adapter-build, claude-capability, codex-capability, sandbox-profile-proof, claude-canary, codex-canary, evidence-commit]
+    prompt_addendum: prompts/v2/P2_subscription_worker_adapter.addendum.v2.md
+    additional_outputs: []
+  P3:
+    required_subtask_ids: [runtime-state, checkpoint-store, atomic-resume-consume, crash-matrix, evidence-commit]
+    prompt_addendum: prompts/v2/P3_durable_graph_runtime.addendum.v2.md
+    additional_outputs: []
+  P4:
+    required_subtask_ids: [status-migration, adapter-migration, policy-migration, regression-suite, evidence-commit]
+    prompt_addendum: prompts/v2/P4_curriculum_graph_migration.addendum.v2.md
+    additional_outputs: []
+  P5:
+    required_subtask_ids: [generator-run, deterministic-checks, isolated-judges, verdict-reducer, repair-loop, evidence-commit]
+    prompt_addendum: prompts/v2/P5_evaluator_optimizer_acceptance.addendum.v2.md
+    additional_outputs: []
+  P6:
+    required_subtask_ids: [static-graph, full-paths, guard-boundaries, fault-injection, live-three-unit, cold-resume, four-judges, historical-matrix, independent-recompute, supersession, evidence-commit]
+    prompt_addendum: prompts/v2/P6_end_to_end_release_and_supersession.addendum.v2.md
+    additional_outputs: []
+orchestrator_addendum: prompts/v2/P_ALL_graph_orchestrator.addendum.v2.md
+status_overrides:
+  observed_unit_states: [ACCEPTED, ACCEPTED_PENDING_REVIEW, BLOCKED, SYSTEM_FAILURE]
+  unit_intermediate_states: [ACCEPTED_PENDING_REVIEW]
+  unit_terminal_states: [ACCEPTED, BLOCKED, SYSTEM_FAILURE]
+  migration_owner: P4
+new_invariants:
+  - A digest is evidence only after the controller reads an existing regular source file inside a resolved authorized root and recomputes SHA-256 from its bytes.
+  - Required test, artifact, and phase-subtask denominators come from the compiled node contract and can never be declared by the event, manifest, or ledger being admitted.
+  - Resume authorization is created by an external operator authority before activation and is atomically consumed in durable state before the suspended node can run.
+  - Every registry schema path and resolver is validated even when no node currently references the entry; unused or unresolvable entries are compile errors.
+  - Sandbox assurance binds executable profile bytes, engine bytes, OS ownership and mode, resolved roots, and executed escape-probe evidence; hash-shaped claims alone fail.
+review_protocol:
+  independent_reviewers: 3
+  roles: [graph_formalism_and_runtime, historical_regression_and_repository, prompt_execution_and_subscription_security]
+  exit_rule: Version 2 is approved only when all three new-version reviews independently report zero unresolved Critical and High findings on identical frozen bytes.
+  iteration_rule: Any version-2 Critical or High finding creates version 3; reviewers never repair the version they assess.

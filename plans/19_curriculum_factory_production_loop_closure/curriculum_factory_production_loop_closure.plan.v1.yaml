@@ -1,0 +1,294 @@
+plan_version: '1.0'
+schema: schemas/curriculum_factory_production_loop_closure.schema.v1.json
+id: curriculum_factory_production_loop_closure
+name: Curriculum Factory Production Loop Closure
+status: approved
+
+word_budget:
+  counting_rule: Count whitespace-delimited words in this YAML file with wc -w after each orchestrator revision.
+  original_words: 2656
+  maximum_words: 3054
+  current_words: 3025
+  growth_percent: 13.89
+  gate: pass
+
+scope_lock:
+  in_scope:
+    - Connect the existing contracts, routes, workers, deterministic checks, renderer, run state, and workbook assembler into one production control loop.
+    - Make the existing CLI perform real single-unit and full-manifest runs with truthful terminal states, checkpoints, targeted revisions, and resume.
+    - Prove the loop with live execution, a bounded full-manifest fixture, and an Arduino-kit production attempt.
+    - Reconcile only deferred obligations and documentation whose truth changes because this plan implements them.
+  out_of_scope:
+    - Redesigning the curriculum schema, pedagogy, visual style, or Arduino-kit sequence unless an executable contradiction blocks this plan.
+    - Authoring L05 through L35 by hand or treating manually supplied worker artifacts as factory output.
+    - Adding unrelated product features, user interfaces, deployment infrastructure, or new curriculum subjects beyond the minimal genericity fixture.
+    - Weakening safety, evidence, visual, review, or acceptance gates to make a run pass.
+
+overall_goal:
+  statement: >-
+    Deliver an operational curriculum-neutral factory whose production CLI can take a valid
+    curriculum manifest through live worker execution, deterministic validation, targeted
+    revision, resumable unit sequencing, and audited workbook assembly without a coding agent
+    manually shepherding artifacts between stages.
+  definition_of_success:
+    - The production CLI implements both --lab-id and --all; neither route falls through to simulation or an unconditional refusal.
+    - Every model call has a validated routing decision, bounded request, captured result, actual model identity, and append-only execution record.
+    - Code alone owns state transitions, retry and revision decisions, acceptance, resume, unit order, and workbook completion.
+    - A clean live single-unit run reaches an honest terminal state without manually creating or editing worker output files.
+    - A bounded multi-unit fixture completes through --all and produces a validated assembled workbook without manual intervention.
+    - The Arduino-kit run either progresses autonomously to completion or stops at the first genuine external evidence prerequisite with a resumable, truthful receipt.
+
+operating_rules:
+  - Preserve the precedence and ownership rules already declared in meta_prompt/curriculum.prompt.v1.md and policy/controller.v1.yaml.
+  - Treat simulated evidence, live-capability evidence, generated-unit evidence, and workbook-release evidence as distinct categories.
+  - Never infer success from file presence; validate declared outputs, hashes, checks, transitions, and terminal decisions.
+  - A worker may write only its declared schema-bound artifact and may never decide transitions or acceptance.
+  - A blocked curriculum fact, a retryable tool failure, and a factory defect remain separate terminal classifications.
+  - Preserve accepted units on resume and refuse overwrite unless a new output version is explicitly requested.
+  - Execute phases in dependency order; atomically update policy, schema, checks, and deferred claims when their enforcement becomes true.
+  - Stop when a phase definition of success cannot be proven.
+
+phases:
+  - id: P0
+    name: Executable baseline and contract freeze
+    goal: Establish one reproducible baseline and a precise production behavior table before changing the runtime.
+    depends_on: []
+    scope:
+      in_scope:
+        - Map and freeze unit and workbook states, CLI paths, routes, checks, artifacts, and deferred obligations.
+        - Add failing contract tests that expose the absent live single-unit path, absent live --all path, and non-executing capability preflight.
+        - Reconcile the canonical terminal vocabulary, enforcement flags, domain-specific engine states, and fixed L01-L35 schema constraint before freezing contracts.
+      out_of_scope:
+        - Implementing production behavior while the baseline and failure expectations are still unsettled.
+    deliverables:
+      - A machine-readable matrix plus canonical digest algorithm and inventory covering selected manifest/domain inputs, prompt, policies, schemas, verifier, renderer, production runtime/audit code, tools, and effective routes.
+      - Reproducible failing tests for the three central production gaps and captured pre-change gate results.
+      - A stale-authority list limited to documents whose current claims contradict executable behavior.
+    definition_of_success:
+      - Every controller state has exactly one declared code owner and one expected artifact or deterministic action.
+      - Terminal states use one canonical vocabulary, with detailed failure IDs separate, and no active schema contradicts a policy value or enforcement claim.
+      - Tests fail because live production is absent, not because of environment, import, fixture, or unrelated worktree failures.
+      - Existing dirty work and generated outputs are inventoried and protected from overwrite.
+    verification:
+      - Validate all current manifests and schemas before edits.
+      - Run the existing runtime suite and phase gates, recording exact baseline results.
+      - Exercise CLI preflight, simulated-all, live-capability, --lab-id, and --all paths and record their actual classifications.
+    stop_conditions:
+      - Stop if active contracts cannot be reconciled to neutral roles, derived unit identifiers, and one owner per transition or terminal decision.
+      - Stop if the baseline cannot be reproduced without modifying user-owned work.
+
+  - id: P1
+    name: Live capability and routing closure
+    goal: Replace unconditional live-capability refusal with real, minimal, policy-enforced route probes and durable evidence.
+    depends_on: [P0]
+    scope:
+      in_scope:
+        - Freeze the effective route manifest and containment command; probe selected-run routes and record command, model, effort, sandbox, result, elapsed time, and proof hash.
+        - Enforce selector-before-worker, executed-model equality, route availability, and explicit optional-route handling.
+        - Register and prove bounded primary-source retrieval and a selector-addressable cross-family judge in addition to worker, PDF, rasterizer, and conditional image generation.
+      out_of_scope:
+        - Generating curriculum content or treating a probe response as generated-unit evidence.
+    deliverables:
+      - A capability preflight that freezes effective routes, then recomputes and binds the run's execution-contract digest.
+      - Runtime enforcement for routing decision presence and decided-versus-executed model identity.
+      - Deterministic classification of required, optional, unavailable, and forbidden routes; globally retained routes are proven or removed.
+    definition_of_success:
+      - --test-live-capabilities performs real bounded probes and returns PASS only when every required route is proven in the current environment.
+      - A missing required route stops before unit creation; an unused optional route does not stop the run.
+      - ROUTE-PROVEN and RT-2 quantify the frozen effective manifest; every route retained in the global catalogue has current real proof.
+      - Missing, malformed, bypassed, or mismatched routing decisions are rejected before worker output can enter the run.
+      - Research retrieval and a judge from a different model family are policy-registered, live-proven, isolated, and reachable through selection.
+    verification:
+      - Positive tests use the real configured route with the smallest valid structured response.
+      - Negative controls cover unavailable executable, timeout, malformed response, model mismatch, and forbidden sandbox widening.
+      - Capability records are replay-verifiable but never accepted as unit evidence.
+    stop_conditions:
+      - Stop if a required route cannot be invoked within the declared sandbox and no policy-compliant route exists.
+      - Stop if actual model identity or family cannot be observed and compared with the routing decision.
+
+  - id: P2
+    name: Schema-bound worker execution
+    goal: Implement the reusable worker adapter that turns one controller task into one bounded, observable, schema-valid artifact.
+    depends_on: [P1]
+    scope:
+      in_scope:
+        - Build sealed worker requests from authorized inputs, role instructions, stable check IDs, output schema, and authorized output path.
+        - Capture stdout, stderr, exit status, routing evidence, timing, output hash, and failure class without exposing unrelated repository context.
+        - Use P1-frozen per-call containment to deny undeclared reads and writes through an isolated staged filesystem rather than prompt instructions.
+      out_of_scope:
+        - Letting workers choose subsequent states, broaden their own inputs, or write terminal decisions.
+    deliverables:
+      - One worker invocation interface used by authoring, research, review, and revision roles.
+      - Atomic output admission that rejects absent, extra, malformed, out-of-scope, or schema-invalid artifacts.
+      - Failure normalization for transient tool errors, invalid output, policy violations, and genuine domain blocks.
+      - A registry assigning one output schema to every worker artifact type exercised by the controller.
+    definition_of_success:
+      - A worker reads only staged inputs and writes only its artifact; each request, route record, artifact, and checkpoint binds the execution-contract digest.
+      - Invalid or extra output never mutates accepted state and is routed to a bounded retry or honest failure class.
+      - Replaying a completed request does not duplicate logs or overwrite a valid accepted artifact.
+    verification:
+      - Contract tests cover every worker role and every failure class with fake executors.
+      - One live canary call proves the adapter, schema admission, logging, and identity capture together.
+      - Adversarial tests attempt path escape, undeclared reads, extra files, prompt injection through curriculum data, and malformed structured output.
+    stop_conditions:
+      - Stop if the chosen worker route cannot enforce authorized read and write boundaries.
+      - Stop if a worker result cannot be tied unambiguously to one request, route decision, and output hash.
+
+  - id: P3
+    name: Production unit state machine
+    goal: Implement every declared unit state as executable code and connect worker stages to deterministic validation and targeted revision.
+    depends_on: [P2]
+    scope:
+      in_scope:
+        - Replace state simulation with production handlers while retaining simulation as a separate test mode.
+        - Integrate session preparation, research, domain and lab production, visuals, rendering, reviews, acceptance, checkpoints, and resume.
+        - Revise only artifacts named by failed checks and enforce convergence limits.
+        - Implement P0-frozen neutral domain-declared roles and derived unit IDs, with Arduino vocabulary under its curriculum and semantic prerequisite validation.
+      out_of_scope:
+        - Rewriting accepted prerequisites, regenerating an entire unit for one local defect, or allowing a model to aggregate reviews.
+    deliverables:
+      - A registry with exactly one production handler for every controller state.
+      - Code-owned transition, review aggregation, targeted revision, checkpoint, resume, and terminal-decision services.
+      - Migration of the manual session bridge into the controller path or its reduction to a tested internal adapter.
+      - A validated check-to-owned-artifact mapping that gives every blocking check one bounded revision route or non-revision terminal class.
+    definition_of_success:
+      - Every P0-frozen unit state is reachable in production and no production state exists outside the controller contract.
+      - An unrelated curriculum can bind its own domain roles and arbitrary valid unit IDs without engine edits or electronics vocabulary in engine layers.
+      - A clean unit reaches acceptance; targeted defects revise only named artifacts; repeated identical failures terminate according to policy.
+      - Interrupt and resume preserve valid hashes and restart at the first missing or invalid checkpoint without manual repair.
+      - BLOCKED is reachable only for a named unavailable safety-critical fact, never for a factory or tool defect.
+    verification:
+      - State-handler contract tests cover success, revision, transient retry, block, system failure, interrupt, and resume.
+      - Negative controls detect illegal transition, skipped state, duplicated completion, stale hash, broad rewrite, and false block.
+      - A mapping test rejects any blocking check without exactly one authorized correction or terminal route.
+      - A live unit executes the complete state path with all intermediate records and no hand-authored worker files.
+    stop_conditions:
+      - Stop if a controller transition or acceptance decision depends on unstructured model prose.
+      - Stop if resume can overwrite accepted work or continue after an unresolved hash mismatch.
+
+  - id: P4
+    name: Full-manifest orchestration
+    goal: Make --lab-id and --all execute the production state machine over manifest-derived unit order with truthful run lifecycle management.
+    depends_on: [P3]
+    scope:
+      in_scope:
+        - Initialize, advance, pause, resume, and close a run from one immutable execution-contract digest.
+        - Preserve sequential acceptance, next-unit derivation, per-unit resource accounting, and explicit blocked or interrupted outcomes.
+      out_of_scope:
+        - Hardcoding Arduino identifiers, silently skipping blocked units, or claiming workbook completion from unit directories.
+    deliverables:
+      - Working production implementations of --lab-id, --all, --resume, and explicit run close.
+      - One authoritative lifecycle schema and record that represent acceptance, pending review, block, interruption, and system failure from validated receipts and manifest order.
+      - Per-unit budgets and convergence state that reset without weakening run-level limits.
+    definition_of_success:
+      - --lab-id processes only a requested unit whose prerequisites are accepted; --all processes manifest order without a manual invocation between units.
+      - Accepted units survive resume; the next unit is derived correctly; execution-contract digest mismatch is refused.
+      - A blocked unit stops the sequential run with its external prerequisite named, while tool and factory failures become SYSTEM_FAILURE.
+      - Only exact ACCEPTED advances or enters workbook coverage; pending review, missing, blocked, failed, or unaccepted units prevent COMPLETE.
+    verification:
+      - A bounded three-unit fixture uses live routed workers for every unit and exercises advancement, interrupt, resume, and coverage.
+      - Negative controls cover unmet prerequisite, pending review, out-of-order or duplicate unit, changed inputs, accepted-unit overwrite, system failure, and false completion.
+      - An Arduino-kit --all attempt proves real manifest selection and either advances or records the first genuine prerequisite honestly.
+    stop_conditions:
+      - Stop if unit order or completion is inferred from filesystem enumeration rather than the frozen manifest.
+      - Stop if a partial run can lose its resumable checkpoint or be reported as complete.
+
+  - id: P5
+    name: Workbook release loop
+    goal: Complete the factory after unit acceptance by assembling, reviewing, revising, and accepting the final workbook under code control.
+    depends_on: [P4]
+    scope:
+      in_scope:
+        - Assemble only exact accepted-manifest coverage, render every page, execute declared workbook reviews, target workbook-only revisions, and audit release.
+        - Keep unit artifacts immutable while revising table of contents, pagination, cross-unit navigation, front matter, and workbook layout.
+        - Implement P0-frozen workbook states under the same code-owned transition, checkpoint, and audit rules.
+      out_of_scope:
+        - Reopening accepted unit content through a workbook-layout failure or sampling pages instead of inspecting all pages.
+    deliverables:
+      - Workbook state handlers, assembly manifest, page inventory, exactly four isolated review records, revision receipts, and terminal acceptance record.
+      - A single code path allowed to write run_status COMPLETE.
+    definition_of_success:
+      - Assembly refuses incomplete or non-accepted coverage and includes every accepted unit exactly once in manifest order.
+      - Every covered unit and workbook record binds the same execution-contract digest.
+      - Every shipped page rasterizes, is inspected, and resolves to the assembled PDF hash.
+      - Exactly four schema-valid reviews run in isolated sessions; identity is the recorded role, invocation, route decision, and executed model.
+      - Failed workbook checks revise only workbook-owned artifacts and are independently re-audited.
+      - COMPLETE implies exact unit coverage, accepted workbook reviews, valid final PDF, and a clean terminal log audit.
+    verification:
+      - Tests reject non-ACCEPTED units; bad pages; and reviews with duplicate identity, sibling-verdict access, shared sessions, or invalid records.
+      - A full fixture run produces a workbook and proves targeted workbook revision without changing unit hashes.
+      - Independent recomputation of coverage, page hashes, checks, and log pairs reproduces the terminal decision.
+    stop_conditions:
+      - Stop if the PDF toolchain cannot deterministically assemble and rasterize the shipped artifact.
+      - Stop if workbook revision can mutate an accepted unit or COMPLETE can be written outside workbook acceptance.
+
+  - id: P6
+    name: End-to-end release proof and debt reconciliation
+    goal: Prove the complete production loop against live and full-manifest cases, then update only obligations made true by that evidence.
+    depends_on: [P5]
+    scope:
+      in_scope:
+        - Run one clean live unit, one bounded unrelated full-manifest fixture, and one Arduino-kit production attempt from fresh output roots.
+        - Reconcile RT-1, RT-2, RT-3, RT-4, RT-5, RT-7, and RT-10 plus check mappings and status documentation only when literal criteria are discharged.
+      out_of_scope:
+        - Declaring the Arduino workbook complete while required automated reviews or genuine external safety-critical evidence remain unresolved.
+        - Adding a production curriculum merely to satisfy genericity; the unrelated fixture exists only to prove engine neutrality.
+    deliverables:
+      - Reproducible release evidence for live unit production, autonomous --all execution, resume, workbook assembly, and terminal audit.
+      - An obligation disposition mapping each relevant deferred ID to discharged evidence or an unchanged blocker.
+      - Operator documentation containing the exact production, resume, inspect, and failure-recovery commands.
+    definition_of_success:
+      - The live unit is produced from factory-owned requests and workers with no manual intermediate artifact edits.
+      - Every unrelated-fixture unit uses live workers, reaches COMPLETE through --all, and passes independent recomputation including the execution-contract digest.
+      - The Arduino run proves production routing and stops only on a correctly classified real prerequisite, or continues if that prerequisite is supplied.
+      - No document claims more coverage, genericity, review, child-readiness, or completion than the recorded evidence supports.
+      - All tests and applicable phase gates pass with zero unresolved Critical or High red-team findings.
+    verification:
+      - Re-run the complete runtime suite, schema validation, policy gates, negative controls, and clean-root end-to-end commands.
+      - Compare produced records with the implementation matrix from P0 and account for every state, route, check, and deferred obligation.
+      - Repair RT-7's stale path against the authoritative output-root contract, record its exact before/after criterion, then apply every affected criterion literally.
+      - Have an independent auditor recompute terminal decisions from immutable inputs and receipts without using controller conclusions.
+    stop_conditions:
+      - Stop if any release proof relies on simulated output, prewritten worker artifacts, or manual mutation inside the run root.
+      - Stop if closing a deferred obligation requires weakening its original acceptance criterion.
+
+red_team_protocol:
+  severity:
+    critical: The plan can falsely accept, damage prior work, bypass safety or routing controls, or cannot achieve the overall goal.
+    high: A phase cannot prove its goal, omits a necessary dependency, or permits material manual shepherding or false evidence.
+    medium: The plan is executable but has an avoidable ambiguity, weak negative control, or incomplete noncritical record.
+    low: A local clarity or efficiency improvement that does not threaten phase or overall success.
+  phase_review:
+    reviewers: 3
+    independence: Each reviewer works independently and does not see another reviewer's findings before submitting its own.
+    coverage: Each reviewer evaluates every phase separately for feasibility, dependencies, success criteria, verification, stops, and scope discipline.
+    maximum_iterations: 3
+    iteration_rule: The orchestrator accepts or rejects each finding with a reason, revises only accepted findings, then repeats only if Critical or High issues remain.
+    exit_rule: Proceed only when all three phase reviewers report no unresolved Critical or High issue, or stop after iteration three as blocked.
+  whole_plan_review:
+    reviewers: 1
+    independence: The SME receives the current plan and phase-review disposition but does not inherit the orchestrator's conclusions as facts.
+    coverage: The SME evaluates phase interactions, end-to-end achievability, missing cross-phase controls, circular dependencies, and cumulative scope.
+    maximum_iterations: 3
+    iteration_rule: The orchestrator decides each finding and adjusts individual phases only when the whole-plan issue is accepted and in scope.
+    exit_rule: Approve only when the SME reports no unresolved Critical or High whole-plan issue, or stop after iteration three as blocked.
+  orchestrator_rule: >-
+    The orchestrator reviews every finding against repository evidence, records accept,
+    reject, or already-covered with a reason, and never adopts feedback automatically.
+  scope_and_size_rule: >-
+    Reviewers may not add product scope or materially lengthen the plan. After every
+    revision the orchestrator recounts words. If current_words exceeds maximum_words,
+    stop immediately, set status and final_gate to reset_required, and do not continue review.
+
+review_state:
+  phase_review:
+    iterations_used: 3
+    unresolved_critical: 0
+    unresolved_high: 0
+    evidence: [plans/curriculum_factory_production_loop_closure/reviews/phase_review.iteration3.yaml]
+  whole_plan_review:
+    iterations_used: 3
+    unresolved_critical: 0
+    unresolved_high: 0
+    evidence: [plans/curriculum_factory_production_loop_closure/reviews/whole_plan_review.iteration3.yaml]
+  final_gate: approved

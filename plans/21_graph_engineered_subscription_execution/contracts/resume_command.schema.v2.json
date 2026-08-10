@@ -1,0 +1,5 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema", "$id": "resume_command.schema.v2.json",
+  "$comment": "operator_authorization_hash must resolve to a signature-verified v2 authorization record in the external authorization root.",
+  "$ref": "resume_command.schema.v1.json"
+}

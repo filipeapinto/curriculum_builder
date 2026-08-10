@@ -1,0 +1,22 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema", "$id": "graph_engineered_subscription_execution.schema.v3.json",
+  "type": "object", "additionalProperties": false,
+  "required": ["plan_version", "id", "status", "behavioral_base", "supersedes_versions", "bootstrap", "contracts", "effective_graph_overrides", "required_subtask_ids", "prompt_addenda", "assurance_rules", "new_invariants", "review_protocol"],
+  "properties": {
+    "plan_version": {"const": "3.0"}, "id": {"const": "graph_engineered_subscription_execution"}, "status": {"enum": ["qa", "approved", "superseded"]},
+    "behavioral_base": {"type": "object", "additionalProperties": false, "required": ["versions", "selection_algorithm", "file_count", "sha256"], "properties": {"versions": {"const": ["1.0", "2.0"]}, "selection_algorithm": {"const": "referenced_v1_v2_manifests_schemas_validators_contracts_prompts_plus_research_and_assessment"}, "file_count": {"const": 45}, "sha256": {"$ref": "#/$defs/sha"}}},
+    "supersedes_versions": {"const": ["1.0", "2.0"]},
+    "bootstrap": {"type": "object", "additionalProperties": false, "required": ["validator", "command", "self_test_command"], "properties": {"validator": {"const": "tools/validate_plan_v3.py"}, "command": {"type": "string"}, "self_test_command": {"type": "string"}}},
+    "contracts": {"type": "object", "additionalProperties": false, "required": ["test_receipt", "evidence_manifest", "phase_ledger", "subtask_receipt", "p0_contract_bundle", "assurance_contract", "external_trust", "sandbox_engine_registry", "sandbox_assurance"], "properties": {"test_receipt": {"const": "contracts/test_receipt.schema.v3.json"}, "evidence_manifest": {"const": "contracts/evidence_manifest.schema.v3.json"}, "phase_ledger": {"const": "contracts/phase_ledger.schema.v3.json"}, "subtask_receipt": {"const": "contracts/subtask_receipt.schema.v3.json"}, "p0_contract_bundle": {"const": "contracts/p0_contract_bundle.schema.v3.json"}, "assurance_contract": {"const": "contracts/assurance_contract.schema.v3.json"}, "external_trust": {"const": "contracts/external_trust.schema.v3.json"}, "sandbox_engine_registry": {"const": "contracts/sandbox_engine_registry.schema.v3.json"}, "sandbox_assurance": {"const": "contracts/sandbox_assurance.schema.v3.json"}}},
+    "effective_graph_overrides": {"type": "object", "additionalProperties": false, "required": ["P0_contract_bundle", "artifact_contract_registry", "trust_prerequisites", "compiled_evidence_sources", "resume_store"], "properties": {"P0_contract_bundle": {"type": "object"}, "artifact_contract_registry": {"type": "object"}, "trust_prerequisites": {"type": "object"}, "compiled_evidence_sources": {"type": "object"}, "resume_store": {"type": "object"}}},
+    "required_subtask_ids": {"$ref": "#/$defs/subtasks"},
+    "prompt_addenda": {"type": "object", "additionalProperties": false, "required": ["P0", "P1", "P2", "P3", "P4", "P5", "P6", "P_ALL"], "patternProperties": {"^P(?:[0-6]|_ALL)$": {"type": "string", "pattern": "^prompts/v3/.+\\.v3\\.md$"}}},
+    "assurance_rules": {"type": "object", "additionalProperties": false, "required": ["test_receipts", "artifact_receipts", "sandbox", "ledger", "resume", "lifecycle"], "properties": {"test_receipts": {"$ref": "#/$defs/rules"}, "artifact_receipts": {"$ref": "#/$defs/rules"}, "sandbox": {"$ref": "#/$defs/rules"}, "ledger": {"$ref": "#/$defs/rules"}, "resume": {"$ref": "#/$defs/rules"}, "lifecycle": {"$ref": "#/$defs/rules"}}},
+    "new_invariants": {"type": "array", "minItems": 5, "uniqueItems": true, "items": {"type": "string", "minLength": 100}},
+    "review_protocol": {"type": "object", "additionalProperties": false, "required": ["independent_reviewers", "exit_rule", "next_failure_disposition"], "properties": {"independent_reviewers": {"const": 3}, "exit_rule": {"type": "string", "minLength": 90}, "next_failure_disposition": {"type": "string", "minLength": 80}}}
+  },
+  "$defs": {
+    "sha": {"type": "string", "pattern": "^[a-f0-9]{64}$"}, "rules": {"type": "array", "minItems": 3, "uniqueItems": true, "items": {"type": "string", "minLength": 8}},
+    "subtasks": {"type": "object", "additionalProperties": false, "required": ["P0", "P1", "P2", "P3", "P4", "P5", "P6"], "patternProperties": {"^P[0-6]$": {"type": "array", "minItems": 5, "uniqueItems": true, "items": {"type": "string", "pattern": "^[a-z0-9-]+$"}}}}
+  }
+}

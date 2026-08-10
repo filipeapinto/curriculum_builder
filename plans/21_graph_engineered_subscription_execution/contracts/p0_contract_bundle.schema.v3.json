@@ -1,0 +1,5 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema", "$id": "p0_contract_bundle.schema.v3.json",
+  "type": "object", "additionalProperties": false, "required": ["version", "baseline_v1", "assurance_v3"],
+  "properties": {"version": {"const": "3.0"}, "baseline_v1": {"$ref": "baseline_contract.schema.v1.json"}, "assurance_v3": {"$ref": "assurance_contract.schema.v3.json"}}
+}

@@ -1,0 +1,32 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "historical_findings.schema.v1.json",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["version", "corpus_digest", "sources", "declared_counts", "findings", "anomalies", "reconciliation"],
+  "properties": {
+    "version": {"const": "1.0"},
+    "corpus_digest": {"type": "string", "pattern": "^[a-f0-9]{64}$"},
+    "sources": {"type": "array", "minItems": 1, "uniqueItems": true, "items": {"type": "string", "minLength": 4}},
+    "declared_counts": {"type": "array", "minItems": 1, "items": {"$ref": "#/$defs/countRecord"}},
+    "findings": {
+      "type": "array", "minItems": 1, "items": {
+        "type": "object", "additionalProperties": false,
+        "required": ["id", "source", "source_format", "source_key", "severity", "status", "test_owner", "evidence_hash"],
+        "properties": {
+          "id": {"type": "string", "minLength": 4}, "source": {"type": "string", "minLength": 4},
+          "source_format": {"enum": ["markdown", "yaml", "issue"]}, "source_key": {"type": "string", "minLength": 1},
+          "severity": {"enum": ["Critical", "High", "Unresolved"]},
+          "status": {"enum": ["open", "fixed_but_retained", "superseded", "anomaly"]},
+          "test_owner": {"type": "string", "pattern": "^P[0-9]-T[0-9]{2}$"},
+          "evidence_hash": {"type": "string", "pattern": "^[a-f0-9]{64}$"}
+        }
+      }
+    },
+    "anomalies": {"type": "array", "items": {"type": "object", "additionalProperties": false, "required": ["id", "source", "declared", "observed", "disposition"], "properties": {"id": {"type": "string", "minLength": 4}, "source": {"type": "string"}, "declared": {"type": "integer", "minimum": 0}, "observed": {"type": "integer", "minimum": 0}, "disposition": {"enum": ["COUNT_MISMATCH_RETAINED", "FORMAT_RECONCILED", "SOURCE_AMBIGUITY"]}}}},
+    "reconciliation": {"type": "object", "additionalProperties": false, "required": ["declared_total", "observed_total", "finding_total", "anomaly_total", "unmapped_total"], "properties": {"declared_total": {"type": "integer", "minimum": 0}, "observed_total": {"type": "integer", "minimum": 1}, "finding_total": {"type": "integer", "minimum": 1}, "anomaly_total": {"type": "integer", "minimum": 0}, "unmapped_total": {"const": 0}}}
+  },
+  "$defs": {
+    "countRecord": {"type": "object", "additionalProperties": false, "required": ["source", "source_format", "declared_critical", "declared_high", "observed_critical", "observed_high"], "properties": {"source": {"type": "string", "minLength": 4}, "source_format": {"enum": ["markdown", "yaml", "issue"]}, "declared_critical": {"type": "integer", "minimum": 0}, "declared_high": {"type": "integer", "minimum": 0}, "observed_critical": {"type": "integer", "minimum": 0}, "observed_high": {"type": "integer", "minimum": 0}}}
+  }
+}

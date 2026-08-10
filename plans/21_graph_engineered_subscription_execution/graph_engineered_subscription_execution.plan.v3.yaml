@@ -1,0 +1,87 @@
+plan_version: "3.0"
+id: graph_engineered_subscription_execution
+status: qa
+behavioral_base:
+  versions: ["1.0", "2.0"]
+  selection_algorithm: referenced_v1_v2_manifests_schemas_validators_contracts_prompts_plus_research_and_assessment
+  file_count: 45
+  sha256: 29369fd1cfce2a13aac39a3e5b27ed03b0a016cf500a7deb2828948fb082e755
+supersedes_versions: ["1.0", "2.0"]
+bootstrap:
+  validator: tools/validate_plan_v3.py
+  command: python3 plans/21_graph_engineered_subscription_execution/tools/validate_plan_v3.py
+  self_test_command: python3 plans/21_graph_engineered_subscription_execution/tools/validate_plan_v3.py --self-test
+contracts:
+  test_receipt: contracts/test_receipt.schema.v3.json
+  evidence_manifest: contracts/evidence_manifest.schema.v3.json
+  phase_ledger: contracts/phase_ledger.schema.v3.json
+  subtask_receipt: contracts/subtask_receipt.schema.v3.json
+  p0_contract_bundle: contracts/p0_contract_bundle.schema.v3.json
+  assurance_contract: contracts/assurance_contract.schema.v3.json
+  external_trust: contracts/external_trust.schema.v3.json
+  sandbox_engine_registry: contracts/sandbox_engine_registry.schema.v3.json
+  sandbox_assurance: contracts/sandbox_assurance.schema.v3.json
+effective_graph_overrides:
+  P0_contract_bundle:
+    schema_ref: contracts/p0_contract_bundle.schema.v3.json
+    writer: P0
+    readers: [P1, P2, P4, P5, P6]
+    required_components: [baseline_v1, assurance_v3]
+  artifact_contract_registry:
+    producer: P1
+    consumers: [PHASE_CONTROLLER, P2, P3, P4, P5, P6]
+    coverage: every_effective_node_authorized_output
+    entry_fields: [artifact_id, resolver, media_type, schema_ref, source_path_template]
+  trust_prerequisites:
+    owner: EXTERNAL_OPERATOR
+    mutable_by_phases: false
+    required_before: P2
+    absence_route: PAUSED_PREREQUISITE
+    absence_failure_class: EXTERNAL_FACT_BLOCK
+  compiled_evidence_sources:
+    test_path_template: controller_evidence_root/{run_id}/{node_id}/tests/{test_id}.receipt.v3.json
+    artifact_paths_from: artifact_contract_registry
+    ledger_path_template: controller_evidence_root/{run_id}/{node_id}/ledgers/{subtask_id}.receipt.v3.json
+    root_owner: PHASE_CONTROLLER_SERVICE
+    model_write_access: false
+  resume_store:
+    owner: PHASE_CONTROLLER
+    engine: sqlite
+    transaction: BEGIN_IMMEDIATE_COMPARE_AND_SWAP
+    unique_keys: [continuation_id, command_id, authorization_id]
+    consume_before_activation: true
+    cold_process_test: true
+required_subtask_ids:
+  P0: [repository-inventory, historical-census, coverage-denominator, baseline-contract, assurance-addendum, evidence-commit]
+  P1: [ir-schema, compiler, registry-resolver, static-mutations, self-compile, evidence-commit]
+  P2: [adapter-build, claude-capability, codex-capability, sandbox-profile-proof, claude-canary, codex-canary, evidence-commit]
+  P3: [runtime-state, checkpoint-store, atomic-resume-consume, crash-matrix, evidence-commit]
+  P4: [status-migration, adapter-migration, policy-migration, regression-suite, evidence-commit]
+  P5: [generator-run, deterministic-checks, isolated-judges, verdict-reducer, repair-loop, evidence-commit]
+  P6: [static-graph, full-paths, guard-boundaries, fault-injection, live-three-unit, cold-resume, four-judges, historical-matrix, independent-recompute, supersession, evidence-commit]
+prompt_addenda:
+  P0: prompts/v3/P0_trust_and_composite_contract.addendum.v3.md
+  P1: prompts/v3/P1_effective_graph_compiler.addendum.v3.md
+  P2: prompts/v3/P2_signed_execution_evidence.addendum.v3.md
+  P3: prompts/v3/P3_atomic_resume_store.addendum.v3.md
+  P4: prompts/v3/P4_composite_state_migration.addendum.v3.md
+  P5: prompts/v3/P5_signed_evaluator_evidence.addendum.v3.md
+  P6: prompts/v3/P6_provenance_release.addendum.v3.md
+  P_ALL: prompts/v3/P_ALL_graph_orchestrator.addendum.v3.md
+assurance_rules:
+  test_receipts: [signed_by_pinned_controller_test_key, semantic_schema_valid, exact_compiled_test_id_and_subject, exit_zero, all_assertions_pass, source_bytes_recomputed]
+  artifact_receipts: [exact_compiler_resolver, unique_source_ownership, source_bytes_recomputed, media_type_valid, declared_schema_valid]
+  sandbox: [externally_signed_engine_registry, executable_allowlisted_binary, existing_resolved_roots, signed_executed_probe_receipts, no_model_writable_trust_or_evidence_root]
+  ledger: [compiled_denominator, exact_receipt_per_subtask, output_bytes_recomputed, admitted_event_id_bound, evidence_manifest_id_bound]
+  resume: [external_signed_authorization, sqlite_atomic_compare_and_swap, durable_unique_consumption, activation_after_commit_only]
+  lifecycle: [composite_P0_state_consumed_by_P4, base_contract_hash_recomputed, exact_four_state_observed_unit_vocabulary]
+new_invariants:
+  - Source existence and hashing are necessary but not sufficient; every passing test is a semantically valid signed deterministic-runner receipt bound to the compiled subject and current run.
+  - Evidence and trust roots are provisioned outside every model workspace by a distinct external authority; P0 records them but cannot create, repair, or bless them, and absence pauses before P2.
+  - Resume consumption is a durable SQLite uniqueness and generation compare-and-swap transaction committed before activation, so two callers sharing one snapshot cannot both succeed.
+  - The effective graph applies every overlay in memory, then reruns ownership, reachability, prompt mapping, state-port, registry, denominator, and output-collision validation before execution.
+  - Every inherited behavioral byte from versions 1 and 2 is selected by a fixed algorithm and bound by one canonical bundle digest.
+review_protocol:
+  independent_reviewers: 3
+  exit_rule: Approve version 3 only after all three reviewers independently report zero unresolved Critical and High findings against identical frozen bytes.
+  next_failure_disposition: Any Critical or High finding leaves v3 unapproved and is reported without further in-place repair.

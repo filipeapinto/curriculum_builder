@@ -1,0 +1,12 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "p0_contract_bundle.schema.v1.json",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["baseline_contract", "historical_findings", "coverage_denominator"],
+  "properties": {
+    "baseline_contract": {"$ref": "baseline_contract.schema.v1.json"},
+    "historical_findings": {"$ref": "historical_findings.schema.v1.json"},
+    "coverage_denominator": {"$ref": "coverage_denominator.schema.v1.json"}
+  }
+}

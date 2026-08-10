@@ -1,0 +1,11 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema", "$id": "sandbox_root_evidence.schema.v2.json",
+  "type": "object", "additionalProperties": false,
+  "required": ["version", "profile_sha256", "resolved_roots", "resolved_roots_digest", "escape_probe_results"],
+  "properties": {
+    "version": {"const": "2.0"}, "profile_sha256": {"$ref": "#/$defs/sha"},
+    "resolved_roots": {"type": "array", "minItems": 2, "uniqueItems": true, "items": {"type": "object", "additionalProperties": false, "required": ["path", "purpose", "read", "write"], "properties": {"path": {"type": "string", "pattern": "^/[^\\u0000]+$"}, "purpose": {"type": "string"}, "read": {"type": "boolean"}, "write": {"type": "boolean"}}}},
+    "resolved_roots_digest": {"$ref": "#/$defs/sha"},
+    "escape_probe_results": {"type": "array", "minItems": 7, "items": {"type": "object", "additionalProperties": false, "required": ["id", "status", "source_path", "source_size", "evidence_hash"], "properties": {"id": {"enum": ["relative", "absolute", "traversal", "symlink", "mount", "network", "credential"]}, "status": {"const": "DENIED"}, "source_path": {"type": "string", "minLength": 1}, "source_size": {"type": "integer", "minimum": 1}, "evidence_hash": {"$ref": "#/$defs/sha"}}}}
+  }, "$defs": {"sha": {"type": "string", "pattern": "^[a-f0-9]{64}$"}}
+}

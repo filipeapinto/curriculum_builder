@@ -1,0 +1,199 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://example.invalid/curriculum_builder/run_lifecycle.schema.v1.json",
+  "title": "Run lifecycle — the one authoritative record of what a run did and where it stopped",
+  "description": "A run root that carries only per-unit directories states nothing about the run: whether it finished, why it stopped, what is left, or whether it can be resumed. Every field here exists because inferring it from directory contents is what made `outputs/arduino_kit_run_v2` read as complete when thirty-one of thirty-five units had never been attempted. `COMPLETE` is reachable only through workbook assembly with full manifest coverage.",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "run_status",
+    "manifest_unit_count",
+    "manifest_unit_ids",
+    "completed_unit_ids",
+    "blocked_unit_ids",
+    "failed_unit_ids",
+    "remaining_unit_ids",
+    "workbook_assembled",
+    "updated_at"
+  ],
+  "properties": {
+    "run_status": {
+      "description": "IN_PROGRESS while units remain and no stop has been declared. PARTIAL, INTERRUPTED and BLOCKED are stated decisions, never inferred. COMPLETE is written only by workbook assembly.",
+      "enum": [
+        "IN_PROGRESS",
+        "PARTIAL",
+        "INTERRUPTED",
+        "BLOCKED",
+        "COMPLETE"
+      ]
+    },
+    "manifest_unit_count": {
+      "type": "integer",
+      "minimum": 0
+    },
+    "manifest_unit_ids": {
+      "type": "array",
+      "items": {
+        "type": "string",
+        "pattern": "^L[0-9]{2,3}$"
+      }
+    },
+    "completed_unit_ids": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      }
+    },
+    "blocked_unit_ids": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      }
+    },
+    "failed_unit_ids": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      }
+    },
+    "remaining_unit_ids": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      }
+    },
+    "unit_states": {
+      "description": "The terminal_state each attempted unit's own acceptance.json recorded.",
+      "type": "object",
+      "additionalProperties": {
+        "type": "string"
+      }
+    },
+    "current_unit": {
+      "type": [
+        "string",
+        "null"
+      ]
+    },
+    "next_unit": {
+      "type": [
+        "string",
+        "null"
+      ]
+    },
+    "terminal_reason": {
+      "description": "Required whenever the run has stopped for a stated reason — PARTIAL, INTERRUPTED or BLOCKED. A run that stopped without one is a run whose stop was never decided.",
+      "type": "string",
+      "minLength": 20
+    },
+    "resumable_checkpoint": {
+      "type": [
+        "object",
+        "null"
+      ],
+      "additionalProperties": false,
+      "required": [
+        "unit_id",
+        "hashes"
+      ],
+      "properties": {
+        "unit_id": {
+          "type": "string"
+        },
+        "hashes": {
+          "type": "object",
+          "additionalProperties": {
+            "type": "string"
+          }
+        }
+      }
+    },
+    "manifest_sha256": {
+      "type": "string",
+      "pattern": "^[a-f0-9]{64}$"
+    },
+    "prompt_sha256": {
+      "type": "string",
+      "pattern": "^[a-f0-9]{64}$"
+    },
+    "workbook_assembled": {
+      "type": "boolean"
+    },
+    "workbook_coverage": {
+      "type": [
+        "object",
+        "null"
+      ],
+      "additionalProperties": false,
+      "required": [
+        "expected",
+        "included"
+      ],
+      "properties": {
+        "expected": {
+          "type": "integer"
+        },
+        "included": {
+          "type": "integer"
+        }
+      }
+    },
+    "started_at": {
+      "type": "string"
+    },
+    "updated_at": {
+      "type": "string"
+    },
+    "closed_at": {
+      "type": [
+        "string",
+        "null"
+      ]
+    }
+  },
+  "allOf": [
+    {
+      "if": {
+        "properties": {
+          "run_status": {
+            "enum": [
+              "PARTIAL",
+              "INTERRUPTED",
+              "BLOCKED"
+            ]
+          }
+        },
+        "required": [
+          "run_status"
+        ]
+      },
+      "then": {
+        "required": [
+          "terminal_reason"
+        ]
+      }
+    },
+    {
+      "if": {
+        "properties": {
+          "run_status": {
+            "const": "COMPLETE"
+          }
+        },
+        "required": [
+          "run_status"
+        ]
+      },
+      "then": {
+        "properties": {
+          "workbook_assembled": {
+            "const": true
+          },
+          "remaining_unit_ids": {
+            "maxItems": 0
+          }
+        }
+      }
+    }
+  ]
+}

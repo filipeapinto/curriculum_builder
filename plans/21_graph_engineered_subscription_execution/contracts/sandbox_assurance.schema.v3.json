@@ -1,0 +1,7 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema", "$id": "sandbox_assurance.schema.v3.json",
+  "type": "object", "additionalProperties": false,
+  "required": ["selected_engine", "profile_path", "profile_sha256", "resolved_roots", "probe_receipt_path", "probe_receipt_sha256", "probe_receipt_size"],
+  "properties": {"selected_engine": {"enum": ["sandbox-exec", "container", "vm"]}, "profile_path": {"type": "string", "pattern": "^/"}, "profile_sha256": {"$ref": "#/$defs/sha"}, "resolved_roots": {"type": "array", "minItems": 2, "uniqueItems": true, "items": {"type": "object", "additionalProperties": false, "required": ["path", "purpose", "read", "write"], "properties": {"path": {"type": "string", "pattern": "^/"}, "purpose": {"enum": ["staged_input", "controller_output", "cli_binary", "temporary", "credential_broker"]}, "read": {"type": "boolean"}, "write": {"type": "boolean"}}}}, "probe_receipt_path": {"type": "string", "pattern": "^/"}, "probe_receipt_sha256": {"$ref": "#/$defs/sha"}, "probe_receipt_size": {"type": "integer", "minimum": 1}},
+  "$defs": {"sha": {"type": "string", "pattern": "^[a-f0-9]{64}$"}}
+}

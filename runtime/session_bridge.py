@@ -10,7 +10,6 @@ from __future__ import annotations
 import argparse
 from datetime import date, datetime, timezone
 import hashlib
-import html
 import json
 from pathlib import Path
 import shutil
@@ -22,11 +21,16 @@ from urllib.request import Request, urlopen
 import jsonschema
 import yaml
 
-from .checks import check_receipts, pdf_page_count, rasterize_and_check_nonblank
+from . import pdf_inspect, run_state
+from .checks import (CheckFailure, bloom_report, check_claim_entailment, check_derivation,
+                     check_receipts, pdf_page_count, rasterize_and_check_nonblank,
+                     readability_problems, required_checks_for)
 from .checkpoint import Checkpoints
 from .controller import CurriculumRuntime, RuntimeFailure
 from .io import atomic_json, require_internal_output, sha256_file
+from .lesson_render import child_facing_text, render_unit
 from .logger import ExecutionLogger
+from .visual_maps import regenerate_assets
 
 
 MODEL_ID = "gpt-5.6-sol"
@@ -44,23 +48,6 @@ def _find_seed(curriculum: Path, lab_id: str) -> Path:
     if len(candidates) != 1:
         raise RuntimeFailure("PRECONDITION-DOMAIN-SEED", f"expected one unit seed, found {candidates}")
     return candidates[0]
-
-
-def _svg(path: Path, title: str, rows: list[str], *, root: Path) -> None:
-    escaped = [html.escape(str(row)) for row in rows]
-    height = 150 + 70 * len(escaped)
-    parts = [f'<svg xmlns="http://www.w3.org/2000/svg" width="1400" height="{height}" viewBox="0 0 1400 {height}">',
-             '<rect width="1400" height="100%" fill="white"/>',
-             f'<text x="70" y="70" font-family="Helvetica" font-size="40" font-weight="bold">{html.escape(title)}</text>']
-    for index, row in enumerate(escaped):
-        y = 140 + index * 70
-        parts.append(f'<circle cx="100" cy="{y}" r="16" fill="white" stroke="#17365D" stroke-width="5"/>')
-        parts.append(f'<text x="145" y="{y + 12}" font-family="Helvetica" font-size="30">{row}</text>')
-        if index + 1 < len(escaped):
-            parts.append(f'<line x1="100" y1="{y + 20}" x2="100" y2="{y + 50}" stroke="#C9472F" stroke-width="5" stroke-dasharray="12 12"/>')
-            parts.append(f'<text x="125" y="{y + 48}" font-family="Helvetica" font-size="19" fill="#C9472F">NOT CONNECTED</text>')
-    parts.append('</svg>')
-    path.write_text("\n".join(parts) + "\n", encoding="utf-8")
 
 
 def prepare(engine: Path, curriculum_value: Path, lab_id: str, output: Path) -> dict[str, Any]:
@@ -105,9 +92,6 @@ def prepare(engine: Path, curriculum_value: Path, lab_id: str, output: Path) -> 
             copies.append(_copy(dependency, inputs / dependency_name))
     for name in ("unit_prose.v1.md", "pedagogy.v1.md"):
         copies.append(_copy(engine / "meta_prompt/assets" / name, inputs / name))
-    photo_candidates = sorted(curriculum.glob("*.jpg"))
-    if photo_candidates:
-        copies.append(_copy(photo_candidates[0], output / "assets/official_reference.jpg"))
     atomic_json(output / "input_freeze.json", {"files": copies, "unit": unit,
                 "runtime_hashes": [{"path": str(path), "sha256": sha256_file(path)}
                                    for path in sorted((engine / "runtime").glob("*.py"))]}, root=output)
@@ -141,18 +125,7 @@ def prepare(engine: Path, curriculum_value: Path, lab_id: str, output: Path) -> 
             raise RuntimeFailure("SOURCE-FETCH-FAILED", str(error)) from error
     atomic_json(output / "sources/source_manifest.json", {"sources": source_receipts}, root=output)
 
-    assets = output / "assets"
-    assets.mkdir(exist_ok=True)
-    path_rows = [item.get("name", item.get("coordinate", "point")) for item in seed_data.get("terminals", [])]
-    if not path_rows:
-        path_rows = [str(item) for item in seed_data.get("legal_coordinates", [])]
-    _svg(assets / "path_map.svg", f"{lab_id} disconnected teaching path", path_rows, root=output)
-    _svg(assets / "evidence_card.svg", f"{lab_id} evidence card", ["Trace each dashed teaching link", "Tick each place you can identify", "Keep every connection open"], root=output)
-    asset_records = []
-    for asset in sorted(assets.iterdir()):
-        if asset.is_file():
-            asset_records.append({"embedded_as": str(asset.relative_to(output)), "sha256": sha256_file(asset)})
-    atomic_json(output / "assets/manifest.json", {"assets": asset_records}, root=output)
+    _, unresolved_roles = regenerate_assets(unit, curriculum, output, unit_id=lab_id, seed=seed_data)
 
     decision = {
         "task_id": f"{lab_id}-in-session-authoring", "task_class": "final_acceptance",
@@ -181,6 +154,7 @@ def prepare(engine: Path, curriculum_value: Path, lab_id: str, output: Path) -> 
         "authorized_outputs": ["workers/domain.json", "workers/lab.json"],
         "output_schemas": ["inputs/domain.schema.json", "inputs/lab.schema.json"],
         "unit": unit, "model_start_id": model_start,
+        "unresolved_visual_roles": unresolved_roles,
         "constraints": ["fully disconnected and unpowered", "no connector polarity", "no live measurement",
                         "derive prose from domain.json", "use only shipped assets and exact recorded hashes",
                         "output is a draft pending downstream human review"],
@@ -199,32 +173,49 @@ def prepare(engine: Path, curriculum_value: Path, lab_id: str, output: Path) -> 
 
 
 def _markdown(lab: dict[str, Any]) -> str:
-    identity, pedagogy, sequence = lab["identity"], lab["pedagogy"], lab["sequence"]
-    lines = [f"# {identity['unit_id']} — {identity['title']}", "", "*Draft pending downstream human review.*", "",
-             identity["subject_job_sentence"], "", "## What I will learn", ""]
-    for objective in pedagogy["learning_objectives"]:
-        lines.append(f"- {objective['success_criterion']}")
-    labels = [("Engage", sequence["engage"]), ("Explore", sequence["explore"]),
-              ("Explain", sequence["explain"]), ("Elaborate", sequence["elaborate"]),
-              ("Evaluate", sequence["evaluate"])]
-    for title, value in labels:
-        lines.extend(["", f"## {title}", "", json.dumps(value, ensure_ascii=False, indent=2)])
-    lines.extend(["", "## Identification", "", json.dumps(lab["content"]["identification"], ensure_ascii=False, indent=2),
-                  "", "## Troubleshooting", "", json.dumps(lab["content"]["troubleshooting"], ensure_ascii=False, indent=2),
-                  "", "## Adult safety verification", "", json.dumps(lab["safety"], ensure_ascii=False, indent=2),
-                  "", "## Visuals", ""])
-    for visual in lab["visuals"]:
-        embedded_name = Path(visual["provenance"]["embedded_as"]).name
-        lines.extend([f"### {visual['role'].replace('_', ' ').title()}", "",
-                      f"![{visual['role']}](assets/{embedded_name})", ""])
-    return "\n".join(lines) + "\n"
+    return render_unit(lab)
 
 
-def finalize(engine: Path, output: Path) -> dict[str, Any]:
+CROSS_FAMILY_BYPASS = "USER_AUTHORIZED_IN_SESSION_MODEL; cross-family judge bypassed"
+VISUAL_REVIEW_FILE = "review/visual_review.json"
+
+
+def _resolve_curriculum(engine: Path, output: Path, curriculum: Path | None) -> Path:
+    if curriculum is not None:
+        return Path(curriculum)
+    meta = output.parent / "meta_execution_state.json"
+    if not meta.is_file():
+        raise RuntimeFailure("PRECONDITION-CURRICULUM-UNRESOLVED",
+                             f"no curriculum given and no {meta} to read one from")
+    return Path(json.loads(meta.read_text())["authorized_roots"]["curriculum"])
+
+
+def finalize(engine: Path, output: Path, *, reentry_reason: str | None = None,
+             curriculum: Path | None = None) -> dict[str, Any]:
+    """Validate, render and score one unit against the real required check set.
+
+    Fail-closed: every id in `checks.required_checks_for` gets one explicit
+    `PASS`/`FAIL`/`NOT_RUN_BLOCKED` entry, and anything other than `PASS` on a blocking
+    check keeps the unit out of `ACCEPTED`. `reentry_reason` makes a second finalization
+    of an already-finalized root legal — it opens a new logger `ACT` rather than reusing
+    the original run's closed one, and clears `document/` rather than assuming it is absent.
+    """
     output = output.resolve()
+    engine = Path(engine).resolve()
+    curriculum = _resolve_curriculum(engine, output, curriculum)
     logger = ExecutionLogger(output, engine / "schemas/execution_log.schema.v2.json")
     pending = json.loads((output / "worker_request.json").read_text())
-    start_id = pending["model_start_id"]
+    if reentry_reason:
+        # A new ACT, never the original run's already-closed model_start_id.
+        start_id = logger.start(action="Re-finalize an already-finalized unit against corrected inputs",
+                                action_kind="resume",
+                                authorized_paths=[str(output / "workers/domain.json"),
+                                                  str(output / "workers/lab.json")],
+                                trigger=reentry_reason,
+                                expected="schema-valid domain.json and lab.json")
+    else:
+        start_id = pending["model_start_id"]
+
     domain_path, lab_path = output / "workers/domain.json", output / "workers/lab.json"
     if not domain_path.is_file() or not lab_path.is_file():
         raise RuntimeFailure("MODEL-OUTPUT-MISSING", "authorized model outputs are missing")
@@ -233,14 +224,26 @@ def finalize(engine: Path, output: Path) -> dict[str, Any]:
              "worker_request": sha256_file(output / "worker_request.json")}
     if before != after:
         raise RuntimeFailure("RESUME-HASH-MISMATCH", f"{before} != {after}")
+
+    inventory = required_checks_for(engine, curriculum)
+    results: dict[str, dict[str, Any]] = {
+        check_id: {"result": "NOT_RUN_BLOCKED", "reason": "the check did not reach its subject",
+                   "blocking": meta["blocking"], "source": meta["source"]}
+        for check_id, meta in inventory["required"].items()}
+
+    def record(check_id: str, result: str, reason: str = "", **extra: Any) -> None:
+        results[check_id].update({"result": result, "reason": reason, **extra})
+
     domain = json.loads(domain_path.read_text())
     lab = json.loads(lab_path.read_text())
     jsonschema.Draft202012Validator(json.loads((output / "inputs/domain.schema.json").read_text())).validate(domain)
     jsonschema.Draft202012Validator(json.loads((output / "inputs/lab.schema.json").read_text())).validate(lab)
-    if lab["domain"] != domain:
-        raise RuntimeFailure("DOC-DERIVED-FROM-SOURCE", "lab domain is not byte-equivalent to model domain output")
+    record("LAB-SCHEMA-VALID", "PASS",
+           "the unit validates against lab.schema.v4.json and its domain block against "
+           "this curriculum's own domain schema")
     logger.complete(start_id, result="in-session model outputs received and schema-valid",
                     notes=f"domain={sha256_file(domain_path)} lab={sha256_file(lab_path)}")
+
     verifier_start = logger.start(action="Execute copied deterministic domain verifier",
                                   action_kind="command", authorized_paths=[str(output)],
                                   trigger="schema-valid unit domain",
@@ -253,20 +256,41 @@ def finalize(engine: Path, output: Path) -> dict[str, Any]:
                     expected="copied verifier exits zero")
         raise RuntimeFailure("DOMAIN-VERIFIER-FAILED", verifier.stdout + verifier.stderr)
     logger.complete(verifier_start, result=verifier.stdout.strip())
+    record("DOMAIN-VERIFIER", "PASS", verifier.stdout.strip()[:400])
+
     receipt_result = check_receipts({"visuals": {"receipts": [item["provenance"] for item in lab["visuals"]]}}, output)
-    result_dir = output / "results"
-    atomic_json(result_dir / "unit_checks.json", {"LAB-SCHEMA-VALID": "PASS",
-                "DOMAIN-SCHEMA-VALID": "PASS", "DOMAIN-VERIFIER": "PASS",
-                "RECEIPT-HASH-RESOLVES": "PASS", "receipt_results": receipt_result,
-                "forced_resume_hashes_before": before, "forced_resume_hashes_after": after}, root=output)
+    record("RECEIPT-HASH-RESOLVES", "PASS",
+           f"{len(receipt_result)} receipts recomputed from the bytes they name")
+
+    unresolved = (lab.get("content") or {}).get("unresolved_visual_roles") or []
+    if unresolved:
+        record("VISUAL-ROLES-COMPLETE", "FAIL",
+               "unresolved visual role(s): " + "; ".join(entry["role"] for entry in unresolved),
+               unresolved_visual_roles=unresolved)
+    else:
+        record("VISUAL-ROLES-COMPLETE", "PASS",
+               "every visual role the manifest declares resolved to a shipped, receipted asset")
+
+    try:
+        derived = check_derivation(lab)
+        entailed = check_claim_entailment(lab, output)
+        record("DOC-DERIVED-FROM-SOURCE", "PASS",
+               f"{len(derived)} rendered facts resolve to a domain pointer; "
+               f"{len(entailed)} sourced claims resolve to text that supports them")
+    except CheckFailure as error:
+        record("DOC-DERIVED-FROM-SOURCE", "FAIL", str(error)[:800])
+
     render_start = logger.start(action="Render selected unit draft to shipped PDF", action_kind="render",
                                 authorized_paths=[str(output)], trigger="validated model unit",
                                 expected="Pandoc Typst PDF")
     document = output / "document"
+    if reentry_reason:
+        shutil.rmtree(document, ignore_errors=True)
     document.mkdir()
     shutil.copytree(output / "assets", document / "assets")
     markdown = document / f"{lab['identity']['unit_id']}.md"
-    markdown.write_text(_markdown(lab), encoding="utf-8")
+    body = _markdown(lab)
+    markdown.write_text(body, encoding="utf-8")
     pdf = document / f"{lab['identity']['unit_id']}.pdf"
     render = subprocess.run(["pandoc", str(markdown), "--resource-path", str(document),
                              "--pdf-engine=typst", "-V", "mainfont=Helvetica",
@@ -277,22 +301,95 @@ def finalize(engine: Path, output: Path) -> dict[str, Any]:
         raise RuntimeFailure("PDF-RENDER-FAILED", render.stderr)
     pages = rasterize_and_check_nonblank(pdf, output / "document/page_renders", dpi=200)
     logger.complete(render_start, result=f"rendered {len(pages)} nonblank PDF pages")
+
+    child_text = child_facing_text(body)
+    readability = readability_problems(child_text, engine / "policy/calibration.v1.yaml")
+    record("TEXT-READABILITY-BAND", "PASS" if not readability else "FAIL",
+           "; ".join(readability) or f"{len(child_text.split())} words of rendered child-facing "
+                                     "text score inside the declared band")
+    flags = bloom_report(lab, engine / "policy/calibration.v1.yaml")
+    record("TEXT-BLOOM-VERBS", "PASS",
+           f"{len(flags)} disagreement(s) recorded; this check flags and never blocks",
+           flags=flags)
+
+    try:
+        legible = pdf_inspect.text_legible(pdf)
+        record("PDF-TEXT-LEGIBLE", "PASS" if not legible["problems"] else "FAIL",
+               "; ".join(legible["problems"]) or
+               f"smallest rendered line box is {legible['smallest']}pt and no line is clipped")
+    except CheckFailure as error:
+        record("PDF-TEXT-LEGIBLE", "NOT_RUN_BLOCKED", str(error)[:400])
+    try:
+        assets = pdf_inspect.assets_resolve(pdf, lab["visuals"], output,
+                                            output / "results/pdf_images")
+        record("PDF-ASSET-RESOLVES", "PASS" if not assets["problems"] else "FAIL",
+               "; ".join(assets["problems"]) or
+               f"{len(assets['declared'])} receipted visuals resolve against the shipped PDF")
+    except CheckFailure as error:
+        record("PDF-ASSET-RESOLVES", "NOT_RUN_BLOCKED", str(error)[:400])
+
+    review_path = output / VISUAL_REVIEW_FILE
+    review_path.parent.mkdir(parents=True, exist_ok=True)
+    if not review_path.is_file():
+        review_path.write_text(json.dumps(
+            pdf_inspect.visual_review_template(len(pages), lab["visuals"]), indent=2) + "\n",
+            encoding="utf-8")
+    verdict = json.loads(review_path.read_text())
+    review_problems = pdf_inspect.visual_review_problems(verdict)
+    record("PDF-VISUAL-REVIEW",
+           "PASS" if not review_problems else ("FAIL" if verdict.get("reviewed") else "NOT_RUN_BLOCKED"),
+           "; ".join(review_problems)[:800] or
+           f"reviewer {verdict.get('reviewer')} answered every criterion for {len(pages)} pages "
+           f"and {len(lab['visuals'])} visuals", verdict_path=VISUAL_REVIEW_FILE)
+
+    atomic_json(output / "results/unit_checks.json", {
+        "unit_id": lab["identity"]["unit_id"],
+        "checks_version": inventory["checks_version"],
+        "checks": results,
+        "receipt_results": receipt_result,
+        "forced_resume_hashes_before": before, "forced_resume_hashes_after": after}, root=output)
+
+    blocking_failures = sorted(check_id for check_id, entry in results.items()
+                               if entry["blocking"] and entry["result"] != "PASS")
+    bypassed = CROSS_FAMILY_BYPASS in pending.get("routing_divergence", CROSS_FAMILY_BYPASS)
+
+    if results["VISUAL-ROLES-COMPLETE"]["result"] != "PASS":
+        terminal_state = "BLOCKED"
+        claim = ("a visual role the curriculum's manifest requires has no verified asset: "
+                 + "; ".join(f"{entry['role']} — {entry['reason']}" for entry in unresolved))
+    elif blocking_failures:
+        terminal_state = "BLOCKED"
+        claim = "blocking checks did not pass: " + ", ".join(blocking_failures)
+    elif bypassed:
+        terminal_state = "ACCEPTED_PENDING_REVIEW"
+        claim = ("every blocking check passed, but a cross-family judge was bypassed; "
+                 "a downstream human step must resolve this before the unit is accepted")
+    else:
+        terminal_state = "ACCEPTED"
+        claim = "every required check passed"
+
     terminal_start = logger.start(action="Record controller terminal decision for selected unit",
                                   action_kind="terminal_decision", authorized_paths=[str(output)],
-                                  trigger="all executed blocking checks passed",
-                                  expected="ACCEPTED draft with divergence disclosure")
-    summary = {"terminal_state": "ACCEPTED", "unit_id": lab["identity"]["unit_id"],
-               "claim": "every executed automated check passed",
+                                  trigger=f"{len(results)} required checks scored",
+                                  expected="a terminal state matching what the checks recorded")
+    summary = {"terminal_state": terminal_state, "unit_id": lab["identity"]["unit_id"],
+               "claim": claim,
                "draft_status": "pending downstream human review", "pdf": str(pdf),
                "pdf_sha256": sha256_file(pdf), "page_count": pdf_page_count(pdf),
                "page_renders": [{"path": str(page), "sha256": sha256_file(page)} for page in pages],
-               "routing_divergence": "USER_AUTHORIZED_IN_SESSION_MODEL; cross-family judge bypassed",
+               "routing_divergence": CROSS_FAMILY_BYPASS,
+               "checks": {check_id: entry["result"] for check_id, entry in results.items()},
+               "blocking_failures": blocking_failures,
+               "unresolved_visual_roles": unresolved,
+               "visual_review": {"path": VISUAL_REVIEW_FILE, "problems": review_problems},
+               "reentry_reason": reentry_reason,
                "resume_hashes_preserved": before == after}
     atomic_json(output / "acceptance.json", summary, root=output)
-    logger.complete(terminal_start, result="selected unit accepted as draft under user-authorized divergence")
+    logger.complete(terminal_start, result=f"unit recorded {terminal_state}")
     audit = logger.audit()
     summary["execution_log_audit"] = audit
     atomic_json(output / "acceptance.json", summary, root=output)
+    run_state.record_unit_transition(output.parent, summary["unit_id"], terminal_state)
     return summary
 
 
@@ -303,10 +400,14 @@ def main() -> int:
     parser.add_argument("--curriculum", type=Path, default=Path("curricula/arduino_kit"))
     parser.add_argument("--lab-id", default="L01")
     parser.add_argument("--output-root", type=Path, required=True)
+    parser.add_argument("--reentry-reason", default=None,
+                        help="re-finalize an already-finalized unit, stating why")
     args = parser.parse_args()
     engine = args.engine.resolve()
     curriculum = args.curriculum if args.curriculum.is_absolute() else engine / args.curriculum
-    value = prepare(engine, curriculum, args.lab_id, args.output_root) if args.action == "prepare" else finalize(engine, args.output_root)
+    value = (prepare(engine, curriculum, args.lab_id, args.output_root) if args.action == "prepare"
+             else finalize(engine, args.output_root, reentry_reason=args.reentry_reason,
+                           curriculum=curriculum))
     print(json.dumps(value, indent=2))
     return 0
 

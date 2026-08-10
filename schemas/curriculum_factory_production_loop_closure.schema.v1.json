@@ -1,0 +1,177 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "curriculum_factory_production_loop_closure.schema.v1.json",
+  "title": "Curriculum Factory Production Loop Closure Plan",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "plan_version",
+    "schema",
+    "id",
+    "name",
+    "status",
+    "word_budget",
+    "scope_lock",
+    "overall_goal",
+    "operating_rules",
+    "phases",
+    "red_team_protocol",
+    "review_state"
+  ],
+  "properties": {
+    "plan_version": {"const": "1.0"},
+    "schema": {"const": "schemas/curriculum_factory_production_loop_closure.schema.v1.json"},
+    "id": {"const": "curriculum_factory_production_loop_closure"},
+    "name": {"type": "string", "minLength": 10},
+    "status": {"enum": ["draft", "red_team", "approved", "reset_required"]},
+    "word_budget": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["counting_rule", "original_words", "maximum_words", "current_words", "growth_percent", "gate"],
+      "properties": {
+        "counting_rule": {"type": "string", "minLength": 10},
+        "original_words": {"type": "integer", "minimum": 1},
+        "maximum_words": {"type": "integer", "minimum": 1},
+        "current_words": {"type": "integer", "minimum": 1},
+        "growth_percent": {"type": "number", "minimum": -100},
+        "gate": {"enum": ["pass", "stop_reset_required"]}
+      }
+    },
+    "scope_lock": {"$ref": "#/$defs/scope"},
+    "overall_goal": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["statement", "definition_of_success"],
+      "properties": {
+        "statement": {"type": "string", "minLength": 40},
+        "definition_of_success": {
+          "type": "array",
+          "minItems": 4,
+          "uniqueItems": true,
+          "items": {"type": "string", "minLength": 20}
+        }
+      }
+    },
+    "operating_rules": {
+      "type": "array",
+      "minItems": 5,
+      "uniqueItems": true,
+      "items": {"type": "string", "minLength": 15}
+    },
+    "phases": {
+      "type": "array",
+      "minItems": 2,
+      "uniqueItems": true,
+      "items": {"$ref": "#/$defs/phase"}
+    },
+    "red_team_protocol": {"$ref": "#/$defs/redTeamProtocol"},
+    "review_state": {"$ref": "#/$defs/reviewState"}
+  },
+  "$defs": {
+    "stringList": {
+      "type": "array",
+      "minItems": 1,
+      "uniqueItems": true,
+      "items": {"type": "string", "minLength": 8}
+    },
+    "scope": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["in_scope", "out_of_scope"],
+      "properties": {
+        "in_scope": {"$ref": "#/$defs/stringList"},
+        "out_of_scope": {"$ref": "#/$defs/stringList"}
+      }
+    },
+    "phase": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "id",
+        "name",
+        "goal",
+        "depends_on",
+        "scope",
+        "deliverables",
+        "definition_of_success",
+        "verification",
+        "stop_conditions"
+      ],
+      "properties": {
+        "id": {"type": "string", "pattern": "^P[0-9]+$"},
+        "name": {"type": "string", "minLength": 5},
+        "goal": {"type": "string", "minLength": 30},
+        "depends_on": {
+          "type": "array",
+          "uniqueItems": true,
+          "items": {"type": "string", "pattern": "^P[0-9]+$"}
+        },
+        "scope": {"$ref": "#/$defs/scope"},
+        "deliverables": {"$ref": "#/$defs/stringList"},
+        "definition_of_success": {"$ref": "#/$defs/stringList"},
+        "verification": {"$ref": "#/$defs/stringList"},
+        "stop_conditions": {"$ref": "#/$defs/stringList"}
+      }
+    },
+    "reviewLoop": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["reviewers", "independence", "coverage", "maximum_iterations", "iteration_rule", "exit_rule"],
+      "properties": {
+        "reviewers": {"type": "integer", "minimum": 1, "maximum": 3},
+        "independence": {"type": "string", "minLength": 20},
+        "coverage": {"type": "string", "minLength": 20},
+        "maximum_iterations": {"const": 3},
+        "iteration_rule": {"type": "string", "minLength": 20},
+        "exit_rule": {"type": "string", "minLength": 20}
+      }
+    },
+    "redTeamProtocol": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["severity", "phase_review", "whole_plan_review", "orchestrator_rule", "scope_and_size_rule"],
+      "properties": {
+        "severity": {
+          "type": "object",
+          "additionalProperties": false,
+          "required": ["critical", "high", "medium", "low"],
+          "properties": {
+            "critical": {"type": "string"},
+            "high": {"type": "string"},
+            "medium": {"type": "string"},
+            "low": {"type": "string"}
+          }
+        },
+        "phase_review": {"$ref": "#/$defs/reviewLoop"},
+        "whole_plan_review": {"$ref": "#/$defs/reviewLoop"},
+        "orchestrator_rule": {"type": "string", "minLength": 30},
+        "scope_and_size_rule": {"type": "string", "minLength": 30}
+      }
+    },
+    "reviewStageState": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["iterations_used", "unresolved_critical", "unresolved_high", "evidence"],
+      "properties": {
+        "iterations_used": {"type": "integer", "minimum": 0, "maximum": 3},
+        "unresolved_critical": {"type": "integer", "minimum": 0},
+        "unresolved_high": {"type": "integer", "minimum": 0},
+        "evidence": {
+          "type": "array",
+          "uniqueItems": true,
+          "items": {"type": "string", "minLength": 8}
+        }
+      }
+    },
+    "reviewState": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["phase_review", "whole_plan_review", "final_gate"],
+      "properties": {
+        "phase_review": {"$ref": "#/$defs/reviewStageState"},
+        "whole_plan_review": {"$ref": "#/$defs/reviewStageState"},
+        "final_gate": {"enum": ["pending", "approved", "blocked", "reset_required"]}
+      }
+    }
+  }
+}

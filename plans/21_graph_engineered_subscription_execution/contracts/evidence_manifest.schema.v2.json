@@ -1,0 +1,18 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema", "$id": "evidence_manifest.schema.v2.json",
+  "type": "object", "additionalProperties": false,
+  "required": ["version", "run_id", "node_id", "attempt", "graph_digest", "prompt_digest", "policy_digest", "schema_digest", "route_digest", "execution_contract_digest", "test_sources", "artifact_sources"],
+  "properties": {
+    "version": {"const": "2.0"}, "run_id": {"type": "string", "minLength": 8}, "node_id": {"type": "string", "pattern": "^P[0-6]$"}, "attempt": {"type": "integer", "minimum": 1},
+    "graph_digest": {"$ref": "#/$defs/sha"}, "prompt_digest": {"$ref": "#/$defs/sha"}, "policy_digest": {"$ref": "#/$defs/sha"}, "schema_digest": {"$ref": "#/$defs/sha"}, "route_digest": {"$ref": "#/$defs/sha"}, "execution_contract_digest": {"$ref": "#/$defs/sha"},
+    "test_sources": {"type": "array", "minItems": 1, "items": {"$ref": "#/$defs/testSource"}},
+    "artifact_sources": {"type": "array", "minItems": 1, "items": {"$ref": "#/$defs/artifactSource"}}
+  },
+  "$defs": {
+    "sha": {"type": "string", "pattern": "^[a-f0-9]{64}$"},
+    "repoPath": {"type": "string", "minLength": 1, "pattern": "^(?!/)(?!.*(?:^|/)\\.\\.(?:/|$))[A-Za-z0-9._{}:/-]+$"},
+    "file": {"type": "object", "additionalProperties": false, "required": ["path", "sha256", "size"], "properties": {"path": {"$ref": "#/$defs/repoPath"}, "sha256": {"$ref": "#/$defs/sha"}, "size": {"type": "integer", "minimum": 1}}},
+    "testSource": {"type": "object", "additionalProperties": false, "required": ["test_id", "status", "source"], "properties": {"test_id": {"type": "string", "pattern": "^P[0-6]-T[0-9]{2}$"}, "status": {"const": "PASS"}, "source": {"$ref": "#/$defs/file"}}},
+    "artifactSource": {"type": "object", "additionalProperties": false, "required": ["artifact_id", "resolved_files", "aggregate_sha256"], "properties": {"artifact_id": {"type": "string", "minLength": 4}, "resolved_files": {"type": "array", "minItems": 1, "items": {"$ref": "#/$defs/file"}}, "aggregate_sha256": {"$ref": "#/$defs/sha"}}}
+  }
+}

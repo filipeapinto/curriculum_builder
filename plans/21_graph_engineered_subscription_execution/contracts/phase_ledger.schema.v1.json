@@ -1,0 +1,11 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema", "$id": "phase_ledger.schema.v1.json",
+  "type": "object", "additionalProperties": false,
+  "required": ["version", "run_id", "node_id", "phase_attempt", "phase_key", "execution_contract_digest", "required_subtask_ids", "subtasks", "complete"],
+  "properties": {
+    "version": {"const": "1.0"}, "run_id": {"type": "string", "minLength": 8}, "node_id": {"type": "string", "pattern": "^P[0-9]+$"}, "phase_attempt": {"type": "integer", "minimum": 1}, "phase_key": {"type": "string", "pattern": "^[a-f0-9]{64}:P[0-9]+:[1-9][0-9]*$"}, "execution_contract_digest": {"$ref": "#/$defs/sha256"},
+    "required_subtask_ids": {"type": "array", "minItems": 1, "uniqueItems": true, "items": {"type": "string", "pattern": "^[A-Za-z0-9._-]{3,}$"}},
+    "subtasks": {"type": "array", "minItems": 1, "items": {"type": "object", "additionalProperties": false, "required": ["subtask_id", "idempotency_key", "input_digest", "output_hashes", "state"], "properties": {"subtask_id": {"type": "string", "pattern": "^[A-Za-z0-9._-]{3,}$"}, "idempotency_key": {"type": "string", "pattern": "^[a-f0-9]{64}:P[0-9]+:[1-9][0-9]*:[A-Za-z0-9._-]{3,}:[a-f0-9]{64}$"}, "input_digest": {"$ref": "#/$defs/sha256"}, "output_hashes": {"type": "object", "minProperties": 1, "additionalProperties": {"$ref": "#/$defs/sha256"}}, "state": {"enum": ["ABSENT", "INCOMPLETE", "COMMITTED"]}}}},
+    "complete": {"type": "boolean"}
+  }, "$defs": {"sha256": {"type": "string", "pattern": "^[a-f0-9]{64}$"}}
+}

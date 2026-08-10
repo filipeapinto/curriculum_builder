@@ -1,0 +1,88 @@
+{
+  "description": "Regions of this curriculum's verified photographs that a human has confirmed contain a named subject. A photographic visual role resolves only through an entry here: without one, the resolver has no evidence the subject is visibly present, and reusing the whole-kit inventory shot for a role about one part is the defect issue 003 records. Recorded under plans/runtime_integrity_remediation section 2's external photography prerequisite; each entry's verified_by names the human inspection that established it.",
+  "source_photographs": {
+    "official_kit_photo.jpg": {
+      "publisher": "ELEGOO",
+      "item_or_family": "UNO R3 Super Starter Kit",
+      "url": "https://www.elegoo.com/en-gb/products/elegoo-uno-r3-super-starter-kit",
+      "pixel_size": [
+        1500,
+        1500
+      ],
+      "shot_type": "whole-kit inventory flat-lay, every item disconnected"
+    }
+  },
+  "regions": [
+    {
+      "subject": "kit inventory",
+      "source": "official_kit_photo.jpg",
+      "crop_box": [
+        0,
+        0,
+        1500,
+        1500
+      ],
+      "verified_note": "The subject of this role is the kit itself, so the uncropped inventory flat-lay is the subject and needs no crop.",
+      "verified_by": "direct visual inspection, plans/runtime_integrity_remediation RIR-T01, 2026-08-08",
+      "subject_tokens": [
+        "kit",
+        "inventory",
+        "identification"
+      ]
+    },
+    {
+      "subject": "breadboard",
+      "source": "official_kit_photo.jpg",
+      "crop_box": [
+        0,
+        640,
+        1045,
+        985
+      ],
+      "verified_note": "Full-size solderless breadboard, legible: both power rails with their + and - markings, the centre trench, numbered columns 1-60 and lettered rows a-e / f-j.",
+      "verified_by": "direct visual inspection, plans/runtime_integrity_remediation RIR-T01, 2026-08-08",
+      "subject_tokens": [
+        "breadboard",
+        "board"
+      ]
+    },
+    {
+      "subject": "jumper wires",
+      "source": "official_kit_photo.jpg",
+      "crop_box": [
+        0,
+        1225,
+        735,
+        1500
+      ],
+      "verified_note": "Both wire types the unit teaches: the male-male jumper bundle with bare pin ends visible at both ends of each wire, and the male-female Dupont ribbon with its black housings.",
+      "verified_by": "direct visual inspection, plans/runtime_integrity_remediation RIR-T01, 2026-08-08",
+      "subject_tokens": [
+        "jumper",
+        "wire",
+        "wires"
+      ]
+    }
+  ],
+  "absent_subjects": [
+    {
+      "subject": "digital multimeter",
+      "finding": "No multimeter, meter probe or meter dial appears anywhere in official_kit_photo.jpg. All four quadrants were inspected at full resolution; the visible inventory is the power supply module, joystick, HC-SR04, relay, DHT11, RGB LED module, fan blade and DC motor, UNO R3, ULN2003 stepper driver, disc, prototype shield with mini breadboard, LEDs, transistors, photoresistors, electrolytic capacitor, active and passive buzzers, tactile buttons, one- and four-digit seven-segment displays, breadboard, 9V battery with barrel lead, DIP ICs, USB cable, IR remote, resistors, 10K potentiometer, LCD1602, jumper wires, servo, stepper motor and mounting hardware.",
+      "verified_by": "direct visual inspection, plans/runtime_integrity_remediation RIR-T01, 2026-08-08",
+      "subject_tokens": [
+        "meter",
+        "multimeter",
+        "dmm"
+      ]
+    },
+    {
+      "subject": "safe disconnected setup",
+      "finding": "official_kit_photo.jpg is an inventory flat-lay, not a photograph of an assembled-but-disconnected L01 setup. No region shows the source lead end, the module DC input and the candidate output location together, and reusing the whole-frame inventory shot for this role would be the oversized-unrelated-asset substitution issue 003 records.",
+      "verified_by": "direct visual inspection, plans/runtime_integrity_remediation RIR-T01, 2026-08-08",
+      "subject_tokens": [
+        "disconnected",
+        "setup"
+      ]
+    }
+  ]
+}

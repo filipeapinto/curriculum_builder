@@ -1,0 +1,20 @@
+review: whole_plan
+iteration: 1
+phase_clearance: plans/curriculum_factory_production_loop_closure/reviews/phase_review.iteration3.yaml
+plan_words_before: 3014
+reviewer: whole_plan_sme
+counts: {critical: 1, high: 2, medium: 0, low: 0}
+orchestrator_dispositions:
+  - finding: WP-01
+    decision: accepted
+    action: A canonical execution-contract digest is frozen in P0 and bound through capability proof, worker artifacts, checkpoints, resume, workbook coverage, and independent release audit.
+  - finding: WP-02
+    decision: accepted
+    action: P0 freezes both unit and workbook lifecycles; P3 and P5 implement their respective frozen subsets.
+  - finding: WP-03
+    decision: accepted
+    action: Every unit in the bounded full-manifest fixture must be factory-produced by live routed workers.
+result:
+  unresolved_critical: 0
+  unresolved_high: 0
+  next_action: Run whole-plan SME iteration 2 against the revised plan.

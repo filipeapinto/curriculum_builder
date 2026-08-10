@@ -1,0 +1,8 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema", "$id": "resume_authorization.schema.v2.json",
+  "type": "object", "additionalProperties": false,
+  "required": ["version", "authorization_id", "run_id", "continuation_id", "continuation_hash", "resume_node_id", "next_attempt", "issued_by", "signer_key_id", "nonce", "issued_at", "expires_at", "signature"],
+  "properties": {
+    "version": {"const": "2.0"}, "authorization_id": {"$ref": "#/$defs/sha"}, "run_id": {"type": "string", "minLength": 8}, "continuation_id": {"$ref": "#/$defs/sha"}, "continuation_hash": {"$ref": "#/$defs/sha"}, "resume_node_id": {"type": "string", "pattern": "^P[0-6]$"}, "next_attempt": {"type": "integer", "minimum": 2}, "issued_by": {"const": "OPERATOR_AUTHORITY"}, "signer_key_id": {"type": "string", "minLength": 8}, "nonce": {"type": "string", "minLength": 16}, "issued_at": {"type": "string", "format": "date-time"}, "expires_at": {"type": "string", "format": "date-time"}, "signature": {"type": "string", "pattern": "^[A-Za-z0-9+/]{86}==$"}
+  }, "$defs": {"sha": {"type": "string", "pattern": "^[a-f0-9]{64}$"}}
+}

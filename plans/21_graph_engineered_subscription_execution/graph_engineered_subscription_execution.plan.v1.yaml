@@ -1,0 +1,508 @@
+plan_version: "1.0"
+id: graph_engineered_subscription_execution
+status: qa
+supersedes:
+  - plans/20_subscription_only_execution_model/subscription_only_execution_model.plan.v1.md
+bootstrap:
+  validator: tools/validate_plan.py
+  command: python3 plans/21_graph_engineered_subscription_execution/tools/validate_plan.py
+  self_test_command: python3 plans/21_graph_engineered_subscription_execution/tools/validate_plan.py --self-test
+  production_compiler_begins_after: P1
+goal: >-
+  Replace implicit and contradictory prompt orchestration with a compiled,
+  durable, subscription-only execution graph in which Claude Code authors,
+  Codex judges independently, deterministic code owns routing and acceptance,
+  every model node is schema-bound, and every failure enters a bounded
+  goal-test-targeted-repair loop or an honest terminal state.
+constraints:
+  - Planning does not authorize implementation; each phase prompt authorizes only its declared outputs.
+  - The shipped deterministic bootstrap validator runs before P0; the production prompt-graph compiler begins only after P1 is implemented.
+  - No production path may use a billed API key, raw model HTTP API, Gemini CLI, or hidden provider fallback.
+  - One normalized worker adapter owns both Claude and Codex subprocess boundaries and receipt normalization.
+  - Claude authoring requires unambiguous subscription entitlement plus structured claude -p output; current logged-out state pauses P2.
+  - Codex judging records driver-bound requested identity honestly because CLI 0.147.0 does not expose a native executed-model field.
+  - Generator and final judge use different provider drivers and model families; deterministic checks run before model judgment.
+  - Models never own graph transitions, reducer behavior, checkpoint admission, failure classification, or terminal acceptance.
+  - Existing outputs, Plan 18 through Plan 20 evidence, and unrelated dirty-worktree changes are immutable inputs.
+  - Plan 19 is reconciled explicitly by contract digest and exact test disposition; it is never silently edited around.
+  - Active runs remain pinned to graph, prompt, policy, schema, route, and model-registry digests.
+  - The deterministic phase controller alone admits immutable result events and continuations; phases never self-authorize edges.
+  - Each phase writes an immutable ledger and evidence artifacts; no phase appends a shared log.
+controller:
+  id: PHASE_CONTROLLER
+  role: deterministic
+  owner: phase_controller
+  phase_event_path_template: plans/21_graph_engineered_subscription_execution/results/events/{node_id}.attempt-{attempt}.result.v1.yaml
+  continuation_path_template: plans/21_graph_engineered_subscription_execution/results/continuations/{run_id}.{node_id}.attempt-{attempt}.v1.yaml
+  resume_command_path_template: plans/21_graph_engineered_subscription_execution/results/resume_commands/{run_id}.{node_id}.attempt-{attempt}.v1.yaml
+  authorized_outputs:
+    - plans/21_graph_engineered_subscription_execution/results/events/{node_id}.attempt-{attempt}.result.v1.yaml
+    - plans/21_graph_engineered_subscription_execution/results/continuations/{run_id}.{node_id}.attempt-{attempt}.v1.yaml
+    - plans/21_graph_engineered_subscription_execution/results/resume_commands/{run_id}.{node_id}.attempt-{attempt}.v1.yaml
+  schemas: [contracts/phase_result.schema.v1.json, contracts/continuation.schema.v1.json, contracts/resume_command.schema.v1.json]
+  admission_checks: [current_run_binding, monotonic_attempt, predecessor_checkpoint_binding, pinned_policy_schema_route_binding, exact_required_tests, all_required_tests_pass, exact_required_artifacts, artifact_hash_recompute, legal_failure_mapping, continuation_command_binding, single_use_resume]
+contract_registry:
+  contract://anti_regression_sources: {owner: PLAN, resolver: anti_regression_sources, schema_ref: graph_engineered_subscription_execution.schema.v1.json}
+  contract://P0/authorized_paths/P4/runtime_policy_schema: {owner: P0, resolver: authorized_paths.P4.runtime_policy_schema, schema_ref: contracts/baseline_contract.schema.v1.json}
+  contract://P0/authorized_paths/P4/plan19_reconciliation: {owner: P0, resolver: authorized_paths.P4.plan19_reconciliation, schema_ref: contracts/baseline_contract.schema.v1.json}
+  contract://P0/authorized_paths/P4/tests: {owner: P0, resolver: authorized_paths.P4.tests, schema_ref: contracts/baseline_contract.schema.v1.json}
+  contract://P0/authorized_paths/P5/runtime_policy_schema: {owner: P0, resolver: authorized_paths.P5.runtime_policy_schema, schema_ref: contracts/baseline_contract.schema.v1.json}
+  contract://P0/authorized_paths/P5/tests: {owner: P0, resolver: authorized_paths.P5.tests, schema_ref: contracts/baseline_contract.schema.v1.json}
+  contract://P0/authorized_paths/P6/fresh_test_roots: {owner: P0, resolver: authorized_paths.P6.fresh_test_roots, schema_ref: contracts/baseline_contract.schema.v1.json}
+  contract://P0/authorized_paths/P6/rt7_reconciliation: {owner: P0, resolver: authorized_paths.P6.rt7_reconciliation, schema_ref: contracts/baseline_contract.schema.v1.json}
+state_schema:
+  schema_ref: contracts/runtime_state.schema.v1.json
+  required_fields:
+    - graph_version
+    - graph_digest
+    - run_id
+    - node_id
+    - node_attempt
+    - prompt_digest
+    - policy_digest
+    - schema_digest
+    - route_digest
+    - execution_contract_digest
+    - phase_key
+    - phase_ledger_hash
+    - active_continuation_hash
+    - consumed_continuation_ids
+    - authorized_input_hashes
+    - authorized_output_schema
+    - route_decision
+    - receipt_hash
+    - check_results
+    - edge_decision
+    - checkpoint_hash
+  unit_terminal_states: [ACCEPTED, BLOCKED, SYSTEM_FAILURE]
+  run_pause_states: [INTERRUPTED]
+  plan_pause_states: [PAUSED_PREREQUISITE, INTERRUPTED]
+  plan_terminal_states: [PLAN_APPROVED, SYSTEM_FAILURE]
+  failure_classes:
+    - TRANSIENT_TOOL_FAILURE
+    - INVALID_MODEL_OUTPUT
+    - POLICY_VIOLATION
+    - CHECK_FAILED_REVISABLE
+    - EXTERNAL_FACT_BLOCK
+    - FACTORY_DEFECT
+    - CONVERGENCE_EXHAUSTED
+    - AUTHENTICATION_MISSING
+    - SUBSCRIPTION_ENTITLEMENT_UNPROVEN
+    - PROTECTED_DIRTY_OVERLAP
+    - INTERRUPTED_EXTERNAL
+state_fields:
+  P0_contract_bundle:
+    schema_ref: contracts/p0_contract_bundle.schema.v1.json
+    writers: [P0]
+    readers: [P1, P2, P4, P5, P6]
+    reducer: replace_once
+    serialization: canonical_yaml
+    checkpoint_policy: immutable
+  P1_compiler_bundle:
+    schema_ref: artifact://P1/schemas/prompt_graph.schema.v1.json
+    writers: [P1]
+    readers: [P2, P3, P4, P6]
+    reducer: replace_once
+    serialization: canonical_json
+    checkpoint_policy: immutable
+  P2_adapter_bundle:
+    schema_ref: artifact://P2/schemas/worker_receipt.schema.v1.json
+    writers: [P2]
+    readers: [P3, P4, P6]
+    reducer: replace_once
+    serialization: canonical_json
+    checkpoint_policy: immutable
+  P3_runtime_contract:
+    schema_ref: artifact://P3/schemas/runtime_contract.schema.v1.json
+    writers: [P3]
+    readers: [P4, P6]
+    reducer: replace_once
+    serialization: canonical_yaml
+    checkpoint_policy: immutable
+  P4_migration_bundle:
+    schema_ref: contracts/artifact_bundle.schema.v1.json
+    writers: [P4]
+    readers: [P5, P6]
+    reducer: replace_once
+    serialization: canonical_json
+    checkpoint_policy: immutable
+  P5_evaluation_bundle:
+    schema_ref: contracts/artifact_bundle.schema.v1.json
+    writers: [P5]
+    readers: [P6]
+    reducer: replace_once
+    serialization: canonical_json
+    checkpoint_policy: immutable
+  P6_release_bundle:
+    schema_ref: contracts/artifact_bundle.schema.v1.json
+    writers: [P6]
+    readers: []
+    reducer: replace_once
+    serialization: canonical_json
+    checkpoint_policy: immutable
+guard_registry:
+  PLAN_SELECTED: {event_schema: contracts/phase_result.schema.v1.json, predicates: [{field: outcome, equals: START}, {field: admission_status, equals: CONTROLLER_VERIFIED}, {field: binding_valid, equals: true}]}
+  P0_PASS: {event_schema: contracts/phase_result.schema.v1.json, predicates: [{field: node_id, equals: P0}, {field: outcome, equals: PASS}, {field: admission_status, equals: CONTROLLER_VERIFIED}, {field: binding_valid, equals: true}, {field: evidence_complete, equals: true}, {field: run_id, equals_state: current.run_id}, {field: graph_digest, equals_state: current.graph_digest}, {field: prompt_digest, equals_state: current.prompt_digest}, {field: execution_contract_digest, equals_state: current.execution_contract_digest}, {field: predecessor_event_hash, equals_state: current.predecessor_event_hash}, {field: checkpoint_hash, equals_state: current.checkpoint_hash}, {field: attempt, equals_state: current.attempt}]}
+  P1_PASS: {event_schema: contracts/phase_result.schema.v1.json, predicates: [{field: node_id, equals: P1}, {field: outcome, equals: PASS}, {field: admission_status, equals: CONTROLLER_VERIFIED}, {field: binding_valid, equals: true}, {field: evidence_complete, equals: true}, {field: run_id, equals_state: current.run_id}, {field: graph_digest, equals_state: current.graph_digest}, {field: prompt_digest, equals_state: current.prompt_digest}, {field: execution_contract_digest, equals_state: current.execution_contract_digest}, {field: predecessor_event_hash, equals_state: current.predecessor_event_hash}, {field: checkpoint_hash, equals_state: current.checkpoint_hash}, {field: attempt, equals_state: current.attempt}]}
+  P2_PASS: {event_schema: contracts/phase_result.schema.v1.json, predicates: [{field: node_id, equals: P2}, {field: outcome, equals: PASS}, {field: admission_status, equals: CONTROLLER_VERIFIED}, {field: binding_valid, equals: true}, {field: evidence_complete, equals: true}, {field: run_id, equals_state: current.run_id}, {field: graph_digest, equals_state: current.graph_digest}, {field: prompt_digest, equals_state: current.prompt_digest}, {field: execution_contract_digest, equals_state: current.execution_contract_digest}, {field: predecessor_event_hash, equals_state: current.predecessor_event_hash}, {field: checkpoint_hash, equals_state: current.checkpoint_hash}, {field: attempt, equals_state: current.attempt}]}
+  P3_PASS: {event_schema: contracts/phase_result.schema.v1.json, predicates: [{field: node_id, equals: P3}, {field: outcome, equals: PASS}, {field: admission_status, equals: CONTROLLER_VERIFIED}, {field: binding_valid, equals: true}, {field: evidence_complete, equals: true}, {field: run_id, equals_state: current.run_id}, {field: graph_digest, equals_state: current.graph_digest}, {field: prompt_digest, equals_state: current.prompt_digest}, {field: execution_contract_digest, equals_state: current.execution_contract_digest}, {field: predecessor_event_hash, equals_state: current.predecessor_event_hash}, {field: checkpoint_hash, equals_state: current.checkpoint_hash}, {field: attempt, equals_state: current.attempt}]}
+  P4_PASS: {event_schema: contracts/phase_result.schema.v1.json, predicates: [{field: node_id, equals: P4}, {field: outcome, equals: PASS}, {field: admission_status, equals: CONTROLLER_VERIFIED}, {field: binding_valid, equals: true}, {field: evidence_complete, equals: true}, {field: run_id, equals_state: current.run_id}, {field: graph_digest, equals_state: current.graph_digest}, {field: prompt_digest, equals_state: current.prompt_digest}, {field: execution_contract_digest, equals_state: current.execution_contract_digest}, {field: predecessor_event_hash, equals_state: current.predecessor_event_hash}, {field: checkpoint_hash, equals_state: current.checkpoint_hash}, {field: attempt, equals_state: current.attempt}]}
+  P5_PASS: {event_schema: contracts/phase_result.schema.v1.json, predicates: [{field: node_id, equals: P5}, {field: outcome, equals: PASS}, {field: admission_status, equals: CONTROLLER_VERIFIED}, {field: binding_valid, equals: true}, {field: evidence_complete, equals: true}, {field: run_id, equals_state: current.run_id}, {field: graph_digest, equals_state: current.graph_digest}, {field: prompt_digest, equals_state: current.prompt_digest}, {field: execution_contract_digest, equals_state: current.execution_contract_digest}, {field: predecessor_event_hash, equals_state: current.predecessor_event_hash}, {field: checkpoint_hash, equals_state: current.checkpoint_hash}, {field: attempt, equals_state: current.attempt}]}
+  P6_PASS: {event_schema: contracts/phase_result.schema.v1.json, predicates: [{field: node_id, equals: P6}, {field: outcome, equals: PASS}, {field: admission_status, equals: CONTROLLER_VERIFIED}, {field: binding_valid, equals: true}, {field: evidence_complete, equals: true}, {field: run_id, equals_state: current.run_id}, {field: graph_digest, equals_state: current.graph_digest}, {field: prompt_digest, equals_state: current.prompt_digest}, {field: execution_contract_digest, equals_state: current.execution_contract_digest}, {field: predecessor_event_hash, equals_state: current.predecessor_event_hash}, {field: checkpoint_hash, equals_state: current.checkpoint_hash}, {field: attempt, equals_state: current.attempt}]}
+  P0_REVISABLE: {event_schema: contracts/phase_result.schema.v1.json, predicates: [{field: node_id, equals: P0}, {field: outcome, equals: REVISABLE}]}
+  P1_REVISABLE: {event_schema: contracts/phase_result.schema.v1.json, predicates: [{field: node_id, equals: P1}, {field: outcome, equals: REVISABLE}]}
+  P2_REVISABLE: {event_schema: contracts/phase_result.schema.v1.json, predicates: [{field: node_id, equals: P2}, {field: outcome, equals: REVISABLE}]}
+  P3_REVISABLE: {event_schema: contracts/phase_result.schema.v1.json, predicates: [{field: node_id, equals: P3}, {field: outcome, equals: REVISABLE}]}
+  P4_REVISABLE: {event_schema: contracts/phase_result.schema.v1.json, predicates: [{field: node_id, equals: P4}, {field: outcome, equals: REVISABLE}]}
+  P5_REVISABLE: {event_schema: contracts/phase_result.schema.v1.json, predicates: [{field: node_id, equals: P5}, {field: outcome, equals: REVISABLE}]}
+  P6_REVISABLE: {event_schema: contracts/phase_result.schema.v1.json, predicates: [{field: node_id, equals: P6}, {field: outcome, equals: REVISABLE}]}
+  P0_EXHAUSTED: {event_schema: contracts/phase_result.schema.v1.json, predicates: [{field: node_id, equals: P0}, {field: outcome, equals: CONVERGENCE_EXHAUSTED}]}
+  P1_EXHAUSTED: {event_schema: contracts/phase_result.schema.v1.json, predicates: [{field: node_id, equals: P1}, {field: outcome, equals: CONVERGENCE_EXHAUSTED}]}
+  P2_EXHAUSTED: {event_schema: contracts/phase_result.schema.v1.json, predicates: [{field: node_id, equals: P2}, {field: outcome, equals: CONVERGENCE_EXHAUSTED}]}
+  P3_EXHAUSTED: {event_schema: contracts/phase_result.schema.v1.json, predicates: [{field: node_id, equals: P3}, {field: outcome, equals: CONVERGENCE_EXHAUSTED}]}
+  P4_EXHAUSTED: {event_schema: contracts/phase_result.schema.v1.json, predicates: [{field: node_id, equals: P4}, {field: outcome, equals: CONVERGENCE_EXHAUSTED}]}
+  P5_EXHAUSTED: {event_schema: contracts/phase_result.schema.v1.json, predicates: [{field: node_id, equals: P5}, {field: outcome, equals: CONVERGENCE_EXHAUSTED}]}
+  P6_EXHAUSTED: {event_schema: contracts/phase_result.schema.v1.json, predicates: [{field: node_id, equals: P6}, {field: outcome, equals: CONVERGENCE_EXHAUSTED}]}
+  P0_SYSTEM_FAILURE: {event_schema: contracts/phase_result.schema.v1.json, predicates: [{field: node_id, equals: P0}, {field: outcome, equals: SYSTEM_FAILURE}]}
+  P1_SYSTEM_FAILURE: {event_schema: contracts/phase_result.schema.v1.json, predicates: [{field: node_id, equals: P1}, {field: outcome, equals: SYSTEM_FAILURE}]}
+  P2_SYSTEM_FAILURE: {event_schema: contracts/phase_result.schema.v1.json, predicates: [{field: node_id, equals: P2}, {field: outcome, equals: SYSTEM_FAILURE}]}
+  P3_SYSTEM_FAILURE: {event_schema: contracts/phase_result.schema.v1.json, predicates: [{field: node_id, equals: P3}, {field: outcome, equals: SYSTEM_FAILURE}]}
+  P4_SYSTEM_FAILURE: {event_schema: contracts/phase_result.schema.v1.json, predicates: [{field: node_id, equals: P4}, {field: outcome, equals: SYSTEM_FAILURE}]}
+  P5_SYSTEM_FAILURE: {event_schema: contracts/phase_result.schema.v1.json, predicates: [{field: node_id, equals: P5}, {field: outcome, equals: SYSTEM_FAILURE}]}
+  P6_SYSTEM_FAILURE: {event_schema: contracts/phase_result.schema.v1.json, predicates: [{field: node_id, equals: P6}, {field: outcome, equals: SYSTEM_FAILURE}]}
+  P0_INTERRUPTED: {event_schema: contracts/phase_result.schema.v1.json, predicates: [{field: node_id, equals: P0}, {field: outcome, equals: INTERRUPTED}]}
+  P1_INTERRUPTED: {event_schema: contracts/phase_result.schema.v1.json, predicates: [{field: node_id, equals: P1}, {field: outcome, equals: INTERRUPTED}]}
+  P2_INTERRUPTED: {event_schema: contracts/phase_result.schema.v1.json, predicates: [{field: node_id, equals: P2}, {field: outcome, equals: INTERRUPTED}]}
+  P3_INTERRUPTED: {event_schema: contracts/phase_result.schema.v1.json, predicates: [{field: node_id, equals: P3}, {field: outcome, equals: INTERRUPTED}]}
+  P4_INTERRUPTED: {event_schema: contracts/phase_result.schema.v1.json, predicates: [{field: node_id, equals: P4}, {field: outcome, equals: INTERRUPTED}]}
+  P5_INTERRUPTED: {event_schema: contracts/phase_result.schema.v1.json, predicates: [{field: node_id, equals: P5}, {field: outcome, equals: INTERRUPTED}]}
+  P6_INTERRUPTED: {event_schema: contracts/phase_result.schema.v1.json, predicates: [{field: node_id, equals: P6}, {field: outcome, equals: INTERRUPTED}]}
+  AUTHENTICATION_MISSING: {event_schema: contracts/phase_result.schema.v1.json, predicates: [{field: node_id, equals: P2}, {field: outcome, equals: PAUSED_PREREQUISITE}, {field: failure_class, equals: AUTHENTICATION_MISSING}, {field: reason_id, equals: AUTHENTICATION_MISSING}, {field: admission_status, equals: CONTROLLER_VERIFIED}, {field: continuation_valid, equals: true}]}
+  SUBSCRIPTION_ENTITLEMENT_UNPROVEN: {event_schema: contracts/phase_result.schema.v1.json, predicates: [{field: node_id, equals: P2}, {field: outcome, equals: PAUSED_PREREQUISITE}, {field: failure_class, equals: SUBSCRIPTION_ENTITLEMENT_UNPROVEN}, {field: reason_id, equals: SUBSCRIPTION_ENTITLEMENT_UNPROVEN}, {field: admission_status, equals: CONTROLLER_VERIFIED}, {field: continuation_valid, equals: true}]}
+  PROTECTED_RT7_OVERLAP: {event_schema: contracts/phase_result.schema.v1.json, predicates: [{field: node_id, equals: P6}, {field: outcome, equals: PAUSED_PREREQUISITE}, {field: failure_class, equals: PROTECTED_DIRTY_OVERLAP}, {field: reason_id, equals: PROTECTED_RT7_OVERLAP}, {field: admission_status, equals: CONTROLLER_VERIFIED}, {field: continuation_valid, equals: true}]}
+  RESUME_P0: {event_schema: contracts/phase_result.schema.v1.json, predicates: [{field: node_id, equals: P0}, {field: outcome, equals: RESUME}, {field: resume_node_id, equals: P0}, {field: admission_status, equals: CONTROLLER_VERIFIED}, {field: binding_valid, equals: true}, {field: continuation_valid, equals: true}]}
+  RESUME_P1: {event_schema: contracts/phase_result.schema.v1.json, predicates: [{field: node_id, equals: P1}, {field: outcome, equals: RESUME}, {field: resume_node_id, equals: P1}, {field: admission_status, equals: CONTROLLER_VERIFIED}, {field: binding_valid, equals: true}, {field: continuation_valid, equals: true}]}
+  RESUME_P2: {event_schema: contracts/phase_result.schema.v1.json, predicates: [{field: node_id, equals: P2}, {field: outcome, equals: RESUME}, {field: resume_node_id, equals: P2}, {field: admission_status, equals: CONTROLLER_VERIFIED}, {field: binding_valid, equals: true}, {field: continuation_valid, equals: true}]}
+  RESUME_P3: {event_schema: contracts/phase_result.schema.v1.json, predicates: [{field: node_id, equals: P3}, {field: outcome, equals: RESUME}, {field: resume_node_id, equals: P3}, {field: admission_status, equals: CONTROLLER_VERIFIED}, {field: binding_valid, equals: true}, {field: continuation_valid, equals: true}]}
+  RESUME_P4: {event_schema: contracts/phase_result.schema.v1.json, predicates: [{field: node_id, equals: P4}, {field: outcome, equals: RESUME}, {field: resume_node_id, equals: P4}, {field: admission_status, equals: CONTROLLER_VERIFIED}, {field: binding_valid, equals: true}, {field: continuation_valid, equals: true}]}
+  RESUME_P5: {event_schema: contracts/phase_result.schema.v1.json, predicates: [{field: node_id, equals: P5}, {field: outcome, equals: RESUME}, {field: resume_node_id, equals: P5}, {field: admission_status, equals: CONTROLLER_VERIFIED}, {field: binding_valid, equals: true}, {field: continuation_valid, equals: true}]}
+  RESUME_P6: {event_schema: contracts/phase_result.schema.v1.json, predicates: [{field: node_id, equals: P6}, {field: outcome, equals: RESUME}, {field: resume_node_id, equals: P6}, {field: admission_status, equals: CONTROLLER_VERIFIED}, {field: binding_valid, equals: true}, {field: continuation_valid, equals: true}]}
+nodes:
+  - id: P0
+    prompt: prompts/P0_contract_and_evidence_freeze.prompt.v1.md
+    role: deterministic
+    owner: contract_freezer
+    goal: Freeze the live repository, prior findings, subscription constraint, Plan 19 conflicts, and exact execution contract before implementation.
+    depends_on: []
+    authorized_inputs:
+      - graph_engineered_subscription_execution.plan.v1.yaml
+      - graph_engineered_subscription_execution.schema.v1.json
+      - contract://anti_regression_sources
+      - repository://read-only
+    authorized_outputs:
+      - plans/21_graph_engineered_subscription_execution/results/P0.result.v1.md
+      - plans/21_graph_engineered_subscription_execution/contracts/baseline_contract.v1.yaml
+      - plans/21_graph_engineered_subscription_execution/contracts/historical_findings.v1.yaml
+      - plans/21_graph_engineered_subscription_execution/contracts/coverage_denominator.v1.yaml
+      - plans/21_graph_engineered_subscription_execution/tools/historical_census.py
+      - plans/21_graph_engineered_subscription_execution/tools/test_historical_census.py
+      - plans/21_graph_engineered_subscription_execution/results/ledgers/P0.attempt-{attempt}.ledger.v1.yaml
+    input_schemas: [graph_engineered_subscription_execution.schema.v1.json]
+    output_schemas:
+      - contracts/baseline_contract.schema.v1.json
+      - contracts/historical_findings.schema.v1.json
+      - contracts/coverage_denominator.schema.v1.json
+      - contracts/phase_ledger.schema.v1.json
+    context_from: []
+    state_reads: []
+    state_writes: [P0_contract_bundle]
+    side_effect_class: workspace_write
+    idempotency:
+      phase_key_template: "{execution_contract_digest}:P0:{phase_attempt}"
+      subtask_key_template: "{phase_key}:{subtask_id}:{input_digest}"
+      ledger_schema: contracts/phase_ledger.schema.v1.json
+      activation_fields: [execution_contract_digest, phase_attempt, subtask_id, input_digest]
+      replay_policy: resume_absent_or_incomplete_never_repeat_committed
+    required_test_ids: [P0-T00, P0-T01, P0-T02, P0-T03, P0-T04, P0-T05, P0-T06, P0-T07, P0-T08, P0-T09, P0-T10, P0-T11]
+    tests: [P0-T00 through P0-T11 in the P0 prompt]
+    loop: Repair only the inventory or contract record named by a failing test, then rerun all P0 tests because every later node binds this digest.
+    stop_conditions:
+      - Stop to SYSTEM_FAILURE if protected user work cannot be distinguished from Plan 21 outputs.
+      - Stop to SYSTEM_FAILURE if Plan 19 and Plan 20 conflicts cannot be enumerated without inventing unrecorded intent.
+  - id: P1
+    prompt: prompts/P1_graph_ir_and_static_compiler.prompt.v1.md
+    role: mixed
+    owner: graph_compiler
+    goal: Implement a versioned graph IR and production compiler that rejects structurally unsafe prompt workflows and emits witness paths.
+    depends_on: [P0]
+    authorized_inputs:
+      - state://P0_contract_bundle
+      - graph_engineered_subscription_execution.plan.v1.yaml
+      - graph_engineered_subscription_execution.schema.v1.json
+    authorized_outputs:
+      - runtime/prompt_graph.py
+      - schemas/prompt_graph.schema.v1.json
+      - tests/runtime/test_prompt_graph.py
+      - plans/21_graph_engineered_subscription_execution/results/P1.result.v1.md
+      - plans/21_graph_engineered_subscription_execution/results/P1.compiled_graph.v1.json
+      - plans/21_graph_engineered_subscription_execution/results/ledgers/P1.attempt-{attempt}.ledger.v1.yaml
+    input_schemas: [contracts/baseline_contract.schema.v1.json, graph_engineered_subscription_execution.schema.v1.json]
+    output_schemas: [artifact://P1/schemas/prompt_graph.schema.v1.json, contracts/phase_ledger.schema.v1.json]
+    context_from: [P0]
+    state_reads: [P0_contract_bundle]
+    state_writes: [P1_compiler_bundle]
+    side_effect_class: workspace_write
+    idempotency:
+      phase_key_template: "{execution_contract_digest}:P1:{phase_attempt}"
+      subtask_key_template: "{phase_key}:{subtask_id}:{input_digest}"
+      ledger_schema: contracts/phase_ledger.schema.v1.json
+      activation_fields: [execution_contract_digest, phase_attempt, subtask_id, input_digest]
+      replay_policy: resume_absent_or_incomplete_never_repeat_committed
+    required_test_ids: [P1-T01, P1-T02, P1-T03, P1-T04, P1-T05, P1-T06, P1-T07, P1-T08, P1-T09, P1-T10, P1-T11, P1-T12, P1-T13, P1-T14, P1-T15]
+    tests: [P1-T01 through P1-T15 in the P1 prompt]
+    loop: Localize each failure to schema, compiler invariant, fixture, or manifest; patch one owner and rerun totality plus affected witness-path tests.
+    stop_conditions:
+      - Stop to SYSTEM_FAILURE if a safety or acceptance property can only be expressed as unstructured model prose.
+      - Stop to SYSTEM_FAILURE if cycles, joins, or terminal reachability cannot be validated before execution.
+  - id: P2
+    prompt: prompts/P2_subscription_worker_adapter.prompt.v1.md
+    role: mixed
+    owner: subscription_adapter
+    goal: Build and live-prove one normalized, least-privilege invocation adapter with Claude Code and Codex CLI subscription drivers.
+    depends_on: [P1]
+    authorized_inputs:
+      - state://P0_contract_bundle
+      - state://P1_compiler_bundle
+      - contracts/identity_assurance_policy.v1.yaml
+    authorized_outputs:
+      - runtime/subscription_worker.py
+      - schemas/worker_request.schema.v1.json
+      - schemas/worker_receipt.schema.v1.json
+      - tests/runtime/test_subscription_worker.py
+      - plans/21_graph_engineered_subscription_execution/results/P2.result.v1.md
+      - plans/21_graph_engineered_subscription_execution/results/ledgers/P2.attempt-{attempt}.ledger.v1.yaml
+    input_schemas: [contracts/baseline_contract.schema.v1.json, artifact://P1/schemas/prompt_graph.schema.v1.json, contracts/identity_assurance_policy.schema.v1.json]
+    output_schemas: [artifact://P2/schemas/worker_request.schema.v1.json, artifact://P2/schemas/worker_receipt.schema.v1.json, contracts/phase_ledger.schema.v1.json]
+    context_from: [P0, P1]
+    state_reads: [P0_contract_bundle, P1_compiler_bundle]
+    state_writes: [P2_adapter_bundle]
+    side_effect_class: mixed
+    idempotency:
+      phase_key_template: "{execution_contract_digest}:P2:{phase_attempt}"
+      subtask_key_template: "{phase_key}:{subtask_id}:{input_digest}"
+      ledger_schema: contracts/phase_ledger.schema.v1.json
+      activation_fields: [execution_contract_digest, phase_attempt, subtask_id, input_digest]
+      replay_policy: resume_absent_or_incomplete_never_repeat_committed
+    required_test_ids: [P2-T01, P2-T02, P2-T03, P2-T04, P2-T05, P2-T06, P2-T07, P2-T08, P2-T09, P2-T10, P2-T11, P2-T12, P2-T13, P2-T14, P2-T15, P2-T16, P2-T17, P2-T18]
+    tests: [P2-T01 through P2-T18 in the P2 prompt]
+    loop: Fix only the shared adapter, one provider driver, one schema, or one fixture; rerun both drivers' contract suite to prevent family-specific drift.
+    stop_conditions:
+      - Pause at PAUSED_PREREQUISITE if Claude subscription entitlement or Codex ChatGPT login cannot be proven.
+      - Stop to SYSTEM_FAILURE if either CLI cannot return schema-valid output or cannot be structurally constrained to authorized context and output admission.
+  - id: P3
+    prompt: prompts/P3_durable_graph_runtime.prompt.v1.md
+    role: mixed
+    owner: graph_runtime
+    goal: Execute compiled graphs with typed state, deterministic reducers, durable checkpoints, idempotent replay, explicit interrupts, and bounded loops.
+    depends_on: [P2]
+    authorized_inputs: [state://P1_compiler_bundle, state://P2_adapter_bundle]
+    authorized_outputs:
+      - runtime/graph_runtime.py
+      - runtime/graph_checkpoint.py
+      - schemas/graph_run.schema.v1.json
+      - schemas/runtime_contract.schema.v1.json
+      - tests/runtime/test_graph_runtime.py
+      - plans/21_graph_engineered_subscription_execution/results/P3.result.v1.md
+      - plans/21_graph_engineered_subscription_execution/results/P3.runtime_contract.v1.yaml
+      - plans/21_graph_engineered_subscription_execution/results/ledgers/P3.attempt-{attempt}.ledger.v1.yaml
+    input_schemas: [artifact://P1/schemas/prompt_graph.schema.v1.json, artifact://P2/schemas/worker_receipt.schema.v1.json]
+    output_schemas: [artifact://P3/schemas/graph_run.schema.v1.json, artifact://P3/schemas/runtime_contract.schema.v1.json, contracts/phase_ledger.schema.v1.json]
+    context_from: [P0, P1, P2]
+    state_reads: [P1_compiler_bundle, P2_adapter_bundle]
+    state_writes: [P3_runtime_contract]
+    side_effect_class: mixed
+    idempotency:
+      phase_key_template: "{execution_contract_digest}:P3:{phase_attempt}"
+      subtask_key_template: "{phase_key}:{subtask_id}:{input_digest}"
+      ledger_schema: contracts/phase_ledger.schema.v1.json
+      activation_fields: [execution_contract_digest, phase_attempt, subtask_id, input_digest]
+      replay_policy: resume_absent_or_incomplete_never_repeat_committed
+    required_test_ids: [P3-T01, P3-T02, P3-T03, P3-T04, P3-T05, P3-T06, P3-T07, P3-T08, P3-T09, P3-T10, P3-T11, P3-T12, P3-T13, P3-T14, P3-T15, P3-T16, P3-T17, P3-T18, P3-T19, P3-T20, P3-T21]
+    tests: [P3-T01 through P3-T21 in the P3 prompt]
+    loop: Patch only the executor, edge evaluator, reducer, checkpoint service, or fixture; rerun compile, replay, and convergence invariants.
+    stop_conditions:
+      - Stop to SYSTEM_FAILURE if resumption can duplicate a side effect, overwrite accepted bytes, or choose a different graph version silently.
+      - Stop to SYSTEM_FAILURE if a model can select an unvalidated edge or terminal state.
+  - id: P4
+    prompt: prompts/P4_curriculum_graph_migration.prompt.v1.md
+    role: mixed
+    owner: curriculum_migrator
+    goal: Migrate curriculum production and Plan 19 contracts onto the compiled runtime while retiring Gemini and the manual session handoff.
+    depends_on: [P3]
+    authorized_inputs: [state://P0_contract_bundle, state://P1_compiler_bundle, state://P2_adapter_bundle, state://P3_runtime_contract]
+    authorized_outputs:
+      - contract://P0/authorized_paths/P4/runtime_policy_schema
+      - contract://P0/authorized_paths/P4/plan19_reconciliation
+      - contract://P0/authorized_paths/P4/tests
+      - plans/21_graph_engineered_subscription_execution/results/P4.result.v1.md
+      - plans/21_graph_engineered_subscription_execution/results/ledgers/P4.attempt-{attempt}.ledger.v1.yaml
+    input_schemas: [contracts/baseline_contract.schema.v1.json, artifact://P1/schemas/prompt_graph.schema.v1.json, artifact://P3/schemas/graph_run.schema.v1.json, artifact://P3/schemas/runtime_contract.schema.v1.json]
+    output_schemas: [contracts/artifact_bundle.schema.v1.json, contracts/phase_ledger.schema.v1.json]
+    context_from: [P0, P1, P2, P3]
+    state_reads: [P0_contract_bundle, P1_compiler_bundle, P2_adapter_bundle, P3_runtime_contract]
+    state_writes: [P4_migration_bundle]
+    side_effect_class: mixed
+    idempotency:
+      phase_key_template: "{execution_contract_digest}:P4:{phase_attempt}"
+      subtask_key_template: "{phase_key}:{subtask_id}:{input_digest}"
+      ledger_schema: contracts/phase_ledger.schema.v1.json
+      activation_fields: [execution_contract_digest, phase_attempt, subtask_id, input_digest]
+      replay_policy: resume_absent_or_incomplete_never_repeat_committed
+    required_test_ids: [P4-T01, P4-T02, P4-T03, P4-T04, P4-T05, P4-T06, P4-T07, P4-T08, P4-T09, P4-T10, P4-T11, P4-T12, P4-T13, P4-T14, P4-T15, P4-T16, P4-T17, P4-T18, P4-T19, P4-T20, P4-T21, P4-T22, P4-T23, P4-T24]
+    tests: [P4-T01 through P4-T24 in the P4 prompt]
+    loop: Use the failed check-to-owned-node mapping to revise one node or deterministic component; never regenerate an accepted sibling or weaken a gate.
+    stop_conditions:
+      - Stop to SYSTEM_FAILURE if Plan 19 frozen controller semantics must be weakened rather than mapped.
+      - Stop to SYSTEM_FAILURE if Gemini, manual worker-file authoring, or dual invocation contracts remain reachable.
+  - id: P5
+    prompt: prompts/P5_evaluator_optimizer_acceptance.prompt.v1.md
+    role: mixed
+    owner: evaluator_graph
+    goal: Implement fail-closed deterministic and cross-family evaluator gates with targeted repair edges, independent contexts, and process-level graph evaluation.
+    depends_on: [P4]
+    authorized_inputs: [state://P0_contract_bundle, state://P4_migration_bundle]
+    authorized_outputs:
+      - contract://P0/authorized_paths/P5/runtime_policy_schema
+      - contract://P0/authorized_paths/P5/tests
+      - plans/21_graph_engineered_subscription_execution/results/P5.result.v1.md
+      - plans/21_graph_engineered_subscription_execution/results/ledgers/P5.attempt-{attempt}.ledger.v1.yaml
+    input_schemas: [contracts/baseline_contract.schema.v1.json, artifact://P3/schemas/graph_run.schema.v1.json]
+    output_schemas: [contracts/artifact_bundle.schema.v1.json, contracts/phase_ledger.schema.v1.json]
+    context_from: [P0, P3, P4]
+    state_reads: [P0_contract_bundle, P4_migration_bundle]
+    state_writes: [P5_evaluation_bundle]
+    side_effect_class: mixed
+    idempotency:
+      phase_key_template: "{execution_contract_digest}:P5:{phase_attempt}"
+      subtask_key_template: "{phase_key}:{subtask_id}:{input_digest}"
+      ledger_schema: contracts/phase_ledger.schema.v1.json
+      activation_fields: [execution_contract_digest, phase_attempt, subtask_id, input_digest]
+      replay_policy: resume_absent_or_incomplete_never_repeat_committed
+    required_test_ids: [P5-T01, P5-T02, P5-T03, P5-T04, P5-T05, P5-T06, P5-T07, P5-T08, P5-T09, P5-T10, P5-T11, P5-T12, P5-T13, P5-T14, P5-T15, P5-T16, P5-T17, P5-T18, P5-T19, P5-T20, P5-T21, P5-T22]
+    tests: [P5-T01 through P5-T22 in the P5 prompt]
+    loop: Route a failing check to its single owner, revise only that artifact, rerun the failed evaluator and every dependent join, and enforce bounds.
+    stop_conditions:
+      - Stop to SYSTEM_FAILURE if the author can see sibling judge verdicts or can accept its own work.
+      - Stop to SYSTEM_FAILURE if a missing or malformed required verdict can reach ACCEPTED.
+  - id: P6
+    prompt: prompts/P6_end_to_end_release_and_supersession.prompt.v1.md
+    role: mixed
+    owner: release_auditor
+    goal: Prove the live graph end to end, exercise every guard boundary and historical regression class, and publish an auditable supersession record.
+    depends_on: [P5]
+    authorized_inputs: [state://P0_contract_bundle, state://P1_compiler_bundle, state://P2_adapter_bundle, state://P3_runtime_contract, state://P4_migration_bundle, state://P5_evaluation_bundle, contract://anti_regression_sources]
+    authorized_outputs:
+      - contract://P0/authorized_paths/P6/fresh_test_roots
+      - contract://P0/authorized_paths/P6/rt7_reconciliation
+      - plans/21_graph_engineered_subscription_execution/results/P6.result.v1.md
+      - plans/21_graph_engineered_subscription_execution/supersession.v1.md
+      - plans/21_graph_engineered_subscription_execution/results/ledgers/P6.attempt-{attempt}.ledger.v1.yaml
+    input_schemas: [contracts/baseline_contract.schema.v1.json, contracts/historical_findings.schema.v1.json, contracts/coverage_denominator.schema.v1.json]
+    output_schemas: [contracts/artifact_bundle.schema.v1.json, contracts/phase_ledger.schema.v1.json]
+    context_from: [P0, P1, P2, P3, P4, P5]
+    state_reads: [P0_contract_bundle, P1_compiler_bundle, P2_adapter_bundle, P3_runtime_contract, P4_migration_bundle, P5_evaluation_bundle]
+    state_writes: [P6_release_bundle]
+    side_effect_class: mixed
+    idempotency:
+      phase_key_template: "{execution_contract_digest}:P6:{phase_attempt}"
+      subtask_key_template: "{phase_key}:{subtask_id}:{input_digest}"
+      ledger_schema: contracts/phase_ledger.schema.v1.json
+      activation_fields: [execution_contract_digest, phase_attempt, subtask_id, input_digest]
+      replay_policy: resume_absent_or_incomplete_never_repeat_committed
+    required_test_ids: [P6-T01, P6-T02, P6-T03, P6-T04, P6-T05, P6-T06, P6-T07, P6-T08, P6-T09, P6-T10, P6-T11, P6-T12, P6-T13, P6-T14, P6-T15, P6-T16, P6-T17, P6-T18, P6-T19, P6-T20, P6-T21, P6-T22, P6-T23, P6-T24]
+    tests: [P6-T01 through P6-T24 in the P6 prompt]
+    loop: Attribute a failure to one node, edge, contract, or fixture; repair that owner and replay the dependency closure plus historical suite.
+    stop_conditions:
+      - Stop to SYSTEM_FAILURE if release proof relies on simulated, prewritten, manually edited, or untraceable model artifacts.
+      - Stop to SYSTEM_FAILURE if a historical Critical or High issue is reproduced or a required graph path lacks evidence.
+edges:
+  - {id: E-START-P0, from: START, to: P0, guard_id: PLAN_SELECTED, outcome: START, kind: start}
+  - {id: E-P0-P1, from: P0, to: P1, guard_id: P0_PASS, outcome: PASS, kind: success}
+  - {id: E-P1-P2, from: P1, to: P2, guard_id: P1_PASS, outcome: PASS, kind: success}
+  - {id: E-P2-P3, from: P2, to: P3, guard_id: P2_PASS, outcome: PASS, kind: success}
+  - {id: E-P3-P4, from: P3, to: P4, guard_id: P3_PASS, outcome: PASS, kind: success}
+  - {id: E-P4-P5, from: P4, to: P5, guard_id: P4_PASS, outcome: PASS, kind: success}
+  - {id: E-P5-P6, from: P5, to: P6, guard_id: P5_PASS, outcome: PASS, kind: success}
+  - {id: E-P6-APPROVED, from: P6, to: PLAN_APPROVED, guard_id: P6_PASS, outcome: PASS, kind: terminal}
+  - {id: E-P0-REPAIR, from: P0, to: P0, guard_id: P0_REVISABLE, outcome: REVISABLE, kind: repair, max_attempts: 2}
+  - {id: E-P1-REPAIR, from: P1, to: P1, guard_id: P1_REVISABLE, outcome: REVISABLE, kind: repair, max_attempts: 2}
+  - {id: E-P2-REPAIR, from: P2, to: P2, guard_id: P2_REVISABLE, outcome: REVISABLE, kind: repair, max_attempts: 2}
+  - {id: E-P3-REPAIR, from: P3, to: P3, guard_id: P3_REVISABLE, outcome: REVISABLE, kind: repair, max_attempts: 2}
+  - {id: E-P4-REPAIR, from: P4, to: P4, guard_id: P4_REVISABLE, outcome: REVISABLE, kind: repair, max_attempts: 2}
+  - {id: E-P5-REPAIR, from: P5, to: P5, guard_id: P5_REVISABLE, outcome: REVISABLE, kind: repair, max_attempts: 2}
+  - {id: E-P6-REPAIR, from: P6, to: P6, guard_id: P6_REVISABLE, outcome: REVISABLE, kind: repair, max_attempts: 2}
+  - {id: E-P0-EXHAUSTED, from: P0, to: SYSTEM_FAILURE, guard_id: P0_EXHAUSTED, outcome: CONVERGENCE_EXHAUSTED, kind: terminal}
+  - {id: E-P1-EXHAUSTED, from: P1, to: SYSTEM_FAILURE, guard_id: P1_EXHAUSTED, outcome: CONVERGENCE_EXHAUSTED, kind: terminal}
+  - {id: E-P2-EXHAUSTED, from: P2, to: SYSTEM_FAILURE, guard_id: P2_EXHAUSTED, outcome: CONVERGENCE_EXHAUSTED, kind: terminal}
+  - {id: E-P3-EXHAUSTED, from: P3, to: SYSTEM_FAILURE, guard_id: P3_EXHAUSTED, outcome: CONVERGENCE_EXHAUSTED, kind: terminal}
+  - {id: E-P4-EXHAUSTED, from: P4, to: SYSTEM_FAILURE, guard_id: P4_EXHAUSTED, outcome: CONVERGENCE_EXHAUSTED, kind: terminal}
+  - {id: E-P5-EXHAUSTED, from: P5, to: SYSTEM_FAILURE, guard_id: P5_EXHAUSTED, outcome: CONVERGENCE_EXHAUSTED, kind: terminal}
+  - {id: E-P6-EXHAUSTED, from: P6, to: SYSTEM_FAILURE, guard_id: P6_EXHAUSTED, outcome: CONVERGENCE_EXHAUSTED, kind: terminal}
+  - {id: E-P2-AUTH-PAUSE, from: P2, to: PAUSED_PREREQUISITE, guard_id: AUTHENTICATION_MISSING, outcome: PAUSED_PREREQUISITE, kind: pause}
+  - {id: E-P2-ENTITLEMENT-PAUSE, from: P2, to: PAUSED_PREREQUISITE, guard_id: SUBSCRIPTION_ENTITLEMENT_UNPROVEN, outcome: PAUSED_PREREQUISITE, kind: pause}
+  - {id: E-P6-PAUSE, from: P6, to: PAUSED_PREREQUISITE, guard_id: PROTECTED_RT7_OVERLAP, outcome: PAUSED_PREREQUISITE, kind: pause}
+  - {id: E-PAUSED-P2, from: PAUSED_PREREQUISITE, to: P2, guard_id: RESUME_P2, outcome: RESUME, kind: resume}
+  - {id: E-PAUSED-P6, from: PAUSED_PREREQUISITE, to: P6, guard_id: RESUME_P6, outcome: RESUME, kind: resume}
+  - {id: E-P0-SYSTEM, from: P0, to: SYSTEM_FAILURE, guard_id: P0_SYSTEM_FAILURE, outcome: SYSTEM_FAILURE, kind: terminal}
+  - {id: E-P1-SYSTEM, from: P1, to: SYSTEM_FAILURE, guard_id: P1_SYSTEM_FAILURE, outcome: SYSTEM_FAILURE, kind: terminal}
+  - {id: E-P2-SYSTEM, from: P2, to: SYSTEM_FAILURE, guard_id: P2_SYSTEM_FAILURE, outcome: SYSTEM_FAILURE, kind: terminal}
+  - {id: E-P3-SYSTEM, from: P3, to: SYSTEM_FAILURE, guard_id: P3_SYSTEM_FAILURE, outcome: SYSTEM_FAILURE, kind: terminal}
+  - {id: E-P4-SYSTEM, from: P4, to: SYSTEM_FAILURE, guard_id: P4_SYSTEM_FAILURE, outcome: SYSTEM_FAILURE, kind: terminal}
+  - {id: E-P5-SYSTEM, from: P5, to: SYSTEM_FAILURE, guard_id: P5_SYSTEM_FAILURE, outcome: SYSTEM_FAILURE, kind: terminal}
+  - {id: E-P6-SYSTEM, from: P6, to: SYSTEM_FAILURE, guard_id: P6_SYSTEM_FAILURE, outcome: SYSTEM_FAILURE, kind: terminal}
+  - {id: E-P0-INTERRUPT, from: P0, to: INTERRUPTED, guard_id: P0_INTERRUPTED, outcome: INTERRUPTED, kind: interrupt}
+  - {id: E-P1-INTERRUPT, from: P1, to: INTERRUPTED, guard_id: P1_INTERRUPTED, outcome: INTERRUPTED, kind: interrupt}
+  - {id: E-P2-INTERRUPT, from: P2, to: INTERRUPTED, guard_id: P2_INTERRUPTED, outcome: INTERRUPTED, kind: interrupt}
+  - {id: E-P3-INTERRUPT, from: P3, to: INTERRUPTED, guard_id: P3_INTERRUPTED, outcome: INTERRUPTED, kind: interrupt}
+  - {id: E-P4-INTERRUPT, from: P4, to: INTERRUPTED, guard_id: P4_INTERRUPTED, outcome: INTERRUPTED, kind: interrupt}
+  - {id: E-P5-INTERRUPT, from: P5, to: INTERRUPTED, guard_id: P5_INTERRUPTED, outcome: INTERRUPTED, kind: interrupt}
+  - {id: E-P6-INTERRUPT, from: P6, to: INTERRUPTED, guard_id: P6_INTERRUPTED, outcome: INTERRUPTED, kind: interrupt}
+  - {id: E-INTERRUPTED-P0, from: INTERRUPTED, to: P0, guard_id: RESUME_P0, outcome: RESUME, kind: resume}
+  - {id: E-INTERRUPTED-P1, from: INTERRUPTED, to: P1, guard_id: RESUME_P1, outcome: RESUME, kind: resume}
+  - {id: E-INTERRUPTED-P2, from: INTERRUPTED, to: P2, guard_id: RESUME_P2, outcome: RESUME, kind: resume}
+  - {id: E-INTERRUPTED-P3, from: INTERRUPTED, to: P3, guard_id: RESUME_P3, outcome: RESUME, kind: resume}
+  - {id: E-INTERRUPTED-P4, from: INTERRUPTED, to: P4, guard_id: RESUME_P4, outcome: RESUME, kind: resume}
+  - {id: E-INTERRUPTED-P5, from: INTERRUPTED, to: P5, guard_id: RESUME_P5, outcome: RESUME, kind: resume}
+  - {id: E-INTERRUPTED-P6, from: INTERRUPTED, to: P6, guard_id: RESUME_P6, outcome: RESUME, kind: resume}
+graph_invariants:
+  - The shipped bootstrap validator must pass before P0; after P1, the production compiler must self-compile this same manifest before P2.
+  - Every node is reachable from START and can reach PLAN_APPROVED or SYSTEM_FAILURE; pauses and interrupts are resumable states with typed return edges.
+  - Every phase is sequentially activated from a digest-bound predecessor; model-bearing evaluation fan-out occurs inside compiled production graphs, not through shared meta-plan writes.
+  - Every model-bearing node uses the normalized subscription worker request and receipt contract.
+  - PHASE_CONTROLLER alone admits phase events; PASS requires exact compiled test and artifact denominators, all tests passing with evidence, recomputed hashes, and current run/digest/checkpoint binding.
+  - Every pause or interrupt creates one controller-owned continuation; a single-use authorized command may resume only the same run and suspended node under unchanged digests.
+  - No curriculum acceptance path bypasses deterministic checks and an independent cross-family judge.
+  - Every repair cycle is first-class, bounded, and has a SYSTEM_FAILURE exhaustion disposition; BLOCKED is never a plan-phase target.
+  - Checkpoints distinguish replayable ABSENT or crash-INCOMPLETE state from fail-closed HASH_MISMATCH, CORRUPT, or UNAUTHORIZED_MUTATION.
+  - Unit BLOCKED is reserved for a named unavailable external safety-critical fact; factory defects become SYSTEM_FAILURE.
+  - Every check and artifact has one owning production node and one repair edge or non-revisable terminal edge.
+  - Historical evidence and accepted artifacts are immutable and excluded from write scopes.
+  - Every phase uses a compiled phase-level idempotency key and immutable ledger whose domain-separated subtasks replay only ABSENT or INCOMPLETE work.
+anti_regression_sources:
+  - issues/001-renderer-emits-raw-json.md through issues/007-run-level-state-is-incomplete.md
+  - plans/09_remove_time_limits/qa
+  - plans/11_provider_correction/qa
+  - plans/12__eval_rtd_ws/qa through plans/17__eval_gf_bl/qa
+  - plans/18_runtime_integrity_remediation/qa
+  - plans/19_curriculum_factory_production_loop_closure/reviews
+  - plans/20_subscription_only_execution_model/qa
+review_protocol:
+  independent_reviewers: 3
+  roles: [graph_formalism_and_runtime, historical_regression_and_repository, prompt_execution_and_subscription_security]
+  exit_rule: Approve only when all three independent reviewers report zero unresolved Critical or High findings and every finding has an evidence-backed disposition.
+  iteration_rule: The author dispositions every finding with evidence, revises accepted findings, reruns validation, and repeats all three reviews for at most three rounds without using decreasing counts as correctness.
+  design_qa_exhaustion:
+    max_full_rounds: 3
+    third_round_finding_status: UNAPPROVED_REMEDIATION_REQUIRED
+    targeted_closure_rule: After round three, accepted findings may receive one reviewer-specific closure addendum against frozen remediated bytes; this is not a fourth full review.
+    failed_closure_status: UNAPPROVED_REQUIRES_NEW_VERSION

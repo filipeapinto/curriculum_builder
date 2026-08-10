@@ -1,0 +1,87 @@
+review: phase
+iteration: 1
+plan_words_before: 2656
+reviewers:
+  - id: phase_red_a
+    counts: {critical: 0, high: 5, medium: 2, low: 0}
+  - id: phase_red_b
+    counts: {critical: 1, high: 7, medium: 3, low: 0}
+  - id: phase_red_c
+    counts: {critical: 1, high: 3, medium: 2, low: 0}
+orchestrator_dispositions:
+  - finding: RT-A1-01
+    decision: accepted
+    action: P0 now reconciles terminal vocabulary and enforcement claims; policy truth is promoted atomically in each implementing phase.
+  - finding: RT-A1-02
+    decision: accepted
+    action: P1 now registers and proves bounded primary-source retrieval.
+  - finding: RT-A1-03
+    decision: accepted
+    action: P1 now requires a selector-addressable, live-proven cross-family judge.
+  - finding: RT-A1-04
+    decision: accepted
+    action: P2 now requires proven per-call read and write containment.
+  - finding: RT-A1-05
+    decision: accepted
+    action: P4 explicitly rejects ACCEPTED_PENDING_REVIEW for advancement and coverage.
+  - finding: RT-A1-06
+    decision: accepted
+    action: P5 now requires and negatively tests exactly four isolated independent reviews.
+  - finding: RT-A1-07
+    decision: accepted
+    action: P6 no longer treats downstream human review as a factory gate.
+  - finding: RTB-P0-01
+    decision: already_covered
+    action: Same correction as RT-A1-01, including cross-contract values.
+  - finding: RTB-P1-01
+    decision: already_covered
+    action: Same corrections as RT-A1-02 and RT-A1-03; conditional image generation remains explicit.
+  - finding: RTB-P2-01
+    decision: already_covered
+    action: Same correction as RT-A1-04; prompt declarations and output admission are insufficient.
+  - finding: RTB-P2-02
+    decision: accepted
+    action: P2 now requires a registered schema for every worker artifact type.
+  - finding: RTB-P3-01
+    decision: accepted
+    action: P0 identifies the contradiction; P3 neutralizes domain states and removes fixed unit-ID ranges.
+  - finding: RTB-P3-02
+    decision: accepted
+    action: P3 now requires a validated check-to-artifact or terminal-route mapping.
+  - finding: RTB-P4-01
+    decision: accepted
+    action: P4 and P6 now require two consecutive live-worker units under --all.
+  - finding: RTB-P4-02
+    decision: accepted
+    action: P4 defines --lab-id prerequisite enforcement and tests the rejected case.
+  - finding: RTB-P5-01
+    decision: already_covered
+    action: Same corrections as RT-A1-05 and RT-A1-06.
+  - finding: RTB-P5-02
+    decision: accepted
+    action: P5 now declares a separate workbook lifecycle in the controller contract.
+  - finding: RTB-P6-01
+    decision: accepted
+    action: P6 enumerates affected deferred IDs and requires literal criterion disposition and stale-location correction.
+  - finding: RTC-01
+    decision: already_covered
+    action: Same correction as RT-A1-01, separating terminal states from failure IDs.
+  - finding: RTC-02
+    decision: already_covered
+    action: Same correction as RT-A1-03.
+  - finding: RTC-03
+    decision: already_covered
+    action: Same correction as RT-A1-04.
+  - finding: RTC-04
+    decision: already_covered
+    action: Same correction as RTB-P3-01; accepted as the iteration's Critical defect.
+  - finding: RTC-05
+    decision: accepted
+    action: P4 now reconciles lifecycle representation of system failure and exact ACCEPTED semantics.
+  - finding: RTC-06
+    decision: already_covered
+    action: Same correction as RTB-P4-01.
+result:
+  unresolved_critical: 0
+  unresolved_high: 0
+  next_action: Run phase-review iteration 2 against the revised plan.

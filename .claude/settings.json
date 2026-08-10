@@ -1,6 +1,16 @@
 {
   "permissions": {
-    "defaultMode": "bypassPermissions",
-    "allow": ["Bash", "Read", "Write", "Edit", "WebFetch", "WebSearch"]
+    "allow": [
+      "Bash",
+      "Read",
+      "Write",
+      "Edit",
+      "WebFetch",
+      "WebSearch"
+    ],
+    "defaultMode": "bypassPermissions"
+  },
+  "enabledPlugins": {
+    "claude-code-setup@claude-plugins-official": true
   }
 }

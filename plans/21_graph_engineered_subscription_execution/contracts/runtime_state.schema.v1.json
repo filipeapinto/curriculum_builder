@@ -1,0 +1,34 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "runtime_state.schema.v1.json",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["graph_version", "graph_digest", "run_id", "node_id", "node_attempt", "prompt_digest", "policy_digest", "schema_digest", "route_digest", "execution_contract_digest", "phase_key", "phase_ledger_hash", "active_continuation_hash", "consumed_continuation_ids", "authorized_input_hashes", "authorized_output_schema", "route_decision", "receipt_hash", "check_results", "edge_decision", "checkpoint_hash"],
+  "properties": {
+    "graph_version": {"type": "string", "minLength": 1},
+    "graph_digest": {"$ref": "#/$defs/sha256"},
+    "run_id": {"type": "string", "minLength": 8},
+    "node_id": {"type": "string", "pattern": "^P[0-9]+$"},
+    "node_attempt": {"type": "integer", "minimum": 1},
+    "prompt_digest": {"$ref": "#/$defs/sha256"},
+    "policy_digest": {"$ref": "#/$defs/sha256"},
+    "schema_digest": {"$ref": "#/$defs/sha256"},
+    "route_digest": {"$ref": "#/$defs/sha256"},
+    "execution_contract_digest": {"$ref": "#/$defs/sha256"},
+    "phase_key": {"type": "string", "pattern": "^[a-f0-9]{64}:P[0-9]+:[1-9][0-9]*$"},
+    "phase_ledger_hash": {"anyOf": [{"$ref": "#/$defs/sha256"}, {"type": "null"}]},
+    "active_continuation_hash": {"anyOf": [{"$ref": "#/$defs/sha256"}, {"type": "null"}]},
+    "consumed_continuation_ids": {"type": "array", "uniqueItems": true, "items": {"$ref": "#/$defs/sha256"}},
+    "authorized_input_hashes": {"type": "object", "minProperties": 1, "additionalProperties": {"$ref": "#/$defs/sha256"}},
+    "authorized_output_schema": {"type": "string", "minLength": 8},
+    "route_decision": {"$ref": "#/$defs/decision"},
+    "receipt_hash": {"anyOf": [{"$ref": "#/$defs/sha256"}, {"type": "null"}]},
+    "check_results": {"type": "array", "minItems": 1, "items": {"type": "object", "additionalProperties": false, "required": ["id", "status", "evidence_hash"], "properties": {"id": {"type": "string", "minLength": 2}, "status": {"enum": ["PASS", "FAIL", "NOT_RUN", "BLOCKED"]}, "evidence_hash": {"anyOf": [{"$ref": "#/$defs/sha256"}, {"type": "null"}]}}}},
+    "edge_decision": {"$ref": "#/$defs/decision"},
+    "checkpoint_hash": {"$ref": "#/$defs/sha256"}
+  },
+  "$defs": {
+    "sha256": {"type": "string", "pattern": "^[a-f0-9]{64}$"},
+    "decision": {"type": "object", "additionalProperties": false, "required": ["edge_id", "guard_id", "outcome"], "properties": {"edge_id": {"type": "string", "pattern": "^E-[A-Z0-9-]+$"}, "guard_id": {"type": "string", "pattern": "^[A-Z][A-Z0-9_-]+$"}, "outcome": {"enum": ["START", "PASS", "REVISABLE", "PAUSED_PREREQUISITE", "SYSTEM_FAILURE", "INTERRUPTED", "CONVERGENCE_EXHAUSTED", "RESUME"]}}}
+  }
+}

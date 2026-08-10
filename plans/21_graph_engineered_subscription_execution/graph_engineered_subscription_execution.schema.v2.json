@@ -1,0 +1,47 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema", "$id": "graph_engineered_subscription_execution.schema.v2.json",
+  "type": "object", "additionalProperties": false,
+  "required": ["plan_version", "id", "status", "base", "supersedes_versions", "bootstrap", "contract_overrides", "controller_overrides", "node_contract_overrides", "orchestrator_addendum", "status_overrides", "new_invariants", "review_protocol"],
+  "properties": {
+    "plan_version": {"const": "2.0"}, "id": {"const": "graph_engineered_subscription_execution"}, "status": {"enum": ["qa", "approved", "superseded"]},
+    "base": {"type": "object", "additionalProperties": false, "required": ["path", "sha256"], "properties": {"path": {"const": "graph_engineered_subscription_execution.plan.v1.yaml"}, "sha256": {"$ref": "#/$defs/sha"}}},
+    "supersedes_versions": {"const": ["1.0"]},
+    "bootstrap": {"type": "object", "additionalProperties": false, "required": ["validator", "command", "self_test_command"], "properties": {"validator": {"const": "tools/validate_plan_v2.py"}, "command": {"type": "string", "minLength": 20}, "self_test_command": {"type": "string", "minLength": 20}}},
+    "contract_overrides": {"type": "object", "additionalProperties": false, "required": ["phase_result", "evidence_manifest", "phase_ledger", "continuation", "resume_authorization", "resume_command", "baseline_assurance", "sandbox_profile", "sandbox_root_evidence"], "properties": {"phase_result": {"const": "contracts/phase_result.schema.v2.json"}, "evidence_manifest": {"const": "contracts/evidence_manifest.schema.v2.json"}, "phase_ledger": {"const": "contracts/phase_ledger.schema.v2.json"}, "continuation": {"const": "contracts/continuation.schema.v2.json"}, "resume_authorization": {"const": "contracts/resume_authorization.schema.v2.json"}, "resume_command": {"const": "contracts/resume_command.schema.v2.json"}, "baseline_assurance": {"const": "contracts/baseline_assurance_addendum.schema.v2.json"}, "sandbox_profile": {"const": "contracts/sandbox_profile.schema.v2.json"}, "sandbox_root_evidence": {"const": "contracts/sandbox_root_evidence.schema.v2.json"}}},
+    "controller_overrides": {
+      "type": "object", "additionalProperties": false,
+      "required": ["evidence_admission", "resume_admission", "contract_resolution", "sandbox_admission"],
+      "properties": {
+        "evidence_admission": {"$ref": "#/$defs/evidenceRules"},
+        "resume_admission": {"$ref": "#/$defs/resumeRules"},
+        "contract_resolution": {"$ref": "#/$defs/plainRules"},
+        "sandbox_admission": {"$ref": "#/$defs/plainRules"}
+      }
+    },
+    "node_contract_overrides": {
+      "type": "object", "additionalProperties": false,
+      "required": ["P0", "P1", "P2", "P3", "P4", "P5", "P6"],
+      "patternProperties": {
+        "^P[0-6]$": {
+          "type": "object", "additionalProperties": false,
+          "required": ["required_subtask_ids", "prompt_addendum", "additional_outputs"],
+          "properties": {
+            "required_subtask_ids": {"type": "array", "minItems": 3, "uniqueItems": true, "items": {"type": "string", "pattern": "^[a-z0-9-]+$"}},
+            "prompt_addendum": {"type": "string", "pattern": "^prompts/v2/.+\\.v2\\.md$"},
+            "additional_outputs": {"type": "array", "uniqueItems": true, "items": {"type": "string", "minLength": 4}}
+          }
+        }
+      }
+    },
+    "orchestrator_addendum": {"const": "prompts/v2/P_ALL_graph_orchestrator.addendum.v2.md"},
+    "status_overrides": {"type": "object", "additionalProperties": false, "required": ["observed_unit_states", "unit_intermediate_states", "unit_terminal_states", "migration_owner"], "properties": {"observed_unit_states": {"const": ["ACCEPTED", "ACCEPTED_PENDING_REVIEW", "BLOCKED", "SYSTEM_FAILURE"]}, "unit_intermediate_states": {"const": ["ACCEPTED_PENDING_REVIEW"]}, "unit_terminal_states": {"const": ["ACCEPTED", "BLOCKED", "SYSTEM_FAILURE"]}, "migration_owner": {"const": "P4"}}},
+    "new_invariants": {"type": "array", "minItems": 5, "uniqueItems": true, "items": {"type": "string", "minLength": 80}},
+    "review_protocol": {"type": "object", "additionalProperties": false, "required": ["independent_reviewers", "roles", "exit_rule", "iteration_rule"], "properties": {"independent_reviewers": {"const": 3}, "roles": {"type": "array", "minItems": 3, "maxItems": 3, "uniqueItems": true}, "exit_rule": {"type": "string", "minLength": 80}, "iteration_rule": {"type": "string", "minLength": 60}}}
+  },
+  "$defs": {
+    "sha": {"type": "string", "pattern": "^[a-f0-9]{64}$"},
+    "plainRules": {"type": "object", "additionalProperties": false, "required": ["rules"], "properties": {"rules": {"type": "array", "minItems": 3, "uniqueItems": true, "items": {"type": "string", "minLength": 8}}}},
+    "evidenceRules": {"type": "object", "additionalProperties": false, "required": ["owner", "manifest_path_template", "rules"], "properties": {"owner": {"const": "PHASE_CONTROLLER"}, "manifest_path_template": {"type": "string", "minLength": 40}, "rules": {"type": "array", "minItems": 6, "uniqueItems": true, "items": {"type": "string", "minLength": 8}}}},
+    "resumeRules": {"type": "object", "additionalProperties": false, "required": ["continuation_owner", "authorization_owner", "authorization_root_class", "atomic_transition", "rules"], "properties": {"continuation_owner": {"const": "PHASE_CONTROLLER"}, "authorization_owner": {"const": "OPERATOR_AUTHORITY"}, "authorization_root_class": {"const": "os_owned_read_only_outside_model_workspace"}, "atomic_transition": {"const": "compare_and_swap_checkpoint_and_append_consumed_continuation_id"}, "rules": {"type": "array", "minItems": 6, "uniqueItems": true}}}
+  }
+}

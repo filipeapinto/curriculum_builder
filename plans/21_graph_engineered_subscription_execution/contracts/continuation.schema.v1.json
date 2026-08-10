@@ -1,0 +1,11 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema", "$id": "continuation.schema.v1.json",
+  "type": "object", "additionalProperties": false,
+  "required": ["version", "continuation_id", "run_id", "suspended_node_id", "allowed_resume_node_id", "source_event_hash", "checkpoint_hash", "graph_digest", "prompt_digest", "policy_digest", "schema_digest", "route_digest", "execution_contract_digest", "next_attempt", "reason_class", "consumed"],
+  "properties": {
+    "version": {"const": "1.0"}, "continuation_id": {"$ref": "#/$defs/sha256"}, "run_id": {"type": "string", "minLength": 8},
+    "suspended_node_id": {"type": "string", "pattern": "^P[0-9]+$"}, "allowed_resume_node_id": {"type": "string", "pattern": "^P[0-9]+$"},
+    "source_event_hash": {"$ref": "#/$defs/sha256"}, "checkpoint_hash": {"$ref": "#/$defs/sha256"}, "graph_digest": {"$ref": "#/$defs/sha256"}, "prompt_digest": {"$ref": "#/$defs/sha256"}, "policy_digest": {"$ref": "#/$defs/sha256"}, "schema_digest": {"$ref": "#/$defs/sha256"}, "route_digest": {"$ref": "#/$defs/sha256"}, "execution_contract_digest": {"$ref": "#/$defs/sha256"},
+    "next_attempt": {"type": "integer", "minimum": 1}, "reason_class": {"enum": ["AUTHENTICATION_MISSING", "SUBSCRIPTION_ENTITLEMENT_UNPROVEN", "PROTECTED_DIRTY_OVERLAP", "INTERRUPTED_EXTERNAL"]}, "consumed": {"const": false}
+  }, "$defs": {"sha256": {"type": "string", "pattern": "^[a-f0-9]{64}$"}}
+}

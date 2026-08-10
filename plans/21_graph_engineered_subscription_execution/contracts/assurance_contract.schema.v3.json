@@ -1,0 +1,7 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema", "$id": "assurance_contract.schema.v3.json",
+  "type": "object", "additionalProperties": false, "required": ["version", "base_contract_hash", "external_trust", "sandbox_engine_registry_path", "sandbox_engine_registry_sha256", "sandbox", "observed_unit_states"],
+  "properties": {"version": {"const": "3.0"}, "base_contract_hash": {"$ref": "#/$defs/sha"}, "external_trust": {"$ref": "external_trust.schema.v3.json"}, "sandbox_engine_registry_path": {"type": ["string", "null"]}, "sandbox_engine_registry_sha256": {"anyOf": [{"$ref": "#/$defs/sha"}, {"type": "null"}]}, "sandbox": {"anyOf": [{"$ref": "sandbox_assurance.schema.v3.json"}, {"type": "null"}]}, "observed_unit_states": {"const": ["ACCEPTED", "ACCEPTED_PENDING_REVIEW", "BLOCKED", "SYSTEM_FAILURE"]}},
+  "allOf": [{"if": {"properties": {"external_trust": {"properties": {"status": {"const": "AVAILABLE"}}}}}, "then": {"properties": {"sandbox_engine_registry_path": {"type": "string", "pattern": "^/"}, "sandbox_engine_registry_sha256": {"$ref": "#/$defs/sha"}, "sandbox": {"$ref": "sandbox_assurance.schema.v3.json"}}}}, {"if": {"properties": {"external_trust": {"properties": {"status": {"const": "UNAVAILABLE"}}}}}, "then": {"properties": {"sandbox_engine_registry_path": {"type": "null"}, "sandbox_engine_registry_sha256": {"type": "null"}, "sandbox": {"type": "null"}}}}],
+  "$defs": {"sha": {"type": "string", "pattern": "^[a-f0-9]{64}$"}}
+}

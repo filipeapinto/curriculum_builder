@@ -70,6 +70,13 @@ lab_document:
   asserts: the unit validates against schemas/lab.schema.v4.json — the six engine blocks and the domain
     block — and its domain block validates against the schema its own curriculum names in manifest domain.schema
   stage: golden
+  note: 'already executes in production, at runtime/session_bridge.py''s finalize(), which
+    validates the unit against inputs/lab.schema.json and its domain block against
+    inputs/domain.schema.json before anything is rendered, recording the result in
+    results/unit_checks.json. deferred RT-5 stays because no registered gate in
+    tests/gates/registry.py verifies that call site — whether RT-5''s obligation is still
+    outstanding and whether a gate checks that this entry is honest are different questions, and
+    only the second is what verified_by answers.'
 - id: LAB-BLOOM-DEPTH
   owner: schemas/lab.schema.v4.json
   method: execution
@@ -102,8 +109,12 @@ unit:
   stage: deterministic
   fixture: tests/fixtures/unit_readability_above_band.reject.json
   fixture_expectation: reject
-  note: zero generated units exist to score today; the executed assertion is the fixture pair, and RT-7
-    is the coverage that is missing
+  note: 'the check now executes against real rendered child-facing text, at
+    runtime/checks.py::readability_problems over the markdown runtime/lesson_render.py produces
+    for each unit under outputs/<run>/L0N/, sharing one implementation with the fixture gate
+    through runtime/readability.py. RT-7 remains unmet all the same — its acceptance criterion
+    names units under curricula/<name>/units/, that directory is still empty, and nothing here
+    discharges it.'
 - id: TEXT-BLOOM-VERBS
   owner: policy/calibration.v1.yaml
   method: mapping
@@ -149,6 +160,9 @@ pdf:
   deferred: RT-5
   asserts: rendered page count equals the count recorded at assembly
   stage: golden
+  note: 'already executes in production, at runtime/session_bridge.py''s finalize(), via
+    runtime/checks.py::pdf_page_count against the shipped PDF, with the count recorded in
+    acceptance.json. deferred RT-5 stays because no registered gate verifies that call site.'
 - id: PDF-PAGE-NONBLANK
   owner: meta_prompt/curriculum.prompt.v1.md
   method: execution
@@ -156,25 +170,44 @@ pdf:
   asserts: no page is uniform within 1% of a single colour
   stage: golden
   rejects: blank or all-black pages
+  note: 'already executes in production, at runtime/session_bridge.py''s finalize(), via
+    runtime/checks.py::rasterize_and_check_nonblank over every rasterized page at 200 dpi.
+    deferred RT-5 stays because no registered gate verifies that call site.'
 - id: PDF-ASSET-RESOLVES
   owner: policy/failures.v1.yaml
   method: execution
   deferred: RT-5
   asserts: every visual receipt's recorded hash matches an asset actually embedded in this PDF
   stage: golden
-  note: corrects B4 — a receipt that does not resolve is a failed gate, not a warning
+  note: 'corrects B4 — a receipt that does not resolve is a failed gate, not a warning. Now
+    executes in production at runtime/pdf_inspect.py::assets_resolve, called from
+    runtime/session_bridge.py''s finalize() and exercised by
+    tests/runtime/test_acceptance_gate.py. A raster asset is re-encoded when it is placed, so what
+    is checked is that the receipt resolves against the bytes on disk and that a perceptually
+    equal image is embedded in the shipped PDF. deferred RT-5 stays because no registered gate
+    verifies that call site.'
 - id: PDF-TEXT-LEGIBLE
   owner: meta_prompt/curriculum.prompt.v1.md
   method: execution
   deferred: RT-5
   asserts: body text renders at 9 pt or above effective at 200 dpi and is not clipped
   stage: golden
+  note: 'now executes in production at runtime/pdf_inspect.py::text_legible, called from
+    runtime/session_bridge.py''s finalize() and exercised by
+    tests/runtime/test_acceptance_gate.py, reading every rendered line''s box with pdftotext
+    -bbox-layout. deferred RT-5 stays because no registered gate verifies that call site.'
 - id: PDF-VISUAL-REVIEW
   owner: meta_prompt/curriculum.prompt.v1.md
   method: execution
   deferred: RT-5
   asserts: all four PDF reviewers pass against the rasterized pages
   stage: golden
+  note: 'now executes in production as a recording-and-blocking rule rather than as automated
+    computer vision, at runtime/pdf_inspect.py::visual_review_template and visual_review_problems,
+    called from runtime/session_bridge.py''s finalize() and exercised by
+    tests/runtime/test_acceptance_gate.py. An absent or unfilled structured verdict blocks
+    ACCEPTED and never passes by default. deferred RT-5 stays because no registered gate verifies
+    that call site.'
 log:
 - id: LOG-APPEND-ONLY
   owner: schemas/execution_log.schema.v2.json

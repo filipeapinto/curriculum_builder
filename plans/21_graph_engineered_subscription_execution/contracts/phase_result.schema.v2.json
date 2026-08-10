@@ -1,0 +1,5 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema", "$id": "phase_result.schema.v2.json",
+  "$comment": "The v1 event envelope plus mandatory v2 controller admission against evidence_manifest.schema.v2.json. JSON Schema validates shape; validate_plan_v2.py recomputes and binds source bytes.",
+  "$ref": "phase_result.schema.v1.json"
+}

@@ -1,7 +1,7 @@
 {
   "id": "l04_multimeter_evidence.v1",
   "component_identity": {
-    "kit_roster_name": "ELEGOO UNO R3 Super Starter Kit digital multimeter (or equivalent DMM used with the kit)",
+    "kit_roster_name": "A basic digital multimeter, as specified by curricula/arduino_kit/roster.md. No model is named by this curriculum and none is assumed.",
     "part_marking": null,
     "kit_photo_or_listing": "curricula/arduino_kit/official_kit_photo.jpg"
   },
@@ -9,17 +9,38 @@
     {
       "url_or_path": "https://learn.sparkfun.com/tutorials/how-to-use-a-multimeter/all",
       "access_date": "2026-08-02",
-      "claim_scope": "Digital multimeter probe socket layout (COM, VΩmA, 10A), and the distinction between voltage, continuity, and current measurement modes; unpowered identification and mode-selection only, no live measurement taken."
+      "claim_scope": "Digital multimeter probe socket layout and the distinction between voltage, continuity and current measurement modes, read generically. This unit takes no model-specific threshold from this source: the tutorial's figures are stated for one particular meter, and this curriculum names no model."
     }
   ],
-  "orientation": "Disconnected conceptual mode-and-socket map; no probe is placed on a live circuit and no measurement is taken.",
+  "orientation": "Disconnected conceptual mode-and-socket map. No probe is placed on a live circuit and no measurement is taken. Current mode is never placed directly across a supply.",
   "terminals": [
-    {"name": "com_socket", "function": "common/ground probe socket, always used for the black probe", "coordinate": "multimeter,socket,com"},
-    {"name": "v_omega_ma_socket", "function": "voltage, resistance, continuity and low-current socket for the red probe", "coordinate": "multimeter,socket,vomega_ma"},
-    {"name": "ten_a_socket", "function": "dedicated high-current socket for the red probe above the low-current jack's rated limit", "coordinate": "multimeter,socket,ten_a"},
-    {"name": "mode_dial", "function": "selector choosing voltage, continuity, or current measurement mode", "coordinate": "multimeter,dial,mode"}
+    {
+      "name": "com_socket",
+      "function": "common/return probe socket, always used for the black probe",
+      "coordinate": "multimeter,socket,com"
+    },
+    {
+      "name": "voltage_resistance_continuity_socket",
+      "function": "socket the red probe uses for voltage, resistance and continuity, and for small currents",
+      "coordinate": "multimeter,socket,vomega_ma"
+    },
+    {
+      "name": "high_current_socket",
+      "function": "separate socket for the red probe when a larger current is expected; the current at which it is used is printed on the meter's own face and differs between meters",
+      "coordinate": "multimeter,socket,ten_a"
+    },
+    {
+      "name": "mode_dial",
+      "function": "selector choosing voltage, continuity, or current measurement mode",
+      "coordinate": "multimeter,dial,mode"
+    }
   ],
-  "legal_coordinates": ["multimeter,socket,com", "multimeter,socket,vomega_ma", "multimeter,socket,ten_a", "multimeter,dial,mode"],
+  "legal_coordinates": [
+    "multimeter,socket,com",
+    "multimeter,socket,vomega_ma",
+    "multimeter,socket,ten_a",
+    "multimeter,dial,mode"
+  ],
   "rail_topology": null,
   "ratings": [],
   "source_bundle_sha256": null

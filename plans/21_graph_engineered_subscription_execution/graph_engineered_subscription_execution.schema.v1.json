@@ -1,0 +1,167 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "graph_engineered_subscription_execution.schema.v1.json",
+  "title": "Graph-Engineered Subscription Execution Plan",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["plan_version", "id", "status", "supersedes", "bootstrap", "goal", "constraints", "controller", "contract_registry", "state_schema", "state_fields", "guard_registry", "nodes", "edges", "graph_invariants", "anti_regression_sources", "review_protocol"],
+  "properties": {
+    "plan_version": {"const": "1.0"},
+    "id": {"const": "graph_engineered_subscription_execution"},
+    "status": {"enum": ["draft", "qa", "approved", "blocked", "superseded"]},
+    "supersedes": {"$ref": "#/$defs/stringList"},
+    "bootstrap": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["validator", "command", "self_test_command", "production_compiler_begins_after"],
+      "properties": {
+        "validator": {"type": "string", "pattern": "^tools/.+\\.py$"},
+        "command": {"type": "string", "minLength": 10},
+        "self_test_command": {"type": "string", "minLength": 10},
+        "production_compiler_begins_after": {"const": "P1"}
+      }
+    },
+    "goal": {"type": "string", "minLength": 80},
+    "constraints": {"$ref": "#/$defs/stringList"},
+    "controller": {"$ref": "#/$defs/controller"},
+    "contract_registry": {"type": "object", "minProperties": 1, "additionalProperties": {"$ref": "#/$defs/contractEntry"}},
+    "state_schema": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["schema_ref", "required_fields", "unit_terminal_states", "run_pause_states", "plan_pause_states", "plan_terminal_states", "failure_classes"],
+      "properties": {
+        "schema_ref": {"const": "contracts/runtime_state.schema.v1.json"},
+        "required_fields": {"$ref": "#/$defs/stringList"},
+        "unit_terminal_states": {"$ref": "#/$defs/stringList"},
+        "run_pause_states": {"$ref": "#/$defs/stringList"},
+        "plan_pause_states": {"$ref": "#/$defs/stringList"},
+        "plan_terminal_states": {"$ref": "#/$defs/stringList"},
+        "failure_classes": {"$ref": "#/$defs/stringList"}
+      }
+    },
+    "state_fields": {
+      "type": "object",
+      "minProperties": 1,
+      "additionalProperties": {"$ref": "#/$defs/stateField"}
+    },
+    "guard_registry": {
+      "type": "object",
+      "minProperties": 1,
+      "additionalProperties": {"$ref": "#/$defs/guard"}
+    },
+    "nodes": {"type": "array", "minItems": 2, "items": {"$ref": "#/$defs/node"}},
+    "edges": {"type": "array", "minItems": 1, "items": {"$ref": "#/$defs/edge"}},
+    "graph_invariants": {"$ref": "#/$defs/stringList"},
+    "anti_regression_sources": {"$ref": "#/$defs/stringList"},
+    "review_protocol": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["independent_reviewers", "roles", "exit_rule", "iteration_rule", "design_qa_exhaustion"],
+      "properties": {
+        "independent_reviewers": {"const": 3},
+        "roles": {"type": "array", "minItems": 3, "maxItems": 3, "uniqueItems": true, "items": {"type": "string", "minLength": 8}},
+        "exit_rule": {"type": "string", "minLength": 40},
+        "iteration_rule": {"type": "string", "minLength": 40},
+        "design_qa_exhaustion": {"type": "object", "additionalProperties": false, "required": ["max_full_rounds", "third_round_finding_status", "targeted_closure_rule", "failed_closure_status"], "properties": {"max_full_rounds": {"const": 3}, "third_round_finding_status": {"const": "UNAPPROVED_REMEDIATION_REQUIRED"}, "targeted_closure_rule": {"type": "string", "minLength": 40}, "failed_closure_status": {"const": "UNAPPROVED_REQUIRES_NEW_VERSION"}}}
+      }
+    }
+  },
+  "$defs": {
+    "stringList": {"type": "array", "minItems": 1, "uniqueItems": true, "items": {"type": "string", "minLength": 4}},
+    "stateField": {
+      "type": "object", "additionalProperties": false,
+      "required": ["schema_ref", "writers", "readers", "reducer", "serialization", "checkpoint_policy"],
+      "properties": {
+        "schema_ref": {"type": "string", "minLength": 8},
+        "writers": {"type": "array", "minItems": 1, "uniqueItems": true, "items": {"type": "string", "pattern": "^P[0-9]+$"}},
+        "readers": {"type": "array", "uniqueItems": true, "items": {"type": "string", "pattern": "^P[0-9]+$"}},
+        "reducer": {"enum": ["replace_once", "set_union", "ordered_append"]},
+        "serialization": {"enum": ["canonical_json", "canonical_yaml"]},
+        "checkpoint_policy": {"enum": ["immutable", "per_attempt", "derived"]}
+      }
+    },
+    "guard": {
+      "type": "object", "additionalProperties": false,
+      "required": ["event_schema", "predicates"],
+      "properties": {
+        "event_schema": {"const": "contracts/phase_result.schema.v1.json"},
+        "predicates": {
+          "type": "array", "minItems": 1,
+          "items": {"oneOf": [
+            {"type": "object", "additionalProperties": false, "required": ["field", "equals"], "properties": {"field": {"type": "string"}, "equals": {"type": ["string", "integer", "boolean"]}}},
+            {"type": "object", "additionalProperties": false, "required": ["field", "equals_state"], "properties": {"field": {"type": "string"}, "equals_state": {"enum": ["current.run_id", "current.graph_digest", "current.prompt_digest", "current.policy_digest", "current.schema_digest", "current.route_digest", "current.execution_contract_digest", "current.predecessor_event_hash", "current.checkpoint_hash", "current.attempt"]}}}
+          ]}
+        }
+      }
+    },
+    "node": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["id", "prompt", "role", "owner", "goal", "depends_on", "authorized_inputs", "authorized_outputs", "input_schemas", "output_schemas", "context_from", "state_reads", "state_writes", "side_effect_class", "idempotency", "required_test_ids", "tests", "loop", "stop_conditions"],
+      "properties": {
+        "id": {"type": "string", "pattern": "^P[0-9]+$"},
+        "prompt": {"type": "string", "pattern": "^prompts/P[0-9]+_.+\\.prompt\\.v1\\.md$"},
+        "role": {"enum": ["deterministic", "model_orchestrated", "mixed"]},
+        "owner": {"type": "string", "minLength": 5},
+        "goal": {"type": "string", "minLength": 40},
+        "depends_on": {"type": "array", "uniqueItems": true, "items": {"type": "string", "pattern": "^P[0-9]+$"}},
+        "authorized_inputs": {"$ref": "#/$defs/stringList"},
+        "authorized_outputs": {"$ref": "#/$defs/stringList"},
+        "input_schemas": {"$ref": "#/$defs/stringList"},
+        "output_schemas": {"$ref": "#/$defs/stringList"},
+        "context_from": {"type": "array", "uniqueItems": true, "items": {"type": "string", "pattern": "^P[0-9]+$"}},
+        "state_reads": {"type": "array", "uniqueItems": true, "items": {"type": "string", "minLength": 4}},
+        "state_writes": {"$ref": "#/$defs/stringList"},
+        "side_effect_class": {"enum": ["read_only", "workspace_write", "external_model", "mixed"]},
+        "idempotency": {"$ref": "#/$defs/idempotency"},
+        "required_test_ids": {"type": "array", "minItems": 1, "uniqueItems": true, "items": {"type": "string", "pattern": "^P[0-9]+-T[0-9]{2}$"}},
+        "tests": {"$ref": "#/$defs/stringList"},
+        "loop": {"type": "string", "minLength": 40},
+        "stop_conditions": {"$ref": "#/$defs/stringList"}
+      }
+    },
+    "controller": {
+      "type": "object", "additionalProperties": false,
+      "required": ["id", "role", "owner", "phase_event_path_template", "continuation_path_template", "resume_command_path_template", "authorized_outputs", "schemas", "admission_checks"],
+      "properties": {
+        "id": {"const": "PHASE_CONTROLLER"}, "role": {"const": "deterministic"}, "owner": {"const": "phase_controller"},
+        "phase_event_path_template": {"const": "plans/21_graph_engineered_subscription_execution/results/events/{node_id}.attempt-{attempt}.result.v1.yaml"},
+        "continuation_path_template": {"const": "plans/21_graph_engineered_subscription_execution/results/continuations/{run_id}.{node_id}.attempt-{attempt}.v1.yaml"},
+        "resume_command_path_template": {"const": "plans/21_graph_engineered_subscription_execution/results/resume_commands/{run_id}.{node_id}.attempt-{attempt}.v1.yaml"},
+        "authorized_outputs": {"$ref": "#/$defs/stringList"}, "schemas": {"$ref": "#/$defs/stringList"},
+        "admission_checks": {"type": "array", "minItems": 8, "uniqueItems": true, "items": {"enum": ["current_run_binding", "monotonic_attempt", "predecessor_checkpoint_binding", "pinned_policy_schema_route_binding", "exact_required_tests", "all_required_tests_pass", "exact_required_artifacts", "artifact_hash_recompute", "legal_failure_mapping", "continuation_command_binding", "single_use_resume"]}}
+      }
+    },
+    "contractEntry": {
+      "type": "object", "additionalProperties": false, "required": ["owner", "resolver", "schema_ref"],
+      "properties": {"owner": {"enum": ["PLAN", "P0"]}, "resolver": {"type": "string", "minLength": 4}, "schema_ref": {"type": "string", "minLength": 8}}
+    },
+    "idempotency": {
+      "type": "object", "additionalProperties": false,
+      "required": ["phase_key_template", "subtask_key_template", "ledger_schema", "activation_fields", "replay_policy"],
+      "properties": {
+        "phase_key_template": {"type": "string", "pattern": "^\\{execution_contract_digest\\}:P[0-9]+:\\{phase_attempt\\}$"},
+        "subtask_key_template": {"const": "{phase_key}:{subtask_id}:{input_digest}"},
+        "ledger_schema": {"const": "contracts/phase_ledger.schema.v1.json"},
+        "activation_fields": {"const": ["execution_contract_digest", "phase_attempt", "subtask_id", "input_digest"]},
+        "replay_policy": {"const": "resume_absent_or_incomplete_never_repeat_committed"}
+      }
+    },
+    "edge": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["id", "from", "to", "guard_id", "outcome", "kind"],
+      "properties": {
+        "id": {"type": "string", "pattern": "^E-[A-Z0-9-]+$"},
+        "from": {"type": "string", "pattern": "^(START|P[0-9]+|PAUSED_PREREQUISITE|INTERRUPTED)$"},
+        "to": {"type": "string", "pattern": "^(P[0-9]+|PLAN_APPROVED|PAUSED_PREREQUISITE|SYSTEM_FAILURE|INTERRUPTED)$"},
+        "guard_id": {"type": "string", "pattern": "^[A-Z][A-Z0-9_-]+$"},
+        "outcome": {"type": "string", "minLength": 4},
+        "kind": {"enum": ["start", "success", "repair", "retry", "pause", "interrupt", "resume", "terminal"]},
+        "max_attempts": {"type": "integer", "minimum": 1, "maximum": 2},
+        "join_group": {"type": "string", "minLength": 4},
+        "reducer": {"type": "string", "minLength": 4}
+      }
+    }
+  }
+}
