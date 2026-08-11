@@ -180,6 +180,18 @@ graph unreadable; one true loop, drawn big, reads far better than three small
 ones stacked on top of each other. See `references/graph_schema.md` for the
 worked example.
 
+**A legend is opt-in polish, not a default.** `references/graph_schema.md`'s
+`legend` field draws a boxed key top-right (role swatches and/or a dashed
+loop-edge sample, each with a label you write) and a rule under every zone
+heading — the same "colour-coded phases with a key" read as a hand-prompted
+infographic like `plan06_contextual_qa_workflow.v1.png`, except driven by data
+in the spec so it stays reproducible. Reach for it once a graph has enough
+roles or edge styles in play that a reader would have to guess what a colour
+or a dashed line means; skip it on a small graph where the zone headings
+already say everything the legend would repeat. See
+`evals/fixtures/plan22.harness_graph.v2.json`/`.png` for the field in use
+against the same spec `v1` renders without it.
+
 **The prompt.md is a named requirement, not a nice-to-have.** A PNG with no
 saved spec is a photograph of a moment — fine until the harness changes or
 someone asks "why does this edge go there." The spec and the brief are what make

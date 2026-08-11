@@ -1,0 +1,85 @@
+# Plan 22 — evolutionary prompt graph — harness execution graph (v2, with legend)
+
+Same harness and same spec as `plan22.harness_graph.v1.json` — see that
+fixture's own `.prompt.md` for the full description of what this graph depicts
+and why it's compressed the way it is. This v2 exists only to demonstrate the
+`legend` field added to `render_graph.py` for a more polished, presentation-
+ready look (a boxed key top-right naming what each role colour and the dashed
+loop edge mean, plus a thin rule under each zone heading), the same visual
+grammar a hand-prompted infographic like
+`PSIM/19QMM26N0033/.../visualizations/pngs/plan06_contextual_qa_workflow.v1.png`
+used, now driven by data in the spec instead of prose to an image model.
+
+```json
+{
+  "title": "Plan 22 — Evolutionary Prompt Graph",
+  "lanes": [
+    {"id": "top", "label": null, "role": "neutral"},
+    {"id": "eval_a", "label": "EVALUATION", "role": "primary"},
+    {"id": "eval_b", "label": "EVALUATION", "role": "primary"},
+    {"id": "evo_top", "label": "EVOLUTION", "role": "accent"},
+    {"id": "evo_mid", "label": "EVOLUTION", "role": "accent"},
+    {"id": "evo_bottom", "label": "EVOLUTION", "role": "accent"},
+    {"id": "review", "label": "EXTERNAL REVIEW", "role": "caution"}
+  ],
+  "nodes": [
+    {"id": "start", "kind": "start", "lane": "top", "col": 0, "label": "START"},
+    {"id": "seed", "kind": "stage", "lane": "top", "col": 1, "label": "Seed Population"},
+    {"id": "compile", "kind": "stage", "lane": "eval_a", "col": 2, "label": "Compile Population"},
+    {"id": "test_candidate", "kind": "stage", "lane": "eval_b", "col": 3, "label": "Test Candidate"},
+    {"id": "review_candidate", "kind": "stage", "lane": "eval_b", "col": 4, "label": "Review Candidate"},
+    {"id": "join_checks", "kind": "stage", "lane": "eval_a", "col": 5, "label": "Join Checks"},
+    {"id": "join_population", "kind": "stage", "lane": "eval_a", "col": 6, "label": "Join Population"},
+    {"id": "score_population", "kind": "gate", "lane": "eval_a", "col": 7, "label": "Score Population"},
+    {"id": "decide_generation", "kind": "gate", "lane": "eval_a", "col": 8, "label": "Decide Generation"},
+    {"id": "exhausted", "kind": "terminal", "lane": "eval_a", "col": 9, "label": "EXHAUSTED", "role": "failure"},
+    {"id": "select_parents", "kind": "stage", "lane": "evo_top", "col": 6, "label": "Select Parents"},
+    {"id": "repair", "kind": "stage", "lane": "evo_mid", "col": 7, "label": "Repair"},
+    {"id": "mutate_prompts", "kind": "stage", "lane": "evo_mid", "col": 8, "label": "Mutate Prompts"},
+    {"id": "mutate_topology", "kind": "stage", "lane": "evo_mid", "col": 9, "label": "Mutate Topology"},
+    {"id": "recombine", "kind": "stage", "lane": "evo_mid", "col": 10, "label": "Recombine"},
+    {"id": "merge_offspring", "kind": "stage", "lane": "evo_bottom", "col": 9, "label": "Merge Offspring"},
+    {"id": "freeze_for_review", "kind": "stage", "lane": "review", "col": 11, "label": "Freeze for Review"},
+    {"id": "challenge_review", "kind": "stage", "lane": "review", "col": 12, "label": "Challenge Review"},
+    {"id": "final_review", "kind": "stage", "lane": "review", "col": 13, "label": "Final Review"},
+    {"id": "compare_champion", "kind": "gate", "lane": "review", "col": 14, "label": "Compare Champion"},
+    {"id": "promoted", "kind": "terminal", "lane": "review", "col": 15, "label": "PROMOTED", "role": "success"}
+  ],
+  "edges": [
+    {"from": "start", "to": "seed", "style": "flow"},
+    {"from": "seed", "to": "compile", "style": "flow"},
+    {"from": "compile", "to": "test_candidate", "style": "flow"},
+    {"from": "compile", "to": "review_candidate", "style": "flow"},
+    {"from": "test_candidate", "to": "join_checks", "style": "flow"},
+    {"from": "review_candidate", "to": "join_checks", "style": "flow"},
+    {"from": "join_checks", "to": "join_population", "style": "flow"},
+    {"from": "join_population", "to": "score_population", "style": "flow"},
+    {"from": "score_population", "to": "decide_generation", "style": "flow"},
+    {"from": "decide_generation", "to": "exhausted", "label": "budget exhausted", "style": "flow"},
+    {"from": "decide_generation", "to": "freeze_for_review", "label": "review target ready", "style": "flow"},
+    {"from": "decide_generation", "to": "select_parents", "label": "no target, budget remains", "style": "flow"},
+    {"from": "select_parents", "to": "repair", "style": "flow"},
+    {"from": "select_parents", "to": "mutate_prompts", "style": "flow"},
+    {"from": "select_parents", "to": "mutate_topology", "style": "flow"},
+    {"from": "select_parents", "to": "recombine", "style": "flow"},
+    {"from": "repair", "to": "merge_offspring", "style": "flow"},
+    {"from": "mutate_prompts", "to": "merge_offspring", "style": "flow"},
+    {"from": "mutate_topology", "to": "merge_offspring", "style": "flow"},
+    {"from": "recombine", "to": "merge_offspring", "style": "flow"},
+    {"from": "merge_offspring", "to": "compile", "label": "next generation", "style": "loop"},
+    {"from": "freeze_for_review", "to": "challenge_review", "style": "flow"},
+    {"from": "challenge_review", "to": "final_review", "style": "flow"},
+    {"from": "final_review", "to": "compare_champion", "style": "flow"},
+    {"from": "compare_champion", "to": "promoted", "label": "eligible", "style": "flow"},
+    {"from": "challenge_review", "to": "select_parents", "label": "findings", "style": "loop"},
+    {"from": "final_review", "to": "select_parents", "label": "findings", "style": "loop"},
+    {"from": "compare_champion", "to": "select_parents", "label": "ineligible", "style": "loop"}
+  ],
+  "legend": [
+    {"swatch": "role:primary", "label": "Evaluation backbone"},
+    {"swatch": "role:accent", "label": "Evolution / variation"},
+    {"swatch": "role:caution", "label": "External review"},
+    {"swatch": "edge:loop", "label": "Loop back (retry / rejected)"}
+  ]
+}
+```

@@ -123,6 +123,14 @@ F_EDGE = 13
 F_LANE = 19
 F_MAIN_TITLE = 30
 
+# ---- legend (optional, data-driven — see graph_schema.md's `legend` field) ---
+LEGEND_PAD = 14
+LEGEND_ITEM_H = 24
+LEGEND_SWATCH_W = 26
+LEGEND_GAP = 10
+LEGEND_TOP = 20   # y of the legend card's top edge
+LEGEND_MARGIN_R = 30  # gap between legend card and canvas right edge
+
 BUMP_H = 40       # how far a same-lane skip edge arcs above its row
 BUS_HUG = 30      # how far a cross-lane elbow's bus sits from its source row
 CORNER_R = 18     # corner rounding radius for multi-segment edge paths
@@ -167,6 +175,19 @@ def color_id(hexcolor: str) -> str:
     return "c" + hexcolor.lstrip("#")
 
 
+def text_width(s: str, font_size: float) -> float:
+    return len(s) * font_size * 0.58
+
+
+def legend_metrics(items: list[dict]) -> tuple[float, float]:
+    if not items:
+        return 0.0, 0.0
+    max_label_w = max(text_width(it["label"], F_DETAIL) for it in items)
+    width = LEGEND_PAD * 2 + LEGEND_SWATCH_W + LEGEND_GAP + max_label_w
+    height = LEGEND_PAD * 2 + len(items) * LEGEND_ITEM_H
+    return width, height
+
+
 def rounded_path(points: list[tuple[float, float]], radius: float = CORNER_R) -> str:
     """An SVG path through `points` with rounded (not mitred) corners, so a
     multi-segment route reads as a pipe/cable rather than a wiring schematic —
@@ -203,6 +224,17 @@ class Graph:
         if not self.nodes:
             raise SystemExit("render_graph: `nodes` is empty — nothing to draw.")
         self.edges = spec.get("edges", [])
+        self.legend = spec.get("legend", [])
+        for it in self.legend:
+            if "swatch" not in it or "label" not in it:
+                raise SystemExit(f"render_graph: legend item {it!r} needs `swatch` and `label`")
+        # A legend card floats top-right, above the lanes; if it needs more
+        # room than the default gap before the first lane row, push that row
+        # down rather than letting the card overlap it.
+        self.top_margin = TOP_MARGIN
+        if self.legend:
+            _, legend_h = legend_metrics(self.legend)
+            self.top_margin = max(TOP_MARGIN, LEGEND_TOP + legend_h + 24)
         for n in self.nodes.values():
             if n["lane"] not in self.lane_index:
                 raise SystemExit(f"render_graph: node {n['id']!r} references unknown lane {n['lane']!r}")
@@ -224,13 +256,13 @@ class Graph:
     def cell_center(self, lane_id: str, col: int) -> tuple[float, float]:
         li = self.lane_index[lane_id]
         cx = X0 + col * COL_PITCH + COL_W / 2
-        cy = TOP_MARGIN + li * LANE_PITCH + LANE_PITCH / 2
+        cy = self.top_margin + li * LANE_PITCH + LANE_PITCH / 2
         return cx, cy
 
     def bounds(self) -> tuple[float, float]:
         max_col = max(n["col"] for n in self.nodes.values())
         width = X0 + (max_col + 1) * COL_PITCH + RIGHT_MARGIN
-        height = TOP_MARGIN + len(self.lanes) * LANE_PITCH + BOTTOM_MARGIN
+        height = self.top_margin + len(self.lanes) * LANE_PITCH + BOTTOM_MARGIN
         return width, height
 
     def lane_bands(self) -> list[dict]:
@@ -335,8 +367,16 @@ def build(spec: dict, theme: str = "light") -> str:
 
     height = base_height
     if loop_rail_used:
-        height = max(height, TOP_MARGIN + len(g.lanes) * LANE_PITCH + BOTTOM_RAIL_GAP
+        height = max(height, g.top_margin + len(g.lanes) * LANE_PITCH + BOTTOM_RAIL_GAP
                      + loop_rail_used * LOOP_RAIL_DX + BOTTOM_MARGIN)
+
+    # A legend card sits top-right, level with the title. Widen the canvas so
+    # neither one crowds the other, rather than letting the card overlap the
+    # title or spill past the right edge on a narrow (few-column) graph.
+    if g.legend:
+        legend_w, _ = legend_metrics(g.legend)
+        title_w = text_width(g.title, F_MAIN_TITLE) if g.title else 0
+        width = max(width, LEFT_MARGIN + title_w + 60 + legend_w + LEGEND_MARGIN_R)
 
     out: list[str] = []
     out.append(
@@ -354,12 +394,20 @@ def build(spec: dict, theme: str = "light") -> str:
     for band in g.lane_bands():
         if band["label"] is None:
             continue
-        y0 = TOP_MARGIN + band["start"] * LANE_PITCH
+        y0 = g.top_margin + band["start"] * LANE_PITCH
         nodes_in_band = [n for n in g.nodes.values() if band["start"] <= g.lane_index[n["lane"]] <= band["end"]]
-        label_x = min((g.cell_center(n["lane"], n["col"])[0] - g.node_size(n)[0] / 2 for n in nodes_in_band),
-                      default=X0)
+        lefts = [g.cell_center(n["lane"], n["col"])[0] - g.node_size(n)[0] / 2 for n in nodes_in_band]
+        rights = [g.cell_center(n["lane"], n["col"])[0] + g.node_size(n)[0] / 2 for n in nodes_in_band]
+        label_x = min(lefts, default=X0)
         r = role(band["role"])
         out.append(text_el(label_x, y0 + 22, band["label"].upper(), F_LANE, r["ink"], weight=700, anchor="start"))
+        # A rule under the phase/zone heading, spanning its own nodes' column
+        # extent — the same "underlined section header" read as a plan's phase
+        # bar, so a multi-lane zone reads as one named section, not a loose
+        # label floating over unrelated rows.
+        if rights:
+            out.append(f'<line x1="{label_x:.1f}" y1="{y0 + 30:.1f}" x2="{max(rights):.1f}" y2="{y0 + 30:.1f}" '
+                        f'stroke="{r["ink"]}" stroke-width="1.5" opacity="0.55"/>')
 
     # ---- title ---------------------------------------------------------------
     if g.title:
@@ -407,7 +455,7 @@ def build(spec: dict, theme: str = "light") -> str:
                 # branch's siblings have already spread apart.
                 label_xy = (bx, y_entry - (16 if going_down else -22))
         else:  # rail
-            rail_y = TOP_MARGIN + len(g.lanes) * LANE_PITCH + BOTTOM_RAIL_GAP + r["rail_index"] * LOOP_RAIL_DX
+            rail_y = g.top_margin + len(g.lanes) * LANE_PITCH + BOTTOM_RAIL_GAP + r["rail_index"] * LOOP_RAIL_DX
             y_exit = ay + ah / 2
             y_entry = by + bh / 2
             ja, jb = r.get("jitter_a", 0), r.get("jitter_b", 0)
@@ -494,6 +542,33 @@ def build(spec: dict, theme: str = "light") -> str:
                 for line in detail_lines:
                     out.append(text_el(cx, ty, line, F_DETAIL, TEXT_MUTED))
                     ty += 16
+
+    # ---- legend (drawn last, on top of everything) ---------------------------
+    if g.legend:
+        lw, lh = legend_metrics(g.legend)
+        lx = width - lw - LEGEND_MARGIN_R
+        ly = LEGEND_TOP
+        out.append(f'<rect x="{lx:.1f}" y="{ly:.1f}" width="{lw:.1f}" height="{lh:.1f}" rx="8" '
+                    f'fill="{th["card_fill"]}" stroke="{RULE}" stroke-width="1.2"/>')
+        edge_stroke = {"flow": TEXT_MUTED, "loop": role("caution")["ink"], "check": role("accent")["ink"]}
+        for i, item in enumerate(g.legend):
+            kind, _, name = item["swatch"].partition(":")
+            iy = ly + LEGEND_PAD + i * LEGEND_ITEM_H + LEGEND_ITEM_H / 2
+            sx0 = lx + LEGEND_PAD
+            if kind == "role":
+                r = role(name)
+                out.append(f'<rect x="{sx0:.1f}" y="{iy - 7:.1f}" width="{LEGEND_SWATCH_W:.0f}" height="14" '
+                            f'rx="4" fill="{r["fill"]}" stroke="{r["ink"]}" stroke-width="1.6"/>')
+            elif kind == "edge":
+                stroke = edge_stroke.get(name, TEXT_MUTED)
+                dash = ' stroke-dasharray="5 4"' if name in ("loop", "check") else ""
+                out.append(f'<line x1="{sx0:.1f}" y1="{iy:.1f}" x2="{sx0 + LEGEND_SWATCH_W:.1f}" y2="{iy:.1f}" '
+                            f'stroke="{stroke}" stroke-width="2.2"{dash} stroke-linecap="round"/>')
+            else:
+                out.append(f'<rect x="{sx0:.1f}" y="{iy - 7:.1f}" width="{LEGEND_SWATCH_W:.0f}" height="14" '
+                            f'rx="4" fill="{item["swatch"]}" stroke="{RULE}" stroke-width="1"/>')
+            out.append(text_el(sx0 + LEGEND_SWATCH_W + LEGEND_GAP, iy + 4.5, item["label"], F_DETAIL, TEXT,
+                                weight=500, anchor="start"))
 
     out.append("</svg>")
     return "\n".join(out)

@@ -18,6 +18,12 @@
       "prompt": "We already have evals/fixtures/plan22.harness_graph.v1.json and evals/fixtures/plan22.harness_graph.v1.png in this skill folder from an earlier run — regenerate the PNG because I tweaked a label in the JSON.",
       "expected_output": "The assistant should NOT overwrite the v1 PNG. It should resolve v2 via scripts/outpath.py (or notice render_graph.py refuses the overwrite and follow its suggested command), write plan22.harness_graph.v2.png, and tell the user v1 is untouched.",
       "files": ["evals/fixtures/plan22.harness_graph.v1.json", "evals/fixtures/plan22.harness_graph.v1.png"]
+    },
+    {
+      "id": 4,
+      "prompt": "This harness graph render looks plainer than the polished, colour-key infographic I've seen elsewhere in this repo — can you make it look more like a finished presentation graphic, with a legend explaining what the colours mean?",
+      "expected_output": "The assistant should add a `legend` array to the JSON spec (role and/or edge swatches with human-written labels, per references/graph_schema.md) rather than hand-editing the SVG/PNG, re-render via render_graph.py to a new version, and explain that the boxed key top-right plus the rule under each zone heading is what changed. It should not add a legend to a small/simple graph where the zone headings already cover the roles in play — see graph_schema.md's `legend` field guidance on when to skip it.",
+      "files": ["evals/fixtures/plan22.harness_graph.v1.json", "evals/fixtures/plan22.harness_graph.v2.json", "evals/fixtures/plan22.harness_graph.v2.png"]
     }
   ]
 }

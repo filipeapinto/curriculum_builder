@@ -32,6 +32,11 @@ Contents:
   "edges": [
     {"from": "start", "to": "compile", "style": "flow"},
     {"from": "decide", "to": "compile", "label": "next generation", "style": "loop"}
+  ],
+  "legend": [
+    {"swatch": "role:primary", "label": "Evaluation backbone"},
+    {"swatch": "role:accent", "label": "Evolution / variation"},
+    {"swatch": "edge:loop", "label": "Loop back (retry / next gen)"}
   ]
 }
 ```
@@ -39,16 +44,35 @@ Contents:
 - `lanes` — an ordered list of grid **rows**, top to bottom. `label` is what's
   printed as a floating, role-coloured heading over the row's own left-most node
   (no background tint — at this palette's darkness a filled band is more visual
-  weight than the boundary is worth); `role` also picks that row's node border/
-  glow colour. A row with `label: null` draws no heading — use this for a plain
-  row that shouldn't visually belong to any zone (a `START` row sitting above all
-  the lanes, the way `graph.v1.png` draws it).
+  weight than the boundary is worth), with a thin rule of the same colour
+  underlining it out to the band's own right-most node, so a multi-row zone
+  reads as one named section rather than a label floating loose over the rows
+  below it; `role` also picks that row's node border/glow colour. A row with
+  `label: null` draws no heading — use this for a plain row that shouldn't
+  visually belong to any zone (a `START` row sitting above all the lanes, the
+  way `graph.v1.png` draws it).
 - `nodes` — every node needs `id`, `kind`, `lane` (a lane `id`), `col` (an integer
   grid column, shared across every lane so nodes in different rows still line up),
   and `label`. `detail` adds a second, smaller line inside a `stage` box.
   `role` overrides the node's own colour instead of inheriting its lane's.
 - `edges` — `from`/`to` are node ids. `label` is optional. `style` is one of
   `flow` (default), `loop`, or `check` — see below.
+- `legend` — optional. A boxed key drawn top-right, level with the title (the
+  canvas widens automatically so it never overlaps the title or spills off the
+  edge). Each item is `{"swatch": "...", "label": "..."}`: `swatch` is either
+  `role:<name>` (draws that role's fill/ink as a small rounded swatch —
+  matches whatever `role` a node or lane band actually uses) or
+  `edge:<flow|loop|check>` (draws a short line sample in that edge style's
+  colour, dashed for `loop`/`check`). `label` is free text — write what the
+  colour or style *means in this harness*, not the role/style name itself
+  ("Independent parallel review lane", not "accent"). Leave `legend` out
+  entirely for a small graph where the role/style grammar is self-evident from
+  the zone headings alone — a legend restating three colours a reader can
+  already see in the two zone labels next to them is clutter, not polish. Add
+  it once a graph has enough roles or edge styles in play (four or more
+  role/style meanings, or any meaning — like a specific loop style — that
+  isn't already spelled out by a zone heading) that a reader would otherwise
+  have to guess what a colour or a dashed line stands for.
 
 ## Choosing lane, col and kind
 
@@ -183,6 +207,12 @@ the label/rail/terminal-width bugs this schema's rough-edges notes above were
 written from, and `v2` shows a correct-but-overloaded white-background render
 before the palette and the loop-vs-elbow judgement call in "Edge styles" above
 were fixed.
+
+`evals/fixtures/plan22.harness_graph.v2.json` is the same plan-22 spec as
+`v1` with a `legend` block added — diff it against `v1.json` to see exactly
+what the field looks like in a real spec, and compare `v2.png` against
+`v1.png` to see what it buys: a boxed key top-right and a rule under each
+zone heading, without touching a single node or edge.
 
 ## Known rough edge: labels on a same-lane adjacent-column edge
 
