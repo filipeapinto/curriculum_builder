@@ -39,7 +39,9 @@ by content hash before activation:
   `schemas/run_lifecycle.schema.v1.json`;
 - the supplied manifest; every curriculum-owned schema, verifier, fixture,
   calibration, check inventory, route input, and prose contract that it declares;
-- the eight model prompts in section 7 of this graph; and
+- the eight model prompts in section 7 of this graph, resolving each `prompts/...`
+  path relative to this graph package directory
+  (`plans/25_curriculum_factory_graph/`), never relative to the repository root; and
 - the controller/runtime executable bytes used for this activation.
 
 Precedence is the order in `meta_prompt/curriculum.prompt.v1.md`. A lower-ranked
@@ -172,7 +174,8 @@ RunState {
   counters: MonotonicMap<CounterKey, nonnegative integer>
   invalidations: AppendMap<(repair_id, artifact_key), InvalidationRecord>
   evidence_index: VersionedAppend<EvidencePointer>
-  terminal: WriteOnce<TerminalRecord>
+  terminal: WriteOncePerExecutionEpisode<TerminalRecord>
+  terminal_history: AppendLog<TerminalRecord>
 }
 ```
 
@@ -213,7 +216,7 @@ Only controller code applies reducers.
 | `join_exact` | Reduce only when every member of the frozen denominator is present once and correlation keys match. Extra, cross-unit, stale, duplicate, failed, invalid, or `NOT_RUN` members prevent the join. |
 | `reduce_checks` | Code recomputes the current blocking denominator and its subject hashes. A model verdict is one result, never the aggregate. |
 | `accept_once` | Writes an accepted receipt only after section 13's complete conjunction passes. Accepted bytes and receipt never change. |
-| `write_terminal_once` | Exactly one terminal is written from the guards in section 14. Model output has no terminal field with authority. |
+| `write_terminal_once` | Exactly one terminal is written per execution episode from the guards in section 14. Only an `INTERRUPTED` record may move, byte-unchanged, to append-only `terminal_history` when `D04` starts a validated resume episode. Model output has no terminal field with authority. |
 
 Parallel writes are permitted only to disjoint keys allocated before fan-out. A
 worker cannot write state directly: the controller stages its one declared output,
@@ -228,7 +231,7 @@ files. Every other node is deterministic controller work.
 
 | Node | Prompt | Reads | Produces | Failure class |
 | --- | --- | --- | --- | --- |
-| `M01_RESEARCH_UNIT_SOURCES` | `prompts/research_unit_sources.prompt.v1.md` | one bounded source request and controller-supplied allowed retrieval results | one structured source interpretation with claim scopes and locators | malformed/extra output retries once; missing external fact may reach prerequisite classification; worker/tool failure is system failure |
+| `M01_RESEARCH_UNIT_SOURCES` | `prompts/research_unit_sources.prompt.v1.md` | one bounded source request for candidate-primary-source discovery, or that request plus controller-supplied retrieval results for interpretation | candidate primary-source locators or one structured source interpretation with claim scopes and locators; only controller-retrieved bytes may be admitted | malformed/extra output retries once; missing external fact may reach prerequisite classification; worker/tool failure is system failure |
 | `M02_CREATE_UNIT_DOMAIN_DATA` | `prompts/create_unit_domain_data.prompt.v1.md` | manifest unit, admitted sources, domain schema, manifest-domain config, curriculum calibration | one new curriculum-owned domain artifact | deterministic schema/verifier failure is repairable when owned locally |
 | `M03_WRITE_UNIT_CONTENT` | `prompts/write_unit_content.prompt.v1.md` | accepted domain artifact, manifest unit, engine unit schema, calibration, pedagogy/prose contracts | one complete seven-block unit artifact plus derivation and source-claim records | schema/derivation/content check failures are repairable when named |
 | `M04_CREATE_UNIT_VISUALS` | `prompts/create_unit_visuals.prompt.v1.md` | one exact visual brief, admitted parent facts, allowed source assets, visual contract | one declared non-authoritative visual artifact and provenance response | only assigned visual may be repaired; exact technical authority is never delegated here |

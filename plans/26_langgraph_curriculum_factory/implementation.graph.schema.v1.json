@@ -1,0 +1,71 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "Plan 26 implementation prompt graph",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "graph_id", "version", "source_spec", "schema", "runner", "entry",
+    "result_pattern", "rules", "nodes", "edges", "rework_edges", "terminals"
+  ],
+  "properties": {
+    "graph_id": {"type": "string", "const": "plan26_langgraph_curriculum_factory_implementation"},
+    "version": {"type": "integer", "const": 1},
+    "source_spec": {"type": "string"},
+    "schema": {"type": "string"},
+    "runner": {"type": "string"},
+    "entry": {"type": "string"},
+    "result_pattern": {"type": "string"},
+    "rules": {
+      "type": "object",
+      "required": ["success_requires_result_evidence", "allow_parallel_ready_nodes", "parallel_requires_disjoint_writes", "invalidate_descendants_on_rework", "max_same_finding_rework", "forbidden_production_imports"]
+    },
+    "nodes": {
+      "type": "object",
+      "minProperties": 1,
+      "additionalProperties": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": ["prompt", "depends_on", "writes"],
+        "properties": {
+          "prompt": {"type": "string"},
+          "depends_on": {"type": "array", "uniqueItems": true, "items": {"type": "string"}},
+          "join": {"enum": ["all_of"]},
+          "writes": {"type": "array", "minItems": 1, "uniqueItems": true, "items": {"type": "string"}},
+          "allowed_results": {"type": "array", "uniqueItems": true, "items": {"enum": ["PASSED", "NOT_AVAILABLE", "BLOCKED"]}}
+        }
+      }
+    },
+    "edges": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": ["from", "to", "type"],
+        "properties": {
+          "from": {"type": "string"},
+          "to": {"type": "string"},
+          "type": {"enum": ["normal", "fan_out", "all_of"]}
+        }
+      }
+    },
+    "rework_edges": {"type": "object", "minProperties": 1, "additionalProperties": {"type": "string"}},
+    "terminals": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["ACTIVATED", "IMPLEMENTED_NOT_ACTIVATED", "BLOCKED"],
+      "properties": {
+        "ACTIVATED": {"$ref": "#/$defs/terminal"},
+        "IMPLEMENTED_NOT_ACTIVATED": {"$ref": "#/$defs/terminal"},
+        "BLOCKED": {"$ref": "#/$defs/terminal"}
+      }
+    }
+  },
+  "$defs": {
+    "terminal": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["guard"],
+      "properties": {"guard": {"type": "string", "minLength": 1}}
+    }
+  }
+}

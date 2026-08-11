@@ -38,6 +38,42 @@ validated manifest.
 Historical Plans 23 and 24 are observations only. Their candidate promotion and
 factory-construction work are not executable dependencies.
 
+All `prompts/...` references in the graph are package-relative to
+`plans/25_curriculum_factory_graph/`; they are not repository-root `prompts/` paths.
+
+## Repository invocation
+
+Run one requested unit (the controller automatically includes its transitive manifest
+prerequisite closure in manifest order):
+
+```bash
+python3 -m runtime.run_curriculum \
+  --curriculum curricula/arduino_kit/arduino_kit_curriculum.v5.yaml \
+  --lab-id L01 \
+  --output-root outputs/arduino_kit_plan25_l01
+```
+
+Run the complete supplied manifest and assemble the workbook:
+
+```bash
+python3 -m runtime.run_curriculum \
+  --curriculum curricula/arduino_kit/arduino_kit_curriculum.v5.yaml \
+  --all \
+  --output-root outputs/arduino_kit_plan25_full
+```
+
+Resume an interrupted run without changing its original mode or target:
+
+```bash
+python3 -m runtime.run_curriculum \
+  --curriculum curricula/arduino_kit/arduino_kit_curriculum.v5.yaml \
+  --resume \
+  --output-root outputs/arduino_kit_plan25_full
+```
+
+The output root must be a new path under `outputs/` for a fresh run. These commands
+execute the factory graph; they do not implement, simulate, or redesign it.
+
 ## Execution contract
 
 1. Resolve the graph and every referenced prompt before `START`. Refuse an incomplete

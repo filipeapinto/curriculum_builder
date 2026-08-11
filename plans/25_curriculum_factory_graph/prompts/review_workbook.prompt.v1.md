@@ -21,16 +21,14 @@ expected release decision, and terminal state are excluded.
 
 ## Output
 
-Write one `ReviewFindingSet`:
+Return exactly one JSON object conforming to the controller-staged
+`output.schema.json`:
 
 ```text
 {
-  run_id, review_id, workbook_sha256, assembly_manifest_sha256,
-  accepted_unit_hashes, rubric_sha256, page_denominator,
-  findings: [{criterion_id, severity, artifact_owner: WORKBOOK,
-              exact_location, observed_defect, required_correction,
-              evidence_refs[]}],
-  page_results: [{page_number, criterion_results[]}],
+  findings: [{criterion_id, severity, artifact_owner: workbook,
+              exact_location, observed_defect, required_correction}],
+  page_results: [{page_number, result: PASS | FAIL, notes}],
   verdict: PASS | REPAIR_REQUIRED
 }
 ```

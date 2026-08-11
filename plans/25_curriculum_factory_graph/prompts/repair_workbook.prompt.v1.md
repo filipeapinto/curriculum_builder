@@ -20,20 +20,17 @@ acceptance records as writable data, counters, and terminal state are excluded.
 
 ## Output
 
-Write one complete workbook-owned child artifact and change response:
+Return exactly one JSON object conforming to the controller-staged
+`output.schema.json`:
 
 ```text
 {
-  repair_id, owner: WORKBOOK,
-  parent_version, parent_sha256, child_path,
-  accepted_unit_hashes_before,
-  changed_locations[], finding_ids_addressed[], unresolved[]
+  front_matter_markdown, finding_ids_addressed[]
 }
 ```
 
-Permitted examples are front matter, TOC/navigation, pagination, workbook styling,
-and assembly metadata within the supplied boundary. The ordered unit inputs must be
-referenced exactly once and byte-unchanged.
+Only the supplied workbook-owned front-matter boundary is mutable in v1. The ordered
+unit inputs are controller-owned and remain byte-unchanged.
 
 ## Bounds
 

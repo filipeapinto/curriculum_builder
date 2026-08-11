@@ -1,13 +1,15 @@
 from __future__ import annotations
 
 import json
+import io
 from pathlib import Path
 import tempfile
 import unittest
 from unittest import mock
+from contextlib import redirect_stdout
 
 from runtime.controller import CurriculumRuntime
-from runtime.run_curriculum import parser_for
+from runtime.run_curriculum import main, parser_for
 
 
 ENGINE = Path(__file__).resolve().parents[2]
@@ -54,6 +56,22 @@ class RunCurriculumParserTests(unittest.TestCase):
         for destination, value in expected.items():
             with self.subTest(destination=destination):
                 self.assertEqual(getattr(args, destination), value)
+
+    @mock.patch("runtime.run_curriculum.CurriculumFactoryGraph")
+    @mock.patch("runtime.run_curriculum.CodexWorker")
+    def test_live_cli_dispatches_exact_manifest_to_factory(self, worker, factory):
+        factory.return_value.run.return_value = {"terminal": "UNIT_ACCEPTED", "run_id": "r1"}
+        output = ENGINE / "outputs/cli-dispatch-not-created"
+        stream = io.StringIO()
+        with redirect_stdout(stream):
+            code = main(["--curriculum", str(CURRICULUM / "arduino_kit_curriculum.v5.yaml"),
+                         "--lab-id", "L01", "--output-root", str(output)])
+        self.assertEqual(0, code)
+        factory.return_value.run.assert_called_once()
+        call = factory.return_value.run.call_args.kwargs
+        self.assertEqual(str(CURRICULUM / "arduino_kit_curriculum.v5.yaml"), call["curriculum"])
+        self.assertEqual("L01", call["lab_id"])
+        self.assertFalse(call["all_units"])
 
 
 class RunCurriculumElapsedTimeTests(unittest.TestCase):

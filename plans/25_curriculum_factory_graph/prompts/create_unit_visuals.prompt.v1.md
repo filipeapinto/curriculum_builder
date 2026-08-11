@@ -22,17 +22,12 @@ acceptance state are excluded.
 
 ## Output
 
-Create exactly the assigned artifact and one structured provenance response:
+Return exactly one JSON object conforming to the controller-staged
+`output.schema.json`:
 
 ```text
 {
-  run_id, unit_id, visual_id,
-  artifact_path, media_type,
-  represented_parent_pointers[],
-  source_asset_ids[],
-  alt_text,
-  creation_notes,
-  unresolved[]
+  filename, svg, role, supports_section, alt_text
 }
 ```
 
@@ -49,7 +44,7 @@ fact. Any text embedded in the asset must come from the brief exactly.
 - Do not compute or assert the final artifact hash or receipt validity; controller
   code does so from bytes.
 - Do not declare the role complete, the visual accepted, or the unit successful.
-- Write only the two declared targets.
+- The `svg` field is the complete SVG payload. Do not write files; controller code
+  writes the preallocated target, hashes its bytes, and creates provenance.
 
-Complete when the assigned artifact and provenance response are written, or when a
-structured unresolved response names why the supplied brief cannot be represented.
+Complete when the one schema-valid response for the assigned visual is returned.

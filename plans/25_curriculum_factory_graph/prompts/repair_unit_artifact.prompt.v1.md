@@ -22,18 +22,12 @@ state are excluded.
 
 ## Output
 
-Write one complete child artifact and one change response:
-
-```text
-{
-  repair_id, owner, parent_version, parent_sha256,
-  child_path,
-  changed_locations[],
-  finding_ids_addressed[],
-  unchanged_dependency_sha256s,
-  unresolved[]
-}
-```
+Return exactly one complete child artifact conforming to the controller-staged
+`output.schema.json`. The schema is owner-specific: source interpretation, curriculum
+domain, complete unit content/visual metadata, or bounded unit-layout settings. It is
+the only legal response shape for this activation. Controller code computes parent
+and child hashes, writes the versioned artifact, checks the allowed diff, and records
+changed locations.
 
 The child must remain complete; it may differ from the parent only at allowed
 locations. Use immutable dependencies as facts, not material to rewrite.
@@ -47,7 +41,8 @@ locations. Use immutable dependencies as facts, not material to rewrite.
   which tests run.
 - Do not report that a finding passed. The controller admits the child and reruns the
   declared invalidated descendants.
-- Write only the declared child and response targets.
+- Do not write files; return only the schema-valid child JSON for the controller's
+  preallocated target.
 
 Complete when the scoped child and change response are written. If a correction
 requires scope expansion, record it as unresolved without making the expansion.

@@ -22,15 +22,14 @@ expected controller decision, and terminal state are structurally absent.
 
 ## Output
 
-Write one `ReviewFindingSet` bound to all supplied subject hashes:
+Return exactly one JSON object conforming to the controller-staged
+`output.schema.json`:
 
 ```text
 {
-  run_id, unit_id, review_id, subject_sha256s, rubric_sha256,
-  page_denominator,
   findings: [{criterion_id, severity, artifact_owner, exact_location,
-              observed_defect, required_correction, evidence_refs[]}],
-  page_results: [{page_number, criterion_results[]}],
+              observed_defect, required_correction}],
+  page_results: [{page_number, result: PASS | FAIL, notes}],
   verdict: PASS | REPAIR_REQUIRED
 }
 ```

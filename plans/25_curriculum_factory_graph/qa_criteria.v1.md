@@ -156,6 +156,13 @@ artifact/section or runtime evidence, trigger, and operational consequence.
     of this factory for supplied runtime inputs until an accepted curriculum product or
     honest terminal. It never asks the caller to implement, redesign, phase, evolve, or
     promote the factory.
+34. **Executable repository binding** — `python3 -m runtime.run_curriculum` resolves
+    this graph and its eight package-relative prompts, accepts the exact active manifest
+    path or curriculum directory, and activates the declared controller/model nodes.
+    A prose-only graph with no bound entry point, a root-level `prompts/` assumption, or
+    delegation to the legacy simulation FSM fails this criterion. The runtime binding
+    is a mechanism that executes the graph; it is not a substitute product or a later
+    factory-implementation phase.
 
 ## Mandatory adversarial rejection tests
 

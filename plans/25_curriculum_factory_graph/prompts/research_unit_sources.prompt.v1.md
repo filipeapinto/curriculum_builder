@@ -12,30 +12,25 @@ whether a source is admitted, select another job, or decide any terminal state.
 - the validated routing decision for this activation;
 - one `SourceRequest`: exact question, required fact/claim scope, acceptable source
   authority, identifier constraints, and required measurement conditions;
-- only the retrieval-result bytes and metadata supplied for this request; and
+- in `DISCOVER` mode, the bounded source question and permission to identify candidate
+  URLs from primary authorities; or, in `INTERPRET` mode, only the controller-supplied
+  retrieval-result bytes and metadata; and
 - this response contract.
 
 No other unit request, manifest sibling, author/reviewer history, existing verdict,
-or repository file is authorized. Do not rely on memory as evidence and do not fetch
-outside the controller-supplied retrieval results.
+or repository file is authorized. A candidate URL is not evidence: only bytes the
+controller successfully retrieves may enter `INTERPRET` mode or later admission.
 
 ## Output
 
-Write one `SourceWorkerResult` to the preallocated target:
+Return exactly one JSON object conforming to the controller-staged
+`output.schema.json`. In `DISCOVER` mode it contains candidate primary-source URLs,
+publishers, titles, claim scopes, and why each authority is primary. In `INTERPRET`
+mode it contains:
 
 ```text
-{
-  run_id, unit_id, request_id,
-  interpretations: [{
-    retrieval_result_id,
-    source_title, publisher, source_identifier, access_date,
-    exact_locator, supported_fact, claim_scope, measurement_conditions,
-    support: DIRECT | INSUFFICIENT | CONFLICTING,
-    concise_reason
-  }],
-  unresolved: [{required_fact, reason}],
-  cautions: [string]
-}
+{sources: [{retrieval_result_id, source_title, publisher, exact_locator,
+            supported_facts[], claim_scope}], unresolved: [string]}
 ```
 
 Every supported fact must point to exact supplied bytes through
@@ -47,8 +42,8 @@ invent or average a value.
 ## Bounds
 
 - Answer only the supplied question.
-- Prefer the declared primary authority; do not substitute an unsupplied secondary
-  source.
+- Prefer the declared primary authority. Discovery may name a candidate; interpretation
+  may not substitute any result the controller did not supply.
 - Never claim that retrieval happened merely because a citation looks plausible.
 - Never declare a source admitted, a prerequisite pause, a repair, or success.
 - Write no file except the declared output and include no undeclared field.
