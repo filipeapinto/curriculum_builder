@@ -109,6 +109,10 @@ ATTEMPT_RESERVATION = "D90_RESERVE_MODEL_ATTEMPT"
 # declares (`NodeSpec.guards` for the nodes N22 owns); rows for nodes N31/N32
 # still owe are declared here first so those nodes implement against a frozen
 # destination rather than inventing one.
+#
+# No row here names a model node. Spec 6.2's D90 row requires the attempt counter
+# to be committed before dispatch, so every model dispatch is routed to D90 and
+# reaches its worker only from D90's own guard, carrying the reservation D90 minted.
 GUARD_DESTINATIONS: Mapping[str, Mapping[str, str]] = {
     "D00_BOOTSTRAP_EPISODE": {
         "fresh": "D01_VALIDATE_AND_FREEZE_INPUTS",
@@ -140,11 +144,11 @@ GUARD_DESTINATIONS: Mapping[str, Mapping[str, str]] = {
         "manifest_exhausted": "D24_PROVE_EXACT_MANIFEST_COVERAGE",
     },
     "D07_CORRELATE_AND_ADMIT_SOURCES": {
-        "sources_admitted": "M02_CREATE_UNIT_DOMAIN_DATA",
+        "sources_admitted": ATTEMPT_RESERVATION,
         "prerequisite_unresolved": "D30_CLASSIFY_PREREQUISITE",
     },
     "D08_VALIDATE_DOMAIN": {
-        "domain_admitted": "M03_WRITE_UNIT_CONTENT",
+        "domain_admitted": ATTEMPT_RESERVATION,
         "domain_repairable": "D17_CLASSIFY_UNIT_FINDINGS",
     },
     "D09_VALIDATE_CONTENT": {
@@ -169,7 +173,7 @@ GUARD_DESTINATIONS: Mapping[str, Mapping[str, str]] = {
         "layout_repairable": "D17_CLASSIFY_UNIT_FINDINGS",
     },
     "D15_FREEZE_UNIT_REVIEW_PACKET": {
-        "review_packet_frozen": "M05_REVIEW_ACTUAL_UNIT",
+        "review_packet_frozen": ATTEMPT_RESERVATION,
     },
     "D16_REDUCE_UNIT_EVIDENCE": {
         "unit_denominator_passed": "D22_ACCEPT_UNIT",
@@ -211,7 +215,7 @@ GUARD_DESTINATIONS: Mapping[str, Mapping[str, str]] = {
         "workbook_layout_repairable": "D29_CLASSIFY_AND_PLAN_WORKBOOK_REPAIR",
     },
     "D27_FREEZE_WORKBOOK_REVIEW_PACKET": {
-        "workbook_packet_frozen": "M07_REVIEW_ACTUAL_WORKBOOK",
+        "workbook_packet_frozen": ATTEMPT_RESERVATION,
     },
     "D28_REDUCE_WORKBOOK_EVIDENCE": {
         "workbook_denominator_passed": "D32_RECOMPUTE_FINAL_RELEASE",
@@ -259,18 +263,24 @@ NORMAL_EDGE_GUARDS: frozenset[tuple[str, str]] = frozenset(
 DYNAMIC_GUARDS: Mapping[str, Mapping[str, str]] = {
     "D92_REENTER_VALIDATED_FRONTIER": {"deterministic_reentry": "destination"},
     "D21_RETEST_REQUIRED_DESCENDANTS": {"retest_frontier_incomplete": "destination"},
+    # `route_attempt_reservation` resolves `authorized` from the restaged packet
+    # instead, so a map reserves and dispatches N members; the `job_id` the guard
+    # record carries is the same single job every one of those members names.
     "D90_RESERVE_MODEL_ATTEMPT": {"authorized": "job_id"},
     "D91_CLASSIFY_MODEL_FAILURE": {"repair": "destination"},
 }
 
-# Guard values that dispatch a `Send` fan-out instead of naming one destination.
+# Guard values that dispatch a fan-out. The destination is where the *dispatch*
+# goes, not where the workers run: a model map goes to D90, which reserves one
+# attempt per member and then fans the restaged packet out itself. D11 is
+# deterministic, needs no reservation, and is therefore sent to directly.
 FANOUT_GUARDS: Mapping[str, Mapping[str, str]] = {
-    "D06_COMPILE_SOURCE_REQUESTS": {"discovery_fanout": "M01_RESEARCH_UNIT_SOURCES"},
-    "D06B_RETRIEVE_SOURCE_CANDIDATES": {"interpretation_fanout": "M01_RESEARCH_UNIT_SOURCES"},
+    "D06_COMPILE_SOURCE_REQUESTS": {"discovery_fanout": ATTEMPT_RESERVATION},
+    "D06B_RETRIEVE_SOURCE_CANDIDATES": {"interpretation_fanout": ATTEMPT_RESERVATION},
     "D10_COMPILE_VISUAL_BRIEFS": {
         "deterministic_visual_fanout": "D11_CREATE_DETERMINISTIC_VISUALS"
     },
-    "D12_VISUAL_BARRIER_AND_JOIN": {"model_visual_fanout": "M04_CREATE_UNIT_VISUALS"},
+    "D12_VISUAL_BARRIER_AND_JOIN": {"model_visual_fanout": ATTEMPT_RESERVATION},
 }
 
 # Where a model node's accepted result goes. A model never names its own next
@@ -446,7 +456,10 @@ def _fanout_or_single(state: Mapping[str, Any], node_id: str) -> Any:
     if interrupt_requested(state):
         return INTERRUPT_GATE
     _, value = _guard_value(state, node_id)
-    if value in FANOUT_GUARDS.get(node_id, {}):
+    dispatch = FANOUT_GUARDS.get(node_id, {}).get(value)
+    if dispatch == ATTEMPT_RESERVATION:
+        return dispatch
+    if dispatch is not None:
         return _staged_fanout(state, node_id)
     return decide(node_id, state)
 
@@ -682,10 +695,25 @@ def route_prerequisite(state: Mapping[str, Any]) -> str:
 # ------------------------------------------------------------- model attempt guards
 
 
-def route_attempt_reservation(state: Mapping[str, Any]) -> str:
-    """D90: the reserved attempt authorizes exactly one model node, or exhausts."""
+def route_attempt_reservation(state: Mapping[str, Any]) -> Any:
+    """D90: one `Send` per member D90 actually reserved an attempt for, or exhausts.
 
-    return decide("D90_RESERVE_MODEL_ATTEMPT", state)
+    D90 restages the dispatching node's packet with each member's reservation
+    attached, so translating that restaged packet is what makes a dispatch carry
+    a committed counter. A single-member dispatch becomes a one-element `Send`
+    list, which is why D07/D08/D15 route here too rather than to their worker.
+    """
+
+    node_id = "D90_RESERVE_MODEL_ATTEMPT"
+    failure = _failure_destination(state, model_node=False)
+    if failure is not None:
+        return failure
+    if interrupt_requested(state):
+        return INTERRUPT_GATE
+    _, value = _guard_value(state, node_id)
+    if value == "authorized":
+        return _staged_fanout(state, node_id)
+    return decide(node_id, state)
 
 
 def route_model_failure(state: Mapping[str, Any]) -> str:

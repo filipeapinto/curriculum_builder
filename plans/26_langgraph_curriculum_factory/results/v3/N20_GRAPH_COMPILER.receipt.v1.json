@@ -1,0 +1,42 @@
+{
+  "changed_files": [],
+  "commands": [
+    {
+      "argv": [
+        "/tmp/plan26_n30_verify/bin/python",
+        "-m",
+        "pytest",
+        "-q",
+        "tests/runtime/test_plan26_topology.py",
+        "tests/runtime/test_plan26_state_reducers.py",
+        "tests/runtime/test_plan26_deterministic_nodes.py",
+        "tests/runtime/test_plan26_model_nodes.py"
+      ],
+      "exit_code": 0,
+      "finished_at": "2026-08-11T21:00:30.643863+00:00",
+      "log": "plans/26_langgraph_curriculum_factory/results/v3/logs/N20_GRAPH_COMPILER/adopt-v2.test1.log",
+      "log_sha256": "3bbc8940bc5400fa8f19eab1ae73b57e9ccc3a9ffc023392e83fc8109d01a54f",
+      "started_at": "2026-08-11T21:00:27.809276+00:00",
+      "tail": "......................................................................... [ 13%]\n............................ [ 18%]\n........................................................................ [ 31%]\n........................................................................ [ 45%]\n........................................................................ [ 58%]\n........................................................................ [ 71%]\n........................................................................ [ 84%]\n........................................................................ [ 98%]\n..........                                                               [100%]\n543 passed, 187 subtests passed in 1.97s\n",
+      "timed_out": false
+    }
+  ],
+  "created_at": "2026-08-11T21:00:30.652024+00:00",
+  "findings": [],
+  "graph_digest": "ac8587de809ce6dbc0a75b476e79fc8d0474a980c0cfbabcb97979a0b490a82a",
+  "graph_id": "plan26_langgraph_curriculum_factory_implementation",
+  "input_fingerprint": "375edbf70cbbc642f0e24c3393cb0ada553a775fc2413be73844736dcf3647ce",
+  "node_definition_sha256": "3664772862d08e5bd6d77705b092006f918a07cadf8bf5b44c582efc2d088187",
+  "node_id": "N20_GRAPH_COMPILER",
+  "outputs": {
+    "plans/26_langgraph_curriculum_factory/results/N20_GRAPH_COMPILER.result.v1.md": "c44d8d4caaebdf540fd80b3b875af062f7ba3d49979b6a310e9e874b4bbbdd7c",
+    "plans/26_langgraph_curriculum_factory/results/evidence/N20_GRAPH_COMPILER": "d4c73b7f06ffd6da4818ba30075be023533d86e47d2efafbc3acd3d22c104818",
+    "runtime/langgraph_factory/graph.py": "6361e12cd0f4daa119d6311b1ecb9bab65102978820e22f24da7a259aa7a72aa",
+    "runtime/langgraph_factory/routing.py": "6be93bf8bd951ae9984f74dc9dbe91c709a41edca0a1a6ff6d72be52cd998079",
+    "tests/runtime/test_plan26_topology.py": "87bd5dc6b3e4da4c6ae4c2646027c648167bf72f9432033c9567c65c752af332"
+  },
+  "prompt_sha256": "577a251c85b80d00fc0ae3929dc620a5c1b28b79ab970729a0b9428744f4f469",
+  "schema_version": 1,
+  "source": "adopted_v2_after_focused_verification",
+  "status": "PASSED"
+}

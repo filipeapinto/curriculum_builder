@@ -1,53 +1,40 @@
 # GOAL
 
-Compile and execute the implementation prompt graph at
-`plans/26_langgraph_curriculum_factory/implementation.graph.v2.yaml` to
-implement `spec/langgraph_curriculum_factory.spec.v1.md` exactly.
+Execute `implementation.graph.v3.yaml` with Claude Sonnet through the deterministic
+controller at `prompt_graph_controller.py`. This prompt runs the implementation
+prompt graph; it does not replace the production LangGraph curriculum factory.
 
-This is the prompt-graph runner. It does not implement phase work itself and it
-does not replace the specified production LangGraph runtime. Read the complete
-source spec, graph manifest/schema, QA criteria, and all node prompts before
-activating the entry node.
-
-Validate schema plus graph invariants: unique/known nodes, prompt/result paths,
-one entry, reachable final audit/terminals, dependencies matching edges, valid
-`all_of` joins, acyclic forward dependencies, total rework ownership, and
-disjoint write sets for concurrently ready nodes.
+Preserve the interrupted v2 results as audit evidence. Adopt a v2 `PASSED` node
+only after its v3 focused verification succeeds. Never adopt the blocked N30 result.
 
 # TEST
 
-For each scheduler generation:
+From the repository root:
 
-1. Recompute node status from result records and declared artifact hashes; file
-   presence alone never means pass.
-2. A node is `READY` only when every `depends_on` predecessor has an admissible
-   passing result and every incoming guard/join is satisfied.
-3. Select all ready nodes with disjoint `writes` for concurrent execution;
-   serialize conflicts in stable node-ID order.
-4. Execute each selected node's prompt verbatim, including its TEST and LOOP.
-5. Validate the result record, commands, exit codes, tests, outputs, hashes, and
-   write-set containment before admitting `PASSED` or `NOT_AVAILABLE` where allowed.
-6. Append a scheduler receipt with graph digest, generation, ready/selected sets,
-   predecessor/result hashes, edge decisions, invalidations, and next frontier.
-7. On final-audit finding, use exactly one declared `rework_edges` owner,
-   invalidate that node and all descendants, and resume normal scheduling.
+1. Validate graph schema and invariants:
+   `python3 plans/26_langgraph_curriculum_factory/prompt_graph_controller.py validate`
+2. Adopt verified completed work through the N20 integration join (which is
+   topologically after N22/N23):
+   `python3 plans/26_langgraph_curriculum_factory/prompt_graph_controller.py adopt-v2 --through N20_GRAPH_COMPILER`
+3. Confirm N30 is the next frontier:
+   `python3 plans/26_langgraph_curriculum_factory/prompt_graph_controller.py status`
+4. Preview every scheduler generation before launching it:
+   `python3 plans/26_langgraph_curriculum_factory/prompt_graph_controller.py run --dry-run`
+5. Execute one generation:
+   `python3 plans/26_langgraph_curriculum_factory/prompt_graph_controller.py run`
 
-After N90, independently validate its evidence and return exactly its verdict:
-`ACTIVATED`, `IMPLEMENTED_NOT_ACTIVATED`, or `BLOCKED`.
+The controller must admit a node only when its Claude command succeeds, its
+focused/join/full verification commands return zero, every changed file is inside
+the declared write set, its compact receipt validates, and all output hashes match.
 
 # LOOP
 
-Traverse the manifest, not filename order. Begin at `N00_BASELINE_FREEZE`; after
-it passes, execute the N10/N11/N12/N13 fan-out concurrently where safe; honor
-every later `all_of` join and declared dependency.
+Repeat status, dry-run, and run one generation at a time until N90. The controller
+launches disjoint ready nodes concurrently in isolated copies of the current dirty
+baseline, merges only declared writes, caches verified nodes, and invalidates stale
+receipts when inputs or outputs change.
 
-Never invent an edge, skip a predecessor, execute an unready node, weaken a
-test, mutate unrelated dirty work, or fall back to a sequential implementation
-controller. A node's own LOOP runs before its failure is propagated. A final-
-audit finding may traverse the same rework key/root-cause pair twice; the third
-occurrence reaches `BLOCKED`.
-
-Stop at `BLOCKED` when graph validation fails, no legal frontier exists, a node
-exhausts its loop, required authority is absent, or implementation would violate
-the source spec. Missing external prerequisites for N60 yield
-`IMPLEMENTED_NOT_ACTIVATED` only when all implementation/adversarial nodes pass.
+Do not load historical result Markdown into Claude by default. Do not rerun the
+complete suite at ordinary nodes. N50 runs the complete unchanged suite; N90 audits
+that immutable receipt. Return only `ACTIVATED`, `IMPLEMENTED_NOT_ACTIVATED`, or
+`BLOCKED` after N90 evidence validates.

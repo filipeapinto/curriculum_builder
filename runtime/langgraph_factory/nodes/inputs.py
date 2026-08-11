@@ -678,9 +678,17 @@ def D02_COMPILE_EFFECTIVE_RUN(projection: dict[str, Any], runtime_context: Any) 
         )
         target_closure = compile_prerequisite_closure(unit_records, requested_unit_id)
 
+    # The curriculum's own domain contract. The engine's metaschema constrains the
+    # shape of this file; the file constrains the domain a unit's artifacts assert.
+    declared_domain = manifest.get("domain") if isinstance(manifest, dict) else None
+    manifest_schema = (
+        declared_domain.get("manifest_schema") if isinstance(declared_domain, dict) else None
+    )
+
     effective_run = {
         "mode": mode,
         "requested_unit_id": requested_unit_id,
+        "manifest_schema": manifest_schema,
         "ordered_unit_ids": ordered_ids,
         "unit_records": unit_records,
         "target_closure": target_closure,

@@ -15,18 +15,22 @@ import jsonschema
 
 from . import (
     SystemFailure,
+    candidate_payload,
     check_record,
     contract_reference,
     deterministic_node,
     guard,
     head_update,
     latest_candidate,
+    latest_model_candidate,
+    mint_version,
     require,
     require_current_parent,
     staged_dispatch,
     stream_id,
     worker_packet,
 )
+from .sources import DOMAIN_SCHEMA_CONTRACT
 
 __all__ = ["DOMAIN_CHECK_IDS", "CURRICULUM_CONTRACTS", "D08_VALIDATE_DOMAIN"]
 
@@ -38,9 +42,12 @@ DOMAIN_CHECK_IDS: tuple[str, ...] = (
 )
 
 # The frozen contracts a unit's prose must satisfy. D09 validates against them,
-# so M03 is handed the same two rather than a paraphrase of them.
+# so M03 is handed the same two rather than a paraphrase of them. The first is a
+# per-*unit* content contract: `curriculum.schema.v5.json` describes a whole
+# curriculum manifest and shares no property with a unit content document, so
+# holding one to the other admits nothing at all.
 CURRICULUM_CONTRACTS: tuple[str, ...] = (
-    "schemas/curriculum.schema.v5.json",
+    "schemas/unit_content.schema.v1.json",
     "meta_prompt/assets/unit_prose.v1.md",
 )
 
@@ -55,6 +62,49 @@ def _load_json(path: Path, label: str) -> Any:
         ) from error
 
 
+def _mint_domain_version(
+    artifact_versions: list[Any],
+    heads: dict[str, Any],
+    stream: str,
+    unit_id: str,
+    schema_path: str,
+) -> dict[str, Any] | None:
+    """Mint the domain version M02's candidate authorizes, or None if it produced none.
+
+    M02 emits `{"domain_version": {unit_id, fields, evidence_references}}` and no
+    version or hash of its own. The artifact body is `fields` — the open document
+    the curriculum's declared schema and the verifier pointer both address; the
+    wrapper around it is lineage M02 already checked against the admitted sources.
+    """
+
+    record = latest_model_candidate(artifact_versions, channel="domain", unit_id=unit_id)
+    if record is None:
+        return None
+    payload = candidate_payload(record, f"domain candidate on {stream}")
+    declared = payload.get("domain_version")
+    require(
+        isinstance(declared, dict),
+        "schema_contract",
+        "the domain candidate declares no domain_version",
+    )
+    body = declared.get("fields")
+    require(
+        isinstance(body, dict),
+        "schema_contract",
+        "the domain candidate declares no domain fields",
+    )
+    return mint_version(
+        record,
+        heads,
+        stream,
+        body=body,
+        unit_id=unit_id,
+        channel="domain",
+        schema_path=schema_path,
+        evidence_references=declared.get("evidence_references", []),
+    )
+
+
 @deterministic_node("D08_VALIDATE_DOMAIN")
 def D08_VALIDATE_DOMAIN(projection: dict[str, Any], runtime_context: Any) -> dict[str, Any]:
     """Validate a candidate domain version and admit it, or emit repairable findings."""
@@ -63,19 +113,26 @@ def D08_VALIDATE_DOMAIN(projection: dict[str, Any], runtime_context: Any) -> dic
     require(isinstance(unit_id, str) and unit_id, "invalid_input", "no unit is selected")
     stream = stream_id(unit_id, "domain")
 
-    candidate = latest_candidate(projection["artifact_versions"], stream)
+    heads = projection["artifact_heads"]
+    effective_run = projection["effective_run"]
+    # The run's own domain contract when it declares one; otherwise the engine's
+    # named domain contract, which is the schema D07 handed the model.
+    domain_schema = effective_run.get("manifest_schema") or DOMAIN_SCHEMA_CONTRACT
+    minted = _mint_domain_version(
+        projection["artifact_versions"], heads, stream, unit_id, str(domain_schema)
+    )
+    candidate = minted or latest_candidate(projection["artifact_versions"], stream)
     require(
         candidate is not None,
         "invalid_input",
         f"no candidate domain version exists on {stream}",
     )
-    require_current_parent(candidate, projection["artifact_heads"], stream)
+    require_current_parent(candidate, heads, stream)
 
     body = candidate.get("body")
     require(isinstance(body, dict), "schema_contract", "candidate domain body must be an object")
 
     engine_root = Path(projection["engine_root"])
-    effective_run = projection["effective_run"]
     manifest_domain = None
     for unit in effective_run.get("unit_records", []):
         if isinstance(unit, dict) and unit.get("id") == unit_id:
@@ -160,7 +217,9 @@ def D08_VALIDATE_DOMAIN(projection: dict[str, Any], runtime_context: Any) -> dic
             }
         )
 
-    verifier = candidate.get("verifier_result")
+    # `/verifier_result` is the pointer D07's `verifier_interface` declares, which
+    # addresses the artifact body, not the record wrapping it.
+    verifier = candidate.get("verifier_result", body.get("verifier_result"))
     verifier_passed = isinstance(verifier, dict) and verifier.get("result") == "all_fixtures_behaved"
     checks.append(
         check_record(
@@ -216,9 +275,12 @@ def D08_VALIDATE_DOMAIN(projection: dict[str, Any], runtime_context: Any) -> dic
         },
     )
 
-    return {
+    update = {
         "artifact_heads": head_update(candidate, stream),
         "deterministic_checks": checks,
         "pending_packet": staged_dispatch("M03_WRITE_UNIT_CONTENT", [packet]),
         "pending_guard": guard("D08_VALIDATE_DOMAIN", "domain_admitted", unit_id=unit_id),
     }
+    if minted is not None:
+        update["artifact_versions"] = [minted]
+    return update

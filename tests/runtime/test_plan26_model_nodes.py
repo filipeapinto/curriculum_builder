@@ -28,6 +28,7 @@ from runtime.langgraph_factory.state import (
 RUN_ID = "run-plan26-model-nodes"
 EPISODE_ID = "ep-n23"
 SHA = "0" * 64
+CONTENT_HASH = "c" * 64
 
 # Spec section 9's table, transcribed. The test asserts the code equals this, so a
 # projection can never quietly widen without this literal transcription changing too.
@@ -232,7 +233,7 @@ def packet_for(spec_name: str) -> dict[str, Any]:
                      "source_rules": dict(SOURCE_RULES),
                      "retrieval_group": {
                          "retrieval_group_hash": SHA,
-                         "retrieved_records": [{"retrieval_id": "RET-1", "bytes_sha256": SHA,
+                         "retrieved_records": [{"retrieval_id": "RET-1", "sha256": SHA,
                                          "content_type": "text/html",
                                          "staged_name": "ret-1.html"}]}})
     elif spec_name == "M02_domain":
@@ -254,7 +255,8 @@ def packet_for(spec_name: str) -> dict[str, Any]:
                      "admitted_evidence_references": [{"source_id": "SRC-1",
                                                        "source_location": "p. 2"}]})
     elif spec_name == "M04_visual":
-        base.update({"brief": {"brief_id": "B1", "visual_class": "conceptual",
+        base.update({"brief": {"brief_id": "B1", "unit_id": "U01",
+                               "visual_class": "conceptual", "content_hash": CONTENT_HASH,
                                "eligibility": "model_eligible", "authoritative": False,
                                "description": "a lever on a fulcrum"},
                      "permitted_facts": ["a lever pivots"],
@@ -953,6 +955,75 @@ def test_every_candidate_record_is_marked_pre_admission(spec_name):
         assert record["record_kind"] == "model_candidate"
 
 
+def candidates_in(update: dict[str, Any]) -> list[dict[str, Any]]:
+    return [record for field in mn.MODEL_NODE_WRITABLE_FIELDS
+            if field in update and field not in {"model_execution_receipts",
+                                                 "activation_receipts", "pending_failure"}
+            for record in (update[field] if isinstance(update[field], list)
+                           else update[field].values())]
+
+
+# B-7: the lineage a deterministic join indexes a candidate by is the dispatcher's, so
+# the projection must carry it onto the record. `payload` stays quarantined as the only
+# thing the model itself authored.
+LINEAGE = [
+    ("M01_discovery", "source_discoveries", {"unit_id": "U01"}),
+    ("M01_interpretation", "source_interpretations",
+     {"unit_id": "U01", "retrieval_sha256": SHA}),
+    ("M02_domain", "artifact_versions", {"unit_id": "U01"}),
+    ("M03_content", "artifact_versions", {"unit_id": "U01"}),
+    ("M04_visual", "visual_results",
+     {"unit_id": "U01", "subset": "model", "content_hash": CONTENT_HASH}),
+]
+
+
+@pytest.mark.parametrize("spec_name,field,expected", LINEAGE,
+                         ids=[row[0] for row in LINEAGE])
+def test_a_candidate_carries_the_lineage_its_consuming_join_indexes_by(spec_name, field,
+                                                                      expected):
+    record = candidates_in(run(spec_name))[0]
+    assert {key: record.get(key) for key in expected} == expected
+    assert field in run(spec_name)
+
+
+def test_the_lineage_tracks_the_dispatchers_brief_not_the_models_unchanged_answer():
+    """One identical model answer, two content epochs: the record follows the brief."""
+
+    superseded = packet_for("M04_visual")
+    superseded["brief"]["content_hash"] = "d" * 64
+    first = candidates_in(run("M04_visual"))[0]
+    second = candidates_in(run("M04_visual", packet=superseded))[0]
+    assert first["payload"] == second["payload"]
+    assert (first["content_hash"], second["content_hash"]) == (CONTENT_HASH, "d" * 64)
+
+
+def test_the_discovery_locators_a_join_reads_stay_inside_the_models_payload():
+    """D06B's locators are the model's own answer, so they are read out of `payload`."""
+
+    record = candidates_in(run("M01_discovery"))[0]
+    assert record["payload"]["locators"][0]["request_id"] == "REQ-1"
+    assert "locators" not in record, "model output is never promoted to a lineage field"
+
+
+@pytest.mark.parametrize("spec_name", sorted(SPEC_SECTION_9))
+def test_no_candidate_record_may_carry_an_admission_owned_field(spec_name):
+    """The property the whole pre-admission design exists to guarantee."""
+
+    for record in candidates_in(run(spec_name)):
+        assert mn.ADMISSION_OWNED_CANDIDATE_FIELDS & set(record) == set()
+        assert {"version", "hash", "parent_hash"} & set(record) == set()
+
+
+@pytest.mark.parametrize("field", sorted(mn.ADMISSION_OWNED_CANDIDATE_FIELDS))
+def test_an_adapter_that_tried_to_mint_a_version_is_refused_by_the_module(field):
+    dispatch = mn._Dispatch(spec=mn.PROJECTION_SPECS["M02_domain"], route=None,
+                            projection={}, correlation=correlation(),
+                            reservation={"reservation_id": "r-1", "activation_id": "a-1"},
+                            candidate={}, receipt={}, attempts=())
+    with pytest.raises(mn.ModelNodeError, match="deterministic admission authority"):
+        mn._candidate_record(dispatch, **{field: SHA})
+
+
 def test_the_writable_and_forbidden_field_sets_are_real_and_disjoint():
     assert mn.MODEL_NODE_WRITABLE_FIELDS <= set(FACTORY_STATE_FIELDS)
     assert mn.FORBIDDEN_MODEL_NODE_FIELDS <= set(FACTORY_STATE_FIELDS)
@@ -1153,6 +1224,137 @@ def test_one_exhausted_member_exhausts_the_whole_superstep():
     assert update["pending_guard"]["detail"]["exhausted"][0]["counter_key"] == at_limit
 
 
+def test_m01s_two_phases_each_get_their_own_attempt_budget():
+    """B-13: a run in which nothing goes wrong must not spend M01's whole budget."""
+
+    job_id = "M01_RESEARCH_UNIT_SOURCES"
+    request_key = "U001/1/required_explanation:000"
+
+    def reserve(phase: str, counters: dict[str, int]) -> dict[str, Any]:
+        return mn.D90_RESERVE_MODEL_ATTEMPT(
+            {"pending_packet": {"dispatch": job_id,
+                                "packets": [member(request_key, phase=phase)]},
+             "attempt_counters": counters}, None)
+
+    discovery = reserve("DISCOVER", {})
+    interpretation = reserve("INTERPRET", dict(discovery["attempt_counters"]))
+
+    assert discovery["pending_guard"]["value"] == "authorized"
+    assert interpretation["pending_guard"]["value"] == "authorized"
+    assert monotonic_max(discovery["attempt_counters"],
+                         interpretation["attempt_counters"]) == {
+        mn.attempt_counter_key(job_id, request_key, "DISCOVER"): 1,
+        mn.attempt_counter_key(job_id, request_key, "INTERPRET"): 1,
+    }
+    for update in (discovery, interpretation):
+        staged_member = update["pending_packet"]["packets"][0]
+        assert staged_member["correlation"]["correlation_key"] == request_key, (
+            "D06B and D07 index their joins by the correlation key, so only D90's "
+            "counter key may widen")
+        assert staged_member["reservation"]["attempt_ordinal"] == 1
+
+
+def test_the_frozen_limit_still_binds_within_one_m01_phase():
+    job_id = "M01_RESEARCH_UNIT_SOURCES"
+    request_key = "U001/1/required_explanation:000"
+    packet = {"dispatch": job_id, "packets": [member(request_key, phase="DISCOVER")]}
+
+    counters: dict[str, int] = {}
+    ordinals = []
+    for _ in range(mn.MODEL_NODE_ATTEMPT_LIMIT):
+        update = mn.D90_RESERVE_MODEL_ATTEMPT(
+            {"pending_packet": packet, "attempt_counters": counters}, None)
+        assert update["pending_guard"]["value"] == "authorized"
+        counters = monotonic_max(counters, update["attempt_counters"])
+        ordinals.append(
+            update["pending_packet"]["packets"][0]["reservation"]["attempt_ordinal"])
+
+    assert ordinals == list(range(1, mn.MODEL_NODE_ATTEMPT_LIMIT + 1))
+    exhausted = mn.D90_RESERVE_MODEL_ATTEMPT(
+        {"pending_packet": packet, "attempt_counters": counters}, None)
+    assert exhausted["pending_guard"]["value"] == "exhausted"
+    assert exhausted["pending_guard"]["detail"]["exhausted"][0]["counter_key"] == (
+        mn.attempt_counter_key(job_id, request_key, "DISCOVER"))
+
+
+def test_a_phased_retry_restages_only_the_phase_d91_named():
+    job_id = "M01_RESEARCH_UNIT_SOURCES"
+    request_key = "U001/1/required_explanation:000"
+    retried = mn.attempt_counter_key(job_id, request_key, "INTERPRET")
+    state = {
+        "pending_packet": {"dispatch": job_id,
+                           "packets": [member(request_key, phase="INTERPRET")]},
+        "attempt_counters": {
+            mn.attempt_counter_key(job_id, request_key, "DISCOVER"): 1,
+            retried: 1,
+        },
+        "pending_guard": {"kind": "model_failure", "decision": "retry",
+                          "counter_key": retried, "job_id": job_id},
+    }
+
+    update = mn.D90_RESERVE_MODEL_ATTEMPT(state, None)
+
+    assert update["attempt_counters"] == {retried: 2}, (
+        "a transport fault on interpretation must not spend discovery's budget")
+    assert update["pending_packet"]["packets"][0]["reservation"]["attempt_ordinal"] == 2
+
+
+def test_the_real_m01_dispatchers_reserve_against_distinct_counters():
+    """N30's regression case, driven through the real D06 body.
+
+    D06 and D06B stage the same `correlation_key` on purpose — D06B indexes
+    `source_discoveries` and D07 indexes `source_interpretations` by it — so the
+    phase is the only thing that may separate the two attempt budgets.
+    """
+
+    from runtime.langgraph_factory.nodes import sources
+
+    state = {
+        "run_id": RUN_ID,
+        "episode_id": EPISODE_ID,
+        "effective_run": {
+            "unit_records": [{"id": "U001", "title": "t",
+                              "required_explanation": ["fact"],
+                              "safety_focus": ["care"]}],
+            "target_closure": ["U001"],
+        },
+        "selected_unit_id": "U001",
+        "source_admissions": [],
+        "engine_root": "/tmp",
+    }
+    staged_discovery = sources.D06_COMPILE_SOURCE_REQUESTS(state, None)
+    discovery_members = staged_discovery["pending_packet"]["packets"]
+    assert {item["phase"] for item in discovery_members} == {"DISCOVER"}
+
+    # D06B restages the same correlations under the interpretation phase.
+    staged_interpretation = {"pending_packet": {
+        **staged_discovery["pending_packet"],
+        "packets": [{**item, "phase": "INTERPRET"} for item in discovery_members]}}
+
+    discovery = mn.D90_RESERVE_MODEL_ATTEMPT({**state, **staged_discovery}, None)
+    interpretation = mn.D90_RESERVE_MODEL_ATTEMPT(
+        {**state, "attempt_counters": discovery["attempt_counters"],
+         **staged_interpretation}, None)
+
+    assert discovery["pending_guard"]["value"] == "authorized"
+    assert interpretation["pending_guard"]["value"] == "authorized"
+    assert not set(discovery["attempt_counters"]) & set(
+        interpretation["attempt_counters"]), "the two phases must not share a counter"
+    assert set(discovery["attempt_counters"].values()) == {1}
+    assert set(interpretation["attempt_counters"].values()) == {1}
+    assert [item["correlation"]["correlation_key"]
+            for item in interpretation["pending_packet"]["packets"]] == [
+        item["correlation"]["correlation_key"] for item in discovery_members]
+
+
+def test_a_staged_member_with_an_unusable_phase_is_refused():
+    job_id = "M01_RESEARCH_UNIT_SOURCES"
+    state = {"pending_packet": {"dispatch": job_id,
+                                "packets": [member("req-1", phase=1)]}}
+    with pytest.raises(mn.ModelNodeError, match="non-string phase"):
+        mn.D90_RESERVE_MODEL_ATTEMPT(state, None)
+
+
 def test_d90_refuses_to_reserve_for_an_unstaged_dispatch():
     with pytest.raises(mn.ModelNodeError, match="no `pending_packet` is staged"):
         mn.D90_RESERVE_MODEL_ATTEMPT({}, None)
@@ -1166,15 +1368,27 @@ def test_d90_guard_routes_through_the_frozen_guard_table():
     from runtime.langgraph_factory import routing
 
     job_id = "M01_RESEARCH_UNIT_SOURCES"
-    state = {"pending_packet": staged(job_id, "req-1")}
-    authorized = mn.D90_RESERVE_MODEL_ATTEMPT(state, None)
-    assert routing.route_attempt_reservation(authorized) == job_id
-
     at_limit = {"pending_packet": staged(job_id, "req-1"),
                 "attempt_counters": {mn.attempt_counter_key(job_id, "req-1"):
                                      mn.MODEL_NODE_ATTEMPT_LIMIT}}
     exhausted = mn.D90_RESERVE_MODEL_ATTEMPT(at_limit, None)
     assert routing.route_attempt_reservation(exhausted) == "D98_WRITE_TERMINAL"
+
+
+def test_an_authorized_reservation_dispatches_one_worker_per_restaged_member():
+    pytest.importorskip("langgraph")  # an authorized fan-out is a real `Send` list
+    from runtime.langgraph_factory import routing
+
+    job_id = "M01_RESEARCH_UNIT_SOURCES"
+    authorized = mn.D90_RESERVE_MODEL_ATTEMPT(
+        {"pending_packet": staged(job_id, "req-1", "req-2")}, None)
+    sends = routing.route_attempt_reservation(authorized)
+
+    assert [send.node for send in sends] == [job_id, job_id]
+    assert sorted(send.arg["reservation"]["counter_key"] for send in sends) == [
+        mn.attempt_counter_key(job_id, "req-1"),
+        mn.attempt_counter_key(job_id, "req-2"),
+    ], "each dispatched worker carries its own committed counter"
 
 
 def test_d91_classifies_the_pending_failure_against_the_committed_counter():

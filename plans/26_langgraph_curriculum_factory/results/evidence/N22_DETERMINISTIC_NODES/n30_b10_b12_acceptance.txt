@@ -1,0 +1,222 @@
+...............................F..............F....................FFFF. [ 97%]
+F.                                                                       [100%]
+=================================== FAILURES ===================================
+__________ test_the_committed_path_stops_at_a_declared_deferred_edge ___________
+
+tmp_path = PosixPath('/private/var/folders/kj/z_75gwxx2ls7p55rnx4t5kg00000gn/T/pytest-of-filipepinto/pytest-281/test_the_committed_path_stops_0')
+monkeypatch = <_pytest.monkeypatch.MonkeyPatch object at 0x10b83b570>
+
+    def test_the_committed_path_stops_at_a_declared_deferred_edge(
+        tmp_path: Path, monkeypatch
+    ) -> None:
+        """The episode's real frontier is a declared handoff, not a silent halt.
+    
+        D09 emits `content_repairable` because no unit content document can satisfy
+        both of its contracts (finding B-10), and that guard's destination D17 is a
+        declared deferred edge owned by N31. The episode therefore ends at a row of
+        `DEFERRED_EDGES` rather than at a fabricated destination.
+        """
+    
+        fixture = _build_episode_fixture(tmp_path)
+        result = _run_episode(monkeypatch, fixture)
+    
+>       assert result["deferred_frontier"] == "D17_CLASSIFY_UNIT_FINDINGS"
+E       AssertionError: assert 'D16_REDUCE_UNIT_EVIDENCE' == 'D17_CLASSIFY_UNIT_FINDINGS'
+E         
+E         - D17_CLASSIFY_UNIT_FINDINGS
+E         + D16_REDUCE_UNIT_EVIDENCE
+
+tests/runtime/test_plan26_unit_graph.py:1340: AssertionError
+________ test_the_unobservable_boundary_is_excluded_for_a_stated_reason ________
+
+tmp_path = PosixPath('/private/var/folders/kj/z_75gwxx2ls7p55rnx4t5kg00000gn/T/pytest-of-filipepinto/pytest-281/test_the_unobservable_boundary0')
+monkeypatch = <_pytest.monkeypatch.MonkeyPatch object at 0x10b65ccd0>
+
+    def test_the_unobservable_boundary_is_excluded_for_a_stated_reason(
+        tmp_path: Path, monkeypatch
+    ) -> None:
+        """D09 is left out of the crash matrix because it cannot be observed, not
+        because it is inconvenient.
+    
+        D09 really executes — the committed episode's last guard is its own — but the
+        branch that would emit its update resolves to the deferred D17 and aborts the
+        superstep, so no stream consumer ever sees it. Both halves are asserted, so
+        the exclusion stops being true (and this test fails) the moment the path
+        extends past D09.
+        """
+    
+        assert UNOBSERVABLE_BOUNDARY not in REACHABLE_BOUNDARIES
+    
+        fixture = _build_episode_fixture(tmp_path)
+        result = _run_episode(monkeypatch, fixture)
+    
+>       assert UNOBSERVABLE_BOUNDARY not in result["trace"]
+E       AssertionError: assert 'D09_VALIDATE_CONTENT' not in ['D00_BOOTSTRAP_EPISODE', 'D01_VALIDATE_AND_FREEZE_INPUTS', 'D02_COMPILE_EFFECTIVE_RUN', 'D03_PROVE_CAPABILITIES', 'D04_INITIALIZE_OR_RESUME', 'D05_SELECT_NEXT_UNIT', ...]
+
+tests/runtime/test_plan26_unit_graph.py:1418: AssertionError
+_____ test_blocked_no_unit_content_document_can_satisfy_both_its_contracts _____
+
+    def test_blocked_no_unit_content_document_can_satisfy_both_its_contracts() -> None:
+        """`plan26/n30/unit-content-contract-is-unsatisfiable` -> N22_DETERMINISTIC_NODES.
+    
+        D09 holds M03's `unit_content` to `CURRICULUM_CONTRACTS[0]`, which is the
+        whole-curriculum manifest schema. Both schemas are `additionalProperties:
+        false` and their property sets are disjoint, so the intersection of the two
+        languages is empty: `content_schema_valid` can never pass, whatever the model
+        writes. This is proven as schema algebra rather than by one failing sample,
+        because a sample would only show that *this* body fails.
+    
+        Inverts when D09's contract and M03's output schema have a satisfiable
+        intersection.
+        """
+    
+        import jsonschema
+    
+        m03 = json.loads(
+            (
+                REPO_ROOT
+                / "runtime"
+                / "langgraph_factory"
+                / "schemas"
+                / "M03_write_unit_content.schema.json"
+            ).read_text(encoding="utf-8")
+        )
+        unit_content = m03["properties"]["unit_content"]
+        target = json.loads(
+            (REPO_ROOT / domain.CURRICULUM_CONTRACTS[0]).read_text(encoding="utf-8")
+        )
+    
+        assert unit_content["additionalProperties"] is False
+        assert target["additionalProperties"] is False
+        # Disjoint vocabularies: nothing M03 may emit is a property D09 permits, and
+        # nothing D09 requires is a property M03 may emit.
+>       assert not set(unit_content["properties"]) & set(target["properties"])
+E       assert not ({'evidence_references', 'sections', 'unit_id', 'visuals'} & {'evidence_references', 'sections', 'unit_id', 'visuals'})
+E        +  where {'evidence_references', 'sections', 'unit_id', 'visuals'} = set({'evidence_references': {'items': {'additionalProperties': False, 'properties': {'section_id': {'maxLength': 200, 'min...sts_authoritative_facts': {'type': 'boolean'}, ...}, 'required': ['role', 'kind'], 'type': 'object'}, 'type': 'array'}})
+E        +  and   {'evidence_references', 'sections', 'unit_id', 'visuals'} = set({'evidence_references': {'description': "Where each section's claims came from. The source ids are checked against the...sts_authoritative_facts': {'type': 'boolean'}, ...}, 'required': ['role', 'kind'], 'type': 'object'}, 'type': 'array'}})
+
+tests/runtime/test_plan26_unit_graph.py:1895: AssertionError
+__________ test_blocked_a_real_m03_content_head_can_declare_no_visual __________
+
+    def test_blocked_a_real_m03_content_head_can_declare_no_visual() -> None:
+        """The same gap's second consequence: D10 reads a key M03 may not write.
+    
+        D10 compiles its briefs from the admitted content body's `visuals`, so with a
+        contract-legal M03 body the deterministic and model visual subsets are both
+        empty forever and D11/M04 are unreachable in production.
+    
+        Inverts when `unit_content` may declare visuals.
+        """
+    
+        m03 = json.loads(
+            (
+                REPO_ROOT
+                / "runtime"
+                / "langgraph_factory"
+                / "schemas"
+                / "M03_write_unit_content.schema.json"
+            ).read_text(encoding="utf-8")
+        )
+        unit_content = m03["properties"]["unit_content"]
+>       assert "visuals" not in unit_content["properties"]
+E       AssertionError: assert 'visuals' not in {'evidence_references': {'items': {'additionalProperties': False, 'properties': {'section_id': {'maxLength': 200, 'min...sts_authoritative_facts': {'type': 'boolean'}, ...}, 'required': ['role', 'kind'], 'type': 'object'}, 'type': 'array'}}
+
+tests/runtime/test_plan26_unit_graph.py:1928: AssertionError
+____________ test_blocked_d15_requires_a_layout_head_no_node_admits ____________
+
+    def test_blocked_d15_requires_a_layout_head_no_node_admits() -> None:
+        """`plan26/n30/d15-requires-a-layout-head-nothing-admits` -> N22_DETERMINISTIC_NODES.
+    
+        D15 requires an admitted head for every channel in `PACKET_ARTIFACT_CHANNELS`,
+        but D13 and D14 are `append-unique` per spec 8.1 and no admission node owns
+        the layout channel, so the head can never exist.
+    
+        Inverts when D15 stops requiring a layout head (or some node admits one).
+        """
+    
+>       assert "layout" in review.PACKET_ARTIFACT_CHANNELS
+E       AssertionError: assert 'layout' in ('domain', 'content', 'visuals')
+E        +  where ('domain', 'content', 'visuals') = review.PACKET_ARTIFACT_CHANNELS
+
+tests/runtime/test_plan26_unit_graph.py:1950: AssertionError
+_________ test_blocked_d11_cannot_read_the_member_the_fanout_delivers __________
+
+    def test_blocked_d11_cannot_read_the_member_the_fanout_delivers() -> None:
+        """`plan26/n30/d11-cannot-read-its-own-send-member` -> N22_DETERMINISTIC_NODES.
+    
+        `_staged_fanout` delivers a member as the target's whole input state, which is
+        the convention every model adapter reads. D11's catalogue row declares its
+        input as `pending_packet`, so it looks for that key *on the member*.
+    
+        Inverts when D11 reads its brief off its own input.
+        """
+    
+        assert NODE_CATALOGUE["D11_CREATE_DETERMINISTIC_VISUALS"].inputs == ("pending_packet",)
+    
+        unit_id = "U001"
+        briefs = [_brief(unit_id, "det-a", "deterministic")]
+        state = {
+            "run_id": "run-n30-fixture",
+            "episode_id": "episode-n30-fixture",
+            "selected_unit_id": unit_id,
+            "artifact_heads": {
+                f"units/{unit_id}/content": {"version": 1, "parent_hash": None, "hash": "content-hash-1"},
+                f"units/{unit_id}/domain": {"version": 1, "parent_hash": None, "hash": "domain-hash-1"},
+            },
+            "artifact_versions": [
+                {
+                    "stream": f"units/{unit_id}/content",
+                    "version": 1,
+                    "parent_hash": None,
+                    "hash": "content-hash-1",
+                    "body": {"visuals": [{"role": "det-a", "kind": "schematic"}]},
+                }
+            ],
+            "engine_root": "/tmp",
+        }
+        update = visuals.D10_COMPILE_VISUAL_BRIEFS(state, _Context())
+        assert update["pending_guard"]["value"] == "deterministic_visual_fanout"
+        dispatch = R.route_visual_briefs({**state, **update})
+        assert [send.node for send in dispatch] == ["D11_CREATE_DETERMINISTIC_VISUALS"]
+        member = dispatch[0].arg
+>       assert "brief" in member and "pending_packet" not in member
+E       AssertionError: assert ('brief' in {'pending_packet': {'brief': {'content_hash': 'content-hash-1', 'domain_hash': 'domain-hash-1', 'key': 'U001/visual/de...t-hash-1/U001/visual/det-a', 'episode_id': 'episode-n30-fixture', 'run_id': 'run-n30-fixture'}, 'permitted_facts': []}})
+
+tests/runtime/test_plan26_unit_graph.py:2027: AssertionError
+____ test_blocked_the_production_runtime_context_has_no_capability_surface _____
+
+    def test_blocked_the_production_runtime_context_has_no_capability_surface() -> None:
+        """`plan26/n30/runtime-context-has-no-capability-surface` -> N13_TRANSPORT_AUTH.
+    
+        D03 needs `prove_capability`/`observe_executable`; D11/D13/D14 need
+        `render_deterministic_visual`/`render_unit`/`inspect_pages`. `CliTransport`
+        implements none of them, so a production context cannot pass D03.
+    
+        Inverts when `CliTransport` (or the context builder) exposes them.
+        """
+    
+        required = (
+            "prove_capability",
+            "observe_executable",
+            "render_unit",
+            "inspect_pages",
+            "render_deterministic_visual",
+        )
+        missing = [name for name in required if not hasattr(mn.tp.CliTransport, name)]
+>       assert missing == list(required), f"{sorted(set(required) - set(missing))} now exist"
+E       AssertionError: ['inspect_pages', 'observe_executable', 'prove_capability', 'render_deterministic_visual', 'render_unit'] now exist
+E       assert [] == ['prove_capab...istic_visual']
+E         
+E         Right contains 5 more items, first extra item: 'prove_capability'
+E         Use -v to get more diff
+
+tests/runtime/test_plan26_unit_graph.py:2110: AssertionError
+=========================== short test summary info ============================
+FAILED tests/runtime/test_plan26_unit_graph.py::test_the_committed_path_stops_at_a_declared_deferred_edge
+FAILED tests/runtime/test_plan26_unit_graph.py::test_the_unobservable_boundary_is_excluded_for_a_stated_reason
+FAILED tests/runtime/test_plan26_unit_graph.py::test_blocked_no_unit_content_document_can_satisfy_both_its_contracts
+FAILED tests/runtime/test_plan26_unit_graph.py::test_blocked_a_real_m03_content_head_can_declare_no_visual
+FAILED tests/runtime/test_plan26_unit_graph.py::test_blocked_d15_requires_a_layout_head_no_node_admits
+FAILED tests/runtime/test_plan26_unit_graph.py::test_blocked_d11_cannot_read_the_member_the_fanout_delivers
+FAILED tests/runtime/test_plan26_unit_graph.py::test_blocked_the_production_runtime_context_has_no_capability_surface
+7 failed, 67 passed in 2.56s

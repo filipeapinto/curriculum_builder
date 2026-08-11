@@ -18,6 +18,14 @@ Produce one candidate complete `unit_content`:
   evidence reference. Record that trace in `evidence_references`.
 - Write to the staged readability, pedagogy, and safety contracts. Where a contract
   states a numeric bound, satisfy it.
+- `visuals` declares the picture each section needs, by `role` and `kind`. It is a
+  request, not a picture: you neither draw the visual nor decide who draws it. A
+  `kind` that asserts an exact physical fact a learner could build from — wiring,
+  a circuit, a pinout, a power path, a build map, a safety inset — is produced
+  deterministically from the accepted domain version, not by any model. List in
+  `permitted_facts` only facts already present in that domain version or in an
+  admitted evidence reference, and omit the key entirely for a unit that needs no
+  picture.
 
 ## Binding constraints
 

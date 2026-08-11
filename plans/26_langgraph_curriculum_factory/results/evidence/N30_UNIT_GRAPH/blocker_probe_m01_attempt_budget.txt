@@ -1,0 +1,15 @@
+discovery counters: {
+ "M01_RESEARCH_UNIT_SOURCES|U001/1/required_explanation:000": 1,
+ "M01_RESEARCH_UNIT_SOURCES|U001/1/safety_focus:000": 1
+}
+discovery guard: authorized
+  counter_key: M01_RESEARCH_UNIT_SOURCES|U001/1/required_explanation:000  ordinal: 1  limit: 2
+
+after interpretation: {
+ "M01_RESEARCH_UNIT_SOURCES|U001/1/required_explanation:000": 2,
+ "M01_RESEARCH_UNIT_SOURCES|U001/1/safety_focus:000": 2
+}
+  ordinal: 2  limit: 2
+
+a retry of either M01 phase resolves to: exhausted
+{"job_id": "M01_RESEARCH_UNIT_SOURCES", "exhausted": [{"counter_key": "M01_RESEARCH_UNIT_SOURCES|U001/1/required_explanation:000", "attempts_used": 2, "limit": 2}, {"counter_key": "M01_RESEARCH_UNIT_SOURCES|U001/1/safety_focus:000", "attempts_used": 2, "limit": 2}], "limit": 2}

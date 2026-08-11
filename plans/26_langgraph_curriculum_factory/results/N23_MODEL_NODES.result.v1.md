@@ -3,7 +3,7 @@
 status: PASSED
 graph_digest: 96e1948fb28eb6fbb327939bc2764eb9bae625606ca668f384126bf10ca617e8
 node_prompt: plans/26_langgraph_curriculum_factory/prompts/N23_model_nodes.prompt.v1.md (2cc6ccd0adaccc8c4768d5cb0ada3fc196aa8c4339e29a9bbe96a31bd9c24344)
-generation: 3
+generation: 5
 
 ## Inputs
 
@@ -27,6 +27,164 @@ generation: 3
 
 No file outside this node's `writes` set was created or modified. N13's `schemas/`
 directory was read and audited but not patched (see Findings).
+
+## Generation 5 — rework for N30 Finding B-13
+
+Fingerprint `plan26/n30/m01-phases-share-one-attempt-counter`, raised in
+`N30_UNIT_GRAPH.result.v1.md`. D90 keyed its attempt counter on
+`job_id|correlation_key` alone. M01 dispatches two structurally different
+activations — discovery and interpretation — under the *same* `correlation_key`,
+and that sharing is required, not accidental: D06B indexes `source_discoveries`
+by it and D07 indexes `source_interpretations` by it. So both phases spent one
+budget. A completely successful run, zero transport faults, still left
+`M01_RESEARCH_UNIT_SOURCES|U001/1/required_explanation:000` at 2 of 2, and the one
+retry spec section 12 freezes did not exist for M01 anywhere in a live run.
+
+### The change, exactly
+
+`correlation_key` is unchanged everywhere it is read. It is still what
+`worker_packet` stages, what every M01 adapter writes its `source_discoveries` /
+`source_interpretations` entry under, and what D06B and D07 join on. Only the
+string D90 keys its own counter by widened:
+
+```
+attempt_counter_key(job_id, correlation_key, phase=None)
+    phase is None  ->  f"{job_id}|{correlation_key}"          (unchanged)
+    phase          ->  f"{job_id}|{phase}|{correlation_key}"
+```
+
+`reserve_model_attempt` takes the same optional `phase` and derives the key
+through that one function, so there is still exactly one derivation in the module.
+
+The phase is **not invented**: `nodes/sources.py` already stages it. D06 builds
+its members with `worker_packet(..., phase="DISCOVER")` and D06B with
+`worker_packet(..., phase="INTERPRET")`, and `m01_research_unit_sources` already
+selects its phase function off that same top-level `phase` key rather than off
+hidden state. `_activation_phase(member)` reads it and returns `None` for the
+seven jobs that stage no phase, so their counter keys are byte-identical to
+generation 4 and no other adapter's budget moved. A member that declares a
+non-string or empty `phase` raises `ModelNodeError` rather than silently keying
+against `None`.
+
+`_activation_id` derives from the counter key, so activation and reservation ids
+now separate by phase too, and D92's activation matching keeps its uniqueness
+property for free. A D91-authorized retry still names one counter key and D90
+still re-reserves only the member whose recomputed key equals it — a transport
+fault on interpretation now re-dispatches interpretation alone and does not
+touch discovery's budget.
+
+### What this is now proven against
+
+Four new tests in this node's suite:
+
+- `test_m01s_two_phases_each_get_their_own_attempt_budget` — N30's exact case:
+  discovery then interpretation for one `correlation_key`, both `authorized`,
+  counters disjoint at 1 each, and both restaged members still carrying the
+  unchanged `correlation_key` so D06B/D07's joins are untouched.
+- `test_the_real_m01_dispatchers_reserve_against_distinct_counters` — the same,
+  driven through the real `sources.D06_COMPILE_SOURCE_REQUESTS` body, asserting
+  the real dispatcher does stage `phase="DISCOVER"` rather than assuming it.
+- `test_the_frozen_limit_still_binds_within_one_m01_phase` — the budget was not
+  accidentally uncapped: two consecutive discovery attempts for one correlation
+  are `authorized` at ordinals 1 and 2, and the third is `exhausted` naming the
+  phase-widened counter key.
+- `test_a_phased_retry_restages_only_the_phase_d91_named` — a classified retry of
+  interpretation increments only interpretation's counter.
+
+### Note for N30 on its own probe
+
+`test_blocked_a_successful_run_spends_m01s_whole_retry_budget` **does not invert**
+under this fix, and that is a defect in the probe rather than in the fix. The test
+calls `D06_COMPILE_SOURCE_REQUESTS` once and reuses that one staging for both of
+its D90 calls, so both of its dispatches carry `phase="DISCOVER"` and it is in
+fact measuring two discovery attempts, which correctly still exhaust. To invert it,
+the second D90 call needs interpretation-phase members — D06B's staging, or D06's
+members with `phase` set to `"INTERPRET"`. That file is outside this node's write
+set and was not edited.
+
+## Generation 4 — rework for N30 Finding B-7 (this node's half)
+
+Fingerprint `plan26/n30/model-candidate-record-not-admissible`, raised in
+`N30_UNIT_GRAPH.result.v1.md`. B-7 is owned by N22 (the deterministic nodes must
+mint `version`/`hash`/`parent_hash` from the candidate's `payload` and the current
+head); this generation is N23's smaller half of it.
+
+The part B-7 explicitly does **not** ask to change, and which did not change: a
+model candidate still carries no `version`, no `hash`, and no `parent_hash`. Spec
+2.4's code-owned-admission rule means a model may never mint its own artifact
+version, and the whole reason `_candidate_record` is shaped as a pre-admission
+descriptor is that it cannot be replayed as an `advance_head` update. What B-7
+found missing was not admission authority but *lineage*: the correlating facts the
+projection already knew before the model ran, which only the adapter is in a
+position to attach.
+
+### The rule the record now states, rather than implies
+
+`_candidate_record` carries exactly two kinds of key. The model's own answer is
+quarantined under `payload`; every other key is lineage read off the dispatcher's
+projection. That split is now enforced rather than conventional:
+`ADMISSION_OWNED_CANDIDATE_FIELDS = {version, hash, parent_hash}` is a module
+constant, and `_candidate_record` raises `ModelNodeError` if any adapter — now or
+later — passes one of the three. A future adapter cannot regress this quietly.
+
+### Lineage fields added, and where each is sourced from
+
+| Candidate record | Field added | Sourced from | Consumer B-7 names |
+|---|---|---|---|
+| M01 `phase=DISCOVER` (`source_discoveries`) | `unit_id` | packet's `projection["unit"]["unit_id"]` | D06B/D07 `_keyed_to` cross-unit check |
+| M01 `phase=INTERPRET` (`source_interpretations`) | `unit_id` | packet's `projection["unit"]["unit_id"]` | D07 cross-unit check |
+| M01 `phase=INTERPRET` | `retrieval_sha256` | packet's `projection["retrieval_group"]["retrieved_records"][*]["sha256"]`, the bytes D06B staged | D07 staleness check |
+| M04 (`visual_results`) | `unit_id` | packet's `projection["brief"]["unit_id"]` | D12 subset membership |
+| M04 | `content_hash` | packet's `projection["brief"]["content_hash"]` | D12 superseded-head check |
+| M04 | `subset` (`"model"`, replacing the unread `producer_class`) | the adapter's own identity — M04 *is* the model subset, exactly as D11 writes `subset="deterministic"` | D12 subset partition |
+
+M02, M03 and M06 already carried `unit_id`; M05/M07/M08 are not named by B-7 and
+their dispatchers stage no unit projection to read one from, so nothing was
+invented for them.
+
+`retrieval_sha256` is deliberately *not* read from the model's answer. D07 stales
+an interpretation whose parent bytes are no longer the retrieval; if the model
+supplied that hash, a stale interpretation could vouch for itself. A retrieval
+group whose records disagree has no single parent, so the record claims none and
+D07 refuses it rather than admitting an unproven lineage.
+
+### `locators` stays inside `payload`
+
+B-7 asks whether D06B's `locators` should become a top-level lineage field or
+remain a documented sub-key of `payload`. It remains in `payload`, because it is
+the one field in the set that the *model* authored — promoting it would blur the
+exact line the record exists to draw, and would be the only case where a model's
+output sat at the same level as facts the projection vouched for.
+`test_the_discovery_locators_a_join_reads_stay_inside_the_models_payload` pins
+both halves. N22's concurrent B-7 fix reads it compatibly through its new
+`nodes.candidate_field(record, field)` helper, which falls back to `payload` for
+exactly this case; no top-level promotion is needed on either side.
+
+### Observation for N22, not fixed here (outside this node's write set)
+
+D12 stages M04 packets with `correlation_key = f"{unit_id}/{content_hash}/{key}"`
+while its own `denominator["model_keys"]` holds bare brief keys (`{unit_id}/visual/{role}`),
+so `visual_results` — which a worker keys by its correlation key, the convention
+D06 follows exactly (`correlation_key=request["key"]`) — cannot equal
+`expected_model` as `nodes/visuals.py` compares them. This is a D12 keying
+question, not a candidate-record one, and `nodes/visuals.py` is N22's write set.
+Recorded here so it is not lost.
+
+### Test re-scope caused by the concurrent B-6 fix
+
+`route_attempt_reservation` now returns a `Send` list for an authorized
+reservation rather than a job id, so `test_d90_guard_routes_through_the_frozen_guard_table`
+was split: the exhaustion half (a plain destination, no `langgraph` needed) stays,
+and the authorized half became
+`test_an_authorized_reservation_dispatches_one_worker_per_restaged_member`, which
+`importorskip`s `langgraph` and proves two staged members become two `Send`s each
+carrying its own committed counter. That keeps the ambient run green while the
+real assertion runs in the hash-locked environment.
+
+Two test fixtures were also aligned to what the real dispatchers stage, since they
+had drifted: the M01 interpretation retrieval record now names its hash `sha256`
+(D06B's field name, previously `bytes_sha256`), and the M04 brief now carries the
+`unit_id` and `content_hash` D12 puts in every model visual packet.
 
 ## Generation 3 — rework for N30 Finding B-3
 
@@ -100,8 +258,8 @@ is proven here rather than asserted: see
 
 ## Outputs
 
-- runtime/langgraph_factory/model_nodes.py: 4b81e4754c04d26635e239e1f55b330979c020ae9aff2cc0f4506afe99769496
-- tests/runtime/test_plan26_model_nodes.py: 4b0a29c5eaa508ed20f93f981d1eb3ab07a99c108cb6f6b51abcc2b8288ffdb2
+- runtime/langgraph_factory/model_nodes.py: 1fd055e8f4a5685c234c2b1f6c6cee0ad539d60b0bc0a468e65b4be711fa7f72
+- tests/runtime/test_plan26_model_nodes.py: 812414bf99c558b3b74ded1360cc124af17d919f7a86347f2ad3ea76f5a932e7
 - plans/26_langgraph_curriculum_factory/results/N23_MODEL_NODES.result.v1.md: this file
 
 ## Node catalogue
@@ -164,6 +322,11 @@ projection through which a caller could hint the wanted review outcome.
 | M07 | `overall_findings` + `page_findings` covering exactly `1..page_count` with matching page hashes | `workbook_reviews[]` / `append_unique` | none |
 | M08 | `candidate_child` + `changed_file_manifest`, files ⊆ allowed workbook-owned files, one declared `defect_id` | `workbook_versions[]` / `append_unique` | none |
 
+As of generation 4 every record in this table also carries the lineage fields
+tabulated above — `unit_id` throughout, plus `retrieval_sha256` (M01 interpretation)
+and `subset`/`content_hash` (M04) — with the model's own answer quarantined under
+`payload`, and never `version`, `hash` or `parent_hash`.
+
 Every adapter also appends `model_execution_receipts` and `activation_receipts`, and
 on failure sets `pending_failure` for D91. `MODEL_NODE_WRITABLE_FIELDS` is the total
 write set; `_assert_model_node_update` raises if anything else is proposed.
@@ -173,6 +336,10 @@ write set; `_assert_model_node_update` raises if anything else is proposed.
 
 ## Attempt bookkeeping (D90 / D91)
 
+- As of generation 5 the counter key is `job_id|correlation_key` for a job with one
+  activation kind and `job_id|phase|correlation_key` for M01, whose two activations
+  share a correlation key by design. The budget is therefore per *activation*, not
+  per correlation, and `correlation_key` itself is unchanged for D06B/D07's joins.
 - D90 `reserve_model_attempt` returns `{"attempt_counters": {key: ordinal}}` under
   `monotonic_max` plus an `activation_receipts` reservation record, *before* any
   transport call exists, so a dispatch that never returns still leaves a durable
@@ -214,27 +381,59 @@ write set; `_assert_model_node_update` raises if anything else is proposed.
 
 ## Commands
 
-- `python3 -m pytest tests/runtime/test_plan26_model_nodes.py -q` — exit 0 — `plans/26_langgraph_curriculum_factory/results/evidence/N23_MODEL_NODES/node_tests.txt` — **167 passed, 1 skipped** (generation 3; the skip is the real-`add_node` proof, which needs `langgraph`)
-- `/tmp/plan26_n30_verify/bin/python -m pytest tests/runtime/test_plan26_model_nodes.py -q` — exit 0 — `.../evidence/N23_MODEL_NODES/venv_node_tests_b3.txt` — **168 passed** in the hash-locked environment, so the `add_node` registration proof actually ran
-- `/tmp/plan26_n30_verify/bin/python -m pytest tests/runtime/test_plan26_unit_graph.py -q -k "d90 or d91 or model"` — exit 0 — `.../evidence/N23_MODEL_NODES/venv_n30_d90_d91_slice.txt` — 5 passed (N30's file, read-only here)
-- `python3 -m pytest -q` — exit 1 — `.../evidence/N23_MODEL_NODES/full_suite.txt` — 753 passed, 8 failed, 11 skipped, 282 subtests passed
+- `python3 -m pytest tests/runtime/test_plan26_model_nodes.py -q -rs` — exit 0 — `plans/26_langgraph_curriculum_factory/results/evidence/N23_MODEL_NODES/node_tests.txt` — **191 passed, 2 skipped** (generation 5; both skips need `langgraph`)
+- `/tmp/plan26_n30_verify/bin/python -m pytest tests/runtime/test_plan26_model_nodes.py -q` — exit 0 — `.../evidence/N23_MODEL_NODES/venv_node_tests_b13.txt` — **193 passed** in the hash-locked environment, so the `add_node` registration proof and the real `Send` fan-out both actually ran
+- `/tmp/plan26_n30_verify/bin/python -m pytest tests/runtime/test_plan26_model_nodes.py -q` (generation 4) — exit 0 — `.../evidence/N23_MODEL_NODES/venv_node_tests_b7.txt` — 188 passed
+- `/tmp/plan26_n30_verify/bin/python -m pytest tests/runtime/test_plan26_model_nodes.py -q` (generation 3) — exit 0 — `.../evidence/N23_MODEL_NODES/venv_node_tests_b3.txt` — 168 passed
+- `/tmp/plan26_n30_verify/bin/python -m pytest tests/runtime/test_plan26_unit_graph.py -q -k "d90 or d91 or model or budget"` — exit 0 — `.../evidence/N23_MODEL_NODES/venv_n30_d90_d91_slice.txt` — 10 passed (N30's file, read-only here; includes `test_blocked_a_successful_run_spends_m01s_whole_retry_budget`, which still passes for the reason recorded under generation 5)
+- `python3 -m pytest -q` — exit 0 — `.../evidence/N23_MODEL_NODES/full_suite.txt` — **805 passed, 12 skipped, 282 subtests passed**, no failures (generation 4; see the ambient note below for generation 5)
+- B-13 probe, N30's own probe re-run against the fix, no pytest in the path — exit 0 — `.../evidence/N23_MODEL_NODES/b13_phase_counters.txt` — the real D06 body stages `DISCOVER`, both phases resolve `authorized`, the four counters sit at 1 rather than 2, the two correlation keys are unchanged, a genuine interpretation fault now reserves ordinal 2, and a further attempt in that phase is `exhausted`
 - `shasum -a 256 <all writes + inputs>` — exit 0 — hashes reproduced in the Hashes section
 
-Generation 3 test arithmetic: this node's suite moves 152 -> 168 (16 new tests for
-the two node callables), and no previously passing test in it changed state.
+Generation 5 test arithmetic: this node's suite moves 188 -> 193 ambient-visible
+(191 ambient + 2 `langgraph`-gated), five new rows, all additive. No existing
+assertion was changed or weakened: `attempt_counter_key`'s third parameter is
+optional and its two-argument form returns the identical string, so every prior
+test that computes a counter key still computes the same one.
 
-The 8 ambient failures are all in `tests/runtime/test_plan26_deterministic_nodes.py`
-(N22's file), which a sibling agent is editing concurrently for N30's Finding B-2;
-none is in this node's write set and none involves `model_nodes.py`. The 10 failures
-in N30's `test_plan26_unit_graph.py` in the hash-locked environment are likewise the
-B-1/B-2 inversion rows plus one D12 row mid-edit — verified by reading the failure
-(`visuals.D12_VISUAL_BARRIER_AND_JOIN` now returns no `pending_guard`), not assumed.
-The D90/D91 rows of that suite pass.
+Generation 4 test arithmetic: this node's suite moves 168 -> 188. Twenty new rows:
+5 lineage rows, 1 dispatcher-provenance row, 1 payload-quarantine row, 9 admission-field
+rows (one per spec row) and 3 minting-refusal rows, plus the authorized-fan-out half
+split out of the D90 guard-table test. No previously passing assertion was weakened:
+the one test whose text changed (`test_d90_guard_routes_through_the_frozen_guard_table`)
+kept its exhaustion assertion verbatim and had its authorized half strengthened from
+"returns the job id" to "returns one `Send` per restaged member, each with its own
+committed counter", because the concurrent B-6 fix made the old contract false.
+
+At generation 5 the ambient suite is **not** clean, and none of it is this node's:
+`python3 -m pytest -q` reported 5 failures in
+`tests/runtime/test_plan26_deterministic_nodes.py`, and a re-run of that one file
+minutes later reported a *different* 2 failures, because sibling agents were
+mid-edit in `nodes/` for B-10/B-11/B-12 while it ran. Every failure was in
+`nodes/`-owned bodies, none named `model_nodes`, and this node's own suite is
+green in both interpreters. The same applies to the 4 failures in N30's
+`test_plan26_unit_graph.py`, three of which are the B-10 probes the sibling fix is
+expected to invert. A clean ambient number must be taken after the concurrent
+`nodes/` rework lands.
+
+The ambient suite was fully green at generation 4. Generation 3 recorded 8 ambient
+failures in `tests/runtime/test_plan26_deterministic_nodes.py` and 10 in N30's
+`test_plan26_unit_graph.py`; those were sibling agents' mid-edit states for B-1/B-2
+and were resolved, confirmed by re-running rather than assumed.
 
 ## Tests
 
-168 tests in `tests/runtime/test_plan26_model_nodes.py`, all PASS (167 ambient, the
-168th needs `langgraph` and runs in the hash-locked environment).
+193 tests in `tests/runtime/test_plan26_model_nodes.py`, all PASS (191 ambient; the
+other 2 need `langgraph` and run in the hash-locked environment).
+
+### Generation 4 — B-7 rework rows
+
+| Claim | Backing tests | Verdict and assertion |
+|---|---|---|
+| Every candidate carries the lineage its consuming join indexes it by | `test_a_candidate_carries_the_lineage_its_consuming_join_indexes_by` (5 rows: M01 discovery, M01 interpretation, M02, M03, M04) | PASS — each row runs the real adapter over the real projection and asserts the exact lineage subset: `unit_id == "U01"` on all five, `retrieval_sha256` equal to the packet's staged retrieval hash on M01 interpretation, and `subset == "model"` plus `content_hash` equal to the brief's on M04 |
+| Lineage is the dispatcher's fact, not one the model could restate | `test_the_lineage_tracks_the_dispatchers_brief_not_the_models_unchanged_answer` | PASS — one identical M04 answer dispatched against two briefs differing only in `content_hash` yields two records with equal `payload` and the two different `content_hash` values, so the field provably tracks the projection |
+| Model output is never promoted out of `payload` | `test_the_discovery_locators_a_join_reads_stay_inside_the_models_payload` | PASS — the discovery record's `payload["locators"][0]["request_id"]` is the model's answer and `"locators" not in record` at the top level |
+| **No model candidate can ever carry an admission-owned field** | `test_no_candidate_record_may_carry_an_admission_owned_field` (9 spec rows), `test_an_adapter_that_tried_to_mint_a_version_is_refused_by_the_module` (3 fields), and the pre-existing `test_a_model_update_can_never_satisfy_an_advance_head_update` | PASS — the safety property this whole design exists to guarantee, now asserted from both directions: no record produced by any of the nine adapters intersects `{version, hash, parent_hash}`, and `_candidate_record` raises `ModelNodeError` if an adapter passes any one of them, so the boundary cannot be crossed by a later edit either |
 
 ### Generation 3 — B-3 rework rows
 
@@ -281,10 +480,33 @@ The D90/D91 rows of that suite pass.
 
 ## Invalidated descendants
 
-None. Generation 3 is additive: the two keyword-only helpers, every adapter, and
-every previously recorded claim are unchanged, and this node's 152 generation-2
-tests still pass alongside the 16 new ones. N30 is unblocked on this finding once
-`graph.binding_inventory()` picks up `MODEL_BOOKKEEPING_NODES` (see above).
+None from generation 5. The only value that moved is a string D90 keys its own
+`attempt_counters` dict by, and no module outside `model_nodes.py` derives that
+string — every consumer (D91, D92, the terminal candidate, the failure
+fingerprint) reads `counter_key` off the reservation or the guard D90 already
+minted. `correlation_key` is byte-identical, so D06B's `source_discoveries` index
+and D07's `source_interpretations` index are untouched, which is the property B-13
+required be preserved. The seven jobs that stage no `phase` keep their generation-4
+counter keys exactly.
+
+The one record that should be re-read is N30's own: its
+`test_blocked_a_successful_run_spends_m01s_whole_retry_budget` does not invert,
+because it drives two *discovery* activations rather than one of each phase (see
+generation 5 above). B-13's underlying defect is closed; N30's probe needs
+restating to observe it.
+
+Generation 4 only *adds* keys to candidate records, so no consumer that read
+a generation-3 record reads a different value now; the one removal is
+`producer_class`, which no module in the repo ever read (grepped before removing)
+and whose meaning `subset` now carries in the vocabulary D11 and D12 already use.
+N22's concurrent B-7 fix is the complementary half and consumes these fields; N30
+should re-run its B-7 probe against both halves together, since neither closes the
+finding alone.
+
+Generation 3 was likewise additive: the two keyword-only helpers, every adapter, and
+every previously recorded claim were unchanged, and this node's 152 generation-2
+tests still pass. N30 is unblocked on B-3 now that `graph.binding_inventory()` picks
+up `MODEL_BOOKKEEPING_NODES`.
 
 ## Hashes
 
@@ -308,7 +530,7 @@ tests still pass alongside the 16 new ones. N30 is unblocked on this finding onc
 | runtime/langgraph_factory/egress.py | 837410dad45a7deb8ef761e3636700a7fbde9f45ff6d97d8b4ba7b5c96383f52 |
 | runtime/langgraph_factory/config/model_jobs.v1.yaml | 7b5d168c106ad428dc59600765a7c2960f16e7dc53e735d0ac232b42096e8a96 |
 | runtime/langgraph_factory/schemas/M02_create_unit_domain_data.schema.json | 311b48b3b85c4fcc2e549a2becfe7b3879a38ec4be59c2ff3e39a3522a5e2232 |
-| runtime/langgraph_factory/model_nodes.py | 4b81e4754c04d26635e239e1f55b330979c020ae9aff2cc0f4506afe99769496 |
-| tests/runtime/test_plan26_model_nodes.py | 4b0a29c5eaa508ed20f93f981d1eb3ab07a99c108cb6f6b51abcc2b8288ffdb2 |
+| runtime/langgraph_factory/model_nodes.py | 1fd055e8f4a5685c234c2b1f6c6cee0ad539d60b0bc0a468e65b4be711fa7f72 |
+| tests/runtime/test_plan26_model_nodes.py | 812414bf99c558b3b74ded1360cc124af17d919f7a86347f2ad3ea76f5a932e7 |
 | runtime/langgraph_factory/routing.py (N20, read for the guard-table proof) | efcc6db169399129e4d3825b3fce5c11501a44a08f0e45433cfadcb7e6361bee |
 | runtime/langgraph_factory/unit_graph.py (N30, read for the D90/D91 contract) | fe1226d42c97318f9ddefaefc802510cdb20593040ace894d078201bd040cd6f |

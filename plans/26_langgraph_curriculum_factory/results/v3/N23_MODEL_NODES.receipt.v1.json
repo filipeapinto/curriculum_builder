@@ -1,0 +1,38 @@
+{
+  "changed_files": [],
+  "commands": [
+    {
+      "argv": [
+        "/tmp/plan26_n30_verify/bin/python",
+        "-m",
+        "pytest",
+        "-q",
+        "tests/runtime/test_plan26_model_nodes.py"
+      ],
+      "exit_code": 0,
+      "finished_at": "2026-08-11T21:00:10.482269+00:00",
+      "log": "plans/26_langgraph_curriculum_factory/results/v3/logs/N23_MODEL_NODES/adopt-v2.test1.log",
+      "log_sha256": "c03e8eb07f12c240a960b0b2097a28f5bf142f4159b2988d7325308a470e74fc",
+      "started_at": "2026-08-11T21:00:09.157363+00:00",
+      "tail": "........................................................................ [ 37%]\n........................................................................ [ 74%]\n.................................................                        [100%]\n193 passed in 0.63s\n",
+      "timed_out": false
+    }
+  ],
+  "created_at": "2026-08-11T21:00:10.489023+00:00",
+  "findings": [],
+  "graph_digest": "ac8587de809ce6dbc0a75b476e79fc8d0474a980c0cfbabcb97979a0b490a82a",
+  "graph_id": "plan26_langgraph_curriculum_factory_implementation",
+  "input_fingerprint": "0d51218071f66ba6a50fffa3296f2cd1a742f05ca776aeee598d8b1f3c4deba4",
+  "node_definition_sha256": "b86f94813ba4f3251746e211e3f1a7639292d1f5898fb5d4035896637deb03a8",
+  "node_id": "N23_MODEL_NODES",
+  "outputs": {
+    "plans/26_langgraph_curriculum_factory/results/N23_MODEL_NODES.result.v1.md": "3fc92f0a9df3c9ffaf416aef49cb3ebd76b0f2e8fdad33d7bc3e65eeeabd3dd5",
+    "plans/26_langgraph_curriculum_factory/results/evidence/N23_MODEL_NODES": "22eb8e26e08f0d7671cabc31cb93bc9938a423879e99148095f58fd3e514eb11",
+    "runtime/langgraph_factory/model_nodes.py": "1fd055e8f4a5685c234c2b1f6c6cee0ad539d60b0bc0a468e65b4be711fa7f72",
+    "tests/runtime/test_plan26_model_nodes.py": "812414bf99c558b3b74ded1360cc124af17d919f7a86347f2ad3ea76f5a932e7"
+  },
+  "prompt_sha256": "2cc6ccd0adaccc8c4768d5cb0ada3fc196aa8c4339e29a9bbe96a31bd9c24344",
+  "schema_version": 1,
+  "source": "adopted_v2_after_focused_verification",
+  "status": "PASSED"
+}

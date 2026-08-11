@@ -1,0 +1,11 @@
+# Non-vacuity probes for the generation-7 (B-6/B-9) assertions. Each violates
+# exactly one property in memory and requires the assertion to reject it.
+
+PROBE a model fan-out dispatches straight to its worker: FAILS AS REQUIRED
+    ('M01_RESEARCH_UNIT_SOURCES', ['D06_COMPILE_SOURCE_REQUESTS', 'D90_RESERVE_MODEL_ATTEMPT'])
+PROBE D07 routes straight to M02 on a plain edge: FAILS AS REQUIRED
+    D07_CORRELATE_AND_ADMIT_SOURCES.sources_admitted routes to M02_CREATE_UNIT_DOMAIN_DATA with no reservation
+PROBE D90's guard resolves one job id instead of the reserved map: FAILS AS REQUIRED
+    <bare assert>
+PROBE a model worker has a forward successor that is not a declared barrier: FAILS AS REQUIRED
+    ('M01_RESEARCH_UNIT_SOURCES', ['D06B_RETRIEVE_SOURCE_CANDIDATES', 'D07_CORRELATE_AND_ADMIT_SOURCES'], ['D06B_RETRIEVE_SOURCE_CANDIDATES'])

@@ -846,12 +846,32 @@ def test_d13_rejects_a_renderer_that_misreports_its_own_pdf_hash(tmp_path: Path)
     assert "artifact_versions" not in update
 
 
+def _layout_version(pdf_path: Path, pdf_sha256: str, unit_id: str = "U001") -> dict[str, Any]:
+    """One appended layout version of the shape D13 writes.
+
+    B-11: layout has no admitted head — D13 is append-unique — so D15 resolves the
+    layout it names from the appended version, and every D15 fixture supplies one.
+    """
+
+    return {
+        "stream": f"units/{unit_id}/layout",
+        "version": 1,
+        "parent_hash": None,
+        "hash": "layout-h",
+        "layout_path": str(pdf_path.with_suffix(".typ")),
+        "layout_sha256": "l" * 64,
+        "pdf_path": str(pdf_path),
+        "pdf_sha256": pdf_sha256,
+        "renderer": "stub",
+    }
+
+
 def test_d15_rejects_a_packet_whose_page_set_is_not_the_full_inventory(tmp_path: Path) -> None:
     state = {
         "selected_unit_id": "U001",
         "artifact_heads": {
             f"units/U001/{channel}": {"version": 1, "parent_hash": None, "hash": f"{channel}-h"}
-            for channel in ("domain", "content", "visuals", "layout")
+            for channel in ("domain", "content", "visuals")
         },
         "unit_page_inventories": [
             {"unit_id": "U001", "pdf_sha256": "p" * 64, "page_count": 3, "result": "PASS"}
@@ -863,11 +883,39 @@ def test_d15_rejects_a_packet_whose_page_set_is_not_the_full_inventory(tmp_path:
         "deterministic_checks": [],
         "source_admissions": [],
         "engine_root": str(tmp_path),
-        "artifact_versions": [],
+        "artifact_versions": [_layout_version(tmp_path / "unit.pdf", "p" * 64)],
     }
     update = review.D15_FREEZE_UNIT_REVIEW_PACKET(state, _Context())
     assert update["pending_failure"]["cause"] == "join"
     assert "review_packets" not in update
+
+
+def test_d15_refuses_a_packet_with_no_resolvable_layout(tmp_path: Path) -> None:
+    """B-11: the layout is required, and required from D13's version, not a head.
+
+    The packet names the bytes the reviewer answers about, so a state with no
+    rendered layout is refused — but the refusal is about the render, not about an
+    admitted head no node in the graph is authorized to write.
+    """
+
+    state = {
+        "selected_unit_id": "U001",
+        "artifact_heads": {
+            f"units/U001/{channel}": {"version": 1, "parent_hash": None, "hash": f"{channel}-h"}
+            for channel in ("domain", "content", "visuals", "layout")
+        },
+        "unit_page_inventories": [
+            {"unit_id": "U001", "pdf_sha256": "p" * 64, "page_count": 1, "result": "PASS"}
+        ],
+        "unit_page_inspections": [],
+        "deterministic_checks": [],
+        "source_admissions": [],
+        "engine_root": str(tmp_path),
+        "artifact_versions": [],
+    }
+    update = review.D15_FREEZE_UNIT_REVIEW_PACKET(state, _Context())
+    assert update["pending_failure"]["cause"] == "invalid_input"
+    assert "rendered layout version" in update["pending_failure"]["message"]
 
 
 def test_d92_rejects_a_frontier_whose_parents_are_no_longer_current() -> None:
@@ -2243,21 +2291,24 @@ def test_d15_freezes_a_packet_covering_every_page(tmp_path: Path) -> None:
     rubric = tmp_path / "meta_prompt" / "assets"
     rubric.mkdir(parents=True)
     (rubric / "pedagogy.v1.md").write_text("# rubric", encoding="utf-8")
+    pdf = tmp_path / "unit.pdf"
+    pdf.write_bytes(b"%PDF-1.7 frozen")
+    pdf_sha256 = hashlib.sha256(pdf.read_bytes()).hexdigest()
 
     state = {
         "selected_unit_id": "U001",
         "artifact_heads": {
             f"units/U001/{channel}": {"version": 1, "parent_hash": None, "hash": f"{channel}-h"}
-            for channel in ("domain", "content", "visuals", "layout")
+            for channel in ("domain", "content", "visuals")
         },
         "unit_page_inventories": [
-            {"unit_id": "U001", "pdf_sha256": "p" * 64, "page_count": 2, "result": "PASS"}
+            {"unit_id": "U001", "pdf_sha256": pdf_sha256, "page_count": 2, "result": "PASS"}
         ],
         "unit_page_inspections": [
             {
                 "key": f"k{number}",
                 "unit_id": "U001",
-                "pdf_sha256": "p" * 64,
+                "pdf_sha256": pdf_sha256,
                 "page": number,
                 "page_sha256": f"{number}" * 64,
                 "image_path": f"/tmp/page-{number}.png",
@@ -2276,12 +2327,15 @@ def test_d15_freezes_a_packet_covering_every_page(tmp_path: Path) -> None:
         ],
         "source_admissions": [{"key": "s1", "unit_id": "U001"}],
         "engine_root": str(tmp_path),
-        "artifact_versions": [],
+        "artifact_versions": [_layout_version(pdf, pdf_sha256)],
         **_CORRELATION,
     }
     update = review.D15_FREEZE_UNIT_REVIEW_PACKET(state, _Context())
     packet = update["review_packets"][0]
     assert packet["denominator"] == {"pages": 2, "artifacts": 4, "checks": 1, "sources": 1}
+    # B-11: the layout the packet names comes from D13's appended version, and
+    # every other artifact hash from its admitted head.
+    assert packet["artifact_hashes"]["layout"] == "layout-h"
     assert packet["packet_hash"] == packet["key"]
     assert len(packet["page_keys"]) == 2
 
@@ -2311,15 +2365,29 @@ def test_every_dispatching_node_authorizes_a_worker_packet(node_id: str) -> None
     assert {"run_id", "episode_id"} <= set(spec.inputs)
 
 
+def _install_curriculum_contracts(engine_root: Path) -> None:
+    """Copy the real `CURRICULUM_CONTRACTS` files into a synthetic engine root.
+
+    B-10: a stub stands in for the contract without being it, which is how D09
+    came to validate unit content against the whole-curriculum manifest schema
+    without any test noticing. Every state built here is held to the bytes a real
+    run is held to.
+    """
+
+    for relative in domain.CURRICULUM_CONTRACTS:
+        source = REPO_ROOT / relative
+        assert source.is_file(), f"engine contract {relative} is missing from the repo"
+        target = engine_root / relative
+        target.parent.mkdir(parents=True, exist_ok=True)
+        target.write_bytes(source.read_bytes())
+
+
 def _domain_admission_state(tmp_path: Path) -> dict[str, Any]:
     schema_dir = tmp_path / "schemas"
     schema_dir.mkdir()
     (schema_dir / "domain.json").write_text(json.dumps({"type": "object"}), encoding="utf-8")
-    (schema_dir / "curriculum.schema.v5.json").write_text("{}", encoding="utf-8")
+    _install_curriculum_contracts(tmp_path)
     (schema_dir / "manifest_domain.metaschema.v1.json").write_text("{}", encoding="utf-8")
-    prose = tmp_path / "meta_prompt" / "assets"
-    prose.mkdir(parents=True)
-    (prose / "unit_prose.v1.md").write_text("# prose", encoding="utf-8")
     policy = tmp_path / "policy"
     policy.mkdir()
     (policy / "calibration.v1.yaml").write_text("{}", encoding="utf-8")
@@ -2534,11 +2602,17 @@ def test_a_staged_deterministic_visual_packet_is_what_d11_consumes() -> None:
     packet = update["pending_packet"]
     assert packet["dispatch"] == "D11_CREATE_DETERMINISTIC_VISUALS"
     member = packet["packets"][0]
-    assert member["brief"]["subset"] == "deterministic"
-    assert member["permitted_facts"] == ["f1"]
+
+    # B-12: `_staged_fanout` translates each staged member into `Send(dest, member)`
+    # unchanged, so the member arrives as D11's *whole input state* and is narrowed
+    # by `project()` on channel name. A member naming anything that is not a channel
+    # is a member D11 cannot read, so it is handed to the real D11 unadapted here.
+    assert set(member) <= set(FIELD_REDUCER_CLASSES)
+    assert member["pending_packet"]["brief"]["subset"] == "deterministic"
+    assert member["pending_packet"]["permitted_facts"] == ["f1"]
 
     produced = visuals.D11_CREATE_DETERMINISTIC_VISUALS(
-        {"pending_packet": member},
+        member,
         _Context(
             transport_registry=_Registry(
                 render_deterministic_visual=lambda brief, facts: {
@@ -2637,6 +2711,9 @@ def test_a_staged_review_packet_is_an_admissible_m05_projection(tmp_path: Path) 
     assets = tmp_path / "meta_prompt" / "assets"
     assets.mkdir(parents=True)
     (assets / "pedagogy.v1.md").write_text("# rubric", encoding="utf-8")
+    pdf = tmp_path / "unit.pdf"
+    pdf.write_bytes(b"%PDF-1.7 reviewed")
+    pdf_sha256 = hashlib.sha256(pdf.read_bytes()).hexdigest()
 
     update = review.D15_FREEZE_UNIT_REVIEW_PACKET(
         {
@@ -2647,16 +2724,16 @@ def test_a_staged_review_packet_is_an_admissible_m05_projection(tmp_path: Path) 
                     "parent_hash": None,
                     "hash": f"{channel}-h",
                 }
-                for channel in ("domain", "content", "visuals", "layout")
+                for channel in ("domain", "content", "visuals")
             },
             "unit_page_inventories": [
-                {"unit_id": "U001", "pdf_sha256": "p" * 64, "page_count": 2, "result": "PASS"}
+                {"unit_id": "U001", "pdf_sha256": pdf_sha256, "page_count": 2, "result": "PASS"}
             ],
             "unit_page_inspections": [
                 {
                     "key": f"k{number}",
                     "unit_id": "U001",
-                    "pdf_sha256": "p" * 64,
+                    "pdf_sha256": pdf_sha256,
                     "page": number,
                     "page_sha256": f"{number}" * 64,
                     "image_path": f"/tmp/page-{number}.png",
@@ -2676,7 +2753,7 @@ def test_a_staged_review_packet_is_an_admissible_m05_projection(tmp_path: Path) 
             ],
             "source_admissions": [{"key": "s1", "unit_id": "U001"}],
             "engine_root": str(tmp_path),
-            "artifact_versions": [],
+            "artifact_versions": [_layout_version(pdf, pdf_sha256)],
             **_CORRELATION,
         },
         _Context(),
@@ -2698,3 +2775,367 @@ def test_no_staged_packet_carries_a_reservation_it_did_not_earn() -> None:
     )
     assert "reservation_kind" not in source
     assert "attempt_ordinal" not in source
+
+
+# ---------------------------------------------------------------------------
+# B-7 rework — the deterministic node mints the version, the model never does
+# ---------------------------------------------------------------------------
+
+
+def _model_update(
+    job_id: str,
+    packet: dict[str, Any],
+    candidate: dict[str, Any],
+    correlation_key: str | None = None,
+) -> dict[str, Any]:
+    """Run one real model adapter over a canned candidate, with a real reservation."""
+
+    import tempfile
+
+    from runtime.langgraph_factory import model_nodes as mn
+
+    registry = mn.tp.load_job_registry()
+    sandbox = Path(tempfile.mkdtemp(prefix="plan26-n22-b7-"))
+    context = mn.ModelNodeContext(
+        transport=mn.tp.FakeCliTransport(
+            sandbox_root=sandbox, responses={job_id: candidate}, registry=registry
+        ),
+        registry=registry,
+    )
+    staged = dict(packet)
+    staged["correlation"] = dict(_CORRELATION)
+    if correlation_key is not None:
+        staged["correlation"]["correlation_key"] = correlation_key
+    staged["reservation"] = {
+        "reservation_kind": mn.RESERVATION_KIND,
+        "activation_id": "activation-1",
+        "reservation_id": "activation-1#1",
+        "job_id": job_id,
+        "counter_key": f"{job_id}|k",
+        "attempt_ordinal": 1,
+    }
+    return mn.MODEL_NODE_ADAPTERS[job_id](staged, context)
+
+
+def _m02_candidate_versions(unit_id: str = "U001", **fields: Any) -> list[dict[str, Any]]:
+    packet = {
+        "unit": {"unit_id": unit_id, "title": "t"},
+        "admitted_sources": [
+            {
+                "source_id": "s1",
+                "fact_id": "f1",
+                "locator": "l",
+                "sha256": "0" * 64,
+                "content_type": "text/html",
+                "scope": "required_explanation",
+            }
+        ],
+        "domain_schema": {"path": sources.DOMAIN_SCHEMA_CONTRACT, "sha256": "0" * 64},
+        "verifier_interface": {"declared_at": "/verifier_result"},
+    }
+    candidate = {
+        "domain_version": {
+            "unit_id": unit_id,
+            "fields": {
+                "facts": [{"fact_id": "f1"}],
+                "verifier_result": {"result": "all_fixtures_behaved"},
+                **fields,
+            },
+            "evidence_references": [{"source_id": "s1", "source_location": "p.1"}],
+        }
+    }
+    return _model_update("M02_CREATE_UNIT_DOMAIN_DATA", packet, candidate)["artifact_versions"]
+
+
+def _domain_state_from_model(tmp_path: Path, heads: dict[str, Any] | None = None) -> dict[str, Any]:
+    schemas = tmp_path / "schemas"
+    schemas.mkdir()
+    (schemas / "manifest_domain.metaschema.v1.json").write_text(
+        json.dumps({"type": "object"}), encoding="utf-8"
+    )
+    _install_curriculum_contracts(tmp_path)
+    return {
+        "selected_unit_id": "U001",
+        "effective_run": {"unit_records": [{"id": "U001", "title": "t"}]},
+        "artifact_versions": _m02_candidate_versions(),
+        "artifact_heads": dict(heads or {}),
+        "source_admissions": [{"key": "s1", "unit_id": "U001", "fact_id": "f1"}],
+        "engine_root": str(tmp_path),
+        **_CORRELATION,
+    }
+
+
+def test_d08_admits_a_real_m02_candidate_the_model_never_versioned(tmp_path: Path) -> None:
+    """B-7: the candidate carries no version or hash, so D08 mints both."""
+
+    state = _domain_state_from_model(tmp_path)
+    record = state["artifact_versions"][0]
+    assert record["record_kind"] == "model_candidate"
+    assert not {"stream", "version", "parent_hash", "hash", "body"} & set(record)
+
+    update = domain.D08_VALIDATE_DOMAIN(state, _Context())
+
+    assert update["pending_guard"]["value"] == "domain_admitted"
+    body = record["payload"]["domain_version"]["fields"]
+    head = update["artifact_heads"]["units/U001/domain"]
+    assert head == {"version": 1, "parent_hash": None, "hash": canonical_digest(body)}
+    minted = update["artifact_versions"][0]
+    assert minted["body"] == body
+    assert minted["schema_path"] == sources.DOMAIN_SCHEMA_CONTRACT
+    assert minted["candidate_sha256"] == record["candidate_sha256"]
+
+
+def test_an_admitted_domain_version_is_the_current_heads_successor(tmp_path: Path) -> None:
+    """The minted version is `advance_head`'s own rule, read off the head."""
+
+    heads = {"units/U001/domain": {"version": 2, "parent_hash": "a" * 64, "hash": "b" * 64}}
+    update = domain.D08_VALIDATE_DOMAIN(_domain_state_from_model(tmp_path, heads), _Context())
+    head = update["artifact_heads"]["units/U001/domain"]
+    assert head["version"] == 3
+    assert head["parent_hash"] == "b" * 64
+
+
+def test_two_domain_candidates_differing_in_body_mint_different_hashes(tmp_path: Path) -> None:
+    """The minted hash is the canonical digest of the body, so it tracks the bytes."""
+
+    state = _domain_state_from_model(tmp_path)
+    first = domain.D08_VALIDATE_DOMAIN(state, _Context())
+    state["artifact_versions"] = _m02_candidate_versions(extra_field={"changed": True})
+    second = domain.D08_VALIDATE_DOMAIN(state, _Context())
+    assert (
+        first["artifact_heads"]["units/U001/domain"]["hash"]
+        != second["artifact_heads"]["units/U001/domain"]["hash"]
+    )
+
+
+def test_the_contract_d09_validates_against_admits_every_legal_m03_body() -> None:
+    """B-10: the author's output schema and the admitting contract are one language.
+
+    D08 hands M03 `CURRICULUM_CONTRACTS` and D09 validates M03's answer against
+    `CURRICULUM_CONTRACTS[0]`. When the two describe different documents — as they
+    did when the constant named the whole-curriculum manifest schema — the
+    intersection is empty and no content can ever be admitted, whatever the model
+    writes. Proven as schema algebra and then on the real validator, so it holds
+    for every legal body rather than for one sample.
+
+    Inverts when a document M03 may legally emit is one D09's contract rejects.
+    """
+
+    import jsonschema
+
+    contract = json.loads(
+        (REPO_ROOT / domain.CURRICULUM_CONTRACTS[0]).read_text(encoding="utf-8")
+    )
+    unit_content = json.loads(
+        (FACTORY_ROOT / "schemas" / "M03_write_unit_content.schema.json").read_text(
+            encoding="utf-8"
+        )
+    )["properties"]["unit_content"]
+
+    assert set(contract["required"]) <= set(unit_content["properties"])
+    assert set(unit_content["properties"]) <= set(contract["properties"])
+
+    body: dict[str, Any] = {
+        "unit_id": "U001",
+        "sections": [{"section_id": "s1", "heading": "h", "body": "b"}],
+        "evidence_references": [
+            {"section_id": "s1", "source_id": "x", "source_location": "p.1"}
+        ],
+    }
+    jsonschema.Draft202012Validator(unit_content).validate(body)
+    jsonschema.Draft202012Validator(contract).validate(body)
+
+    # D10 compiles the visual denominator off this same body, so the contract must
+    # admit the declaration it reads or every unit ships with no visuals at all.
+    with_visuals = {
+        **body,
+        "visuals": [{"role": "wiring", "kind": "build_map", "permitted_facts": ["f1"]}],
+    }
+    jsonschema.Draft202012Validator(contract).validate(with_visuals)
+    assert "visuals" in contract["properties"]
+
+
+def test_d09_admits_a_real_m03_candidate_against_the_admitted_domain_head(tmp_path: Path) -> None:
+    """The content path has the same gap and the same fix."""
+
+    _install_curriculum_contracts(tmp_path)
+    domain_hash = "d" * 64
+    packet = {
+        "unit": {"unit_id": "U001", "title": "t"},
+        "admitted_domain": {
+            "unit_id": "U001",
+            "domain_hash": domain_hash,
+            "version": 1,
+            "facts": [{"fact_id": "f1"}],
+        },
+        "curriculum_contracts": [{"path": content.CURRICULUM_CONTRACTS[0], "sha256": "0" * 64}],
+    }
+    candidate = {
+        "unit_content": {
+            "unit_id": "U001",
+            "sections": [{"section_id": "s1", "heading": "h", "body": "b"}],
+            "evidence_references": [
+                {"section_id": "s1", "source_id": "s1", "source_location": "p.1"}
+            ],
+        }
+    }
+    versions = _model_update("M03_WRITE_UNIT_CONTENT", packet, candidate)["artifact_versions"]
+    update = content.D09_VALIDATE_CONTENT(
+        {
+            "selected_unit_id": "U001",
+            "effective_run": {"unit_records": [{"id": "U001", "title": "t"}]},
+            "artifact_versions": versions,
+            "artifact_heads": {
+                "units/U001/domain": {"version": 1, "parent_hash": None, "hash": domain_hash}
+            },
+            "engine_root": str(tmp_path),
+        },
+        _Context(),
+    )
+    assert update["pending_guard"]["value"] == "content_admitted"
+    body = versions[0]["payload"]["unit_content"]
+    assert update["artifact_heads"]["units/U001/content"] == {
+        "version": 1,
+        "parent_hash": None,
+        "hash": canonical_digest(body),
+    }
+    assert update["artifact_versions"][0]["domain_hash"] == domain_hash
+
+
+def test_d06b_reads_locators_from_the_discovery_candidates_payload(tmp_path: Path) -> None:
+    """The join field M01 emits lives under `payload`, not on the record."""
+
+    from runtime.langgraph_factory.nodes import candidate_field
+
+    packet = {
+        "request": {"request_id": "U001/f1", "question": "q", "scope": "required_explanation"},
+        "unit": {"unit_id": "U001", "title": "t"},
+        "source_rules": dict(sources.SOURCE_RULES),
+        "discovery_authority": {
+            "phase": "DISCOVER",
+            "locators_only": True,
+            "may_retrieve_bytes": False,
+        },
+    }
+    candidate = {
+        "locators": [
+            {
+                "request_id": "U001/f1",
+                "url": "https://example.invalid/f1",
+                "title": "t",
+                "publisher": "p",
+                "locator_kind": "primary",
+                "rationale": "r",
+            }
+        ]
+    }
+    update = _model_update(
+        "M01_RESEARCH_UNIT_SOURCES", {**packet, "phase": "DISCOVER"}, candidate, "U001/f1"
+    )
+    record = next(iter(update["source_discoveries"].values()))
+    assert "locators" not in record
+    assert candidate_field(record, "locators") == candidate["locators"]
+
+
+def test_a_model_visual_candidate_joins_under_its_brief_key(tmp_path: Path) -> None:
+    """M04 keys on its activation; the denominator is keyed on the brief."""
+
+    content_hash = "c" * 64
+    brief = {
+        "key": "U001/visual/diagram",
+        "unit_id": "U001",
+        "role": "diagram",
+        "kind": "illustration",
+        "subset": "model",
+        "content_hash": content_hash,
+        "domain_hash": "d" * 64,
+        "permitted_facts": ["f1"],
+    }
+    packet = {
+        "brief": {
+            "brief_id": brief["key"],
+            "unit_id": "U001",
+            "role": "diagram",
+            "visual_class": "illustration",
+            "content_hash": content_hash,
+            "authoritative": False,
+            "eligibility": "model_eligible",
+        },
+        "permitted_facts": ["f1"],
+        "visual_contract": dict(visuals.MODEL_VISUAL_CONTRACT),
+    }
+    candidate = {
+        "visual_candidate": {
+            "brief_id": brief["key"],
+            "prompt_text": "p",
+            "dimensions": {"width_px": 100, "height_px": 100},
+            "image_format": "png",
+            "accessibility_text": "a",
+        },
+        "provenance_declaration": {
+            "brief_id": brief["key"],
+            "permitted_facts_used": ["f1"],
+            "asserts_authoritative_detail": False,
+        },
+    }
+    results = _model_update(
+        "M04_CREATE_UNIT_VISUALS", packet, candidate, f"U001/{content_hash}/{brief['key']}"
+    )["visual_results"]
+    assert brief["key"] not in results
+
+    update = visuals.D12_VISUAL_BARRIER_AND_JOIN(
+        {
+            "selected_unit_id": "U001",
+            "visual_denominators": {
+                "k": {
+                    "unit_id": "U001",
+                    "content_hash": content_hash,
+                    "deterministic_keys": [],
+                    "model_keys": [brief["key"]],
+                    "size": 1,
+                }
+            },
+            "visual_briefs": [brief],
+            "visual_results": results,
+            "artifact_versions": [],
+            "artifact_heads": {
+                "units/U001/content": {"version": 1, "parent_hash": None, "hash": content_hash}
+            },
+            **_CORRELATION,
+        },
+        _Context(),
+    )
+    assert update["pending_guard"]["value"] == "visuals_admitted"
+    assert update["artifact_heads"]["units/U001/visuals"]["version"] == 1
+
+
+def test_no_node_reads_an_admission_field_off_a_model_candidate() -> None:
+    """Version, hash, and parent are minted here; a node never reads one from a model."""
+
+    from runtime.langgraph_factory import model_nodes as mn
+    from runtime.langgraph_factory.nodes import mint_version
+
+    minted = mint_version({"key": "candidate:x"}, {}, "units/U001/domain", body={"a": 1})
+    assert set(mn.ADMISSION_OWNED_CANDIDATE_FIELDS) <= set(minted)
+    assert minted["version"] == 1 and minted["parent_hash"] is None
+    assert minted["hash"] == canonical_digest({"a": 1})
+    assert minted["minted_by"] == "deterministic_admission"
+
+
+def test_the_domain_body_is_held_to_the_contract_the_run_declares(tmp_path: Path) -> None:
+    """The schema is the run's own, never a path the model chose."""
+
+    state = _domain_state_from_model(tmp_path)
+    declared = tmp_path / "curricula" / "synthetic" / "manifest.domain.schema.v1.json"
+    declared.parent.mkdir(parents=True)
+    declared.write_text(
+        json.dumps({"type": "object", "required": ["absent"]}), encoding="utf-8"
+    )
+    state["effective_run"]["manifest_schema"] = "curricula/synthetic/manifest.domain.schema.v1.json"
+
+    update = domain.D08_VALIDATE_DOMAIN(state, _Context())
+
+    assert update["pending_guard"]["value"] == "domain_repairable"
+    assert [finding["check_id"] for finding in update["pending_guard"]["detail"]["findings"]] == [
+        "domain_schema_valid"
+    ]

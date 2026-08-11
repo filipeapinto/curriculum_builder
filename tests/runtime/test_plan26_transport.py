@@ -2,6 +2,7 @@
 from __future__ import annotations
 
 import json
+import shutil
 import subprocess
 import sys
 from dataclasses import dataclass
@@ -13,6 +14,12 @@ import pytest
 import yaml
 
 from runtime.langgraph_factory import transport as tp
+from runtime.langgraph_factory.artifacts import (
+    UNIT_SCOPE,
+    ArtifactStore,
+    ArtifactStream,
+    canonical_json_bytes,
+)
 from runtime.langgraph_factory.egress import (
     PROVIDER_DATA_CLASSES,
     AuthorizationDenied,
@@ -805,6 +812,253 @@ def test_fake_transport_returns_only_schema_valid_candidates():
     assert result.receipt["sandbox_mechanism"] == "fake_transport_no_process"
     with pytest.raises(tp.RouteRejected):
         fake.execute(job_id="M05_REVIEW_ACTUAL_UNIT", activation_id="b")
+
+
+# ---------------------------------- TEST 12: product capability surface (finding B-8)
+#
+# D03, D11, D13 and D14 call five methods on `RuntimeContext.transport_registry`, which
+# `graph.build_runtime_context` installs `CliTransport` as. N30's B-8 found all five
+# absent, so a production runtime context failed D03 immediately. These exercise the
+# real implementations against the real local toolchain, not a double.
+
+CAPABILITY_SURFACE = (
+    "prove_capability", "observe_executable",
+    "render_unit", "inspect_pages", "render_deterministic_visual",
+)
+
+requires_render_tools = pytest.mark.skipif(
+    not all(shutil.which(tool) for tool in tp.RENDER_TOOLS + tp.RASTER_TOOLS),
+    reason="host lacks the pandoc/typst/poppler toolchain the renderer capability requires")
+
+
+def capability_transport(tmp_path: Path) -> tp.CliTransport:
+    """A production `CliTransport` with no fake executables and no fake runner."""
+    output_root = tmp_path / "output"
+    output_root.mkdir(exist_ok=True)
+    receipts = ReceiptLog()
+    return tp.CliTransport(
+        output_root=output_root, run_id=RUN_ID, curriculum_digest=CURRICULUM_DIGEST,
+        authorization=authorization(output_root), receipts=receipts,
+        guard=EgressGuard(receipts), ledger=tp.AttemptLedger(), capability_proof=None)
+
+
+UNIT_CONTENT = {
+    "unit_id": "U01",
+    "sections": [{"section_id": "s1", "heading": "Levers",
+                  "body": "A lever turns about a fulcrum. " * 20}],
+    "evidence_references": [{"section_id": "s1", "source_id": "src-1", "source_location": "p. 3"}],
+    "visuals": [{"role": "path map", "kind": "power_path", "permitted_facts": ["battery to lamp"]}],
+}
+
+UNIT_DOMAIN = {
+    "build_map": {"map_kind": "power_path", "orientation": "flat",
+                  "traced_path": ["battery +", "switch", "lamp", "battery -"]},
+    "electrical": {"circuit": {"status": "designed_verified"}},
+}
+
+
+def admit(transport: tp.CliTransport, channel: str, body: dict) -> str:
+    """Admit one artifact body into the content-addressed store the renderer reads."""
+    store = ArtifactStore(transport.output_root)
+    stream = ArtifactStream(scope=UNIT_SCOPE, channel=channel, unit_id="U01")
+    record = store.admit_version(
+        stream, data=canonical_json_bytes(body), version=1, parent_hash=None,
+        idempotency_key=f"admit-{channel}")
+    return record.content_hash
+
+
+def test_the_production_transport_exposes_the_capability_surface_the_nodes_call(tmp_path: Path):
+    transport = capability_transport(tmp_path)
+    for name in CAPABILITY_SURFACE:
+        assert callable(getattr(transport, name, None)), f"CliTransport has no {name}"
+
+
+def test_every_required_capability_has_exactly_one_local_probe():
+    from runtime.langgraph_factory.nodes.inputs import REQUIRED_CAPABILITIES
+
+    assert set(tp.CAPABILITY_PROBES) == set(REQUIRED_CAPABILITIES)
+
+
+def test_capability_probes_read_the_real_local_toolchain(tmp_path: Path):
+    transport = capability_transport(tmp_path)
+
+    renderer = transport.prove_capability("renderer")
+    assert renderer["result"] == "PASS"
+    assert set(renderer["detail"]["tools"]) == set(tp.RENDER_TOOLS)
+    assert all(version for version in renderer["detail"]["tools"].values())
+
+    rasterizer = transport.prove_capability("rasterizer")
+    assert rasterizer["result"] == "PASS"
+    assert set(rasterizer["detail"]["tools"]) == set(tp.RASTER_TOOLS)
+
+    assert transport.prove_capability("persistence")["result"] == "PASS"
+    assert transport.prove_capability("logger")["result"] == "PASS"
+
+    identity = transport.prove_capability("model_cli_identity")
+    assert identity["result"] == "PASS"
+    for name, observed in identity["detail"]["executables"].items():
+        assert Path(observed["path"]).is_file()
+        assert observed["name"] == name
+
+
+def test_an_absent_tool_is_a_missing_capability_not_a_crash(tmp_path: Path, monkeypatch):
+    transport = capability_transport(tmp_path)
+    monkeypatch.setattr(tp.shutil, "which", lambda name: None)
+    proof = transport.prove_capability("renderer")
+    assert proof["result"] == "MISSING"
+    assert "pandoc" in proof["detail"]
+
+
+def test_an_unnamed_capability_is_missing_rather_than_silently_proven(tmp_path: Path):
+    proof = capability_transport(tmp_path).prove_capability("telepathy")
+    assert proof["result"] == "MISSING"
+
+
+def test_a_probe_may_report_an_unavailable_external_fact(tmp_path: Path, monkeypatch):
+    """D03 pauses only on a named unavailable external fact; the path must be reachable."""
+
+    def unavailable(_: tp.CliTransport) -> dict:
+        raise tp.UnavailableExternalFact("kit_calibration_measurement", "no measured kit on hand")
+
+    monkeypatch.setattr(tp, "CAPABILITY_PROBES", {**tp.CAPABILITY_PROBES, "retrieval": unavailable})
+    proof = capability_transport(tmp_path).prove_capability("retrieval")
+    assert proof["result"] == "UNAVAILABLE_EXTERNAL_FACT"
+    assert proof["fact"] == "kit_calibration_measurement"
+
+
+def test_observe_executable_reports_the_installed_binarys_own_identity(tmp_path: Path):
+    observed = capability_transport(tmp_path).observe_executable("codex")
+    assert Path(observed["path"]).is_file()
+    assert observed["sha256"] == tp.sha256_file(Path(observed["path"]))
+    assert observed["version"]
+
+
+@requires_render_tools
+def test_render_unit_produces_a_real_pdf_from_the_admitted_content_head(tmp_path: Path):
+    transport = capability_transport(tmp_path)
+    parents = {"domain": admit(transport, "domain", UNIT_DOMAIN),
+               "content": admit(transport, "content", UNIT_CONTENT),
+               "visuals": "v" * 64}
+
+    rendered = transport.render_unit("U01", parents)
+    pdf = Path(rendered["pdf_path"])
+    assert pdf.is_file() and pdf.read_bytes().startswith(b"%PDF")
+    assert rendered["pdf_sha256"] == tp.sha256_file(pdf)
+    assert rendered["layout_sha256"] == tp.sha256_file(Path(rendered["layout_path"]))
+    assert "Levers" in Path(rendered["layout_path"]).read_text(encoding="utf-8")
+    assert rendered["attempt"] == 1
+    assert transport.render_unit("U01", parents)["attempt"] == 2
+
+
+def test_render_unit_refuses_a_content_parent_no_admitted_artifact_matches(tmp_path: Path):
+    transport = capability_transport(tmp_path)
+    with pytest.raises(tp.RenderFault):
+        transport.render_unit("U01", {"domain": "d" * 64, "content": "c" * 64, "visuals": "v" * 64})
+
+
+@requires_render_tools
+def test_inspect_pages_inventories_and_inspects_every_page_by_hash(tmp_path: Path):
+    transport = capability_transport(tmp_path)
+    rendered = transport.render_unit("U01", {
+        "domain": admit(transport, "domain", UNIT_DOMAIN),
+        "content": admit(transport, "content", UNIT_CONTENT), "visuals": "v" * 64})
+
+    report = transport.inspect_pages(rendered["pdf_path"], rendered["pdf_sha256"])
+    pages = report["pages"]
+    assert [page["number"] for page in pages] == list(range(1, len(pages) + 1))
+    assert pages
+    for page in pages:
+        assert len(page["page_sha256"]) == 64
+        assert Path(page["image_path"]).is_file()
+        assert page["problems"] == [] and page["unreadable"] is False
+
+
+@requires_render_tools
+def test_inspect_pages_refuses_a_pdf_that_is_not_the_hash_it_was_given(tmp_path: Path):
+    transport = capability_transport(tmp_path)
+    rendered = transport.render_unit("U01", {
+        "domain": admit(transport, "domain", UNIT_DOMAIN),
+        "content": admit(transport, "content", UNIT_CONTENT), "visuals": "v" * 64})
+    with pytest.raises(tp.RenderFault):
+        transport.inspect_pages(rendered["pdf_path"], "0" * 64)
+
+
+@requires_render_tools
+def test_a_blank_page_is_a_finding_on_that_page_not_a_transport_fault(tmp_path: Path):
+    source = tmp_path / "blank.typ"
+    source.write_text("#set page(width: 210mm, height: 297mm)\n#pagebreak()\n= Second\ntext\n",
+                      encoding="utf-8")
+    pdf = tmp_path / "blank.pdf"
+    assert subprocess.run(["typst", "compile", str(source), str(pdf)]).returncode == 0
+
+    transport = capability_transport(tmp_path)
+    pages = transport.inspect_pages(str(pdf), tp.sha256_file(pdf))["pages"]
+    assert len(pages) == 2
+    assert pages[0]["unreadable"] is True and pages[0]["problems"]
+    assert pages[1]["unreadable"] is False and pages[1]["problems"] == []
+
+
+def test_every_authoritative_visual_kind_has_a_deterministic_renderer():
+    """D10 sends exactly these kinds to D11, so a kind with no renderer is unrenderable."""
+    from runtime.langgraph_factory.nodes.visuals import AUTHORITATIVE_VISUAL_KINDS
+
+    assert set(tp.DETERMINISTIC_VISUAL_RENDERERS) == set(AUTHORITATIVE_VISUAL_KINDS)
+
+
+def test_render_deterministic_visual_draws_from_the_admitted_domain(tmp_path: Path):
+    transport = capability_transport(tmp_path)
+    domain_hash = admit(transport, "domain", UNIT_DOMAIN)
+    brief = {"key": "U01/visual/path map", "unit_id": "U01", "kind": "power_path",
+             "subset": "deterministic", "domain_hash": domain_hash, "content_hash": "c" * 64}
+
+    produced = transport.render_deterministic_visual(brief, ["battery to lamp"])
+    asset = Path(produced["asset_path"])
+    assert produced["format"] == "svg"
+    assert produced["sha256"] == tp.sha256_file(asset)
+    svg = asset.read_text(encoding="utf-8")
+    assert svg.startswith("<svg") and "battery +" in svg
+
+
+def test_render_deterministic_visual_refuses_a_kind_it_cannot_draw(tmp_path: Path):
+    transport = capability_transport(tmp_path)
+    with pytest.raises(tp.RenderFault):
+        transport.render_deterministic_visual(
+            {"key": "k", "unit_id": "U01", "kind": "mood_board",
+             "domain_hash": "d" * 64}, [])
+
+
+# ------------------------------- M03 declares the visuals D10 reads (finding B-10)
+
+
+def m03_schema() -> dict:
+    return json.loads(
+        (tp.SCHEMA_DIR / "M03_write_unit_content.schema.json").read_text(encoding="utf-8"))
+
+
+def test_m03_may_declare_the_visual_brief_fields_d10_reads():
+    """D10 reads these five off each declaration; a closed schema must permit all five."""
+    item = m03_schema()["properties"]["unit_content"]["properties"]["visuals"]["items"]
+    assert set(item["properties"]) == {
+        "role", "kind", "authoritative", "requests_authoritative_facts", "permitted_facts"}
+    assert item["additionalProperties"] is False
+    assert set(item["required"]) == {"role", "kind"}
+
+
+def test_m03_admits_a_content_document_that_declares_visuals():
+    validator = jsonschema.Draft202012Validator(m03_schema())
+    validator.validate({"unit_content": UNIT_CONTENT})
+    validator.validate({"unit_content": {**UNIT_CONTENT, "visuals": []}})
+    validator.validate({"unit_content": {k: v for k, v in UNIT_CONTENT.items() if k != "visuals"}})
+    with pytest.raises(jsonschema.ValidationError):
+        validator.validate({"unit_content": {**UNIT_CONTENT, "visuals": [{"role": "r"}]}})
+    with pytest.raises(jsonschema.ValidationError):
+        validator.validate(
+            {"unit_content": {**UNIT_CONTENT, "visuals": [{"role": "r", "kind": "k", "x": 1}]}})
+
+
+def test_a_declared_visual_carries_no_control_plane_field():
+    tp.assert_no_authoritative_fields(m03_schema(), label="M03 output schema")
+    tp.assert_no_authoritative_fields({"unit_content": UNIT_CONTENT}, label="M03 candidate")
 
 
 # --------------------------------------------------------- forbidden production imports

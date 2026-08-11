@@ -14,6 +14,7 @@ import platform
 import re
 import shutil
 import signal
+import sqlite3
 import stat
 import subprocess
 import sys
@@ -27,6 +28,9 @@ from typing import Any, Callable, Mapping, Sequence
 import jsonschema
 import yaml
 
+from .. import checks, pdf_inspect, visual_maps
+from ..pdf_inspect import MIN_POINT_SIZE
+from .artifacts import UNIT_SCOPE, ArtifactStore, ArtifactStream, canonical_digest
 from .egress import (
     AuthorizationDenied,
     AuthorizationRecord,
@@ -941,6 +945,249 @@ def _signal_group(process: subprocess.Popen[str], number: int) -> None:
         process.send_signal(number)
 
 
+# --------------------------------------------------- product capability surface
+#
+# D03, D11, D13 and D14 reach for five methods on `RuntimeContext.transport_registry`.
+# They are capability work, not curriculum work: each does one bounded local job and
+# raises on any tool fault, so the calling node classifies it as a system failure
+# instead of letting a broken renderer reach the record as a product finding.
+
+RENDER_TOOLS: tuple[str, ...] = ("pandoc", "typst")
+RASTER_TOOLS: tuple[str, ...] = ("pdftoppm", "pdfinfo", "pdftotext", "pdfimages")
+RENDER_DIRNAME = ".render"
+
+# The nominal type size is recoverable from an ink box by pdf_inspect's constant,
+# calibrated against this repository's own pandoc/typst/Helvetica toolchain.
+_INK_BOX_RATIO = pdf_inspect._INK_BOX_RATIO
+_BLANK_PAGE_RANGE = 2
+
+_PAGE_SIZE_RE = re.compile(r'^width="([\d.]+)" height="([\d.]+)"')
+_LINE_BOX_RE = re.compile(
+    r'<line xMin="([\d.]+)" yMin="([\d.]+)" xMax="([\d.]+)" yMax="([\d.]+)">(.*?)</line>', re.S)
+
+
+class RenderFault(TransportError):
+    """A renderer, rasterizer, or artifact-store fault. Never a product finding."""
+
+
+class UnavailableExternalFact(TransportError):
+    """A named required external fact no local probe can supply (spec 2.4 item 6)."""
+
+    def __init__(self, fact: str, detail: str = "") -> None:
+        super().__init__(f"{fact}: {detail}" if detail else fact)
+        self.fact = fact
+
+
+def rasterize_pages(pdf: Path, directory: Path, *, dpi: int = 200) -> list[Path]:
+    """One PNG per shipped page.
+
+    `checks.rasterize_and_check_nonblank` aborts on the first blank page. D14 owes a
+    result for *every* page and treats a blank one as a product finding, so the blank
+    audit happens per page in `inspect_pages` rather than here.
+    """
+    if not shutil.which("pdftoppm"):
+        raise RenderFault("pdftoppm unavailable; the rasterizer capability is unproven")
+    directory.mkdir(parents=True, exist_ok=True)
+    completed = subprocess.run(
+        ["pdftoppm", "-r", str(dpi), "-png", str(pdf), str(directory / "page")],
+        capture_output=True, text=True, timeout=600)
+    if completed.returncode != 0:
+        raise RenderFault(f"rasterization failed: {completed.stderr.strip()[:500]}")
+    pages = sorted(directory.glob("page-*.png"))
+    declared = checks.pdf_page_count(pdf)
+    if len(pages) != declared:
+        raise RenderFault(f"rasterized {len(pages)} page(s) from a {declared}-page PDF")
+    return pages
+
+
+def page_is_blank(image_path: Path) -> bool:
+    from PIL import Image
+
+    with Image.open(image_path) as image:
+        extrema = image.convert("L").getextrema()
+    return extrema is None or (extrema[1] - extrema[0]) <= _BLANK_PAGE_RANGE
+
+
+def page_text_problems(pdf: Path) -> dict[int, list[str]]:
+    """Undersized and clipped text, per page, from one poppler pass.
+
+    `pdf_inspect.text_legible` answers the same question for a whole document; D14's
+    denominator is per page, so the same `-bbox-layout` output is split by page here.
+    """
+    if not shutil.which("pdftotext"):
+        raise RenderFault("pdftotext unavailable; page inspection cannot be proven")
+    completed = subprocess.run(
+        ["pdftotext", "-bbox-layout", str(pdf), "-"],
+        capture_output=True, text=True, timeout=600)
+    if completed.returncode != 0:
+        raise RenderFault(f"pdftotext failed: {completed.stderr.strip()[:500]}")
+    problems: dict[int, list[str]] = {}
+    for number, chunk in enumerate(completed.stdout.split("<page ")[1:], start=1):
+        size = _PAGE_SIZE_RE.match(chunk)
+        width = float(size.group(1)) if size else None
+        height = float(size.group(2)) if size else None
+        found: set[str] = set()
+        for match in _LINE_BOX_RE.finditer(chunk):
+            x_max, y_min, y_max = float(match.group(3)), float(match.group(2)), float(match.group(4))
+            text = re.sub(r"\s+", " ", re.sub(r"<[^>]+>", " ", match.group(5))).strip()
+            if len(text) < 3:
+                continue
+            nominal = round((y_max - y_min) / _INK_BOX_RATIO, 2)
+            if nominal < MIN_POINT_SIZE:
+                found.add(f"text below {MIN_POINT_SIZE}pt ({nominal}pt): {text[:60]}")
+            if width is not None and (x_max > width + 1 or y_max > (height or 0) + 1):
+                found.add(f"line runs outside the page box: {text[:60]}")
+        problems[number] = sorted(found)
+    return problems
+
+
+def compose_unit_markdown(unit_id: str, content: Mapping[str, Any]) -> str:
+    """The deterministic layout source for one admitted unit content body."""
+    sections = content.get("sections")
+    if not isinstance(sections, list) or not sections:
+        raise RenderFault(f"admitted content for {unit_id} declares no sections to render")
+    lines = [f"# {unit_id}", ""]
+    for ordinal, section in enumerate(sections):
+        if not isinstance(section, Mapping):
+            raise RenderFault(f"content section {ordinal} of {unit_id} is not an object")
+        heading = section.get("heading")
+        body = section.get("body")
+        if not isinstance(heading, str) or not isinstance(body, str):
+            raise RenderFault(f"content section {ordinal} of {unit_id} has no heading and body")
+        lines += [f"## {heading}", "", body, ""]
+    return "\n".join(lines) + "\n"
+
+
+# Which deterministic renderer draws a brief of each authoritative kind. Topology kinds
+# resolve through `visual_maps.render_map`, so the *domain's* own `map_kind` chooses the
+# drawing, not the brief's word for it.
+def _render_topology(domain: Mapping[str, Any]) -> str:
+    return visual_maps.render_map(dict(domain))
+
+
+def _render_power_path(domain: Mapping[str, Any]) -> str:
+    return visual_maps.render_power_path(
+        dict(domain.get("build_map") or {}), dict(domain.get("electrical") or {}))
+
+
+def _render_parts(domain: Mapping[str, Any]) -> str:
+    parts = domain.get("parts") or []
+    if not parts:
+        raise RenderFault("the domain names no parts to draw")
+    return visual_maps.render_parts_diagram(list(parts), subject=str(domain.get("subject", "")))
+
+
+def _render_safety_inset(domain: Mapping[str, Any]) -> str:
+    failures = (domain.get("electrical") or {}).get("failure_modes") or []
+    if not failures:
+        raise RenderFault("the domain records no failure mode to draw a safety inset from")
+    return visual_maps.render_warning_notice(dict(failures[0]))
+
+
+# Poppler's utilities take `-v`, not `--version`, and print it on stderr.
+_VERSION_FLAG = {name: "-v" for name in RASTER_TOOLS}
+
+
+def tool_versions(names: Sequence[str]) -> dict[str, str]:
+    """One real local invocation per tool; an absent or broken tool fails closed."""
+    versions: dict[str, str] = {}
+    for name in names:
+        located = shutil.which(name)
+        if not located:
+            raise CapabilityProofFailed(f"executable not on PATH: {name}")
+        completed = subprocess.run(
+            [located, _VERSION_FLAG.get(name, "--version")],
+            capture_output=True, text=True, timeout=60)
+        printed = (completed.stdout or completed.stderr).strip().splitlines()
+        if not printed:
+            raise CapabilityProofFailed(f"{name} reports no version")
+        versions[name] = printed[0]
+    return versions
+
+
+DETERMINISTIC_VISUAL_RENDERERS: Mapping[str, Callable[[Mapping[str, Any]], str]] = {
+    "build_map": _render_topology,
+    "breadboard": _render_topology,
+    "wiring": _render_topology,
+    "circuit": _render_topology,
+    "electrical": _render_topology,
+    "terminal_block": _render_topology,
+    "connectivity": _render_topology,
+    "schematic": _render_topology,
+    "netlist": _render_topology,
+    "power_path": _render_power_path,
+    "pinout": _render_parts,
+    "pin_map": _render_parts,
+    "safety_inset": _render_safety_inset,
+}
+
+
+def _probe_model_cli_identity(transport: "CliTransport") -> dict[str, Any]:
+    return {
+        "executables": {
+            name: transport.observe_executable(name)
+            for name in sorted({route.cli for route in transport.registry.values()})
+        }
+    }
+
+
+def _probe_retrieval(transport: "CliTransport") -> dict[str, Any]:
+    if not transport.guard.installed:
+        raise CapabilityProofFailed(
+            "the process egress broker is not installed; no retrieval can be contained")
+    return {"egress_broker": "EgressGuard", "mechanism": "socket.socket interception"}
+
+
+def _probe_renderer(transport: "CliTransport") -> dict[str, Any]:
+    return {"tools": tool_versions(RENDER_TOOLS)}
+
+
+def _probe_rasterizer(transport: "CliTransport") -> dict[str, Any]:
+    return {"tools": tool_versions(RASTER_TOOLS)}
+
+
+def _probe_persistence(transport: "CliTransport") -> dict[str, Any]:
+    probe_path = transport.output_root / RENDER_DIRNAME / "capability_probe.json"
+    probe_path.parent.mkdir(parents=True, exist_ok=True)
+    payload = canonical_json({"probe": "persistence", "at": utc_now().isoformat()})
+    probe_path.write_text(payload, encoding="utf-8")
+    written = probe_path.read_text(encoding="utf-8")
+    probe_path.unlink()
+    if written != payload:
+        raise CapabilityProofFailed(f"the output root at {transport.output_root} does not read back")
+    connection = sqlite3.connect(":memory:")
+    try:
+        connection.execute("create table probe (value text)")
+        connection.execute("insert into probe values ('ok')")
+        rows = connection.execute("select value from probe").fetchall()
+    finally:
+        connection.close()
+    if rows != [("ok",)]:
+        raise CapabilityProofFailed("the sqlite checkpoint engine does not round-trip a write")
+    return {"output_root": str(transport.output_root), "sqlite_version": sqlite3.sqlite_version}
+
+
+def _probe_logger(transport: "CliTransport") -> dict[str, Any]:
+    evidence_root = transport.evidence_root
+    evidence_root.mkdir(parents=True, exist_ok=True)
+    probe_path = evidence_root / "capability_probe.log"
+    with probe_path.open("a", encoding="utf-8") as handle:
+        handle.write("")
+    probe_path.unlink()
+    return {"evidence_root": str(evidence_root)}
+
+
+# One local probe per capability, in D03's own order. No entry may reach a model.
+CAPABILITY_PROBES: Mapping[str, Callable[["CliTransport"], dict[str, Any]]] = {
+    "model_cli_identity": _probe_model_cli_identity,
+    "retrieval": _probe_retrieval,
+    "renderer": _probe_renderer,
+    "rasterizer": _probe_rasterizer,
+    "persistence": _probe_persistence,
+    "logger": _probe_logger,
+}
+
+
 # -------------------------------------------------------------------------- transport
 
 
@@ -990,11 +1237,140 @@ class CliTransport:
         self._receipt_validator = jsonschema.Draft202012Validator(
             _load_json(SCHEMA_DIR / "internal_execution_receipt.schema.json"))
         self._executables: dict[str, ExecutableIdentity] = dict(executables or {})
+        self.render_root = self.output_root / RENDER_DIRNAME
+        self._artifacts = ArtifactStore(self.output_root)
+        self._render_attempts: dict[str, int] = {}
 
     def executable(self, name: str) -> ExecutableIdentity:
         if name not in self._executables:
             self._executables[name] = probe_executable(name)
         return self._executables[name]
+
+    # -------------------------------------------- product capability surface (D03)
+
+    def prove_capability(self, capability: str) -> dict[str, Any]:
+        """One bounded local probe. Never a curriculum model job (spec 6.2, D03)."""
+        probe = CAPABILITY_PROBES.get(capability)
+        if probe is None:
+            return {"result": "MISSING", "capability": capability,
+                    "detail": f"no local probe is registered for {capability!r}"}
+        try:
+            detail = probe(self)
+        except UnavailableExternalFact as error:
+            return {"result": "UNAVAILABLE_EXTERNAL_FACT", "capability": capability,
+                    "fact": error.fact, "detail": str(error)[:500]}
+        except (TransportError, checks.CheckFailure, OSError, sqlite3.Error) as error:
+            return {"result": "MISSING", "capability": capability, "detail": str(error)[:500]}
+        return {"result": "PASS", "capability": capability, "detail": detail}
+
+    def observe_executable(self, name: str) -> dict[str, Any]:
+        """The installed executable's own identity, resolved and hashed on this host."""
+        identity = self.executable(name)
+        return {"name": identity.name, "path": identity.path,
+                "sha256": identity.sha256, "version": identity.version}
+
+    # ------------------------------------ product capability surface (D11/D13/D14)
+
+    def read_artifact_body(self, unit_id: str, channel: str, content_hash: str) -> dict[str, Any]:
+        """The admitted artifact those bytes hash to, from the content-addressed store."""
+        stream = ArtifactStream(scope=UNIT_SCOPE, channel=channel, unit_id=unit_id)
+        path = self._artifacts.resolve(stream.blob_path(content_hash))
+        if not path.is_file():
+            raise RenderFault(
+                f"no admitted {channel} artifact for {unit_id} at {content_hash} "
+                f"under {self.output_root}")
+        data = path.read_bytes()
+        if sha256_bytes(data) != content_hash:
+            raise RenderFault(f"the stored {channel} artifact for {unit_id} is not its own hash")
+        body = json.loads(data)
+        if not isinstance(body, dict):
+            raise RenderFault(f"the admitted {channel} artifact for {unit_id} is not an object")
+        return body
+
+    def render_unit(self, unit_id: str, parents: Mapping[str, str]) -> dict[str, Any]:
+        """Render one layout source and unit PDF from the admitted heads (D13)."""
+        content_hash = parents.get("content")
+        if not isinstance(content_hash, str) or not content_hash:
+            raise RenderFault(f"render of {unit_id} was given no admitted content parent")
+        content = self.read_artifact_body(unit_id, "content", content_hash)
+
+        directory = self.render_root / unit_id / canonical_digest(dict(parents))
+        directory.mkdir(parents=True, exist_ok=True)
+        markdown = directory / f"{unit_id}.md"
+        markdown.write_text(compose_unit_markdown(unit_id, content), encoding="utf-8")
+        pdf = directory / f"{unit_id}.pdf"
+        completed = subprocess.run(
+            ["pandoc", str(markdown), "--resource-path", str(directory),
+             "--pdf-engine=typst", "-V", "mainfont=Helvetica",
+             "-V", "geometry:margin=0.8in", "-V", "fontsize=11pt", "-o", str(pdf)],
+            cwd=str(directory), capture_output=True, text=True, timeout=600)
+        if completed.returncode != 0:
+            raise RenderFault(f"pandoc/typst failed for {unit_id}: {completed.stderr.strip()[:500]}")
+        if not pdf.is_file():
+            raise RenderFault(f"pandoc reported success but wrote no PDF for {unit_id}")
+
+        self._render_attempts[unit_id] = self._render_attempts.get(unit_id, 0) + 1
+        return {
+            "layout_path": str(markdown),
+            "layout_sha256": sha256_file(markdown),
+            "pdf_path": str(pdf),
+            "pdf_sha256": sha256_file(pdf),
+            "renderer": "pandoc --pdf-engine=typst",
+            "attempt": self._render_attempts[unit_id],
+        }
+
+    def inspect_pages(self, pdf_path: str, pdf_sha256: str) -> dict[str, Any]:
+        """Rasterize and inspect every page of the exact shipped PDF (D14)."""
+        path = Path(pdf_path)
+        if not path.is_file():
+            raise RenderFault(f"the PDF to inspect does not exist: {path}")
+        actual = sha256_file(path)
+        if actual != pdf_sha256:
+            raise RenderFault(
+                f"the PDF at {path} hashes to {actual}, not the declared {pdf_sha256}")
+
+        images = rasterize_pages(path, self.render_root / "pages" / pdf_sha256)
+        text_problems = page_text_problems(path)
+        pages: list[dict[str, Any]] = []
+        for number, image in enumerate(images, start=1):
+            blank = page_is_blank(image)
+            problems = list(text_problems.get(number, ()))
+            if blank:
+                problems.append("the page renders no ink")
+            pages.append({
+                "number": number,
+                "page_sha256": sha256_file(image),
+                "image_path": str(image),
+                "problems": sorted(problems),
+                "unreadable": blank,
+            })
+        return {"pdf_sha256": pdf_sha256, "pages": pages}
+
+    def render_deterministic_visual(
+        self, brief: Mapping[str, Any], permitted_facts: Sequence[str]
+    ) -> dict[str, Any]:
+        """Draw one authoritative visual from the admitted domain, never from a model (D11)."""
+        kind = brief.get("kind")
+        renderer = DETERMINISTIC_VISUAL_RENDERERS.get(str(kind))
+        if renderer is None:
+            raise RenderFault(f"no deterministic renderer for visual kind {kind!r}")
+        unit_id, domain_hash, key = brief.get("unit_id"), brief.get("domain_hash"), brief.get("key")
+        if not all(isinstance(value, str) and value for value in (unit_id, domain_hash, key)):
+            raise RenderFault(f"visual brief {key!r} names no unit, domain head, and key")
+
+        domain = self.read_artifact_body(str(unit_id), "domain", str(domain_hash))
+        svg = renderer(domain)
+
+        directory = self.render_root / str(unit_id) / "visuals" / str(domain_hash)
+        directory.mkdir(parents=True, exist_ok=True)
+        asset = directory / (re.sub(r"[^A-Za-z0-9._-]", "_", str(key)) + ".svg")
+        asset.write_text(svg, encoding="utf-8")
+        return {
+            "asset_path": str(asset),
+            "sha256": sha256_file(asset),
+            "format": "svg",
+            "permitted_facts": sorted(str(fact) for fact in permitted_facts or ()),
+        }
 
     def execute(
         self,

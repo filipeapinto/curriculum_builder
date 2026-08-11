@@ -13,6 +13,7 @@ from typing import Any
 from . import (
     PrerequisitePause,
     SystemFailure,
+    candidate_field,
     canonical_digest,
     contract_reference,
     deterministic_node,
@@ -361,7 +362,7 @@ def D06B_RETRIEVE_SOURCE_CANDIDATES(
         if request_key not in requests:
             continue
         record = _record(discovery, f"discovery for {request_key}")
-        locators = record.get("locators") or []
+        locators = candidate_field(record, "locators") or []
         require(
             isinstance(locators, list),
             "schema_contract",
@@ -493,6 +494,11 @@ def D07_CORRELATE_AND_ADMIT_SOURCES(
     expected = set(denominator["request_keys"])
     retrievals = projection["retrievals"]
     interpretations = projection["source_interpretations"]
+    requests_by_key = {
+        request.get("key"): request
+        for request in projection["source_requests"]
+        if isinstance(request, dict)
+    }
 
     # Cross-unit contamination is a join failure, not a filterable condition: a
     # member keyed to another unit means the fan-out correlation itself is wrong.
@@ -501,7 +507,7 @@ def D07_CORRELATE_AND_ADMIT_SOURCES(
             key
             for key, value in collection.items()
             if isinstance(value, dict)
-            and value.get("unit_id") not in (None, unit_id)
+            and candidate_field(value, "unit_id") not in (None, unit_id)
             and key in expected
         )
         require(
@@ -521,7 +527,7 @@ def D07_CORRELATE_AND_ADMIT_SOURCES(
     stale: list[dict[str, Any]] = []
     for key in sorted(interpreted):
         interpretation = _record(interpretations[key], f"interpretation {key}")
-        parent = interpretation.get("retrieval_sha256")
+        parent = candidate_field(interpretation, "retrieval_sha256")
         retrieval = retrievals.get(key)
         current = retrieval.get("sha256") if isinstance(retrieval, dict) else None
         if parent != current:
@@ -576,7 +582,9 @@ def D07_CORRELATE_AND_ADMIT_SOURCES(
                 "sha256": retrieval.get("sha256"),
                 "content_type": retrieval.get("content_type"),
                 "interpretation_hash": canonical_digest(interpretation),
-                "scope": interpretation.get("scope"),
+                "scope": candidate_field(
+                    interpretation, "scope", requests_by_key.get(key, {}).get("scope")
+                ),
             }
         )
 
@@ -627,7 +635,7 @@ def D07_CORRELATE_AND_ADMIT_SOURCES(
 
 
 def _keyed_to(value: Any, unit_id: str) -> bool:
-    return isinstance(value, dict) and value.get("unit_id") == unit_id
+    return isinstance(value, dict) and candidate_field(value, "unit_id") == unit_id
 
 
 # --------------------------------------------------------------------------

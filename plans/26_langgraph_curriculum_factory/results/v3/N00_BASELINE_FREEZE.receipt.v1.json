@@ -1,0 +1,34 @@
+{
+  "changed_files": [],
+  "commands": [
+    {
+      "argv": [
+        "/tmp/plan26_n30_verify/bin/python",
+        "plans/26_langgraph_curriculum_factory/prompt_graph_controller.py",
+        "validate"
+      ],
+      "exit_code": 0,
+      "finished_at": "2026-08-11T20:59:50.778066+00:00",
+      "log": "plans/26_langgraph_curriculum_factory/results/v3/logs/N00_BASELINE_FREEZE/adopt-v2.test1.log",
+      "log_sha256": "ead99b3d4771d495f8fc45450295bb1f2c59b7bf41e9592368bfb29690ba0b19",
+      "started_at": "2026-08-11T20:59:50.610887+00:00",
+      "tail": "{\n  \"graph_digest\": \"ac8587de809ce6dbc0a75b476e79fc8d0474a980c0cfbabcb97979a0b490a82a\",\n  \"topological_order\": [\n    \"N00_BASELINE_FREEZE\",\n    \"N10_DEPENDENCY_API\",\n    \"N11_STATE_REDUCERS\",\n    \"N12_EVIDENCE_ARTIFACTS\",\n    \"N13_TRANSPORT_AUTH\",\n    \"N21_PERSISTENCE_RESUME\",\n    \"N22_DETERMINISTIC_NODES\",\n    \"N23_MODEL_NODES\",\n    \"N20_GRAPH_COMPILER\",\n    \"N30_UNIT_GRAPH\",\n    \"N31_REPAIR_ACCEPTANCE\",\n    \"N32_WORKBOOK_TERMINALS\",\n    \"N40_CLI_CUTOVER\",\n    \"N50_ADVERSARIAL_REGRESSION\",\n    \"N60_LIVE_PRODUCT_PROOF\",\n    \"N90_FINAL_AUDIT\"\n  ],\n  \"valid\": true\n}\n",
+      "timed_out": false
+    }
+  ],
+  "created_at": "2026-08-11T20:59:50.782881+00:00",
+  "findings": [],
+  "graph_digest": "ac8587de809ce6dbc0a75b476e79fc8d0474a980c0cfbabcb97979a0b490a82a",
+  "graph_id": "plan26_langgraph_curriculum_factory_implementation",
+  "input_fingerprint": "a88f5f5a6318b5c8b52d01e4f3ff88ca0bbe1d8369e98e2c789f4dcb2691f093",
+  "node_definition_sha256": "72f25c4ae3aaa3ae096b6f8243c047707b7f58eb5dde9d51df2eeaba11274217",
+  "node_id": "N00_BASELINE_FREEZE",
+  "outputs": {
+    "plans/26_langgraph_curriculum_factory/contracts": "e5355b2a18b694c729f66659b83b404448fedd250dd4272af987f6e83d5243c6",
+    "plans/26_langgraph_curriculum_factory/results/N00_BASELINE_FREEZE.result.v1.md": "c861b67efcf89bc3258d3bfeafaffcb263cee4b1540e417bd6de645d5ced88d5"
+  },
+  "prompt_sha256": "fdf358591c1d027c909e17ffaf856e07848c95967667a461cf684f1ae545cede",
+  "schema_version": 1,
+  "source": "adopted_v2_after_focused_verification",
+  "status": "PASSED"
+}

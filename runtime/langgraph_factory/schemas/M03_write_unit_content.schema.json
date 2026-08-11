@@ -39,6 +39,25 @@
               "source_location": {"type": "string", "minLength": 1, "maxLength": 500}
             }
           }
+        },
+        "visuals": {
+          "description": "Declared visual briefs. D10 compiles these into the unit's exact visual denominator and splits them into the deterministic and model subsets; a unit that needs no picture omits the key or declares an empty list.",
+          "type": "array",
+          "items": {
+            "type": "object",
+            "additionalProperties": false,
+            "required": ["role", "kind"],
+            "properties": {
+              "role": {"type": "string", "minLength": 1, "maxLength": 200},
+              "kind": {"type": "string", "minLength": 1, "maxLength": 200},
+              "authoritative": {"type": "boolean"},
+              "requests_authoritative_facts": {"type": "boolean"},
+              "permitted_facts": {
+                "type": "array",
+                "items": {"type": "string", "minLength": 1, "maxLength": 500}
+              }
+            }
+          }
         }
       }
     }

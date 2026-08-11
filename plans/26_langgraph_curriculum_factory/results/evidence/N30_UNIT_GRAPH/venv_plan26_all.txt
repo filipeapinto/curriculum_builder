@@ -1,123 +1,14 @@
 .......................................... [  5%]
-........................................................................ [ 15%]
-........................................................................ [ 25%]
-........................................................................ [ 35%]
-...................................s......................... [ 44%]
-........................................................................ [ 54%]
-......................................................................................................... [ 68%]
-..................................... [ 73%]
-............................ [ 77%]
-................F.F....F................................................ [ 87%]
+........................................................................ [ 13%]
+........................................................................ [ 22%]
+........................................................................ [ 31%]
+............................................................. [ 38%]
+s....................................................................... [ 47%]
+........................................................................ [ 56%]
+................................................................... [ 64%]
+......................................................... [ 71%]
+............................................................................ [ 80%]
+........................................................................ [ 89%]
 ........................................................................ [ 97%]
-...................                                                      [100%]
-=================================== FAILURES ===================================
-_ TestEpisodeLifecycle.test_episode_state_update_matches_the_frozen_state_fields (field='checkpoint_ns') _
-
-self = <tests.runtime.test_plan26_persistence.TestEpisodeLifecycle testMethod=test_episode_state_update_matches_the_frozen_state_fields>
-
-    def test_episode_state_update_matches_the_frozen_state_fields(self) -> None:
-        from runtime.langgraph_factory.state import FACTORY_STATE_FIELDS
-    
-        update = self.fresh_invocation().as_state_update()
-        for field in update:
-            with self.subTest(field=field):
->               self.assertIn(field, FACTORY_STATE_FIELDS)
-E               AssertionError: 'checkpoint_ns' not found in ('invocation', 'validated_recovery_envelope', 'bootstrap_kind', 'contract_version', 'run_id', 'created_at', 'engine_root', 'curriculum_root', 'active_manifest_path', 'output_root', 'mode', 'requested_unit_id', 'frozen_inputs', 'frozen_digest', 'frozen_executable_identities', 'external_authorizations', 'effective_run', 'episode_id', 'checkpoint_thread_id', 'checkpoint_namespace', 'resume_from', 'resume_frontier', 'cursor', 'selected_unit_id', 'unit_status', 'source_requests', 'source_denominators', 'source_discoveries', 'retrievals', 'source_interpretations', 'source_admissions', 'source_join_evidence', 'artifact_versions', 'artifact_heads', 'deterministic_checks', 'visual_briefs', 'visual_denominators', 'visual_results', 'visual_join_evidence', 'unit_page_inventories', 'unit_page_inspections', 'review_packets', 'unit_reviews', 'finding_partitions', 'repair_requests', 'invalidations', 'retest_plans', 'retest_results', 'attempt_counters', 'failure_fingerprints', 'accepted_unit_receipts', 'accepted_unit_checkpoint_receipts', 'workbook_versions', 'workbook_head', 'workbook_coverage', 'workbook_page_inventories', 'workbook_page_inspections', 'workbook_review_packets', 'workbook_reviews', 'workbook_finding_partitions', 'workbook_repair_requests', 'workbook_invalidations', 'workbook_retests', 'final_release_audits', 'route_decisions', 'model_execution_receipts', 'activation_receipts', 'capability_receipts', 'evidence_index_entries', 'log_audit_receipts', 'checkpoint_metadata', 'pending_failure', 'pending_packet', 'pending_guard', 'terminal_candidate', 'terminal', 'terminal_history')
-
-tests/runtime/test_plan26_persistence.py:1244: AssertionError
-_________ test_an_unwired_undeclared_node_fails_the_build_by_stable_id _________
-
-monkeypatch = <_pytest.monkeypatch.MonkeyPatch object at 0x109052e00>
-
-    def test_an_unwired_undeclared_node_fails_the_build_by_stable_id(monkeypatch):
-        deferred = dict(G.DEFERRED_TOPOLOGY)
->       deferred.pop("D13_RENDER_UNIT")
-E       KeyError: 'D13_RENDER_UNIT'
-
-tests/runtime/test_plan26_topology.py:263: KeyError
-_ test_the_skeleton_contains_no_cycle_and_every_deferred_cycle_crosses_a_counter _
-
-compiled = <langgraph.graph.state.CompiledStateGraph object at 0x10901b9d0>
-
-    def test_the_skeleton_contains_no_cycle_and_every_deferred_cycle_crosses_a_counter(compiled):
-        """The skeleton is acyclic; it wires no product loop yet.
-    
-        START -> D00 -> ... -> D04 -> {D05, D92} is a DAG, and the recovery branch
-        D00 -> D96 -> D98 -> END terminates. The three product cycles of spec 8.1
-        (D16/D22/D23 -> D05, the D17-D21 repair cycle, and the D26-D31 workbook
-        cycle) are N30/N31/N32 registrations; this asserts their guard rows already
-        route through a deterministic exhaustion gate so no cycle can be wired
-        without one.
-        """
-    
-        edges = {
-            (source, target)
-            for source, target, _ in G.compiled_topology(compiled)["edges"]
-            if target != END
-        }
-        order = {}
-    
-        def visit(node, stack):
-            assert node not in stack, f"skeleton cycle through {node}"
-            if node in order:
-                return
-            order[node] = len(order)
-            for _source, target in sorted(e for e in edges if e[0] == node):
-                visit(target, stack | {node})
-    
->       visit(START, frozenset())
-
-tests/runtime/test_plan26_topology.py:306: 
-_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
-tests/runtime/test_plan26_topology.py:304: in visit
-    visit(target, stack | {node})
-tests/runtime/test_plan26_topology.py:304: in visit
-    visit(target, stack | {node})
-tests/runtime/test_plan26_topology.py:304: in visit
-    visit(target, stack | {node})
-tests/runtime/test_plan26_topology.py:304: in visit
-    visit(target, stack | {node})
-tests/runtime/test_plan26_topology.py:304: in visit
-    visit(target, stack | {node})
-tests/runtime/test_plan26_topology.py:304: in visit
-    visit(target, stack | {node})
-tests/runtime/test_plan26_topology.py:304: in visit
-    visit(target, stack | {node})
-tests/runtime/test_plan26_topology.py:304: in visit
-    visit(target, stack | {node})
-tests/runtime/test_plan26_topology.py:304: in visit
-    visit(target, stack | {node})
-_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
-
-node = 'M01_RESEARCH_UNIT_SOURCES'
-stack = frozenset({'D00R_REVALIDATE_RESUME_IDENTITY', 'D00_BOOTSTRAP_EPISODE', 'D03_PROVE_CAPABILITIES', 'D04_INITIALIZE_OR_RESUME', 'D05_SELECT_NEXT_UNIT', 'D06B_RETRIEVE_SOURCE_CANDIDATES', ...})
-
-    def visit(node, stack):
->       assert node not in stack, f"skeleton cycle through {node}"
-E       AssertionError: skeleton cycle through M01_RESEARCH_UNIT_SOURCES
-E       assert 'M01_RESEARCH_UNIT_SOURCES' not in frozenset({'D00R_REVALIDATE_RESUME_IDENTITY', 'D00_BOOTSTRAP_EPISODE', 'D03_PROVE_CAPABILITIES', 'D04_INITIALIZE_OR_RESUME', 'D05_SELECT_NEXT_UNIT', 'D06B_RETRIEVE_SOURCE_CANDIDATES', ...})
-
-tests/runtime/test_plan26_topology.py:299: AssertionError
-__________________ test_the_skeleton_registers_no_send_fanout __________________
-
-compiled = <langgraph.graph.state.CompiledStateGraph object at 0x10901b9d0>
-
-    def test_the_skeleton_registers_no_send_fanout(compiled):
-        """No `Send` fan-out is in scope for the skeleton: it wires no map/reduce.
-    
-        D06/D06B/D10/D12 are registered but unwired (N30 owns their edges), so the
-        compiled skeleton contains no dynamic dispatch at all.
-        """
-    
-        edges = G.compiled_topology(compiled)["edges"]
-        fanout_sources = set(R.FANOUT_GUARDS)
->       assert not [e for e in edges if e[0] in fanout_sources]
-E       AssertionError: assert not [['D06B_RETRIEVE_SOURCE_CANDIDATES', 'D96_GRACEFUL_INTERRUPT_GATE', True], ['D06B_RETRIEVE_SOURCE_CANDIDATES', 'D98_WR...SOURCE_REQUESTS', 'D98_WRITE_TERMINAL', True], ['D06_COMPILE_SOURCE_REQUESTS', 'M01_RESEARCH_UNIT_SOURCES', True], ...]
-
-tests/runtime/test_plan26_topology.py:455: AssertionError
-=========================== short test summary info ============================
-SUBFAILED(field='checkpoint_ns') tests/runtime/test_plan26_persistence.py::TestEpisodeLifecycle::test_episode_state_update_matches_the_frozen_state_fields
-FAILED tests/runtime/test_plan26_topology.py::test_an_unwired_undeclared_node_fails_the_build_by_stable_id
-FAILED tests/runtime/test_plan26_topology.py::test_the_skeleton_contains_no_cycle_and_every_deferred_cycle_crosses_a_counter
-FAILED tests/runtime/test_plan26_topology.py::test_the_skeleton_registers_no_send_fanout
-4 failed, 720 passed, 1 skipped, 175 deselected, 302 subtests passed in 9.70s
+.................                                                        [100%]
+823 passed, 1 skipped, 175 deselected, 345 subtests passed in 11.11s

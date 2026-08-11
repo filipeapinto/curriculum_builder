@@ -1,0 +1,19 @@
+boundary                          gate  terminal      exit resumable terminals  D98 entries  after gate
+----------------------------------------------------------------------------------------------------------------------------------
+D00_BOOTSTRAP_EPISODE             D96   INTERRUPTED     10 True      1          1            D98
+D01_VALIDATE_AND_FREEZE_INPUTS    D96   INTERRUPTED     10 True      1          1            D98
+D02_COMPILE_EFFECTIVE_RUN         D96   INTERRUPTED     10 True      1          1            D98
+D03_PROVE_CAPABILITIES            D96   INTERRUPTED     10 True      1          1            D98
+D04_INITIALIZE_OR_RESUME          D96   INTERRUPTED     10 True      1          1            D98
+D05_SELECT_NEXT_UNIT              D96   INTERRUPTED     10 True      1          1            D98
+D06_COMPILE_SOURCE_REQUESTS       D96   INTERRUPTED     10 True      1          1            D98
+D90_RESERVE_MODEL_ATTEMPT         D96   INTERRUPTED     10 True      1          1            D98
+M01_RESEARCH_UNIT_SOURCES         D96   INTERRUPTED     10 True      1          2            D98
+D06B_RETRIEVE_SOURCE_CANDIDATES   D96   INTERRUPTED     10 True      1          1            D98
+D07_CORRELATE_AND_ADMIT_SOURCES   D96   INTERRUPTED     10 True      1          1            D98
+M02_CREATE_UNIT_DOMAIN_DATA       D96   INTERRUPTED     10 True      1          1            D98
+D08_VALIDATE_DOMAIN               D96   INTERRUPTED     10 True      1          1            D98
+M03_WRITE_UNIT_CONTENT            D96   INTERRUPTED     10 True      1          1            D98
+
+D09_VALIDATE_CONTENT              excluded: executes, but its update is never observable
+   (its branch resolves to the deferred D17 and aborts the superstep first)

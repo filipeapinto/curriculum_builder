@@ -1,0 +1,92 @@
+=== node trace (real .stream() of build_curriculum_factory_graph) ===
+D00_BOOTSTRAP_EPISODE              guard=fresh
+D01_VALIDATE_AND_FREEZE_INPUTS     guard=inputs_frozen
+D02_COMPILE_EFFECTIVE_RUN          guard=effective_run_compiled
+D03_PROVE_CAPABILITIES             guard=capabilities_proven
+D04_INITIALIZE_OR_RESUME           guard=fresh_initialized
+D05_SELECT_NEXT_UNIT               guard=unit_selected
+D06_COMPILE_SOURCE_REQUESTS        guard=discovery_fanout
+D90_RESERVE_MODEL_ATTEMPT          guard=authorized
+M01_RESEARCH_UNIT_SOURCES          guard=
+M01_RESEARCH_UNIT_SOURCES          guard=
+D06B_RETRIEVE_SOURCE_CANDIDATES    guard=interpretation_fanout
+D90_RESERVE_MODEL_ATTEMPT          guard=authorized
+M01_RESEARCH_UNIT_SOURCES          guard=
+M01_RESEARCH_UNIT_SOURCES          guard=
+D07_CORRELATE_AND_ADMIT_SOURCES    guard=sources_admitted
+D90_RESERVE_MODEL_ATTEMPT          guard=authorized
+M02_CREATE_UNIT_DOMAIN_DATA        guard=
+D08_VALIDATE_DOMAIN                guard=domain_admitted
+D90_RESERVE_MODEL_ATTEMPT          guard=authorized
+M03_WRITE_UNIT_CONTENT             guard=
+
+=== deferred frontier ===
+D17_CLASSIFY_UNIT_FINDINGS (declared row: D09_VALIDATE_CONTENT/content_repairable -> D17, owner N31_REPAIR_ACCEPTANCE)
+
+=== admitted artifact heads (minted by code, never by a model) ===
+{
+  "units/U001/domain": {
+    "version": 1,
+    "parent_hash": null,
+    "hash": "b657f5410bbf9587644246d388fcab257c3c8af5d27a3bafa11da5c65f48cb01"
+  }
+}
+
+=== model activations ===
+[
+  "M01_RESEARCH_UNIT_SOURCES",
+  "M01_RESEARCH_UNIT_SOURCES",
+  "M01_RESEARCH_UNIT_SOURCES",
+  "M01_RESEARCH_UNIT_SOURCES",
+  "M02_CREATE_UNIT_DOMAIN_DATA",
+  "M03_WRITE_UNIT_CONTENT"
+]
+
+=== attempt counters (one reservation per fan-out member, committed pre-dispatch) ===
+{
+  "M01_RESEARCH_UNIT_SOURCES|U001/1/required_explanation:000": 2,
+  "M01_RESEARCH_UNIT_SOURCES|U001/1/safety_focus:000": 2,
+  "M02_CREATE_UNIT_DOMAIN_DATA|U001/1/domain": 1,
+  "M03_WRITE_UNIT_CONTENT|U001/b657f5410bbf9587644246d388fcab257c3c8af5d27a3bafa11da5c65f48cb01/content": 1
+}
+
+=== D09's guard: the committed path's last node ===
+{
+  "node": "D09_VALIDATE_CONTENT",
+  "value": "content_repairable",
+  "detail": {
+    "unit_id": "U001",
+    "findings": [
+      {
+        "check_id": "content_schema_valid",
+        "owner": "unit content",
+        "pointer": "/",
+        "message": "Additional properties are not allowed ('evidence_references', 'sections', 'unit_id' were unexpected)"
+      },
+      {
+        "check_id": "content_schema_valid",
+        "owner": "unit content",
+        "pointer": "/",
+        "message": "'manifest_version' is a required property"
+      },
+      {
+        "check_id": "content_schema_valid",
+        "owner": "unit content",
+        "pointer": "/",
+        "message": "'curriculum' is a required property"
+      },
+      {
+        "check_id": "content_schema_valid",
+        "owner": "unit content",
+        "pointer": "/",
+        "message": "'domain' is a required property"
+      },
+      {
+        "check_id": "content_schema_valid",
+        "owner": "unit content",
+        "pointer": "/",
+        "message": "'labs' is a required property"
+      }
+    ]
+  }
+}

@@ -3,7 +3,7 @@
 status: PASSED
 graph_digest: 96e1948fb28eb6fbb327939bc2764eb9bae625606ca668f384126bf10ca617e8
 node_prompt: plans/26_langgraph_curriculum_factory/prompts/N13_transport_authorization.prompt.v2.md (123d987b166da423f31d03b77f61b2be37ec175d3b90d6d3b091d0c9ac4e0f04)
-generation: 1
+generation: 2
 
 ## Inputs
 
@@ -20,12 +20,12 @@ generation: 1
 
 ## Outputs
 
-- runtime/langgraph_factory/transport.py: 111474fc70ae5cb8a3e95ea8e53f035141eca795138956a1c9879159958d87af
+- runtime/langgraph_factory/transport.py: 338bf915823ad2ba23ae3fdf95e8030e249a5ee794f14a565ea397b30f5475b3
 - runtime/langgraph_factory/egress.py: 837410dad45a7deb8ef761e3636700a7fbde9f45ff6d97d8b4ba7b5c96383f52
 - runtime/langgraph_factory/config/model_jobs.v1.yaml: 7b5d168c106ad428dc59600765a7c2960f16e7dc53e735d0ac232b42096e8a96
 - runtime/langgraph_factory/schemas/M01_research_unit_sources.schema.json: cb745d064f9a8d2575c718613ac8512985f79f99a0297d6bd376d6a9075fa6f9
 - runtime/langgraph_factory/schemas/M02_create_unit_domain_data.schema.json: 311b48b3b85c4fcc2e549a2becfe7b3879a38ec4be59c2ff3e39a3522a5e2232
-- runtime/langgraph_factory/schemas/M03_write_unit_content.schema.json: c442d317899ad0d9f4fcf94ae6bb4b9fc05d4b3c7bfd5b08b05551cf71d88554
+- runtime/langgraph_factory/schemas/M03_write_unit_content.schema.json: f5773a2c54271778abf71a15a7b2cd41440f010ab2bf8c7bdcfc11d64e7912eb
 - runtime/langgraph_factory/schemas/M04_create_unit_visuals.schema.json: 6be7ad65b6ad2f9c1db7ac49cd80939e80b0c9a52c522e1a29a4d33aa534026e
 - runtime/langgraph_factory/schemas/M05_review_actual_unit.schema.json: fe7618d77e94d09f6de7ecc5da64bd354032396a2ebe1a19895413e29f743b51
 - runtime/langgraph_factory/schemas/M06_repair_named_unit_artifact.schema.json: 8ec0f76dff14cc09e87f618086c44d5e5da6f3858886f75e61c9b9e822ed9a49
@@ -37,13 +37,13 @@ generation: 1
 - runtime/langgraph_factory/schemas/internal_execution_receipt.schema.json: c1f34b029f7a3c97ccd8980b6b1d0e342ada3920f946269fd610e83f245d2de5
 - runtime/langgraph_factory/prompts/M01_research_unit_sources.prompt.md: cd34146c6888ca416438d38c0d4c8b519a98bc51baeff65ecb8d54dcaef123b5
 - runtime/langgraph_factory/prompts/M02_create_unit_domain_data.prompt.md: 6c59088990aa03c2f76a90dd4568bbb4d2e40a25234d4530c1ac2a4a71f8dadd
-- runtime/langgraph_factory/prompts/M03_write_unit_content.prompt.md: dec4260a1e86a82d637411ecc40a413503a1e9ed66d53c8583f8e4061812de76
+- runtime/langgraph_factory/prompts/M03_write_unit_content.prompt.md: dfded39069111263b5cc9930c00d0362d900dd8731a2d8d013f6714d015c5d85
 - runtime/langgraph_factory/prompts/M04_create_unit_visuals.prompt.md: 964a3d793ed7f98276ca6d8ad7818ad30a74643fc95367d5dcc0d8dba8ec0186
 - runtime/langgraph_factory/prompts/M05_review_actual_unit.prompt.md: 013e1d5404311f642b799bc5ee6d71f8c1e7a82ed61ed7ee9532f0dafbd9766d
 - runtime/langgraph_factory/prompts/M06_repair_named_unit_artifact.prompt.md: a02a21c9c63013e3007e49aabf0406fbbc6ab3e8624c309195c6bc2517c8517e
 - runtime/langgraph_factory/prompts/M07_review_actual_workbook.prompt.md: 6c2c84591b8abd7a5dd6a037092ddc924048ee33ab927663a7a1d9663c8f34bd
 - runtime/langgraph_factory/prompts/M08_repair_named_workbook_defect.prompt.md: d182c8d80e80f98b6fbb5deff8cb7da573ec452d9c93314881d202432b3213ab
-- tests/runtime/test_plan26_transport.py: 622c5af42af20b728cd785607108ecf5a1e397ed255766724a0b1dbce5821d63
+- tests/runtime/test_plan26_transport.py: 8c67461bc0bc25134e61f1f237c23cd00283141ff9c6c53c0da8f493b316ff59
 - tests/runtime/test_plan26_egress.py: e31bab0c2084a41928a0c5c9a96db9f87db18fc87a865e38723334658ac9bf1a
 
 `runtime/langgraph_factory/__init__.py` was already present (N11's write) and was not
@@ -183,6 +183,15 @@ Codex/Gemini model invocation.
 - `codex --version` — exit 0 — `codex-cli 0.147.0`
 - `gemini --version` — exit 0 — `0.24.5`
 
+Generation 2 (this rework):
+
+- `python3 -m pytest tests/runtime/test_plan26_transport.py tests/runtime/test_plan26_egress.py -q` — exit 0 — `plans/26_langgraph_curriculum_factory/results/evidence/N13_TRANSPORT_AUTH/node_tests_gen2.txt` — 130 passed
+- `python3 -m pytest -q` — exit 0 — `plans/26_langgraph_curriculum_factory/results/evidence/N13_TRANSPORT_AUTH/full_suite_gen2.txt` — 831 passed, 12 skipped, 282 subtests passed
+
+The 12 skips are N10's two lock/API tests and the ten Plan 26 graph test modules, which
+`pytest.importorskip` on `langgraph`; that package is not installed in this interpreter.
+No N13 test skipped.
+
 The two skips belong to N10 (`test_plan26_api_contract.py`, `test_plan26_lock_drift.py`)
 and are unrelated to this node; no N13 test skipped.
 
@@ -210,6 +219,93 @@ Supporting tests beyond the eleven items: pinned Codex and Gemini argv
 closed control-free schemas for all eight jobs, staged-input hash validation, undeclared
 worker-write rejection, allowlisted worker environment, workspace destruction, and
 absence of every forbidden production import.
+
+## Generation 2 rework (N30 findings B-10 and B-8)
+
+Two unrelated defects reported by `results/N30_UNIT_GRAPH.result.v1.md`. Nothing outside
+this node's write set was touched; `nodes/`, `model_nodes.py`, `graph.py`, `state.py`,
+`persistence.py`, `unit_graph.py` and `tests/runtime/test_plan26_unit_graph.py` were read
+only.
+
+### B-10 (this node's half): M03 could not declare the visuals D10 reads
+
+`schemas/M03_write_unit_content.schema.json` constrained `unit_content` to exactly
+`{unit_id, sections, evidence_references}` under `additionalProperties: false`, while
+`nodes/visuals.py:109` (D10) reads `body.get("visuals", [])` off the admitted content
+head. A model could therefore never write the key the visual denominator is compiled
+from, so every unit's denominator was empty by construction.
+
+`unit_content` now permits one further property, `visuals`: an **optional** array (a unit
+that needs no picture omits it, and an empty list is legal), each entry an object closed
+at exactly the five fields D10 actually reads — `role` and `kind` required,
+`permitted_facts`, `authoritative` and `requests_authoritative_facts` optional. The shape
+was taken from `nodes/visuals.py` itself (`classify_visual_brief` reads `kind` and
+`authoritative`; `D10_COMPILE_VISUAL_BRIEFS` reads `role`, `permitted_facts` and
+`requests_authoritative_facts`), not from prose, and
+`test_m03_may_declare_the_visual_brief_fields_d10_reads` asserts the two sets are equal so
+they cannot drift apart again.
+
+`additionalProperties: false` is retained at every level, including inside a visual entry:
+the closed-schema safety property is widened by one legitimate key, not weakened.
+`assert_no_authoritative_fields` still passes on the whole schema and on a candidate
+carrying visuals, so none of the five field names is readable as a control-plane claim.
+`prompts/M03_write_unit_content.prompt.md` gains the matching instruction, stating that a
+declaration is a request rather than a picture and that an authoritative kind is drawn
+deterministically from the accepted domain, never by a model.
+
+This is the smaller half of B-10. The larger half — pointing `CURRICULUM_CONTRACTS[0]` at
+a per-unit content contract that admits these four keys — is N22's and is not in this
+node's write set. That contract landed concurrently as `schemas/unit_content.schema.v1.json`
+and declares the same four properties and the same five visual fields, so the two are
+compatible in the direction that matters: a candidate M03 may emit is a candidate D09
+admits. Verified directly — the sample above validates against both documents.
+
+### B-8: the production transport had no capability surface
+
+`CliTransport` exposed only `executable` and `execute`, while D03, D11, D13 and D14 call
+five further methods on `RuntimeContext.transport_registry` — which
+`graph.build_runtime_context` installs `CliTransport` as. A production context therefore
+failed D03 immediately. All five are now real, and are exercised against the real local
+toolchain rather than a double.
+
+| Method | Caller | What it now really does |
+|---|---|---|
+| `prove_capability` | D03 (`nodes/inputs.py`) | one bounded local probe per capability from `CAPABILITY_PROBES`, whose key set is asserted equal to D03's `REQUIRED_CAPABILITIES`. No probe can reach a model. `renderer`/`rasterizer` invoke `pandoc`/`typst` and the four poppler utilities for their real versions; `persistence` writes, reads back and deletes a probe file under the output root and round-trips a real SQLite write; `logger` proves the evidence root is appendable; `retrieval` proves the egress broker is installed; `model_cli_identity` resolves and hashes both model CLIs. |
+| `observe_executable` | D03 | `probe_executable` — the identity-observation logic this node already owned — resolved through `PATH`, hashed, and version-probed. D03 compares `path` and `sha256` against the frozen identities. |
+| `render_unit` | D13 (`nodes/render.py`) | resolves the admitted content body from the content-addressed `ArtifactStore` by the `content` parent hash, composes the deterministic layout source, and renders the unit PDF with Plan 25's own pinned invocation (`pandoc --pdf-engine=typst -V mainfont=Helvetica`). Returns real `layout_sha256`/`pdf_sha256` recomputed from the bytes on disk. |
+| `inspect_pages` | D14 (`nodes/render.py`) | rasterizes every page with `pdftoppm`, cross-checks the count against `checks.pdf_page_count`, hashes each page image, and reports per-page problems: blank-ink detection at `checks.py`'s own threshold, plus undersized and clipped text measured per page from one `pdftotext -bbox-layout` pass using `pdf_inspect`'s calibrated ink-box ratio and `MIN_POINT_SIZE`. |
+| `render_deterministic_visual` | D11 (`nodes/visuals.py`) | resolves the admitted domain body by the brief's `domain_hash` and draws through `runtime/visual_maps.py`. `DETERMINISTIC_VISUAL_RENDERERS`'s key set is asserted equal to `nodes/visuals.AUTHORITATIVE_VISUAL_KINDS`, so every kind D10 routes to D11 has a renderer. Topology kinds resolve through `visual_maps.render_map`, which dispatches on the *domain's* own `map_kind` — the brief's word for the picture never overrides the domain. |
+
+Every fault path raises (`RenderFault`, `CapabilityProofFailed`, `VisualMapError`,
+`CheckFailure`) rather than returning a degraded result, so D11/D13/D14's `except
+Exception` boundaries classify it `class=system, cause=tool`. The one deliberate exception
+is a blank or illegible page, which D14 owns as a *product* finding: `rasterize_pages`
+therefore does not use `checks.rasterize_and_check_nonblank`, which aborts the whole
+inspection on the first blank page, and the blank audit runs per page instead.
+
+`prove_capability` classifies a probe that raises `UnavailableExternalFact` as
+`UNAVAILABLE_EXTERNAL_FACT`, which is the only result that reaches D03's
+`PrerequisitePause`; anything else that fails is `MISSING`, which is a system failure. The
+path is asserted by `test_a_probe_may_report_an_unavailable_external_fact`. See the
+`no-production-probe-classifies-an-unavailable-external-fact` finding below for what this
+does and does not claim.
+
+### Verified
+
+- 130 tests in this node's two files, all PASS (18 new).
+- The whole ambient suite: 831 passed, 12 skipped.
+- A real unit PDF: `test_render_unit_produces_a_real_pdf_from_the_admitted_content_head`
+  admits a content artifact, renders it, and asserts the file begins `%PDF` and hashes to
+  the value returned. `test_inspect_pages_inventories_and_inspects_every_page_by_hash`
+  then rasterizes that same PDF and asserts a positive contiguous inventory with a
+  64-character hash and an existing image per page.
+- A real deterministic visual:
+  `test_render_deterministic_visual_draws_from_the_admitted_domain` asserts the SVG names
+  a traced point that appears only in the admitted domain, so the picture is drawn from
+  the domain rather than from the brief.
+- A real blank page: `test_a_blank_page_is_a_finding_on_that_page_not_a_transport_fault`
+  compiles a genuine two-page PDF whose first page is empty and asserts page 1 is
+  `unreadable` with a problem while page 2 is clean and the call does not raise.
 
 ## Findings
 
@@ -240,9 +336,85 @@ absence of every forbidden production import.
   fails closed on an unrecognized stream, so an unexpected live shape yields
   `IdentityUnobservable` and a D03 failure, never a fabricated identity.
 
+Added at generation 2:
+
+- **no-node-persists-an-admitted-artifact-body** (BLOCKING for production) — owner:
+  N22_DETERMINISTIC_NODES, with N40_CLI_CUTOVER. Evidence key:
+  `runtime/langgraph_factory/artifacts.py:admit_version` has no caller in
+  `runtime/langgraph_factory/nodes/`. Fingerprint:
+  `plan26/n13/artifact-bodies-never-reach-the-store`.
+  `render_unit` and `render_deterministic_visual` receive only head *hashes* — D13 is
+  handed `parents = {domain, content, visuals}` and D11 a brief carrying `domain_hash` —
+  so the only way either can reach the bytes it must render is the content-addressed
+  store under the output root. `ArtifactStore.admit_version` writes those blobs, and no
+  deterministic node calls it: D08/D09/D12 advance heads in LangGraph state only. In a
+  live episode both methods therefore raise `RenderFault` ("no admitted <channel>
+  artifact for <unit> at <hash>"), which D11/D13 classify as `class=system, cause=tool`
+  — a loud, correct failure, not a silent one. This node's tests admit the artifacts
+  themselves and then render for real, so the adapters are proven; what remains is that
+  an admission node must persist the body it admits. This is stated as a named gap, not
+  as a resolved item.
+- **d13-cannot-embed-a-visual-in-the-unit-pdf** — owner: N22_DETERMINISTIC_NODES.
+  Evidence key: `nodes/render.py:78` (`renderer(unit_id, parents)`) against
+  `nodes/visuals.py:481-488` (D12's admitted visual candidate carries `stream`,
+  `version`, `parent_hash` and `hash` and no body). Fingerprint:
+  `plan26/n13/visual-assets-are-unreachable-from-d13`.
+  The visuals stream has no artifact body and D13 passes no asset map, so the renderer
+  cannot resolve the `asset_path` D11 produced. The unit PDF this node renders is
+  therefore prose-only: real, hash-correct, and page-inspectable, but carrying none of
+  the unit's pictures. Nothing in this node's write set can fix it — D13's own contract
+  has to carry the assets.
+- **no-production-probe-classifies-an-unavailable-external-fact** — owner: N13 (this
+  node), for N50/N60 review. Evidence key: `transport.CAPABILITY_PROBES`. Fingerprint:
+  `plan26/n13/pause-path-mechanism-only`.
+  D03 pauses only on `UNAVAILABLE_EXTERNAL_FACT`. The classification mechanism exists,
+  is reached by any probe raising `UnavailableExternalFact`, and is tested. But all six
+  capabilities D03 requires are decidable locally — an absent renderer, a dead sqlite, an
+  unhashable CLI are each a *system* failure, not an unavailable external fact — so no
+  production probe returns it today. Rather than invent an external fact to make the
+  path look exercised in production, it is recorded here: the pause path is reachable by
+  construction and unreached by the current six probes.
+- **egress-guard-is-installed-by-no-production-path** — owner: N40_CLI_CUTOVER. Evidence
+  key: `EgressGuard.install` has no caller outside tests. Fingerprint:
+  `plan26/n13/guard-never-installed`. The `retrieval` probe requires `guard.installed`,
+  exactly as the pre-existing `prove_transport_capabilities` facet does, so on a context
+  whose guard was never opened the probe correctly reports `MISSING` and D03 fails
+  closed. Opening the guard belongs to the CLI entry point, which does not exist yet.
+- **lesson_render-is-not-reusable-for-a-plan-26-content-body** — owner: N13 (this node),
+  for N90 audit confirmation. Evidence key: `runtime/lesson_render.py:455` against
+  `schemas/M03_write_unit_content.schema.json`. Fingerprint:
+  `plan26/n13/lesson-render-is-bound-to-lab-schema-v4`.
+  Spec 2.3 lists `lesson_render.py` as reuse/adapt. Every one of its template functions
+  is bound to a block of `schemas/lab.schema.v4.json` and it raises `RendererError` on a
+  field with no branch, so a Plan 26 `unit_content` body — `{unit_id, sections,
+  evidence_references, visuals}` — cannot be passed to it at all. The layout source is
+  therefore composed in `compose_unit_markdown` while the parts that *are* shape-neutral
+  are reused: Plan 25's pinned pandoc/typst invocation, `pdf_inspect`'s calibrated
+  legibility constants, `checks.pdf_page_count`, and the whole of `visual_maps`.
+
+
 ## Invalidated descendants
 
-None. First-pass PASSED.
+Generation 1 invalidated nothing. Generation 2 inverts two of N30's own blocker probes,
+both of which are written to invert and are N30's to update:
+
+- `test_blocked_the_production_runtime_context_has_no_capability_surface`
+  (`tests/runtime/test_plan26_unit_graph.py`) asserts all five capability methods are
+  absent from `CliTransport`. All five now exist, so it fails by design — its docstring
+  reads "Inverts when `CliTransport` (or the context builder) exposes them."
+  `test_the_production_transport_exposes_the_capability_surface_the_nodes_call` in this
+  node's own file now carries the positive claim.
+- `test_blocked_a_real_m03_content_head_can_declare_no_visual` asserts
+  `"visuals" not in unit_content["properties"]`. It now fails, likewise by design
+  ("Inverts when `unit_content` may declare visuals").
+
+Neither could be executed here: every Plan 26 graph test module `importorskip`s
+`langgraph`, which is not installed in this interpreter, so all ten skip. The inversion
+is read off the assertions, not claimed as an observed failure.
+
+No predecessor or sibling artifact was modified. `nodes/`, `model_nodes.py`, `graph.py`,
+`routing.py`, `state.py`, `reducers.py`, `persistence.py`, `unit_graph.py` and
+`tests/runtime/test_plan26_unit_graph.py` are byte-identical.
 
 ## Hashes
 
@@ -258,12 +430,12 @@ None. First-pass PASSED.
 | plans/26_langgraph_curriculum_factory/contracts/shared_names_and_paths.v1.md | 7b77a0775139c9a26ec0688ca8f437e5494ea161f3a4e8c5f3b92bcdb2261cc7 |
 | plans/26_langgraph_curriculum_factory/contracts/traceability_matrix.v1.md | edfc93d1bd412959133d523538150280785de8e9c3d4b0a4425b52e32fde244b |
 | plans/26_langgraph_curriculum_factory/spec/langgraph_curriculum_factory.spec.v1.md | 44e63e6271cae25f14f0bc970c598d1c15da41b67ae3cdf811bbb2f2303536e6 |
-| runtime/langgraph_factory/transport.py | 111474fc70ae5cb8a3e95ea8e53f035141eca795138956a1c9879159958d87af |
+| runtime/langgraph_factory/transport.py | 338bf915823ad2ba23ae3fdf95e8030e249a5ee794f14a565ea397b30f5475b3 |
 | runtime/langgraph_factory/egress.py | 837410dad45a7deb8ef761e3636700a7fbde9f45ff6d97d8b4ba7b5c96383f52 |
 | runtime/langgraph_factory/config/model_jobs.v1.yaml | 7b5d168c106ad428dc59600765a7c2960f16e7dc53e735d0ac232b42096e8a96 |
 | runtime/langgraph_factory/schemas/M01_research_unit_sources.schema.json | cb745d064f9a8d2575c718613ac8512985f79f99a0297d6bd376d6a9075fa6f9 |
 | runtime/langgraph_factory/schemas/M02_create_unit_domain_data.schema.json | 311b48b3b85c4fcc2e549a2becfe7b3879a38ec4be59c2ff3e39a3522a5e2232 |
-| runtime/langgraph_factory/schemas/M03_write_unit_content.schema.json | c442d317899ad0d9f4fcf94ae6bb4b9fc05d4b3c7bfd5b08b05551cf71d88554 |
+| runtime/langgraph_factory/schemas/M03_write_unit_content.schema.json | f5773a2c54271778abf71a15a7b2cd41440f010ab2bf8c7bdcfc11d64e7912eb |
 | runtime/langgraph_factory/schemas/M04_create_unit_visuals.schema.json | 6be7ad65b6ad2f9c1db7ac49cd80939e80b0c9a52c522e1a29a4d33aa534026e |
 | runtime/langgraph_factory/schemas/M05_review_actual_unit.schema.json | fe7618d77e94d09f6de7ecc5da64bd354032396a2ebe1a19895413e29f743b51 |
 | runtime/langgraph_factory/schemas/M06_repair_named_unit_artifact.schema.json | 8ec0f76dff14cc09e87f618086c44d5e5da6f3858886f75e61c9b9e822ed9a49 |
@@ -275,11 +447,11 @@ None. First-pass PASSED.
 | runtime/langgraph_factory/schemas/internal_execution_receipt.schema.json | c1f34b029f7a3c97ccd8980b6b1d0e342ada3920f946269fd610e83f245d2de5 |
 | runtime/langgraph_factory/prompts/M01_research_unit_sources.prompt.md | cd34146c6888ca416438d38c0d4c8b519a98bc51baeff65ecb8d54dcaef123b5 |
 | runtime/langgraph_factory/prompts/M02_create_unit_domain_data.prompt.md | 6c59088990aa03c2f76a90dd4568bbb4d2e40a25234d4530c1ac2a4a71f8dadd |
-| runtime/langgraph_factory/prompts/M03_write_unit_content.prompt.md | dec4260a1e86a82d637411ecc40a413503a1e9ed66d53c8583f8e4061812de76 |
+| runtime/langgraph_factory/prompts/M03_write_unit_content.prompt.md | dfded39069111263b5cc9930c00d0362d900dd8731a2d8d013f6714d015c5d85 |
 | runtime/langgraph_factory/prompts/M04_create_unit_visuals.prompt.md | 964a3d793ed7f98276ca6d8ad7818ad30a74643fc95367d5dcc0d8dba8ec0186 |
 | runtime/langgraph_factory/prompts/M05_review_actual_unit.prompt.md | 013e1d5404311f642b799bc5ee6d71f8c1e7a82ed61ed7ee9532f0dafbd9766d |
 | runtime/langgraph_factory/prompts/M06_repair_named_unit_artifact.prompt.md | a02a21c9c63013e3007e49aabf0406fbbc6ab3e8624c309195c6bc2517c8517e |
 | runtime/langgraph_factory/prompts/M07_review_actual_workbook.prompt.md | 6c2c84591b8abd7a5dd6a037092ddc924048ee33ab927663a7a1d9663c8f34bd |
 | runtime/langgraph_factory/prompts/M08_repair_named_workbook_defect.prompt.md | d182c8d80e80f98b6fbb5deff8cb7da573ec452d9c93314881d202432b3213ab |
-| tests/runtime/test_plan26_transport.py | 622c5af42af20b728cd785607108ecf5a1e397ed255766724a0b1dbce5821d63 |
+| tests/runtime/test_plan26_transport.py | 8c67461bc0bc25134e61f1f237c23cd00283141ff9c6c53c0da8f493b316ff59 |
 | tests/runtime/test_plan26_egress.py | e31bab0c2084a41928a0c5c9a96db9f87db18fc87a865e38723334658ac9bf1a |

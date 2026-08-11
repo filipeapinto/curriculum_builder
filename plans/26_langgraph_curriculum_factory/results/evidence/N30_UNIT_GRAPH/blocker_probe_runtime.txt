@@ -1,7 +1,0 @@
-P1 M02(full FactoryState): AttemptNotReserved: M02_CREATE_UNIT_DOMAIN_DATA: no D90 reservation in the packet; D90_RESERVE_MODEL_ATTEMPT must commit a counter before any dispatch
-P1 M05(full FactoryState): ProjectionViolation: M05 page_inventory must be a mapping, got NoneType
-P2 D06 update keys: ['pending_guard', 'source_denominators', 'source_requests']
-P2 D06 guard value: discovery_fanout
-P2 route_source_discovery_fanout(after real D06): RoutingViolation: D06_COMPILE_SOURCE_REQUESTS: a fan-out guard was taken with no staged `pending_packet`
-P3 validate_bindings(unit_graph-authored D90): GraphBindingError: N20-BIND-PLACEHOLDER:D90_RESERVE_MODEL_ATTEMPT: module 'runtime.langgraph_factory.unit_graph' is not a production node module
-P4 M04(D12-staged brief as Send payload): ProjectionViolation: M04 brief must be a mapping, got NoneType

@@ -16,15 +16,20 @@ import jsonschema
 
 from . import (
     SystemFailure,
+    candidate_field,
+    candidate_payload,
     check_record,
     deterministic_node,
     guard,
     head_update,
     latest_candidate,
+    latest_model_candidate,
+    mint_version,
     require,
     require_current_parent,
     stream_id,
 )
+from .domain import CURRICULUM_CONTRACTS
 
 __all__ = ["CONTENT_CHECK_IDS", "D09_VALIDATE_CONTENT"]
 
@@ -35,6 +40,42 @@ CONTENT_CHECK_IDS: tuple[str, ...] = (
     "content_derivation_resolves",
     "content_claims_grounded",
 )
+
+
+def _mint_content_version(
+    artifact_versions: list[Any],
+    heads: dict[str, Any],
+    stream: str,
+    unit_id: str,
+    domain_head: dict[str, Any],
+) -> dict[str, Any] | None:
+    """Mint the content version M03's candidate authorizes, or None if it produced none.
+
+    The schema the prose is held to is this node's own frozen contract, not a path
+    the model chose; the parent domain is the candidate's declared lineage when it
+    has one, and otherwise the head this node is about to validate it against.
+    """
+
+    record = latest_model_candidate(artifact_versions, channel="content", unit_id=unit_id)
+    if record is None:
+        return None
+    payload = candidate_payload(record, f"content candidate on {stream}")
+    body = payload.get("unit_content")
+    require(
+        isinstance(body, dict),
+        "schema_contract",
+        "the content candidate declares no unit_content",
+    )
+    return mint_version(
+        record,
+        heads,
+        stream,
+        body=body,
+        unit_id=unit_id,
+        channel="content",
+        schema_path=CURRICULUM_CONTRACTS[0],
+        domain_hash=candidate_field(record, "domain_hash", domain_head.get("hash")),
+    )
 
 
 @deterministic_node("D09_VALIDATE_CONTENT")
@@ -55,7 +96,10 @@ def D09_VALIDATE_CONTENT(projection: dict[str, Any], runtime_context: Any) -> di
         stream=domain_stream,
     )
 
-    candidate = latest_candidate(projection["artifact_versions"], content_stream)
+    minted = _mint_content_version(
+        projection["artifact_versions"], heads, content_stream, unit_id, domain_head
+    )
+    candidate = minted or latest_candidate(projection["artifact_versions"], content_stream)
     require(candidate is not None, "invalid_input", f"no candidate content on {content_stream}")
     require_current_parent(candidate, heads, content_stream)
 
@@ -207,11 +251,14 @@ def D09_VALIDATE_CONTENT(projection: dict[str, Any], runtime_context: Any) -> di
             ),
         }
 
-    return {
+    update = {
         "artifact_heads": head_update(candidate, content_stream),
         "deterministic_checks": checks,
         "pending_guard": guard("D09_VALIDATE_CONTENT", "content_admitted", unit_id=unit_id),
     }
+    if minted is not None:
+        update["artifact_versions"] = [minted]
+    return update
 
 
 def _resolves(document: Any, pointer: Any) -> bool:

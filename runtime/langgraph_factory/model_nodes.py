@@ -32,6 +32,7 @@ __all__ = [
     "MODEL_NODE_ATTEMPT_LIMIT",
     "MODEL_NODE_WRITABLE_FIELDS",
     "FORBIDDEN_MODEL_NODE_FIELDS",
+    "ADMISSION_OWNED_CANDIDATE_FIELDS",
     "PROJECTION_SPECS",
     "ProjectionSpec",
     "ModelNodeContext",
@@ -153,6 +154,10 @@ FORBIDDEN_MODEL_NODE_FIELDS: frozenset[str] = frozenset({
     "pending_guard",
     "resume_frontier",
     "cursor",
+})
+
+ADMISSION_OWNED_CANDIDATE_FIELDS: frozenset[str] = frozenset({
+    "version", "hash", "parent_hash",
 })
 
 RESERVE_ATTEMPT_WRITABLE_FIELDS: frozenset[str] = frozenset({
@@ -692,7 +697,19 @@ def build_test_model_node_context(*, sandbox_root: Path | str,
 # ---------------------------------------------------------------- D90 / D91 bookkeeping
 
 
-def attempt_counter_key(job_id: str, correlation_key: str) -> str:
+def attempt_counter_key(job_id: str, correlation_key: str,
+                        phase: str | None = None) -> str:
+    """The counter one attempt budget is spent against.
+
+    The phase widens the key without touching `correlation_key` itself: M01's
+    discovery and interpretation activations must keep the same correlation key,
+    because D06B indexes `source_discoveries` and D07 indexes
+    `source_interpretations` by it, but they are two independent activations and
+    each owns its own retry budget.
+    """
+
+    if phase:
+        return f"{job_id}|{phase}|{correlation_key}"
     return f"{job_id}|{correlation_key}"
 
 
@@ -702,6 +719,7 @@ def reserve_model_attempt(
     job_id: str,
     correlation_key: str,
     activation_id: str,
+    phase: str | None = None,
     limit: int = MODEL_NODE_ATTEMPT_LIMIT,
     fingerprints: Sequence[Mapping[str, Any]] = (),
     clock: Callable[[], str] = _utc_now,
@@ -715,7 +733,7 @@ def reserve_model_attempt(
     if job_id not in MODEL_NODE_FAMILIES:
         raise ModelNodeError(f"D90: {job_id!r} is not one of the eight model jobs")
     counters = state.get("attempt_counters") or {}
-    key = attempt_counter_key(job_id, correlation_key)
+    key = attempt_counter_key(job_id, correlation_key, phase)
     current = int(counters.get(key, 0))
     now = clock()
     if current >= limit:
@@ -887,6 +905,24 @@ def _retry_counter_key(state: Mapping[str, Any]) -> str | None:
     return key
 
 
+def _activation_phase(member: Mapping[str, Any]) -> str | None:
+    """The activation kind a staged member declares, if its job has more than one.
+
+    Only M01 dispatches two structurally different activations (`DISCOVER` and
+    `INTERPRET`) under one correlation key, and its dispatchers already stage the
+    distinction; every other job stages no `phase` and keeps an unwidened key.
+    """
+
+    phase = member.get("phase")
+    if phase is None:
+        return None
+    if not isinstance(phase, str) or not phase:
+        raise ModelNodeError(
+            f"{ATTEMPT_RESERVATION_NODE}: staged member declares a non-string phase "
+            f"{phase!r}, so its attempt budget could not be keyed")
+    return phase
+
+
 def _activation_id(correlation: Mapping[str, Any], *, counter_key: str,
                    ordinal: int) -> str:
     """One activation identity per attempt, derived so no two attempts share one.
@@ -927,12 +963,14 @@ def D90_RESERVE_MODEL_ATTEMPT(state: Mapping[str, Any],
 
     for member in members:
         correlation = _resolve_correlation(member, job_id=job_id, needs_key=True)
-        key = attempt_counter_key(job_id, correlation["correlation_key"])
+        phase = _activation_phase(member)
+        key = attempt_counter_key(job_id, correlation["correlation_key"], phase)
         if retry_key is not None and key != retry_key:
             continue
         ordinal = int(counters.get(key, 0)) + 1
         update = reserve_model_attempt(
             state, job_id=job_id, correlation_key=correlation["correlation_key"],
+            phase=phase,
             activation_id=_activation_id(correlation, counter_key=key, ordinal=ordinal))
         guard = update["pending_guard"]
         reserved_counters.update(update["attempt_counters"])
@@ -1230,10 +1268,22 @@ def _assert_model_node_update(update: Mapping[str, Any]) -> None:
 def _candidate_record(dispatch: _Dispatch, **extra: Any) -> dict[str, Any]:
     """A pre-admission candidate descriptor.
 
-    It deliberately carries no ``version``/``hash`` pair, so it cannot be replayed as an
-    ``advance_head`` update; only a deterministic admission node mints a head record.
+    Two kinds of key, and the split is the point. The model's own output is quarantined
+    under ``payload``; every other key is *lineage* the projection already knew before the
+    model ran (which unit, which retrieved bytes, which content epoch), so a deterministic
+    node can correlate the candidate without trusting the model for it.
+
+    It deliberately carries no ``version``/``hash``/``parent_hash``, so it cannot be
+    replayed as an ``advance_head`` update; only a deterministic admission node mints a
+    head record, and ``ADMISSION_OWNED_CANDIDATE_FIELDS`` is enforced here rather than
+    left to convention.
     """
 
+    minted = sorted(ADMISSION_OWNED_CANDIDATE_FIELDS & set(extra))
+    if minted:
+        raise ModelNodeError(
+            f"{dispatch.spec.job_id}: a model candidate may not carry {minted}; minting an "
+            f"artifact version is deterministic admission authority")
     record = {
         "key": f"candidate:{dispatch.reservation['reservation_id']}",
         "record_kind": "model_candidate",
@@ -1283,7 +1333,8 @@ def m01_discover_unit_sources(packet: Mapping[str, Any],
                            f"projection declared {request_id!r}")
     key = dispatch.correlation["correlation_key"]
     return _accept(dispatch, {"source_discoveries": {key: _candidate_record(
-        dispatch, phase="DISCOVER", request_id=request_id)}})
+        dispatch, phase="DISCOVER", request_id=request_id,
+        unit_id=dispatch.projection["unit"].get("unit_id"))}})
 
 
 def m01_interpret_unit_sources(packet: Mapping[str, Any],
@@ -1319,7 +1370,24 @@ def m01_interpret_unit_sources(packet: Mapping[str, Any],
                            f"{interpretation.get('retrieval_id')!r}")
     key = dispatch.correlation["correlation_key"]
     return _accept(dispatch, {"source_interpretations": {key: _candidate_record(
-        dispatch, phase="INTERPRET", request_id=request_id)}})
+        dispatch, phase="INTERPRET", request_id=request_id,
+        unit_id=dispatch.projection["unit"].get("unit_id"),
+        retrieval_sha256=_retrieval_sha256(group))}})
+
+
+def _retrieval_sha256(group: Mapping[str, Any]) -> str | None:
+    """The sha256 of the bytes this interpretation was derived from.
+
+    Read off the retrieval group the dispatcher staged, never off the model's answer:
+    D07 stales an interpretation whose parent bytes are no longer the retrieval, and a
+    model-supplied parent hash would let a stale interpretation vouch for itself. A
+    group whose records disagree has no single parent, so the record claims none and
+    D07 refuses it rather than admitting an unproven lineage.
+    """
+
+    hashes = {record.get("sha256") for record in group.get("retrieved_records", [])
+              if isinstance(record, Mapping)}
+    return hashes.pop() if len(hashes) == 1 else None
 
 
 def m01_research_unit_sources(packet: Mapping[str, Any],
@@ -1427,8 +1495,9 @@ def m04_create_unit_visuals(packet: Mapping[str, Any],
         return _reject(dispatch, "candidate_undeclared_artifact", str(error))
     key = dispatch.correlation["correlation_key"]
     return _accept(dispatch, {"visual_results": {key: _candidate_record(
-        dispatch, channel="visuals", scope="units", brief_id=brief_id,
-        producer_class="model")}})
+        dispatch, channel="visuals", scope="units", brief_id=brief_id, subset="model",
+        unit_id=dispatch.projection["brief"].get("unit_id"),
+        content_hash=dispatch.projection["brief"].get("content_hash"))}})
 
 
 def m06_repair_named_unit_artifact(packet: Mapping[str, Any],

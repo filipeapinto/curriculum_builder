@@ -1,0 +1,138 @@
+=== the probe source (patched IN MEMORY ONLY; nothing below is committed) ===
+"""B-10 + B-11 recipe probe. IN MEMORY ONLY; nothing is written to the repo.
+
+B-10  the unit-content contract is incoherent across three owners:
+      M03's output schema (N23) says unit_content = {unit_id, sections,
+      evidence_references}, additionalProperties:false; D09 (N22) validates that
+      body against schemas/curriculum.schema.v5.json, a whole-curriculum MANIFEST
+      schema; and D10 (N22) reads body["visuals"], which M03 may not emit.
+      Recipe: one real unit-content contract that all three agree on.
+B-11  D15 requires an admitted `layout` head, but spec 8.1's authority table
+      admits heads only at D08/D09/D12/D20 and gives D13/D14 `append-unique`.
+      Recipe: D15 resolves layout from D13's appended version, not from a head.
+"""
+import sys, json, tempfile
+from pathlib import Path
+REPO=Path("/Users/filipepinto/Projects/curriculum_builder")
+sys.path.insert(0,str(REPO)); sys.path.insert(0,str(REPO/"tests"/"runtime"))
+import test_plan26_unit_graph as T
+from runtime.langgraph_factory import graph as G, transport as tp
+from runtime.langgraph_factory.nodes import domain, content, review, visuals
+
+scratch=Path(tempfile.mkdtemp(prefix="n30recipe-"))
+
+# ---- B-10: one coherent unit-content contract -------------------------------
+M03_SRC=json.load(open(REPO/"runtime/langgraph_factory/schemas/M03_write_unit_content.schema.json"))
+UC=json.loads(json.dumps(M03_SRC["properties"]["unit_content"]))
+UC["properties"]["visuals"]={"type":"array","items":{"type":"object","additionalProperties":False,
+    "required":["role","kind"],"properties":{"role":{"type":"string"},"kind":{"type":"string"},
+    "authoritative":{"type":"boolean"}}}}
+UNIT_CONTENT_RELATIVE="schemas/unit_content.schema.v1.json"
+M03_PATCHED=json.loads(json.dumps(M03_SRC)); M03_PATCHED["properties"]["unit_content"]=UC
+m03_path=scratch/"M03_patched.schema.json"; m03_path.write_text(json.dumps(M03_PATCHED),encoding="utf-8")
+_real_resolve=tp.resolve_schema_path
+def resolve(route):
+    return m03_path if route.job_id=="M03_WRITE_UNIT_CONTENT" else _real_resolve(route)
+
+# ---- B-11: D15 resolves layout from the appended version --------------------
+_real_D15=review.D15_FREEZE_UNIT_REVIEW_PACKET
+_real_channels=review.PACKET_ARTIFACT_CHANNELS
+
+class MP:
+    def __init__(self): self.undo=[]
+    def setattr(self,o,n,v): self.undo.append((o,n,getattr(o,n))); setattr(o,n,v)
+    def close(self):
+        for o,n,v in reversed(self.undo): setattr(o,n,v)
+
+tmp=Path(tempfile.mkdtemp(prefix="n30stack-"))
+fx=T._build_episode_fixture(tmp,units=1)
+(fx["engine"]/UNIT_CONTENT_RELATIVE).write_text(json.dumps({"$schema":"https://json-schema.org/draft/2020-12/schema","$id":"plan26/unit_content.schema.v1.json",**UC},indent=2),encoding="utf-8")
+PATCHED_CONTRACTS=(UNIT_CONTENT_RELATIVE,)+domain.CURRICULUM_CONTRACTS[1:]
+
+# the scripted M03 now also declares two visuals, one of each subset
+_real_scripted=T._scripted_candidate
+def scripted(job_id, projection):
+    out=_real_scripted(job_id, projection)
+    if job_id=="M03_WRITE_UNIT_CONTENT":
+        out["unit_content"]["visuals"]=[{"role":"det-a","kind":"schematic"},
+                                        {"role":"mdl-a","kind":"illustration"}]
+    return out
+
+lock,inv,env=T._prepare_episode(fx)
+ctx=T._HarnessContext(fx["engine"],fx["output_root"],fx["sandbox"])
+mp=MP()
+mp.setattr(G,"build_model_node_context", lambda c,**k: T._scripted_model_context(fx["sandbox"]))
+mp.setattr(domain,"CURRICULUM_CONTRACTS",PATCHED_CONTRACTS)
+mp.setattr(content,"CURRICULUM_CONTRACTS",PATCHED_CONTRACTS)
+mp.setattr(tp,"resolve_schema_path",resolve)
+mp.setattr(T,"_scripted_candidate",scripted)
+mp.setattr(review,"PACKET_ARTIFACT_CHANNELS",("domain","content","visuals"))
+# ---- B-12: D11 is the only deterministic `Send` target and cannot read its member.
+# `_staged_fanout` delivers the member AS the node's whole input state (which is
+# how every model worker reads it), but D11's catalogue row declares its input as
+# `pending_packet`, so `project()` looks for a key the member does not have.
+# Recipe proof: adapt the member into the shape D11's row declares. The real fix
+# is D11's row/body reading `brief`/`permitted_facts` off its own input.
+_real_D11 = visuals.D11_CREATE_DETERMINISTIC_VISUALS
+def _d11(state, runtime_context=None):
+    if "brief" in state and "pending_packet" not in state:
+        state = {**state, "pending_packet": dict(state)}
+    return _real_D11(state, runtime_context)
+_d11.__name__ = "D11_CREATE_DETERMINISTIC_VISUALS"
+for _a in ("node_id","node_spec","node_body"): setattr(_d11,_a,getattr(_real_D11,_a))
+mp.setattr(visuals,"D11_CREATE_DETERMINISTIC_VISUALS",_d11)
+
+compiled=G.build_curriculum_factory_graph(engine_root=fx["engine"],output_root=fx["output_root"])
+ups=[]
+try:
+    for chunk in compiled.stream({"invocation":env},config=inv.config,stream_mode="updates",context=ctx):
+        for nid,u in chunk.items(): ups.append((nid,dict(u or {})))
+except Exception as e: print("RAISED:",type(e).__name__,str(e)[:200])
+finally: mp.close(); lock.release()
+for n,u in ups:
+    g=u.get("pending_guard") or {}
+    print("   ",n,"guard=",g.get("value") or g.get("decision"))
+    if "pending_failure" in u: print("      FAIL:",json.dumps(u["pending_failure"],default=str)[:800])
+st=compiled.get_state(inv.config).values
+print("UNIT_REVIEWS:",json.dumps(st.get("unit_reviews"),default=str)[:1500])
+print("REVIEW_PACKETS:",json.dumps([{k:v for k,v in p.items() if k in ("unit_id","pdf_sha256","key","denominator")} for p in (st.get("review_packets") or [])],default=str)[:800])
+print("RECEIPTS:",[r.get("job_id") for r in (st.get("model_execution_receipts") or [])])
+print("HEADS:",json.dumps(st.get("artifact_heads"),default=str)[:700])
+
+=== output ===
+RAISED: KeyError 'D16_REDUCE_UNIT_EVIDENCE'
+    D00_BOOTSTRAP_EPISODE guard= fresh
+    D01_VALIDATE_AND_FREEZE_INPUTS guard= inputs_frozen
+    D02_COMPILE_EFFECTIVE_RUN guard= effective_run_compiled
+    D03_PROVE_CAPABILITIES guard= capabilities_proven
+    D04_INITIALIZE_OR_RESUME guard= fresh_initialized
+    D05_SELECT_NEXT_UNIT guard= unit_selected
+    D06_COMPILE_SOURCE_REQUESTS guard= discovery_fanout
+    D90_RESERVE_MODEL_ATTEMPT guard= authorized
+    M01_RESEARCH_UNIT_SOURCES guard= None
+    M01_RESEARCH_UNIT_SOURCES guard= None
+    D06B_RETRIEVE_SOURCE_CANDIDATES guard= interpretation_fanout
+    D90_RESERVE_MODEL_ATTEMPT guard= authorized
+    M01_RESEARCH_UNIT_SOURCES guard= None
+    M01_RESEARCH_UNIT_SOURCES guard= None
+    D07_CORRELATE_AND_ADMIT_SOURCES guard= sources_admitted
+    D90_RESERVE_MODEL_ATTEMPT guard= authorized
+    M02_CREATE_UNIT_DOMAIN_DATA guard= None
+    D08_VALIDATE_DOMAIN guard= domain_admitted
+    D90_RESERVE_MODEL_ATTEMPT guard= authorized
+    M03_WRITE_UNIT_CONTENT guard= None
+    D09_VALIDATE_CONTENT guard= content_admitted
+    D10_COMPILE_VISUAL_BRIEFS guard= deterministic_visual_fanout
+    D11_CREATE_DETERMINISTIC_VISUALS guard= visual_produced
+    D12_VISUAL_BARRIER_AND_JOIN guard= model_visual_fanout
+    D90_RESERVE_MODEL_ATTEMPT guard= authorized
+    M04_CREATE_UNIT_VISUALS guard= None
+    D12_VISUAL_BARRIER_AND_JOIN guard= visuals_admitted
+    D13_RENDER_UNIT guard= unit_rendered
+    D14_INVENTORY_AND_INSPECT_UNIT_PAGES guard= pages_inspected
+    D15_FREEZE_UNIT_REVIEW_PACKET guard= review_packet_frozen
+    D90_RESERVE_MODEL_ATTEMPT guard= authorized
+UNIT_REVIEWS: [{"key": "candidate:23d82b2d75a18bff572c908a0bdd1d5ef4deffd4acf47045a7ab0fa2994e1bcc/696c61e570e1dffce968d5bfe1afa550c0550684eb3167b6f75d01da49b9e7dd/M05_REVIEW_ACTUAL_UNIT|U001/7abc789d93c1b9f715a89abd0903528b212bc1723b610ea937a227e5e2f30015/review/attempt-1#1", "record_kind": "model_candidate", "pre_admission": true, "job_id": "M05_REVIEW_ACTUAL_UNIT", "projection_name": "M05_unit_review", "run_id": "23d82b2d75a18bff572c908a0bdd1d5ef4deffd4acf47045a7ab0fa2994e1bcc", "episode_id": "696c61e570e1dffce968d5bfe1afa550c0550684eb3167b6f75d01da49b9e7dd", "activation_id": "23d82b2d75a18bff572c908a0bdd1d5ef4deffd4acf47045a7ab0fa2994e1bcc/696c61e570e1dffce968d5bfe1afa550c0550684eb3167b6f75d01da49b9e7dd/M05_REVIEW_ACTUAL_UNIT|U001/7abc789d93c1b9f715a89abd0903528b212bc1723b610ea937a227e5e2f30015/review/attempt-1", "reservation_id": "23d82b2d75a18bff572c908a0bdd1d5ef4deffd4acf47045a7ab0fa2994e1bcc/696c61e570e1dffce968d5bfe1afa550c0550684eb3167b6f75d01da49b9e7dd/M05_REVIEW_ACTUAL_UNIT|U001/7abc789d93c1b9f715a89abd0903528b212bc1723b610ea937a227e5e2f30015/review/attempt-1#1", "projection_sha256": "cc945a768426de32455c21d9cdaa5c954c803c179328b76928b5cc66f8bb9226", "candidate_sha256": "c35728d7c710576c0c0ff1072f52918416d06e8665f29994dc96144202aed96c", "payload": {"overall_findings": [], "page_findings": [{"page_number": 1, "page_sha256": "b836994a72ce439587da8d97c022bb1b04b00ca89b982fde97cfbc761496c84f", "findings": []}, {"page_number": 2, "page_sha256": "348071d15abc43f1cf3e42452d5ad7fa109cf
+REVIEW_PACKETS: [{"unit_id": "U001", "pdf_sha256": "7abc789d93c1b9f715a89abd0903528b212bc1723b610ea937a227e5e2f30015", "denominator": {"pages": 2, "artifacts": 3, "checks": 11, "sources": 2}, "key": "549e06fdb070b361ce538397d263018194e47e9a4f87756a26954676bf1b5225"}]
+RECEIPTS: ['M01_RESEARCH_UNIT_SOURCES', 'M01_RESEARCH_UNIT_SOURCES', 'M01_RESEARCH_UNIT_SOURCES', 'M01_RESEARCH_UNIT_SOURCES', 'M02_CREATE_UNIT_DOMAIN_DATA', 'M03_WRITE_UNIT_CONTENT', 'M04_CREATE_UNIT_VISUALS', 'M05_REVIEW_ACTUAL_UNIT']
+HEADS: {"units/U001/domain": {"version": 1, "parent_hash": null, "hash": "b657f5410bbf9587644246d388fcab257c3c8af5d27a3bafa11da5c65f48cb01"}, "units/U001/content": {"version": 1, "parent_hash": null, "hash": "a8d4b8b9b087ba57826c5539c0c2001fb17a81bab7f8c577b8ed352e7a447d56"}, "units/U001/visuals": {"version": 1, "parent_hash": null, "hash": "de3d55a864d862540ced66749e899170645db05f08ef225e36e6d13657cb5a05"}}

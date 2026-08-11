@@ -3,7 +3,7 @@
 status: PASSED
 graph_digest: 96e1948fb28eb6fbb327939bc2764eb9bae625606ca668f384126bf10ca617e8
 node_prompt: plans/26_langgraph_curriculum_factory/prompts/N22_deterministic_nodes.prompt.v2.md (dbc64fa8a419f0a2a3e41096b11b4b61bea9e153df113deecf8d39fa9fb2f744)
-generation: 5
+generation: 7
 
 ## Inputs
 
@@ -39,19 +39,20 @@ Plan 25 modules read for adaptation (read-only, not modified): `runtime/controll
 
 | Declared `writes` path | Actual path | sha256 |
 |---|---|---|
-| `runtime/langgraph_factory/nodes` | `runtime/langgraph_factory/nodes/__init__.py` | 9f04100a02bfb1d5dcc5fd69e1fef4da8bc5def79690ced6494972023f1087c8 |
-| | `runtime/langgraph_factory/nodes/inputs.py` | 0ba94888a1c601adbed50e477b37575788387bb4489e8a62363f230c622d5627 |
-| | `runtime/langgraph_factory/nodes/sources.py` | 21ae3780bad01eada01ecd173783702787f4b766e9965e33f360c03b23832f39 |
-| | `runtime/langgraph_factory/nodes/domain.py` | 89d6608a6fdd5ebf3c9ddb9b0f70a310d19bb283aa6145d3474e6e24594a5d93 |
-| | `runtime/langgraph_factory/nodes/content.py` | 18fbe517a0c701fa24253cb47029b3525a79bd0e5a9b0ccf28845c43f621a937 |
-| | `runtime/langgraph_factory/nodes/visuals.py` | 70d13f8e6d8ec96284dbc3ad6c3a0a31b803e7462fc2b349efbbffe4488693b8 |
+| `runtime/langgraph_factory/nodes` | `runtime/langgraph_factory/nodes/__init__.py` | c591775a214e0e7b51c051f2e297a8af8e9dc2dba844ed8b5b4944015a02ca02 |
+| | `runtime/langgraph_factory/nodes/inputs.py` | 3b42770b83b389ae99d0cc4f3175b8942218f0f8f1adbcf5fcdb89cb412536a9 |
+| | `runtime/langgraph_factory/nodes/sources.py` | 32785995c3e54d94cb84baa511b725bc09f6e7f43b0c56878b4060d3e733bb14 |
+| | `runtime/langgraph_factory/nodes/domain.py` | a7318d9bd880a792d9b9a773e58e89902fb56b441c4767604d93150e208d3038 |
+| | `runtime/langgraph_factory/nodes/content.py` | e103557cb83a7850cabe1ca4ed94cdbfc76755e0840f7ef7b5055859e3aa4ef0 |
+| | `runtime/langgraph_factory/nodes/visuals.py` | 9b07577f5df151e7fd6169d182e6fd881d5fedb8f860a573f5e771859e8f4907 |
 | | `runtime/langgraph_factory/nodes/render.py` | 76fa183ad8fc26c054a33901d42c3635e3cb5c0094bca70b9f797517e19152b4 |
-| | `runtime/langgraph_factory/nodes/review.py` | fd1b61f25cdf96a82b5f9307b1dd3dbeae9cd8b8eb4605ce182f7980e641cb5e |
+| | `runtime/langgraph_factory/nodes/review.py` | 7b030939f97d03e503fad39e9f181ef273855e712b2c5780a284cfe24308a8b6 |
 | `runtime/langgraph_factory/terminal.py` | `runtime/langgraph_factory/nodes/terminal.py` (see finding F-01) | 66e7b92752d8ab8e0a93e00fc50114331f74f34538358b9b2938a6f02c17f28d |
-| `tests/runtime/test_plan26_deterministic_nodes.py` | same | 47a56efa6e83642aec99b1a7683337af3c9ecd8ec34d1dab7ff611b29850c67e |
+| `tests/runtime/test_plan26_deterministic_nodes.py` | same | 1a878db51e63e1969d8e6a27e85e7957220b6265bb22c0aa88e99506a0107ad8 |
+| (outside the declared `writes`, see finding F-05) | `schemas/unit_content.schema.v1.json` | 9055922e3af160209c0dea15b1af23daca8940a3f487b1928aea3cfde5233ef1 |
 | `plans/.../results/N22_DETERMINISTIC_NODES.result.v1.md` | this file | (not self-hashed) |
 
-4419 lines of production node code, 2578 lines of test.
+4942 lines of production node code, 3141 lines of test.
 
 ## Node ownership
 
@@ -141,6 +142,15 @@ a graph edge.
 | `shasum -a 256 <each input and output path>` | 0 | hash table below |
 | `/tmp/plan26_n30_verify/bin/python -m pytest tests/runtime/test_plan26_deterministic_nodes.py -q` | 0 | `results/evidence/N22_DETERMINISTIC_NODES/venv_node_tests.txt` (**235 passed** in the hash-locked environment) |
 | `/tmp/plan26_n30_verify/bin/python -m pytest tests/runtime/test_plan26_unit_graph.py -q -k '<N30 B-2 rows>'` | 1 | `results/evidence/N22_DETERMINISTIC_NODES/n30_b2_acceptance.txt` (**8 failed** — the designed inversion; see the generation-5 rework note) |
+| `python3 -m pytest tests/runtime/test_plan26_deterministic_nodes.py -q` (generation 6) | 0 | `results/evidence/N22_DETERMINISTIC_NODES/node_tests_b7.txt` (2536df2e39530e95b41f541579378c316e18b975ba3af4874098a79e61844949) — **243 passed** |
+| `python3 -m pytest -q` (generation 6) | 0 | `results/evidence/N22_DETERMINISTIC_NODES/full_suite_b7.txt` (cbf2990cdf13351054f8ecd5d9fc6ebd39a7b129fe52c8c1fb2ad7343f79e54b) — **806 passed, 12 skipped, 282 subtests** |
+| `/tmp/plan26_n30_verify/bin/python -m pytest tests/runtime/test_plan26_deterministic_nodes.py -q` (generation 6) | 0 | `results/evidence/N22_DETERMINISTIC_NODES/venv_node_tests_b7.txt` (8edf3adcfb7a101d6b6a336ca414ee6e05942a8ebd8f8ae02e3636c865cd7398) — **243 passed** in the hash-locked environment |
+| `/tmp/plan26_n30_verify/bin/python -m pytest tests/runtime/test_plan26_unit_graph.py -q -k '<N30 B-7 rows>'` | 1 | `results/evidence/N22_DETERMINISTIC_NODES/n30_b7_acceptance.txt` (401347c7ff5ee2ff33bedce9a2379bb3e6379941a4d6e9f392d8f54b7313dcad) — **1 failed, 3 passed**: the designed inversion of `test_blocked_a_model_candidate_record_is_not_an_admissible_artifact_version` |
+| `python3 -m pytest tests/runtime/test_plan26_deterministic_nodes.py -q` (generation 7) | 0 | `results/evidence/N22_DETERMINISTIC_NODES/node_tests_b10_b12.txt` (cd668fd2c9892a3036177b69538eb60a46684558499e4b88f26bd077668d4e9a) — **245 passed** |
+| `python3 -m pytest -q` (generation 7) | 0 | `results/evidence/N22_DETERMINISTIC_NODES/full_suite_b10_b12.txt` (d5fa0e847948d876618d0347494a3020f6a1c230546a58a3ca4cf3f099f9d5ad) — **831 passed, 12 skipped, 282 subtests** |
+| `/tmp/plan26_n30_verify/bin/python -m pytest tests/runtime/test_plan26_deterministic_nodes.py -q` (generation 7) | 0 | `results/evidence/N22_DETERMINISTIC_NODES/venv_node_tests_b10_b12.txt` (df355c6afdb59311bcca7d7b68d9fcb09db479427cfb353349f8f8294fab5fb8) — **245 passed** in the hash-locked environment |
+| `/tmp/plan26_n30_verify/bin/python -m pytest tests/runtime/test_plan26_unit_graph.py -q` (generation 7) | 1 | `results/evidence/N22_DETERMINISTIC_NODES/n30_b10_b12_acceptance.txt` (a275bd2de088b41eb2e87581f486653f860aca38c7b3104eb4b5fb456e431737) — **7 failed, 67 passed**; every failure is a declared inversion, see the generation-7 rework note |
+| `/tmp/plan26_n30_verify/bin/python <trace probe over N30's own `_build_episode_fixture`/`_run_episode`>` | 0 | `results/evidence/N22_DETERMINISTIC_NODES/unit_path_trace_b10_b12.txt` (73b5f94b69b632908f1ba5c86b8aac1ee5d3014d912f97f27de1fa1a191537c2) — the committed path now runs D09 -> D10 -> D12 -> D13 -> D14 -> D15 -> D90 and stops at N31's deferred D16 |
 
 Re-run at generation 4, after the `checkpoint_namespace` rename and against N11's
 completed `state.py`. Node suite: **217 passed** (unchanged count; the rename retargeted an
@@ -171,6 +181,164 @@ No isolated venv was needed: node bodies are framework-agnostic `(state, runtime
 | 9. Static scan finds no curriculum constants or second terminal writer | `test_the_owned_file_set_is_exactly_the_frozen_layout`, `test_no_curriculum_name_appears_in_production_source` (9), `test_no_unit_id_literal_appears_in_production_source` (9), `test_no_hardcoded_unit_count_appears_in_production_source` (9), `test_the_closure_algorithm_reads_unit_ids_only_from_the_manifest` | PASS | The package contains exactly the 8 frozen module names plus `__init__.py`; no installed curriculum's directory name or >3-character token appears in any production file; no `[LU]\d{2,3}` literal appears on any production line; no integer literal in any production file equals an installed manifest's unit count (the scan derives both the names and the counts from the installed curricula at run time, so it cannot go stale); no unit-id-shaped string constant exists in `inputs.py` |
 
 ## Findings
+
+**Rework note (generation 7) — the unit-content contract, D15's layout resolution,
+and D11's own input (N30_UNIT_GRAPH findings B-10, B-11, B-12).**
+
+N30 ran a real episode over the committed graph and found the unit path could not
+leave D09. Three defects, all in this node's write set, all fixed here.
+
+*B-10 (`plan26/n30/unit-content-contract-is-unsatisfiable`).* `CURRICULUM_CONTRACTS[0]`
+named `schemas/curriculum.schema.v5.json` — the whole-**curriculum manifest**
+schema, requiring `manifest_version`/`curriculum`/`domain`/`labs` under
+`additionalProperties: false`. D09 validates M03's *per-unit* content body,
+`{unit_id, sections, evidence_references}`, also closed. The two vocabularies are
+disjoint in both directions, so `content_schema_valid` could never pass for any
+document at all. No per-unit content contract existed in the repository to point
+at: `curriculum.schema.v5.json`'s `$defs/lab` requires 14 manifest-row properties
+and forbids all three of M03's, and `schemas/lab.schema.v4.json` describes the
+*finished* seven-block unit document assembled downstream of this stage, not the
+prose body M03 writes. The contract was therefore added —
+`schemas/unit_content.schema.v1.json`, disclosed as finding F-05 — and
+`CURRICULUM_CONTRACTS[0]` points at it. D08's `curriculum_contracts` projection
+and D09's `schema_path` both read that one constant, so the author is handed
+exactly the contract that admits the answer; the defect was invisible precisely
+because the constant could name something unsatisfiable without either side
+noticing. The contract admits the `visuals` declaration D10 compiles the visual
+denominator from, which N23 added to M03's output schema in the same round.
+`test_the_contract_d09_validates_against_admits_every_legal_m03_body` is the
+regression: it proves the two schemas describe one language as algebra
+(D09's `required` is inside M03's property set; M03's property set is inside
+D09's) and then on the real validator, so it holds for every legal body rather
+than for one sample.
+
+*B-11 (`plan26/n30/d15-requires-a-layout-head-nothing-admits`).* D15 required an
+admitted head for a `layout` channel, but spec 8.1 admits heads at D08/D09/D12/D20
+only and gives D13/D14 `append-unique`, so no node in the graph is authorized to
+write one. The requirement was unsatisfiable by construction. `layout` is out of
+`PACKET_ARTIFACT_CHANNELS`; D15 now resolves the layout from D13's appended
+version — the same `latest_candidate` lookup it already used for its PDF-bytes
+check — and freezes that version's hash into `artifact_hashes["layout"]`. The
+resolution is *required*, not optional, and the PDF-bytes check that was
+conditional on it is now unconditional, so the packet still cannot name bytes the
+inventory did not measure. Nothing was weakened: the layout is not independently
+admitted product evidence, the rendered PDF is, and the packet names it exactly.
+`test_d15_refuses_a_packet_with_no_resolvable_layout` covers the refusal.
+
+*B-12 (`plan26/n30/d11-cannot-read-its-own-send-member`).* `_staged_fanout`
+translates each staged member into `Send(destination, member)` unchanged, so the
+member arrives as the worker's whole input state. D11 is the graph's only
+*deterministic* `Send` target, and a deterministic node is narrowed by `project()`,
+which reads its authorized inputs by **state channel name** and takes each one's
+declared reducer default. A model adapter takes its member unprojected and can
+therefore be staged flat with keys like `brief`; D11 cannot — `brief` and
+`permitted_facts` are not channels, and making them channels would put worker-local
+values into the graph's persisted state schema, which is the wrong direction. D10
+therefore stages each deterministic member as `{"pending_packet": {brief,
+permitted_facts, correlation}}`, and D11's catalogue row keeps its honest
+`("pending_packet",)` input: the member now names the channel it delivers on.
+`test_a_staged_deterministic_visual_packet_is_what_d11_consumes` asserts the
+member's key set is a subset of the declared channels and hands the member to the
+real D11 unadapted.
+
+**Acceptance.** On committed code the unit path now runs
+`D09 -> D10 -> D12 -> D13 -> D14 -> D15 -> D90` and stops at
+`D16_REDUCE_UNIT_EVIDENCE`, a declared deferred edge owned by N31, with a real
+2-page PDF, a frozen review packet whose four artifact hashes include the layout
+resolved from D13's version, and domain/content/visuals heads admitted
+(`unit_path_trace_b10_b12.txt`). All seven failures in N30's suite are declared
+inversions rather than regressions: the four `test_blocked_*` rows for B-10/B-11/B-12
+each state "Inverts when ..." and each has now inverted;
+`test_the_committed_path_stops_at_a_declared_deferred_edge` and
+`test_the_unobservable_boundary_is_excluded_for_a_stated_reason` both assert the
+path halts *at* D09 and now halt at D16; and
+`test_blocked_the_production_runtime_context_has_no_capability_surface` is N13's
+B-8, fixed in the same round. Rewriting those rows is N30's, whose file is
+read-only here.
+
+**F-05 — one file was written outside the declared `writes` set.** The B-10 fix
+needs an engine-root contract file, and `CURRICULUM_CONTRACTS` entries resolve
+against `engine_root`, which for a production run is the repository root. No
+existing schema described a per-unit content document, so
+`schemas/unit_content.schema.v1.json` was created. It is a new file, owned by no
+other node, and adjacent to the curriculum contracts it sits beside; the
+alternative — pointing the constant at a schema that admits nothing — is the
+defect itself.
+
+**Rework note (generation 6) — the deterministic node mints the artifact version
+(N30_UNIT_GRAPH finding B-7, `plan26/n30/model-candidate-record-not-admissible`).**
+
+N30 ran the real M02 adapter against the real D08 body and found that D08 could not see a
+candidate M02 had genuinely produced. A model adapter writes a *pre-admission* record keyed
+on its activation, with the model's own output quarantined under `payload` and no
+`version`/`hash`/`parent_hash` — which is correct and is spec 2.4's code-owned-admission
+rule, now enforced by N23's `ADMISSION_OWNED_CANDIDATE_FIELDS`. This node's consuming
+bodies, however, resolved that record as though the model had already minted a versioned
+artifact: D08/D09 looked it up by `stream` and then read `body`, `schema_path`,
+`parent_hash` and `verifier_result` off it, D06B read `locators`, D07 read
+`retrieval_sha256`, and D12 read `subset` and `content_hash`. None of those keys exists on
+the record the adapter writes, so D08 reported `no candidate domain version exists` against
+a real candidate and no artifact head could ever advance.
+
+The gap is closed in the direction N30 specified: **admission mints the version here.**
+Four shared helpers now live in `nodes/__init__.py` and are the only way a candidate
+becomes a version:
+
+- `latest_model_candidate(versions, channel=, unit_id=)` resolves a pre-admission record by
+  its correlation (`record_kind == "model_candidate"`, plus the channel and unit lineage
+  N23 stamps), not by a `stream` key the model never wrote.
+- `candidate_payload(record, label)` reads the model's own output, failing closed as
+  `schema_contract` if the record carries none.
+- `candidate_field(record, field, default)` reads a lineage field off the record and falls
+  back to the payload. Every model job schema is closed and `additionalProperties: false`,
+  so a payload physically cannot carry an admission field; the fallback can only reach
+  lineage the projection itself declared.
+- `mint_version(candidate, heads, stream, body=, **lineage)` mints the record. `version` is
+  `advance_head`'s own rule read off the current head (`head.version + 1`, genesis 1),
+  `parent_hash` is the current head's `hash` (`None` at genesis), and `hash` is
+  `canonical_digest(body)` under `contracts/digest_algorithm.v1.md`'s canonical-JSON rule —
+  computed from the body this node derived, never read off the model's record. The minted
+  record is stamped `minted_by: deterministic_admission` and keyed
+  `canonical_digest({stream, hash})` so `append_unique` cannot confuse it with the
+  pre-admission record it descends from.
+
+Per node:
+
+| Node | How the version is now derived | Body / join field |
+|---|---|---|
+| D08_VALIDATE_DOMAIN | `_mint_domain_version` resolves M02's candidate on `channel="domain"` for the selected unit, then `mint_version` off `artifact_heads[units/<id>/domain]`. `require_current_parent` still runs, and is now satisfied by construction rather than by trusting the model. | body is `payload.domain_version.fields` — the open document the curriculum's own schema and the `/verifier_result` pointer both address; `evidence_references` carries over as lineage. `schema_path` is the run's declared `domain.manifest_schema`, falling back to `DOMAIN_SCHEMA_CONTRACT` (the schema D07 handed the model), never a path the model chose. `verifier_result` is read at the pointer D07's `verifier_interface` declares, i.e. inside the body. |
+| D09_VALIDATE_CONTENT | `_mint_content_version` resolves M03's candidate on `channel="content"`, then `mint_version` off the content head. | body is `payload.unit_content`; `schema_path` is this node's own frozen `CURRICULUM_CONTRACTS[0]`; `domain_hash` is the candidate's declared lineage when it has one and otherwise the domain head this node is about to validate it against. |
+| D06B_RETRIEVE_SOURCE_CANDIDATES | unchanged (it admits nothing) | `locators` is read through `candidate_field`, so it resolves from M01-discovery's payload. This is the one B-7 join N23's lineage fields do not cover, because a locator set *is* the model's answer. |
+| D07_CORRELATE_AND_ADMIT_SOURCES | unchanged (it admits sources, not versions) | `retrieval_sha256`, `unit_id` and `scope` are read through `candidate_field`; `scope` falls back to the request's own declared scope, which is where it belongs. |
+| D12_VISUAL_BARRIER_AND_JOIN | already minted its own `version`/`parent_hash`/`hash` off the visual head and still does; B-7's gap here was the join, not the mint | `_visual_result` normalizes an M04 candidate into the exact record shape D11 writes: it re-keys the member from the activation correlation key to the `brief_id` the denominator is indexed by, takes `unit_id`/`content_hash`/`domain_hash` from the compiled brief, fixes `subset` to `model` and `provenance` to `model_candidate`, and computes `sha256` as this node's own canonical digest of the candidate. |
+
+One adjacent derivation was required and is recorded here rather than left implicit: with
+the model no longer supplying `schema_path`, D08 has to choose the domain schema itself.
+`D02_COMPILE_EFFECTIVE_RUN` now carries the curriculum's declared
+`domain.manifest_schema` on `effective_run` (read from the manifest it has already frozen
+and digested), because the engine's `manifest_domain.metaschema.v1.json` constrains the
+*shape of that contract*, not a domain instance. A run that declares no contract still
+validates against the engine's named one, which is what D07 tells the model it will be
+held to.
+
+Nine tests were added (`243 passed`, up from 235). They run the *real* model adapters over
+a `FakeCliTransport` and feed their real output to the real node bodies: D08 admitting an
+M02 candidate that carries no version, the minted version being the current head's
+successor, two candidates differing only in body minting different hashes, D09 admitting an
+M03 candidate against the admitted domain head, the run's declared contract being the one
+the body is held to, `locators` resolving out of M01-discovery's payload, an M04 candidate
+joining under its brief key, and `mint_version` covering every field
+`ADMISSION_OWNED_CANDIDATE_FIELDS` denies a model.
+
+Acceptance against N30: `test_blocked_a_model_candidate_record_is_not_an_admissible_artifact_version`
+now fails on `KeyError: 'pending_failure'` — its own docstring's stated inversion ("inverts
+when D08 derives the versioned record from the model candidate"). Reproduced end to end
+outside the harness: real M02 adapter -> real D08 -> `domain_admitted`, head
+`{version: 1, parent_hash: null, hash: 4acf6223...}`, and a staged `M03_WRITE_UNIT_CONTENT`
+packet that `build_projection("M03_content", ...)` accepts. The six other N30 failures in
+the hash-locked environment are the `Send`-shape assertions superseded by N20's in-flight
+B-6 rework (`route_source_discovery_fanout` now returns D90), not this node's write set.
+`test_plan26_unit_graph.py` was run, never edited.
 
 **Rework note (generation 5) — dispatching nodes stage their worker packets
 (N30_UNIT_GRAPH finding B-2, `plan26/n30/model-packet-not-staged` and
@@ -367,6 +535,17 @@ the spelling of one channel. Descendants that read `checkpoint_ns` from `Factory
 must read `checkpoint_namespace` instead, which the erratum already binds on them
 independently of this record.
 
+Generation 6 (B-7) invalidates no predecessor. It adds four helpers to `nodes/__init__.py`
+and one key (`manifest_schema`) to `effective_run`; both are additive, and no node's
+inputs, guards, failure classes, or terminal semantics changed. `artifact_versions` joins
+D08's and D09's declared outputs, which is a widening: both channels already reduced
+through `append_unique`, so `SPEC_OUTPUT_REDUCERS` is unchanged and N11's reducer contract
+is untouched. `model_nodes.py` and `tests/runtime/test_plan26_unit_graph.py` were read, not
+written. N31 and N32 inherit an artifact stream that can now actually advance: a repair
+candidate from M06 arrives on `artifact_versions` in the same pre-admission shape and is
+minted by the same `mint_version` rule, so a repaired child is version `head+1` parented on
+the head it was planned against.
+
 ## Hashes
 
 | Path | sha256 |
@@ -386,19 +565,30 @@ independently of this record.
 | `plans/26_langgraph_curriculum_factory/contracts/erratum_checkpoint_ns_rename.v1.md` | 10d0fe61a98ffcf1f32b1721874758c211765d30f37eae3163e98979205dc1f1 |
 | `runtime/langgraph_factory/state.py` | 428c78edd53b73fd3458d469b36e1bb528dea37d4565f3b37995d63e4a075167 |
 | `runtime/langgraph_factory/reducers.py` | 05dc3632dd378946ddc1aee1ca725f99f0be7e1c69b516c00061aee336fb26cf |
-| `runtime/langgraph_factory/model_nodes.py` (N23, read for the D90 handoff) | 4b81e4754c04d26635e239e1f55b330979c020ae9aff2cc0f4506afe99769496 |
-| `plans/.../results/N30_UNIT_GRAPH.result.v1.md` (finding B-2) | 83c75350d23fadfafc804f4cc4d410a433ca43311eb83fa4c3acc65d3d152e87 |
-| `runtime/langgraph_factory/nodes/__init__.py` | 9f04100a02bfb1d5dcc5fd69e1fef4da8bc5def79690ced6494972023f1087c8 |
-| `runtime/langgraph_factory/nodes/inputs.py` | 0ba94888a1c601adbed50e477b37575788387bb4489e8a62363f230c622d5627 |
-| `runtime/langgraph_factory/nodes/sources.py` | 21ae3780bad01eada01ecd173783702787f4b766e9965e33f360c03b23832f39 |
-| `runtime/langgraph_factory/nodes/domain.py` | 89d6608a6fdd5ebf3c9ddb9b0f70a310d19bb283aa6145d3474e6e24594a5d93 |
-| `runtime/langgraph_factory/nodes/content.py` | 18fbe517a0c701fa24253cb47029b3525a79bd0e5a9b0ccf28845c43f621a937 |
-| `runtime/langgraph_factory/nodes/visuals.py` | 70d13f8e6d8ec96284dbc3ad6c3a0a31b803e7462fc2b349efbbffe4488693b8 |
+| `runtime/langgraph_factory/model_nodes.py` (N23, read for the D90 handoff and the B-7 candidate shape) | ff471867ef2c6aa4fa78f6aac9942c85416d1e6305f3c49d9b8f1fb5861718e1 |
+| `plans/.../results/N30_UNIT_GRAPH.result.v1.md` (findings B-2, B-7, B-10, B-11, B-12) | 87afe808a4d331405edcbd72165b5c5d254cbaba74f130947ceb286ced090c6e |
+| `runtime/langgraph_factory/nodes/__init__.py` | c591775a214e0e7b51c051f2e297a8af8e9dc2dba844ed8b5b4944015a02ca02 |
+| `runtime/langgraph_factory/nodes/inputs.py` | 3b42770b83b389ae99d0cc4f3175b8942218f0f8f1adbcf5fcdb89cb412536a9 |
+| `runtime/langgraph_factory/nodes/sources.py` | 32785995c3e54d94cb84baa511b725bc09f6e7f43b0c56878b4060d3e733bb14 |
+| `runtime/langgraph_factory/nodes/domain.py` | a7318d9bd880a792d9b9a773e58e89902fb56b441c4767604d93150e208d3038 |
+| `runtime/langgraph_factory/nodes/content.py` | e103557cb83a7850cabe1ca4ed94cdbfc76755e0840f7ef7b5055859e3aa4ef0 |
+| `runtime/langgraph_factory/nodes/visuals.py` | 9b07577f5df151e7fd6169d182e6fd881d5fedb8f860a573f5e771859e8f4907 |
 | `runtime/langgraph_factory/nodes/render.py` | 76fa183ad8fc26c054a33901d42c3635e3cb5c0094bca70b9f797517e19152b4 |
-| `runtime/langgraph_factory/nodes/review.py` | fd1b61f25cdf96a82b5f9307b1dd3dbeae9cd8b8eb4605ce182f7980e641cb5e |
+| `runtime/langgraph_factory/nodes/review.py` | 7b030939f97d03e503fad39e9f181ef273855e712b2c5780a284cfe24308a8b6 |
 | `runtime/langgraph_factory/nodes/terminal.py` | 66e7b92752d8ab8e0a93e00fc50114331f74f34538358b9b2938a6f02c17f28d |
-| `tests/runtime/test_plan26_deterministic_nodes.py` | 47a56efa6e83642aec99b1a7683337af3c9ecd8ec34d1dab7ff611b29850c67e |
+| `tests/runtime/test_plan26_deterministic_nodes.py` | 1a878db51e63e1969d8e6a27e85e7957220b6265bb22c0aa88e99506a0107ad8 |
+| `schemas/unit_content.schema.v1.json` (new, finding F-05) | 9055922e3af160209c0dea15b1af23daca8940a3f487b1928aea3cfde5233ef1 |
+| `runtime/langgraph_factory/schemas/M03_write_unit_content.schema.json` (N23, read for the B-10 contract agreement) | 5f8893a218f3ccb979a1c025721666b1e634bdaaf46bfa2be35de6f3113e35fe |
 | `plans/.../results/evidence/N22_DETERMINISTIC_NODES/node_tests.txt` | ce3080fca29fc581081ec7c006fae52af8c1bfb18bb69799d79160d895be8ae3 |
 | `plans/.../results/evidence/N22_DETERMINISTIC_NODES/full_suite.txt` | 243fd9483ca5c66770993d464c761f36c1ef66d23221cff66116d1601335d378 |
 | `plans/.../results/evidence/N22_DETERMINISTIC_NODES/venv_node_tests.txt` | c49d9df22963948dbee49f84601b6b2f377132b31ffbc6f5905670b7497a52a4 |
 | `plans/.../results/evidence/N22_DETERMINISTIC_NODES/n30_b2_acceptance.txt` | 8b08f2abe4c12b3d130a2e131b546a5eaea5f1e7d4a61c34e8c224150e943e6a |
+| `plans/.../results/evidence/N22_DETERMINISTIC_NODES/node_tests_b7.txt` | 2536df2e39530e95b41f541579378c316e18b975ba3af4874098a79e61844949 |
+| `plans/.../results/evidence/N22_DETERMINISTIC_NODES/full_suite_b7.txt` | cbf2990cdf13351054f8ecd5d9fc6ebd39a7b129fe52c8c1fb2ad7343f79e54b |
+| `plans/.../results/evidence/N22_DETERMINISTIC_NODES/venv_node_tests_b7.txt` | 8edf3adcfb7a101d6b6a336ca414ee6e05942a8ebd8f8ae02e3636c865cd7398 |
+| `plans/.../results/evidence/N22_DETERMINISTIC_NODES/n30_b7_acceptance.txt` | 401347c7ff5ee2ff33bedce9a2379bb3e6379941a4d6e9f392d8f54b7313dcad |
+| `plans/.../results/evidence/N22_DETERMINISTIC_NODES/node_tests_b10_b12.txt` | cd668fd2c9892a3036177b69538eb60a46684558499e4b88f26bd077668d4e9a |
+| `plans/.../results/evidence/N22_DETERMINISTIC_NODES/full_suite_b10_b12.txt` | d5fa0e847948d876618d0347494a3020f6a1c230546a58a3ca4cf3f099f9d5ad |
+| `plans/.../results/evidence/N22_DETERMINISTIC_NODES/venv_node_tests_b10_b12.txt` | df355c6afdb59311bcca7d7b68d9fcb09db479427cfb353349f8f8294fab5fb8 |
+| `plans/.../results/evidence/N22_DETERMINISTIC_NODES/n30_b10_b12_acceptance.txt` | a275bd2de088b41eb2e87581f486653f860aca38c7b3104eb4b5fb456e431737 |
+| `plans/.../results/evidence/N22_DETERMINISTIC_NODES/unit_path_trace_b10_b12.txt` | 73b5f94b69b632908f1ba5c86b8aac1ee5d3014d912f97f27de1fa1a191537c2 |

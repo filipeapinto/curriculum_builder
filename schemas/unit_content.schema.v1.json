@@ -1,0 +1,116 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://example.invalid/curriculum_builder/unit_content.schema.v1.json",
+  "title": "Unit content v1 — the prose body of one unit and the visuals it declares",
+  "description": "The per-unit content document the factory admits on the `content` stream. It is deliberately not `curriculum.schema.v5.json`, which describes a whole curriculum manifest, nor `lab.schema.v4.json`, which describes a finished seven-block unit assembled downstream of this stage. This contract is the one an author is held to and the one the admission node validates against: the same file, so the two can never drift into an empty intersection.",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "unit_id",
+    "sections",
+    "evidence_references"
+  ],
+  "properties": {
+    "unit_id": {
+      "type": "string",
+      "minLength": 1,
+      "maxLength": 200
+    },
+    "sections": {
+      "type": "array",
+      "minItems": 1,
+      "items": {
+        "type": "object",
+        "required": [
+          "section_id",
+          "heading",
+          "body"
+        ],
+        "properties": {
+          "section_id": {
+            "type": "string",
+            "minLength": 1,
+            "maxLength": 200
+          },
+          "heading": {
+            "type": "string",
+            "minLength": 1,
+            "maxLength": 500
+          },
+          "body": {
+            "type": "string",
+            "minLength": 1,
+            "maxLength": 200000
+          }
+        }
+      }
+    },
+    "evidence_references": {
+      "description": "Where each section's claims came from. The source ids are checked against the admitted source set by the engine, never by this contract.",
+      "type": "array",
+      "minItems": 1,
+      "items": {
+        "type": "object",
+        "required": [
+          "section_id",
+          "source_id",
+          "source_location"
+        ],
+        "properties": {
+          "section_id": {
+            "type": "string",
+            "minLength": 1,
+            "maxLength": 200
+          },
+          "source_id": {
+            "type": "string",
+            "minLength": 1,
+            "maxLength": 200
+          },
+          "source_location": {
+            "type": "string",
+            "minLength": 1,
+            "maxLength": 500
+          }
+        }
+      }
+    },
+    "visuals": {
+      "description": "The unit's visual denominator, declared here and frozen by the brief compiler. `kind` decides which subset a visual falls in: a kind that asserts exact physical facts is produced deterministically from the domain and is never requested from a model, so declaring one here is a request for a render, not for an invention.",
+      "type": "array",
+      "items": {
+        "type": "object",
+        "required": [
+          "role",
+          "kind"
+        ],
+        "properties": {
+          "role": {
+            "type": "string",
+            "minLength": 1,
+            "maxLength": 200
+          },
+          "kind": {
+            "type": "string",
+            "minLength": 1,
+            "maxLength": 200
+          },
+          "authoritative": {
+            "type": "boolean"
+          },
+          "permitted_facts": {
+            "type": "array",
+            "items": {
+              "type": "string",
+              "minLength": 1,
+              "maxLength": 500
+            }
+          },
+          "requests_authoritative_facts": {
+            "type": "boolean"
+          }
+        }
+      }
+    }
+  }
+}

@@ -1,0 +1,19 @@
+D06 stages phase: ['DISCOVER']
+D06B stages phase: ['INTERPRET']  (nodes/sources.py, worker_packet(..., phase="INTERPRET"))
+
+discovery guard:     authorized
+interpretation guard: authorized
+
+counters after a fully successful two-phase run:
+{
+ "M01_RESEARCH_UNIT_SOURCES|DISCOVER|U001/1/required_explanation:000": 1,
+ "M01_RESEARCH_UNIT_SOURCES|DISCOVER|U001/1/safety_focus:000": 1,
+ "M01_RESEARCH_UNIT_SOURCES|INTERPRET|U001/1/required_explanation:000": 1,
+ "M01_RESEARCH_UNIT_SOURCES|INTERPRET|U001/1/safety_focus:000": 1
+}
+
+correlation keys are unchanged (D06B/D07 join on these):
+['U001/1/required_explanation:000', 'U001/1/safety_focus:000']
+
+a genuine transport fault on interpretation now resolves: authorized ordinal 2
+and the frozen limit still binds within that phase: exhausted

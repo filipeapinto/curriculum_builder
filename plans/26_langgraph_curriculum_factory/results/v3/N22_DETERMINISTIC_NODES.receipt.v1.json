@@ -1,0 +1,38 @@
+{
+  "changed_files": [],
+  "commands": [
+    {
+      "argv": [
+        "/tmp/plan26_n30_verify/bin/python",
+        "-m",
+        "pytest",
+        "-q",
+        "tests/runtime/test_plan26_deterministic_nodes.py"
+      ],
+      "exit_code": 0,
+      "finished_at": "2026-08-11T21:00:09.143406+00:00",
+      "log": "plans/26_langgraph_curriculum_factory/results/v3/logs/N22_DETERMINISTIC_NODES/adopt-v2.test1.log",
+      "log_sha256": "66cffc19a52772180739cd7f5b80167c0debfd9e0a7ecbe4e2c3b5bb022de704",
+      "started_at": "2026-08-11T21:00:07.637282+00:00",
+      "tail": "........................................................................ [ 29%]\n........................................................................ [ 58%]\n........................................................................ [ 88%]\n.............................                                            [100%]\n245 passed in 0.94s\n",
+      "timed_out": false
+    }
+  ],
+  "created_at": "2026-08-11T21:00:09.150500+00:00",
+  "findings": [],
+  "graph_digest": "ac8587de809ce6dbc0a75b476e79fc8d0474a980c0cfbabcb97979a0b490a82a",
+  "graph_id": "plan26_langgraph_curriculum_factory_implementation",
+  "input_fingerprint": "52c6cc1129d789708270023aef71bdc894f266bdcbacff529654fb6285b797d2",
+  "node_definition_sha256": "cfc789566996be2ff8d669658848e8a3aabeec422a722cb7c0640ba2b2eda200",
+  "node_id": "N22_DETERMINISTIC_NODES",
+  "outputs": {
+    "plans/26_langgraph_curriculum_factory/results/N22_DETERMINISTIC_NODES.result.v1.md": "a167b4a11d4f4b8c32f9d75bd23f98f8b373fac7d28e558124dd6a5461b535fb",
+    "plans/26_langgraph_curriculum_factory/results/evidence/N22_DETERMINISTIC_NODES": "952feea1ebe6812d0cf18dcd0792f3a2c3f43a3955c90d6a9afcf3de09783321",
+    "runtime/langgraph_factory/nodes": "cb0b056aeb8729853b22f78313481f85299a4797455e0a3ec94d82af0217c88c",
+    "tests/runtime/test_plan26_deterministic_nodes.py": "1a878db51e63e1969d8e6a27e85e7957220b6265bb22c0aa88e99506a0107ad8"
+  },
+  "prompt_sha256": "cb9a83d5997fa93be678cd796c6fdae94dc976a7cfd06f6b12ce34b353014858",
+  "schema_version": 1,
+  "source": "adopted_v2_after_focused_verification",
+  "status": "PASSED"
+}

@@ -1,0 +1,46 @@
+F...                                                                     [100%]
+=================================== FAILURES ===================================
+_ test_blocked_a_model_candidate_record_is_not_an_admissible_artifact_version __
+
+    def test_blocked_a_model_candidate_record_is_not_an_admissible_artifact_version() -> None:
+        """`plan26/n30/model-candidate-record-not-admissible` -> N22_DETERMINISTIC_NODES.
+    
+        M02 writes a pre-admission descriptor keyed on the activation, with its
+        payload under `payload`. D08 resolves its candidate by `stream` and then
+        reads `body`/`schema_path`/`verifier_result` off it, so it sees no candidate
+        at all.
+    
+        Inverts when D08 derives the versioned record from the model candidate.
+        """
+    
+        sandbox = Path(tempfile.mkdtemp())
+        context = _scripted_model_context(sandbox)
+        update = mn.MODEL_NODE_ADAPTERS["M02_CREATE_UNIT_DOMAIN_DATA"](
+            _m02_packet("U001"), context
+        )
+        record = update["artifact_versions"][0]
+        assert record["record_kind"] == "model_candidate"
+        for field in ("stream", "version", "parent_hash", "hash", "body", "schema_path"):
+            assert field not in record, f"{field} is now on the candidate; revisit this gap"
+    
+        admission = domain.D08_VALIDATE_DOMAIN(
+            {
+                "run_id": "r",
+                "episode_id": "e",
+                "selected_unit_id": "U001",
+                "effective_run": {"unit_records": [{"id": "U001", "title": "t"}]},
+                "artifact_versions": update["artifact_versions"],
+                "artifact_heads": {},
+                "source_admissions": [],
+                "engine_root": str(REPO_ROOT),
+            },
+            _Context(),
+        )
+>       assert admission["pending_failure"]["cause"] == "invalid_input"
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+E       KeyError: 'pending_failure'
+
+tests/runtime/test_plan26_unit_graph.py:1460: KeyError
+=========================== short test summary info ============================
+FAILED tests/runtime/test_plan26_unit_graph.py::test_blocked_a_model_candidate_record_is_not_an_admissible_artifact_version
+1 failed, 3 passed, 57 deselected in 0.30s

@@ -42,7 +42,11 @@ from . import routing, transport as tp, unit_graph
 from .artifacts import ArtifactStore
 from .egress import EgressGuard, ReceiptLog, RetrievalPolicy, SourceRetriever
 from .evidence import EvidenceStore
-from .model_nodes import MODEL_NODE_ADAPTERS, build_model_node_context
+from .model_nodes import (
+    MODEL_BOOKKEEPING_NODES,
+    MODEL_NODE_ADAPTERS,
+    build_model_node_context,
+)
 from .nodes import NODE_CATALOGUE, node_registry
 from .persistence import InterruptToken, open_checkpoint_saver
 from .state import (
@@ -272,14 +276,14 @@ def _binding_record(node_id: str, body: Callable[..., Any]) -> dict[str, Any]:
 def binding_inventory() -> dict[str, Callable[..., Any]]:
     """Every node callable that exists now, by stable ID.
 
-    N31/N32 nodes (D16-D29, D31, D32) and the D90/D91 bookkeeping callables are
-    absent by construction: this returns what is implemented, never a padded
-    catalogue.
+    N31/N32 nodes (D16-D29, D31, D32) are absent by construction: this returns
+    what is implemented, never a padded catalogue.
     """
 
     bindings: dict[str, Callable[..., Any]] = dict(node_registry())
     for job_id, adapter in MODEL_NODE_ADAPTERS.items():
         bindings[job_id] = adapter
+    bindings.update(MODEL_BOOKKEEPING_NODES)
     return bindings
 
 

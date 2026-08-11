@@ -25,7 +25,12 @@ from . import (
 __all__ = ["PACKET_ARTIFACT_CHANNELS", "D15_FREEZE_UNIT_REVIEW_PACKET"]
 
 
-PACKET_ARTIFACT_CHANNELS: tuple[str, ...] = ("domain", "content", "visuals", "layout")
+# The channels whose *admitted head* the packet freezes. Layout is not one of
+# them and cannot be: heads are admitted at D08/D09/D12/D20 only, and D13 is
+# append-unique, so the layout the packet names is resolved from D13's appended
+# version below. The rendered PDF, not the layout source, is the product evidence
+# the reviewer is answering about, and the packet still names it exactly.
+PACKET_ARTIFACT_CHANNELS: tuple[str, ...] = ("domain", "content", "visuals")
 
 
 @deterministic_node("D15_FREEZE_UNIT_REVIEW_PACKET")
@@ -48,6 +53,15 @@ def D15_FREEZE_UNIT_REVIEW_PACKET(
             unit_id=unit_id,
         )
         artifact_hashes[channel] = head["hash"]
+
+    layout_version = latest_candidate(projection["artifact_versions"], stream_id(unit_id, "layout"))
+    require(
+        isinstance(layout_version, dict),
+        "invalid_input",
+        "the review packet requires a rendered layout version",
+        unit_id=unit_id,
+    )
+    artifact_hashes["layout"] = str(layout_version["hash"])
 
     inventories = [
         record
@@ -80,18 +94,22 @@ def D15_FREEZE_UNIT_REVIEW_PACKET(
     # The packet names the shipped PDF, so its bytes must still be the bytes the
     # inventory measured; a packet built over a re-rendered PDF would send the
     # reviewer one document and the denominator another.
-    layout_version = latest_candidate(projection["artifact_versions"], stream_id(unit_id, "layout"))
-    if layout_version is not None and layout_version.get("pdf_path"):
-        pdf_path = Path(str(layout_version["pdf_path"]))
-        require(pdf_path.is_file(), "integrity", "the shipped unit PDF is missing")
-        actual = _sha256_file(pdf_path)
-        require(
-            actual == pdf_sha256,
-            "integrity",
-            "the shipped PDF's bytes do not match the inventoried PDF hash",
-            declared=pdf_sha256,
-            actual=actual,
-        )
+    require(
+        bool(layout_version.get("pdf_path")),
+        "invalid_input",
+        "the resolved layout version names no rendered PDF",
+        unit_id=unit_id,
+    )
+    pdf_path = Path(str(layout_version["pdf_path"]))
+    require(pdf_path.is_file(), "integrity", "the shipped unit PDF is missing")
+    actual = _sha256_file(pdf_path)
+    require(
+        actual == pdf_sha256,
+        "integrity",
+        "the shipped PDF's bytes do not match the inventoried PDF hash",
+        declared=pdf_sha256,
+        actual=actual,
+    )
 
     checks = [
         record
@@ -168,7 +186,7 @@ def D15_FREEZE_UNIT_REVIEW_PACKET(
             "unit_artifacts": dict(artifact_hashes),
             "unit_pdf": {
                 "sha256": pdf_sha256,
-                "path": str(layout_version["pdf_path"]) if layout_version else None,
+                "path": str(pdf_path),
             },
             "page_inventory": {
                 "page_count": inventory["page_count"],

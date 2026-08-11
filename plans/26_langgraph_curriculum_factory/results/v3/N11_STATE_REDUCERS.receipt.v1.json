@@ -1,0 +1,38 @@
+{
+  "changed_files": [],
+  "commands": [
+    {
+      "argv": [
+        "/tmp/plan26_n30_verify/bin/python",
+        "-m",
+        "pytest",
+        "-q",
+        "tests/runtime/test_plan26_state_reducers.py"
+      ],
+      "exit_code": 0,
+      "finished_at": "2026-08-11T20:59:53.131030+00:00",
+      "log": "plans/26_langgraph_curriculum_factory/results/v3/logs/N11_STATE_REDUCERS/adopt-v2.test1.log",
+      "log_sha256": "f4f75d45e7cfed6a5296de7cb0cdae214d5dd39f25eab958d0bbe7b479a7bca1",
+      "started_at": "2026-08-11T20:59:52.050621+00:00",
+      "tail": "......................... [ 37%]\n.........................................                                    [100%]\n66 passed, 187 subtests passed in 0.39s\n",
+      "timed_out": false
+    }
+  ],
+  "created_at": "2026-08-11T20:59:53.133168+00:00",
+  "findings": [],
+  "graph_digest": "ac8587de809ce6dbc0a75b476e79fc8d0474a980c0cfbabcb97979a0b490a82a",
+  "graph_id": "plan26_langgraph_curriculum_factory_implementation",
+  "input_fingerprint": "51fa33881effda624e4b48b4b220ad50aba64e12c12b36b401bc980349a7e99d",
+  "node_definition_sha256": "4a90bfbee13e12a68c9746f20463a675bc35f71a5d48dfd333e245e1aa0f6878",
+  "node_id": "N11_STATE_REDUCERS",
+  "outputs": {
+    "plans/26_langgraph_curriculum_factory/results/N11_STATE_REDUCERS.result.v1.md": "9633ac27f94f1fa97ebf50c0119eb76124f233c3f75311b07697b3281818a0e9",
+    "runtime/langgraph_factory/reducers.py": "05dc3632dd378946ddc1aee1ca725f99f0be7e1c69b516c00061aee336fb26cf",
+    "runtime/langgraph_factory/state.py": "428c78edd53b73fd3458d469b36e1bb528dea37d4565f3b37995d63e4a075167",
+    "tests/runtime/test_plan26_state_reducers.py": "b10f89014c2e17e6e751f38b978a4af4e69be36f55f1c95791699b7f217f51bd"
+  },
+  "prompt_sha256": "9a04739d02833f7381c7f3441c8d16ae38329bcd0e092c1ab1d9c13936e0f4d3",
+  "schema_version": 1,
+  "source": "adopted_v2_after_focused_verification",
+  "status": "PASSED"
+}

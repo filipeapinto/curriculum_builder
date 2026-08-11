@@ -54,6 +54,12 @@ __all__ = [
     "require",
     "stream_id",
     "latest_candidate",
+    "MODEL_CANDIDATE_KIND",
+    "is_model_candidate",
+    "candidate_payload",
+    "candidate_field",
+    "latest_model_candidate",
+    "mint_version",
     "require_current_parent",
     "head_update",
     "check_record",
@@ -425,7 +431,12 @@ NODE_CATALOGUE: dict[str, NodeSpec] = {
                 "run_id",
                 "episode_id",
             ),
-            outputs=("artifact_heads", "deterministic_checks", "pending_packet"),
+            outputs=(
+                "artifact_versions",
+                "artifact_heads",
+                "deterministic_checks",
+                "pending_packet",
+            ),
             failures=("system",),
             guards=("domain_admitted", "domain_repairable"),
         ),
@@ -439,7 +450,7 @@ NODE_CATALOGUE: dict[str, NodeSpec] = {
                 "artifact_heads",
                 "engine_root",
             ),
-            outputs=("artifact_heads", "deterministic_checks"),
+            outputs=("artifact_versions", "artifact_heads", "deterministic_checks"),
             failures=("system",),
             guards=("content_admitted", "content_repairable"),
         ),
@@ -704,6 +715,92 @@ def latest_candidate(
     if not candidates:
         return None
     return max(candidates, key=lambda record: record.get("version", 0))
+
+
+# The `record_kind` a model adapter stamps on its pre-admission descriptor. Such a
+# record carries the model's own output under `payload` and deliberately carries no
+# `version`/`hash` pair, because spec 2.4 makes admission code-owned: the version a
+# model artifact enters state under is minted here, by the node that validated it.
+MODEL_CANDIDATE_KIND = "model_candidate"
+
+
+def is_model_candidate(record: Any) -> bool:
+    """True for a pre-admission model candidate descriptor."""
+
+    return isinstance(record, Mapping) and record.get("record_kind") == MODEL_CANDIDATE_KIND
+
+
+def candidate_payload(record: Mapping[str, Any], label: str) -> dict[str, Any]:
+    """The model's own output off a pre-admission candidate record."""
+
+    payload = record.get("payload")
+    require(isinstance(payload, Mapping), "schema_contract", f"{label} carries no candidate payload")
+    return dict(payload)
+
+
+def candidate_field(record: Mapping[str, Any], field: str, default: Any = None) -> Any:
+    """A lineage field off a record, falling back to a model candidate's payload.
+
+    Every model job schema is closed, so a payload can never carry an admission
+    field; the fallback can only reach lineage the projection itself declared.
+    """
+
+    if field in record:
+        return record[field]
+    if is_model_candidate(record):
+        payload = record.get("payload")
+        if isinstance(payload, Mapping) and field in payload:
+            return payload[field]
+    return default
+
+
+def latest_model_candidate(
+    artifact_versions: Iterable[Mapping[str, Any]], *, channel: str, unit_id: str
+) -> dict[str, Any] | None:
+    """The newest pre-admission model candidate on one unit's channel, or None."""
+
+    matches = [
+        dict(record)
+        for record in artifact_versions
+        if is_model_candidate(record)
+        and record.get("channel") == channel
+        and record.get("unit_id") == unit_id
+    ]
+    return matches[-1] if matches else None
+
+
+def mint_version(
+    candidate: Mapping[str, Any],
+    heads: Mapping[str, Any],
+    stream: str,
+    *,
+    body: Mapping[str, Any],
+    **lineage: Any,
+) -> dict[str, Any]:
+    """Mint the versioned artifact record a validated model candidate authorizes.
+
+    Version and parent are `advance_head`'s own rule (the current head's successor,
+    parented on the current head's hash, genesis at version 1 with a null parent),
+    and the hash is the canonical digest of the body this node derived — never a
+    value read off the model's record.
+    """
+
+    current = heads.get(stream) if isinstance(heads, Mapping) else None
+    current = current if isinstance(current, Mapping) else {}
+    record = {
+        "stream": stream,
+        "version": int(current.get("version", 0)) + 1,
+        "parent_hash": current.get("hash"),
+        "hash": canonical_digest(body),
+        "body": dict(body),
+        "minted_by": "deterministic_admission",
+        "candidate_key": candidate.get("key"),
+        "candidate_sha256": candidate.get("candidate_sha256"),
+        "attempt": int(candidate.get("attempt", 1)),
+    }
+    record.update(lineage)
+    record["key"] = canonical_digest({"stream": stream, "hash": record["hash"]})
+    return record
 
 
 def require_current_parent(

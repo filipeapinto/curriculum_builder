@@ -1,0 +1,16 @@
+D09 holds the content body to: schemas/curriculum.schema.v5.json
+M03 unit_content: required = ['unit_id', 'sections', 'evidence_references'] additionalProperties = False
+target: required = ['manifest_version', 'curriculum', 'domain', 'labs'] additionalProperties = False
+target properties = ['curriculum', 'domain', 'lab_count', 'labs', 'manifest_version']
+
+Any legal M03 body has exactly these keys: ['evidence_references', 'sections', 'unit_id']
+Intersection with target's allowed properties: []
+target required keys M03 may emit: []
+
+body is a VALID M03 unit_content.
+errors against schemas/curriculum.schema.v5.json: 5
+    / -> Additional properties are not allowed ('evidence_references', 'sections', 'unit_id' were unexpected)
+    / -> 'manifest_version' is a required property
+    / -> 'curriculum' is a required property
+    / -> 'domain' is a required property
+    / -> 'labs' is a required property

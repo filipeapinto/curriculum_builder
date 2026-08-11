@@ -3,7 +3,58 @@
 status: PASSED
 graph_digest: 96e1948fb28eb6fbb327939bc2764eb9bae625606ca668f384126bf10ca617e8
 node_prompt: plans/26_langgraph_curriculum_factory/prompts/N20_graph_compiler.prompt.v2.md (577a251c85b80d00fc0ae3929dc620a5c1b28b79ab970729a0b9428744f4f469)
-generation: 6
+generation: 7
+
+## Generation-7 rework — B-6 (blocking) and B-9
+
+Generation 7 answers **N30_UNIT_GRAPH Findings B-6 and B-9** (fingerprints
+`plan26/n30/model-dispatch-bypasses-d90` and
+`plan26/n30/n20-tests-superseded-by-d90-d91-registration`, in
+`results/N30_UNIT_GRAPH.result.v1.md`,
+ed79b4e2c68621519f7d85b33bd5c19b14f20e1dc7f0e029bd0bf9bc7a08ab35).
+
+B-6 is this node's defect and it was real. Spec 6.2's D90 row requires the model
+attempt counter to be *committed before dispatch*, and every N23 adapter enforces
+it by raising `AttemptNotReserved`. The section 8.2 table this node materialized
+had no edge into D90 from any dispatcher: `FANOUT_GUARDS` translated D06/D06B/D12's
+staged packet directly into `Send(worker, member)`, and `GUARD_DESTINATIONS` sent
+D07/D08/D15 to M02/M03/M05 on a plain conditional edge. Every model worker was
+therefore entered with an unreserved packet. It was masked until N30 ran a real
+episode: N23 proved D90 restages correctly by calling it directly, N22 proved its
+packets satisfy the adapters after passing them through D90 by hand, and this node
+compiled the table without ever invoking it. Only a real dispatch through a
+compiled edge shows that nothing calls D90.
+
+The fix is N30's four-part recipe, applied to `routing.py`:
+
+| # | Change |
+|---:|---|
+| 1 | The three model fan-out rows of `FANOUT_GUARDS` (D06 `discovery_fanout`, D06B `interpretation_fanout`, D12 `model_visual_fanout`) name `D90_RESERVE_MODEL_ATTEMPT` as their dispatch destination. D10's `deterministic_visual_fanout -> D11` is unchanged: D11 is deterministic and reserves nothing. |
+| 2 | `GUARD_DESTINATIONS`' `D07.sources_admitted`, `D08.domain_admitted` and `D15.review_packet_frozen` name `D90_RESERVE_MODEL_ATTEMPT`. |
+| 3 | `_fanout_or_single` returns that single destination for a model dispatcher instead of calling `_staged_fanout` at the dispatcher. |
+| 4 | `route_attempt_reservation` translates D90's *restaged* packet through `_staged_fanout`, so a one-member dispatch is a one-element `Send` list and an N-member map is an N-element one. It is now the single authority for D90's `authorized` value. |
+
+A fifth row was found by this node's own new regression test, not by N30: the
+workbook path had the identical defect at
+`D27_FREEZE_WORKBOOK_REVIEW_PACKET.workbook_packet_frozen -> M07_REVIEW_ACTUAL_WORKBOOK`.
+N30 could not have seen it — the workbook branch is not wired and N30 exercises
+only the unit path — but `GUARD_DESTINATIONS` is spec 8.2 and therefore this
+node's ownership, so the row is fixed here rather than left for N32 to inherit.
+It now names `D90_RESERVE_MODEL_ATTEMPT`, which is also the contract N32
+implements against: D27 must stage an M07 packet.
+
+**No row of `GUARD_DESTINATIONS` names a model node any more, and every model
+node's only compiled predecessor is D90.** Both halves are asserted by the new
+`test_no_compiled_edge_enters_a_model_node_except_from_d90`, which is the direct
+inversion of B-6 and fails if either half regresses.
+
+B-9's two re-scopes were applied, and three further assertions in the same file
+turned out to be superseded by the same change (all five described under
+"Re-scoped at generation 7" below). All 39 tests in this node's file pass in the
+hash-locked environment, and the real episode now dispatches through D90 for real
+— see "B-6 verified on the real graph" under Commands.
+
+## Generation 6 — B-4
 
 Generation 6 is a narrow rework answering **N30_UNIT_GRAPH Finding B-4**
 (fingerprint `plan26/n30/n20-skeleton-scoped-tests-superseded`, in
@@ -84,9 +135,9 @@ Other frozen inputs read:
 
 | Path | SHA-256 |
 |---|---|
-| `runtime/langgraph_factory/graph.py` | 3d56e7ff375aa89f3c76fd48932fa5affd195fe62137919c953e31769718bc32 (was `b47b8786…` at generation 5; the delta is N30's additive unit-path registration, not an edit by this node) |
-| `runtime/langgraph_factory/routing.py` | efcc6db169399129e4d3825b3fce5c11501a44a08f0e45433cfadcb7e6361bee |
-| `tests/runtime/test_plan26_topology.py` | 844883016df59f9c54b2c4d24a312d1af5230754a40aa1b98c02cc6111de8a8c |
+| `runtime/langgraph_factory/graph.py` | 6361e12cd0f4daa119d6311b1ecb9bab65102978820e22f24da7a259aa7a72aa (was `3d56e7ff…` at generation 6; the delta is N30's D90/D91 registration, not an edit by this node — this node made no `graph.py` change at generation 7) |
+| `runtime/langgraph_factory/routing.py` | 6be93bf8bd951ae9984f74dc9dbe91c709a41edca0a1a6ff6d72be52cd998079 (was `efcc6db1…`; the B-6 rework, and the first change to this file since generation 4) |
+| `tests/runtime/test_plan26_topology.py` | 87bd5dc6b3e4da4c6ae4c2646027c648167bf72f9432033c9567c65c752af332 (was `84488301…`; the B-9 re-scopes plus the new B-6 regression) |
 | `plans/26_langgraph_curriculum_factory/results/N20_GRAPH_COMPILER.result.v1.md` | this file |
 
 ## Commands
@@ -119,6 +170,63 @@ so `tests/runtime/test_plan26_unit_graph.py` and
 `test_plan26_deterministic_nodes.py` were red in the same environment. None of
 those rows is `test_plan26_topology.py`, and none is in this node's write set.
 
+### Generation 7 (B-6/B-9 rework)
+
+Run in `/tmp/plan26_n20_verify`, the environment this node built at generation 4
+from `requirements/plan26.lock` with `pip install --require-hashes`
+(`venv_install.txt`), still holding `langgraph 1.2.9`.
+
+| Command | Exit | Evidence |
+|---|---:|---|
+| `/tmp/plan26_n20_verify/bin/python -m pytest tests/runtime/test_plan26_topology.py -q` | 0 | `results/evidence/N20_GRAPH_COMPILER/venv_topology_gen7.txt` (**39 passed**; the baseline before this rework was 37 passed / 2 failed, exactly B-9's two rows) |
+| one real episode of the real compiled graph, no pytest and no in-memory patch in the path | 0 | `results/evidence/N20_GRAPH_COMPILER/d90_dispatch_trace_gen7.txt` |
+| negative probes: each generation-7 assertion violated on purpose | 0 | `results/evidence/N20_GRAPH_COMPILER/negative_probes_gen7.txt` (all four reject) |
+| `python3 -m pytest -q -rs` (ambient) | 0 | `results/evidence/N20_GRAPH_COMPILER/ambient_pytest_gen7.txt` (**806 passed, 12 skipped, 0 failed**, 282 subtests passed; every skip is a "langgraph absent from the ambient interpreter" module skip plus N10's `pip-tools` skip) |
+
+#### B-6 verified on the real graph
+
+The point of B-6 is that it was invisible to every test that did not dispatch
+through a compiled edge, so the acceptance evidence is a real episode, not an
+assertion. Streamed from the real `build_curriculum_factory_graph`, with
+`routing.py` exactly as it sits on disk and nothing patched in memory:
+
+```text
+D00 -> D01 -> D02 -> D03 -> D04 -> D05
+D06_COMPILE_SOURCE_REQUESTS      guard=discovery_fanout
+D90_RESERVE_MODEL_ATTEMPT        guard=authorized        <- 2 reservations committed
+M01_RESEARCH_UNIT_SOURCES        (Send worker 1 of 2)
+M01_RESEARCH_UNIT_SOURCES        (Send worker 2 of 2)
+D06B_RETRIEVE_SOURCE_CANDIDATES  guard=interpretation_fanout
+D90_RESERVE_MODEL_ATTEMPT        guard=authorized        <- 2 more
+M01_RESEARCH_UNIT_SOURCES        (Send worker 1 of 2)
+M01_RESEARCH_UNIT_SOURCES        (Send worker 2 of 2)
+D07_CORRELATE_AND_ADMIT_SOURCES  exact join reached and passed
+D98_WRITE_TERMINAL
+```
+
+This is the trace N30 verified for the recipe in memory
+(`evidence/N30_UNIT_GRAPH/blocker_probe_d90_recipe.txt`), now produced by
+committed code. Before this rework the same episode reached M01 unreserved and
+was classified `system` by D91 at the first dispatch. D07 still ends on a
+`schema_contract` system failure — the synthetic fixture engine root has no
+`schemas/manifest_domain.metaschema.v1.json` — which is the identical stopping
+point N30's probe recorded and is a fixture limit, not a routing one.
+
+Four reservations were minted for four dispatches, one per fan-out member, which
+is what spec 6.2's "committed before dispatch" requires and what every N23
+adapter enforces from the other side.
+
+#### Non-vacuity
+
+The generation-7 assertions were each violated on purpose and each rejected:
+
+| Violation | Rejected by |
+|---|---|
+| a model fan-out row dispatches straight to its worker | `test_no_compiled_edge_enters_a_model_node_except_from_d90` (M01 gains D06 as a second predecessor) |
+| `D07.sources_admitted` points straight at M02 | the same test, on the guard-table half |
+| `route_attempt_reservation` resolves one job id instead of the reserved map | `test_a_fanout_guard_emits_one_send_per_staged_worker_projection` |
+| a model worker gains a forward successor that is not a declared barrier | `test_every_registered_fanout_has_the_worker_to_barrier_shape` (so widening its exclusion set to cover D91 did not make it vacuous) |
+
 Direct compilation proof, run outside pytest against the production builder with
 no test harness in the path:
 
@@ -139,23 +247,24 @@ Installed in the isolated environment: `langgraph 1.2.9`,
 
 | # | TEST item | Verdict | Backing assertion |
 |---:|---|---|---|
-| 1 | Exact available catalogue compiles; one START; only real D98 reaches END | **PASS** | `test_the_available_catalogue_compiles_against_real_node_callables`, `test_start_has_exactly_one_edge_and_d98_is_the_only_registered_end_edge`, `test_the_skeleton_wires_exactly_the_declared_edges` — all three pass against the real unmodified schema: 30 registered nodes (22 N22 + 8 N23), `START` has exactly one edge (`D00`), and `D98_WRITE_TERMINAL` is the only source of a *registered* END edge. |
+| 1 | Exact available catalogue compiles; one START; only real D98 reaches END | **PASS** (generation 7: 30 -> 32 bindings, B-9) | `test_the_available_catalogue_compiles_against_real_node_callables`, `test_start_has_exactly_one_edge_and_d98_is_the_only_registered_end_edge`, `test_the_skeleton_wires_exactly_the_declared_edges` — all three pass against the real unmodified schema: **32** registered nodes (22 N22 + 8 N23 adapters + N23's two `MODEL_BOOKKEEPING_NODES`, D90 and D91, which N30 registered), `START` has exactly one edge (`D00`), and `D98_WRITE_TERMINAL` is the only source of a *registered* END edge. The expected set is composed from the three real inventories rather than a literal, and `len(bindings) == 32` is asserted exactly, so a dropped or smuggled binding fails either way. |
 | 2 | Missing/placeholder/test-only/duplicate/dangling/unreachable fails by stable ID | **PASS** | 7 tests: `N20-BIND-MISSING`, `N20-BIND-PLACEHOLDER` (x2: foreign module and test-local callable), `N20-BIND-UNCALLABLE`, `N20-BIND-DUPLICATE`, `N20-EDGE-DANGLING`, `N20-NODE-UNDECLARED`, plus `N20-GUARD-UNROUTED` for a declared guard value with no destination. All raise before `add_node`, so this is a builder guard, not a runtime crash. Generation 6: the `N20-NODE-UNDECLARED` case now reads its example node from the live `DEFERRED_TOPOLOGY` rather than naming `D13_RENDER_UNIT`, which N30 has since wired — the rejection is what is under test, not any one node, and the fixture now follows whatever N31/N32 still owe. |
-| 3 | Every cycle crosses a deterministic counter/exhaustion guard | **PASS** (generation 6: re-scoped, no longer "scoped") | `test_every_cycle_in_the_compiled_graph_crosses_an_exhaustion_guard` enumerates every simple cycle of the really-compiled graph. Two exist, both worker/barrier supersteps N30 wired from spec 8.1: `D06B -> M01 -> D06B` (source interpretation) and `D12 -> M04 -> D12` (the visual barrier). Each is required to contain a bounding node — one declaring an exhaustion guard value whose destination leaves the cycle, or a fan-out dispatcher that refuses to dispatch again without a freshly staged worker projection (`RoutingViolation`, proven by calling the guard) — and to have at least one product exit outside itself, so no cycle is a closed trap. D06B and D12 are the bounds; the exits are `M01 -> D07` and `D12 -> D13`. The frozen guard rows for the cycles N31/N32 have yet to wire are still asserted: D17/D18/D29 `convergence_exhausted -> D98`, D90/D91 `exhausted -> D98`, and the unit loop closing only through `D23 -> D05`. Non-vacuity is evidenced, not assumed (`negative_probes_gen6.txt`). |
+| 3 | Every cycle crosses a deterministic counter/exhaustion guard | **PASS** (generation 7: the model supersteps now run through D90) | `test_every_cycle_in_the_compiled_graph_crosses_an_exhaustion_guard` enumerates every simple cycle of the really-compiled graph. Each is required to contain a bounding node — one declaring an exhaustion guard value whose destination leaves the cycle, or a fan-out that refuses to dispatch again without a freshly staged worker projection (`RoutingViolation`, proven by calling the guard) — and to have at least one product exit outside itself, so no cycle is a closed trap. Generation 7 changes the shape of the two model supersteps: `D06B -> M01 -> D06B` is now `D06B -> D90 -> M01 -> D06B` and the visual barrier is `D12 -> D90 -> M04 -> D12`, which is a *stronger* bound, since D90 is the node that commits the attempt counter and declares `exhausted -> D98`. The refusal probe follows the `Send`s to D90's guard, which is where a staged packet is now translated. The frozen guard rows for the cycles N31/N32 have yet to wire are still asserted: D17/D18/D29 `convergence_exhausted -> D98`, D90/D91 `exhausted -> D98`, and the unit loop closing only through `D23 -> D05`. Non-vacuity is evidenced, not assumed (`negative_probes_gen6.txt`, `negative_probes_gen7.txt`). |
 | 4 | Models have no edge to acceptance/routing/reduction/resume/terminal authority | **PASS** | `test_no_model_node_has_an_edge_to_an_authority_node` (compiled-edge half, now against the real compiled graph), `test_a_model_node_holds_no_acceptance_reduction_or_terminal_channel_authority`, `test_routing_never_lets_a_model_result_name_its_own_destination` (AST: no model-result guard reads any channel in `MODEL_NODE_WRITABLE_FIELDS` except presence of `source_discoveries`/`source_interpretations`, and names only code-owned destinations), and `test_a_stored_frontier_may_not_name_a_model_node`. See Findings F-02 for the deliberate reading of "reduction". |
-| 5 | Source/visual fan-outs use supported `Send` worker->barrier; mixed joins fail | **PASS** (generation 6: re-scoped, no longer "scoped") | `test_every_registered_fanout_has_the_worker_to_barrier_shape` checks all four registered fan-outs against the compiled graph: D06/D06B -> M01, D10 -> D11, D12 -> M04. For each, the dispatcher has a compiled edge to a *single* worker, the guard emits exactly one `Send` per staged worker projection with the projection passed through unchanged, and the worker has a compiled edge to the deterministic barrier that owns the denominator (D06B, D07, D12, D12 respectively — never a model node). Each worker's forward successors, recovery destinations aside, are *exactly* its declared barriers, so a fanned-out worker rejoins a denominator and never fans out again. The shape table is asserted total over `FANOUT_GUARDS`, so a fan-out added without a declared shape fails rather than going unchecked. The prior guard-level tests are retained unchanged: `test_a_fanout_guard_emits_one_send_per_staged_worker_projection` and `test_a_fanout_guard_refuses_an_unstaged_or_mixed_dispatch`. |
+| 5 | Source/visual fan-outs use supported `Send` worker->barrier; mixed joins fail | **PASS** (generation 7: re-scoped for B-6, and a new assertion added) | `test_every_registered_fanout_has_the_worker_to_barrier_shape` checks all four registered fan-outs against the compiled graph. The compiled shape is now `dispatcher -> D90 -> worker -> barrier` for the three model fan-outs (D06/D06B -> M01, D12 -> M04) and `dispatcher -> worker -> barrier` for the deterministic one (D10 -> D11): the dispatching guard is asserted to return D90 rather than a `Send` list, and the `Send`s are then asserted against D90's own guard, one per staged member with the member passed through unchanged. Each worker has a compiled edge to the deterministic barrier that owns the denominator (D06B, D07, D12, D12 respectively — never a model node), and its forward successors, recovery destinations aside, are *exactly* its declared barriers. `D91_CLASSIFY_MODEL_FAILURE` joined `D96`/`D98`/`END` in that exclusion set (B-9): a model worker's failure edge is a recovery edge, not a second barrier — and the probe table above shows the widened exclusion did not make the assertion vacuous. The shape table is still asserted total over `FANOUT_GUARDS`. **New at generation 7:** `test_no_compiled_edge_enters_a_model_node_except_from_d90` asserts B-6's inverse over the whole graph — no `GUARD_DESTINATIONS` row names a model node, and every model node's set of compiled predecessors is exactly `{D90}`. The two guard-level tests were re-pointed at D90, which is now where a staged packet becomes `Send`s: `test_a_fanout_guard_emits_one_send_per_staged_worker_projection` (which also asserts D12's guard returns D90) and `test_a_fanout_guard_refuses_an_unstaged_or_mixed_dispatch`. |
 | 6 | Empty subsets and arbitrary manifest lengths remain legal | **PASS** | Four tests: no unit/lesson identifier or manifest-length constant appears in `graph.py`/`routing.py` (AST + substring); an empty deterministic visual subset routes straight to the barrier; an exhausted manifest routes to coverage proof at any length; and `test_the_builder_registers_a_fixed_node_set_independent_of_any_manifest` confirms against the real compiled graph that the registered node set equals the frozen binding inventory with no per-unit node. |
-| 7 | Identical real bindings yield identical digest; callable/schema/prompt drift changes it | **PASS** | All five digest tests pass against the real schema: two independent builds agree, and a changed callable binding, a changed reducer declaration, and a changed prompt file each change the digest; `test_the_digest_ignores_python_object_identity` pins that it is not keyed on object identity. **Production graph digest at generation 6: `d26798042b0499425055fa4eb995deb2071c00f07f520d4be1fcd3f85429125c`.** It moved from generation 5's `4b1f7242…` because N30 registered the per-unit path — the digest is keyed on topology, so a larger topology is a different graph, which is the property these tests exist to hold. Generation 4's provisional diagnostic value `58ef1bd4...` was computed over a patched schema and remains void. |
+| 7 | Identical real bindings yield identical digest; callable/schema/prompt drift changes it | **PASS** | All five digest tests pass against the real schema: two independent builds agree, and a changed callable binding, a changed reducer declaration, and a changed prompt file each change the digest; `test_the_digest_ignores_python_object_identity` pins that it is not keyed on object identity. **Production graph digest at generation 7: `297f0b5f1113aceb902d1793ab1669520c4cdc5575ca5e51c79c3d652c1f5fe3`.** It moved from generation 6's `d2679804…` for two reasons that are both the property these tests exist to hold: N30 registered D90/D91 (two nodes, fifteen edges), and this node's B-6 rework re-pointed six guard rows, which changes the topology the digest is keyed on. It had moved from generation 5's `4b1f7242…` when N30 registered the per-unit path. Generation 4's provisional diagnostic value `58ef1bd4...` was computed over a patched schema and remains void. |
 | 8 | Production imports contain no handwritten fallback controller | **PASS** | `test_production_graph_imports_contain_no_fallback_controller`: no import or textual reference to `runtime.curriculum_factory_graph`, `CurriculumFactoryGraph`, `session_bridge`, `test_simulated`, or `fallback_controller`, and none of the five forbidden model-invocation packages. `test_only_one_builder_and_one_compile_call_exist` asserts exactly one `build_*graph*` function and exactly one `.compile(` call in `graph.py`. |
 
-Totals: **38 passed, 0 failed, 0 errors, 0 skipped** in the hash-locked
-environment. The 38th test,
+Totals: **39 passed, 0 failed, 0 errors, 0 skipped** in the hash-locked
+environment (38 at generation 6; the 39th is
+`test_no_compiled_edge_enters_a_model_node_except_from_d90`). The 38th test,
 `test_the_state_schema_declares_no_langgraph_reserved_channel_name` — the
 assertion that reported the generation-4 blocker — is now green, which is the
 acceptance test for the erratum's rework and is retained as a standing
 regression guard against any future reserved-name collision.
 
-### Real binding inventory (30 callables, all production modules)
+### Real binding inventory (32 callables, all production modules)
 
 | Source | Node IDs |
 |---|---|
@@ -165,10 +274,12 @@ regression guard against any future reserved-name collision.
 | `runtime.langgraph_factory.nodes.visuals` (N22) | D10, D11, D12 |
 | `runtime.langgraph_factory.nodes.render` / `.review` (N22) | D13, D14, D15 |
 | `runtime.langgraph_factory.nodes.terminal` (N22) | D98 |
-| `runtime.langgraph_factory.model_nodes` (N23) | M01–M08 |
+| `runtime.langgraph_factory.model_nodes` (N23) | M01–M08, D90, D91 |
 
-Absent by construction, not padded: D16–D29, D31, D32 (N31/N32 own the bodies)
-and graph-registrable D90/D91 wrappers (see F-03).
+Absent by construction, not padded: D16–D29, D31, D32 (N31/N32 own the bodies).
+D90/D91 are no longer absent — F-03 recorded them as owed, N23 exported them as
+`MODEL_BOOKKEEPING_NODES` under N30's Finding B-3, and N30 registered them, which
+takes the inventory from 30 to 32.
 
 ### Topology actually registered
 
@@ -321,21 +432,71 @@ initialization/correlation (D04, D23), unit selection (D05), workbook assembly
   falsify it. Phrase the invariant instead — "every X has shape S" — which is
   what these three now do.
 
+- **F-08 (RESOLVED at generation 7) — N30's B-6, `topology_or_guard`, this node's defect.**
+  Fingerprint `plan26/n30/model-dispatch-bypasses-d90`. Diagnosed and fixed as
+  described at the head of this record. Two things are worth carrying forward.
+  First, on why it survived four generations of green tests: every predecessor
+  proved its own half by *calling* D90 or the adapters directly, and this node
+  proved the guard table was total and well-typed. Totality is not reachability
+  — a table can name a destination for every guard value and still have no edge
+  that reaches the node that authorizes the dispatch. The generation-7
+  regression is phrased over compiled predecessors precisely so it cannot be
+  satisfied by a table that merely mentions D90.
+  Second, on scope: N30 named three unit-path rows; a fourth (D27 -> M07) had the
+  same defect on the not-yet-wired workbook path and was found by writing the
+  assertion as a total property of `GUARD_DESTINATIONS` rather than as three
+  fixes. A defect report is bounded by what the reporter can execute, and the
+  owner of the table is the one who has to close it everywhere.
+
+- **F-09 (RESOLVED at generation 7) — N30's B-9, `topology_or_guard`, caused by N30.**
+  Fingerprint `plan26/n30/n20-tests-superseded-by-d90-d91-registration`. N30
+  registering D90/D91 made two of this node's assertions false by design, the
+  same pattern as F-07. Applying B-6 in the same generation superseded three
+  more. All five are re-scoped; none is weakened, and the probe table under
+  Commands shows none became vacuous.
+
+### Re-scoped at generation 7
+
+| Test | Was | Now |
+|---|---|---|
+| `test_the_available_catalogue_compiles_against_real_node_callables` | `set(bindings) == set(registry) \| set(MODEL_NODE_ADAPTERS)`, 30 bindings | also unions `MODEL_BOOKKEEPING_NODES` and asserts 32, with that set's membership (D90, D91) asserted rather than assumed |
+| `test_every_registered_fanout_has_the_worker_to_barrier_shape` | dispatcher's compiled successor is the worker, and the dispatcher's guard emits the `Send`s | dispatcher's successor is D90 for a model fan-out (D11 for the deterministic one), the `Send`s are asserted against D90's guard, and D91 joins the worker-successor exclusion set as a recovery edge (B-9) |
+| `test_every_cycle_in_the_compiled_graph_crosses_an_exhaustion_guard` | the discovery superstep cycle is `{D06B, M01}`, and the dispatcher's guard is probed for the no-staged-packet refusal | the cycle is `{D06B, D90, M01}`, and the refusal is probed at whichever guard now emits the `Send`s |
+| `test_a_fanout_guard_emits_one_send_per_staged_worker_projection` | `route_visual_barrier` returns two `Send`s | `route_visual_barrier` returns D90, and `route_attempt_reservation` returns the two `Send`s |
+| `test_a_fanout_guard_refuses_an_unstaged_or_mixed_dispatch` | the three malformed-packet rejections are asserted on D12's guard | asserted on D90's guard, which is where a staged packet is now translated |
+
 ## Invalidated descendants
 
-None. This node has never modified a predecessor's artifact. Generation 5 changed
-no code at all, and generation 6 changed only `tests/runtime/test_plan26_topology.py`
-— no production module in this node's write set was edited, so no descendant's
-inputs moved. The F-01 rework's own invalidation was recorded by N11 and N22 at
-their generation 4.
+None. This node has never modified a predecessor's artifact. Generation 7 edits
+`routing.py` and `tests/runtime/test_plan26_topology.py`, both in this node's own
+write set, and `routing.py`'s change is the rework N30 asked for.
+
+It does, however, supersede six assertions in **N30's own**
+`tests/runtime/test_plan26_unit_graph.py`, which N30 must re-scope — the mirror
+image of B-9, and expected, since two of them are the `test_blocked_*` rows N30
+wrote to *record* B-6 and which must now invert:
+
+| N30 test | Why it is now false |
+|---|---|
+| `test_blocked_no_registered_edge_routes_a_model_dispatch_through_d90` | an edge does now route through D90; this is B-6's inversion |
+| `test_blocked_d90s_authorized_guard_cannot_express_a_map` | `route_attempt_reservation` now returns an N-element `Send` list |
+| `test_a_visual_fanout_dispatches_one_send_per_staged_denominator_member` | D12's guard returns D90, so the `Send`s are D90's |
+| `test_a_source_fanout_stages_one_m01_packet_per_request_key` | same, for D06 |
+| `test_a_fanout_with_no_staged_packet_refuses_to_improvise_one` | the refusal moved to D90's guard |
+| `test_the_source_map_reduce_supersteps_execute_as_real_send_fanouts` | asserts the episode ends `SYSTEM_FAILURE` via D91 on an unreserved dispatch; it now reaches D07 |
+
+A seventh row in the same file,
+`test_blocked_a_model_candidate_record_is_not_an_admissible_artifact_version`, is
+red for an unrelated reason — it is B-7's inversion, and N22/N23's B-7 rework has
+since landed. Not caused by this node and not this node's to re-scope.
 
 ## Hashes
 
 | Artifact | SHA-256 |
 |---|---|
-| `runtime/langgraph_factory/graph.py` | 3d56e7ff375aa89f3c76fd48932fa5affd195fe62137919c953e31769718bc32 (was `b47b8786…` at generation 5; the delta is N30's additive unit-path registration, not an edit by this node) |
-| `runtime/langgraph_factory/routing.py` | efcc6db169399129e4d3825b3fce5c11501a44a08f0e45433cfadcb7e6361bee |
-| `tests/runtime/test_plan26_topology.py` | 844883016df59f9c54b2c4d24a312d1af5230754a40aa1b98c02cc6111de8a8c |
+| `runtime/langgraph_factory/graph.py` | 6361e12cd0f4daa119d6311b1ecb9bab65102978820e22f24da7a259aa7a72aa (was `3d56e7ff…` at generation 6; the delta is N30's D90/D91 registration, not an edit by this node — this node made no `graph.py` change at generation 7) |
+| `runtime/langgraph_factory/routing.py` | 6be93bf8bd951ae9984f74dc9dbe91c709a41edca0a1a6ff6d72be52cd998079 (was `efcc6db1…`; the B-6 rework, and the first change to this file since generation 4) |
+| `tests/runtime/test_plan26_topology.py` | 87bd5dc6b3e4da4c6ae4c2646027c648167bf72f9432033c9567c65c752af332 (was `84488301…`; the B-9 re-scopes plus the new B-6 regression) |
 | `implementation.graph.v2.yaml` | 96e1948fb28eb6fbb327939bc2764eb9bae625606ca668f384126bf10ca617e8 |
 | `prompts/N20_graph_compiler.prompt.v2.md` | 577a251c85b80d00fc0ae3929dc620a5c1b28b79ab970729a0b9428744f4f469 |
 | `spec/langgraph_curriculum_factory.spec.v1.md` | 44e63e6271cae25f14f0bc970c598d1c15da41b67ae3cdf811bbb2f2303536e6 |
@@ -357,11 +518,21 @@ their generation 4.
 | `evidence/N20_GRAPH_COMPILER/venv_install.txt` | 31bb4772eabad10cce59aa5be2c6be3fc3d25e925cd87a2d5eb3c70909effa8c |
 | `evidence/N20_GRAPH_COMPILER/venv_topology_real.txt` | 8f43e90bfe5bb236d1c342ca85a0502229b25efcdbfc8c6d31f594159e54086c |
 | `evidence/N20_GRAPH_COMPILER/ambient_pytest.txt` | 845db468fec82eec756226286db95c88c627eb41584370cc0d17ebd2a67bfa92 |
+| `evidence/N20_GRAPH_COMPILER/venv_topology_gen6.txt` | 4aabaa683addc2d06d9012b6f353beeb8c7a3b6910929ce5ef1b7a04fc53a16a |
+| `evidence/N20_GRAPH_COMPILER/negative_probes_gen6.txt` | c6763d56a63c525f15612d946b0c84cd2373b20f63acd61cd3fe63e7482427ad |
+| `evidence/N20_GRAPH_COMPILER/venv_topology_gen7.txt` | 542b2ea3c0853039e23d94f5dbdea43a307cb20c9f02a89bc5f1948ccaaacd59 |
+| `evidence/N20_GRAPH_COMPILER/d90_dispatch_trace_gen7.txt` | 58b33f3821f4bafe6951f7c8de9c62eb3cd6f35177b49bbe392cb7878def1b4c |
+| `evidence/N20_GRAPH_COMPILER/negative_probes_gen7.txt` | 31e1ba0cdaf9af241edef30947279bbca9d8c868c95300de7715bca2f9b38ec3 |
+| `evidence/N20_GRAPH_COMPILER/ambient_pytest_gen7.txt` | b99e69c541db99e428b0f5f1c3ddfb62c533ad116a16515e553040fb5268a3ad |
+| `results/N30_UNIT_GRAPH.result.v1.md` | ed79b4e2c68621519f7d85b33bd5c19b14f20e1dc7f0e029bd0bf9bc7a08ab35 |
 
 Generation 4's `diag_plugin.py`, `venv_topology_diagnostic.txt`, and
 `diagnostic_topology.txt` were deleted, not merely de-listed: no verdict in
 this record depends on them, and leaving a schema-patching plugin in an
 evidence directory invites a later node to mistake it for a supported harness.
 
-Production graph digest (over the real compiled graph, reproducible):
-`4b1f7242be5b2f40ac789b38f154ca32d05ef91bd01bdb3745d93ba027fb7361`.
+Production graph digest at generation 7 (over the real compiled graph,
+reproducible): `297f0b5f1113aceb902d1793ab1669520c4cdc5575ca5e51c79c3d652c1f5fe3`.
+Generation 6 was `d26798042b0499425055fa4eb995deb2071c00f07f520d4be1fcd3f85429125c`
+and generation 5 `4b1f7242be5b2f40ac789b38f154ca32d05ef91bd01bdb3745d93ba027fb7361`;
+each move is a real topology change, which is what the digest is keyed on.

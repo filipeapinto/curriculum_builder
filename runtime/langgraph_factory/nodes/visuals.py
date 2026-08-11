@@ -12,8 +12,10 @@ from typing import Any
 
 from . import (
     SystemFailure,
+    candidate_payload,
     canonical_digest,
     check_record,
+    is_model_candidate,
     correlation_record,
     deterministic_node,
     guard,
@@ -158,17 +160,24 @@ def D10_COMPILE_VISUAL_BRIEFS(projection: dict[str, Any], runtime_context: Any) 
 
     if deterministic_keys:
         by_key = {brief["key"]: brief for brief in briefs}
+        # A `Send` member arrives as the worker's *whole input state*, and D11 is
+        # the one deterministic worker on the receiving end: its authorized
+        # projection is read by channel name, so the member has to name the
+        # channel it delivers on. A model worker takes its member unprojected and
+        # so can be staged flat; D11 cannot.
         update["pending_packet"] = staged_dispatch(
             "D11_CREATE_DETERMINISTIC_VISUALS",
             [
                 {
-                    "brief": by_key[key],
-                    "permitted_facts": by_key[key]["permitted_facts"],
-                    "correlation": correlation_record(
-                        projection["run_id"],
-                        projection["episode_id"],
-                        f"{unit_id}/{content_head['hash']}/{key}",
-                    ),
+                    "pending_packet": {
+                        "brief": by_key[key],
+                        "permitted_facts": by_key[key]["permitted_facts"],
+                        "correlation": correlation_record(
+                            projection["run_id"],
+                            projection["episode_id"],
+                            f"{unit_id}/{content_head['hash']}/{key}",
+                        ),
+                    }
                 }
                 for key in sorted(deterministic_keys)
             ],
@@ -251,6 +260,41 @@ def D11_CREATE_DETERMINISTIC_VISUALS(
 # --------------------------------------------------------------------------
 
 
+def _visual_result(
+    key: str, value: Any, briefs: dict[str, Any]
+) -> tuple[str, Any]:
+    """Normalize one member of `visual_results` into the shape D11 also writes.
+
+    An M04 candidate is keyed on its activation and carries only the model's own
+    answer, so the join key, the subset, the unit, and the content head it belongs
+    to are the brief's, and the hash is this node's digest of the candidate — none
+    of them a value the model was allowed to supply.
+    """
+
+    if not is_model_candidate(value):
+        return key, value
+    payload = candidate_payload(value, f"visual candidate {key}")
+    visual = payload.get("visual_candidate")
+    require(
+        isinstance(visual, dict),
+        "schema_contract",
+        f"visual candidate {key} declares no visual_candidate",
+    )
+    brief_id = str(value.get("brief_id") or visual.get("brief_id") or key)
+    brief = briefs.get(brief_id, {})
+    return brief_id, {
+        "key": brief_id,
+        "unit_id": value.get("unit_id", brief.get("unit_id")),
+        "subset": value.get("subset", "model"),
+        "provenance": "model_candidate",
+        "content_hash": value.get("content_hash", brief.get("content_hash")),
+        "domain_hash": value.get("domain_hash", brief.get("domain_hash")),
+        "sha256": canonical_digest(payload),
+        "format": visual.get("image_format"),
+        "accessibility_text": visual.get("accessibility_text"),
+    }
+
+
 @deterministic_node("D12_VISUAL_BARRIER_AND_JOIN")
 def D12_VISUAL_BARRIER_AND_JOIN(projection: dict[str, Any], runtime_context: Any) -> dict[str, Any]:
     """Prove the exact visual denominator, then dispatch model briefs or admit the head.
@@ -282,7 +326,15 @@ def D12_VISUAL_BARRIER_AND_JOIN(projection: dict[str, Any], runtime_context: Any
 
     expected_deterministic = set(denominator["deterministic_keys"])
     expected_model = set(denominator["model_keys"])
-    results = projection["visual_results"]
+    briefs_by_key = {
+        brief["key"]: brief
+        for brief in projection["visual_briefs"]
+        if isinstance(brief, dict) and "key" in brief
+    }
+    results: dict[str, Any] = {}
+    for raw_key, value in projection["visual_results"].items():
+        joined_key, result = _visual_result(raw_key, value, briefs_by_key)
+        results[joined_key] = result
 
     actual_deterministic = {
         key

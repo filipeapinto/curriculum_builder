@@ -1,0 +1,24 @@
+# B-6 verification, generation 7: the real compiled graph, streamed from the
+# real on-disk routing.py. Nothing is patched in memory. Reproduces the trace
+# N30 verified for its proposed recipe (blocker_probe_d90_recipe.txt).
+
+# B-6 verification: real compiled graph, on-disk routing.py, no pytest in the path
+-> D00_BOOTSTRAP_EPISODE guard=fresh fail=None
+-> D01_VALIDATE_AND_FREEZE_INPUTS guard=inputs_frozen fail=None
+-> D02_COMPILE_EFFECTIVE_RUN guard=effective_run_compiled fail=None
+-> D03_PROVE_CAPABILITIES guard=capabilities_proven fail=None
+-> D04_INITIALIZE_OR_RESUME guard=fresh_initialized fail=None
+-> D05_SELECT_NEXT_UNIT guard=unit_selected fail=None
+-> D06_COMPILE_SOURCE_REQUESTS guard=discovery_fanout fail=None
+-> D90_RESERVE_MODEL_ATTEMPT guard=authorized fail=None
+-> M01_RESEARCH_UNIT_SOURCES guard=None fail=None
+-> M01_RESEARCH_UNIT_SOURCES guard=None fail=None
+-> D06B_RETRIEVE_SOURCE_CANDIDATES guard=interpretation_fanout fail=None
+-> D90_RESERVE_MODEL_ATTEMPT guard=authorized fail=None
+-> M01_RESEARCH_UNIT_SOURCES guard=None fail=None
+-> M01_RESEARCH_UNIT_SOURCES guard=None fail=None
+-> D07_CORRELATE_AND_ADMIT_SOURCES guard=None fail=schema_contract
+    {"node": "D07_CORRELATE_AND_ADMIT_SOURCES", "class": "system", "cause": "schema_contract", "message": "engine contract 'schemas/manifest_domain.metaschema.v1.json' is missing", "evidence": {"path": "/private/var/folders/kj/z_75gwxx2ls7p55rnx4t5kg00000gn/T/n20-b6-sy792_ff/engine/schemas/manifest_domain.metaschema.v1.json"}}
+-> D98_WRITE_TERMINAL guard=terminated fail=None
+TRACE ['D00_BOOTSTRAP_EPISODE', 'D01_VALIDATE_AND_FREEZE_INPUTS', 'D02_COMPILE_EFFECTIVE_RUN', 'D03_PROVE_CAPABILITIES', 'D04_INITIALIZE_OR_RESUME', 'D05_SELECT_NEXT_UNIT', 'D06_COMPILE_SOURCE_REQUESTS', 'D90_RESERVE_MODEL_ATTEMPT', 'M01_RESEARCH_UNIT_SOURCES', 'M01_RESEARCH_UNIT_SOURCES', 'D06B_RETRIEVE_SOURCE_CANDIDATES', 'D90_RESERVE_MODEL_ATTEMPT', 'M01_RESEARCH_UNIT_SOURCES', 'M01_RESEARCH_UNIT_SOURCES', 'D07_CORRELATE_AND_ADMIT_SOURCES', 'D98_WRITE_TERMINAL']
+TERMINAL SYSTEM_FAILURE

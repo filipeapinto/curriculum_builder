@@ -85,10 +85,12 @@ AUTHORITY_NODES = frozenset({
     END,
 })
 
-# (dispatching node, fan-out guard value) -> (guard, worker, barrier). The
-# barrier is the deterministic node that owns the fan-out's denominator and to
+# (dispatching node, fan-out guard value) -> (dispatching guard, worker, barrier).
+# The barrier is the deterministic node that owns the fan-out's denominator and to
 # which the worker returns; for M01 that is the next node of whichever superstep
-# the phase advance selects.
+# the phase advance selects. A model fan-out's dispatching guard resolves to D90,
+# not to the worker: the `Send`s are emitted by D90's guard, from the packet D90
+# restaged with one committed attempt reservation per member.
 FANOUT_SHAPES = {
     ("D06_COMPILE_SOURCE_REQUESTS", "discovery_fanout"): (
         R.route_source_discovery_fanout,
@@ -111,6 +113,19 @@ FANOUT_SHAPES = {
         "D12_VISUAL_BARRIER_AND_JOIN",
     ),
 }
+
+
+def _send_emitting_guard(source: str, value: str):
+    """The guard that actually emits the `Send`s for this fan-out, and its record.
+
+    For a model fan-out that is D90's guard reading D90's restaged packet, because
+    spec 6.2 requires the attempt counter to be committed before dispatch; for a
+    deterministic fan-out it is the dispatching node's own guard.
+    """
+
+    if R.FANOUT_GUARDS[source][value] == R.ATTEMPT_RESERVATION:
+        return R.route_attempt_reservation, R.ATTEMPT_RESERVATION, "authorized"
+    return FANOUT_SHAPES[(source, value)][0], source, value
 
 
 @pytest.fixture(scope="module")
@@ -162,13 +177,17 @@ def test_the_available_catalogue_compiles_against_real_node_callables(compiled):
     assert compiled.name == G.GRAPH_NAME == "plan26_curriculum_factory"
     assert isinstance(compiled, CompiledStateGraph)
 
-    # 22 deterministic bodies (N22) + 8 model adapters (N23), all real callables.
+    # 22 deterministic bodies (N22) + 8 model adapters + D90/D91 (N23), all real
+    # callables.
     assert set(registry) == set(NODE_CATALOGUE)
     assert len(registry) == 22
     assert set(mn.MODEL_NODE_ADAPTERS) == set(mn.MODEL_NODE_IDS)
     assert len(mn.MODEL_NODE_ADAPTERS) == 8
-    assert set(bindings) == set(registry) | set(mn.MODEL_NODE_ADAPTERS)
-    assert len(bindings) == 30
+    assert set(mn.MODEL_BOOKKEEPING_NODES) == {R.ATTEMPT_RESERVATION, R.MODEL_FAILURE_CLASSIFIER}
+    assert set(bindings) == (
+        set(registry) | set(mn.MODEL_NODE_ADAPTERS) | set(mn.MODEL_BOOKKEEPING_NODES)
+    )
+    assert len(bindings) == 32
 
     drawn = compiled.get_graph()
     assert set(drawn.nodes) - {START, END} == set(bindings)
@@ -361,9 +380,9 @@ def _cycle_bounds(cycle: frozenset[str]) -> list[str]:
         if node_id not in R.FANOUT_GUARDS:
             continue
         for value in R.FANOUT_GUARDS[node_id]:
-            guard = FANOUT_SHAPES[(node_id, value)][0]
+            guard, guard_node, guard_value = _send_emitting_guard(node_id, value)
             with pytest.raises(R.RoutingViolation, match="no staged"):
-                guard({"pending_guard": {"node": node_id, "value": value, "detail": {}}})
+                guard({"pending_guard": {"node": guard_node, "value": guard_value, "detail": {}}})
         bounds.append(node_id)
     return bounds
 
@@ -385,8 +404,13 @@ def test_every_cycle_in_the_compiled_graph_crosses_an_exhaustion_guard(compiled)
     }
     cycles = _simple_cycles(edges)
 
-    # Not vacuous: spec 8.1's own discovery superstep is wired and is a cycle.
-    assert frozenset({"D06B_RETRIEVE_SOURCE_CANDIDATES", "M01_RESEARCH_UNIT_SOURCES"}) in cycles
+    # Not vacuous: spec 8.1's own discovery superstep is wired and is a cycle. It
+    # runs through D90, which is where the attempt bound that closes it is committed.
+    assert frozenset({
+        "D06B_RETRIEVE_SOURCE_CANDIDATES",
+        R.ATTEMPT_RESERVATION,
+        "M01_RESEARCH_UNIT_SOURCES",
+    }) in cycles
 
     for cycle in sorted(cycles, key=sorted):
         assert _cycle_bounds(cycle), (
@@ -546,12 +570,16 @@ def test_every_registered_fanout_has_the_worker_to_barrier_shape(compiled):
     denominator — never a second fan-out and never an authority node. This is the
     same property the guard-level tests below prove in isolation, asserted here
     against the graph that actually compiled.
+
+    A model fan-out reaches its worker through D90, so the compiled shape is
+    dispatcher -> D90 -> worker -> barrier: spec 6.2 requires the attempt counter
+    committed before dispatch, and every adapter refuses an unreserved packet.
     """
 
     declared = {
-        (source, value): worker
+        (source, value): dispatch
         for source, row in R.FANOUT_GUARDS.items()
-        for value, worker in row.items()
+        for value, dispatch in row.items()
     }
     assert set(FANOUT_SHAPES) == set(declared), (
         "a fan-out guard was registered or removed without updating the shape "
@@ -559,17 +587,33 @@ def test_every_registered_fanout_has_the_worker_to_barrier_shape(compiled):
     )
 
     edges = {(source, target) for source, target, _ in G.compiled_topology(compiled)["edges"]}
-    for (source, value), (guard, worker, barrier) in sorted(FANOUT_SHAPES.items()):
-        assert declared[(source, value)] == worker
-        assert (source, worker) in edges, f"{source} has no compiled edge to worker {worker}"
+    for (source, value), (dispatch_guard, worker, barrier) in sorted(FANOUT_SHAPES.items()):
+        dispatch = declared[(source, value)]
+        assert dispatch not in mn.MODEL_NODE_IDS, (
+            f"{source} dispatches straight to model node {dispatch} with no reservation"
+        )
+        assert (source, dispatch) in edges, f"{source} has no compiled edge to {dispatch}"
+        if dispatch == R.ATTEMPT_RESERVATION:
+            assert (dispatch, worker) in edges, f"D90 has no compiled edge to worker {worker}"
+        else:
+            assert dispatch == worker
         assert (worker, barrier) in edges, f"worker {worker} has no compiled edge to {barrier}"
         assert barrier not in mn.MODEL_NODE_IDS, f"{barrier} is a model node, not a barrier"
 
         projections = [{"key": f"{source}/{index}"} for index in range(3)]
-        sends = guard(
+        packet = {"dispatch": worker, "packets": projections}
+        routed = dispatch_guard(
+            {"pending_guard": {"node": source, "value": value, "detail": {}},
+             "pending_packet": packet}
+        )
+        if dispatch == R.ATTEMPT_RESERVATION:
+            assert routed == R.ATTEMPT_RESERVATION
+
+        emitting, guard_node, guard_value = _send_emitting_guard(source, value)
+        sends = emitting(
             {
-                "pending_guard": {"node": source, "value": value, "detail": {}},
-                "pending_packet": {"dispatch": worker, "packets": projections},
+                "pending_guard": {"node": guard_node, "value": guard_value, "detail": {}},
+                "pending_packet": packet,
             }
         )
         assert [type(item) for item in sends] == [Send, Send, Send]
@@ -577,7 +621,9 @@ def test_every_registered_fanout_has_the_worker_to_barrier_shape(compiled):
         assert [item.arg for item in sends] == projections
 
     # A worker's forward successors are exactly the barriers declared for it, so
-    # a fanned-out worker rejoins a denominator and fans out no further.
+    # a fanned-out worker rejoins a denominator and fans out no further. D91 is
+    # excluded with the other non-forward edges: a model worker's failure edge is
+    # a recovery edge, not a second barrier.
     barriers: dict[str, set[str]] = {}
     for _guard, worker, barrier in FANOUT_SHAPES.values():
         barriers.setdefault(worker, set()).add(barrier)
@@ -585,24 +631,63 @@ def test_every_registered_fanout_has_the_worker_to_barrier_shape(compiled):
         successors = {target for source, target in edges if source == worker} - {
             R.INTERRUPT_GATE,
             R.TERMINAL,
+            R.MODEL_FAILURE_CLASSIFIER,
             END,
         }
         assert successors == expected, (worker, sorted(successors), sorted(expected))
 
 
+def test_no_compiled_edge_enters_a_model_node_except_from_d90(compiled):
+    """Spec 6.2 D90: the attempt counter is committed *before* dispatch.
+
+    The counter cannot be minted by the dispatching node (it would be committed
+    in the same superstep as the dispatch) nor invented at routing time, so the
+    only compiled predecessor a model worker may have is D90. Every N23 adapter
+    enforces the same rule from the other side by raising `AttemptNotReserved`.
+    """
+
+    for node_id, row in R.GUARD_DESTINATIONS.items():
+        for value, destination in row.items():
+            assert destination not in mn.MODEL_NODE_IDS, (
+                f"{node_id}.{value} routes to {destination} with no reservation"
+            )
+
+    edges = {(source, target) for source, target, _ in G.compiled_topology(compiled)["edges"]}
+    entered = {target for _source, target in edges if target in mn.MODEL_NODE_IDS}
+    assert entered, "no model node is wired, so this would pass vacuously"
+    for worker in sorted(entered):
+        predecessors = {source for source, target in edges if target == worker}
+        assert predecessors == {R.ATTEMPT_RESERVATION}, (worker, sorted(predecessors))
+
+
 def test_a_fanout_guard_emits_one_send_per_staged_worker_projection():
-    state = {
-        "pending_guard": {
-            "node": "D12_VISUAL_BARRIER_AND_JOIN",
-            "value": "model_visual_fanout",
-            "detail": {},
-        },
-        "pending_packet": {
-            "dispatch": "M04_CREATE_UNIT_VISUALS",
-            "briefs": [{"key": "u1/visual/a"}, {"key": "u1/visual/b"}],
-        },
+    packet = {
+        "dispatch": "M04_CREATE_UNIT_VISUALS",
+        "briefs": [{"key": "u1/visual/a"}, {"key": "u1/visual/b"}],
     }
-    sends = R.route_visual_barrier(state)
+    # The dispatcher hands the staged map to D90 rather than to the worker: no
+    # `Send` may be emitted before the attempt counter is committed (spec 6.2).
+    assert R.route_visual_barrier(
+        {
+            "pending_guard": {
+                "node": "D12_VISUAL_BARRIER_AND_JOIN",
+                "value": "model_visual_fanout",
+                "detail": {},
+            },
+            "pending_packet": packet,
+        }
+    ) == R.ATTEMPT_RESERVATION
+
+    sends = R.route_attempt_reservation(
+        {
+            "pending_guard": {
+                "node": R.ATTEMPT_RESERVATION,
+                "value": "authorized",
+                "detail": {"job_id": "M04_CREATE_UNIT_VISUALS"},
+            },
+            "pending_packet": packet,
+        }
+    )
     assert [type(item) for item in sends] == [Send, Send]
     assert {item.node for item in sends} == {"M04_CREATE_UNIT_VISUALS"}
     assert [item.arg["key"] for item in sends] == ["u1/visual/a", "u1/visual/b"]
@@ -616,17 +701,17 @@ def test_a_fanout_guard_emits_one_send_per_staged_worker_projection():
 def test_a_fanout_guard_refuses_an_unstaged_or_mixed_dispatch():
     base = {
         "pending_guard": {
-            "node": "D12_VISUAL_BARRIER_AND_JOIN",
-            "value": "model_visual_fanout",
-            "detail": {},
+            "node": R.ATTEMPT_RESERVATION,
+            "value": "authorized",
+            "detail": {"job_id": "M04_CREATE_UNIT_VISUALS"},
         }
     }
     with pytest.raises(R.RoutingViolation, match="no staged"):
-        R.route_visual_barrier(dict(base))
+        R.route_attempt_reservation(dict(base))
     with pytest.raises(R.RoutingViolation, match="no dispatch destination"):
-        R.route_visual_barrier({**base, "pending_packet": {"briefs": [{"key": "a"}]}})
+        R.route_attempt_reservation({**base, "pending_packet": {"briefs": [{"key": "a"}]}})
     with pytest.raises(R.RoutingViolation, match="no non-empty worker projection"):
-        R.route_visual_barrier(
+        R.route_attempt_reservation(
             {**base, "pending_packet": {"dispatch": "M04_CREATE_UNIT_VISUALS", "briefs": []}}
         )
 

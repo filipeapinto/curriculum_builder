@@ -1,0 +1,37 @@
+{
+  "changed_files": [],
+  "commands": [
+    {
+      "argv": [
+        "/tmp/plan26_n30_verify/bin/python",
+        "-m",
+        "pytest",
+        "-q",
+        "tests/runtime/test_plan26_persistence.py"
+      ],
+      "exit_code": 0,
+      "finished_at": "2026-08-11T21:00:07.629725+00:00",
+      "log": "plans/26_langgraph_curriculum_factory/results/v3/logs/N21_PERSISTENCE_RESUME/adopt-v2.test1.log",
+      "log_sha256": "546b1d90dfebd025f3d13dab2c571d33ee9a644e179d8e8472030131f450b9be",
+      "started_at": "2026-08-11T21:00:04.164546+00:00",
+      "tail": "......................................... [ 77%]\n............                                               [100%]\n53 passed, 45 subtests passed in 2.75s\n",
+      "timed_out": false
+    }
+  ],
+  "created_at": "2026-08-11T21:00:07.631933+00:00",
+  "findings": [],
+  "graph_digest": "ac8587de809ce6dbc0a75b476e79fc8d0474a980c0cfbabcb97979a0b490a82a",
+  "graph_id": "plan26_langgraph_curriculum_factory_implementation",
+  "input_fingerprint": "7bbe30a5da0ece60a83d08e45b2a320721108fb9981a1d0c47b825434351f881",
+  "node_definition_sha256": "3ce169ba924db772d88fe25eb77ae15716d3a48c122b2726b0861d7093b28ea9",
+  "node_id": "N21_PERSISTENCE_RESUME",
+  "outputs": {
+    "plans/26_langgraph_curriculum_factory/results/N21_PERSISTENCE_RESUME.result.v1.md": "cd8f08eac498c14370d31578b056d8e12477293dfad03378cb9680e106fd9841",
+    "runtime/langgraph_factory/persistence.py": "c2b3eb236d2ea7bb6ca7f0ff5d6258c8bd1fdec8cf36d9520c2b2ddb9298b289",
+    "tests/runtime/test_plan26_persistence.py": "c3863a74512ee8d79e0ed92db768553a605265984be489191c0b9084e2ab6a94"
+  },
+  "prompt_sha256": "3b0d3ee5aabe8cc77401cad14314f36f5af2635d752d996955ec1e6e863f1d36",
+  "schema_version": 1,
+  "source": "adopted_v2_after_focused_verification",
+  "status": "PASSED"
+}

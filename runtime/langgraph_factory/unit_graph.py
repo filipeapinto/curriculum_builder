@@ -17,7 +17,7 @@ It invents no `Send` projection. Every fan-out edge translates the packet the
 dispatching node staged (spec section 10: the denominator is immutable and
 persisted before dispatch). A projection materialized at routing time would be
 one no denominator committed to, so where a node stages nothing, the fan-out
-guard raises rather than improvising — see `BLOCKING_GAPS`.
+guard raises rather than improvising.
 
 `DEFERRED_EDGES` is the frozen record of every guard destination this path
 declares whose node body does not exist yet, with the owning graph node. The
@@ -80,6 +80,8 @@ UNIT_BRANCHES: tuple[tuple[str, Callable[[Mapping[str, Any]], Any]], ...] = (
     ("M02_CREATE_UNIT_DOMAIN_DATA", routing.route_m02_domain),
     ("M03_WRITE_UNIT_CONTENT", routing.route_m03_content),
     ("M05_REVIEW_ACTUAL_UNIT", routing.route_m05_unit_review),
+    ("D90_RESERVE_MODEL_ATTEMPT", routing.route_attempt_reservation),
+    ("D91_CLASSIFY_MODEL_FAILURE", routing.route_model_failure),
 )
 
 # A model node's own guard has no `GUARD_DESTINATIONS` row: its accepted result
@@ -106,6 +108,24 @@ MODEL_BRANCH_DESTINATIONS: Mapping[str, tuple[str, ...]] = {
     "M05_REVIEW_ACTUAL_UNIT": (
         "D16_REDUCE_UNIT_EVIDENCE",
         routing.MODEL_FAILURE_CLASSIFIER,
+        routing.INTERRUPT_GATE,
+    ),
+    # D90's authorized destination is the job its reservation names, which is a
+    # dynamic guard value: the path map has to enumerate every model job this
+    # path can reserve for, or the compiled edge cannot reach the one reserved.
+    "D90_RESERVE_MODEL_ATTEMPT": (
+        "M01_RESEARCH_UNIT_SOURCES",
+        "M02_CREATE_UNIT_DOMAIN_DATA",
+        "M03_WRITE_UNIT_CONTENT",
+        "M04_CREATE_UNIT_VISUALS",
+        "M05_REVIEW_ACTUAL_UNIT",
+        routing.TERMINAL,
+        routing.INTERRUPT_GATE,
+    ),
+    "D91_CLASSIFY_MODEL_FAILURE": (
+        routing.ATTEMPT_RESERVATION,
+        "D17_CLASSIFY_UNIT_FINDINGS",
+        routing.TERMINAL,
         routing.INTERRUPT_GATE,
     ),
 }
@@ -143,16 +163,8 @@ DEFERRED_EDGES: tuple[tuple[str, str, str, str], ...] = (
      "D17_CLASSIFY_UNIT_FINDINGS", "N31_REPAIR_ACCEPTANCE"),
     ("D14_INVENTORY_AND_INSPECT_UNIT_PAGES", "layout_repairable",
      "D17_CLASSIFY_UNIT_FINDINGS", "N31_REPAIR_ACCEPTANCE"),
-    ("D92_REENTER_VALIDATED_FRONTIER", "incomplete_model_activation",
-     "D91_CLASSIFY_MODEL_FAILURE", "N23_MODEL_NODES"),
-    ("M01_RESEARCH_UNIT_SOURCES", "model_failure",
-     "D91_CLASSIFY_MODEL_FAILURE", "N23_MODEL_NODES"),
-    ("M02_CREATE_UNIT_DOMAIN_DATA", "model_failure",
-     "D91_CLASSIFY_MODEL_FAILURE", "N23_MODEL_NODES"),
-    ("M03_WRITE_UNIT_CONTENT", "model_failure",
-     "D91_CLASSIFY_MODEL_FAILURE", "N23_MODEL_NODES"),
-    ("M05_REVIEW_ACTUAL_UNIT", "model_failure",
-     "D91_CLASSIFY_MODEL_FAILURE", "N23_MODEL_NODES"),
+    ("D91_CLASSIFY_MODEL_FAILURE", "repair",
+     "D17_CLASSIFY_UNIT_FINDINGS", "N31_REPAIR_ACCEPTANCE"),
     ("M05_REVIEW_ACTUAL_UNIT", "review_returned",
      "D16_REDUCE_UNIT_EVIDENCE", "N31_REPAIR_ACCEPTANCE"),
 )
@@ -160,56 +172,18 @@ DEFERRED_EDGES: tuple[tuple[str, str, str, str], ...] = (
 # What this path cannot execute, and who owns each gap. These are structural,
 # reproducible facts about the current tree, not judgements: each row names the
 # exact call that fails and the rework edge from `implementation.graph.v2.yaml`.
-BLOCKING_GAPS: tuple[Mapping[str, str], ...] = (
-    {
-        "fingerprint": "plan26/n30/write-once-channel-default-conflict",
-        "owner": "N11_STATE_REDUCERS",
-        "rework_edge": "state_or_reducer",
-        "detail": (
-            "A `write_once` channel annotated with a zero-arg-constructible type "
-            "(`str`, `RecordList`, `Record`) is initialized by LangGraph's "
-            "`BinaryOperatorAggregate` to that type's empty value, so the reducer "
-            "sees a non-None `existing` on the node's *first* write and raises "
-            "`WriteOnceConflict`. 17 of the 19 `write_once` channels are affected, "
-            "including `run_id`, `mode` and `effective_run`, so no episode can "
-            "complete D01. The two unaffected channels are annotated `X | None`, "
-            "which leaves the channel unset and bypasses the operator."
-        ),
-    },
-    {
-        "fingerprint": "plan26/n30/model-packet-not-staged",
-        "owner": "N22_DETERMINISTIC_NODES",
-        "rework_edge": "deterministic_node",
-        "detail": (
-            "D06, D06B, D07, D08 and D15 do not stage a `pending_packet` worker "
-            "projection and their catalogue rows do not authorize one, so no "
-            "M01/M02/M03/M05 dispatch can carry the reservation, correlation and "
-            "spec section 9 projection its adapter requires."
-        ),
-    },
-    {
-        "fingerprint": "plan26/n30/visual-fanout-packet-not-staged",
-        "owner": "N22_DETERMINISTIC_NODES",
-        "rework_edge": "deterministic_node",
-        "detail": (
-            "D10 does not stage a `pending_packet` for the deterministic visual "
-            "map, and D12's staged M04 briefs are bare brief records rather than "
-            "M04 packets (`brief`, `permitted_facts`, `visual_contract`, "
-            "`reservation`, `correlation`)."
-        ),
-    },
-    {
-        "fingerprint": "plan26/n30/d90-d91-not-registrable",
-        "owner": "N23_MODEL_NODES",
-        "rework_edge": "model_node_or_projection",
-        "detail": (
-            "`reserve_model_attempt` and `classify_model_failure` are keyword-only "
-            "helpers, not `(state, context)` node callables, so D90/D91 cannot be "
-            "registered; every model node's failure edge and the whole attempt "
-            "reservation/retry cycle have no destination."
-        ),
-    },
-)
+#
+# Empty as of generation 9. Every row this table has ever carried — B-1 through
+# B-13 — was closed by its named owner and re-verified here by executing the real
+# compiled graph, not by report: the unit path now runs from D00 to a real M05
+# review and stops at `D16_REDUCE_UNIT_EVIDENCE`, which is a declared row of
+# `DEFERRED_EDGES` and this node's handoff to N31, not a gap.
+#
+# The table stays declared rather than deleted because
+# `test_every_blocking_gap_is_declared_with_an_owner_and_rework_edge` asserts its
+# shape, so a future gap has one place to be recorded and cannot be noted in prose
+# alone.
+BLOCKING_GAPS: tuple[Mapping[str, str], ...] = ()
 
 
 def branch_destinations(source: str, available: Sequence[str]) -> tuple[str, ...]:

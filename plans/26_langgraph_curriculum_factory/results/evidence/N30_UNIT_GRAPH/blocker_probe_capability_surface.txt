@@ -1,0 +1,12 @@
+# B-8 probe: the surface D03/D11/D13/D14 reach on RuntimeContext.transport_registry.
+# graph.build_runtime_context installs transport.CliTransport there.
+
+    CliTransport.prove_capability             present=False
+    CliTransport.observe_executable           present=False
+    CliTransport.render_unit                  present=False
+    CliTransport.inspect_pages                present=False
+    CliTransport.render_deterministic_visual  present=False
+
+public attributes of CliTransport:
+    executable
+    execute
