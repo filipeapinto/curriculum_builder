@@ -1,0 +1,3 @@
+$ /tmp/plan26_n30_verify/bin/python -m pytest tests/runtime/test_plan26_topology.py -q   # generation 6 (B-4 rework)
+......................................                                   [100%]
+38 passed in 0.78s

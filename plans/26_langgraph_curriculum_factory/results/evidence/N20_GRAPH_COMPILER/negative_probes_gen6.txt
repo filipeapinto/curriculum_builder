@@ -1,0 +1,5 @@
+live DEFERRED_TOPOLOGY: {'M06_REPAIR_NAMED_UNIT_ARTIFACT': 'N31_REPAIR_ACCEPTANCE', 'M07_REVIEW_ACTUAL_WORKBOOK': 'N32_WORKBOOK_TERMINALS', 'M08_REPAIR_NAMED_WORKBOOK_DEFECT': 'N32_WORKBOOK_TERMINALS'}
+example node used by the undeclared-node case: M06_REPAIR_NAMED_UNIT_ARTIFACT
+PROBE cycle-with-no-bound: failed as required -> cycle ['D06B_RETRIEVE_SOURCE_CANDIDATES', 'M01_RESEARCH_UNIT_SOURCES'] crosses no exhaustion guard and no fan-out dispatcher, so nothing sto
+PROBE worker-returns-to-a-non-barrier: failed as required -> worker M04_CREATE_UNIT_VISUALS has no compiled edge to D13_RENDER_UNIT
+PROBE registered-fanout-with-no-declared-shape: failed as required -> a fan-out guard was registered or removed without updating the shape table this test checks it against

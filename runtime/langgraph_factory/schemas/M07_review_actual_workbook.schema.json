@@ -1,0 +1,45 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "plan26/M07_review_actual_workbook.schema.json",
+  "title": "M07 review_actual_workbook findings output",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["overall_findings", "page_findings"],
+  "$defs": {
+    "finding": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["finding_id", "severity", "category", "description", "evidence_reference"],
+      "properties": {
+        "finding_id": {"type": "string", "minLength": 1, "maxLength": 200},
+        "severity": {"type": "string", "enum": ["blocking", "major", "minor", "observation"]},
+        "category": {"type": "string", "minLength": 1, "maxLength": 200},
+        "description": {"type": "string", "minLength": 1, "maxLength": 8000},
+        "evidence_reference": {"type": "string", "minLength": 1, "maxLength": 2000}
+      }
+    }
+  },
+  "properties": {
+    "overall_findings": {
+      "type": "array",
+      "items": {"$ref": "#/$defs/finding"}
+    },
+    "page_findings": {
+      "type": "array",
+      "minItems": 1,
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": ["page_number", "page_sha256", "findings"],
+        "properties": {
+          "page_number": {"type": "integer", "minimum": 1},
+          "page_sha256": {"type": "string", "pattern": "^[0-9a-f]{64}$"},
+          "findings": {
+            "type": "array",
+            "items": {"$ref": "#/$defs/finding"}
+          }
+        }
+      }
+    }
+  }
+}

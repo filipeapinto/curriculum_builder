@@ -1,0 +1,38 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "plan26/M06_repair_named_unit_artifact.schema.json",
+  "title": "M06 repair_named_unit_artifact candidate output",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["candidate_child", "changed_path_manifest"],
+  "properties": {
+    "candidate_child": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["artifact_name", "artifact_body", "addressed_finding_ids"],
+      "properties": {
+        "artifact_name": {"type": "string", "minLength": 1, "maxLength": 300},
+        "artifact_body": {"type": "string", "minLength": 1, "maxLength": 500000},
+        "addressed_finding_ids": {
+          "type": "array",
+          "minItems": 1,
+          "items": {"type": "string", "minLength": 1, "maxLength": 200}
+        }
+      }
+    },
+    "changed_path_manifest": {
+      "type": "array",
+      "minItems": 1,
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": ["json_pointer", "change_kind", "finding_id"],
+        "properties": {
+          "json_pointer": {"type": "string", "minLength": 1, "maxLength": 2000},
+          "change_kind": {"type": "string", "enum": ["replace", "insert", "remove"]},
+          "finding_id": {"type": "string", "minLength": 1, "maxLength": 200}
+        }
+      }
+    }
+  }
+}

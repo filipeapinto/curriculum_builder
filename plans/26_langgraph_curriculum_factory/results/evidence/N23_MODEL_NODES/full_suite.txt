@@ -1,0 +1,332 @@
+........................................................................................................ [ 13%]
+........................................................................ [ 22%]
+..............................F......................................... [ 32%]
+.......................................................FFF..F...F.FF.... [ 41%]
+.....................................................s....... [ 49%]
+........................................................................ [ 58%]
+........................................................................ [ 68%]
+.......................s...............sssss................................................................................................... [ 86%]
+.......................................................... [ 94%]
+..........................................                               [100%]
+=================================== FAILURES ===================================
+________ test_d14_reports_a_noncontiguous_inventory_as_a_layout_finding ________
+
+tmp_path = PosixPath('/private/var/folders/kj/z_75gwxx2ls7p55rnx4t5kg00000gn/T/pytest-of-filipepinto/pytest-158/test_d14_reports_a_noncontiguo0')
+
+                {
+                    "stream": "units/U001/layout",
+                    "version": 1,
+                    "parent_hash": None,
+                    "hash": "h" * 64,
+                    "pdf_path": str(pdf),
+                    "pdf_sha256": frozen_hash,
+                }
+            ],
+            "output_root": str(tmp_path),
+        }
+        update = render.D14_INVENTORY_AND_INSPECT_UNIT_PAGES(state, _Context())
+        assert update["pending_failure"]["cause"] == "integrity"
+        assert "unit_page_inventories" not in update
+    
+    
+    def test_d14_reports_a_noncontiguous_inventory_as_a_layout_finding(tmp_path: Path) -> None:
+        pdf = tmp_path / "unit.pdf"
+        pdf.write_bytes(b"%PDF-1.7 ok")
+        pdf_hash = hashlib.sha256(pdf.read_bytes()).hexdigest()
+    
+        registry = _Registry(
+            inspect_pages=lambda path, digest: {"pages": [_inspected_page(1), _inspected_page(3)]}
+        )
+>       state = {
+               ^^^
+            "selected_unit_id": "U001",
+            "artifact_heads": {},
+            "artifact_versions": [
+                {
+                    "stream": "units/U001/layout",
+                    "version": 1,
+                    "parent_hash": None,
+                    "hash": "h" * 64,
+                    "pdf_path": str(pdf),
+                    "pdf_sha256": pdf_hash,
+                }
+            ],
+            "output_root": str(tmp_path),
+        }
+E       KeyError: 'unit_page_inventories'
+
+tests/runtime/test_plan26_deterministic_nodes.py:803: KeyError
+_________ test_d06_compiles_a_positive_denominator_scaled_to_the_unit __________
+
+>   ???
+E   KeyError: 'source_denominators'
+
+tests/runtime/test_plan26_deterministic_nodes.py:1926: KeyError
+___________ test_d06_scales_with_the_unit_rather_than_a_fixed_count ____________
+
+        "selected_unit_id": "U001",
+        "source_admissions": [],
+        "engine_root": "/engine",
+        **_CORRELATION,
+    }
+    update = sources.D06_COMPILE_SOURCE_REQUESTS(state, _Context())
+    denominator = next(iter(update["source_denominators"].values()))
+    assert denominator["size"] == len(update["source_requests"]) == 4
+    assert sorted(request["required"] for request in update["source_requests"]) == [
+        False,
+        True,
+>       True,
+              
+        True,
+    ]
+E   KeyError: 'source_requests'
+
+tests/runtime/test_plan26_deterministic_nodes.py:1948: KeyError
+__________________ test_d07_admits_a_complete_correlated_join __________________
+
+    
+    
+    def test_d06_scales_with_the_unit_rather_than_a_fixed_count() -> None:
+        small = {"id": "U001", "required_explanation": ["a"]}
+        large = {"id": "U002", "required_explanation": [f"fact {index}" for index in range(19)]}
+        base = {"source_admissions": [], "engine_root": "/engine", **_CORRELATION}
+    
+        small_update = sources.D06_COMPILE_SOURCE_REQUESTS(
+            {**base, "effective_run": {"unit_records": [small]}, "selected_unit_id": "U001"}, _Context()
+        )
+        large_update = sources.D06_COMPILE_SOURCE_REQUESTS(
+            {**base, "effective_run": {"unit_records": [large]}, "selected_unit_id": "U002"}, _Context()
+        )
+        assert len(small_update["source_requests"]) == 1
+        assert len(large_update["source_requests"]) == 19
+    
+    
+    def test_d07_admits_a_complete_correlated_join() -> None:
+>       digest = "a" * 64
+                 ^^^^^^^^^
+
+tests/runtime/test_plan26_deterministic_nodes.py:1970: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+runtime/langgraph_factory/nodes/__init__.py:658: in node
+    update = body(projection, runtime_context)
+             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+runtime/langgraph_factory/nodes/sources.py:602: in D07_CORRELATE_AND_ADMIT_SOURCES
+    "unit": _unit_projection(_unit_record(projection["effective_run"], unit_id)),
+                             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+
+effective_run = None, unit_id = 'U001'
+
+    def _unit_record(effective_run: dict[str, Any], unit_id: str) -> dict[str, Any]:
+>       for unit in effective_run.get("unit_records", []):
+                    ^^^^^^^^^^^^^^^^^
+E       AttributeError: 'NoneType' object has no attribute 'get'
+
+runtime/langgraph_factory/nodes/sources.py:107: AttributeError
+____________ test_d10_splits_authoritative_and_illustrative_briefs _____________
+
+            },
+            "artifact_versions": [
+                {
+                    "stream": "units/U001/content",
+                    "version": 1,
+                    "parent_hash": None,
+                    "hash": head,
+                    "body": {
+                        "visuals": [
+                            {"role": "photo", "kind": "illustration", "requests_authoritative_facts": True}
+                        ]
+                    },
+                }
+            ],
+            "engine_root": "/engine",
+        }
+        update = visuals.D10_COMPILE_VISUAL_BRIEFS(state, _Context())
+        assert update["pending_failure"]["cause"] == "invalid_input"
+    
+    
+    def test_d10_splits_authoritative_and_illustrative_briefs() -> None:
+        head = "c" * 64
+        state = {
+            "selected_unit_id": "U001",
+            "artifact_heads": {
+>               "units/U001/content": {"version": 1, "parent_hash": None, "hash": head},
+                                ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+                "units/U001/domain": {"version": 1, "parent_hash": None, "hash": "d" * 64},
+            },
+            "artifact_versions": [
+                {
+                    "stream": "units/U001/content",
+                    "version": 1,
+                    "parent_hash": None,
+                    "hash": head,
+                    "body": {
+                        "visuals": [
+                            {"role": "wiring", "kind": "build_map"},
+                            {"role": "cover", "kind": "illustration"},
+                        ]
+                    },
+                }
+            ],
+            "engine_root": "/engine",
+            **_CORRELATION,
+        }
+E       KeyError: 'visual_denominators'
+
+tests/runtime/test_plan26_deterministic_nodes.py:2046: KeyError
+_ test_d12_dispatches_model_briefs_only_after_the_deterministic_subset_is_exact _
+
+            raise RuntimeError("typst exited 1")
+    
+        state = {
+            "pending_packet": {
+                "brief": {"key": "U001/visual/wiring", "subset": "deterministic", "kind": "build_map"}
+            }
+        }
+        update = visuals.D11_CREATE_DETERMINISTIC_VISUALS(
+            state, _Context(transport_registry=_Registry(render_deterministic_visual=explode))
+        )
+        assert update["pending_failure"]["cause"] == "tool"
+    
+    
+    def test_d11_refuses_a_brief_outside_the_deterministic_subset() -> None:
+        state = {"pending_packet": {"brief": {"key": "k", "subset": "model"}}}
+        update = visuals.D11_CREATE_DETERMINISTIC_VISUALS(
+            state, _Context(transport_registry=_Registry(render_deterministic_visual=lambda *a: {}))
+        )
+        assert update["pending_failure"]["cause"] == "invalid_input"
+    
+    
+    def test_d12_dispatches_model_briefs_only_after_the_deterministic_subset_is_exact() -> None:
+        head = "c" * 64
+        state = {
+            "selected_unit_id": "U001",
+            "visual_denominators": {
+                "k": {
+                    "unit_id": "U001",
+                    "content_hash": head,
+>                   "deterministic_keys": ["v1"],
+                    "model_keys": ["v2"],
+                    "size": 2,
+                }
+            },
+            "visual_briefs": [
+                {"key": "v2", "unit_id": "U001", "subset": "model", "kind": "illustration"}
+            ],
+            **_CORRELATION,
+            "visual_results": {
+                "v1": {
+                    "key": "v1",
+                    "unit_id": "U001",
+                    "subset": "deterministic",
+                    "content_hash": head,
+                    "sha256": "a" * 64,
+                    "format": "svg",
+                    "provenance": "deterministic_renderer",
+                }
+            },
+            "artifact_versions": [],
+            "artifact_heads": {"units/U001/content": {"version": 1, "parent_hash": None, "hash": head}},
+        }
+E       TypeError: 'NoneType' object is not subscriptable
+
+tests/runtime/test_plan26_deterministic_nodes.py:2127: TypeError
+________ test_d13_and_d14_produce_a_contiguous_inventory_for_every_page ________
+
+tmp_path = PosixPath('/private/var/folders/kj/z_75gwxx2ls7p55rnx4t5kg00000gn/T/pytest-of-filipepinto/pytest-158/test_d13_and_d14_produce_a_con0')
+
+                "content_hash": head,
+                "sha256": f"{key}-hash",
+                "format": "svg",
+                "provenance": "deterministic_renderer" if subset == "deterministic" else "model_candidate",
+            }
+            for key, subset in (("v1", "deterministic"), ("v2", "model"))
+        }
+        state = {
+            "selected_unit_id": "U001",
+            "visual_denominators": {
+                "k": {
+                    "unit_id": "U001",
+                    "content_hash": head,
+                    "deterministic_keys": ["v1"],
+                    "model_keys": ["v2"],
+                    "size": 2,
+                }
+            },
+            "visual_briefs": [],
+            "visual_results": results,
+            "artifact_versions": [],
+            "artifact_heads": {"units/U001/content": {"version": 1, "parent_hash": None, "hash": head}},
+        }
+        update = visuals.D12_VISUAL_BARRIER_AND_JOIN(state, _Context())
+        assert update["pending_guard"]["value"] == "visuals_admitted"
+        admitted = update["artifact_heads"]["units/U001/visuals"]
+        assert admitted["version"] == 1 and admitted["parent_hash"] is None
+    
+    
+    def test_d13_and_d14_produce_a_contiguous_inventory_for_every_page(tmp_path: Path) -> None:
+        pdf = tmp_path / "unit.pdf"
+        pdf.write_bytes(b"%PDF-1.7 rendered")
+        pdf_hash = hashlib.sha256(pdf.read_bytes()).hexdigest()
+    
+        registry = _Registry(
+            render_unit=lambda unit_id, parents: {
+                "layout_path": str(tmp_path / "unit.typ"),
+                "layout_sha256": "l" * 64,
+                "pdf_path": str(pdf),
+                "pdf_sha256": pdf_hash,
+>               "renderer": "typst-stub",
+                    ^^^^^^^^^^^^^^^^^^^^^^
+            },
+            inspect_pages=lambda path, digest: {
+                "pages": [_inspected_page(number) for number in range(1, 5)]
+            },
+        )
+E       KeyError: 'unit_page_inventories'
+
+tests/runtime/test_plan26_deterministic_nodes.py:2208: KeyError
+________________ test_d15_freezes_a_packet_covering_every_page _________________
+
+tmp_path = PosixPath('/private/var/folders/kj/z_75gwxx2ls7p55rnx4t5kg00000gn/T/pytest-of-filipepinto/pytest-158/test_d15_freezes_a_packet_cove0')
+
+    context = _Context(transport_registry=registry)
+    render_state = {
+        "selected_unit_id": "U001",
+        "artifact_heads": {
+            f"units/U001/{channel}": {"version": 1, "parent_hash": None, "hash": f"{channel}-h"}
+            for channel in ("domain", "content", "visuals")
+        },
+        "engine_root": str(tmp_path),
+        "output_root": str(tmp_path),
+    }
+    render_update = render.D13_RENDER_UNIT(render_state, context)
+    version = render_update["artifact_versions"][0]
+    assert version["pdf_sha256"] == pdf_hash
+    
+    inspect_update = render.D14_INVENTORY_AND_INSPECT_UNIT_PAGES(
+        {
+            "selected_unit_id": "U001",
+            "artifact_heads": {},
+            "artifact_versions": [version],
+            "output_root": str(tmp_path),
+        },
+        context,
+    )
+    inventory = inspect_update["unit_page_inventories"][0]
+    assert inventory["page_count"] == 4 and inventory["contiguous"] is True
+    assert len(inspect_update["unit_page_inspections"]) == 4
+>   assert inspect_update["pending_guard"]["value"] == "pages_inspected"
+             ^^^^^^^^^^^^^^^^^^^^^^^^
+E   KeyError: 'review_packets'
+
+tests/runtime/test_plan26_deterministic_nodes.py:2240: KeyError
+=========================== short test summary info ============================
+FAILED tests/runtime/test_plan26_deterministic_nodes.py::test_d14_reports_a_noncontiguous_inventory_as_a_layout_finding
+FAILED tests/runtime/test_plan26_deterministic_nodes.py::test_d06_compiles_a_positive_denominator_scaled_to_the_unit
+FAILED tests/runtime/test_plan26_deterministic_nodes.py::test_d06_scales_with_the_unit_rather_than_a_fixed_count
+FAILED tests/runtime/test_plan26_deterministic_nodes.py::test_d07_admits_a_complete_correlated_join
+FAILED tests/runtime/test_plan26_deterministic_nodes.py::test_d10_splits_authoritative_and_illustrative_briefs
+FAILED tests/runtime/test_plan26_deterministic_nodes.py::test_d12_dispatches_model_briefs_only_after_the_deterministic_subset_is_exact
+FAILED tests/runtime/test_plan26_deterministic_nodes.py::test_d13_and_d14_produce_a_contiguous_inventory_for_every_page
+FAILED tests/runtime/test_plan26_deterministic_nodes.py::test_d15_freezes_a_packet_covering_every_page
+8 failed, 753 passed, 11 skipped, 282 subtests passed in 113.70s (0:01:53)

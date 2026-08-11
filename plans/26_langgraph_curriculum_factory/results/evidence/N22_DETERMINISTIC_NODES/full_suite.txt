@@ -1,0 +1,25 @@
+........................................................................................................ [ 13%]
+........................................................................ [ 22%]
+........................................................................ [ 31%]
+........................................................................ [ 40%]
+........................................................... [ 48%]
+....... [ 49%]
+.....s............................................................. [ 57%]
+........................................................................ [ 66%]
+.........................................s...............sssss..... [ 75%]
+............................................................................ [ 84%]
+................................................................. [ 93%]
+.....................................................             [100%]
+=========================== short test summary info ============================
+SKIPPED [1] tests/runtime/test_plan26_api_contract.py:28: unittest.case.SkipTest: plan26 hash-locked environment not installed (python3 -m pip install --require-hashes -r requirements/plan26.lock): No module named 'langgraph'
+SKIPPED [1] tests/runtime/test_plan26_persistence.py:34: unittest.case.SkipTest: plan26 hash-locked environment not installed (python3 -m pip install --require-hashes -r requirements/plan26.lock): No module named 'langgraph'
+SKIPPED [1] tests/runtime/test_plan26_topology.py:37: unittest.case.SkipTest: plan26 hash-locked environment not installed (python3 -m pip install --require-hashes -r requirements/plan26.lock): No module named 'langgraph'
+SKIPPED [1] tests/runtime/test_plan26_unit_graph.py:38: unittest.case.SkipTest: plan26 hash-locked environment not installed (python3 -m pip install --require-hashes -r requirements/plan26.lock): No module named 'langgraph'
+SKIPPED [1] tests/runtime/test_plan26_lock_drift.py:220: pinned generator absent (needs pip==25.3, pip-tools==7.6.0); CI installs both
+SKIPPED [1] tests/runtime/test_plan26_model_nodes.py:1273: could not import 'langgraph': No module named 'langgraph'
+SKIPPED [1] tests/runtime/test_plan26_state_reducers.py:309: plan26 hash-locked environment not installed (python3 -m pip install --require-hashes -r requirements/plan26.lock)
+SKIPPED [1] tests/runtime/test_plan26_state_reducers.py:320: plan26 hash-locked environment not installed (python3 -m pip install --require-hashes -r requirements/plan26.lock)
+SKIPPED [1] tests/runtime/test_plan26_state_reducers.py:302: plan26 hash-locked environment not installed (python3 -m pip install --require-hashes -r requirements/plan26.lock)
+SKIPPED [1] tests/runtime/test_plan26_state_reducers.py:284: plan26 hash-locked environment not installed (python3 -m pip install --require-hashes -r requirements/plan26.lock)
+SKIPPED [1] tests/runtime/test_plan26_state_reducers.py:280: plan26 hash-locked environment not installed (python3 -m pip install --require-hashes -r requirements/plan26.lock)
+779 passed, 11 skipped, 282 subtests passed in 116.17s (0:01:56)

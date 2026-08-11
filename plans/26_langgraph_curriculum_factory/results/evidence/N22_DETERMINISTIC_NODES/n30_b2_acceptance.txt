@@ -1,0 +1,212 @@
+FFFFFFFF                                                                 [100%]
+=================================== FAILURES ===================================
+________ test_blocked_a_source_fanout_has_no_staged_packet_to_dispatch _________
+
+    def test_blocked_a_source_fanout_has_no_staged_packet_to_dispatch() -> None:
+        """`plan26/n30/model-packet-not-staged` -> N22_DETERMINISTIC_NODES.
+    
+        D06 computes the request denominator and declares `discovery_fanout`, but
+        stages no `pending_packet`, and its catalogue row does not authorize one, so
+        the fan-out guard has nothing to translate. The guard raising here is the
+        correct behaviour (spec 10) — the defect is upstream.
+    
+        Inverts when D06 stages one M01 discovery packet per request key.
+        """
+    
+>       assert "pending_packet" not in NODE_CATALOGUE["D06_COMPILE_SOURCE_REQUESTS"].outputs
+E       AssertionError: assert 'pending_packet' not in ('source_requests', 'source_denominators', 'pending_packet')
+E        +  where ('source_requests', 'source_denominators', 'pending_packet') = NodeSpec(node_id='D06_COMPILE_SOURCE_REQUESTS', module='sources', inputs=('effective_run', 'selected_unit_id', 'source...('source_requests', 'source_denominators', 'pending_packet'), failure_classes=('pause',), guards=('discovery_fanout',)).outputs
+
+tests/runtime/test_plan26_unit_graph.py:695: AssertionError
+_ test_blocked_no_dispatching_node_authorizes_a_worker_packet[D06_COMPILE_SOURCE_REQUESTS-M01 discovery] _
+
+node_id = 'D06_COMPILE_SOURCE_REQUESTS', staging_node = 'M01 discovery'
+
+    @pytest.mark.parametrize(
+        "node_id, staging_node",
+        [
+            ("D06_COMPILE_SOURCE_REQUESTS", "M01 discovery"),
+            ("D06B_RETRIEVE_SOURCE_CANDIDATES", "M01 interpretation"),
+            ("D07_CORRELATE_AND_ADMIT_SOURCES", "M02"),
+            ("D08_VALIDATE_DOMAIN", "M03"),
+            ("D10_COMPILE_VISUAL_BRIEFS", "D11"),
+            ("D15_FREEZE_UNIT_REVIEW_PACKET", "M05"),
+        ],
+    )
+    def test_blocked_no_dispatching_node_authorizes_a_worker_packet(node_id: str, staging_node: str) -> None:
+        """Same gap, stated as the frozen catalogue rows that must change."""
+    
+>       assert "pending_packet" not in NODE_CATALOGUE[node_id].outputs, (
+            f"{node_id} now stages a packet for {staging_node}; revisit this gap"
+        )
+E       AssertionError: D06_COMPILE_SOURCE_REQUESTS now stages a packet for M01 discovery; revisit this gap
+E       assert 'pending_packet' not in ('source_requests', 'source_denominators', 'pending_packet')
+E        +  where ('source_requests', 'source_denominators', 'pending_packet') = NodeSpec(node_id='D06_COMPILE_SOURCE_REQUESTS', module='sources', inputs=('effective_run', 'selected_unit_id', 'source...('source_requests', 'source_denominators', 'pending_packet'), failure_classes=('pause',), guards=('discovery_fanout',)).outputs
+
+tests/runtime/test_plan26_unit_graph.py:731: AssertionError
+_ test_blocked_no_dispatching_node_authorizes_a_worker_packet[D06B_RETRIEVE_SOURCE_CANDIDATES-M01 interpretation] _
+
+node_id = 'D06B_RETRIEVE_SOURCE_CANDIDATES', staging_node = 'M01 interpretation'
+
+    @pytest.mark.parametrize(
+        "node_id, staging_node",
+        [
+            ("D06_COMPILE_SOURCE_REQUESTS", "M01 discovery"),
+            ("D06B_RETRIEVE_SOURCE_CANDIDATES", "M01 interpretation"),
+            ("D07_CORRELATE_AND_ADMIT_SOURCES", "M02"),
+            ("D08_VALIDATE_DOMAIN", "M03"),
+            ("D10_COMPILE_VISUAL_BRIEFS", "D11"),
+            ("D15_FREEZE_UNIT_REVIEW_PACKET", "M05"),
+        ],
+    )
+    def test_blocked_no_dispatching_node_authorizes_a_worker_packet(node_id: str, staging_node: str) -> None:
+        """Same gap, stated as the frozen catalogue rows that must change."""
+    
+>       assert "pending_packet" not in NODE_CATALOGUE[node_id].outputs, (
+            f"{node_id} now stages a packet for {staging_node}; revisit this gap"
+        )
+E       AssertionError: D06B_RETRIEVE_SOURCE_CANDIDATES now stages a packet for M01 interpretation; revisit this gap
+E       assert 'pending_packet' not in ('retrievals', 'pending_packet')
+E        +  where ('retrievals', 'pending_packet') = NodeSpec(node_id='D06B_RETRIEVE_SOURCE_CANDIDATES', module='sources', inputs=('selected_unit_id', 'source_requests', '...id'), outputs=('retrievals', 'pending_packet'), failure_classes=('system', 'pause'), guards=('interpretation_fanout',)).outputs
+
+tests/runtime/test_plan26_unit_graph.py:731: AssertionError
+_ test_blocked_no_dispatching_node_authorizes_a_worker_packet[D07_CORRELATE_AND_ADMIT_SOURCES-M02] _
+
+node_id = 'D07_CORRELATE_AND_ADMIT_SOURCES', staging_node = 'M02'
+
+    @pytest.mark.parametrize(
+        "node_id, staging_node",
+        [
+            ("D06_COMPILE_SOURCE_REQUESTS", "M01 discovery"),
+            ("D06B_RETRIEVE_SOURCE_CANDIDATES", "M01 interpretation"),
+            ("D07_CORRELATE_AND_ADMIT_SOURCES", "M02"),
+            ("D08_VALIDATE_DOMAIN", "M03"),
+            ("D10_COMPILE_VISUAL_BRIEFS", "D11"),
+            ("D15_FREEZE_UNIT_REVIEW_PACKET", "M05"),
+        ],
+    )
+    def test_blocked_no_dispatching_node_authorizes_a_worker_packet(node_id: str, staging_node: str) -> None:
+        """Same gap, stated as the frozen catalogue rows that must change."""
+    
+>       assert "pending_packet" not in NODE_CATALOGUE[node_id].outputs, (
+            f"{node_id} now stages a packet for {staging_node}; revisit this gap"
+        )
+E       AssertionError: D07_CORRELATE_AND_ADMIT_SOURCES now stages a packet for M02; revisit this gap
+E       assert 'pending_packet' not in ('source_admissions', 'source_join_evidence', 'pending_packet')
+E        +  where ('source_admissions', 'source_join_evidence', 'pending_packet') = NodeSpec(node_id='D07_CORRELATE_AND_ADMIT_SOURCES', module='sources', inputs=('selected_unit_id', 'source_requests', '...join_evidence', 'pending_packet'), failure_classes=('system',), guards=('sources_admitted', 'prerequisite_unresolved')).outputs
+
+tests/runtime/test_plan26_unit_graph.py:731: AssertionError
+_ test_blocked_no_dispatching_node_authorizes_a_worker_packet[D08_VALIDATE_DOMAIN-M03] _
+
+node_id = 'D08_VALIDATE_DOMAIN', staging_node = 'M03'
+
+    @pytest.mark.parametrize(
+        "node_id, staging_node",
+        [
+            ("D06_COMPILE_SOURCE_REQUESTS", "M01 discovery"),
+            ("D06B_RETRIEVE_SOURCE_CANDIDATES", "M01 interpretation"),
+            ("D07_CORRELATE_AND_ADMIT_SOURCES", "M02"),
+            ("D08_VALIDATE_DOMAIN", "M03"),
+            ("D10_COMPILE_VISUAL_BRIEFS", "D11"),
+            ("D15_FREEZE_UNIT_REVIEW_PACKET", "M05"),
+        ],
+    )
+    def test_blocked_no_dispatching_node_authorizes_a_worker_packet(node_id: str, staging_node: str) -> None:
+        """Same gap, stated as the frozen catalogue rows that must change."""
+    
+>       assert "pending_packet" not in NODE_CATALOGUE[node_id].outputs, (
+            f"{node_id} now stages a packet for {staging_node}; revisit this gap"
+        )
+E       AssertionError: D08_VALIDATE_DOMAIN now stages a packet for M03; revisit this gap
+E       assert 'pending_packet' not in ('artifact_heads', 'deterministic_checks', 'pending_packet')
+E        +  where ('artifact_heads', 'deterministic_checks', 'pending_packet') = NodeSpec(node_id='D08_VALIDATE_DOMAIN', module='domain', inputs=('selected_unit_id', 'effective_run', 'artifact_versio...deterministic_checks', 'pending_packet'), failure_classes=('system',), guards=('domain_admitted', 'domain_repairable')).outputs
+
+tests/runtime/test_plan26_unit_graph.py:731: AssertionError
+_ test_blocked_no_dispatching_node_authorizes_a_worker_packet[D10_COMPILE_VISUAL_BRIEFS-D11] _
+
+node_id = 'D10_COMPILE_VISUAL_BRIEFS', staging_node = 'D11'
+
+    @pytest.mark.parametrize(
+        "node_id, staging_node",
+        [
+            ("D06_COMPILE_SOURCE_REQUESTS", "M01 discovery"),
+            ("D06B_RETRIEVE_SOURCE_CANDIDATES", "M01 interpretation"),
+            ("D07_CORRELATE_AND_ADMIT_SOURCES", "M02"),
+            ("D08_VALIDATE_DOMAIN", "M03"),
+            ("D10_COMPILE_VISUAL_BRIEFS", "D11"),
+            ("D15_FREEZE_UNIT_REVIEW_PACKET", "M05"),
+        ],
+    )
+    def test_blocked_no_dispatching_node_authorizes_a_worker_packet(node_id: str, staging_node: str) -> None:
+        """Same gap, stated as the frozen catalogue rows that must change."""
+    
+>       assert "pending_packet" not in NODE_CATALOGUE[node_id].outputs, (
+            f"{node_id} now stages a packet for {staging_node}; revisit this gap"
+        )
+E       AssertionError: D10_COMPILE_VISUAL_BRIEFS now stages a packet for D11; revisit this gap
+E       assert 'pending_packet' not in ('visual_briefs', 'visual_denominators', 'pending_packet')
+E        +  where ('visual_briefs', 'visual_denominators', 'pending_packet') = NodeSpec(node_id='D10_COMPILE_VISUAL_BRIEFS', module='visuals', inputs=('selected_unit_id', 'artifact_heads', 'artifac...s', 'pending_packet'), failure_classes=('system',), guards=('deterministic_visual_fanout', 'no_deterministic_visuals')).outputs
+
+tests/runtime/test_plan26_unit_graph.py:731: AssertionError
+_ test_blocked_no_dispatching_node_authorizes_a_worker_packet[D15_FREEZE_UNIT_REVIEW_PACKET-M05] _
+
+node_id = 'D15_FREEZE_UNIT_REVIEW_PACKET', staging_node = 'M05'
+
+    @pytest.mark.parametrize(
+        "node_id, staging_node",
+        [
+            ("D06_COMPILE_SOURCE_REQUESTS", "M01 discovery"),
+            ("D06B_RETRIEVE_SOURCE_CANDIDATES", "M01 interpretation"),
+            ("D07_CORRELATE_AND_ADMIT_SOURCES", "M02"),
+            ("D08_VALIDATE_DOMAIN", "M03"),
+            ("D10_COMPILE_VISUAL_BRIEFS", "D11"),
+            ("D15_FREEZE_UNIT_REVIEW_PACKET", "M05"),
+        ],
+    )
+    def test_blocked_no_dispatching_node_authorizes_a_worker_packet(node_id: str, staging_node: str) -> None:
+        """Same gap, stated as the frozen catalogue rows that must change."""
+    
+>       assert "pending_packet" not in NODE_CATALOGUE[node_id].outputs, (
+            f"{node_id} now stages a packet for {staging_node}; revisit this gap"
+        )
+E       AssertionError: D15_FREEZE_UNIT_REVIEW_PACKET now stages a packet for M05; revisit this gap
+E       assert 'pending_packet' not in ('review_packets', 'pending_packet')
+E        +  where ('review_packets', 'pending_packet') = NodeSpec(node_id='D15_FREEZE_UNIT_REVIEW_PACKET', module='review', inputs=('selected_unit_id', 'artifact_heads', 'unit...sode_id'), outputs=('review_packets', 'pending_packet'), failure_classes=('system',), guards=('review_packet_frozen',)).outputs
+
+tests/runtime/test_plan26_unit_graph.py:731: AssertionError
+____________ test_blocked_the_staged_m04_briefs_are_not_m04_packets ____________
+
+    def test_blocked_the_staged_m04_briefs_are_not_m04_packets() -> None:
+        """`plan26/n30/visual-fanout-packet-not-staged` -> N22_DETERMINISTIC_NODES.
+    
+        D12 does stage a packet, but its members are bare brief records. `Send`
+        delivers each member as the worker's whole input, and M04 requires a
+        `brief`/`permitted_facts`/`visual_contract` packet with a reservation and a
+        correlation key.
+    
+        Inverts when D12 stages M04 packets rather than briefs.
+        """
+    
+        sandbox = Path(tempfile.mkdtemp())
+        context = mn.build_test_model_node_context(sandbox_root=sandbox, responses={})
+        unit_id = "U001"
+        briefs = [_brief(unit_id, "det-a", "deterministic"), _brief(unit_id, "mdl-a", "model")]
+        key = f"{unit_id}/visual/det-a"
+        state = _visual_state(unit_id, briefs, {key: _visual_result(key, unit_id, "deterministic")})
+        update = visuals.D12_VISUAL_BARRIER_AND_JOIN(state, _Context())
+    
+>       member = update["pending_packet"]["briefs"][0]
+                 ^^^^^^^^^^^^^^^^^^^^^^^^
+E       KeyError: 'pending_packet'
+
+tests/runtime/test_plan26_unit_graph.py:778: KeyError
+=========================== short test summary info ============================
+FAILED tests/runtime/test_plan26_unit_graph.py::test_blocked_a_source_fanout_has_no_staged_packet_to_dispatch
+FAILED tests/runtime/test_plan26_unit_graph.py::test_blocked_no_dispatching_node_authorizes_a_worker_packet[D06_COMPILE_SOURCE_REQUESTS-M01 discovery]
+FAILED tests/runtime/test_plan26_unit_graph.py::test_blocked_no_dispatching_node_authorizes_a_worker_packet[D06B_RETRIEVE_SOURCE_CANDIDATES-M01 interpretation]
+FAILED tests/runtime/test_plan26_unit_graph.py::test_blocked_no_dispatching_node_authorizes_a_worker_packet[D07_CORRELATE_AND_ADMIT_SOURCES-M02]
+FAILED tests/runtime/test_plan26_unit_graph.py::test_blocked_no_dispatching_node_authorizes_a_worker_packet[D08_VALIDATE_DOMAIN-M03]
+FAILED tests/runtime/test_plan26_unit_graph.py::test_blocked_no_dispatching_node_authorizes_a_worker_packet[D10_COMPILE_VISUAL_BRIEFS-D11]
+FAILED tests/runtime/test_plan26_unit_graph.py::test_blocked_no_dispatching_node_authorizes_a_worker_packet[D15_FREEZE_UNIT_REVIEW_PACKET-M05]
+FAILED tests/runtime/test_plan26_unit_graph.py::test_blocked_the_staged_m04_briefs_are_not_m04_packets
+8 failed, 34 deselected in 0.35s

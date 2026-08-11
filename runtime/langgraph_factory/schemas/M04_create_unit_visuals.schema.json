@@ -1,0 +1,43 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "plan26/M04_create_unit_visuals.schema.json",
+  "title": "M04 create_unit_visuals candidate output",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["visual_candidate", "provenance_declaration"],
+  "properties": {
+    "visual_candidate": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["brief_id", "prompt_text", "dimensions", "image_format", "accessibility_text"],
+      "properties": {
+        "brief_id": {"type": "string", "minLength": 1, "maxLength": 200},
+        "prompt_text": {"type": "string", "minLength": 1, "maxLength": 20000},
+        "dimensions": {
+          "type": "object",
+          "additionalProperties": false,
+          "required": ["width_px", "height_px"],
+          "properties": {
+            "width_px": {"type": "integer", "minimum": 1, "maximum": 16384},
+            "height_px": {"type": "integer", "minimum": 1, "maximum": 16384}
+          }
+        },
+        "image_format": {"type": "string", "enum": ["png", "jpeg"]},
+        "accessibility_text": {"type": "string", "minLength": 1, "maxLength": 4000}
+      }
+    },
+    "provenance_declaration": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["brief_id", "permitted_facts_used", "asserts_authoritative_detail"],
+      "properties": {
+        "brief_id": {"type": "string", "minLength": 1, "maxLength": 200},
+        "permitted_facts_used": {
+          "type": "array",
+          "items": {"type": "string", "minLength": 1, "maxLength": 2000}
+        },
+        "asserts_authoritative_detail": {"type": "boolean"}
+      }
+    }
+  }
+}

@@ -1,0 +1,35 @@
+REGISTRABLE: 30
+D05_SELECT_NEXT_UNIT                       missing=['D24_PROVE_EXACT_MANIFEST_COVERAGE']
+D06_COMPILE_SOURCE_REQUESTS                missing=[]
+D06B_RETRIEVE_SOURCE_CANDIDATES            missing=[]
+D07_CORRELATE_AND_ADMIT_SOURCES            missing=[]
+D08_VALIDATE_DOMAIN                        missing=['D17_CLASSIFY_UNIT_FINDINGS']
+D09_VALIDATE_CONTENT                       missing=['D17_CLASSIFY_UNIT_FINDINGS']
+D10_COMPILE_VISUAL_BRIEFS                  missing=[]
+D11_CREATE_DETERMINISTIC_VISUALS           missing=[]
+D12_VISUAL_BARRIER_AND_JOIN                missing=['D17_CLASSIFY_UNIT_FINDINGS']
+D13_RENDER_UNIT                            missing=[]
+D14_INVENTORY_AND_INSPECT_UNIT_PAGES       missing=['D17_CLASSIFY_UNIT_FINDINGS']
+D15_FREEZE_UNIT_REVIEW_PACKET              missing=[]
+D30_CLASSIFY_PREREQUISITE                  missing=[]
+D92_REENTER_VALIDATED_FRONTIER             missing=['D91_CLASSIFY_MODEL_FAILURE']
+M01_RESEARCH_UNIT_SOURCES                  missing=['D91_CLASSIFY_MODEL_FAILURE']
+M02_CREATE_UNIT_DOMAIN_DATA                missing=['D91_CLASSIFY_MODEL_FAILURE']
+M03_WRITE_UNIT_CONTENT                     missing=['D91_CLASSIFY_MODEL_FAILURE']
+M04_CREATE_UNIT_VISUALS                    missing=['D91_CLASSIFY_MODEL_FAILURE']
+M05_REVIEW_ACTUAL_UNIT                     missing=['D16_REDUCE_UNIT_EVIDENCE', 'D91_CLASSIFY_MODEL_FAILURE']
+ALL MISSING DESTINATIONS: ['D16_REDUCE_UNIT_EVIDENCE', 'D17_CLASSIFY_UNIT_FINDINGS', 'D24_PROVE_EXACT_MANIFEST_COVERAGE', 'D91_CLASSIFY_MODEL_FAILURE']
+
+D90/D91 in node_registry: ['D92_REENTER_VALIDATED_FRONTIER', 'D96_GRACEFUL_INTERRUPT_GATE', 'D98_WRITE_TERMINAL']
+D90/D91 in MODEL_NODE_ADAPTERS: []
+reserve_model_attempt sig: (state: 'Mapping[str, Any]', *, job_id: 'str', correlation_key: 'str', activation_id: 'str', limit: 'int' = 2, fingerprints: 'Sequence[Mapping[str, Any]]' = (), clock: 'Callable[[], str]' = <function _utc_now at 0x10a522340>) -> 'dict[str, Any]'
+classify_model_failure sig: (failure: 'Mapping[str, Any]', *, attempts_used: 'int', limit: 'int' = 2, clock: 'Callable[[], str]' = <function _utc_now at 0x10a522340>) -> 'dict[str, Any]'
+PRODUCTION_BINDING_MODULES: ('runtime.langgraph_factory.nodes', 'runtime.langgraph_factory.model_nodes')
+
+D06_COMPILE_SOURCE_REQUESTS                pending_packet_out=False  inputs=('effective_run', 'selected_unit_id', 'source_admissions', 'engine_root')
+D06B_RETRIEVE_SOURCE_CANDIDATES            pending_packet_out=False  inputs=('selected_unit_id', 'source_requests', 'source_denominators', 'source_discoveries', 'external_authorizations')
+D07_CORRELATE_AND_ADMIT_SOURCES            pending_packet_out=False  inputs=('selected_unit_id', 'source_requests', 'source_denominators', 'source_discoveries', 'retrievals', 'source_interpretations')
+D08_VALIDATE_DOMAIN                        pending_packet_out=False  inputs=('selected_unit_id', 'effective_run', 'artifact_versions', 'artifact_heads', 'source_admissions', 'engine_root')
+D10_COMPILE_VISUAL_BRIEFS                  pending_packet_out=False  inputs=('selected_unit_id', 'artifact_heads', 'artifact_versions', 'engine_root')
+D12_VISUAL_BARRIER_AND_JOIN                pending_packet_out=True  inputs=('selected_unit_id', 'visual_denominators', 'visual_briefs', 'visual_results', 'artifact_versions', 'artifact_heads')
+D15_FREEZE_UNIT_REVIEW_PACKET              pending_packet_out=False  inputs=('selected_unit_id', 'artifact_heads', 'unit_page_inventories', 'unit_page_inspections', 'deterministic_checks', 'source_admissions', 'artifact_versions', 'engine_root')

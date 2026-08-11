@@ -1,0 +1,23 @@
+# Plan 26 direct dependency pins (spec section 3.1).
+# Python is pinned to >=3.13,<3.14 for Plan 26 reproducibility.
+#
+# Regenerate the lock with pip-tools 7.6.0 under CPython 3.13:
+#   pip-compile --generate-hashes --no-header --strip-extras \
+#     --output-file requirements/plan26.lock requirements/plan26.in
+#
+# Forbidden (spec section 3.1): langchain, langchain-openai,
+# langchain-google-genai, openai, google-generativeai, and any HTTP client
+# introduced to call a model endpoint. Transitive langchain-core is resolved by
+# langgraph and does not authorize chat-model wrappers.
+
+# --- core runtime ---
+langgraph==1.2.9
+langgraph-checkpoint-sqlite==3.1.0
+
+# --- existing runtime stack, made explicit ---
+jsonschema==4.26.0
+PyYAML==6.0.3
+Pillow==12.2.0
+
+# --- development only (tests; not installed on a production-only path) ---
+pytest==9.0.3

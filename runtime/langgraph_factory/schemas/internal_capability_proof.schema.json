@@ -1,0 +1,30 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "plan26/internal_capability_proof.schema.json",
+  "title": "Internal D03 transport capability proof",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["proved_at_utc", "platform", "facets", "satisfied"],
+  "properties": {
+    "proved_at_utc": {"type": "string", "minLength": 1},
+    "platform": {"type": "string", "minLength": 1},
+    "satisfied": {"type": "boolean"},
+    "unsatisfied_required_facets": {"type": "array", "items": {"type": "string"}},
+    "facets": {
+      "type": "object",
+      "minProperties": 1,
+      "additionalProperties": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": ["required", "enforced", "mechanism", "evidence"],
+        "properties": {
+          "required": {"type": "boolean"},
+          "enforced": {"type": "boolean"},
+          "mechanism": {"type": "string", "minLength": 1},
+          "evidence": {"type": "string", "minLength": 1},
+          "limitation": {"type": ["string", "null"]}
+        }
+      }
+    }
+  }
+}

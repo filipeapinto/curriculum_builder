@@ -1,0 +1,158 @@
+graph_id: plan26_langgraph_curriculum_factory_implementation
+version: 1
+source_spec: plans/26_langgraph_curriculum_factory/spec/langgraph_curriculum_factory.spec.v1.md
+schema: plans/26_langgraph_curriculum_factory/deprecated/implementation.graph.schema.v1.json
+runner: plans/26_langgraph_curriculum_factory/run.prompt.md
+entry: N00_BASELINE_FREEZE
+result_pattern: plans/26_langgraph_curriculum_factory/results/{node_id}.result.v1.md
+
+rules:
+  success_requires_result_evidence: true
+  allow_parallel_ready_nodes: true
+  parallel_requires_disjoint_writes: true
+  invalidate_descendants_on_rework: true
+  max_same_finding_rework: 2
+  forbidden_production_imports:
+    - langchain
+    - langchain_openai
+    - langchain_google_genai
+    - openai
+    - google.generativeai
+
+nodes:
+  N00_BASELINE_FREEZE:
+    prompt: prompts/N00_baseline_freeze.prompt.v1.md
+    depends_on: []
+    writes: [plans/26_langgraph_curriculum_factory/contracts, plans/26_langgraph_curriculum_factory/results/N00_BASELINE_FREEZE.result.v1.md]
+
+  N10_DEPENDENCY_API:
+    prompt: prompts/deprecated/N10_dependency_api.prompt.v1.md
+    depends_on: [N00_BASELINE_FREEZE]
+    writes: [requirements/plan26.in, requirements/plan26.lock, tests/runtime/test_plan26_api_contract.py, plans/26_langgraph_curriculum_factory/results/N10_DEPENDENCY_API.result.v1.md]
+
+  N11_STATE_REDUCERS:
+    prompt: prompts/N11_state_reducers.prompt.v1.md
+    depends_on: [N00_BASELINE_FREEZE]
+    writes: [runtime/langgraph_factory/state.py, runtime/langgraph_factory/reducers.py, tests/runtime/test_plan26_state_reducers.py, plans/26_langgraph_curriculum_factory/results/N11_STATE_REDUCERS.result.v1.md]
+
+  N12_EVIDENCE_ARTIFACTS:
+    prompt: prompts/N12_evidence_artifacts.prompt.v1.md
+    depends_on: [N00_BASELINE_FREEZE]
+    writes: [runtime/langgraph_factory/evidence.py, runtime/langgraph_factory/artifacts.py, tests/runtime/test_plan26_evidence.py, plans/26_langgraph_curriculum_factory/results/N12_EVIDENCE_ARTIFACTS.result.v1.md]
+
+  N13_TRANSPORT_AUTH:
+    prompt: prompts/deprecated/N13_transport_authorization.prompt.v1.md
+    depends_on: [N00_BASELINE_FREEZE]
+    writes: [runtime/langgraph_factory/transport.py, runtime/langgraph_factory/config, runtime/langgraph_factory/schemas, runtime/langgraph_factory/prompts, tests/runtime/test_plan26_transport.py, plans/26_langgraph_curriculum_factory/results/N13_TRANSPORT_AUTH.result.v1.md]
+
+  N20_GRAPH_COMPILER:
+    prompt: prompts/deprecated/N20_graph_compiler.prompt.v1.md
+    depends_on: [N10_DEPENDENCY_API, N11_STATE_REDUCERS]
+    join: all_of
+    writes: [runtime/langgraph_factory/graph.py, runtime/langgraph_factory/routing.py, tests/runtime/test_plan26_topology.py, plans/26_langgraph_curriculum_factory/results/N20_GRAPH_COMPILER.result.v1.md]
+
+  N21_PERSISTENCE_RESUME:
+    prompt: prompts/N21_persistence_resume.prompt.v1.md
+    depends_on: [N10_DEPENDENCY_API, N11_STATE_REDUCERS, N12_EVIDENCE_ARTIFACTS]
+    join: all_of
+    writes: [runtime/langgraph_factory/persistence.py, tests/runtime/test_plan26_persistence.py, plans/26_langgraph_curriculum_factory/results/N21_PERSISTENCE_RESUME.result.v1.md]
+
+  N22_DETERMINISTIC_NODES:
+    prompt: prompts/deprecated/N22_deterministic_nodes.prompt.v1.md
+    depends_on: [N11_STATE_REDUCERS, N12_EVIDENCE_ARTIFACTS]
+    join: all_of
+    writes: [runtime/langgraph_factory/nodes, tests/runtime/test_plan26_deterministic_nodes.py, plans/26_langgraph_curriculum_factory/results/N22_DETERMINISTIC_NODES.result.v1.md]
+
+  N23_MODEL_NODES:
+    prompt: prompts/N23_model_nodes.prompt.v1.md
+    depends_on: [N11_STATE_REDUCERS, N13_TRANSPORT_AUTH]
+    join: all_of
+    writes: [runtime/langgraph_factory/model_nodes.py, tests/runtime/test_plan26_model_nodes.py, plans/26_langgraph_curriculum_factory/results/N23_MODEL_NODES.result.v1.md]
+
+  N30_UNIT_GRAPH:
+    prompt: prompts/N30_unit_graph.prompt.v1.md
+    depends_on: [N20_GRAPH_COMPILER, N21_PERSISTENCE_RESUME, N22_DETERMINISTIC_NODES, N23_MODEL_NODES]
+    join: all_of
+    writes: [runtime/langgraph_factory/unit_graph.py, tests/runtime/test_plan26_unit_graph.py, plans/26_langgraph_curriculum_factory/results/N30_UNIT_GRAPH.result.v1.md]
+
+  N31_REPAIR_ACCEPTANCE:
+    prompt: prompts/deprecated/N31_repair_acceptance.prompt.v1.md
+    depends_on: [N30_UNIT_GRAPH]
+    writes: [runtime/langgraph_factory/repair.py, runtime/langgraph_factory/acceptance.py, tests/runtime/test_plan26_repair_acceptance.py, plans/26_langgraph_curriculum_factory/results/N31_REPAIR_ACCEPTANCE.result.v1.md]
+
+  N32_WORKBOOK_TERMINALS:
+    prompt: prompts/deprecated/N32_workbook_terminals.prompt.v1.md
+    depends_on: [N31_REPAIR_ACCEPTANCE]
+    writes: [runtime/langgraph_factory/workbook.py, runtime/langgraph_factory/terminal.py, tests/runtime/test_plan26_workbook.py, plans/26_langgraph_curriculum_factory/results/N32_WORKBOOK_TERMINALS.result.v1.md]
+
+  N40_CLI_CUTOVER:
+    prompt: prompts/N40_cli_cutover.prompt.v1.md
+    depends_on: [N32_WORKBOOK_TERMINALS]
+    writes: [runtime/run_curriculum.py, tests/runtime/test_plan26_cli.py, plans/26_langgraph_curriculum_factory/results/N40_CLI_CUTOVER.result.v1.md]
+
+  N50_ADVERSARIAL_REGRESSION:
+    prompt: prompts/deprecated/N50_adversarial_regression.prompt.v1.md
+    depends_on: [N40_CLI_CUTOVER]
+    writes: [tests/runtime/test_plan26_adversarial.py, plans/26_langgraph_curriculum_factory/results/N50_ADVERSARIAL_REGRESSION.result.v1.md]
+
+  N60_LIVE_PRODUCT_PROOF:
+    prompt: prompts/N60_live_product_proof.prompt.v1.md
+    depends_on: [N50_ADVERSARIAL_REGRESSION]
+    writes: [plans/26_langgraph_curriculum_factory/results/N60_LIVE_PRODUCT_PROOF.result.v1.md]
+    allowed_results: [PASSED, NOT_AVAILABLE, BLOCKED]
+
+  N90_FINAL_AUDIT:
+    prompt: prompts/N90_final_audit.prompt.v1.md
+    depends_on: [N50_ADVERSARIAL_REGRESSION, N60_LIVE_PRODUCT_PROOF]
+    join: all_of
+    writes: [plans/26_langgraph_curriculum_factory/results/N90_FINAL_AUDIT.result.v1.md]
+
+edges:
+  - {from: N00_BASELINE_FREEZE, to: N10_DEPENDENCY_API, type: fan_out}
+  - {from: N00_BASELINE_FREEZE, to: N11_STATE_REDUCERS, type: fan_out}
+  - {from: N00_BASELINE_FREEZE, to: N12_EVIDENCE_ARTIFACTS, type: fan_out}
+  - {from: N00_BASELINE_FREEZE, to: N13_TRANSPORT_AUTH, type: fan_out}
+  - {from: N10_DEPENDENCY_API, to: N20_GRAPH_COMPILER, type: all_of}
+  - {from: N11_STATE_REDUCERS, to: N20_GRAPH_COMPILER, type: all_of}
+  - {from: N10_DEPENDENCY_API, to: N21_PERSISTENCE_RESUME, type: all_of}
+  - {from: N11_STATE_REDUCERS, to: N21_PERSISTENCE_RESUME, type: all_of}
+  - {from: N12_EVIDENCE_ARTIFACTS, to: N21_PERSISTENCE_RESUME, type: all_of}
+  - {from: N11_STATE_REDUCERS, to: N22_DETERMINISTIC_NODES, type: all_of}
+  - {from: N12_EVIDENCE_ARTIFACTS, to: N22_DETERMINISTIC_NODES, type: all_of}
+  - {from: N11_STATE_REDUCERS, to: N23_MODEL_NODES, type: all_of}
+  - {from: N13_TRANSPORT_AUTH, to: N23_MODEL_NODES, type: all_of}
+  - {from: N20_GRAPH_COMPILER, to: N30_UNIT_GRAPH, type: all_of}
+  - {from: N21_PERSISTENCE_RESUME, to: N30_UNIT_GRAPH, type: all_of}
+  - {from: N22_DETERMINISTIC_NODES, to: N30_UNIT_GRAPH, type: all_of}
+  - {from: N23_MODEL_NODES, to: N30_UNIT_GRAPH, type: all_of}
+  - {from: N30_UNIT_GRAPH, to: N31_REPAIR_ACCEPTANCE, type: normal}
+  - {from: N31_REPAIR_ACCEPTANCE, to: N32_WORKBOOK_TERMINALS, type: normal}
+  - {from: N32_WORKBOOK_TERMINALS, to: N40_CLI_CUTOVER, type: normal}
+  - {from: N40_CLI_CUTOVER, to: N50_ADVERSARIAL_REGRESSION, type: normal}
+  - {from: N50_ADVERSARIAL_REGRESSION, to: N60_LIVE_PRODUCT_PROOF, type: normal}
+  - {from: N50_ADVERSARIAL_REGRESSION, to: N90_FINAL_AUDIT, type: all_of}
+  - {from: N60_LIVE_PRODUCT_PROOF, to: N90_FINAL_AUDIT, type: all_of}
+
+rework_edges:
+  dependency_or_api: N10_DEPENDENCY_API
+  state_or_reducer: N11_STATE_REDUCERS
+  evidence_or_artifact: N12_EVIDENCE_ARTIFACTS
+  transport_or_authorization: N13_TRANSPORT_AUTH
+  topology_or_guard: N20_GRAPH_COMPILER
+  checkpoint_or_resume: N21_PERSISTENCE_RESUME
+  deterministic_node: N22_DETERMINISTIC_NODES
+  model_node_or_projection: N23_MODEL_NODES
+  unit_flow_or_denominator: N30_UNIT_GRAPH
+  repair_or_unit_acceptance: N31_REPAIR_ACCEPTANCE
+  workbook_or_terminal: N32_WORKBOOK_TERMINALS
+  cli_or_cutover: N40_CLI_CUTOVER
+  adversarial_or_regression: N50_ADVERSARIAL_REGRESSION
+  live_product_proof: N60_LIVE_PRODUCT_PROOF
+
+terminals:
+  ACTIVATED:
+    guard: N90 verdict is ACTIVATED and N60 has authorized live product receipts
+  IMPLEMENTED_NOT_ACTIVATED:
+    guard: N50 passed, N60 is NOT_AVAILABLE, and N90 found no implementation defect
+  BLOCKED:
+    guard: a node exhausted its loop, graph scheduling is impossible, or final audit has an unresolved blocking finding

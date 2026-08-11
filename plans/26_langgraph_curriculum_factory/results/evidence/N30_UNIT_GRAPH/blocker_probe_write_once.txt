@@ -1,0 +1,21 @@
+write_once channels initialized to a NON-None empty value (first real write conflicts):
+   bootstrap_kind                     initial=''
+   contract_version                   initial=''
+   run_id                             initial=''
+   created_at                         initial=''
+   engine_root                        initial=''
+   curriculum_root                    initial=''
+   active_manifest_path               initial=''
+   output_root                        initial=''
+   mode                               initial=''
+   requested_unit_id                  initial=<object object at 0x10448e230>
+   frozen_inputs                      initial=[]
+   frozen_digest                      initial=''
+   frozen_executable_identities       initial=[]
+   external_authorizations            initial=[]
+   effective_run                      initial={}
+   episode_id                         initial=''
+   checkpoint_thread_id               initial=''
+   checkpoint_namespace               initial=''
+   resume_from                        initial=<object object at 0x10448e230>
+count: 19

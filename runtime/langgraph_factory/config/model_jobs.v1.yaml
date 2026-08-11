@@ -1,0 +1,157 @@
+version: 1
+registry_id: plan26_model_jobs.v1
+frozen: true
+job_count: 8
+
+identity_observation:
+  codex:
+    mechanism: codex_jsonl_events
+    required_flag: "--json"
+    events: [session_configured, thread.started, model_reroute]
+  gemini:
+    mechanism: gemini_json_envelope_session_metrics
+    required_flag: "--output-format json"
+    pointer: stats.models
+
+jobs:
+  - job_id: M01_RESEARCH_UNIT_SOURCES
+    job_type: research_unit_sources
+    cli: codex
+    family: openai
+    provider: openai
+    model: gpt-5.6-sol
+    task_class: component_research
+    reasoning_effort: xhigh
+    schema: M01_research_unit_sources.schema.json
+    prompt: M01_research_unit_sources.prompt.md
+    timeout_seconds: 900
+    retry_limit: 1
+    data_classes:
+      - bounded_questions
+      - manifest_unit_projection
+      - schemas_and_rubrics
+      - retrieved_source_files
+
+  - job_id: M02_CREATE_UNIT_DOMAIN_DATA
+    job_type: create_unit_domain_data
+    cli: codex
+    family: openai
+    provider: openai
+    model: gpt-5.6-sol
+    task_class: final_acceptance
+    reasoning_effort: max
+    schema: M02_create_unit_domain_data.schema.json
+    prompt: M02_create_unit_domain_data.prompt.md
+    timeout_seconds: 900
+    retry_limit: 1
+    data_classes:
+      - manifest_unit_projection
+      - admitted_source_excerpts
+      - schemas_and_rubrics
+
+  - job_id: M03_WRITE_UNIT_CONTENT
+    job_type: write_unit_content
+    cli: codex
+    family: openai
+    provider: openai
+    model: gpt-5.6-sol
+    task_class: child_explanatory_writing
+    reasoning_effort: high
+    schema: M03_write_unit_content.schema.json
+    prompt: M03_write_unit_content.prompt.md
+    timeout_seconds: 900
+    retry_limit: 1
+    data_classes:
+      - domain_parent_artifact
+      - admitted_source_excerpts
+      - schemas_and_rubrics
+
+  - job_id: M04_CREATE_UNIT_VISUALS
+    job_type: create_unit_visuals
+    cli: codex
+    family: openai
+    provider: openai
+    model: gpt-5.6-sol
+    task_class: photorealistic_visual_prompt
+    reasoning_effort: high
+    schema: M04_create_unit_visuals.schema.json
+    prompt: M04_create_unit_visuals.prompt.md
+    timeout_seconds: 900
+    retry_limit: 1
+    data_classes:
+      - visual_parent_artifact
+      - schemas_and_rubrics
+
+  - job_id: M05_REVIEW_ACTUAL_UNIT
+    job_type: review_actual_unit
+    cli: gemini
+    family: google
+    provider: google
+    model: gemini-3-pro-preview
+    task_class: null
+    reasoning_effort: cli_model_default
+    schema: M05_review_actual_unit.schema.json
+    prompt: M05_review_actual_unit.prompt.md
+    timeout_seconds: 900
+    retry_limit: 1
+    data_classes:
+      - frozen_unit_artifacts
+      - shipped_pdf
+      - rasterized_pages
+      - deterministic_evidence
+      - schemas_and_rubrics
+
+  - job_id: M06_REPAIR_NAMED_UNIT_ARTIFACT
+    job_type: repair_named_unit_artifact
+    cli: codex
+    family: openai
+    provider: openai
+    model: gpt-5.6-sol
+    task_class: final_acceptance
+    reasoning_effort: max
+    schema: M06_repair_named_unit_artifact.schema.json
+    prompt: M06_repair_named_unit_artifact.prompt.md
+    timeout_seconds: 900
+    retry_limit: 1
+    data_classes:
+      - named_repair_findings
+      - domain_parent_artifact
+      - content_parent_artifact
+      - visual_parent_artifact
+      - schemas_and_rubrics
+
+  - job_id: M07_REVIEW_ACTUAL_WORKBOOK
+    job_type: review_actual_workbook
+    cli: gemini
+    family: google
+    provider: google
+    model: gemini-3-pro-preview
+    task_class: null
+    reasoning_effort: cli_model_default
+    schema: M07_review_actual_workbook.schema.json
+    prompt: M07_review_actual_workbook.prompt.md
+    timeout_seconds: 900
+    retry_limit: 1
+    data_classes:
+      - frozen_workbook_artifacts
+      - shipped_pdf
+      - rasterized_pages
+      - deterministic_evidence
+      - schemas_and_rubrics
+
+  - job_id: M08_REPAIR_NAMED_WORKBOOK_DEFECT
+    job_type: repair_named_workbook_defect
+    cli: codex
+    family: openai
+    provider: openai
+    model: gpt-5.6-sol
+    task_class: workbook_assembly
+    reasoning_effort: high
+    schema: M08_repair_named_workbook_defect.schema.json
+    prompt: M08_repair_named_workbook_defect.prompt.md
+    timeout_seconds: 900
+    retry_limit: 1
+    data_classes:
+      - named_repair_findings
+      - frozen_workbook_artifacts
+      - schemas_and_rubrics

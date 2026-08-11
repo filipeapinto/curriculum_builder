@@ -1,7 +1,7 @@
 # GOAL
 
 Compile and execute the implementation prompt graph at
-`plans/26_langgraph_curriculum_factory/implementation.graph.v1.yaml` to
+`plans/26_langgraph_curriculum_factory/implementation.graph.v2.yaml` to
 implement `spec/langgraph_curriculum_factory.spec.v1.md` exactly.
 
 This is the prompt-graph runner. It does not implement phase work itself and it
@@ -51,4 +51,3 @@ Stop at `BLOCKED` when graph validation fails, no legal frontier exists, a node
 exhausts its loop, required authority is absent, or implementation would violate
 the source spec. Missing external prerequisites for N60 yield
 `IMPLEMENTED_NOT_ACTIVATED` only when all implementation/adversarial nodes pass.
-
