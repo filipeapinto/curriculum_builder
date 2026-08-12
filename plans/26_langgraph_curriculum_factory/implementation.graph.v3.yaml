@@ -14,7 +14,7 @@ execution:
   workspace_mode: isolated_copy
   workspace_log_dir: .plan26-run
   python_candidates: [/tmp/plan26_n30_verify/bin/python, /tmp/plan26_n21_verify/bin/python, python3]
-  claude_command: [claude, --print, --model, sonnet, --effort, high, --permission-mode, acceptEdits, --allowedTools, "Read Edit Write Glob Grep Bash(/tmp/plan26_n30_verify/bin/python -m pytest *)", --output-format, json, --no-session-persistence]
+  claude_command: [claude, --print, --model, sonnet, --effort, high, --permission-mode, acceptEdits, --allowedTools, "Read Edit Write Glob Grep Bash({python} -m pytest *)", --output-format, json, --no-session-persistence]
   max_parallel: 4
   node_timeout_seconds: 7200
   test_timeout_seconds: 1800

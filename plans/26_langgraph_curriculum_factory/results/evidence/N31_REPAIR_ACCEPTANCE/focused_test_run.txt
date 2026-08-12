@@ -1,0 +1,41 @@
+============================= test session starts ==============================
+platform darwin -- Python 3.13.1, pytest-9.0.3, pluggy-1.6.0 -- /private/tmp/plan26_n30_verify/bin/python
+cachedir: .pytest_cache
+rootdir: /private/var/folders/kj/z_75gwxx2ls7p55rnx4t5kg00000gn/T/plan26-n31_repair_acceptance-en27itet/repo
+plugins: anyio-4.14.2, langsmith-0.10.17
+collecting ... collected 32 items
+
+tests/runtime/test_plan26_repair_acceptance.py::test_d17_rejects_a_finding_with_no_owner PASSED [  3%]
+tests/runtime/test_plan26_repair_acceptance.py::test_d17_rejects_a_finding_with_an_unknown_owner PASSED [  6%]
+tests/runtime/test_plan26_repair_acceptance.py::test_d17_partitions_a_multi_owner_findings_list_into_separate_owner_entries PASSED [  9%]
+tests/runtime/test_plan26_repair_acceptance.py::test_review_finding_category_is_never_trusted_as_an_owner PASSED [ 12%]
+tests/runtime/test_plan26_repair_acceptance.py::test_a_correctly_scoped_model_repair_admits PASSED [ 15%]
+tests/runtime/test_plan26_repair_acceptance.py::test_a_broad_repair_outside_its_boundary_is_refused PASSED [ 18%]
+tests/runtime/test_plan26_repair_acceptance.py::test_an_in_place_no_op_repair_is_refused PASSED [ 21%]
+tests/runtime/test_plan26_repair_acceptance.py::test_a_stale_parent_repair_is_refused PASSED [ 25%]
+tests/runtime/test_plan26_repair_acceptance.py::test_a_deterministic_layout_repair_changes_only_its_allowed_pointer PASSED [ 28%]
+tests/runtime/test_plan26_repair_acceptance.py::test_attempt_bound_exhausts_before_a_fourth_repair_child PASSED [ 31%]
+tests/runtime/test_plan26_repair_acceptance.py::test_fingerprint_repeat_bound_exhausts_at_d17 PASSED [ 34%]
+tests/runtime/test_plan26_repair_acceptance.py::test_d21_dispatches_the_first_retest_node_of_the_owners_fixed_chain PASSED [ 37%]
+tests/runtime/test_plan26_repair_acceptance.py::test_stale_evidence_at_an_old_head_cannot_pass_the_denominator PASSED [ 40%]
+tests/runtime/test_plan26_repair_acceptance.py::test_d22_accepts_a_fully_passing_denominator PASSED [ 43%]
+tests/runtime/test_plan26_repair_acceptance.py::test_removing_or_failing_any_single_member_makes_d22_reject[source] PASSED [ 46%]
+tests/runtime/test_plan26_repair_acceptance.py::test_removing_or_failing_any_single_member_makes_d22_reject[domain_check] PASSED [ 50%]
+tests/runtime/test_plan26_repair_acceptance.py::test_removing_or_failing_any_single_member_makes_d22_reject[visuals] PASSED [ 53%]
+tests/runtime/test_plan26_repair_acceptance.py::test_removing_or_failing_any_single_member_makes_d22_reject[pages] PASSED [ 56%]
+tests/runtime/test_plan26_repair_acceptance.py::test_removing_or_failing_any_single_member_makes_d22_reject[review] PASSED [ 59%]
+tests/runtime/test_plan26_repair_acceptance.py::test_staling_the_content_head_makes_d22_reject PASSED [ 62%]
+tests/runtime/test_plan26_repair_acceptance.py::test_accept_once_refuses_a_differing_second_write_for_the_same_unit PASSED [ 65%]
+tests/runtime/test_plan26_repair_acceptance.py::test_an_already_accepted_unit_can_never_re_enter_classification_or_planning PASSED [ 68%]
+tests/runtime/test_plan26_repair_acceptance.py::test_d23_writes_checkpoint_metadata_and_cursor_in_the_same_update PASSED [ 71%]
+tests/runtime/test_plan26_repair_acceptance.py::test_d23_refuses_to_advance_the_cursor_with_no_accepted_receipt PASSED [ 75%]
+tests/runtime/test_plan26_repair_acceptance.py::test_coverage_proof_rejects_missing_extra_reordered_and_wrong_hash PASSED [ 78%]
+tests/runtime/test_plan26_repair_acceptance.py::test_a_unit_accepted_candidate_traverses_the_real_d98_and_is_accepted PASSED [ 81%]
+tests/runtime/test_plan26_repair_acceptance.py::test_a_tampered_unit_accepted_candidate_is_rejected_by_the_real_d98 PASSED [ 84%]
+tests/runtime/test_plan26_repair_acceptance.py::test_a_convergence_exhausted_candidate_from_d17_traverses_the_real_d98 PASSED [ 87%]
+tests/runtime/test_plan26_repair_acceptance.py::test_repeating_d22_after_a_crash_replays_idempotently PASSED [ 90%]
+tests/runtime/test_plan26_repair_acceptance.py::test_repeating_d23_after_a_crash_replays_idempotently PASSED [ 93%]
+tests/runtime/test_plan26_repair_acceptance.py::test_re_admitting_the_same_repair_after_the_head_already_advanced_fails_closed PASSED [ 96%]
+tests/runtime/test_plan26_repair_acceptance.py::test_a_crash_before_the_terminal_write_still_lets_d98_be_invoked_cleanly PASSED [100%]
+
+============================== 32 passed in 0.08s ==============================

@@ -1,0 +1,41 @@
+$ /tmp/plan26_n30_verify/bin/python -m pytest tests/runtime/test_plan26_topology.py -q
+(captured before the generation-8 fix, against graph.py as committed at 7fbb202,
+before `register_workbook_topology(builder)` was removed from
+`build_curriculum_factory_graph`)
+
+.F....................F................                                  [100%]
+=================================== FAILURES ===================================
+______ test_the_available_catalogue_compiles_against_real_node_callables _______
+
+    ...
+    drawn = compiled.get_graph()
+>       assert set(drawn.nodes) - {START, END} == set(bindings)
+E       AssertionError: assert {'D00R_REVALI..._RESUME', ...} == {'D00R_REVALI..._RESUME', ...}
+E
+E         Extra items in the left set:
+E         'D24_PROVE_EXACT_MANIFEST_COVERAGE'
+E         'D32_RECOMPUTE_FINAL_RELEASE'
+E         'D28_REDUCE_WORKBOOK_EVIDENCE'
+E         'D25_ASSEMBLE_WORKBOOK'
+E         'D27_FREEZE_WORKBOOK_REVIEW_PACKET'...
+
+tests/runtime/test_plan26_topology.py:193: AssertionError
+___ test_the_builder_registers_a_fixed_node_set_independent_of_any_manifest ____
+
+    def test_the_builder_registers_a_fixed_node_set_independent_of_any_manifest(compiled):
+        drawn = set(compiled.get_graph().nodes) - {START, END}
+>       assert drawn == set(G.binding_inventory())
+E       AssertionError: assert {'D00R_REVALI..._RESUME', ...} == {'D00R_REVALI..._RESUME', ...}
+E
+E         Extra items in the left set:
+E         'D24_PROVE_EXACT_MANIFEST_COVERAGE'
+E         'D32_RECOMPUTE_FINAL_RELEASE'
+E         'D28_REDUCE_WORKBOOK_EVIDENCE'
+E         'D25_ASSEMBLE_WORKBOOK'
+E         'D27_FREEZE_WORKBOOK_REVIEW_PACKET'...
+
+tests/runtime/test_plan26_topology.py:748: AssertionError
+=========================== short test summary info ============================
+FAILED tests/runtime/test_plan26_topology.py::test_the_available_catalogue_compiles_against_real_node_callables
+FAILED tests/runtime/test_plan26_topology.py::test_the_builder_registers_a_fixed_node_set_independent_of_any_manifest
+2 failed, 37 passed in 1.02s

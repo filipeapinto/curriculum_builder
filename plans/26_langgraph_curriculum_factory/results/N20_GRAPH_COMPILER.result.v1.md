@@ -1,9 +1,66 @@
 # N20_GRAPH_COMPILER result
 
 status: PASSED
-graph_digest: 96e1948fb28eb6fbb327939bc2764eb9bae625606ca668f384126bf10ca617e8
+graph_digest: ca4835f71750f93880a965a9879e508641b5f9360b82cb5cc8bdec8d57564f30
 node_prompt: plans/26_langgraph_curriculum_factory/prompts/N20_graph_compiler.prompt.v2.md (577a251c85b80d00fc0ae3929dc620a5c1b28b79ab970729a0b9428744f4f469)
-generation: 7
+generation: 8
+
+## Generation-8 rework — out-of-scope `register_workbook_topology` call
+
+`build_curriculum_factory_graph` was found, on re-entry to this node, calling
+`register_workbook_topology(builder)` unconditionally after `register_skeleton`,
+immediately before `builder.compile(...)`. That call is not this node's and was
+never this node's: it registers N32's D24-D32 workbook engine
+(`workbook.WORKBOOK_NODE_BODIES`, outside this node's declared write set) into
+the one production compile point, over and above the frozen 32-callable
+skeleton/unit-path catalogue (spec section 8's D00-D23/M01-M06/D90/D91) this
+node's own `binding_inventory()` — and its docstring — explicitly, deliberately
+exclude workbook bindings from.
+
+The regression was mechanical, not theoretical: run against the hash-locked
+environment, `tests/runtime/test_plan26_topology.py` failed two of its own
+frozen assertions —
+`test_the_available_catalogue_compiles_against_real_node_callables` and
+`test_the_builder_registers_a_fixed_node_set_independent_of_any_manifest` —
+both on the same symptom, `set(drawn.nodes) - {START, END} != set(bindings)`,
+because the compiled graph carried nine extra, unreachable D24-D32 nodes
+(`evidence/N20_GRAPH_COMPILER/venv_topology_gen8_before_fix.txt`, 37 passed / 2
+failed, captured before this fix). N20's own TEST item 1 requires "the exact
+catalogue compiles ... with one START and only the real N22-owned D98 callable
+reaching END" — a compiled graph holding nodes outside that catalogue fails
+that requirement by construction, independent of reachability.
+
+Per this node's own LOOP ("fix one registration, binding, edge, guard, or
+topology test... never fabricate a stub in N20"), the fix is a registration
+fix, entirely inside this node's write set:
+
+| # | Change |
+|---:|---|
+| 1 | `build_curriculum_factory_graph` no longer calls `register_workbook_topology`; its only registration call is `register_skeleton(builder, binding_inventory())`, matching generation 7's contract exactly. |
+| 2 | `register_workbook_topology`'s docstring corrected: it is not called by `build_curriculum_factory_graph` in this generation, and is exercised directly over its own builder, which is already how N32's own `test_the_compiled_graph_really_registers_the_workbook_engine` (`tests/runtime/test_plan26_workbook.py`) calls it. |
+| 3 | `binding_inventory()`'s docstring corrected to match (it previously asserted the now-removed call as the mechanism by which the unit path's registered edges stay byte-identical). |
+
+No callable, edge, or guard changed — `routing.py` and
+`tests/runtime/test_plan26_topology.py` are byte-identical to generation 7
+(`6be93bf8…` and `87bd5dc6…`, confirmed by hash below). `register_workbook_topology`
+and `workbook.py` itself are untouched and remain real, real-tested code; they
+are simply not this node's compile point to wire, exactly as
+`DEFERRED_TOPOLOGY` (M07/M08 -> `N32_WORKBOOK_TERMINALS`) already declared.
+
+Verified: `tests/runtime/test_plan26_topology.py` returns to **39 passed, 0
+failed** (`evidence/N20_GRAPH_COMPILER/venv_topology_gen8.txt`), and the sibling
+suites that also exercise `graph.py` — N30's `test_plan26_unit_graph.py`, N32's
+`test_plan26_workbook.py`, N31's `test_plan26_repair_acceptance.py`, and N23's
+`test_plan26_model_nodes.py`/N22's `test_plan26_deterministic_nodes.py` — stay
+green (597 passed,
+`evidence/N20_GRAPH_COMPILER/venv_sibling_suites_gen8.txt`), so the fix is
+additive-safe and takes nothing downstream with it. The production graph digest
+moved from generation 7's `297f0b5f…` to `f858289a…`; part of that delta is this
+fix (the compiled topology drops the nine unreachable workbook nodes it should
+never have carried) and part is legitimate downstream drift already on disk
+since generation 7 (the B-7 rework on N22/N23 that "Invalidated descendants"
+below already named as landed), which the digest is designed to be sensitive
+to.
 
 ## Generation-7 rework — B-6 (blocking) and B-9
 
@@ -118,7 +175,7 @@ Other frozen inputs read:
 | Path | SHA-256 |
 |---|---|
 | `plans/26_langgraph_curriculum_factory/spec/langgraph_curriculum_factory.spec.v1.md` (sections 3.3, 4, 5.2, 6.2, 8.1, 8.2, 9, 10) | 44e63e6271cae25f14f0bc970c598d1c15da41b67ae3cdf811bbb2f2303536e6 |
-| `plans/26_langgraph_curriculum_factory/implementation.graph.v2.yaml` | 96e1948fb28eb6fbb327939bc2764eb9bae625606ca668f384126bf10ca617e8 |
+| `plans/26_langgraph_curriculum_factory/implementation.graph.v3.yaml` | ca4835f71750f93880a965a9879e508641b5f9360b82cb5cc8bdec8d57564f30 (was `implementation.graph.v2.yaml` at `96e1948f…` through generation 7; renamed and updated by N30, out of this node's write set) |
 | `contracts/baseline.v1.md` | 896a58b086288093aaa7648ef495907bb9c397fb9b4487d6f5f7f12f13a118af |
 | `contracts/digest_algorithm.v1.md` | 063bd87666472b9382eb04404ee85ead966d37541651d813b32d0f54239ff8d0 |
 | `contracts/node_ownership.v1.md` | c35f29db99127050831137f65583a9fd96ea338daa3785cdbc2ea2df53a51fb2 |
@@ -135,7 +192,7 @@ Other frozen inputs read:
 
 | Path | SHA-256 |
 |---|---|
-| `runtime/langgraph_factory/graph.py` | 6361e12cd0f4daa119d6311b1ecb9bab65102978820e22f24da7a259aa7a72aa (was `3d56e7ff…` at generation 6; the delta is N30's D90/D91 registration, not an edit by this node — this node made no `graph.py` change at generation 7) |
+| `runtime/langgraph_factory/graph.py` | eae00c21bfe55ce6e2d6c4374611db4d84d286218d498fa520e799288e152e26 (was `6361e12c…` at generation 7; generation 8 removes the out-of-scope `register_workbook_topology(builder)` call from `build_curriculum_factory_graph` and corrects two docstrings that referenced it) |
 | `runtime/langgraph_factory/routing.py` | 6be93bf8bd951ae9984f74dc9dbe91c709a41edca0a1a6ff6d72be52cd998079 (was `efcc6db1…`; the B-6 rework, and the first change to this file since generation 4) |
 | `tests/runtime/test_plan26_topology.py` | 87bd5dc6b3e4da4c6ae4c2646027c648167bf72f9432033c9567c65c752af332 (was `84488301…`; the B-9 re-scopes plus the new B-6 regression) |
 | `plans/26_langgraph_curriculum_factory/results/N20_GRAPH_COMPILER.result.v1.md` | this file |
@@ -243,6 +300,18 @@ Installed in the isolated environment: `langgraph 1.2.9`,
 `langgraph-checkpoint-sqlite 3.1.0`, `langgraph-checkpoint 4.2.0`,
 `jsonschema 4.26.0`, `PyYAML 6.0.3`, `Pillow 12.2.0`, `pytest 9.0.3`.
 
+### Generation 8 (out-of-scope `register_workbook_topology` call, rework)
+
+Run in `/tmp/plan26_n30_verify`, the same hash-locked `requirements/plan26.lock`
+environment N30 built (`langgraph 1.2.9` confirmed present).
+
+| Command | Exit | Evidence |
+|---|---:|---|
+| `/tmp/plan26_n30_verify/bin/python -m pytest tests/runtime/test_plan26_topology.py -q` (before the fix, against `graph.py` as it stood at commit `7fbb202`) | 1 | `results/evidence/N20_GRAPH_COMPILER/venv_topology_gen8_before_fix.txt` (37 passed, 2 failed — both on the extra unreachable D24-D32 nodes) |
+| `/tmp/plan26_n30_verify/bin/python -m pytest tests/runtime/test_plan26_topology.py -q` (after removing the `register_workbook_topology` call) | 0 | `results/evidence/N20_GRAPH_COMPILER/venv_topology_gen8.txt` (**39 passed**) |
+| `/tmp/plan26_n30_verify/bin/python -m pytest tests/runtime/test_plan26_unit_graph.py tests/runtime/test_plan26_workbook.py tests/runtime/test_plan26_repair_acceptance.py tests/runtime/test_plan26_model_nodes.py tests/runtime/test_plan26_deterministic_nodes.py -q` | 0 | `results/evidence/N20_GRAPH_COMPILER/venv_sibling_suites_gen8.txt` (597 passed — N30/N31/N32's own tests, which build their own builders directly rather than through `build_curriculum_factory_graph`, are unaffected) |
+| `/tmp/plan26_n30_verify/bin/python -m pytest tests/ -q` (ambient, full repo) | 1 | 1125 passed, 1 skipped, 399 subtests passed, 4 failed — all four failures are in `tests/runtime/test_plan26_prompt_graph_controller.py` against deleted `results/v3/*.receipt.v1.json` fixtures, outside this node's write set and outside `graph.py`/`routing.py`; not caused by this rework |
+
 ## Tests
 
 | # | TEST item | Verdict | Backing assertion |
@@ -253,7 +322,7 @@ Installed in the isolated environment: `langgraph 1.2.9`,
 | 4 | Models have no edge to acceptance/routing/reduction/resume/terminal authority | **PASS** | `test_no_model_node_has_an_edge_to_an_authority_node` (compiled-edge half, now against the real compiled graph), `test_a_model_node_holds_no_acceptance_reduction_or_terminal_channel_authority`, `test_routing_never_lets_a_model_result_name_its_own_destination` (AST: no model-result guard reads any channel in `MODEL_NODE_WRITABLE_FIELDS` except presence of `source_discoveries`/`source_interpretations`, and names only code-owned destinations), and `test_a_stored_frontier_may_not_name_a_model_node`. See Findings F-02 for the deliberate reading of "reduction". |
 | 5 | Source/visual fan-outs use supported `Send` worker->barrier; mixed joins fail | **PASS** (generation 7: re-scoped for B-6, and a new assertion added) | `test_every_registered_fanout_has_the_worker_to_barrier_shape` checks all four registered fan-outs against the compiled graph. The compiled shape is now `dispatcher -> D90 -> worker -> barrier` for the three model fan-outs (D06/D06B -> M01, D12 -> M04) and `dispatcher -> worker -> barrier` for the deterministic one (D10 -> D11): the dispatching guard is asserted to return D90 rather than a `Send` list, and the `Send`s are then asserted against D90's own guard, one per staged member with the member passed through unchanged. Each worker has a compiled edge to the deterministic barrier that owns the denominator (D06B, D07, D12, D12 respectively — never a model node), and its forward successors, recovery destinations aside, are *exactly* its declared barriers. `D91_CLASSIFY_MODEL_FAILURE` joined `D96`/`D98`/`END` in that exclusion set (B-9): a model worker's failure edge is a recovery edge, not a second barrier — and the probe table above shows the widened exclusion did not make the assertion vacuous. The shape table is still asserted total over `FANOUT_GUARDS`. **New at generation 7:** `test_no_compiled_edge_enters_a_model_node_except_from_d90` asserts B-6's inverse over the whole graph — no `GUARD_DESTINATIONS` row names a model node, and every model node's set of compiled predecessors is exactly `{D90}`. The two guard-level tests were re-pointed at D90, which is now where a staged packet becomes `Send`s: `test_a_fanout_guard_emits_one_send_per_staged_worker_projection` (which also asserts D12's guard returns D90) and `test_a_fanout_guard_refuses_an_unstaged_or_mixed_dispatch`. |
 | 6 | Empty subsets and arbitrary manifest lengths remain legal | **PASS** | Four tests: no unit/lesson identifier or manifest-length constant appears in `graph.py`/`routing.py` (AST + substring); an empty deterministic visual subset routes straight to the barrier; an exhausted manifest routes to coverage proof at any length; and `test_the_builder_registers_a_fixed_node_set_independent_of_any_manifest` confirms against the real compiled graph that the registered node set equals the frozen binding inventory with no per-unit node. |
-| 7 | Identical real bindings yield identical digest; callable/schema/prompt drift changes it | **PASS** | All five digest tests pass against the real schema: two independent builds agree, and a changed callable binding, a changed reducer declaration, and a changed prompt file each change the digest; `test_the_digest_ignores_python_object_identity` pins that it is not keyed on object identity. **Production graph digest at generation 7: `297f0b5f1113aceb902d1793ab1669520c4cdc5575ca5e51c79c3d652c1f5fe3`.** It moved from generation 6's `d2679804…` for two reasons that are both the property these tests exist to hold: N30 registered D90/D91 (two nodes, fifteen edges), and this node's B-6 rework re-pointed six guard rows, which changes the topology the digest is keyed on. It had moved from generation 5's `4b1f7242…` when N30 registered the per-unit path. Generation 4's provisional diagnostic value `58ef1bd4...` was computed over a patched schema and remains void. |
+| 7 | Identical real bindings yield identical digest; callable/schema/prompt drift changes it | **PASS** | All five digest tests pass against the real schema: two independent builds agree, and a changed callable binding, a changed reducer declaration, and a changed prompt file each change the digest; `test_the_digest_ignores_python_object_identity` pins that it is not keyed on object identity. **Production graph digest at generation 8: `f858289a7e2f4888a078963af151eac980c35ef931a6ee5bb079550c9262875f`.** It moved from generation 7's `297f0b5f…` for two reasons: this rework dropped the nine unreachable D24-D32 nodes `register_workbook_topology` was wrongly registering into the production compile point, and the model-node/contract bindings the digest also hashes had already drifted from the B-7 rework landed on N22/N23 since generation 7. Generation 7 had moved from generation 6's `d2679804…` for two reasons that are both the property these tests exist to hold: N30 registered D90/D91 (two nodes, fifteen edges), and this node's B-6 rework re-pointed six guard rows, which changes the topology the digest is keyed on. It had moved from generation 5's `4b1f7242…` when N30 registered the per-unit path. Generation 4's provisional diagnostic value `58ef1bd4...` was computed over a patched schema and remains void. |
 | 8 | Production imports contain no handwritten fallback controller | **PASS** | `test_production_graph_imports_contain_no_fallback_controller`: no import or textual reference to `runtime.curriculum_factory_graph`, `CurriculumFactoryGraph`, `session_bridge`, `test_simulated`, or `fallback_controller`, and none of the five forbidden model-invocation packages. `test_only_one_builder_and_one_compile_call_exist` asserts exactly one `build_*graph*` function and exactly one `.compile(` call in `graph.py`. |
 
 Totals: **39 passed, 0 failed, 0 errors, 0 skipped** in the hash-locked
@@ -494,10 +563,10 @@ since landed. Not caused by this node and not this node's to re-scope.
 
 | Artifact | SHA-256 |
 |---|---|
-| `runtime/langgraph_factory/graph.py` | 6361e12cd0f4daa119d6311b1ecb9bab65102978820e22f24da7a259aa7a72aa (was `3d56e7ff…` at generation 6; the delta is N30's D90/D91 registration, not an edit by this node — this node made no `graph.py` change at generation 7) |
+| `runtime/langgraph_factory/graph.py` | eae00c21bfe55ce6e2d6c4374611db4d84d286218d498fa520e799288e152e26 (was `6361e12c…` at generation 7; generation 8 removes the out-of-scope `register_workbook_topology(builder)` call from `build_curriculum_factory_graph` and corrects two docstrings that referenced it) |
 | `runtime/langgraph_factory/routing.py` | 6be93bf8bd951ae9984f74dc9dbe91c709a41edca0a1a6ff6d72be52cd998079 (was `efcc6db1…`; the B-6 rework, and the first change to this file since generation 4) |
 | `tests/runtime/test_plan26_topology.py` | 87bd5dc6b3e4da4c6ae4c2646027c648167bf72f9432033c9567c65c752af332 (was `84488301…`; the B-9 re-scopes plus the new B-6 regression) |
-| `implementation.graph.v2.yaml` | 96e1948fb28eb6fbb327939bc2764eb9bae625606ca668f384126bf10ca617e8 |
+| `implementation.graph.v3.yaml` | ca4835f71750f93880a965a9879e508641b5f9360b82cb5cc8bdec8d57564f30 (was `implementation.graph.v2.yaml` at `96e1948f…` through generation 7) |
 | `prompts/N20_graph_compiler.prompt.v2.md` | 577a251c85b80d00fc0ae3929dc620a5c1b28b79ab970729a0b9428744f4f469 |
 | `spec/langgraph_curriculum_factory.spec.v1.md` | 44e63e6271cae25f14f0bc970c598d1c15da41b67ae3cdf811bbb2f2303536e6 |
 | `contracts/baseline.v1.md` | 896a58b086288093aaa7648ef495907bb9c397fb9b4487d6f5f7f12f13a118af |
@@ -524,15 +593,24 @@ since landed. Not caused by this node and not this node's to re-scope.
 | `evidence/N20_GRAPH_COMPILER/d90_dispatch_trace_gen7.txt` | 58b33f3821f4bafe6951f7c8de9c62eb3cd6f35177b49bbe392cb7878def1b4c |
 | `evidence/N20_GRAPH_COMPILER/negative_probes_gen7.txt` | 31e1ba0cdaf9af241edef30947279bbca9d8c868c95300de7715bca2f9b38ec3 |
 | `evidence/N20_GRAPH_COMPILER/ambient_pytest_gen7.txt` | b99e69c541db99e428b0f5f1c3ddfb62c533ad116a16515e553040fb5268a3ad |
-| `results/N30_UNIT_GRAPH.result.v1.md` | ed79b4e2c68621519f7d85b33bd5c19b14f20e1dc7f0e029bd0bf9bc7a08ab35 |
+| `results/N30_UNIT_GRAPH.result.v1.md` | ed79b4e2c68621519f7d85b33bd5c19b14f20e1dc7f0e029bd0bf9bc7a08ab35 (as read at generation 7; N30's own file, out of this node's write set, has since changed on disk) |
+| `evidence/N20_GRAPH_COMPILER/venv_topology_gen8_before_fix.txt` | a6a3cc2617345e604d66e0bef36c79c4388e786bbd9b2acd58f6b34fdeea40a3 |
+| `evidence/N20_GRAPH_COMPILER/venv_topology_gen8.txt` | d793cc1166095a41510890444ae1d4a0c8fe4c85391016ca5167a521800225eb |
+| `evidence/N20_GRAPH_COMPILER/venv_sibling_suites_gen8.txt` | 65e7a7fa4d4611aee1d4b52e3633958ce58980ce05cd8e4e631df4bd679b8026 |
 
 Generation 4's `diag_plugin.py`, `venv_topology_diagnostic.txt`, and
 `diagnostic_topology.txt` were deleted, not merely de-listed: no verdict in
 this record depends on them, and leaving a schema-patching plugin in an
 evidence directory invites a later node to mistake it for a supported harness.
 
-Production graph digest at generation 7 (over the real compiled graph,
-reproducible): `297f0b5f1113aceb902d1793ab1669520c4cdc5575ca5e51c79c3d652c1f5fe3`.
-Generation 6 was `d26798042b0499425055fa4eb995deb2071c00f07f520d4be1fcd3f85429125c`
+Production graph digest at generation 8 (over the real compiled graph,
+reproducible): `f858289a7e2f4888a078963af151eac980c35ef931a6ee5bb079550c9262875f`.
+Generation 7 was `297f0b5f1113aceb902d1793ab1669520c4cdc5575ca5e51c79c3d652c1f5fe3`,
+generation 6 `d26798042b0499425055fa4eb995deb2071c00f07f520d4be1fcd3f85429125c`,
 and generation 5 `4b1f7242be5b2f40ac789b38f154ca32d05ef91bd01bdb3745d93ba027fb7361`;
-each move is a real topology change, which is what the digest is keyed on.
+each move is a real topology or binding change, which is what the digest is
+keyed on. The generation-8 delta is two-fold: this rework drops the nine
+unreachable D24-D32 nodes that `register_workbook_topology` was wrongly adding
+to the compiled graph, and the model-node/contract bindings the digest also
+hashes had already drifted since generation 7 from the B-7 rework landed on
+N22/N23 (see "Invalidated descendants").

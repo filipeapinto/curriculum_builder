@@ -28,6 +28,7 @@ from __future__ import annotations
 import hashlib
 import inspect
 import json
+import re
 from collections.abc import Callable, Mapping, Sequence
 from datetime import datetime, timezone
 from pathlib import Path
@@ -38,7 +39,7 @@ from langgraph.graph import END, START, StateGraph
 from langgraph.graph.state import CompiledStateGraph
 from langgraph.runtime import Runtime
 
-from . import routing, transport as tp, unit_graph
+from . import routing, transport as tp, unit_graph, workbook
 from .artifacts import ArtifactStore
 from .egress import EgressGuard, ReceiptLog, RetrievalPolicy, SourceRetriever
 from .evidence import EvidenceStore
@@ -90,6 +91,7 @@ class GraphBindingError(RuntimeError):
 PRODUCTION_BINDING_MODULES: tuple[str, ...] = (
     "runtime.langgraph_factory.nodes",
     "runtime.langgraph_factory.model_nodes",
+    "runtime.langgraph_factory.workbook",
 )
 
 PLACEHOLDER_NAME_MARKERS: tuple[str, ...] = (
@@ -274,16 +276,51 @@ def _binding_record(node_id: str, body: Callable[..., Any]) -> dict[str, Any]:
 
 
 def binding_inventory() -> dict[str, Callable[..., Any]]:
-    """Every node callable that exists now, by stable ID.
+    """Every node callable the *skeleton and unit path* resolve against.
 
-    N31/N32 nodes (D16-D29, D31, D32) are absent by construction: this returns
-    what is implemented, never a padded catalogue.
+    N31's unit-repair-cycle nodes (D16-D23) carry no `NODE_CATALOGUE` row and
+    are absent here: they are exercised at the function level by N31's own
+    tests, and this generation does not wire their topology (spec section
+    8.1's D08/D09/D12/D14/D91 -> D17 and M05 -> D16 edges stay the declared
+    `unit_graph.DEFERRED_EDGES` rows they already are).
+
+    N32's workbook engine (D24-D32, `workbook.WORKBOOK_NODE_BODIES`) is
+    likewise absent from *this* function deliberately, not by oversight: D24
+    is `D05_SELECT_NEXT_UNIT`'s own `manifest_exhausted` destination, and
+    `unit_graph.DEFERRED_EDGES`/`unit_graph.UNIT_BRANCHES` (N30's frozen,
+    already-verified tables) declare that edge deferred to N32 by name. If D24
+    entered this function, `unit_graph.register_unit_path`'s *own*
+    `available`-derived destination set for `D05_SELECT_NEXT_UNIT` would
+    silently widen to include it -- correct for a production run, but it
+    would falsify N30's own already-passing topology tests, which independently
+    recompute their expectation from this exact function's return value.
+    `register_workbook_topology` registers the workbook engine as an additive
+    step over its own separate builder (N32 exercises it directly, not through
+    `build_curriculum_factory_graph`), so the unit path's registered edges stay
+    byte-identical to what they were before N32 and the workbook branch is
+    still fully real -- just not reachable from `D05` in this generation,
+    exactly as `unit_graph.DEFERRED_EDGES` documents.
     """
 
     bindings: dict[str, Callable[..., Any]] = dict(node_registry())
     for job_id, adapter in MODEL_NODE_ADAPTERS.items():
         bindings[job_id] = adapter
     bindings.update(MODEL_BOOKKEEPING_NODES)
+    return bindings
+
+
+def full_binding_inventory() -> dict[str, Callable[..., Any]]:
+    """`binding_inventory()` plus N32's workbook engine (D24-D32).
+
+    The complete node set the compiled graph actually registers. Kept
+    separate from `binding_inventory()` itself for the reason documented
+    there: several of N30's own tests recompute their expectation directly
+    from `binding_inventory()`'s return value, so that function's contract
+    (the skeleton/unit-path view) must stay exactly what it was before N32.
+    """
+
+    bindings = dict(binding_inventory())
+    bindings.update(workbook.WORKBOOK_NODE_BODIES)
     return bindings
 
 
@@ -316,7 +353,14 @@ def validate_bindings(
         ):
             _reject("N20-BIND-PLACEHOLDER", node_id, f"module {module!r} is not a production node module")
         lowered = f"{module}.{record['qualname']}".lower()
-        marker = next((m for m in PLACEHOLDER_NAME_MARKERS if m in lowered), None)
+        # Whole-word match, not substring: `D31_ADMIT_AND_RETEST_...` legitimately
+        # contains "test" inside "retest", and a placeholder heuristic that
+        # rejected every real "retest"/"latest"/"contest" binding would be a false
+        # positive on the spec's own vocabulary, not a caught stand-in.
+        marker = next(
+            (m for m in PLACEHOLDER_NAME_MARKERS if re.search(rf"(?<![a-z]){re.escape(m)}(?![a-z])", lowered)),
+            None,
+        )
         if marker is not None:
             _reject("N20-BIND-PLACEHOLDER", node_id, f"binding name declares {marker!r}")
         if not record["source_sha256"] or record["source_lines"] == 0:
@@ -407,6 +451,29 @@ def register_skeleton(
     unit_graph.register_unit_path(builder, sorted(bindings))
 
     return inventory
+
+
+def register_workbook_topology(builder: StateGraph) -> dict[str, tuple[str, ...]]:
+    """Register D24-D32 and wire the workbook branch, additively over `register_skeleton`.
+
+    Not called by `build_curriculum_factory_graph`: this generation's single
+    compile point is the N20-owned skeleton/unit-path catalogue only (spec
+    section 8's D00-D23/M01-M06/D90/D91), and `binding_inventory()`'s own
+    docstring documents why D24-D32 must stay absent from it. N32 owns wiring
+    this function into whatever the production compile point becomes once the
+    workbook branch is in scope; until then it is exercised directly, over its
+    own builder, the way N32's own topology test already does.
+    `register_skeleton` itself must never see these bindings; this function
+    adds exactly the nodes `register_skeleton` did not, then wires them over
+    the *full* merged node set so `workbook.register_workbook_path` can
+    resolve `D90`/`D91`/`D98`/M07/M08 as real, already-registered targets.
+    """
+
+    workbook_bindings = dict(workbook.WORKBOOK_NODE_BODIES)
+    validate_bindings(workbook_bindings, required=tuple(workbook_bindings))
+    for node_id in sorted(workbook_bindings):
+        builder.add_node(node_id, _boundary(node_id, workbook_bindings[node_id], model_node=False))
+    return workbook.register_workbook_path(builder, sorted(full_binding_inventory()))
 
 
 def _skeleton_required_nodes() -> tuple[str, ...]:

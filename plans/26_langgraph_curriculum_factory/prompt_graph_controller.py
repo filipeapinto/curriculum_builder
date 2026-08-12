@@ -99,6 +99,14 @@ def paths_overlap(left: str, right: str) -> bool:
     return covers(left, right) or covers(right, left)
 
 
+def expand_placeholders(argv: Sequence[str], python_exe: str) -> list[str]:
+    """Resolve the Plan 26 interpreter once and substitute it anywhere it
+    appears inside any argument, including inside a combined tool-policy
+    string such as ``Bash({python} -m pytest *)``."""
+
+    return [value.replace("{python}", python_exe) for value in argv]
+
+
 def run_command(
     argv: Sequence[str], cwd: Path, timeout: int, log_path: Path
 ) -> dict[str, Any]:
@@ -321,12 +329,38 @@ class ReceiptStore:
         if any(self.admissible(predecessor, seen) is None for predecessor in self.manifest.nodes[node_id]["depends_on"]):
             return None
         fingerprint = self.input_fingerprint_without_recursing(node_id)
-        if fingerprint is None or receipt.get("input_fingerprint") != fingerprint:
+        if fingerprint is None:
+            return None
+        if receipt.get("input_fingerprint") != fingerprint and not self.mechanically_revalidate(node_id, receipt):
             return None
         for relative, expected in receipt.get("outputs", {}).items():
             if path_digest(REPO_ROOT, relative) != expected:
                 return None
         return receipt
+
+    def mechanically_revalidate(self, node_id: str, receipt: dict[str, Any]) -> bool:
+        """Admit a receipt whose input_fingerprint no longer matches solely
+        because permission-launcher/harness code changed, by checking the
+        node-correctness-relevant facts directly instead of rerunning Claude:
+        schema validity, recorded zero exits, current output hashes, and
+        predecessor admissibility."""
+
+        schema_path = REPO_ROOT / self.manifest.data["execution"]["receipt_schema"]
+        schema = json.loads(schema_path.read_text(encoding="utf-8"))
+        try:
+            jsonschema.Draft202012Validator(schema).validate(receipt)
+        except jsonschema.ValidationError:
+            return False
+        node = self.manifest.nodes[node_id]
+        if receipt.get("prompt_sha256") != sha256_file(REPO_ROOT / node["prompt"]):
+            return False
+        commands = receipt.get("commands") or []
+        if any(command.get("exit_code") != 0 for command in commands):
+            return False
+        for relative, expected in receipt.get("outputs", {}).items():
+            if path_digest(REPO_ROOT, relative) != expected:
+                return False
+        return all(self.admissible(predecessor) is not None for predecessor in node["depends_on"])
 
     def input_fingerprint_without_recursing(self, node_id: str) -> str | None:
         node = self.manifest.nodes[node_id]
@@ -380,11 +414,30 @@ class Controller:
         return {
             "graph_id": self.manifest.data["graph_id"],
             "graph_digest": self.manifest.digest,
+            "harness_digest": self.harness_digest(),
             "statuses": statuses,
             "stale_receipts": stale,
             "ready": ready,
             "selected": self.select_disjoint(ready),
         }
+
+    def harness_digest(self) -> str:
+        """Digest of the launcher/scheduler code and schemas, recorded for
+        audit only. It intentionally does not gate node admissibility: see
+        ReceiptStore.mechanically_revalidate."""
+
+        paths = [
+            self.manifest.data["execution"]["controller"],
+            self.manifest.data["schema"],
+            self.manifest.data["execution"]["receipt_schema"],
+        ]
+        digest = hashlib.sha256()
+        for relative in paths:
+            digest.update(relative.encode())
+            digest.update(b"\0")
+            digest.update(sha256_file(REPO_ROOT / relative).encode())
+            digest.update(b"\n")
+        return digest.hexdigest()
 
     def select_disjoint(self, ready: Iterable[str]) -> list[str]:
         selected: list[str] = []
@@ -413,12 +466,14 @@ class Controller:
                 return resolved
         raise ControllerError("no Plan 26 Python candidate is executable")
 
-    def _verification(self, node_id: str, cwd: Path, attempt: str) -> list[dict[str, Any]]:
+    def _verification(
+        self, node_id: str, cwd: Path, attempt: str, resolved_python: str
+    ) -> list[dict[str, Any]]:
         commands: list[dict[str, Any]] = []
         timeout = self.manifest.data["execution"]["test_timeout_seconds"]
         log_root = self.receipts.root / "logs" / node_id
         for index, argv in enumerate(self.manifest.nodes[node_id].get("verification", []), start=1):
-            resolved_argv = [self.python_executable() if value == "{python}" else value for value in argv]
+            resolved_argv = expand_placeholders(argv, resolved_python)
             result = run_command(resolved_argv, cwd, timeout, log_root / f"{attempt}.test{index}.log")
             commands.append(result)
             if result["exit_code"] != 0:
@@ -426,6 +481,7 @@ class Controller:
         return commands
 
     def adopt_v2(self, through: str | None = None) -> dict[str, Any]:
+        resolved_python = self.python_executable()
         adopted: list[str] = []
         stopped: dict[str, Any] | None = None
         for node_id in self.manifest.topological_order():
@@ -440,7 +496,7 @@ class Controller:
                 if not legacy_path.is_file() or "status: PASSED" not in legacy_path.read_text(encoding="utf-8")[:1000]:
                     stopped = {"node": node_id, "reason": "legacy_result_not_passed"}
                     break
-                commands = self._verification(node_id, REPO_ROOT, "adopt-v2")
+                commands = self._verification(node_id, REPO_ROOT, "adopt-v2", resolved_python)
                 if any(command["exit_code"] != 0 for command in commands):
                     stopped = {"node": node_id, "reason": "focused_verification_failed", "commands": commands}
                     break
@@ -497,7 +553,7 @@ class Controller:
             "created_at": utc_now(),
         }
 
-    def _prompt_packet(self, node_id: str) -> str:
+    def _prompt_packet(self, node_id: str, resolved_python: str) -> str:
         node = self.manifest.nodes[node_id]
         predecessor_summary = {
             dependency: {
@@ -512,6 +568,8 @@ class Controller:
             "You are executing one node of the Plan 26 implementation prompt graph.\n"
             "The production curriculum factory MUST continue to use LangGraph exactly as specified.\n"
             "Do not implement a Python replacement for that production runtime.\n"
+            f"Run every pytest command as {resolved_python} -m pytest ...; "
+            "never use python3, python, or plain pytest.\n"
             f"Node: {node_id}\n"
             f"Declared writable paths: {json.dumps(node['writes'])}\n"
             f"Compact predecessor state: {json.dumps(predecessor_summary, sort_keys=True)}\n"
@@ -552,10 +610,13 @@ class Controller:
         return temporary, workspace, snapshot(workspace)
 
     def _run_isolated(self, node_id: str) -> dict[str, Any]:
+        resolved_python = self.python_executable()
         temporary, workspace, before = self._copy_workspace(node_id)
         try:
-            command = list(self.manifest.data["execution"]["claude_command"])
-            command.append(self._prompt_packet(node_id))
+            command = expand_placeholders(
+                list(self.manifest.data["execution"]["claude_command"]), resolved_python
+            )
+            command.append(self._prompt_packet(node_id, resolved_python))
             attempt = dt.datetime.now().strftime("%Y%m%dT%H%M%S")
             claude_result = run_command(
                 command,
@@ -581,7 +642,7 @@ class Controller:
                     "reported_status": reported_status,
                     "commands": [claude_result],
                 }
-            verification = self._verification(node_id, workspace, attempt)
+            verification = self._verification(node_id, workspace, attempt, resolved_python)
             if any(command_result["exit_code"] != 0 for command_result in verification):
                 return {"node_id": node_id, "status": "BLOCKED", "reason": "verification_failed", "commands": [claude_result, *verification]}
             return {
@@ -597,6 +658,109 @@ class Controller:
         except Exception:
             temporary.cleanup()
             raise
+
+    @staticmethod
+    def _parse_claude_json_envelope(log_path: Path) -> dict[str, Any] | None:
+        for line in reversed(log_path.read_text(encoding="utf-8").splitlines()):
+            candidate = line.strip()
+            if candidate.startswith("{") and candidate.endswith("}"):
+                try:
+                    return json.loads(candidate)
+                except json.JSONDecodeError:
+                    continue
+        return None
+
+    @staticmethod
+    def _evaluate_preflight(
+        reference_exit_code: int,
+        claude_exit_code: int,
+        changed_files: list[str],
+        envelope: dict[str, Any] | None,
+        expected_marker: str,
+    ) -> tuple[bool, str | None]:
+        if reference_exit_code != 0:
+            return False, "controller_reference_pytest_failed"
+        if claude_exit_code != 0:
+            return False, "nested_claude_exit_nonzero"
+        if changed_files:
+            return False, "isolated_workspace_modified"
+        if envelope is None:
+            return False, "no_json_envelope"
+        if envelope.get("permission_denials"):
+            return False, "bash_permission_denied"
+        result_text = str(envelope.get("result", ""))
+        if "PREFLIGHT_FAILED" in result_text:
+            return False, "nested_claude_reported_failure"
+        if expected_marker not in result_text:
+            return False, "missing_or_mismatched_success_marker"
+        return True, None
+
+    def preflight(self) -> dict[str, Any]:
+        """Prove, cheaply and without touching repository files or receipts,
+        that a nested non-interactive Sonnet session running under the exact
+        node permission policy can actually execute the authorized pytest
+        Bash command. Must be green before N30 (or any node) is launched."""
+
+        resolved_python = self.python_executable()
+        log_dir = self.receipts.root / "logs" / "preflight"
+        attempt = dt.datetime.now().strftime("%Y%m%dT%H%M%S")
+
+        reference = run_command(
+            [resolved_python, "-m", "pytest", "--version"],
+            REPO_ROOT,
+            60,
+            log_dir / f"{attempt}.reference.log",
+        )
+        expected_marker = f"PREFLIGHT_OK: {reference['tail'].strip()}"
+
+        temporary, workspace, before = self._copy_workspace("preflight")
+        try:
+            command = expand_placeholders(
+                list(self.manifest.data["execution"]["claude_command"]), resolved_python
+            )
+            prompt = (
+                "You are proving the Plan 26 non-interactive launcher before any node runs.\n"
+                f"Run exactly this command using the Bash tool: {resolved_python} -m pytest --version\n"
+                "Do not run any other command. Do not edit, create, or delete any file.\n"
+                "When it succeeds, reply with only one line, exactly:\n"
+                "PREFLIGHT_OK: <the exact stdout produced by that command>\n"
+                "If the command is denied or fails, reply with only one line: PREFLIGHT_FAILED: <reason>.\n"
+            )
+            command.append(prompt)
+            claude_log_path = log_dir / f"{attempt}.claude.log"
+            claude_result = run_command(
+                command,
+                workspace,
+                self.manifest.data["execution"]["test_timeout_seconds"],
+                claude_log_path,
+            )
+            after = snapshot(workspace)
+            changed = sorted(path for path in set(before) | set(after) if before.get(path) != after.get(path))
+
+            envelope = None
+            if reference["exit_code"] == 0 and claude_result["exit_code"] == 0 and not changed:
+                envelope = self._parse_claude_json_envelope(claude_log_path)
+            passed, reason = self._evaluate_preflight(
+                reference["exit_code"], claude_result["exit_code"], changed, envelope, expected_marker
+            )
+
+            payload = {
+                "preflight": True,
+                "passed": passed,
+                "reason": reason,
+                "resolved_python": resolved_python,
+                "command": claude_result["argv"],
+                "exit_code": claude_result["exit_code"],
+                "log": str(claude_log_path),
+                "log_sha256": claude_result["log_sha256"],
+                "changed_files": changed,
+            }
+            result_log_path = log_dir / f"{attempt}.result.json"
+            result_log_path.parent.mkdir(parents=True, exist_ok=True)
+            result_log_path.write_text(json.dumps(payload, indent=2, sort_keys=True) + "\n", encoding="utf-8")
+            return payload
+        finally:
+            temporary.cleanup()
 
     def _merge(self, result: dict[str, Any]) -> dict[str, Any]:
         node_id = result["node_id"]
@@ -671,6 +835,7 @@ def parser() -> argparse.ArgumentParser:
     subcommands.add_parser("status")
     adopt = subcommands.add_parser("adopt-v2")
     adopt.add_argument("--through")
+    subcommands.add_parser("preflight")
     run = subcommands.add_parser("run")
     run.add_argument("--dry-run", action="store_true")
     run.add_argument("--node")
@@ -688,6 +853,8 @@ def main(argv: Sequence[str] | None = None) -> int:
             payload = controller.status()
         elif arguments.command == "adopt-v2":
             payload = controller.adopt_v2(arguments.through)
+        elif arguments.command == "preflight":
+            payload = controller.preflight()
         else:
             payload = controller.run_generation(dry_run=arguments.dry_run, only_node=arguments.node)
         print(json.dumps(payload, indent=2, sort_keys=True))
