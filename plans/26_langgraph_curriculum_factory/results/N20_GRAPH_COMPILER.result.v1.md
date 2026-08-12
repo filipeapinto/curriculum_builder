@@ -1,9 +1,84 @@
 # N20_GRAPH_COMPILER result
 
 status: PASSED
-graph_digest: ca4835f71750f93880a965a9879e508641b5f9360b82cb5cc8bdec8d57564f30
+graph_digest: f858289a7e2f4888a078963af151eac980c35ef931a6ee5bb079550c9262875f
 node_prompt: plans/26_langgraph_curriculum_factory/prompts/N20_graph_compiler.prompt.v2.md (577a251c85b80d00fc0ae3929dc620a5c1b28b79ab970729a0b9428744f4f469)
-generation: 8
+generation: 9
+patch: P-N20-001 (active_patch_ids=["P-N20-001"], patch_chain_sha256=ac6db487d79bdc554dbd58ecbc830e80824344e61ad9b8250711560fae5a966f)
+
+## Generation-9 rework — P-N20-001 (root cause: N90 finding F1, via P-N31-001)
+
+**Root cause chain.** N90's audit found finding F1: before any real repair/
+acceptance wiring existed, a real episode could never reach `UNIT_ACCEPTED`.
+N31's approved rework `P-N31-001` closes that gap by wiring D16-D23/M06 into
+the one production compiled graph (`build_curriculum_factory_graph` in
+`graph.py`), additively, over and above this node's frozen 32-entry
+`binding_inventory()` — which N31 correctly leaves unchanged, since other
+tests (this node's own, among them) depend on that exact 32-entry contract.
+That correction necessarily makes the compiled graph's node set *wider* than
+`binding_inventory()` from then on: D16-D23 were always excluded from that
+function by design (its own docstring says so), not by oversight.
+
+Three assertions in this node's own `tests/runtime/test_plan26_topology.py`
+hardcoded the narrower, pre-correction invariant "the compiled node set is
+*exactly* `binding_inventory()`", which is a structural consequence of
+nothing downstream having wired anything yet — not a defect in this node's
+own topology-validation logic (`register_skeleton`, `validate_bindings`,
+`_validate_topology`, `DEFERRED_TOPOLOGY`), none of which P-N31-001 touches.
+Per this approved immutable patch overlay, the fix is a test-fixture
+correction only, confined to the one file already in this node's write set.
+**Important ordering note, confirmed empirically below:** at the time this
+generation runs, `graph.py` in this repository still only compiles the
+narrow, pre-correction `binding_inventory()` (verified: `graph.py` and
+`routing.py` hashes are byte-identical to generation 8, unchanged by this
+rework) — N31's D16-D23 wiring lands in a separate, isolated attempt and is
+rebased in afterward. The three failures the patch describes therefore do
+not reproduce in this workspace; the fix is verified as correct by
+construction instead (below), exactly as the patch instructs.
+
+**What changed**, all in `tests/runtime/test_plan26_topology.py`:
+
+| Test | Was (generation 8) | Now (generation 9, P-N20-001) |
+|---|---|---|
+| `test_the_available_catalogue_compiles_against_real_node_callables` | `set(drawn.nodes) - {START, END} == set(bindings)` (exact equality) | `skeleton_required <= compiled_nodes`, where `skeleton_required = set(G._skeleton_required_nodes()) \| set(bindings)` — a subset assertion that holds whether the compiled set is today's narrow 32 or a later, legitimately wider one. The existing per-binding production-module loop is retained unchanged, re-deriving `validate_bindings`'s own guarantee for every binding this node owns. |
+| `test_the_builder_registers_a_fixed_node_set_independent_of_any_manifest` | `drawn == set(G.binding_inventory())` (exact equality) | Same subset assertion (`skeleton_required <= drawn`), plus the existing unit/lesson-numbering check unchanged. |
+| `test_an_unwired_undeclared_node_fails_the_build_by_stable_id` | picked `sorted(G.DEFERRED_TOPOLOGY)[0]` unconditionally as the pop-victim | now filters `DEFERRED_TOPOLOGY` to keys with **no compiled edge at all** (`set(G.DEFERRED_TOPOLOGY) - wired_endpoints`, computed from the real `compiled` fixture's edge set) before picking one, and asserts at least one such candidate exists. A `DEFERRED_TOPOLOGY` entry whose node a downstream node has since wired for real — even if the entry itself is left stale in the table — no longer produces a false victim that fails to reproduce `N20-NODE-UNDECLARED`; simulated and confirmed below (`deferred_victim_simulation_gen9.txt`). This is a strictly *stronger* fixture than the patch's literal minimum ask ("was it wired") — it defends against a stale-entry edge case the patch's own narrative did not need to name because it was describing D16's future removal from the table, not a leftover key. |
+
+None of `register_skeleton`, `validate_bindings`, `_validate_topology`,
+`DEFERRED_TOPOLOGY`, `routing.py`'s guard tables, N31's `repair.py`/
+`acceptance.py`, or D16-D23's registration logic were touched, per the
+patch's explicit instruction. `graph.py` and `routing.py` are byte-identical
+to generation 8.
+
+**Verification.** Because the widening this patch anticipates has not
+happened in this workspace yet, correctness is shown two ways rather than by
+reproducing a failure that cannot occur here:
+
+1. All 39 tests in `tests/runtime/test_plan26_topology.py` still pass
+   unmodified against today's narrow, unwidened graph
+   (`evidence/N20_GRAPH_COMPILER/venv_topology_gen9.txt`, **39 passed**), and
+   the full N10/N11/N22/N23 verification command stays green across all four
+   of its test files (`evidence/N20_GRAPH_COMPILER/venv_sibling_suites_gen9.txt`,
+   **543 passed, 187 subtests passed**, covering
+   `test_plan26_topology.py`/`test_plan26_deterministic_nodes.py`/
+   `test_plan26_model_nodes.py`/`test_plan26_state_reducers.py`).
+2. Two standalone simulations construct the exact future scenario the patch
+   describes — a hand-widened compiled graph with an extra node/edge beyond
+   `binding_inventory()` (`widening_simulation_gen9.py`/`.txt`), and a
+   `DEFERRED_TOPOLOGY` entry whose node has been wired for real but is left
+   stale in the table (`deferred_victim_simulation_gen9.py`/`.txt`) — and
+   prove, outside pytest, against the real compiled graph: (a) the new
+   subset assertion holds under widening while the *old* exact-equality
+   assertion this patch replaced would have failed under the identical
+   widening, confirming the fix is not a no-op; and (b) the new dynamic
+   victim filter still finds a real, still-undeclared victim (`M07`/`M08`)
+   and skips the stale, now-wired `M06` entry, while the old naive
+   `sorted(...)[0]` picker would have chosen the stale entry and silently
+   failed to reproduce `N20-NODE-UNDECLARED`.
+
+Production graph digest is unchanged from generation 8
+(`f858289a7e2f4888a078963af151eac980c35ef931a6ee5bb079550c9262875f`): this
+rework touches only the test file, which the digest does not hash.
 
 ## Generation-8 rework — out-of-scope `register_workbook_topology` call
 
@@ -192,9 +267,9 @@ Other frozen inputs read:
 
 | Path | SHA-256 |
 |---|---|
-| `runtime/langgraph_factory/graph.py` | eae00c21bfe55ce6e2d6c4374611db4d84d286218d498fa520e799288e152e26 (was `6361e12c…` at generation 7; generation 8 removes the out-of-scope `register_workbook_topology(builder)` call from `build_curriculum_factory_graph` and corrects two docstrings that referenced it) |
-| `runtime/langgraph_factory/routing.py` | 6be93bf8bd951ae9984f74dc9dbe91c709a41edca0a1a6ff6d72be52cd998079 (was `efcc6db1…`; the B-6 rework, and the first change to this file since generation 4) |
-| `tests/runtime/test_plan26_topology.py` | 87bd5dc6b3e4da4c6ae4c2646027c648167bf72f9432033c9567c65c752af332 (was `84488301…`; the B-9 re-scopes plus the new B-6 regression) |
+| `runtime/langgraph_factory/graph.py` | eae00c21bfe55ce6e2d6c4374611db4d84d286218d498fa520e799288e152e26 (unchanged since generation 8; P-N20-001 is a test-fixture correction only) |
+| `runtime/langgraph_factory/routing.py` | 6be93bf8bd951ae9984f74dc9dbe91c709a41edca0a1a6ff6d72be52cd998079 (unchanged since generation 8) |
+| `tests/runtime/test_plan26_topology.py` | 93adacae78ff0e41f9feed023492b10e2a652d14036a93469653939a91977000 (was `87bd5dc6…` at generation 8; generation 9 re-scopes three assertions per P-N20-001, see above) |
 | `plans/26_langgraph_curriculum_factory/results/N20_GRAPH_COMPILER.result.v1.md` | this file |
 
 ## Commands
@@ -563,9 +638,11 @@ since landed. Not caused by this node and not this node's to re-scope.
 
 | Artifact | SHA-256 |
 |---|---|
-| `runtime/langgraph_factory/graph.py` | eae00c21bfe55ce6e2d6c4374611db4d84d286218d498fa520e799288e152e26 (was `6361e12c…` at generation 7; generation 8 removes the out-of-scope `register_workbook_topology(builder)` call from `build_curriculum_factory_graph` and corrects two docstrings that referenced it) |
-| `runtime/langgraph_factory/routing.py` | 6be93bf8bd951ae9984f74dc9dbe91c709a41edca0a1a6ff6d72be52cd998079 (was `efcc6db1…`; the B-6 rework, and the first change to this file since generation 4) |
-| `tests/runtime/test_plan26_topology.py` | 87bd5dc6b3e4da4c6ae4c2646027c648167bf72f9432033c9567c65c752af332 (was `84488301…`; the B-9 re-scopes plus the new B-6 regression) |
+| `runtime/langgraph_factory/graph.py` | eae00c21bfe55ce6e2d6c4374611db4d84d286218d498fa520e799288e152e26 (unchanged since generation 8) |
+| `runtime/langgraph_factory/routing.py` | 6be93bf8bd951ae9984f74dc9dbe91c709a41edca0a1a6ff6d72be52cd998079 (unchanged since generation 8) |
+| `tests/runtime/test_plan26_topology.py` | 93adacae78ff0e41f9feed023492b10e2a652d14036a93469653939a91977000 (was `87bd5dc6…` at generation 8; generation 9's P-N20-001 re-scope) |
+| `plans/26_langgraph_curriculum_factory/patches/P-N20-001.patch.v1.yaml` | eb84722a589b5c8b7d42cb94d80f6b5b2378c42bbf56d17ff611e79df57012fe |
+| `plans/26_langgraph_curriculum_factory/patches/sources/P-N20-001.instructions.md` | 705a44a96f038c5cfb3c3f496c8a9899bd0c435b2acaa80a09a0399969bd65b0 |
 | `implementation.graph.v3.yaml` | ca4835f71750f93880a965a9879e508641b5f9360b82cb5cc8bdec8d57564f30 (was `implementation.graph.v2.yaml` at `96e1948f…` through generation 7) |
 | `prompts/N20_graph_compiler.prompt.v2.md` | 577a251c85b80d00fc0ae3929dc620a5c1b28b79ab970729a0b9428744f4f469 |
 | `spec/langgraph_curriculum_factory.spec.v1.md` | 44e63e6271cae25f14f0bc970c598d1c15da41b67ae3cdf811bbb2f2303536e6 |
@@ -597,19 +674,28 @@ since landed. Not caused by this node and not this node's to re-scope.
 | `evidence/N20_GRAPH_COMPILER/venv_topology_gen8_before_fix.txt` | a6a3cc2617345e604d66e0bef36c79c4388e786bbd9b2acd58f6b34fdeea40a3 |
 | `evidence/N20_GRAPH_COMPILER/venv_topology_gen8.txt` | d793cc1166095a41510890444ae1d4a0c8fe4c85391016ca5167a521800225eb |
 | `evidence/N20_GRAPH_COMPILER/venv_sibling_suites_gen8.txt` | 65e7a7fa4d4611aee1d4b52e3633958ce58980ce05cd8e4e631df4bd679b8026 |
+| `evidence/N20_GRAPH_COMPILER/venv_topology_gen9.txt` | 22a9f2a7141ea3c6c25d51f0b5b51c30dba2886d8c04a374c8feb1d148f5c876 (39 passed, unmodified graph) |
+| `evidence/N20_GRAPH_COMPILER/venv_sibling_suites_gen9.txt` | 1b02b84e140eba25113bcf62833c06acd8ae0260cacce9e9b515937b67ef58ae (543 passed, 187 subtests passed — the four-file verification command) |
+| `evidence/N20_GRAPH_COMPILER/widening_simulation_gen9.py` | ad9b8105daf4579dd63ad65213ada1f61b20184734a4671e11ed010dec335e88 |
+| `evidence/N20_GRAPH_COMPILER/widening_simulation_gen9.txt` | f1950ebe20d26fc3328c7c31d8aa5cb3a33fbb7daf5f5a3b15ec8ec0a508b189 |
+| `evidence/N20_GRAPH_COMPILER/deferred_victim_simulation_gen9.py` | 54e49a7a10bd3a3549175797c4a6a2a9df3e3278ade17ac808e433eab087cd3d |
+| `evidence/N20_GRAPH_COMPILER/deferred_victim_simulation_gen9.txt` | bc51c397aa06e1f323f4f5ed310e3cf283d6bfcb071b2b671395d303a77ac126 |
 
 Generation 4's `diag_plugin.py`, `venv_topology_diagnostic.txt`, and
 `diagnostic_topology.txt` were deleted, not merely de-listed: no verdict in
 this record depends on them, and leaving a schema-patching plugin in an
 evidence directory invites a later node to mistake it for a supported harness.
 
-Production graph digest at generation 8 (over the real compiled graph,
-reproducible): `f858289a7e2f4888a078963af151eac980c35ef931a6ee5bb079550c9262875f`.
-Generation 7 was `297f0b5f1113aceb902d1793ab1669520c4cdc5575ca5e51c79c3d652c1f5fe3`,
+Production graph digest at generation 9 (over the real compiled graph,
+reproducible): `f858289a7e2f4888a078963af151eac980c35ef931a6ee5bb079550c9262875f`
+— unchanged from generation 8, since P-N20-001 touches only the test file,
+which the digest does not hash.
+Generation 8 was the same value; generation 7 was
+`297f0b5f1113aceb902d1793ab1669520c4cdc5575ca5e51c79c3d652c1f5fe3`,
 generation 6 `d26798042b0499425055fa4eb995deb2071c00f07f520d4be1fcd3f85429125c`,
 and generation 5 `4b1f7242be5b2f40ac789b38f154ca32d05ef91bd01bdb3745d93ba027fb7361`;
 each move is a real topology or binding change, which is what the digest is
-keyed on. The generation-8 delta is two-fold: this rework drops the nine
+keyed on. The generation-8 delta was two-fold: that rework dropped the nine
 unreachable D24-D32 nodes that `register_workbook_topology` was wrongly adding
 to the compiled graph, and the model-node/contract bindings the digest also
 hashes had already drifted since generation 7 from the B-7 rework landed on

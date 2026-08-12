@@ -1,0 +1,87 @@
+schema_version: 1
+patch_id: P-N30-001
+action: overlay
+graph_id: plan26_langgraph_curriculum_factory_implementation
+base_graph_digest: b943d0f944251043c34d8fd778043ad25397673df0a7c83b4c791ac2ecf963e8
+target_node: N30_UNIT_GRAPH
+scope: node_only
+reason: N31's approved rework (P-N31-001, closing N90 finding F1) necessarily widens
+  the compiled graph's routing, which N30's own frozen test_plan26_unit_graph.py hardcodes
+  assumptions against (binding_inventory()-derived available set, and a clean episode
+  fixture's expected M05->D16 deferred stopping point). Structural, unavoidable consequence,
+  not a defect in unit_graph.py's own logic
+expected_effect: test_plan26_unit_graph.py derives its expected wired-edge set from
+  the real compiled graph rather than the always-narrow binding_inventory(), and derives
+  the clean-episode fixture's expected halting frontier dynamically rather than hardcoding
+  D16, so it stays correct both before and after D16-D23/D24-D32 are wired
+instructions: "Ownership correction, same chain as P-N20-001: N31 has now (per an\
+  \ approved\nimmutable patch, P-N31-001) wired D16-D23/M06 into the one production\n\
+  compiled graph, closing N90's finding F1 \u2014 before this, a real run could\n\
+  never reach `D22_ACCEPT_UNIT`/`UNIT_ACCEPTED` for any unit. Six of your own\ntests\
+  \ in `tests/runtime/test_plan26_unit_graph.py` hardcode assumptions from\nbefore\
+  \ that correction and now fail as a direct, structural consequence \u2014 not\n\
+  because `unit_graph.py`'s own logic (`register_unit_path`, `branch_\ndestinations`,\
+  \ `deferred_destinations`, `DEFERRED_EDGES`, `UNIT_BRANCHES`) is\nwrong; N31 did\
+  \ not touch `unit_graph.py` at all, by design (widening the\n`available` sequence\
+  \ `register_unit_path` receives is what resolves the six\nN31-owned `DEFERRED_EDGES`\
+  \ rows automatically \u2014 your module's own machinery\nalready does this correctly\
+  \ for whatever `available` it's given).\n\nImportant ordering note: at the time\
+  \ you run, `runtime/langgraph_factory\n/graph.py` still only compiles the narrow,\
+  \ pre-correction `binding_\ninventory()` \u2014 N31's wiring happens in a separate,\
+  \ isolated attempt and is\nmerged in only after your fix here is verified and admitted.\
+  \ The six\nfailures below will not reproduce in your own environment right now.\
+  \ Your\nfix must be correct by construction and verified by your existing suite\n\
+  passing cleanly today \u2014 do not hardcode today's specific behavior anywhere,\n\
+  and do not weaken any assertion's actual guarantee, only what it assumes\nabout\
+  \ which nodes are currently wired.\n\n- `test_the_compiled_graph_registers_every_declared_unit_branch`\
+  \ computes\n  `expected = branch_destinations(source, available)` from `available\
+  \ =\n  tuple(sorted(binding_inventory()))` (deliberately narrow, per P-N31-001's\n\
+  \  own instruction not to change what `binding_inventory()` returns), then\n  asserts\
+  \ it equals `registered`, read from the real compiled graph's edges.\n  Once D08/D09/D12/D14/D91's\
+  \ guards really do route to D17 (and M05's to\n  D16) in the real compiled graph,\
+  \ `registered` correctly contains those\n  destinations while `expected` \u2014\
+  \ computed from the frozen narrow\n  `binding_inventory()` \u2014 does not, so the\
+  \ two can no longer be equal by\n  construction. Fix this the same way P-N20-001\
+  \ fixes the analogous topology\n  test: derive `available` for this comparison from\
+  \ whatever the real\n  compiled graph's own node set is (`set(compiled.get_graph().nodes)`)\n\
+  \  intersected with what `branch_destinations`/`deferred_destinations`\n  actually\
+  \ need, rather than from `binding_inventory()`'s always-narrow\n  return value \u2014\
+  \ the test's real job is proving `register_unit_path` wired\n  exactly the destinations\
+  \ that truly have bodies in whatever the production\n  compile point actually used,\
+  \ which is a self-consistency check against the\n  compiled graph itself, not a\
+  \ hardcoded external list frozen at whichever\n  generation last touched this file.\n\
+  - `test_a_fresh_episode_executes_the_bootstrap_spine_once_through_langgraph`,\n\
+  \  `test_a_visual_denominator_permutation_produces_an_identical_admitted_head`,\n\
+  \  `test_the_committed_path_stops_at_a_declared_deferred_edge`,\n  `test_the_unobservable_boundary_is_excluded_for_a_stated_reason`,\
+  \ and\n  `test_this_nodes_renderers_are_a_test_double_and_not_exposed_to_n13s_store_gap`\n\
+  \  all run the shared single-unit `_build_episode_fixture` through\n  `_run_episode`,\
+  \ whose scripted M05 review has no blocking findings. Before\n  D16 had a real body,\
+  \ that episode necessarily dead-ended at the `M05 ->\n  D16` deferred edge \u2014\
+  \ several of these tests hardcode that specific\n  frontier (`deferred_frontier\
+  \ == \"D16_REDUCE_UNIT_EVIDENCE\"`, or assertions\n  that only hold because the\
+  \ episode never called `D05_SELECT_NEXT_UNIT` a\n  second time). Now that D16 genuinely\
+  \ executes, its denominator legitimately\n  passes on the first try for this clean\
+  \ fixture, so the real run proceeds\n  through D22/D23, loops back to a second `D05_SELECT_NEXT_UNIT`\
+  \ call, finds\n  the one-unit manifest exhausted, and correctly halts on the still-deferred\n\
+  \  `D24_PROVE_EXACT_MANIFEST_COVERAGE` row instead \u2014 this is the pipeline\n\
+  \  behaving correctly, exactly what N90's finding said was missing, not a\n  defect\
+  \ in this generation's fixture. Do not hardcode the new frontier\n  (`D24_...`)\
+  \ as a literal replacement string either, for the same staleness\n  reason as above:\
+  \ derive \"the deferred edge this clean episode currently\n  halts on\" from the\
+  \ actual run's own terminal state / `DEFERRED_EDGES`\n  lookup at test time, so\
+  \ this suite keeps working once N32 also closes D24.\n  If any of these five tests'\
+  \ real purpose (not its specific hardcoded\n  frontier) no longer makes sense once\
+  \ D16-D23 execute for real \u2014 e.g. a\n  test whose entire point was \"prove\
+  \ the run stops exactly at the M05->D16\n  edge\" \u2014 say so explicitly in your\
+  \ result report rather than forcing an\n  artificial fixture (such as injecting\
+  \ a blocking M05 finding) purely to\n  preserve the old stopping point; a real,\
+  \ more-complete pipeline run is the\n  correct outcome here, not a regression to\
+  \ route around.\n\nDo not touch `runtime/langgraph_factory/graph.py`'s content,\
+  \ `repair.py`,\n`acceptance.py`, or D16-D23's registration logic \u2014 none of\
+  \ that is this\nnode's concern here; this is a test-fixture correction only, in\
+  \ the one file\nalready in your write set (`tests/runtime/test_plan26_unit_graph.py`).\
+  \ Run\nyour full existing verification command afterward and confirm it is green.\n\
+  Update your own result report to record this correction: cite N90's F1 and\nP-N31-001\
+  \ as the root cause chain, and what changed.\n"
+context: {}
+created_at: '2026-08-12T20:54:45.963329+00:00'

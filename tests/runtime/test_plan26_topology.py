@@ -189,8 +189,19 @@ def test_the_available_catalogue_compiles_against_real_node_callables(compiled):
     )
     assert len(bindings) == 32
 
+    # P-N20-001 (root cause: N90 finding F1, closed by N31's approved rework
+    # P-N31-001): once a downstream graph node correctly wires D16-D23/M06 into
+    # the one production graph, the compiled node set is wider than
+    # `binding_inventory()` by design — D16-D23 carry no `NODE_CATALOGUE` row
+    # and were never part of that function's contract (see its own docstring).
+    # This asserts the invariant that actually holds in every generation: every
+    # node this node's own skeleton requires, plus everything `binding_
+    # inventory()` declares, is present in the compiled graph. A genuinely
+    # missing or wrong skeleton node still fails this.
     drawn = compiled.get_graph()
-    assert set(drawn.nodes) - {START, END} == set(bindings)
+    compiled_nodes = set(drawn.nodes) - {START, END}
+    skeleton_required = set(G._skeleton_required_nodes()) | set(bindings)
+    assert skeleton_required <= compiled_nodes, sorted(skeleton_required - compiled_nodes)
 
     for node_id, body in bindings.items():
         module = G._binding_record(node_id, body)["module"]
@@ -307,15 +318,25 @@ def test_a_wired_node_with_no_callable_fails_the_build_by_stable_id(monkeypatch)
         G.register_skeleton(fresh_builder(), G.binding_inventory())
 
 
-def test_an_unwired_undeclared_node_fails_the_build_by_stable_id(monkeypatch):
-    # The example node is read from the live table rather than pinned: a node
-    # deferred today is wired tomorrow by the graph node that owns it, and this
-    # negative case is about the rejection, not about any particular node.
-    assert G.DEFERRED_TOPOLOGY, (
-        "every registered node is now wired, so this case needs a different "
-        "fixture: a registered node that is neither wired nor declared deferred"
+def test_an_unwired_undeclared_node_fails_the_build_by_stable_id(compiled, monkeypatch):
+    # P-N20-001: the victim is read from the live table AND filtered against the
+    # live compiled topology, not just picked as the alphabetically-first key. A
+    # `DEFERRED_TOPOLOGY` entry whose node a downstream graph node has since
+    # wired is no longer undeclared-and-unwired -- popping it would not
+    # reproduce N20-NODE-UNDECLARED, so it is not a valid victim any more. Only
+    # a key with no compiled edge at all is still what this negative case needs.
+    wired_endpoints = {
+        endpoint
+        for source, target, _ in G.compiled_topology(compiled)["edges"]
+        for endpoint in (source, target)
+    }
+    candidates = sorted(set(G.DEFERRED_TOPOLOGY) - wired_endpoints)
+    assert candidates, (
+        "every DEFERRED_TOPOLOGY entry is now wired into the compiled graph, so "
+        "this fixture needs a human decision (a real registered-but-unwired-and-"
+        "undeclared node to pop), not a silent skip"
     )
-    node_id = sorted(G.DEFERRED_TOPOLOGY)[0]
+    node_id = candidates[0]
     deferred = dict(G.DEFERRED_TOPOLOGY)
     deferred.pop(node_id)
     monkeypatch.setattr(G, "DEFERRED_TOPOLOGY", deferred)
@@ -744,8 +765,12 @@ def test_no_curriculum_specific_manifest_length_or_order_is_hardcoded():
 
 
 def test_the_builder_registers_a_fixed_node_set_independent_of_any_manifest(compiled):
+    # P-N20-001: subset, not equality, for the same reason as the catalogue test
+    # above — a downstream node's legitimate widening of the compiled graph
+    # beyond `binding_inventory()` must not falsify this fixture.
     drawn = set(compiled.get_graph().nodes) - {START, END}
-    assert drawn == set(G.binding_inventory())
+    skeleton_required = set(G._skeleton_required_nodes()) | set(G.binding_inventory())
+    assert skeleton_required <= drawn
     assert not [node for node in drawn if re.search(r"(unit|lesson)_\d", node.lower())]
 
 

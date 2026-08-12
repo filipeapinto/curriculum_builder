@@ -1,0 +1,42 @@
+schema_version: 1
+patch_id: P-N31-002
+action: overlay
+graph_id: plan26_langgraph_curriculum_factory_implementation
+base_graph_digest: b943d0f944251043c34d8fd778043ad25397673df0a7c83b4c791ac2ecf963e8
+target_node: N31_REPAIR_ACCEPTANCE
+scope: node_only
+reason: 'N31''s result report used a malformed multi-line status line (''status: PASSED
+  (...)'' with trailing explanation) instead of the required bare ''status: PASSED'',
+  so the controller could not detect the reported status. N20/N30 have since been
+  independently corrected, so the caveat the malformed line was capturing is resolved'
+expected_effect: N31 corrects only its status line to the machine-parseable format
+  and reconfirms both required verification commands are green now that N20/N30's
+  fixtures are fixed, allowing admission
+instructions: "The controller only admits a node when its result report contains a\
+  \ bare,\nmachine-parseable status line matching this exact pattern (multiline regex):\n\
+  \n  ^status:\\s*(PASSED|NOT_AVAILABLE|BLOCKED)\\s*$\n\nThat means a line, on its\
+  \ own, starting at column 0 with lowercase `status:`\nfollowed by one of PASSED,\
+  \ NOT_AVAILABLE, or BLOCKED and nothing else on that\nline \u2014 no trailing parenthetical\
+  \ explanation, no continuation onto following\nlines. `results/N31_REPAIR_ACCEPTANCE.result.v1.md`\
+  \ currently opens with:\n\n  status: PASSED (this node's own TEST 1-10 and the P-N31-001\
+  \ required proof\n  all pass; six pre-existing tests in the frozen `test_plan26_unit_graph.py`,\n\
+  \  ...)\n\nwhich does not match the required pattern, so the controller cannot detect\n\
+  the reported status and blocks the node even though the work is correct and\ncomplete:\
+  \ N20 and N30 have since been independently corrected (P-N20-001,\nP-N30-001) to\
+  \ fix the exact stale assumptions this node's own diagnosis\nidentified, so the\
+  \ caveat this multi-line status text was trying to capture\nno longer describes\
+  \ an open problem.\n\nFix only the status line itself: replace it with a bare `status:\
+  \ PASSED`\nline. Move the explanatory content that was in the parenthetical (or\
+  \ a\nshort, updated version noting N20/N30 have since corrected the dependent\n\
+  fixtures) into the body of the report, not the status line \u2014 e.g. as a\none-line\
+  \ note directly under \"P-N31-001 correction\" or wherever it reads\nbest. Change\
+  \ nothing else in the report's substance, evidence, or hashes.\n\nThen re-run both\
+  \ of this node's required verification commands\n(`{python} -m pytest -q tests/runtime/test_plan26_repair_acceptance.py`\
+  \ and\n`{python} -m pytest -q tests/runtime/test_plan26_unit_graph.py`) against\
+  \ the\ncurrent repository state and confirm both are green now that N30's fixtures\n\
+  have been corrected \u2014 do not assume they still fail; the whole point of\nP-N20-001/P-N30-001\
+  \ was to make them pass. If `test_plan26_unit_graph.py`\nstill fails for a reason\
+  \ unrelated to what N20/N30 already fixed, report\nthat honestly rather than adjusting\
+  \ the status line to PASSED anyway.\n"
+context: {}
+created_at: '2026-08-12T21:13:25.732507+00:00'

@@ -1,0 +1,2 @@
+NEW subset assertion (skeleton_required <= compiled_nodes): PASSED under widening
+OLD exact-equality assertion (compiled_nodes == binding_inventory()): FAILED under widening, as expected -- this is exactly why P-N20-001 was needed

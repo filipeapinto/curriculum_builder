@@ -131,9 +131,10 @@ nodes:
   N31_REPAIR_ACCEPTANCE:
     prompt: plans/26_langgraph_curriculum_factory/prompts/N31_repair_acceptance.prompt.v2.md
     depends_on: [N30_UNIT_GRAPH]
-    writes: [runtime/langgraph_factory/repair.py, runtime/langgraph_factory/acceptance.py, tests/runtime/test_plan26_repair_acceptance.py, plans/26_langgraph_curriculum_factory/results/N31_REPAIR_ACCEPTANCE.result.v1.md, plans/26_langgraph_curriculum_factory/results/evidence/N31_REPAIR_ACCEPTANCE]
+    writes: [runtime/langgraph_factory/repair.py, runtime/langgraph_factory/acceptance.py, runtime/langgraph_factory/graph.py, tests/runtime/test_plan26_repair_acceptance.py, tests/runtime/test_plan26_unit_graph.py, plans/26_langgraph_curriculum_factory/results/N31_REPAIR_ACCEPTANCE.result.v1.md, plans/26_langgraph_curriculum_factory/results/evidence/N31_REPAIR_ACCEPTANCE]
     verification:
       - ['{python}', -m, pytest, -q, tests/runtime/test_plan26_repair_acceptance.py]
+      - ['{python}', -m, pytest, -q, tests/runtime/test_plan26_unit_graph.py]
     test_lane: focused
 
   N32_WORKBOOK_TERMINALS:

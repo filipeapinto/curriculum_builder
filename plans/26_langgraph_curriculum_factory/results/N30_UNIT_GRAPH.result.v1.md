@@ -3,7 +3,109 @@
 status: PASSED
 graph_digest: ca4835f71750f93880a965a9879e508641b5f9360b82cb5cc8bdec8d57564f30
 node_prompt: plans/26_langgraph_curriculum_factory/prompts/N30_unit_graph.prompt.v1.md (f78e98cb44f95a2aa108e87301d3e5fcddd0924e68a47333181bf5ebcd7f5e3e)
-generation: 9
+generation: 10
+
+## Generation 10 — P-N30-001 (ownership correction, closing N90 finding F1)
+
+`P-N30-001` is an approved immutable patch overlay, applied this generation.
+Root cause chain: N90's finding F1 observed that no real run could ever reach
+`D22_ACCEPT_UNIT`/`UNIT_ACCEPTED`, because `D16_REDUCE_UNIT_EVIDENCE` (this
+node's own declared handoff row) had no node body anywhere in the tree.
+`P-N31-001` (a separate approved immutable patch, closing that finding) has
+N31 wire D16-D23/M06 into the one production compiled graph by widening the
+`available` sequence `unit_graph.register_unit_path` receives — a change to
+`graph.py`'s call site, not to `unit_graph.py`'s own logic
+(`register_unit_path`, `branch_destinations`, `deferred_destinations`,
+`DEFERRED_EDGES`, `UNIT_BRANCHES`), all of which resolve correctly for
+whatever `available` they are given, unchanged this generation. That widening
+has not merged into this attempt's `graph.py` yet (per P-N30-001's own
+ordering note, confirmed below: `graph.py`'s hash is unchanged and
+`binding_inventory()` is still the narrow, pre-correction view), but six of
+this node's own tests in `test_plan26_unit_graph.py` hardcoded assumptions
+that hold only *before* that widening, and would fail the moment it lands —
+a structural, unavoidable consequence of the correction, not a defect in
+`unit_graph.py`. Fixed here, all in the one file already in this node's write
+set:
+
+1. `test_the_compiled_graph_registers_every_declared_unit_branch` — already
+   computed `expected = branch_destinations(source, graph_nodes)` from
+   `graph_nodes = set(compiled.get_graph().nodes)` (the real compiled graph's
+   own node set), not from `binding_inventory()`'s deliberately narrow return
+   value, so no change was needed here; confirmed and documented as already
+   correct-by-construction.
+2. `test_a_fresh_episode_executes_the_bootstrap_spine_once_through_langgraph`
+   — asserted `state["selected_unit_id"] == "U001"` off the run's final
+   merged state. `selected_unit_id` uses the `replace_current` reducer
+   (`state.py:121`), and once D16-D23 wire, this clean single-unit episode
+   legitimately loops back to a second `D05_SELECT_NEXT_UNIT` call whose
+   `manifest_exhausted` guard correctly overwrites it to `None` — a real
+   second call, not a repeat of the first. Fixed to assert `"U001"` off
+   `D05`'s own *first* `updates` entry instead, and to assert the final
+   `selected_unit_id` conditionally on whether `D05` ran once or twice.
+3. `test_a_visual_denominator_permutation_produces_an_identical_admitted_head`,
+   `test_the_committed_path_stops_at_a_declared_deferred_edge`, and
+   `test_this_nodes_renderers_are_a_test_double_and_not_exposed_to_n13s_store_gap`
+   — each hardcoded `result["deferred_frontier"] == "D16_REDUCE_UNIT_EVIDENCE"`.
+   Fixed to assert, via a new shared helper `_assert_frontier_is_a_declared_row`,
+   only that the frontier `_run_episode` actually observed (the real
+   `KeyError` LangGraph raised, not a re-derived prediction) is *some* row of
+   `DEFERRED_EDGES` — never `None`, never fabricated — without naming which
+   row. (An initial attempt tried re-deriving the expected destination from
+   `trace[-1]`; this does not work for `M05`, whose own update is swallowed
+   by the aborted superstep before it reaches the stream — see item 5 below —
+   so the derivation was corrected to check the observed value's validity
+   rather than independently re-predict it.) The permutation test additionally
+   now asserts `forward["deferred_frontier"] == reverse["deferred_frontier"]`,
+   a real cross-check that visual order cannot change which row the episode
+   halts on.
+4. `test_the_committed_path_stops_at_a_declared_deferred_edge`'s docstring is
+   reworded from "the episode's real frontier is this node's own GOAL
+   boundary" (specific to the M05->D16 edge) to "never a fabricated one"
+   (general to whichever row is currently open), since its real, durable
+   purpose was always the latter.
+5. `test_the_unobservable_boundary_is_excluded_for_a_stated_reason` is
+   **deliberately left with its hardcoded `"D16_REDUCE_UNIT_EVIDENCE"`
+   literal**, per P-N30-001's own escape hatch for a test "whose entire
+   point was to prove the run stops exactly at the M05->D16 edge." Its
+   premise is not just today's specific frontier value — it is that M05 is
+   *unobservable* because the one edge that is currently deferred happens to
+   be M05's own next hop. Once N31 wires D16, that premise inverts: M05's
+   own update becomes observable (the superstep no longer aborts) and M05
+   belongs in `REACHABLE_BOUNDARIES`/the crash matrix instead of being
+   excluded from it. No dynamic re-derivation preserves that meaning — a
+   version that instead asserted "the frontier is a declared row" would
+   silently keep passing for the wrong reason once M05 stops being the
+   unobservable node, masking exactly the regression the test exists to
+   catch. This test is therefore expected to start failing, correctly, the
+   moment D16 is wired, and rewriting or retiring it then is N31's (or
+   whichever generation wires D16) to do — recorded in-line in the test's own
+   docstring and here, not routed around with an artificial fixture.
+
+Verification: `tests/runtime/test_plan26_unit_graph.py` is 93/93 green today,
+unchanged in count from generation 9 (`evidence/N30_UNIT_GRAPH/venv_unit_graph.txt`,
+regenerated). `unit_graph.py` and `graph.py` are untouched (hashes below
+unchanged from generation 9); the patch's own instruction not to touch either
+file, `repair.py`, or `acceptance.py` is honored. `binding_inventory()` in
+this attempt's `graph.py` is confirmed still the narrow pre-correction view
+(unchanged hash, and `graph.py:278-309`'s own docstring still documents D16-D23
+and D24-D32 as deliberately absent), consistent with P-N30-001's ordering note
+that P-N31-001's widening has not merged into this attempt.
+
+One pre-existing, out-of-scope-by-ownership item surfaced while re-running the
+full sweep this generation: `tests/runtime/test_plan26_prompt_graph_controller.py::
+test_passed_nodes_remain_admissible_after_harness_or_predecessor_change` now
+fails, reporting `N30_UNIT_GRAPH has a PASSED receipt but is inadmissible`
+(`evidence/N30_UNIT_GRAPH/controller_receipt_admissibility_note.txt`). This is
+the harness's own receipt store observing that this generation's test-file
+edit changed `test_plan26_unit_graph.py`'s hash out from under the still-stale
+generation-9 receipt it holds for this node — exactly the kind of
+harness-level pre-condition generation 9's own report already documented as
+outside this node's write set (that file is owned by the harness controller,
+not by any `implementation.graph.v3.yaml` node, and is excluded by the same
+`--deselect` used there). A fresh receipt for this node resolves it once this
+result is accepted; it is not evidence of a defect in `unit_graph.py`,
+`graph.py`, or the test file's own assertions, all of which are green on
+their own.
 
 `graph_digest` is the sha256 of `implementation.graph.v3.yaml`, the graph that
 governs this execution (the v2 file `contracts/result_record_schema.v1.md`
@@ -99,7 +201,7 @@ result record):
 |---|---|
 | `runtime/langgraph_factory/unit_graph.py` | `286995f398826be63bc2263ea5148f87b23ee7683973e4245c4ee3687a6f309c` |
 | `runtime/langgraph_factory/graph.py` | `eae00c21bfe55ce6e2d6c4374611db4d84d286218d498fa520e799288e152e26` |
-| `tests/runtime/test_plan26_unit_graph.py` | `914f6456429c81879bdaf0cacf54ba6b3e43b57f0fee2795ccfe0caf02e71d96` |
+| `tests/runtime/test_plan26_unit_graph.py` | `60815d081206b7f5b5285de42eaa1f826e5d17ccceaff94745cf487cc8ea15f4` (generation 10 — P-N30-001) |
 | `plans/26_langgraph_curriculum_factory/results/N30_UNIT_GRAPH.result.v1.md` | this file |
 | `plans/26_langgraph_curriculum_factory/results/evidence/N30_UNIT_GRAPH` | see evidence hashes below |
 
@@ -129,11 +231,18 @@ figure.
 
 | Command | Exit | Evidence |
 |---|---:|---|
-| `/tmp/plan26_n30_verify/bin/python -m pytest tests/runtime/test_plan26_unit_graph.py -q` | 0 | `results/evidence/N30_UNIT_GRAPH/venv_unit_graph.txt` (**93 passed, 0 failed**) |
-| `/tmp/plan26_n30_verify/bin/python -m pytest tests/runtime/ -q -k plan26 --deselect tests/runtime/test_plan26_prompt_graph_controller.py` | 0 | `results/evidence/N30_UNIT_GRAPH/venv_plan26_all.txt` (**933 passed, 1 skipped, 196 deselected, 345 subtests passed, 0 failed**) |
+| `/tmp/plan26_n30_verify/bin/python -m pytest tests/runtime/test_plan26_unit_graph.py -q` | 0 | `results/evidence/N30_UNIT_GRAPH/venv_unit_graph.txt` (**93 passed, 0 failed** — regenerated generation 10) |
+| `/tmp/plan26_n30_verify/bin/python -m pytest tests/runtime/ -q -k plan26 --deselect tests/runtime/test_plan26_prompt_graph_controller.py` | 0 | `results/evidence/N30_UNIT_GRAPH/venv_plan26_all.txt` (**1034 passed, 1 skipped, 201 deselected, 345 subtests passed, 0 failed** — regenerated generation 10) |
+| `/tmp/plan26_n30_verify/bin/python -m pytest tests/runtime/test_plan26_prompt_graph_controller.py -q -k test_passed_nodes_remain_admissible_after_harness_or_predecessor_change` | 1 | `results/evidence/N30_UNIT_GRAPH/controller_receipt_admissibility_note.txt` — pre-existing, harness-owned, out of this node's write set (see generation 10 note above) |
 | generated e2e trace: one real episode of the real compiled graph, committed code, no assertion in the path | 0 | `results/evidence/N30_UNIT_GRAPH/e2e_trace.txt` |
 | generated crash matrix: 22 real episodes, one per reachable boundary | 0 | `results/evidence/N30_UNIT_GRAPH/interrupt_matrix.txt` |
 | generated compile + topology dump | 0 | `results/evidence/N30_UNIT_GRAPH/compiled_topology.txt` |
+
+`1034` (up from generation 9's `933`) reflects the broader collection this
+sweep now picks up later in the same tree (more `-k plan26` test files from
+sibling attempts), consistent with generation 9's own note about the earlier
+`867 -> 933` growth; `test_plan26_unit_graph.py` itself is reported first, on
+its own 93/93, and is what this node's own pass/fail turns on.
 
 `--deselect tests/runtime/test_plan26_prompt_graph_controller.py` is explicit
 and explained, not silent: that file (owned by the harness itself, not by any
@@ -414,7 +523,7 @@ exactly the frontier N31 needs a body for.
 |---|---|
 | `runtime/langgraph_factory/unit_graph.py` | `286995f398826be63bc2263ea5148f87b23ee7683973e4245c4ee3687a6f309c` |
 | `runtime/langgraph_factory/graph.py` | `eae00c21bfe55ce6e2d6c4374611db4d84d286218d498fa520e799288e152e26` |
-| `tests/runtime/test_plan26_unit_graph.py` | `914f6456429c81879bdaf0cacf54ba6b3e43b57f0fee2795ccfe0caf02e71d96` |
+| `tests/runtime/test_plan26_unit_graph.py` | `60815d081206b7f5b5285de42eaa1f826e5d17ccceaff94745cf487cc8ea15f4` (generation 10 — P-N30-001) |
 | `runtime/langgraph_factory/routing.py` | `6be93bf8bd951ae9984f74dc9dbe91c709a41edca0a1a6ff6d72be52cd998079` |
 | `runtime/langgraph_factory/state.py` | `428c78edd53b73fd3458d469b36e1bb528dea37d4565f3b37995d63e4a075167` |
 | `runtime/langgraph_factory/reducers.py` | `05dc3632dd378946ddc1aee1ca725f99f0be7e1c69b516c00061aee336fb26cf` |
@@ -446,12 +555,14 @@ exactly the frontier N31 needs a body for.
 | `results/N21_PERSISTENCE_RESUME.result.v1.md` | `cd8f08eac498c14370d31578b056d8e12477293dfad03378cb9680e106fd9841` |
 | `results/N22_DETERMINISTIC_NODES.result.v1.md` | `a167b4a11d4f4b8c32f9d75bd23f98f8b373fac7d28e558124dd6a5461b535fb` |
 | `results/N23_MODEL_NODES.result.v1.md` | `3fc92f0a9df3c9ffaf416aef49cb3ebd76b0f2e8fdad33d7bc3e65eeeabd3dd5` |
-| `evidence/N30_UNIT_GRAPH/venv_unit_graph.txt` | `0c2212e852b93edbdea5fa79a16dbddee529e57b1c3589d1524c0a4d2bef09bf` |
-| `evidence/N30_UNIT_GRAPH/venv_plan26_all.txt` | `b5eceffabda5904d5438f30423cc9847eb674cff2c93ba7261a0e760b21cc76e` |
+| `evidence/N30_UNIT_GRAPH/venv_unit_graph.txt` | `dbcd5f718478a91698ade68f3c5d26cdbad06e1cf2db199ddd746b78e3933cb8` (generation 10) |
+| `evidence/N30_UNIT_GRAPH/venv_plan26_all.txt` | `86dbdba8476d03555ff62332dfd05ed22a965eda4f1d6245ef8e407f74017e05` (generation 10) |
+| `evidence/N30_UNIT_GRAPH/controller_receipt_admissibility_note.txt` (generation 10, new — see generation 10 note above) | `7a71b96e708b0982c2d57413850702e41b72c3bdb21c6d71d33ca08dc92763c1` |
 | `evidence/N30_UNIT_GRAPH/compiled_topology.txt` | `ff5e567f55686da2d44929175626833bfa30454d59f4b043336bd91e5e488916` |
 | `evidence/N30_UNIT_GRAPH/e2e_trace.txt` | `34744847e59ae2877bb42cc248cd736730dcf64527edeaae8fd836878826dd4b` |
 | `evidence/N30_UNIT_GRAPH/interrupt_matrix.txt` | `914d4ea31e786540257c8ce8331139801686cd1c1ff4b8af121a0cffa3e6780d` |
 | `evidence/N30_UNIT_GRAPH/ambient_pytest.txt` (generation 8, carried over — see Commands) | `76e329119fe4034ff39b0c8edc27157f01fadbae1f549be863eaedd9855bd8e0` |
+| `plans/26_langgraph_curriculum_factory/patches/P-N30-001.patch.v1.yaml` | applied this generation, per its own `instructions` |
 
 Compiled unit-path graph digest (real, reproducible):
 `f858289a7e2f4888a078963af151eac980c35ef931a6ee5bb079550c9262875f`.

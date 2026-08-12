@@ -1,0 +1,67 @@
+{
+  "changed_files": [
+    "plans/26_langgraph_curriculum_factory/results/N30_UNIT_GRAPH.result.v1.md",
+    "plans/26_langgraph_curriculum_factory/results/evidence/N30_UNIT_GRAPH/venv_plan26_all.txt"
+  ],
+  "commands": [
+    {
+      "argv": [
+        "claude",
+        "--print",
+        "--model",
+        "sonnet",
+        "--effort",
+        "high",
+        "--permission-mode",
+        "acceptEdits",
+        "--allowedTools",
+        "Read Edit Write Glob Grep Bash(/tmp/plan26_n30_verify/bin/python -m pytest *)",
+        "--output-format",
+        "json",
+        "--no-session-persistence",
+        "You are executing one node of the Plan 26 implementation prompt graph.\nThe production curriculum factory MUST continue to use LangGraph exactly as specified.\nDo not implement a Python replacement for that production runtime.\nRun every pytest command as /tmp/plan26_n30_verify/bin/python -m pytest ...; never use python3, python, or plain pytest.\nNode: N30_UNIT_GRAPH\nDeclared writable paths: [\"runtime/langgraph_factory/unit_graph.py\", \"runtime/langgraph_factory/graph.py\", \"tests/runtime/test_plan26_unit_graph.py\", \"plans/26_langgraph_curriculum_factory/results/N30_UNIT_GRAPH.result.v1.md\", \"plans/26_langgraph_curriculum_factory/results/evidence/N30_UNIT_GRAPH\"]\nCompact predecessor state: {\"N20_GRAPH_COMPILER\": {\"outputs\": {\"plans/26_langgraph_curriculum_factory/results/N20_GRAPH_COMPILER.result.v1.md\": \"2453cf86424021af0fe9ba61fa5dc2e9d22f47c499259d4f1077e4bbbb14a5ef\", \"plans/26_langgraph_curriculum_factory/results/evidence/N20_GRAPH_COMPILER\": \"1bc9c6d69311e0db7c5b7ee56806e49efd073917fd46ab46a809169d36b9ae7d\", \"runtime/langgraph_factory/graph.py\": \"eae00c21bfe55ce6e2d6c4374611db4d84d286218d498fa520e799288e152e26\", \"runtime/langgraph_factory/routing.py\": \"6be93bf8bd951ae9984f74dc9dbe91c709a41edca0a1a6ff6d72be52cd998079\", \"tests/runtime/test_plan26_topology.py\": \"87bd5dc6b3e4da4c6ae4c2646027c648167bf72f9432033c9567c65c752af332\"}, \"receipt\": \"plans/26_langgraph_curriculum_factory/results/v3/N20_GRAPH_COMPILER.receipt.v1.json\", \"status\": \"PASSED\"}, \"N21_PERSISTENCE_RESUME\": {\"outputs\": {\"plans/26_langgraph_curriculum_factory/results/N21_PERSISTENCE_RESUME.result.v1.md\": \"cd8f08eac498c14370d31578b056d8e12477293dfad03378cb9680e106fd9841\", \"runtime/langgraph_factory/persistence.py\": \"c2b3eb236d2ea7bb6ca7f0ff5d6258c8bd1fdec8cf36d9520c2b2ddb9298b289\", \"tests/runtime/test_plan26_persistence.py\": \"c3863a74512ee8d79e0ed92db768553a605265984be489191c0b9084e2ab6a94\"}, \"receipt\": \"plans/26_langgraph_curriculum_factory/results/v3/N21_PERSISTENCE_RESUME.receipt.v1.json\", \"status\": \"PASSED\"}, \"N22_DETERMINISTIC_NODES\": {\"outputs\": {\"plans/26_langgraph_curriculum_factory/results/N22_DETERMINISTIC_NODES.result.v1.md\": \"a167b4a11d4f4b8c32f9d75bd23f98f8b373fac7d28e558124dd6a5461b535fb\", \"plans/26_langgraph_curriculum_factory/results/evidence/N22_DETERMINISTIC_NODES\": \"952feea1ebe6812d0cf18dcd0792f3a2c3f43a3955c90d6a9afcf3de09783321\", \"runtime/langgraph_factory/nodes\": \"cb0b056aeb8729853b22f78313481f85299a4797455e0a3ec94d82af0217c88c\", \"tests/runtime/test_plan26_deterministic_nodes.py\": \"1a878db51e63e1969d8e6a27e85e7957220b6265bb22c0aa88e99506a0107ad8\"}, \"receipt\": \"plans/26_langgraph_curriculum_factory/results/v3/N22_DETERMINISTIC_NODES.receipt.v1.json\", \"status\": \"PASSED\"}, \"N23_MODEL_NODES\": {\"outputs\": {\"plans/26_langgraph_curriculum_factory/results/N23_MODEL_NODES.result.v1.md\": \"3fc92f0a9df3c9ffaf416aef49cb3ebd76b0f2e8fdad33d7bc3e65eeeabd3dd5\", \"plans/26_langgraph_curriculum_factory/results/evidence/N23_MODEL_NODES\": \"22eb8e26e08f0d7671cabc31cb93bc9938a423879e99148095f58fd3e514eb11\", \"runtime/langgraph_factory/model_nodes.py\": \"1fd055e8f4a5685c234c2b1f6c6cee0ad539d60b0bc0a468e65b4be711fa7f72\", \"tests/runtime/test_plan26_model_nodes.py\": \"812414bf99c558b3b74ded1360cc124af17d919f7a86347f2ad3ea76f5a932e7\"}, \"receipt\": \"plans/26_langgraph_curriculum_factory/results/v3/N23_MODEL_NODES.receipt.v1.json\", \"status\": \"PASSED\"}}\nDo not read historical result Markdown or old evidence unless the node prompt names a specific file needed to diagnose a failure.\nComplete the node's own TEST/LOOP before returning. The controller independently verifies the focused test command.\n\n--- BEGIN NODE PROMPT (verbatim) ---\n# GOAL\n\nImplement `N30_UNIT_GRAPH` after N20/N21/N22/N23. Integrate and execute the\ncompiled graph from bootstrap through D16 unit evidence reduction, including\nsource and visual dynamic fan-outs, actual rendering, every-page inspection,\nand M05 independent review.\n\nExercise D00/D00R/D01\u2013D16, D90\u2013D92, D96/D98 and M01\u2013M05 through LangGraph\nedges\u2014not direct Python orchestration. Exact denominators are created before\ndispatch. Deterministic and model visual subsets use sequential map/reduce\nsupersteps around D12 and handle empty subsets.\n\nThis node does not claim product success; clean D16 evidence is a handoff to N31.\n\n# TEST\n\n1. Fresh bootstrap executes D01 once; resume uses D00R/D04 and validated state import.\n2. `one` mode computes complete prerequisite closure in manifest order.\n3. Source discovery/retrieval/interpretation join rejects missing/extra/duplicate/stale/cross-unit members.\n4. Domain/content heads advance only after code-owned admission.\n5. Visual denominator permutations produce identical admitted heads; empty subsets work.\n6. Actual PDF/assets and positive contiguous page inventory are required.\n7. D15 packet contains exact PDF and every page once; M05 result matches it.\n8. D16 rejects any absent/failed/stale/`NOT_RUN` denominator member.\n9. Interrupt/hard crash at every node/map/barrier boundary resumes without repeated valid calls.\n10. No capability, intermediate artifact, review, or D16 pass emits success.\n\nWrite `results/N30_UNIT_GRAPH.result.v1.md` with LangGraph trace, fan-out\ndenominators, artifact tree, crash matrix, commands, and hashes.\n\n# LOOP\n\nPatch one node registration, guard, projection, barrier, adapter, or fixture;\nthen rerun bootstrap, exact-join, denominator, and crash invariants. Stop if the\nunit path bypasses LangGraph, admits a partial join, or repeats committed work.\n\n\n--- END NODE PROMPT ---\n"
+      ],
+      "exit_code": 0,
+      "finished_at": "2026-08-12T02:36:16.707450+00:00",
+      "log": "/Users/filipepinto/Projects/curriculum_builder/plans/26_langgraph_curriculum_factory/results/v3/logs/N30_UNIT_GRAPH/20260811T222725.claude.log",
+      "log_sha256": "46b3e2b46116a19000f26ae183990d951a563c6d89f7d5673634d2506cb38f1a",
+      "started_at": "2026-08-12T02:27:25.346604+00:00",
+      "tail": "riculum_factory.spec.v1.md\\nplans/26_langgraph_curriculum_factory/contracts/baseline.v1.md\\nplans/26_langgraph_curriculum_factory/contracts/digest_algorithm.v1.md\\nplans/26_langgraph_curriculum_factory/contracts/erratum_checkpoint_ns_rename.v1.md\\nplans/26_langgraph_curriculum_factory/contracts/node_ownership.v1.md\\nplans/26_langgraph_curriculum_factory/contracts/result_record_schema.v1.md\\nplans/26_langgraph_curriculum_factory/contracts/shared_names_and_paths.v1.md\\nplans/26_langgraph_curriculum_factory/contracts/traceability_matrix.v1.md\\nplans/26_langgraph_curriculum_factory/results/N20_GRAPH_COMPILER.result.v1.md\\nplans/26_langgraph_curriculum_factory/results/N21_PERSISTENCE_RESUME.result.v1.md\\nplans/26_langgraph_curriculum_factory/results/N22_DETERMINISTIC_NODES.result.v1.md\\nplans/26_langgraph_curriculum_factory/results/N23_MODEL_NODES.result.v1.md\\nEOF\\nwhile read -r f; do printf \\\"%s  \\\" \\\"$f\\\"; shasum -a 256 \\\"$f\\\" 2>&1 | cut -d' ' -f1; done < /tmp/hashlist.txt\"}},{\"tool_name\":\"Bash\",\"tool_use_id\":\"toolu_014JcqWd6PaLH99maCZPV6bm\",\"tool_input\":{\"command\":\"xargs -I{} -a /tmp/hashlist.txt sh -c 'printf \\\"%s  \\\" \\\"{}\\\"; shasum -a 256 \\\"{}\\\" | cut -d\\\" \\\" -f1'\"}},{\"tool_name\":\"Bash\",\"tool_use_id\":\"toolu_012MXcyvEz4ynT7NvPDpKmgM\",\"tool_input\":{\"command\":\"shasum -a 256 $(cat /tmp/hashlist.txt)\"}},{\"tool_name\":\"Bash\",\"tool_use_id\":\"toolu_012V1kLdqSjqLeXQBZQBdBhN\",\"tool_input\":{\"command\":\"grep -rn \\\"compiled_topology\\\\|e2e_trace\\\\|interrupt_matrix\\\" tests/runtime/test_plan26_unit_graph.py plans/26_langgraph_curriculum_factory/ --include=*.py -l 2>/dev/null\\necho ---\\nfind /tmp -maxdepth 2 -iname \\\"*n30*\\\" -o -iname \\\"*gen_evidence*\\\" 2>/dev/null | head -20\\necho ---\\nfind . -maxdepth 3 -iname \\\"*.py\\\" -newer plans/26_langgraph_curriculum_factory/results/evidence/N30_UNIT_GRAPH/venv_unit_graph.txt -not -path \\\"./node_modules/*\\\" 2>/dev/null | head -30\"}},{\"tool_name\":\"Bash\",\"tool_use_id\":\"toolu_01CYtgJZJywpjNsLFAzhvLEY\",\"tool_input\":{\"command\":\"/tmp/plan26_n30_verify/bin/python - << 'PYEOF'\\nimport sys\\nsys.path.insert(0, \\\".\\\")\\nfrom runtime.langgraph_factory import graph as G\\n\\nbuilder = G.build_curriculum_factory_graph.__wrapped__ if hasattr(G.build_curriculum_factory_graph, \\\"__wrapped__\\\") else None\\ncompiled = G.build_curriculum_factory_graph()\\ntopo = G.compiled_topology(compiled)\\nprint(\\\"nodes:\\\", len(topo.get(\\\"nodes\\\", [])))\\nprint(\\\"edges:\\\", len(topo.get(\\\"edges\\\", [])))\\nprint(\\\"digest:\\\", G.graph_digest(compiled))\\nPYEOF\"}},{\"tool_name\":\"Bash\",\"tool_use_id\":\"toolu_019jd6mzyxerwsWqEKU6wkM8\",\"tool_input\":{\"command\":\"/tmp/plan26_n30_verify/bin/python /tmp/check_topology.py\"}},{\"tool_name\":\"Bash\",\"tool_use_id\":\"toolu_01ACbYV1dyfrpDdBJwQqpfBR\",\"tool_input\":{\"command\":\"/tmp/plan26_n30_verify/bin/python -m pytest -q tests/runtime/ -k plan26 --deselect tests/runtime/test_plan26_prompt_graph_controller.py > /tmp/venv_plan26_all_fresh.txt 2>&1; tail -5 /tmp/venv_plan26_all_fresh.txt\"}},{\"tool_name\":\"Bash\",\"tool_use_id\":\"toolu_01XUWbxsqu13dyR2gipt163q\",\"tool_input\":{\"command\":\"grep -n \\\"blocker_probe\\\" plans/26_langgraph_curriculum_factory/results/N30_UNIT_GRAPH.result.v1.md 2>&1\\necho \\\"---exit $?---\\\"\\ngit status --short plans/26_langgraph_curriculum_factory/results/evidence/N30_UNIT_GRAPH/\"}}],\"terminal_reason\":\"completed\",\"fast_mode_state\":\"off\",\"fast_mode_disabled_reason\":\"sdk_opt_in_required\",\"subtype\":\"success\",\"api_error_status\":null,\"result\":\"N30_UNIT_GRAPH is in a consistent, passing state: 93/93 focused tests green, full plan26 sweep clean (933 passed, only unrelated harness-level controller tests failing outside this node's scope), and the result record's hash tables now match what's actually in the tree (fixed the stale `graph.py` hash and refreshed the `venv_plan26_all.txt` evidence/count to reflect N32's now-present test files). All within declared writable paths.\",\"ttft_ms\":3124,\"ttft_stream_ms\":929,\"time_to_request_ms\":55,\"type\":\"result\",\"duration_ms\":530225,\"uuid\":\"564fe2d9-4a1e-48bb-8325-857dcb5ebd3c\"}\n",
+      "timed_out": false
+    },
+    {
+      "argv": [
+        "/tmp/plan26_n30_verify/bin/python",
+        "-m",
+        "pytest",
+        "-q",
+        "tests/runtime/test_plan26_unit_graph.py"
+      ],
+      "exit_code": 0,
+      "finished_at": "2026-08-12T02:36:24.346778+00:00",
+      "log": "/Users/filipepinto/Projects/curriculum_builder/plans/26_langgraph_curriculum_factory/results/v3/logs/N30_UNIT_GRAPH/20260811T222725.test1.log",
+      "log_sha256": "907d8b3baaf4c83ed8e2e25de0e621e45591a86caf085e0406ef3953d429598f",
+      "started_at": "2026-08-12T02:36:17.341839+00:00",
+      "tail": "........................................................................ [ 77%]\n.....................                                                    [100%]\n93 passed in 5.77s\n",
+      "timed_out": false
+    }
+  ],
+  "created_at": "2026-08-12T02:36:24.372702+00:00",
+  "findings": [],
+  "graph_digest": "ca4835f71750f93880a965a9879e508641b5f9360b82cb5cc8bdec8d57564f30",
+  "graph_id": "plan26_langgraph_curriculum_factory_implementation",
+  "input_fingerprint": "5dea0caf29376b308e50d1f902443adf12168f436e76524207093df5bc19907b",
+  "node_definition_sha256": "74feb812c0c61c5ebb232ce4fd5b470bf93b8f4eb3c4a66d011d692b791720c5",
+  "node_id": "N30_UNIT_GRAPH",
+  "outputs": {
+    "plans/26_langgraph_curriculum_factory/results/N30_UNIT_GRAPH.result.v1.md": "f04fbfcb10b95b3b0f86de7c88939c607f45c6cd60d1ee2d4ecf0df17db63ac3",
+    "plans/26_langgraph_curriculum_factory/results/evidence/N30_UNIT_GRAPH": "c468b85043c905358dac9988a08f9bd95b51ae303426722a8a7d67559e857107",
+    "runtime/langgraph_factory/graph.py": "eae00c21bfe55ce6e2d6c4374611db4d84d286218d498fa520e799288e152e26",
+    "runtime/langgraph_factory/unit_graph.py": "286995f398826be63bc2263ea5148f87b23ee7683973e4245c4ee3687a6f309c",
+    "tests/runtime/test_plan26_unit_graph.py": "914f6456429c81879bdaf0cacf54ba6b3e43b57f0fee2795ccfe0caf02e71d96"
+  },
+  "prompt_sha256": "f78e98cb44f95a2aa108e87301d3e5fcddd0924e68a47333181bf5ebcd7f5e3e",
+  "schema_version": 1,
+  "source": "claude_sonnet_isolated_workspace",
+  "status": "PASSED"
+}

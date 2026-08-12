@@ -1,0 +1,4 @@
+DEFERRED_TOPOLOGY: ['M06_REPAIR_NAMED_UNIT_ARTIFACT', 'M07_REVIEW_ACTUAL_WORKBOOK', 'M08_REPAIR_NAMED_WORKBOOK_DEFECT']
+candidates after excluding the now-wired-but-stale M06 entry: ['M07_REVIEW_ACTUAL_WORKBOOK', 'M08_REPAIR_NAMED_WORKBOOK_DEFECT']
+Dynamic filter correctly skips the stale wired entry and still finds a real victim: PASSED
+OLD naive picker would have chosen 'M06_REPAIR_NAMED_UNIT_ARTIFACT', which is wired in this simulation and would not raise N20-NODE-UNDECLARED

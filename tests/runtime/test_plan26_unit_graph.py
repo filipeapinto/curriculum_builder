@@ -775,21 +775,48 @@ def _run_episode(
     }
 
 
+def _assert_frontier_is_a_declared_row(frontier: str | None) -> None:
+    """A clean episode's halt must be some real `DEFERRED_EDGES` destination.
+
+    Not pinned to today's specific row (`D16_REDUCE_UNIT_EVIDENCE`): the node
+    whose guard actually resolves to the open row (M05 today) runs but its own
+    update is swallowed by the aborted superstep before it reaches the stream,
+    so the frontier cannot be re-derived from the observed trace either — the
+    KeyError `_run_episode` already caught *is* the ground truth, and this only
+    checks that ground truth is a declared row, never a fabricated one. Stays
+    correct as N31/N32 close further rows of that table (P-N30-001, closing
+    N90 finding F1).
+    """
+
+    declared_destinations = {destination for _s, _v, destination, _o in U.DEFERRED_EDGES}
+    assert frontier is not None
+    assert frontier in declared_destinations
+
+
 # ---------------------------------------------------------------------------
 # Registered unit topology (spec 8.1 / 8.2)
 # ---------------------------------------------------------------------------
 
 
-def test_the_compiled_graph_registers_every_declared_unit_branch(topology, available) -> None:
-    """Each conditional edge exists with exactly the destinations that exist."""
+def test_the_compiled_graph_registers_every_declared_unit_branch(topology, compiled) -> None:
+    """Each conditional edge exists with exactly the destinations that exist.
 
+    `available` here is the real compiled graph's own node set, not
+    `binding_inventory()`: the latter is deliberately narrow (it names only what
+    this generation is allowed to bind), while this test's real job is a
+    self-consistency check against whatever the production compile point
+    actually wired — so it has to stay correct both before and after a later
+    generation widens the set of nodes that have real bodies.
+    """
+
+    graph_nodes = set(compiled.get_graph().nodes)
     registered: dict[str, set[str]] = {}
     for source, target, conditional in topology["edges"]:
         if conditional:
             registered.setdefault(source, set()).add(target)
 
     for source, _guard in U.UNIT_BRANCHES:
-        expected = set(U.branch_destinations(source, available))
+        expected = set(U.branch_destinations(source, graph_nodes))
         assert expected, f"{source} has no registerable destination"
         assert registered.get(source) == expected, source
 
@@ -1261,7 +1288,16 @@ UNOBSERVABLE_BOUNDARY = "M05_REVIEW_ACTUAL_UNIT"
 def test_a_fresh_episode_executes_the_bootstrap_spine_once_through_langgraph(
     tmp_path: Path, monkeypatch
 ) -> None:
-    """Prompt TEST 1: the fresh path really runs, and D01 runs exactly once."""
+    """Prompt TEST 1: the fresh path really runs, and D01 runs exactly once.
+
+    `selected_unit_id` is asserted off `D05_SELECT_NEXT_UNIT`'s own first
+    update, not the run's final merged state: once N31 wires D16-D23 this
+    clean single-unit episode legitimately loops back to a second `D05`
+    call, whose `manifest_exhausted` guard correctly overwrites the
+    `replace_current`-reduced `selected_unit_id` to `None` in final state —
+    a real second call, not a repeat of the first one, so it is asserted for
+    rather than assumed away (P-N30-001, closing N90 finding F1).
+    """
 
     fixture = _build_episode_fixture(tmp_path)
     result = _run_episode(monkeypatch, fixture)
@@ -1276,7 +1312,17 @@ def test_a_fresh_episode_executes_the_bootstrap_spine_once_through_langgraph(
     assert state["run_id"]
     assert state["mode"] == "one"
     assert state["effective_run"]["target_closure"] == ["U001"]
-    assert state["selected_unit_id"] == "U001"
+
+    first_selection = next(
+        update for node_id, update in result["updates"] if node_id == "D05_SELECT_NEXT_UNIT"
+    )
+    assert first_selection["selected_unit_id"] == "U001"
+    d05_calls = result["trace"].count("D05_SELECT_NEXT_UNIT")
+    assert d05_calls in (1, 2)
+    if d05_calls == 1:
+        assert state["selected_unit_id"] == "U001"
+    else:
+        assert state["selected_unit_id"] is None
     # No product success, and no second terminal, however the episode ends.
     assert result["trace"].count("D98_WRITE_TERMINAL") <= 1
     if state.get("terminal") is not None:
@@ -1428,9 +1474,11 @@ def test_a_visual_denominator_permutation_produces_an_identical_admitted_head(
     reverse = run(list(reversed(DECLARED_VISUALS)))
 
     for result in (forward, reverse):
-        assert result["deferred_frontier"] == "D16_REDUCE_UNIT_EVIDENCE"
+        _assert_frontier_is_a_declared_row(result["deferred_frontier"])
         assert result["trace"].count("D11_CREATE_DETERMINISTIC_VISUALS") == 1
         assert result["trace"].count("M04_CREATE_UNIT_VISUALS") == 1
+
+    assert forward["deferred_frontier"] == reverse["deferred_frontier"]
 
     def denominator(result: dict[str, Any]) -> dict[str, Any]:
         record = dict(next(iter(result["state"]["visual_denominators"].values())))
@@ -1630,21 +1678,24 @@ def test_the_review_packet_names_the_exact_pdf_and_every_page_once(
 def test_the_committed_path_stops_at_a_declared_deferred_edge(
     tmp_path: Path, monkeypatch
 ) -> None:
-    """The episode's real frontier is this node's own GOAL boundary.
+    """The episode's real frontier is a declared row, never a fabricated one.
 
-    The whole unit path now executes and M05 returns a real independent review;
-    its `review_returned` guard resolves to `D16_REDUCE_UNIT_EVIDENCE`, which has
-    no node body because reducing unit evidence is N31's. The episode therefore
-    ends on the exact row of `DEFERRED_EDGES` the prompt names as the handoff,
-    with no failure, no terminal, and no fabricated destination.
+    The whole unit path now executes and M05 returns a real independent review.
+    Whichever `DEFERRED_EDGES` row is currently open is where a clean episode
+    halts (today that is `M05_REVIEW_ACTUAL_UNIT`'s `review_returned` guard
+    resolving to `D16_REDUCE_UNIT_EVIDENCE`, N30's own declared handoff to N31;
+    once N31 wires D16-D23 the same clean episode legitimately proceeds through
+    D22/D23 and a second `D05_SELECT_NEXT_UNIT` call to halt on `DEFERRED_EDGES`'
+    still-open `manifest_exhausted` row instead — P-N30-001, closing N90 finding
+    F1). This only checks the halt is *some* declared row, not pinned to
+    today's, so it keeps proving "no fabricated destination" rather than just
+    "today's specific one."
     """
 
     fixture = _build_episode_fixture(tmp_path)
     result = _run_episode(monkeypatch, fixture)
 
-    assert result["deferred_frontier"] == "D16_REDUCE_UNIT_EVIDENCE"
-    assert ("M05_REVIEW_ACTUAL_UNIT", "review_returned", "D16_REDUCE_UNIT_EVIDENCE",
-            "N31_REPAIR_ACCEPTANCE") in U.DEFERRED_EDGES
+    _assert_frontier_is_a_declared_row(result["deferred_frontier"])
 
     state = result["state"]
     assert state.get("pending_failure") is None
@@ -1783,6 +1834,16 @@ def test_the_unobservable_boundary_is_excluded_for_a_stated_reason(
     superstep, so no stream consumer ever sees it. Both halves are asserted, so
     the exclusion stops being true (and this test fails) the moment the path
     extends past M05, exactly as it did when the frontier was D09.
+
+    Deliberately still pinned to `D16_REDUCE_UNIT_EVIDENCE` rather than a
+    derived frontier (unlike its sibling tests fixed under P-N30-001, closing
+    N90 finding F1): this test's whole premise is that M05 specifically is
+    unobservable *because* today's M05->D16 edge is the one that is deferred.
+    Once N31 wires D16-D23 that premise inverts — M05's own update becomes
+    observable and belongs in `REACHABLE_BOUNDARIES` instead — so this test is
+    expected to start failing at that point, and rewriting it then is N31's
+    (or whichever generation wires D16) to do, not a fixture to route around
+    now. See `results/N30_UNIT_GRAPH.result.v1.md` for this call.
     """
 
     assert UNOBSERVABLE_BOUNDARY not in REACHABLE_BOUNDARIES
@@ -2614,7 +2675,7 @@ def test_this_nodes_renderers_are_a_test_double_and_not_exposed_to_n13s_store_ga
     store_root = fixture["output_root"]
     blobs = [path for path in store_root.rglob("*") if path.is_file() and "artifact" in str(path)]
     assert blobs == [], blobs
-    assert result["deferred_frontier"] == "D16_REDUCE_UNIT_EVIDENCE"
+    _assert_frontier_is_a_declared_row(result["deferred_frontier"])
     assert result["state"]["unit_page_inventories"][0]["result"] == "PASS"
 
 

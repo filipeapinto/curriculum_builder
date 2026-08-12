@@ -1,0 +1,57 @@
+schema_version: 1
+patch_id: P-N31-003
+action: overlay
+graph_id: plan26_langgraph_curriculum_factory_implementation
+base_graph_digest: 252ed9088a18eb1fd0991291158eb7fd7c06a3c2c3ce6772f487ccffb8a4375a
+target_node: N31_REPAIR_ACCEPTANCE
+scope: node_only
+reason: N31's generation-2 pass correctly diagnosed 2 residual test_plan26_unit_graph.py
+  failures as structural consequences of its own D16-D23 wiring, outside its write
+  set at the time, and honestly reported BLOCKED per P-N31-002's own instruction rather
+  than routing around them. One test's docstring explicitly pre-assigns ownership
+  to N31; the other is a LangGraph stream/exception trace-collection artifact only
+  fixable in the test's own assertion. Extending N31's write set to close both directly
+expected_effect: 'test_plan26_unit_graph.py reaches 93/93 passing, both residual failures
+  closed by N31 itself, allowing this node to report a genuine bare status: PASSED'
+instructions: "`tests/runtime/test_plan26_unit_graph.py` is now also in your write\
+  \ set,\nspecifically for two residual failures your own generation-2 pass already\n\
+  diagnosed precisely and correctly declined to route around (per P-N31-002's\nown\
+  \ instruction to report honestly rather than force a PASSED status). Fix\nexactly\
+  \ these two, nothing else in that file:\n\n1. `test_the_unobservable_boundary_is_excluded_for_a_stated_reason`\
+  \ \u2014 its own\n   docstring already predicts this exact failure and names you\
+  \ as the owner\n   of the rewrite once D16-D23 are wired (its premise \u2014 that\
+  \ M05's own update\n   is unobservable because the M05->D16 edge is deferred \u2014\
+  \ is now false by\n   construction, since D16 has a real body and M05's update is\
+  \ genuinely\n   observable). Update this test to assert the correct, current invariant\n\
+  \   instead of the pre-wiring one its docstring already anticipated retiring.\n\
+  \   Do not weaken it into a no-op; assert what is actually true and\n   meaningful\
+  \ now (e.g. that the update *is* observable, or whatever the\n   test's real underlying\
+  \ concern converts to once its premise inverts \u2014\n   read the full test and\
+  \ its docstring before deciding, they already\n   explain the intended replacement).\n\
+  \n2. `test_a_fresh_episode_executes_the_bootstrap_spine_once_through_langgraph`\n\
+  \   \u2014 a real, reproducible LangGraph streaming artifact, not a graph.py/\n\
+  \   repair.py/acceptance.py defect: `compiled.stream(stream_mode=\"updates\")`\n\
+  \   does not yield the update chunk for a step whose *next* step's routing\n   raises\
+  \ in the same tick, so when the clean one-unit episode's second\n   `D05_SELECT_NEXT_UNIT`\
+  \ call correctly finds the manifest exhausted and\n   routes to the still-deferred\
+  \ `D24_PROVE_EXACT_MANIFEST_COVERAGE`, that\n   second D05 call's own chunk is swallowed\
+  \ by the same-tick `KeyError`\n   before `result[\"trace\"]` ever records it \u2014\
+  \ even though the call is real\n   and the state update (`cursor.accepted_ordinal`,\
+  \ cleared\n   `selected_unit_id`) is really checkpointed. The test's\n   `d05_calls\
+  \ = result[\"trace\"].count(\"D05_SELECT_NEXT_UNIT\")` therefore\n   undercounts\
+  \ by exactly one in the exhausted case. Fix the test's own\n   assertion to check\
+  \ the real, checkpointed state directly (e.g.\n   `state[\"selected_unit_id\"] is\
+  \ None` and `state[\"cursor\"]\n   [\"accepted_ordinal\"] == 1` for the exhausted-after-one-unit\
+  \ case) instead\n   of inferring it from a trace-count that this specific stream/exception\n\
+  \   interaction cannot reliably produce. Do not change `compiled.stream()`'s\n \
+  \  call, mode, or anything in `graph.py`/`unit_graph.py` to work around\n   this\
+  \ \u2014 the trace-collection helper in the test file is what needs to stop\n  \
+  \ trusting an undercounted signal, not the compiled graph's own execution.\n\nDo\
+  \ not touch anything else in `test_plan26_unit_graph.py` \u2014 the other 91\ntests,\
+  \ including the five P-N30-001 already corrected, are exactly right and\nmust stay\
+  \ exactly as they are. Re-run both of your required verification\ncommands and confirm\
+  \ both are fully green (93/93 for\n`test_plan26_unit_graph.py`, all of `test_plan26_repair_acceptance.py`)\n\
+  before reporting `status: PASSED` as a bare line. Update your own result\nreport's\
+  \ \"Residual failures\" section to reflect that both are now closed,\nwith the evidence.\n"
+context: {}
+created_at: '2026-08-12T21:50:02.971896+00:00'

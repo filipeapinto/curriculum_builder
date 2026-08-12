@@ -1,0 +1,103 @@
+schema_version: 1
+patch_id: P-N31-001
+action: overlay
+graph_id: plan26_langgraph_curriculum_factory_implementation
+base_graph_digest: b943d0f944251043c34d8fd778043ad25397673df0a7c83b4c791ac2ecf963e8
+target_node: N31_REPAIR_ACCEPTANCE
+scope: node_only
+reason: N90's audit (finding F1) found D16-D23 fully implemented but never wired into
+  the one production compiled graph, because N31's own module docstring deferred registration
+  to N32 while N32's prompt deferred it right back. graph.py is now in N31's write
+  set to close this ownership gap directly
+expected_effect: D16-D23 become real, wired members of the compiled production graph;
+  the six N31-owned DEFERRED_EDGES rows resolve; a real compiled fake-transport run
+  reaches UNIT_ACCEPTED; binding_inventory()'s return value stays unchanged so N30's
+  frozen tests keep passing
+instructions: "Ownership correction from N90's independent audit (finding F1). N90\
+  \ found that\nD16-D23 (the unit repair/acceptance cycle you implement) are fully\
+  \ implemented\nand function-level tested, but never registered or wired into the\
+  \ one\nproduction compiled graph (`build_curriculum_factory_graph()` in\n`runtime/langgraph_factory/graph.py`).\
+  \ A real run can never reach\n`D22_ACCEPT_UNIT`/`UNIT_ACCEPTED` for any unit \u2014\
+  \ only the isolated function\ncalls your own tests exercise prove anything.\n\n\
+  Root cause: your own `repair.py` module docstring says \"that registration is\n\
+  N32's write\" \u2014 deferring wiring to N32, who deferred it right back (N32's\
+  \ own\nprompt says the workbook engine is \"not called by `build_curriculum_factory_\n\
+  graph`... N32 owns wiring this function into whatever the production compile\npoint\
+  \ becomes once the workbook branch is in scope\"). Nobody wired D16-D23.\n`graph.py`\
+  \ is now in your write set specifically to close this. Wire it here,\nas the node\
+  \ that owns the repair/acceptance node bodies and is best placed to\nprove them\
+  \ reachable.\n\n## What \"wired\" means and how the existing machinery already does\
+  \ most of it\n\nRead `runtime/langgraph_factory/unit_graph.py` in full before changing\n\
+  anything \u2014 do not re-derive its logic from memory. `unit_graph.register_\n\
+  unit_path(builder, available)` already computes, for every `UNIT_BRANCHES`\nsource\
+  \ (including D08_VALIDATE_DOMAIN, D09_VALIDATE_CONTENT, D12_VISUAL_\nBARRIER_AND_JOIN,\
+  \ D14_INVENTORY_AND_INSPECT_UNIT_PAGES, D91_CLASSIFY_MODEL_\nFAILURE, and M05_REVIEW_ACTUAL_UNIT),\
+  \ which of their declared guard\ndestinations currently have a registered node body\
+  \ (`branch_destinations`,\nintersecting `MODEL_BRANCH_DESTINATIONS`/`routing.guard_destinations`\
+  \ against\nwhatever `available` sequence is passed in) versus which stay deferred\n\
+  (`deferred_destinations`, checked against the frozen `DEFERRED_EDGES` table).\n\
+  This means: once D16-D23's node bodies are present in the `bindings`/\n`available`\
+  \ sequence that reaches `register_unit_path`, the six DEFERRED_EDGES\nrows your\
+  \ work owns \u2014\n  (D08_VALIDATE_DOMAIN, domain_repairable) -> D17_CLASSIFY_UNIT_FINDINGS\n\
+  \  (D09_VALIDATE_CONTENT, content_repairable) -> D17_CLASSIFY_UNIT_FINDINGS\n  (D12_VISUAL_BARRIER_AND_JOIN,\
+  \ visuals_repairable) -> D17_CLASSIFY_UNIT_FINDINGS\n  (D14_INVENTORY_AND_INSPECT_UNIT_PAGES,\
+  \ layout_repairable) -> D17_CLASSIFY_UNIT_FINDINGS\n  (D91_CLASSIFY_MODEL_FAILURE,\
+  \ repair) -> D17_CLASSIFY_UNIT_FINDINGS\n  (M05_REVIEW_ACTUAL_UNIT, review_returned)\
+  \ -> D16_REDUCE_UNIT_EVIDENCE\nget wired automatically the next time `register_skeleton`/`register_unit_path`\n\
+  runs with that widened set. You do not need to (and must not) edit\n`unit_graph.py`\
+  \ itself \u2014 it is N30's frozen write, already correct, and\nalready designed\
+  \ for exactly this widening.\n\nWhat does not exist yet and is yours to add: (1)\
+  \ getting D16-D23's node\nbodies into the bindings passed to `register_skeleton`\
+  \ at the one production\ncompile point, and (2) the internal topology *within* D16-D23\
+  \ itself \u2014 the\nloop spec section 8.2 describes (see the spec's own ASCII diagram,\
+  \ \"D16\nPASS -> D22 -> D23 -> D05\", \"D16 FAIL -> D17 -> D18 -> D19 -> [deterministic\n\
+  producer, or D90 -> M06] -> D20 -> D21 -> earliest invalidated producer/check\n\
+  in topological order -> D16\", \"D17/D29 repeat-bound or attempts-exhausted ->\n\
+  D98\"). `UNIT_BRANCHES` in `unit_graph.py` does not declare D16-D23 as sources\n\
+  at all \u2014 that internal loop is not `unit_graph.py`'s concern, it is yours,\n\
+  the same way `workbook.register_workbook_path` is `workbook.py`'s concern for\n\
+  D24-D32. Read `runtime/langgraph_factory/workbook.py`'s `register_workbook_\npath`\
+  \ and `graph.py`'s `register_workbook_topology` as the worked reference\nfor this\
+  \ exact pattern (additive registration function, called once from the\none production\
+  \ compile point, wiring a sub-cycle's internal edges over a\nbuilder that already\
+  \ has the skeleton and unit path registered).\n\n## The one constraint that will\
+  \ break other nodes' frozen tests if you miss it\n\n`graph.py`'s `binding_inventory()`\
+  \ function has an explicit docstring warning:\nseveral of N30's own tests in `tests/runtime/test_plan26_unit_graph.py`\n\
+  independently recompute their expectations directly from `binding_inventory\n()`'s\
+  \ *return value*. Do not change what `binding_inventory()` returns. N32\nalready\
+  \ solved this exact problem for the workbook engine by introducing\n`full_binding_inventory()`\
+  \ \u2014 a separate, wider function (`binding_inventory()`\nplus workbook bindings)\
+  \ used only at the compile point, leaving `binding_\ninventory()` itself untouched\
+  \ for N30's tests to keep trusting. Follow the\nsame pattern for D16-D23: either\
+  \ extend that composition one layer further,\nor add your own comparably-named wider\
+  \ function, so `binding_inventory()`'s\nreturn value is provably unchanged (assert\
+  \ this directly in your own test)\nwhile `build_curriculum_factory_graph()` compiles\
+  \ against a set that includes\nD16-D23. `tests/runtime/test_plan26_unit_graph.py`\
+  \ is not in your write set\nand is a required verification command for this node\
+  \ now specifically so a\nregression here is caught before merge, not after.\n\n\
+  ## Required proof (this is what makes the finding closed, not just \"code added\"\
+  )\n\nYour own test file must independently prove, by executing the real compiled\n\
+  graph \u2014 not by re-reading source or trusting N90's fingerprints are gone \u2014\
+  \nthat:\n- D16-D23 are members of `build_curriculum_factory_graph(...).get_graph().\n\
+  \  nodes` (an actually compiled graph, the way N90's audit checked it:\n  `compiled_topology()`/`compiled.get_graph().nodes`,\
+  \ not a declared table).\n- Each of the six DEFERRED_EDGES rows you own is now a\
+  \ real, wired edge in\n  that compiled graph, not merely absent from a \"still deferred\"\
+  \ set.\n- A real run through the compiled production graph \u2014 using the fake-CLI-\n\
+  \  transport/scripted-response pattern `tests/runtime/test_plan26_adversarial.\n\
+  \  py` already established (see `_ScriptedFakeTransport`, `_HarnessContext`,\n \
+  \ and how N50 drives a real compiled graph end to end with `mn.tp.\n  FakeCliTransport`)\
+  \ \u2014 reaches `D22_ACCEPT_UNIT`/a real `UNIT_ACCEPTED`\n  terminal for at least\
+  \ one unit, exercising both the D16 PASS fast path and\n  at least one full D17-D21\
+  \ repair-and-retest loop back to D16 for a\n  deterministic-repair-owned finding.\
+  \ Do not stop at \"the edges exist\"; prove\n  a run actually traverses them.\n\
+  - No `UnitTopologyError`/`GraphBindingError` is raised by `register_skeleton`\n\
+  \  against the widened bindings (i.e. `validate_bindings`'s placeholder/\n  duplicate/uncallable\
+  \ checks and `register_unit_path`'s `N30-EDGE-*` checks\n  all pass for D16-D23\
+  \ exactly as they already do for the existing skeleton).\n\nDo not touch `runtime/langgraph_factory/workbook.py`,\
+  \ `unit_graph.py`, or\nD24-D32 in any way \u2014 that is N32's write, next. Do not\
+  \ restore or duplicate\nanything N32 already owns. Update your own result report\
+  \ to record this\ncorrection: what F1 said, why it was this node's responsibility,\
+  \ and what\nchanged, with the compiled-graph evidence (node list, edge list, or\
+  \ hashes)\nto back it, matching the rigor N90's own audit used.\n"
+context: {}
+created_at: '2026-08-12T19:53:15.451650+00:00'

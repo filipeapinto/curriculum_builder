@@ -1,0 +1,93 @@
+schema_version: 1
+patch_id: P-N20-001
+action: overlay
+graph_id: plan26_langgraph_curriculum_factory_implementation
+base_graph_digest: b943d0f944251043c34d8fd778043ad25397673df0a7c83b4c791ac2ecf963e8
+target_node: N20_GRAPH_COMPILER
+scope: node_only
+reason: N31's approved rework (P-N31-001, closing N90 finding F1) necessarily widens
+  the compiled graph's node set beyond binding_inventory(), which N20's own frozen
+  test_plan26_topology.py hardcodes as exactly equal. This is a structural, unavoidable
+  consequence independently confirmed by N31's own diagnosis, not a defect in N20's
+  topology validation logic
+expected_effect: test_plan26_topology.py asserts a robust subset/structural invariant
+  instead of exact-set equality against binding_inventory(), and dynamically selects
+  a still-deferred DEFERRED_TOPOLOGY entry for its negative test, so it stays correct
+  both before and after downstream nodes wire more of the graph
+instructions: "Ownership correction, one layer further up the chain from N90's finding\
+  \ F1.\nN31 has now (per an approved immutable patch, P-N31-001) wired D16-D23/M06\n\
+  into the one production compiled graph, `build_curriculum_factory_graph()` in\n\
+  `runtime/langgraph_factory/graph.py` \u2014 closing a real gap N90's audit found:\n\
+  before this, a real run could never reach `UNIT_ACCEPTED`. That correction\nnecessarily\
+  \ makes the compiled graph's node/edge set wider than\n`binding_inventory()`'s return\
+  \ value (which N31 correctly left unchanged, at\nyour own original 32 entries, since\
+  \ other tests depend on that exact value).\n\nThree of your own tests in `tests/runtime/test_plan26_topology.py`\
+  \ hardcode\nthe *narrower* pre-correction assumption \"the compiled graph's node\
+  \ set is\nexactly `binding_inventory()`\" and now fail as a direct, structural\n\
+  consequence \u2014 not because anything about your own topology validation logic\n\
+  (`register_skeleton`, `validate_bindings`, `_validate_topology`,\n`DEFERRED_TOPOLOGY`)\
+  \ is wrong; N31 did not touch any of that. Fix your test\nfixtures to check the\
+  \ correct, current invariant instead of a value that\npredates D16-D23 existing\
+  \ in the compiled graph:\n\n- `test_the_available_catalogue_compiles_against_real_node_callables`\
+  \ and\n  `test_the_builder_registers_a_fixed_node_set_independent_of_any_manifest`\n\
+  \  assert `set(compiled.get_graph().nodes) - {START, END} == set(binding_\n  inventory())`.\
+  \ The compiled graph's actual node set is no longer exactly\n  `binding_inventory()`\
+  \ \u2014 that was always going to become true the moment any\n  node correctly wired\
+  \ D16-D23 or D24-D32, both deliberately excluded from\n  `binding_inventory()` by\
+  \ design (see its own docstring) so that OTHER\n  frozen tests (elsewhere) could\
+  \ keep trusting that specific narrow value.\n  Important ordering note: at the time\
+  \ you run, D16-D23 are NOT yet merged\n  into this repository's `graph.py` (N31's\
+  \ own rework happens in an isolated\n  attempt and is rebased in afterward, not\
+  \ merged before you run) \u2014 do not\n  hardcode a reference to N31's specific\
+  \ function name or its current node\n  count; whatever you write must stay correct\
+  \ both today, when `binding_\n  inventory()` is still the whole story, and later,\
+  \ once N31's and then N32's\n  wiring lands. The robust fix is a subset/structural\
+  \ assertion instead of\n  exact-set equality against one named function: assert\
+  \ every node this\n  node's own skeleton requires (`_skeleton_required_nodes()`\
+  \ plus whatever\n  `binding_inventory()` itself declares) is present in the compiled\
+  \ graph\n  (`skeleton_required <= compiled_nodes`), and separately assert every\n\
+  \  compiled node passes `validate_bindings`'s own placeholder/production-\n  module\
+  \ checks (which already run unconditionally inside `register_skeleton`\n  for whatever\
+  \ the *actual* bindings argument turns out to be, so this is\n  re-deriving the\
+  \ guarantee `register_skeleton` already provides, not\n  weakening it) \u2014 rather\
+  \ than asserting the compiled set equals one\n  hardcoded or named-function value\
+  \ that a later, entirely different node's\n  legitimate widening would otherwise\
+  \ falsify again. You are not weakening\n  this test's coverage (a genuinely wrong\
+  \ or missing skeleton node still\n  fails it); you are removing an assumption that\
+  \ only ever happened to be\n  true because nothing downstream had wired anything\
+  \ yet.\n- `test_an_unwired_undeclared_node_fails_the_build_by_stable_id` pops one\n\
+  \  entry from `DEFERRED_TOPOLOGY` (currently the alphabetically-first key)\n  expecting\
+  \ the build to reject it as undeclared. Today that key is D16, and\n  as of D16-D23's\
+  \ coming registration it would no longer be undeclared, so\n  popping it stops triggering\
+  \ `N20-NODE-UNDECLARED`. Rather than hardcoding a\n  different specific node id\
+  \ (which would go stale again the next time\n  another currently-deferred node gets\
+  \ wired, e.g. by N32), pick the victim\n  node dynamically at test time: any `DEFERRED_TOPOLOGY`\
+  \ key that is NOT\n  currently a member of the real compiled graph's node set (i.e.\
+  \ one this\n  generation's environment still actually treats as deferred), asserting\
+  \ at\n  least one such key exists (so the test still fails loudly, rather than\n\
+  \  silently vacuously passing, on the day every declared gap is finally\n  closed\
+  \ \u2014 at which point this fixture legitimately needs a human decision,\n  not\
+  \ a silent skip). Do not weaken what the test proves (that popping a\n  real deferred-but-undeclared\
+  \ entry still fails the build); only fix how it\n  selects which entry to pop.\n\
+  \nImportant: at the time you run, `runtime/langgraph_factory/graph.py` in this\n\
+  repository still only compiles the narrow, pre-correction `binding_\ninventory()`\
+  \ \u2014 N31's wiring of D16-D23 happens in a separate, isolated\nattempt and is\
+  \ merged in only after your fix here is verified and admitted\n(so that N31's own\
+  \ required verification, which includes your test file, has\nsomething correct to\
+  \ run against). This means the three failures described\nabove will NOT actually\
+  \ reproduce in your own environment right now \u2014 your\nfix must be correct by\
+  \ construction (a subset assertion holds trivially\nwhether the compiled set is\
+  \ the narrow one of today or a wider one later;\ndynamic `DEFERRED_TOPOLOGY` selection\
+  \ picks whatever is really still deferred\nin whichever environment it runs) and\
+  \ verified by your existing test suite\npassing cleanly today, not by reproducing\
+  \ a failure that has not happened in\nyour own workspace yet. Do not hardcode today's\
+  \ specific narrow node count or\ntoday's specific set of `DEFERRED_TOPOLOGY` keys\
+  \ anywhere in your fix.\n\nDo not touch `runtime/langgraph_factory/routing.py`'s\
+  \ guard tables, N31's\n`repair.py`/`acceptance.py`, or D16-D23's registration logic\
+  \ \u2014 none of that\nis this node's concern here; this is a test-fixture correction\
+  \ only, in the\none file already in your write set. Run your full existing verification\n\
+  command afterward and confirm all four of its test files are green, not just\n`test_plan26_topology.py`.\
+  \ Update your own result report to record this\ncorrection: cite N90's F1 and P-N31-001\
+  \ as the root cause chain, and what\nchanged.\n"
+context: {}
+created_at: '2026-08-12T20:46:16.602970+00:00'
