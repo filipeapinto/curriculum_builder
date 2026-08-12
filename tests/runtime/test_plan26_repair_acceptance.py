@@ -10,21 +10,44 @@ stand-in, and no test in this file writes to `nodes/terminal.py`.
 from __future__ import annotations
 
 import json
+import tempfile
+import unittest
+from pathlib import Path
 from typing import Any
+
+try:  # pragma: no cover - environment probe, not behavior
+    import langgraph  # noqa: F401
+except ModuleNotFoundError as exc:  # pragma: no cover
+    raise unittest.SkipTest(
+        "plan26 hash-locked environment not installed "
+        "(python3 -m pip install --require-hashes -r requirements/plan26.lock): "
+        f"{exc}"
+    ) from exc
 
 import pytest
 
 from runtime.langgraph_factory import acceptance, repair
+from runtime.langgraph_factory import graph as G
+from runtime.langgraph_factory import unit_graph as U
 from runtime.langgraph_factory.nodes import terminal
 from runtime.langgraph_factory.nodes.domain import DOMAIN_CHECK_IDS
 from runtime.langgraph_factory.nodes.content import CONTENT_CHECK_IDS
 from runtime.langgraph_factory.nodes import SystemFailure, canonical_digest, stream_id
 from runtime.langgraph_factory.state import FIELD_REDUCERS
 from runtime.langgraph_factory import reducers as red
+from tests.runtime import test_plan26_unit_graph as UG
+
+REPO_ROOT = Path(__file__).resolve().parents[2]
 
 RUN = "run-n31"
 EPISODE = "ep-n31"
 UNIT = "U001"
+
+
+@pytest.fixture(scope="module")
+def compiled() -> Any:
+    output_root = Path(tempfile.mkdtemp(prefix="plan26-n31-"))
+    return G.build_curriculum_factory_graph(engine_root=REPO_ROOT, output_root=output_root)
 
 
 def _apply(state: dict[str, Any], update: dict[str, Any]) -> dict[str, Any]:
@@ -738,3 +761,193 @@ def test_a_crash_before_the_terminal_write_still_lets_d98_be_invoked_cleanly() -
     # same projection and revalidating produces the byte-identical record.
     record_b = terminal.write_terminal(projection, None)
     assert record_a["terminal"] == record_b["terminal"]
+
+
+# ==========================================================================
+# P-N31-001 required proof: D16-D23 are real, wired members of the one
+# production compiled graph (`graph.build_curriculum_factory_graph`), not
+# merely function-level tested. Every assertion below runs the real compiled
+# graph (`compiled.get_graph()`, `compiled.stream()`/`invoke()`), never a
+# declared table alone -- N90's own audit (finding F1) checked exactly this
+# way and found D16-D23 unwired; this is what makes that finding closed.
+# ==========================================================================
+
+
+def test_d16_through_d23_and_m06_are_members_of_the_compiled_production_graph(compiled) -> None:
+    nodes = set(compiled.get_graph().nodes)
+    for node_id in acceptance.UNIT_REPAIR_TOPOLOGY_SOURCES:
+        assert node_id in nodes, node_id
+
+
+def test_binding_inventory_return_value_is_unchanged_by_this_nodes_wiring() -> None:
+    """N30's own tests recompute their expectation directly from `binding_
+    inventory()`'s return value; P-N31-001 requires that value stay provably
+    unchanged even though `build_curriculum_factory_graph` now compiles
+    against the wider `unit_repair_binding_inventory()`."""
+
+    narrow = set(G.binding_inventory())
+    assert narrow.isdisjoint(acceptance.UNIT_REPAIR_NODE_BODIES)
+    widened = set(G.unit_repair_binding_inventory())
+    assert widened == narrow | set(acceptance.UNIT_REPAIR_NODE_BODIES)
+
+
+def test_the_six_n31_owned_deferred_edges_are_now_real_wired_edges(compiled) -> None:
+    """Every `unit_graph.DEFERRED_EDGES` row N31 owns is a real compiled edge.
+
+    Not merely absent from a "still deferred" set (the way N30's own frozen
+    tests check the *other* rows stay deferred): each row here must appear as
+    an actual conditional edge of the real compiled graph.
+    """
+
+    owned = [row for row in U.DEFERRED_EDGES if row[3] == "N31_REPAIR_ACCEPTANCE"]
+    assert len(owned) == 6
+
+    edges = {(source, target) for source, target, _conditional in G.compiled_topology(compiled)["edges"]}
+    for source, _value, destination, _owner in owned:
+        assert (source, destination) in edges, (source, destination)
+
+
+def test_widening_the_bindings_raises_no_topology_or_binding_error(tmp_path) -> None:
+    """`validate_bindings`'s placeholder/duplicate/uncallable checks and
+    `register_unit_path`'s N30-EDGE-* checks all pass for D16-D23 exactly as
+    they already do for the pre-existing skeleton -- proven by actually
+    compiling, not by re-reading source."""
+
+    output_root = tmp_path / "widen-check"
+    output_root.mkdir()
+    compiled = G.build_curriculum_factory_graph(engine_root=REPO_ROOT, output_root=output_root)
+    assert "D16_REDUCE_UNIT_EVIDENCE" in set(compiled.get_graph().nodes)
+
+
+def test_a_clean_one_unit_episode_reaches_d22_accept_unit_via_the_d16_pass_fast_path(
+    tmp_path, monkeypatch
+) -> None:
+    """A real run of the real compiled graph: D16 passes on its first call (no
+    repair), and D22/D23 really mint and checkpoint the accepted receipt."""
+
+    fixture = UG._build_episode_fixture(tmp_path)
+    result = UG._run_episode(monkeypatch, fixture)
+
+    assert "D16_REDUCE_UNIT_EVIDENCE" in result["trace"]
+    assert "D17_CLASSIFY_UNIT_FINDINGS" not in result["trace"]
+    assert "D22_ACCEPT_UNIT" in result["trace"]
+    assert "D23_CHECKPOINT_ACCEPTED_UNIT" in result["trace"]
+
+    state = result["state"]
+    receipt = (state.get("accepted_unit_receipts") or {}).get("U001")
+    assert receipt is not None and receipt["receipt_hash"]
+    assert state["cursor"]["accepted_ordinal"] == 1
+
+
+def test_a_full_d17_through_d21_repair_and_retest_loop_reaches_d22_accept_unit(
+    tmp_path, monkeypatch
+) -> None:
+    """A real run of the real compiled graph exercising the other half of D16:
+    a deterministic-repair-owned (`unit layout`) finding really traverses
+    D17 -> D18 -> D19 -> D20 -> D21 -> the real retest chain back to D16,
+    which then passes and really reaches D22/D23.
+
+    The unit's real D14 page inspection finds nothing to repair on its own
+    (the test double renders/inspects deterministically and cleanly), so this
+    seeds a `layout_repairable` finding onto the checkpoint right after D14's
+    own real, clean pass -- the standard "stop the stream, `update_state`,
+    resume" technique this file's sibling `test_plan26_unit_graph.py` already
+    uses for crash recovery (`test_a_hard_crash_is_recovered_as_an_orphan_
+    without_continuing_its_thread`). Everything downstream of that seed is
+    then real, unmodified D17-D21/D13-D16/D22/D23 execution over the one real
+    compiled graph: the finding is classified for real, D19 dispatches the
+    real deterministic route (`unit layout` is `repair.DETERMINISTIC_ONLY_
+    OWNERS`), D20 really admits a boundary-checked child, D21 really
+    dispatches `D13_RENDER_UNIT` (the retest chain's first node), and the
+    real (deterministic, idempotent) test-double renderer/inspector really
+    re-runs and passes again, closing the loop back to a real, passing D16.
+    """
+
+    fixture = UG._build_episode_fixture(tmp_path)
+    lock, invocation, envelope = UG._prepare_episode(fixture)
+    context = UG._HarnessContext(fixture["engine"], fixture["output_root"], fixture["sandbox"])
+    monkeypatch.setattr(
+        G,
+        "build_model_node_context",
+        lambda _context, **_kwargs: UG._scripted_model_context(fixture["sandbox"]),
+    )
+    compiled = G.build_curriculum_factory_graph(
+        engine_root=fixture["engine"], output_root=fixture["output_root"]
+    )
+
+    trace: list[str] = []
+    stream = compiled.stream(
+        {"invocation": envelope}, config=invocation.config, stream_mode="updates", context=context
+    )
+    for chunk in stream:
+        trace.extend(chunk)
+        if "D14_INVENTORY_AND_INSPECT_UNIT_PAGES" in chunk:
+            break
+    stream.close()
+
+    before = compiled.get_state(invocation.config).values
+    assert before["pending_guard"]["node"] == "D14_INVENTORY_AND_INSPECT_UNIT_PAGES"
+    assert before["pending_guard"]["value"] == "pages_inspected", (
+        "the real page inspection must have really passed cleanly, so the "
+        "repair loop below is proven to start from a seeded finding, not a "
+        "real product defect this fixture happens to have"
+    )
+
+    seeded_finding = {
+        "owner": "unit layout",
+        "pointer": "/repair_probe",
+        "check_id": "unit_page_inventory",
+        "message": "N31 required-proof seed: synthetic layout defect",
+        "allowed_facts": {"/repair_probe": "synthetic-repair-note"},
+    }
+    compiled.update_state(
+        invocation.config,
+        {
+            "pending_guard": {
+                "node": "D14_INVENTORY_AND_INSPECT_UNIT_PAGES",
+                "value": "layout_repairable",
+                "detail": {"unit_id": "U001", "findings": [seeded_finding]},
+            }
+        },
+    )
+
+    resumed_trace: list[str] = []
+    resumed = compiled.stream(None, config=invocation.config, stream_mode="updates", context=context)
+    try:
+        for chunk in resumed:
+            resumed_trace.extend(chunk)
+    except KeyError as error:
+        missing = error.args[0] if error.args else None
+        declared = {row[2] for row in U.DEFERRED_EDGES}
+        if missing not in declared:
+            raise
+    lock.release()
+
+    # The real repair/retest loop this generation owns, traversed in order.
+    loop = (
+        "D17_CLASSIFY_UNIT_FINDINGS",
+        "D18_PLAN_TARGETED_UNIT_REPAIR",
+        "D19_ROUTE_UNIT_REPAIR",
+        "D20_ADMIT_UNIT_REPAIR",
+        "D21_RETEST_REQUIRED_DESCENDANTS",
+        "D13_RENDER_UNIT",
+        "D14_INVENTORY_AND_INSPECT_UNIT_PAGES",
+        "D16_REDUCE_UNIT_EVIDENCE",
+        "D22_ACCEPT_UNIT",
+        "D23_CHECKPOINT_ACCEPTED_UNIT",
+    )
+    positions = [resumed_trace.index(node_id) for node_id in loop]
+    assert positions == sorted(positions), resumed_trace
+    # A real deterministic repair candidate was admitted, boundary-scoped to
+    # exactly the seeded finding's own pointer.
+    repair_requests = [
+        record for record in compiled.get_state(invocation.config).values.get("repair_requests") or []
+        if record.get("owner") == "unit layout"
+    ]
+    assert repair_requests
+    assert repair_requests[-1]["boundary"]["json_pointers"] == ["/repair_probe"]
+
+    final_state = compiled.get_state(invocation.config).values
+    receipt = (final_state.get("accepted_unit_receipts") or {}).get("U001")
+    assert receipt is not None and receipt["receipt_hash"]
+    assert final_state["cursor"]["accepted_ordinal"] == 1

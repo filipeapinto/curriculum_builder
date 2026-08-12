@@ -1,0 +1,83 @@
+schema_version: 1
+patch_id: P-N32-001
+action: overlay
+graph_id: plan26_langgraph_curriculum_factory_implementation
+base_graph_digest: 252ed9088a18eb1fd0991291158eb7fd7c06a3c2c3ce6772f487ccffb8a4375a
+target_node: N32_WORKBOOK_TERMINALS
+scope: node_only
+reason: N90's audit (finding F2) found D24-D32 fully implemented, with a correct register_workbook_topology()
+  function, but never called from build_curriculum_factory_graph(), and N32's own
+  prior result report falsely claimed it was. N31 has since closed the analogous F1
+  gap for D16-D23 using the exact composition pattern (full_binding_inventory()) N32
+  itself had already built for this purpose
+expected_effect: D24-D32 become real, wired members of the compiled production graph;
+  the last remaining DEFERRED_EDGES row (D05->D24) resolves; a real compiled fake-transport
+  run reaches workbook COMPLETE; N32's prior false claim is corrected in its own report
+instructions: "Ownership correction from N90's independent audit (finding F2). N90\
+  \ found\nthat D24-D32 (your workbook engine) are fully implemented and function-level\n\
+  tested, and `register_workbook_topology()` correctly wires them *when called\ndirectly*\
+  \ (as your own `test_plan26_workbook.py` already does against a\nprivate builder)\
+  \ \u2014 but it is never called from `build_curriculum_factory_\ngraph()`, so a\
+  \ real run can never reach workbook `COMPLETE`. Worse, your own\nprior result report\
+  \ (`results/N32_WORKBOOK_TERMINALS.result.v1.md`) states\nverbatim that `register_workbook_topology()`\
+  \ is \"called by\n`build_curriculum_factory_graph()` right after `register_skeleton()`\"\
+  \ \u2014 that\nclaim was false against the receipted artifact. N31 has since closed\
+  \ the\nanalogous gap for D16-D23 (P-N31-001, N90 finding F1), following the exact\n\
+  same pattern your own `full_binding_inventory()`/`register_workbook_topology()`\n\
+  functions were already built for. Close F2 the same way, now that D16-D23 are\n\
+  real: wire your own engine into the one production compile point too.\n\n`runtime/langgraph_factory/graph.py`'s\
+  \ `build_curriculum_factory_graph()`\ncurrently reads:\n\n    bindings = unit_repair_binding_inventory()\n\
+  \    register_skeleton(builder, bindings)\n    register_unit_repair_topology(builder,\
+  \ sorted(bindings))\n    saver, _connection = open_checkpoint_saver(output_root)\n\
+  \    return builder.compile(checkpointer=saver, name=GRAPH_NAME)\n\nTwo changes\
+  \ close F2, using machinery that already exists and already does\nexactly what's\
+  \ needed \u2014 read `full_binding_inventory()` and `register_\nworkbook_topology()`\
+  \ in full before changing anything, both already compose\ncorrectly for this:\n\n\
+  1. Compile against `full_binding_inventory()` instead of `unit_repair_\n   binding_inventory()`\
+  \ for the `register_skeleton`/`register_unit_repair_\n   topology` calls. `full_binding_inventory()`\
+  \ is `unit_repair_binding_\n   inventory()` plus your own `workbook.WORKBOOK_NODE_BODIES`\
+  \ \u2014 once D24-D32's\n   bodies are in the `bindings` that `register_skeleton`\
+  \ passes to `unit_graph\n   .register_unit_path`, the one remaining DEFERRED_EDGES\
+  \ row you own \u2014\n   `(D05_SELECT_NEXT_UNIT, manifest_exhausted) -> D24_PROVE_EXACT_MANIFEST_\n\
+  \   COVERAGE` \u2014 resolves automatically, exactly the way N31's six rows did.\n\
+  \   You do not need to (and must not) edit `unit_graph.py`.\n2. Call `register_workbook_topology(builder)`\
+  \ immediately after `register_\n   unit_repair_topology(builder, ...)`, before `open_checkpoint_saver`.\
+  \ This\n   function already exists and is already correct (your own topology test\n\
+  \   already proves it works when called directly) \u2014 it wires D24-D32's own\n\
+  \   internal loop (D24 through D32, including the retest/repair reuse of\n   `repair.py`'s\
+  \ engine and the `D90`/`D91`/`D98`/M07/M08 resolution against\n   the full merged\
+  \ node set) additively over the builder `register_skeleton`\n   and `register_unit_repair_topology`\
+  \ already populated. Do not change its\n   own body; only add the call site.\n\n\
+  Do not change `binding_inventory()` or `unit_repair_binding_inventory()`'s\nown\
+  \ return values \u2014 both must stay exactly as N31 left them (N30's and N31's\n\
+  own frozen tests independently recompute expectations from them). `full_\nbinding_inventory()`\
+  \ is the one function meant to widen further, and it\nalready does.\n\n## Required\
+  \ proof (matching the rigor N31's own P-N31-001 proof used)\n\nYour own test file\
+  \ (`tests/runtime/test_plan26_workbook.py`) must\nindependently prove, by executing\
+  \ the real compiled graph \u2014 not by\nre-reading source or trusting this description\
+  \ \u2014 that:\n- D24-D32 are members of `build_curriculum_factory_graph(...).get_graph()\n\
+  \  .nodes` (an actually compiled graph).\n- The `(D05_SELECT_NEXT_UNIT, manifest_exhausted)\
+  \ -> D24_PROVE_EXACT_\n  MANIFEST_COVERAGE` row is now a real, wired edge in that\
+  \ compiled graph.\n- A real run through the compiled production graph \u2014 using\
+  \ the fake-CLI-\n  transport/scripted-response pattern `tests/runtime/test_plan26_adversarial\n\
+  \  .py` established and N31's own new tests already reused \u2014 reaches a real\n\
+  \  workbook `COMPLETE` terminal for a manifest whose units are all accepted,\n \
+  \ proving the whole chain (D05 exhaustion -> D24 coverage -> D25 through\n  D32)\
+  \ actually executes, not just that the nodes exist.\n- No `UnitTopologyError`/`GraphBindingError`\
+  \ is raised by `register_skeleton`\n  or `register_workbook_topology` against the\
+  \ fully-widened bindings.\n- `binding_inventory()` and `unit_repair_binding_inventory()`'s\
+  \ return values\n  are both unchanged (assert this directly).\n\n## Correcting your\
+  \ own prior report's false claim\n\n`results/N32_WORKBOOK_TERMINALS.result.v1.md`\
+  \ currently states `register_\nworkbook_topology()` is already called by `build_curriculum_factory_graph()`\n\
+  \u2014 that was false when written (the function existed but nothing called it)\n\
+  and N90's audit caught it. Correct that passage in this pass, alongside\ndocumenting\
+  \ the real fix, so the report matches the receipted artifact.\n\nDo not touch `runtime/langgraph_factory/repair.py`,\
+  \ `acceptance.py`, or\nD16-D23's registration logic \u2014 that is N31's write,\
+  \ already closed. Change\nnothing in `test_plan26_unit_graph.py` or `test_plan26_topology.py`\
+  \ \u2014 if\neither still fails against your changes for a reason structurally\n\
+  unavoidable (the same class of consequence N31 diagnosed for the D16-D23\ncorrection),\
+  \ report it honestly rather than routing around it; do not assume\nit will happen,\
+  \ verify against the current repository state, which already\nhas N31's correction\
+  \ merged in.\n"
+context: {}
+created_at: '2026-08-12T23:09:03.743029+00:00'

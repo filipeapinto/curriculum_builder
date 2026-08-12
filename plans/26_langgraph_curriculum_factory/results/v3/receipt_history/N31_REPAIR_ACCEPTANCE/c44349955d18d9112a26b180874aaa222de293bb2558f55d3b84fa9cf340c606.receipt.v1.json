@@ -1,0 +1,71 @@
+{
+  "changed_files": [
+    "plans/26_langgraph_curriculum_factory/results/N31_REPAIR_ACCEPTANCE.result.v1.md",
+    "plans/26_langgraph_curriculum_factory/results/evidence/N31_REPAIR_ACCEPTANCE/focused_test_run.txt",
+    "plans/26_langgraph_curriculum_factory/results/evidence/N31_REPAIR_ACCEPTANCE/full_plan26_suite.txt",
+    "runtime/langgraph_factory/acceptance.py",
+    "runtime/langgraph_factory/repair.py",
+    "tests/runtime/test_plan26_repair_acceptance.py"
+  ],
+  "commands": [
+    {
+      "argv": [
+        "claude",
+        "--print",
+        "--model",
+        "sonnet",
+        "--effort",
+        "high",
+        "--permission-mode",
+        "acceptEdits",
+        "--allowedTools",
+        "Read Edit Write Glob Grep Bash(/tmp/plan26_n30_verify/bin/python -m pytest *)",
+        "--output-format",
+        "json",
+        "--no-session-persistence",
+        "You are executing one node of the Plan 26 implementation prompt graph.\nThe production curriculum factory MUST continue to use LangGraph exactly as specified.\nDo not implement a Python replacement for that production runtime.\nRun every pytest command as /tmp/plan26_n30_verify/bin/python -m pytest ...; never use python3, python, or plain pytest.\nNode: N31_REPAIR_ACCEPTANCE\nDeclared writable paths: [\"runtime/langgraph_factory/repair.py\", \"runtime/langgraph_factory/acceptance.py\", \"tests/runtime/test_plan26_repair_acceptance.py\", \"plans/26_langgraph_curriculum_factory/results/N31_REPAIR_ACCEPTANCE.result.v1.md\", \"plans/26_langgraph_curriculum_factory/results/evidence/N31_REPAIR_ACCEPTANCE\"]\nCompact predecessor state: {\"N30_UNIT_GRAPH\": {\"outputs\": {\"plans/26_langgraph_curriculum_factory/results/N30_UNIT_GRAPH.result.v1.md\": \"0ae1e884902c797cbf9c32d8662e0ae8651c79980e3c9c3c93739947912346f7\", \"plans/26_langgraph_curriculum_factory/results/evidence/N30_UNIT_GRAPH\": \"a2bf0e12e504e908155ee4b20bbae4179e32f03960c93a11db86e80a8ea60a7c\", \"runtime/langgraph_factory/graph.py\": \"6361e12cd0f4daa119d6311b1ecb9bab65102978820e22f24da7a259aa7a72aa\", \"runtime/langgraph_factory/unit_graph.py\": \"286995f398826be63bc2263ea5148f87b23ee7683973e4245c4ee3687a6f309c\", \"tests/runtime/test_plan26_unit_graph.py\": \"914f6456429c81879bdaf0cacf54ba6b3e43b57f0fee2795ccfe0caf02e71d96\"}, \"receipt\": \"plans/26_langgraph_curriculum_factory/results/v3/N30_UNIT_GRAPH.receipt.v1.json\", \"status\": \"PASSED\"}}\nDo not read historical result Markdown or old evidence unless the node prompt names a specific file needed to diagnose a failure.\nComplete the node's own TEST/LOOP before returning. The controller independently verifies the focused test command.\n\n--- BEGIN NODE PROMPT (verbatim) ---\n# GOAL\n\nImplement `N31_REPAIR_ACCEPTANCE` after N30. Integrate D17\u2013D24 and M06 into the\nsame compiled graph for finding classification, targeted repair, invalidation/\nretest, bounded convergence, immutable unit acceptance, checkpoint correlation,\ncoverage, and routing of terminal candidates through the already implemented,\nN22-owned D98.\n\nN31 owns repair/acceptance modules, not terminal.py. Every finding maps once;\nattempts reserve before dispatch; repairs are versioned bounded children; D22\nrecomputes the full current unit denominator. Unit success/failure tests invoke\nthe real predecessor-provided D98 callable and never patch or replace it.\n\n# TEST\n\n1. Zero/multiple/unknown/model-selected finding owners fail.\n2. Local repair changes only named paths/descendants; broad/in-place/stale repair fails.\n3. Attempt/repeat bounds stop before an over-bound M06 call.\n4. All invalidated descendants retest; stale evidence cannot pass.\n5. Removing/failing/staling each acceptance member makes D22 reject.\n6. Accepted bytes remain immutable across resume, later units, and repair.\n7. Cursor advances only after checkpoint/evidence/log correlation flush.\n8. D24 rejects missing/extra/reordered/wrong-hash coverage.\n9. One-mode success and unit failure candidates traverse the real N22-owned D98;\n   invalid terminal candidates are rejected, with no N31 write to terminal.py.\n10. Crash at every repair/accept/checkpoint/D98 boundary is recoverable.\n\nWrite `results/N31_REPAIR_ACCEPTANCE.result.v1.md` with owner/retest maps,\ndenominator and real-D98 traces, commands, and hashes.\n\n# LOOP\n\nPatch one classifier, repair, admission, retest, acceptance, coverage, or fixture\nowner. Route any D98 defect back to N22; do not write terminal code here. Never\nwiden repair or weaken a denominator.\n\n\n--- END NODE PROMPT ---\n"
+      ],
+      "exit_code": 0,
+      "finished_at": "2026-08-12T01:28:06.738935+00:00",
+      "log": "/Users/filipepinto/Projects/curriculum_builder/plans/26_langgraph_curriculum_factory/results/v3/logs/N31_REPAIR_ACCEPTANCE/20260811T210203.claude.log",
+      "log_sha256": "b4332a5aed925d562f960fe394b94148c643eccba1228d4a570b84556a753601",
+      "started_at": "2026-08-12T01:02:03.239308+00:00",
+      "tail": "ry/repair.py', 'runtime/langgraph_factory/acceptance.py']:\\n    src = open(path).read()\\n    tree = ast.parse(src)\\n    imported = set()\\n    for node in ast.walk(tree):\\n        if isinstance(node, ast.ImportFrom):\\n            for alias in node.names:\\n                imported.add(alias.asname or alias.name)\\n    used = set()\\n    for node in ast.walk(tree):\\n        if isinstance(node, ast.Name):\\n            used.add(node.id)\\n    unused = imported - used\\n    print(path, 'unused:', unused)\\nEOF\"}},{\"tool_name\":\"Bash\",\"tool_use_id\":\"toolu_01TTn15dgJnm6DnxjRd3QJsg\",\"tool_input\":{\"command\":\"/tmp/plan26_n30_verify/bin/python /tmp/check_imports.py\"}},{\"tool_name\":\"Bash\",\"tool_use_id\":\"toolu_015c7iWpM2bam1t8f3w1zN6H\",\"tool_input\":{\"command\":\"/tmp/plan26_n30_verify/bin/python /tmp/check_imports.py 2>&1\"}},{\"tool_name\":\"Bash\",\"tool_use_id\":\"toolu_01AMBpkvLCVbY81U1kySrqpw\",\"tool_input\":{\"command\":\"\\\\\\npython3 -c \\\"import hashlib,sys; [print(p, hashlib.sha256(open(p,'rb').read()).hexdigest()) for p in ['runtime/langgraph_factory/repair.py','runtime/langgraph_factory/acceptance.py','tests/runtime/test_plan26_repair_acceptance.py']]\\\" 2>&1 || \\\\\\nfor f in runtime/langgraph_factory/repair.py runtime/langgraph_factory/acceptance.py tests/runtime/test_plan26_repair_acceptance.py; do shasum -a 256 \\\"$f\\\"; done\"}},{\"tool_name\":\"Bash\",\"tool_use_id\":\"toolu_01KoxTc9yUzm7591bVn5XVUD\",\"tool_input\":{\"command\":\"for f in runtime/langgraph_factory/repair.py runtime/langgraph_factory/acceptance.py tests/runtime/test_plan26_repair_acceptance.py; do shasum -a 256 \\\"$f\\\"; done\"}},{\"tool_name\":\"Bash\",\"tool_use_id\":\"toolu_01D52KGgKXBGvfzLmkTYKNWD\",\"tool_input\":{\"command\":\"mkdir -p plans/26_langgraph_curriculum_factory/results/evidence/N31_REPAIR_ACCEPTANCE\\n/tmp/plan26_n30_verify/bin/python -m pytest tests/runtime/test_plan26_repair_acceptance.py -v > /tmp/n31_focused.txt 2>&1\\ntail -50 /tmp/n31_focused.txt\"}},{\"tool_name\":\"Bash\",\"tool_use_id\":\"toolu_01QfgHbXnogdhEUkCQGoGqK1\",\"tool_input\":{\"command\":\"/tmp/plan26_n30_verify/bin/python -m pytest tests/runtime/test_plan26_repair_acceptance.py -v > /tmp/n31_focused.txt 2>&1\"}}],\"terminal_reason\":\"completed\",\"fast_mode_state\":\"off\",\"fast_mode_disabled_reason\":\"sdk_opt_in_required\",\"subtype\":\"success\",\"api_error_status\":null,\"result\":\"N31_REPAIR_ACCEPTANCE is complete. Summary:\\n\\n- **`runtime/langgraph_factory/repair.py`** \u2014 D17 (finding classification, owner vocabulary enforced, no model-trusted owners), D18 (one-partition-at-a-time repair planning with the numeric attempt bound), D19 (deterministic-vs-model routing table, stages the real M06 dispatch), D20 (independent parent/child diff, boundary/stale/in-place rejection, atomic head advance), D21 (retest dispatch to the fixed per-owner chain).\\n- **`runtime/langgraph_factory/acceptance.py`** \u2014 D16/D22 shared denominator recomputation, D23 (checkpoint correlation + cursor advance in one atomic update), plus a `prove_exact_manifest_coverage` primitive for N32's D24.\\n- **`tests/runtime/test_plan26_repair_acceptance.py`** \u2014 32 tests covering all 10 TEST items, including direct calls to the real, unmodified `nodes.terminal.write_terminal` (D98) for both success and exhaustion candidates.\\n\\nAll 32 focused tests pass, plus the full existing plan26 suite (916 passed) with no regressions. Found and fixed one real design bug along the way: D17 was wrongly duplicating D18's attempt-bound check. Wrote `results/N31_REPAIR_ACCEPTANCE.result.v1.md` documenting owner/retest maps, denominator scope, real-D98 traces, and honest scope limitations (simplified source-interpretation routing, structural rather than byte-level evidence/checkpoint audit). Note: 4 pre-existing failures in `test_plan26_prompt_graph_controller.py` are unrelated \u2014 caused by receipt files already missing from the working tree before this session started.\",\"ttft_ms\":3424,\"ttft_stream_ms\":1756,\"time_to_request_ms\":63,\"type\":\"result\",\"duration_ms\":1561088,\"uuid\":\"43773f01-3140-48f7-80c2-0f82888af9d4\"}\n",
+      "timed_out": false
+    },
+    {
+      "argv": [
+        "/tmp/plan26_n30_verify/bin/python",
+        "-m",
+        "pytest",
+        "-q",
+        "tests/runtime/test_plan26_repair_acceptance.py"
+      ],
+      "exit_code": 0,
+      "finished_at": "2026-08-12T01:28:08.093051+00:00",
+      "log": "/Users/filipepinto/Projects/curriculum_builder/plans/26_langgraph_curriculum_factory/results/v3/logs/N31_REPAIR_ACCEPTANCE/20260811T210203.test1.log",
+      "log_sha256": "5209c8d7a493dc1c18bde84532c40c578a7238f1055931a8a6fbb043b563bff3",
+      "started_at": "2026-08-12T01:28:07.399580+00:00",
+      "tail": "................................                                         [100%]\n32 passed in 0.07s\n",
+      "timed_out": false
+    }
+  ],
+  "created_at": "2026-08-12T01:28:08.107478+00:00",
+  "findings": [],
+  "graph_digest": "ca4835f71750f93880a965a9879e508641b5f9360b82cb5cc8bdec8d57564f30",
+  "graph_id": "plan26_langgraph_curriculum_factory_implementation",
+  "input_fingerprint": "0cb0b8e930a35cbe82832fea8e83be039e8b0ca8a75d5068c022a0a4bc6293da",
+  "node_definition_sha256": "53e1d4f294e6d7880aebd489b031f7a1b4132acc4f8d33d141a640c3a5178947",
+  "node_id": "N31_REPAIR_ACCEPTANCE",
+  "outputs": {
+    "plans/26_langgraph_curriculum_factory/results/N31_REPAIR_ACCEPTANCE.result.v1.md": "325936e48371bf40a638f97d3a5c73137775cfe44f8c8582ee6cb5e048d4224c",
+    "plans/26_langgraph_curriculum_factory/results/evidence/N31_REPAIR_ACCEPTANCE": "78cdedd8ec451f92a0b508f56646f6be2d7a7b3a04bb798e705c63d146723cb4",
+    "runtime/langgraph_factory/acceptance.py": "f5c0445eec0f3a4685ac4847565e22294db5ac3a7c030fa1c5a0fea267ae89bb",
+    "runtime/langgraph_factory/repair.py": "9e9013e51d4e339838e9d72916ee04cf47ff0a6e3dcf80383bd7f2d0a744af1e",
+    "tests/runtime/test_plan26_repair_acceptance.py": "99add3d695747e901a458d07e673130a999936e91f0fab6657ccd0a2cb651ee8"
+  },
+  "prompt_sha256": "c540087d0e59c03f924ed65efecd23f18bd7079ec692486f010dd6464fb835a1",
+  "schema_version": 1,
+  "source": "claude_sonnet_isolated_workspace",
+  "status": "PASSED"
+}

@@ -26,11 +26,11 @@ removed to make a fixture pass; a future generation only ever tightens this.
 
 from __future__ import annotations
 
-from collections.abc import Mapping
+from collections.abc import Mapping, Sequence
 from dataclasses import dataclass, field
 from typing import Any
 
-from . import repair
+from . import reducers, repair, routing
 from .nodes import (
     SystemFailure,
     candidate_payload,
@@ -49,6 +49,10 @@ __all__ = [
     "D16_REDUCE_UNIT_EVIDENCE",
     "D22_ACCEPT_UNIT",
     "D23_CHECKPOINT_ACCEPTED_UNIT",
+    "UNIT_REPAIR_TOPOLOGY_SOURCES",
+    "UNIT_REPAIR_NODE_BODIES",
+    "unit_repair_destinations",
+    "register_unit_repair_path",
 ]
 
 
@@ -62,6 +66,29 @@ class DenominatorResult:
 
 def _guard(node_id: str, value: str, **detail: Any) -> dict[str, Any]:
     return {"node": node_id, "value": value, "detail": detail}
+
+
+def _status_update(state: Mapping[str, Any], unit_id: str, target: str) -> dict[str, str]:
+    """`{unit_id: target}` only when `reducers.UNIT_STATUS_TRANSITIONS` allows it.
+
+    `D05_SELECT_NEXT_UNIT` is the only node this generation that sets an
+    initial `unit_status` (`SELECTED`); no deterministic node between it and
+    D16 advances through `SOURCING`/`BUILDING` yet (a real, code-owned gap
+    outside this module's write set), so a first-real-run D16 call legally
+    has no declared transition to make. Recording nothing in that case is
+    honest about what actually happened rather than raising a
+    `StatusTransitionError` for a gap this module does not own, or
+    fabricating an intermediate status no node ever produced. Once a unit
+    reaches `REVIEWING`/`REPAIRING` the declared cycle between them is real
+    and this always records it.
+    """
+
+    current = (state.get("unit_status") or {}).get(unit_id)
+    if current is None:
+        return {unit_id: target} if target in reducers.INITIAL_UNIT_STATUSES else {}
+    if target in reducers.UNIT_STATUS_TRANSITIONS.get(current, frozenset()):
+        return {unit_id: target}
+    return {}
 
 
 def _latest_unit_review(unit_reviews: Any, pdf_sha256: str | None) -> dict[str, Any] | None:
@@ -301,14 +328,14 @@ def D16_REDUCE_UNIT_EVIDENCE(state: Mapping[str, Any], runtime_context: Any) -> 
     if result.passed:
         return {
             "deterministic_checks": [result.check],
-            "unit_status": {unit_id: "REVIEWING"},
+            "unit_status": _status_update(state, unit_id, "REVIEWING"),
             "pending_guard": _guard(
                 "D16_REDUCE_UNIT_EVIDENCE", "unit_denominator_passed", unit_id=unit_id
             ),
         }
     return {
         "deterministic_checks": [result.check],
-        "unit_status": {unit_id: "REVIEWING"},
+        "unit_status": _status_update(state, unit_id, "REVIEWING"),
         "pending_guard": _guard(
             "D16_REDUCE_UNIT_EVIDENCE", "unit_findings_repairable",
             unit_id=unit_id, findings=result.findings,
@@ -430,3 +457,131 @@ def D23_CHECKPOINT_ACCEPTED_UNIT(state: Mapping[str, Any], runtime_context: Any)
             unit_id=unit_id, checkpoint_id=checkpoint_id,
         ),
     }
+
+
+# --------------------------------------------------------------------------
+# Topology registration (spec section 8.2's unit repair/acceptance cycle)
+# --------------------------------------------------------------------------
+#
+# Additive registration over the one builder N20/N30 already populated, in the
+# same convention `unit_graph.register_unit_path`/`workbook.register_workbook_
+# path` use: no `add_node`, no `StateGraph()`, no `compile()`. Unlike
+# `workbook.register_workbook_path`, this module's own node bodies (D16, D22,
+# D23 here; D17-D21 in `repair.py`) are *not* added by this function -- they
+# are already members of `graph.unit_repair_binding_inventory()`, the widened
+# set `graph.register_skeleton` itself `add_node`s before this function ever
+# runs, so this only adds the edges neither `unit_graph.py` nor
+# `register_skeleton` own: the loop internal to D16-D23 (spec section 8.2's
+# "D16 FAIL -> D17 -> D18 -> D19 -> ... -> D20 -> D21 -> ... -> D16" cycle) and
+# D22 -> D23 -> D05, plus M06's own result edge (the one N31-owned model job,
+# wired here for the same reason `workbook.py` wires M07/M08 itself: neither
+# is a `unit_graph.UNIT_BRANCHES` source).
+#
+# D08/D09/D12/D14/D91's own edges to D17, and M05's own edge to D16, are never
+# added here: those six rows are declared in `unit_graph.DEFERRED_EDGES` and
+# resolve automatically the moment D16/D17 are members of the `available`
+# sequence `unit_graph.register_unit_path` receives -- `unit_graph.py` is
+# frozen (N30's write) and already correct for exactly this widening.
+
+
+def _repair_routing() -> Any:
+    from . import routing
+
+    return routing
+
+
+UNIT_REPAIR_NODE_BODIES: Mapping[str, Any] = {
+    "D16_REDUCE_UNIT_EVIDENCE": D16_REDUCE_UNIT_EVIDENCE,
+    "D17_CLASSIFY_UNIT_FINDINGS": repair.D17_CLASSIFY_UNIT_FINDINGS,
+    "D18_PLAN_TARGETED_UNIT_REPAIR": repair.D18_PLAN_TARGETED_UNIT_REPAIR,
+    "D19_ROUTE_UNIT_REPAIR": repair.D19_ROUTE_UNIT_REPAIR,
+    "D20_ADMIT_UNIT_REPAIR": repair.D20_ADMIT_UNIT_REPAIR,
+    "D21_RETEST_REQUIRED_DESCENDANTS": repair.D21_RETEST_REQUIRED_DESCENDANTS,
+    "D22_ACCEPT_UNIT": D22_ACCEPT_UNIT,
+    "D23_CHECKPOINT_ACCEPTED_UNIT": D23_CHECKPOINT_ACCEPTED_UNIT,
+}
+
+# The one N31-owned model job (`M06_REPAIR_NAMED_UNIT_ARTIFACT`) is a real
+# conditional-edge source too, alongside the eight deterministic nodes above:
+# neither is a `unit_graph.UNIT_BRANCHES` source, so both are wired by this
+# module's own `register_unit_repair_path`, not by N30's frozen table.
+UNIT_REPAIR_TOPOLOGY_SOURCES: tuple[str, ...] = (
+    "D16_REDUCE_UNIT_EVIDENCE",
+    "D17_CLASSIFY_UNIT_FINDINGS",
+    "D18_PLAN_TARGETED_UNIT_REPAIR",
+    "D19_ROUTE_UNIT_REPAIR",
+    "D20_ADMIT_UNIT_REPAIR",
+    "D21_RETEST_REQUIRED_DESCENDANTS",
+    "D22_ACCEPT_UNIT",
+    "D23_CHECKPOINT_ACCEPTED_UNIT",
+    "M06_REPAIR_NAMED_UNIT_ARTIFACT",
+)
+
+
+def unit_repair_destinations(source: str, available: Sequence[str]) -> tuple[str, ...]:
+    """Every destination `source` declares that a node body currently exists for.
+
+    Two rows need help beyond `routing.guard_destinations()`'s generic table
+    lookup, for the same reason `unit_graph.branch_destinations` special-cases
+    `D92_REENTER_VALIDATED_FRONTIER`: `D21_RETEST_REQUIRED_DESCENDANTS`'
+    `retest_frontier_incomplete` guard value carries a *state-derived*
+    destination (one of `repair.RETEST_FIRST_NODE`'s values), not a row of
+    `routing.GUARD_DESTINATIONS`; and `M06_REPAIR_NAMED_UNIT_ARTIFACT`'s
+    accepted-result destination lives in `routing.MODEL_RESULT_DESTINATIONS`,
+    a table `guard_destinations()` deliberately does not consult (the same
+    reason `workbook.register_workbook_path` adds `model_result_extra` for
+    M07/M08 rather than trusting `guard_destinations()` alone).
+    """
+
+    routing = _repair_routing()
+    declared = set(routing.guard_destinations(source))
+    if source == "D21_RETEST_REQUIRED_DESCENDANTS":
+        declared.update(repair.RETEST_FIRST_NODE.values())
+    if source == "M06_REPAIR_NAMED_UNIT_ARTIFACT":
+        declared.add(routing.MODEL_RESULT_DESTINATIONS["M06_REPAIR_NAMED_UNIT_ARTIFACT"])
+    return tuple(sorted(declared & set(available)))
+
+
+def register_unit_repair_path(builder: Any, available: Sequence[str]) -> dict[str, tuple[str, ...]]:
+    """Add the unit repair/acceptance cycle's own outgoing edges to the shared builder.
+
+    Called by `graph.py` (via `register_unit_repair_topology`) after
+    `register_skeleton` -- which has already `add_node`-registered every
+    member of `UNIT_REPAIR_NODE_BODIES` because `graph.unit_repair_binding_
+    inventory()` is part of the bindings `register_skeleton` receives -- and
+    after `unit_graph.register_unit_path`, over the same `StateGraph`
+    instance. Returns the resolved per-source destination map so a caller can
+    assert the registered topology the way `unit_graph.register_unit_path`
+    already does.
+    """
+
+    routing = _repair_routing()
+    available_set = set(available)
+    for node_id in UNIT_REPAIR_TOPOLOGY_SOURCES:
+        if node_id not in available_set:
+            raise routing.RoutingViolation(
+                f"N31-EDGE-DANGLING:{node_id}: the unit repair path names a node with no "
+                f"registered body"
+            )
+
+    guards: dict[str, Any] = {
+        "D16_REDUCE_UNIT_EVIDENCE": routing.route_unit_reduction,
+        "D17_CLASSIFY_UNIT_FINDINGS": routing.route_finding_classification,
+        "D18_PLAN_TARGETED_UNIT_REPAIR": routing.route_repair_plan,
+        "D19_ROUTE_UNIT_REPAIR": routing.route_repair_dispatch,
+        "D20_ADMIT_UNIT_REPAIR": routing.route_repair_admission,
+        "D21_RETEST_REQUIRED_DESCENDANTS": routing.route_retest_frontier,
+        "D22_ACCEPT_UNIT": routing.route_unit_acceptance,
+        "D23_CHECKPOINT_ACCEPTED_UNIT": routing.route_accepted_checkpoint,
+        "M06_REPAIR_NAMED_UNIT_ARTIFACT": routing.route_m06_unit_repair,
+    }
+
+    resolved: dict[str, tuple[str, ...]] = {}
+    for source in UNIT_REPAIR_TOPOLOGY_SOURCES:
+        path = guards[source]
+        destinations = unit_repair_destinations(source, available)
+        if not destinations:
+            raise routing.RoutingViolation(f"N31-EDGE-EMPTY:{source}: every declared destination is deferred")
+        builder.add_conditional_edges(source, path, {target: target for target in destinations})
+        resolved[source] = destinations
+    return resolved

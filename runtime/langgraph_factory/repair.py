@@ -29,6 +29,7 @@ import json
 from collections.abc import Mapping, Sequence
 from typing import Any
 
+from . import reducers
 from .nodes import (
     SystemFailure,
     candidate_payload,
@@ -341,6 +342,23 @@ def _guard(node_id: str, value: str, **detail: Any) -> dict[str, Any]:
     return {"node": node_id, "value": value, "detail": detail}
 
 
+def _status_update(state: Mapping[str, Any], unit_id: str, target: str) -> dict[str, str]:
+    """`{unit_id: target}` only when `reducers.UNIT_STATUS_TRANSITIONS` allows it.
+
+    Mirrors `acceptance._status_update` (duplicated rather than imported: this
+    module must not import `acceptance`, which itself imports `repair`). See
+    that function's docstring for why a first-real-run repair classification
+    reached directly from `SELECTED` legally records no transition.
+    """
+
+    current = (state.get("unit_status") or {}).get(unit_id)
+    if current is None:
+        return {unit_id: target} if target in reducers.INITIAL_UNIT_STATUSES else {}
+    if target in reducers.UNIT_STATUS_TRANSITIONS.get(current, frozenset()):
+        return {unit_id: target}
+    return {}
+
+
 def _attempt_key(unit_id: str, owner: str, fingerprint: str) -> str:
     return f"repair|{unit_id}|{owner}|{fingerprint}"
 
@@ -458,7 +476,7 @@ def D17_CLASSIFY_UNIT_FINDINGS(state: Mapping[str, Any], runtime_context: Any) -
         update.update(
             {
                 "finding_partitions": partitions,
-                "unit_status": {unit_id: "REPAIRING"},
+                "unit_status": _status_update(state, unit_id, "REPAIRING"),
                 "pending_guard": _guard(
                     "D17_CLASSIFY_UNIT_FINDINGS", "convergence_exhausted",
                     unit_id=unit_id, exhausted=exhausted,
@@ -479,7 +497,7 @@ def D17_CLASSIFY_UNIT_FINDINGS(state: Mapping[str, Any], runtime_context: Any) -
     update.update(
         {
             "finding_partitions": partitions,
-            "unit_status": {unit_id: "REPAIRING"},
+            "unit_status": _status_update(state, unit_id, "REPAIRING"),
             "pending_guard": _guard(
                 "D17_CLASSIFY_UNIT_FINDINGS", "partition_complete",
                 unit_id=unit_id, owners=[entry["owner"] for entry in partitions],
@@ -739,7 +757,7 @@ def D19_ROUTE_UNIT_REPAIR(state: Mapping[str, Any], runtime_context: Any) -> dic
     # since D20 is the one and only admission authority and no intervening
     # dispatch node exists on the deterministic side (spec section 12: a
     # deterministic repair producer "receives no prompt").
-    parent_body, current_hash, _current_version, _head_tracked = _current_parent(state, stream)
+    parent_body, current_hash, _current_version, _head_tracked, _body_keyed = _current_parent(state, stream)
     new_body = _deterministic_repair_candidate(request, parent_body)
     candidate = {
         "key": canonical_digest({"request_key": request["key"], "kind": "deterministic_candidate"}),
@@ -782,14 +800,51 @@ def _latest_deterministic_candidate(
     return matches[-1] if matches else None
 
 
-def _current_parent(state: Mapping[str, Any], stream: str) -> tuple[Any, str | None, int, bool]:
+# Bookkeeping keys this repair engine's own admitted records always carry,
+# never a channel's content. Used only to recover a record's meaningful
+# content when the record itself carries no `body` key (see `_record_content`
+# below); domain/content admit a `body`-keyed record (`nodes/domain.py`,
+# `nodes/content.py`) and are read directly, so this set is only consulted
+# for a channel like layout that is not.
+_RECORD_BOOKKEEPING_KEYS: frozenset[str] = frozenset(
+    {
+        "key", "stream", "version", "parent_hash", "hash", "record_kind",
+        "pre_admission", "request_key", "owner", "attempt", "channel",
+        "unit_id", "minted_by", "addressed_finding_ids",
+    }
+)
+
+
+def _record_content(record: Mapping[str, Any]) -> dict[str, Any]:
+    """The meaningful content fields of an admitted artifact record.
+
+    Domain/content nest their content under a `body` key (`nodes/domain.py`,
+    `nodes/content.py`); layout does not -- `D13_RENDER_UNIT` (`nodes/render
+    .py`) writes `pdf_path`/`pdf_sha256`/... directly on the record, alongside
+    only this engine's own fixed bookkeeping keys. Reading either shape
+    uniformly here is what lets D19's boundary-scoped JSON-pointer patch and
+    D20's diff/boundary check apply to a channel regardless of which
+    convention its own producer uses, instead of silently seeing an empty
+    parent body for a channel that never wraps one.
+    """
+
+    if "body" in record:
+        return dict(record.get("body") or {})
+    return {key: value for key, value in record.items() if key not in _RECORD_BOOKKEEPING_KEYS}
+
+
+def _current_parent(state: Mapping[str, Any], stream: str) -> tuple[Any, str | None, int, bool, bool]:
     """The current parent body/hash/version of ``stream``, head-tracked or not.
 
     Domain/content/visuals advance through `artifact_heads` (`advance_head`);
     layout does not (it is admitted by D13 as a plain append-unique version,
     the same convention `review.py` already reads it under). Both shapes
-    resolve to one parent here so D20 admits either uniformly, and the fourth
-    element tells the caller whether `artifact_heads` may legally be written.
+    resolve to one parent here so D20 admits either uniformly, the fourth
+    element tells the caller whether `artifact_heads` may legally be written,
+    and the fifth tells the caller whether the parent record itself was
+    `body`-keyed -- so a child D20 admits stays in the same shape convention
+    its own channel's real producer already uses (`D20_ADMIT_UNIT_REPAIR`
+    reads this rather than assuming every channel is `body`-keyed).
     """
 
     heads = state.get("artifact_heads") or {}
@@ -802,8 +857,11 @@ def _current_parent(state: Mapping[str, Any], stream: str) -> tuple[Any, str | N
                 and record.get("stream") == stream
                 and record.get("hash") == head.get("hash")
             ):
-                return record.get("body") or {}, head.get("hash"), int(head.get("version", 0)), True
-        return {}, head.get("hash"), int(head.get("version", 0)), True
+                return (
+                    _record_content(record), head.get("hash"), int(head.get("version", 0)), True,
+                    "body" in record,
+                )
+        return {}, head.get("hash"), int(head.get("version", 0)), True, True
 
     candidates = [
         record
@@ -813,9 +871,12 @@ def _current_parent(state: Mapping[str, Any], stream: str) -> tuple[Any, str | N
         and record.get("record_kind") not in (DETERMINISTIC_REPAIR_CANDIDATE_KIND, "model_candidate")
     ]
     if not candidates:
-        return {}, None, 0, False
+        return {}, None, 0, False, True
     latest = max(candidates, key=lambda record: record.get("version", 0))
-    return latest.get("body") or {}, latest.get("hash"), int(latest.get("version", 0)), False
+    return (
+        _record_content(latest), latest.get("hash"), int(latest.get("version", 0)), False,
+        "body" in latest,
+    )
 
 
 def D20_ADMIT_UNIT_REPAIR(state: Mapping[str, Any], runtime_context: Any) -> dict[str, Any]:
@@ -845,7 +906,7 @@ def D20_ADMIT_UNIT_REPAIR(state: Mapping[str, Any], runtime_context: Any) -> dic
     parent_head = heads.get(stream)
     artifact_versions = state.get("artifact_versions") or []
 
-    parent_body, current_hash, current_version, head_tracked = _current_parent(state, stream)
+    parent_body, current_hash, current_version, head_tracked, body_keyed = _current_parent(state, stream)
 
     model_candidate = latest_model_candidate(artifact_versions, channel=request["channel"], unit_id=unit_id)
     deterministic_candidate = _latest_deterministic_candidate(
@@ -890,12 +951,11 @@ def D20_ADMIT_UNIT_REPAIR(state: Mapping[str, Any], runtime_context: Any) -> dic
         stream=stream, out_of_bound=out_of_bound, boundary=boundary,
     )
 
-    child_record = {
+    child_record: dict[str, Any] = {
         "stream": stream,
         "version": current_version + 1,
         "parent_hash": current_hash,
         "hash": canonical_digest(new_body),
-        "body": new_body,
         "minted_by": "targeted_repair_admission",
         "unit_id": unit_id,
         "channel": request["channel"],
@@ -903,6 +963,16 @@ def D20_ADMIT_UNIT_REPAIR(state: Mapping[str, Any], runtime_context: Any) -> dic
         "owner": request["owner"],
         "attempt": request["attempt_ordinal"],
     }
+    # Admit the child in the same shape convention its own channel's real
+    # producer already uses: `body`-keyed for domain/content (`nodes/domain
+    # .py`, `nodes/content.py`), spread at top level for a channel like layout
+    # that never wraps one (`nodes/render.py`) -- otherwise a channel's own
+    # later real reader (D13/D14 for layout) would silently see a malformed
+    # version instead of the admitted repair.
+    if body_keyed:
+        child_record["body"] = new_body
+    else:
+        child_record.update(new_body)
     child_record["key"] = canonical_digest({"stream": stream, "hash": child_record["hash"]})
 
     update: dict[str, Any] = {

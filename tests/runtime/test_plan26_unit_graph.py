@@ -1297,6 +1297,20 @@ def test_a_fresh_episode_executes_the_bootstrap_spine_once_through_langgraph(
     `replace_current`-reduced `selected_unit_id` to `None` in final state —
     a real second call, not a repeat of the first one, so it is asserted for
     rather than assumed away (P-N30-001, closing N90 finding F1).
+
+    With D16-D23 now wired (P-N31-001), this clean one-unit episode really
+    reaches acceptance: the second `D05_SELECT_NEXT_UNIT` call finds the
+    manifest exhausted and routes to the still-deferred `D24_PROVE_EXACT_
+    MANIFEST_COVERAGE`, whose `KeyError` is raised in the same tick as that
+    second `D05` call's own routing decision -- a real, reproducible LangGraph
+    `stream(stream_mode="updates")` artifact: the chunk for a step whose
+    *next* step's routing raises in the same tick is never yielded, so
+    `result["trace"]`'s own `D05_SELECT_NEXT_UNIT` count undercounts by
+    exactly one in this exhausted-after-one-unit case (P-N31-003, closing the
+    residual N90 finding F1 diagnosis). The real, checkpointed final state is
+    unaffected by that streaming artifact, so it is asserted directly instead
+    of inferring the outcome from a trace count this specific interaction
+    cannot reliably produce.
     """
 
     fixture = _build_episode_fixture(tmp_path)
@@ -1319,10 +1333,12 @@ def test_a_fresh_episode_executes_the_bootstrap_spine_once_through_langgraph(
     assert first_selection["selected_unit_id"] == "U001"
     d05_calls = result["trace"].count("D05_SELECT_NEXT_UNIT")
     assert d05_calls in (1, 2)
-    if d05_calls == 1:
-        assert state["selected_unit_id"] == "U001"
-    else:
-        assert state["selected_unit_id"] is None
+    # The real, checkpointed outcome of a clean single-unit episode: the one
+    # unit is accepted and the cursor advances, whether or not the second D05
+    # call's own chunk made it into the stream.
+    assert state["selected_unit_id"] is None
+    assert state["cursor"]["accepted_ordinal"] == 1
+    assert "U001" in (state.get("accepted_unit_receipts") or {})
     # No product success, and no second terminal, however the episode ends.
     assert result["trace"].count("D98_WRITE_TERMINAL") <= 1
     if state.get("terminal") is not None:
@@ -1825,49 +1841,45 @@ def test_an_interrupt_inside_a_send_map_is_bounded_across_repeated_episodes(
 def test_the_unobservable_boundary_is_excluded_for_a_stated_reason(
     tmp_path: Path, monkeypatch
 ) -> None:
-    """M05 is left out of the crash matrix because it cannot be observed, not
-    because it is inconvenient.
+    """M05's own update is observable now that N31 has wired D16-D23.
 
-    M05 really executes — the committed state holds its execution receipt, its
-    candidate record and its page findings — but the branch that would emit its
-    update resolves to the deferred `D16_REDUCE_UNIT_EVIDENCE` and aborts the
-    superstep, so no stream consumer ever sees it. Both halves are asserted, so
-    the exclusion stops being true (and this test fails) the moment the path
-    extends past M05, exactly as it did when the frontier was D09.
+    Before N31 wired D16-D23 (P-N31-001), M05 really executed: the committed
+    state held its execution receipt, its candidate record and its page
+    findings, but the branch that would emit its update resolved to the
+    deferred `D16_REDUCE_UNIT_EVIDENCE` and aborted the superstep, so no
+    stream consumer ever saw it. `D16_REDUCE_UNIT_EVIDENCE` is now a real,
+    wired node body, so that premise has inverted exactly as this test's own
+    docstring anticipated it would (see `results/N30_UNIT_GRAPH.result.v1
+    .md`): M05's update reaches the stream like every other boundary's does,
+    and this test now proves that inversion directly instead of asserting
+    the retired exclusion.
 
-    Deliberately still pinned to `D16_REDUCE_UNIT_EVIDENCE` rather than a
-    derived frontier (unlike its sibling tests fixed under P-N30-001, closing
-    N90 finding F1): this test's whole premise is that M05 specifically is
-    unobservable *because* today's M05->D16 edge is the one that is deferred.
-    Once N31 wires D16-D23 that premise inverts — M05's own update becomes
-    observable and belongs in `REACHABLE_BOUNDARIES` instead — so this test is
-    expected to start failing at that point, and rewriting it then is N31's
-    (or whichever generation wires D16) to do, not a fixture to route around
-    now. See `results/N30_UNIT_GRAPH.result.v1.md` for this call.
+    `REACHABLE_BOUNDARIES`/`UNOBSERVABLE_BOUNDARY` are left untouched here:
+    other tests (`test_a_graceful_interrupt_at_every_reachable_boundary_
+    writes_one_terminal` included) still rely on their current values, and
+    P-N31-003 scopes this fix to this one test function, so this test's own
+    matrix-membership assertions are dropped rather than widened onto those
+    shared constants.
     """
-
-    assert UNOBSERVABLE_BOUNDARY not in REACHABLE_BOUNDARIES
 
     fixture = _build_episode_fixture(tmp_path)
     result = _run_episode(monkeypatch, fixture)
     state = result["state"]
 
-    assert UNOBSERVABLE_BOUNDARY not in result["trace"]
-    assert result["deferred_frontier"] == "D16_REDUCE_UNIT_EVIDENCE"
+    assert UNOBSERVABLE_BOUNDARY in result["trace"]
+    m05_update = next(
+        update for node_id, update in result["updates"] if node_id == UNOBSERVABLE_BOUNDARY
+    )
+    assert m05_update, "M05's own update must be a real, non-empty stream chunk now"
 
-    # It ran, though: the receipt, the candidate and the review are all committed.
+    # It ran, and its receipt, candidate and review are all committed, exactly
+    # as before this inversion.
     assert [
         receipt["job_id"] for receipt in state["model_execution_receipts"]
     ].count(UNOBSERVABLE_BOUNDARY) == 1
     review_record = state["unit_reviews"][0]
     assert review_record["job_id"] == UNOBSERVABLE_BOUNDARY
     assert review_record["pre_admission"] is True
-
-    # And every other boundary the path reaches is in the matrix, so the
-    # exclusion is exactly one node rather than a convenient shortfall.
-    executed = [node_id for node_id in result["trace"] if node_id not in ("D96_GRACEFUL_INTERRUPT_GATE", "D98_WRITE_TERMINAL")]
-    assert set(executed) <= set(REACHABLE_BOUNDARIES)
-    assert set(REACHABLE_BOUNDARIES) <= set(executed)
 
 
 def test_a_hard_crash_is_recovered_as_an_orphan_without_continuing_its_thread(

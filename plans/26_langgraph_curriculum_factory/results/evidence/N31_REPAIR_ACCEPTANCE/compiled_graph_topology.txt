@@ -1,0 +1,25 @@
+=== D16-D23 + M06 present in compiled nodes ===
+D16_REDUCE_UNIT_EVIDENCE True
+D17_CLASSIFY_UNIT_FINDINGS True
+D18_PLAN_TARGETED_UNIT_REPAIR True
+D19_ROUTE_UNIT_REPAIR True
+D20_ADMIT_UNIT_REPAIR True
+D21_RETEST_REQUIRED_DESCENDANTS True
+D22_ACCEPT_UNIT True
+D23_CHECKPOINT_ACCEPTED_UNIT True
+M06_REPAIR_NAMED_UNIT_ARTIFACT True
+
+=== The six N31-owned unit_graph.DEFERRED_EDGES rows, now real edges ===
+D08_VALIDATE_DOMAIN --[domain_repairable]--> D17_CLASSIFY_UNIT_FINDINGS  wired=True
+D09_VALIDATE_CONTENT --[content_repairable]--> D17_CLASSIFY_UNIT_FINDINGS  wired=True
+D12_VISUAL_BARRIER_AND_JOIN --[visuals_repairable]--> D17_CLASSIFY_UNIT_FINDINGS  wired=True
+D14_INVENTORY_AND_INSPECT_UNIT_PAGES --[layout_repairable]--> D17_CLASSIFY_UNIT_FINDINGS  wired=True
+D91_CLASSIFY_MODEL_FAILURE --[repair]--> D17_CLASSIFY_UNIT_FINDINGS  wired=True
+M05_REVIEW_ACTUAL_UNIT --[review_returned]--> D16_REDUCE_UNIT_EVIDENCE  wired=True
+
+=== binding_inventory() unchanged (no D16-D23 members) ===
+disjoint from UNIT_REPAIR_NODE_BODIES: True
+
+=== graph digest (self-consistency) ===
+53790bb433dde844e19c0bd0e6998801d3d638a89922acc7bc5ecafdf3c27b27
+node count: 42 edge count: 137

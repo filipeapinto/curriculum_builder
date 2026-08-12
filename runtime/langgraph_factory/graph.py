@@ -39,7 +39,7 @@ from langgraph.graph import END, START, StateGraph
 from langgraph.graph.state import CompiledStateGraph
 from langgraph.runtime import Runtime
 
-from . import routing, transport as tp, unit_graph, workbook
+from . import acceptance, routing, transport as tp, unit_graph, workbook
 from .artifacts import ArtifactStore
 from .egress import EgressGuard, ReceiptLog, RetrievalPolicy, SourceRetriever
 from .evidence import EvidenceStore
@@ -69,8 +69,12 @@ __all__ = [
     "SKELETON_BRANCHES",
     "build_runtime_context",
     "binding_inventory",
+    "unit_repair_binding_inventory",
+    "full_binding_inventory",
     "validate_bindings",
     "register_skeleton",
+    "register_unit_repair_topology",
+    "register_workbook_topology",
     "build_curriculum_factory_graph",
     "compiled_topology",
     "graph_digest",
@@ -92,6 +96,8 @@ PRODUCTION_BINDING_MODULES: tuple[str, ...] = (
     "runtime.langgraph_factory.nodes",
     "runtime.langgraph_factory.model_nodes",
     "runtime.langgraph_factory.workbook",
+    "runtime.langgraph_factory.repair",
+    "runtime.langgraph_factory.acceptance",
 )
 
 PLACEHOLDER_NAME_MARKERS: tuple[str, ...] = (
@@ -114,9 +120,28 @@ PLACEHOLDER_SOURCE_MARKERS: tuple[str, ...] = (
 )
 
 # Registered here, wired by a later graph node. A node that is neither wired by
-# the skeleton nor declared here fails the build: silence about an unwired node
-# is how a topology gap becomes a silent halt at runtime.
+# the skeleton/unit-path tables `_validate_topology` inspects nor declared here
+# fails the build: silence about an unwired node is how a topology gap becomes
+# a silent halt at runtime.
+#
+# D16 and D17 need no row: once their bodies are members of `available`, they
+# are reached as real *destinations* of already-wired `unit_graph.UNIT_BRANCHES`
+# sources (D08/D09/D12/D14/D91 -> D17, M05 -> D16 -- the six rows `unit_graph
+# .DEFERRED_EDGES` names), so `_validate_topology`'s own `wired` set already
+# contains them. D18-D23 are reached only from *inside* the unit repair cycle
+# itself (D17 -> D18 -> ... -> D21 -> D16, D22 -> D23 -> D05), which is wired by
+# `acceptance.register_unit_repair_path` (via `register_unit_repair_topology`,
+# called after `register_skeleton` returns) rather than by any table
+# `_validate_topology` reads -- so they are declared deferred here for the same
+# reason M06/M07/M08 are: really wired, by a registration step this function
+# does not itself see.
 DEFERRED_TOPOLOGY: Mapping[str, str] = {
+    "D18_PLAN_TARGETED_UNIT_REPAIR": "N31_REPAIR_ACCEPTANCE",
+    "D19_ROUTE_UNIT_REPAIR": "N31_REPAIR_ACCEPTANCE",
+    "D20_ADMIT_UNIT_REPAIR": "N31_REPAIR_ACCEPTANCE",
+    "D21_RETEST_REQUIRED_DESCENDANTS": "N31_REPAIR_ACCEPTANCE",
+    "D22_ACCEPT_UNIT": "N31_REPAIR_ACCEPTANCE",
+    "D23_CHECKPOINT_ACCEPTED_UNIT": "N31_REPAIR_ACCEPTANCE",
     "M06_REPAIR_NAMED_UNIT_ARTIFACT": "N31_REPAIR_ACCEPTANCE",
     "M07_REVIEW_ACTUAL_WORKBOOK": "N32_WORKBOOK_TERMINALS",
     "M08_REPAIR_NAMED_WORKBOOK_DEFECT": "N32_WORKBOOK_TERMINALS",
@@ -276,13 +301,18 @@ def _binding_record(node_id: str, body: Callable[..., Any]) -> dict[str, Any]:
 
 
 def binding_inventory() -> dict[str, Callable[..., Any]]:
-    """Every node callable the *skeleton and unit path* resolve against.
+    """Every node callable N20's own skeleton/unit-path tables resolve against.
 
     N31's unit-repair-cycle nodes (D16-D23) carry no `NODE_CATALOGUE` row and
-    are absent here: they are exercised at the function level by N31's own
-    tests, and this generation does not wire their topology (spec section
-    8.1's D08/D09/D12/D14/D91 -> D17 and M05 -> D16 edges stay the declared
-    `unit_graph.DEFERRED_EDGES` rows they already are).
+    are deliberately absent from *this* function's return value even though
+    they are real, wired members of the compiled production graph: several of
+    N30's own tests in `test_plan26_unit_graph.py` independently recompute
+    their expectation directly from this function's return value, so it stays
+    exactly what it was before N31 (per N90 finding F1's own resolution --
+    `full_binding_inventory()`/`unit_repair_binding_inventory()` below are the
+    functions that widen it; this one never does). Use `unit_repair_binding_
+    inventory()` for the actual widened set `build_curriculum_factory_graph`
+    compiles against.
 
     N32's workbook engine (D24-D32, `workbook.WORKBOOK_NODE_BODIES`) is
     likewise absent from *this* function deliberately, not by oversight: D24
@@ -309,17 +339,31 @@ def binding_inventory() -> dict[str, Callable[..., Any]]:
     return bindings
 
 
-def full_binding_inventory() -> dict[str, Callable[..., Any]]:
-    """`binding_inventory()` plus N32's workbook engine (D24-D32).
+def unit_repair_binding_inventory() -> dict[str, Callable[..., Any]]:
+    """`binding_inventory()` plus this node's own D16-D23 unit-repair-cycle bodies.
 
-    The complete node set the compiled graph actually registers. Kept
-    separate from `binding_inventory()` itself for the reason documented
-    there: several of N30's own tests recompute their expectation directly
-    from `binding_inventory()`'s return value, so that function's contract
-    (the skeleton/unit-path view) must stay exactly what it was before N32.
+    The set `build_curriculum_factory_graph` actually compiles the one
+    production graph against (N90 finding F1): D16-D23 become real, reachable
+    members of that graph, while D24-D32 (N32's still-deferred workbook
+    engine) stay absent, exactly as `binding_inventory()`'s own docstring
+    documents for that pair. Kept separate from `binding_inventory()` itself
+    so N30's tests, which recompute their expectation directly from that
+    function's return value, stay unaffected by this widening.
     """
 
     bindings = dict(binding_inventory())
+    bindings.update(acceptance.UNIT_REPAIR_NODE_BODIES)
+    return bindings
+
+
+def full_binding_inventory() -> dict[str, Callable[..., Any]]:
+    """`unit_repair_binding_inventory()` plus N32's workbook engine (D24-D32).
+
+    The complete node set this generation's node bodies span. Kept separate
+    from `binding_inventory()` itself for the reason documented there.
+    """
+
+    bindings = dict(unit_repair_binding_inventory())
     bindings.update(workbook.WORKBOOK_NODE_BODIES)
     return bindings
 
@@ -453,6 +497,23 @@ def register_skeleton(
     return inventory
 
 
+def register_unit_repair_topology(builder: StateGraph, available: Sequence[str]) -> dict[str, tuple[str, ...]]:
+    """Wire D16-D23's internal repair/acceptance cycle, additively over `register_skeleton`.
+
+    Called from `build_curriculum_factory_graph` immediately after `register_
+    skeleton` (which has already `add_node`-registered every member of
+    `unit_repair_binding_inventory()`, D16-D23 included) and after `unit_graph
+    .register_unit_path` (run inside `register_skeleton` itself). This closes
+    N90 finding F1 for the six DEFERRED_EDGES rows N31 owns: those six edges
+    are not added here -- they are `unit_graph.py`'s own rows, and resolve
+    automatically the moment D16/D17 are members of the bindings `register_
+    skeleton` receives -- this function adds only the loop internal to D16-D23
+    itself, which no other module owns.
+    """
+
+    return acceptance.register_unit_repair_path(builder, available)
+
+
 def register_workbook_topology(builder: StateGraph) -> dict[str, tuple[str, ...]]:
     """Register D24-D32 and wire the workbook branch, additively over `register_skeleton`.
 
@@ -494,6 +555,13 @@ def build_curriculum_factory_graph(
     returned graph is invoked with `context=build_runtime_context(...)`; no
     services are captured at build time, so the compiled object carries no
     run identity and no authorization.
+
+    Compiles against `unit_repair_binding_inventory()`, not `binding_
+    inventory()`: D16-D23 (this node's own unit repair/acceptance cycle) are
+    real, wired members of the one compiled production graph (N90 finding
+    F1), while D24-D32 (N32's still-deferred workbook engine) stay absent --
+    `register_unit_repair_topology` is called immediately after `register_
+    skeleton` to wire the loop internal to D16-D23 that no other module owns.
     """
 
     engine_root = Path(engine_root).resolve()
@@ -504,7 +572,9 @@ def build_curriculum_factory_graph(
         input_schema=FactoryInput,
         output_schema=FactoryOutput,
     )
-    register_skeleton(builder, binding_inventory())
+    bindings = unit_repair_binding_inventory()
+    register_skeleton(builder, bindings)
+    register_unit_repair_topology(builder, sorted(bindings))
     saver, _connection = open_checkpoint_saver(output_root)
     return builder.compile(checkpointer=saver, name=GRAPH_NAME)
 
