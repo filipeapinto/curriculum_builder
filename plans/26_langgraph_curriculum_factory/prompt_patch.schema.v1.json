@@ -1,0 +1,32 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "Plan 26 immutable prompt patch record",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["schema_version", "patch_id", "action", "graph_id", "base_graph_digest", "reason", "expected_effect", "created_at"],
+  "properties": {
+    "schema_version": {"const": 1},
+    "patch_id": {"type": "string", "pattern": "^[A-Za-z0-9][A-Za-z0-9._-]{2,79}$"},
+    "action": {"enum": ["overlay", "revoke"]},
+    "graph_id": {"const": "plan26_langgraph_curriculum_factory_implementation"},
+    "base_graph_digest": {"type": "string", "pattern": "^[0-9a-f]{64}$"},
+    "target_node": {"type": "string", "pattern": "^N[0-9]{2}_[A-Z0-9_]+$"},
+    "scope": {"enum": ["node_only", "node_and_descendants"]},
+    "reason": {"type": "string", "minLength": 1},
+    "expected_effect": {"type": "string", "minLength": 1},
+    "instructions": {"type": "string", "minLength": 1},
+    "context": {"type": "object"},
+    "supersedes": {"type": "array", "minItems": 1, "uniqueItems": true, "items": {"type": "string", "pattern": "^[A-Za-z0-9][A-Za-z0-9._-]{2,79}$"}},
+    "created_at": {"type": "string", "format": "date-time"}
+  },
+  "allOf": [
+    {
+      "if": {"properties": {"action": {"const": "overlay"}}},
+      "then": {"required": ["target_node", "scope", "instructions", "context"], "not": {"required": ["supersedes"]}}
+    },
+    {
+      "if": {"properties": {"action": {"const": "revoke"}}},
+      "then": {"required": ["supersedes"], "not": {"anyOf": [{"required": ["target_node"]}, {"required": ["instructions"]}, {"required": ["context"]}]}}
+    }
+  ]
+}

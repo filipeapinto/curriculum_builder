@@ -1,0 +1,717 @@
+{
+  "anchor_id": "anchor-20260812T141329.898138Z-7cd43bc44f",
+  "created_at": "2026-08-12T14:13:29.918127+00:00",
+  "entries": [
+    {
+      "mtime_ns": 1786461648975723086,
+      "path": "plans/26_langgraph_curriculum_factory/results/N00_BASELINE_FREEZE.result.v1.md",
+      "sha256": "c861b67efcf89bc3258d3bfeafaffcb263cee4b1540e417bd6de645d5ced88d5",
+      "size": 7319
+    },
+    {
+      "mtime_ns": 1786462366083624790,
+      "path": "plans/26_langgraph_curriculum_factory/results/N10_DEPENDENCY_API.result.v1.md",
+      "sha256": "1788ebb199b74744233107585a22a361ccb3019e529635324a4bd5bb62611658",
+      "size": 17115
+    },
+    {
+      "mtime_ns": 1786471459939428736,
+      "path": "plans/26_langgraph_curriculum_factory/results/N11_STATE_REDUCERS.result.v1.md",
+      "sha256": "9633ac27f94f1fa97ebf50c0119eb76124f233c3f75311b07697b3281818a0e9",
+      "size": 31452
+    },
+    {
+      "mtime_ns": 1786462517958669556,
+      "path": "plans/26_langgraph_curriculum_factory/results/N12_EVIDENCE_ARTIFACTS.result.v1.md",
+      "sha256": "6c4a2bbbacb325e4f4b28c36a8811415f5e7d96b24a8e95ce2c10cb70f18c06f",
+      "size": 17416
+    },
+    {
+      "mtime_ns": 1786479476836518307,
+      "path": "plans/26_langgraph_curriculum_factory/results/N13_TRANSPORT_AUTH.result.v1.md",
+      "sha256": "ae681c609bbc2e8dc4815a3fd9d15136ca57e9a1587f8dd5ca0a4a038b2e842a",
+      "size": 40979
+    },
+    {
+      "mtime_ns": 1786501462626915306,
+      "path": "plans/26_langgraph_curriculum_factory/results/N20_GRAPH_COMPILER.result.v1.md",
+      "sha256": "2453cf86424021af0fe9ba61fa5dc2e9d22f47c499259d4f1077e4bbbb14a5ef",
+      "size": 51399
+    },
+    {
+      "mtime_ns": 1786471197710194543,
+      "path": "plans/26_langgraph_curriculum_factory/results/N21_PERSISTENCE_RESUME.result.v1.md",
+      "sha256": "cd8f08eac498c14370d31578b056d8e12477293dfad03378cb9680e106fd9841",
+      "size": 42067
+    },
+    {
+      "mtime_ns": 1786479332455223912,
+      "path": "plans/26_langgraph_curriculum_factory/results/N22_DETERMINISTIC_NODES.result.v1.md",
+      "sha256": "a167b4a11d4f4b8c32f9d75bd23f98f8b373fac7d28e558124dd6a5461b535fb",
+      "size": 60953
+    },
+    {
+      "mtime_ns": 1786478904828558575,
+      "path": "plans/26_langgraph_curriculum_factory/results/N23_MODEL_NODES.result.v1.md",
+      "sha256": "3fc92f0a9df3c9ffaf416aef49cb3ebd76b0f2e8fdad33d7bc3e65eeeabd3dd5",
+      "size": 49182
+    },
+    {
+      "mtime_ns": 1786502140317828391,
+      "path": "plans/26_langgraph_curriculum_factory/results/N30_UNIT_GRAPH.result.v1.md",
+      "sha256": "f04fbfcb10b95b3b0f86de7c88939c607f45c6cd60d1ee2d4ecf0df17db63ac3",
+      "size": 36868
+    },
+    {
+      "mtime_ns": 1786498070503699000,
+      "path": "plans/26_langgraph_curriculum_factory/results/N31_REPAIR_ACCEPTANCE.result.v1.md",
+      "sha256": "325936e48371bf40a638f97d3a5c73137775cfe44f8c8582ee6cb5e048d4224c",
+      "size": 11261
+    },
+    {
+      "mtime_ns": 1786500711337098693,
+      "path": "plans/26_langgraph_curriculum_factory/results/N32_WORKBOOK_TERMINALS.result.v1.md",
+      "sha256": "ceb509d327ccefb03d6d194ce5491279ac02a8ffa7a08574d4868078391399ce",
+      "size": 19733
+    },
+    {
+      "mtime_ns": 1786530921918025088,
+      "path": "plans/26_langgraph_curriculum_factory/results/N40_CLI_CUTOVER.result.v1.md",
+      "sha256": "f44b91e526a1854eb69928c3e8179f7efb8a761928532b6cccf9ed581e2e5593",
+      "size": 10197
+    },
+    {
+      "mtime_ns": 1786463412694815124,
+      "path": "plans/26_langgraph_curriculum_factory/results/evidence/N13_TRANSPORT_AUTH/full_suite.txt",
+      "sha256": "f98a1297bbc901b5a152d16291a1bb3075aca929a39b58ee7dc67ef9ae5d2b0c",
+      "size": 558
+    },
+    {
+      "mtime_ns": 1786479606113172635,
+      "path": "plans/26_langgraph_curriculum_factory/results/evidence/N13_TRANSPORT_AUTH/full_suite_gen2.txt",
+      "sha256": "f7086b27cb8a0a5fcf298add2a0821dbd64c2ae14ed057c0a8dca0cfd950d388",
+      "size": 1031
+    },
+    {
+      "mtime_ns": 1786463306750911136,
+      "path": "plans/26_langgraph_curriculum_factory/results/evidence/N13_TRANSPORT_AUTH/node_tests.txt",
+      "sha256": "087aa58cb33b939f50ce81f6312a0acfeff3b8403af3878adbe23cf3bd2debfa",
+      "size": 180
+    },
+    {
+      "mtime_ns": 1786479495977210084,
+      "path": "plans/26_langgraph_curriculum_factory/results/evidence/N13_TRANSPORT_AUTH/node_tests_gen2.txt",
+      "sha256": "9f32e0ed5be95e8275830ecada869b89a6e7b8b45fca8745e15d72f4c70829a9",
+      "size": 180
+    },
+    {
+      "mtime_ns": 1786468896026726172,
+      "path": "plans/26_langgraph_curriculum_factory/results/evidence/N20_GRAPH_COMPILER/ambient_pytest.txt",
+      "sha256": "845db468fec82eec756226286db95c88c627eb41584370cc0d17ebd2a67bfa92",
+      "size": 950
+    },
+    {
+      "mtime_ns": 1786475509977375975,
+      "path": "plans/26_langgraph_curriculum_factory/results/evidence/N20_GRAPH_COMPILER/ambient_pytest_gen7.txt",
+      "sha256": "b99e69c541db99e428b0f5f1c3ddfb62c533ad116a16515e553040fb5268a3ad",
+      "size": 3250
+    },
+    {
+      "mtime_ns": 1786475220127125887,
+      "path": "plans/26_langgraph_curriculum_factory/results/evidence/N20_GRAPH_COMPILER/d90_dispatch_trace_gen7.txt",
+      "sha256": "58b33f3821f4bafe6951f7c8de9c62eb3cd6f35177b49bbe392cb7878def1b4c",
+      "size": 2055
+    },
+    {
+      "mtime_ns": 1786471484963503637,
+      "path": "plans/26_langgraph_curriculum_factory/results/evidence/N20_GRAPH_COMPILER/negative_probes_gen6.txt",
+      "sha256": "c6763d56a63c525f15612d946b0c84cd2373b20f63acd61cd3fe63e7482427ad",
+      "size": 775
+    },
+    {
+      "mtime_ns": 1786475368428806439,
+      "path": "plans/26_langgraph_curriculum_factory/results/evidence/N20_GRAPH_COMPILER/negative_probes_gen7.txt",
+      "sha256": "31e1ba0cdaf9af241edef30947279bbca9d8c868c95300de7715bca2f9b38ec3",
+      "size": 844
+    },
+    {
+      "mtime_ns": 1786467677982751316,
+      "path": "plans/26_langgraph_curriculum_factory/results/evidence/N20_GRAPH_COMPILER/venv_install.txt",
+      "sha256": "31bb4772eabad10cce59aa5be2c6be3fc3d25e925cd87a2d5eb3c70909effa8c",
+      "size": 8258
+    },
+    {
+      "mtime_ns": 1786501276884896016,
+      "path": "plans/26_langgraph_curriculum_factory/results/evidence/N20_GRAPH_COMPILER/venv_sibling_suites_gen8.txt",
+      "sha256": "65e7a7fa4d4611aee1d4b52e3633958ce58980ce05cd8e4e631df4bd679b8026",
+      "size": 740
+    },
+    {
+      "mtime_ns": 1786471473091261361,
+      "path": "plans/26_langgraph_curriculum_factory/results/evidence/N20_GRAPH_COMPILER/venv_topology_gen6.txt",
+      "sha256": "4aabaa683addc2d06d9012b6f353beeb8c7a3b6910929ce5ef1b7a04fc53a16a",
+      "size": 216
+    },
+    {
+      "mtime_ns": 1786475306677806846,
+      "path": "plans/26_langgraph_curriculum_factory/results/evidence/N20_GRAPH_COMPILER/venv_topology_gen7.txt",
+      "sha256": "542b2ea3c0853039e23d94f5dbdea43a307cb20c9f02a89bc5f1948ccaaacd59",
+      "size": 99
+    },
+    {
+      "mtime_ns": 1786501251554975460,
+      "path": "plans/26_langgraph_curriculum_factory/results/evidence/N20_GRAPH_COMPILER/venv_topology_gen8.txt",
+      "sha256": "d793cc1166095a41510890444ae1d4a0c8fe4c85391016ca5167a521800225eb",
+      "size": 99
+    },
+    {
+      "mtime_ns": 1786501265410423188,
+      "path": "plans/26_langgraph_curriculum_factory/results/evidence/N20_GRAPH_COMPILER/venv_topology_gen8_before_fix.txt",
+      "sha256": "a6a3cc2617345e604d66e0bef36c79c4388e786bbd9b2acd58f6b34fdeea40a3",
+      "size": 2052
+    },
+    {
+      "mtime_ns": 1786468771814168768,
+      "path": "plans/26_langgraph_curriculum_factory/results/evidence/N20_GRAPH_COMPILER/venv_topology_real.txt",
+      "sha256": "8f43e90bfe5bb236d1c342ca85a0502229b25efcdbfc8c6d31f594159e54086c",
+      "size": 99
+    },
+    {
+      "mtime_ns": 1786472067506038048,
+      "path": "plans/26_langgraph_curriculum_factory/results/evidence/N22_DETERMINISTIC_NODES/full_suite.txt",
+      "sha256": "243fd9483ca5c66770993d464c761f36c1ef66d23221cff66116d1601335d378",
+      "size": 3069
+    },
+    {
+      "mtime_ns": 1786479149634868699,
+      "path": "plans/26_langgraph_curriculum_factory/results/evidence/N22_DETERMINISTIC_NODES/full_suite_b10_b12.txt",
+      "sha256": "d5fa0e847948d876618d0347494a3020f6a1c230546a58a3ca4cf3f099f9d5ad",
+      "size": 1031
+    },
+    {
+      "mtime_ns": 1786475968064894211,
+      "path": "plans/26_langgraph_curriculum_factory/results/evidence/N22_DETERMINISTIC_NODES/full_suite_b7.txt",
+      "sha256": "cbf2990cdf13351054f8ecd5d9fc6ebd39a7b129fe52c8c1fb2ad7343f79e54b",
+      "size": 1023
+    },
+    {
+      "mtime_ns": 1786479154384898185,
+      "path": "plans/26_langgraph_curriculum_factory/results/evidence/N22_DETERMINISTIC_NODES/n30_b10_b12_acceptance.txt",
+      "sha256": "a275bd2de088b41eb2e87581f486653f860aca38c7b3104eb4b5fb456e431737",
+      "size": 12218
+    },
+    {
+      "mtime_ns": 1786472083978484197,
+      "path": "plans/26_langgraph_curriculum_factory/results/evidence/N22_DETERMINISTIC_NODES/n30_b2_acceptance.txt",
+      "sha256": "8b08f2abe4c12b3d130a2e131b546a5eaea5f1e7d4a61c34e8c224150e943e6a",
+      "size": 13054
+    },
+    {
+      "mtime_ns": 1786475779501928614,
+      "path": "plans/26_langgraph_curriculum_factory/results/evidence/N22_DETERMINISTIC_NODES/n30_b7_acceptance.txt",
+      "sha256": "401347c7ff5ee2ff33bedce9a2379bb3e6379941a4d6e9f392d8f54b7313dcad",
+      "size": 2260
+    },
+    {
+      "mtime_ns": 1786471951129420470,
+      "path": "plans/26_langgraph_curriculum_factory/results/evidence/N22_DETERMINISTIC_NODES/node_tests.txt",
+      "sha256": "ce3080fca29fc581081ec7c006fae52af8c1bfb18bb69799d79160d895be8ae3",
+      "size": 340
+    },
+    {
+      "mtime_ns": 1786479037628571096,
+      "path": "plans/26_langgraph_curriculum_factory/results/evidence/N22_DETERMINISTIC_NODES/node_tests_b10_b12.txt",
+      "sha256": "cd668fd2c9892a3036177b69538eb60a46684558499e4b88f26bd077668d4e9a",
+      "size": 340
+    },
+    {
+      "mtime_ns": 1786475769018993999,
+      "path": "plans/26_langgraph_curriculum_factory/results/evidence/N22_DETERMINISTIC_NODES/node_tests_b7.txt",
+      "sha256": "2536df2e39530e95b41f541579378c316e18b975ba3af4874098a79e61844949",
+      "size": 340
+    },
+    {
+      "mtime_ns": 1786479165557924181,
+      "path": "plans/26_langgraph_curriculum_factory/results/evidence/N22_DETERMINISTIC_NODES/unit_path_trace_b10_b12.txt",
+      "sha256": "73b5f94b69b632908f1ba5c86b8aac1ee5d3014d912f97f27de1fa1a191537c2",
+      "size": 1389
+    },
+    {
+      "mtime_ns": 1786472069249844457,
+      "path": "plans/26_langgraph_curriculum_factory/results/evidence/N22_DETERMINISTIC_NODES/venv_node_tests.txt",
+      "sha256": "c49d9df22963948dbee49f84601b6b2f377132b31ffbc6f5905670b7497a52a4",
+      "size": 340
+    },
+    {
+      "mtime_ns": 1786479151277298216,
+      "path": "plans/26_langgraph_curriculum_factory/results/evidence/N22_DETERMINISTIC_NODES/venv_node_tests_b10_b12.txt",
+      "sha256": "df355c6afdb59311bcca7d7b68d9fcb09db479427cfb353349f8f8294fab5fb8",
+      "size": 340
+    },
+    {
+      "mtime_ns": 1786475581892163837,
+      "path": "plans/26_langgraph_curriculum_factory/results/evidence/N22_DETERMINISTIC_NODES/venv_node_tests_b7.txt",
+      "sha256": "8edf3adcfb7a101d6b6a336ca414ee6e05942a8ebd8f8ae02e3636c865cd7398",
+      "size": 340
+    },
+    {
+      "mtime_ns": 1786478897728533852,
+      "path": "plans/26_langgraph_curriculum_factory/results/evidence/N23_MODEL_NODES/b13_phase_counters.txt",
+      "sha256": "e47ea8e4a375a950ad491d43da48439121fa1d271a5f213d10c7b3459de5c800",
+      "size": 787
+    },
+    {
+      "mtime_ns": 1786475345316706448,
+      "path": "plans/26_langgraph_curriculum_factory/results/evidence/N23_MODEL_NODES/full_suite.txt",
+      "sha256": "155d2d864513ff1cef7a75cf79467840d5cdd940c76af0845d27ad4d01961cac",
+      "size": 1023
+    },
+    {
+      "mtime_ns": 1786478776886974703,
+      "path": "plans/26_langgraph_curriculum_factory/results/evidence/N23_MODEL_NODES/node_tests.txt",
+      "sha256": "2b518229dc1f38331d67de5d31638b03bffd3703f4ec40fa2307ccb907fb12ad",
+      "size": 586
+    },
+    {
+      "mtime_ns": 1786478782788038276,
+      "path": "plans/26_langgraph_curriculum_factory/results/evidence/N23_MODEL_NODES/venv_n30_d90_d91_slice.txt",
+      "sha256": "7cfc2db0766ce2cef47f85452a4bdb9b26035b564611497ffacae2c79ae85ad5",
+      "size": 114
+    },
+    {
+      "mtime_ns": 1786478778052658858,
+      "path": "plans/26_langgraph_curriculum_factory/results/evidence/N23_MODEL_NODES/venv_node_tests_b13.txt",
+      "sha256": "4dc49b267916377101891a384f1127091f4d5a7aa1945c5346df9f9a0ab9043d",
+      "size": 260
+    },
+    {
+      "mtime_ns": 1786471478163114033,
+      "path": "plans/26_langgraph_curriculum_factory/results/evidence/N23_MODEL_NODES/venv_node_tests_b3.txt",
+      "sha256": "b4455055c29e3eccf7a71a8f8f8a39fe4355f40fb8aaf211c58cf7dc343b4efe",
+      "size": 260
+    },
+    {
+      "mtime_ns": 1786475222997285203,
+      "path": "plans/26_langgraph_curriculum_factory/results/evidence/N23_MODEL_NODES/venv_node_tests_b7.txt",
+      "sha256": "1afbea22a8c01355d6f7087ad9ca30a2b54f882cee905b11b98bce4d4dfe4917",
+      "size": 260
+    },
+    {
+      "mtime_ns": 1786478185102305536,
+      "path": "plans/26_langgraph_curriculum_factory/results/evidence/N30_UNIT_GRAPH/ambient_pytest.txt",
+      "sha256": "76e329119fe4034ff39b0c8edc27157f01fadbae1f549be863eaedd9855bd8e0",
+      "size": 3250
+    },
+    {
+      "mtime_ns": 1786486645053833622,
+      "path": "plans/26_langgraph_curriculum_factory/results/evidence/N30_UNIT_GRAPH/compiled_topology.txt",
+      "sha256": "ff5e567f55686da2d44929175626833bfa30454d59f4b043336bd91e5e488916",
+      "size": 8421
+    },
+    {
+      "mtime_ns": 1786486644967987673,
+      "path": "plans/26_langgraph_curriculum_factory/results/evidence/N30_UNIT_GRAPH/e2e_trace.txt",
+      "sha256": "34744847e59ae2877bb42cc248cd736730dcf64527edeaae8fd836878826dd4b",
+      "size": 4233
+    },
+    {
+      "mtime_ns": 1786486647135935714,
+      "path": "plans/26_langgraph_curriculum_factory/results/evidence/N30_UNIT_GRAPH/interrupt_matrix.txt",
+      "sha256": "914d4ea31e786540257c8ce8331139801686cd1c1ff4b8af121a0cffa3e6780d",
+      "size": 2690
+    },
+    {
+      "mtime_ns": 1786502083883291057,
+      "path": "plans/26_langgraph_curriculum_factory/results/evidence/N30_UNIT_GRAPH/venv_plan26_all.txt",
+      "sha256": "b5eceffabda5904d5438f30423cc9847eb674cff2c93ba7261a0e760b21cc76e",
+      "size": 1132
+    },
+    {
+      "mtime_ns": 1786486681651496417,
+      "path": "plans/26_langgraph_curriculum_factory/results/evidence/N30_UNIT_GRAPH/venv_unit_graph.txt",
+      "sha256": "0c2212e852b93edbdea5fa79a16dbddee529e57b1c3589d1524c0a4d2bef09bf",
+      "size": 179
+    },
+    {
+      "mtime_ns": 1786497984000355753,
+      "path": "plans/26_langgraph_curriculum_factory/results/evidence/N31_REPAIR_ACCEPTANCE/focused_test_run.txt",
+      "sha256": "2c3ace775ed48fe62f08f4754c9f1916eccada065be0fe769bf94a8bea3632fe",
+      "size": 4411
+    },
+    {
+      "mtime_ns": 1786498008130092247,
+      "path": "plans/26_langgraph_curriculum_factory/results/evidence/N31_REPAIR_ACCEPTANCE/full_plan26_suite.txt",
+      "sha256": "8933ad26ab36a9c9354046e24611ec0a96f84b2a483c88550bfb6a3a20a57b91",
+      "size": 4206
+    },
+    {
+      "mtime_ns": 1786500488131474742,
+      "path": "plans/26_langgraph_curriculum_factory/results/evidence/N32_WORKBOOK_TERMINALS/focused_test_run.txt",
+      "sha256": "5a7ddc43161e2c7bbe677a6fcf94cbded03f4a126ec68f4840128ba834346e00",
+      "size": 16639
+    },
+    {
+      "mtime_ns": 1786500613150134825,
+      "path": "plans/26_langgraph_curriculum_factory/results/evidence/N32_WORKBOOK_TERMINALS/full_plan26_suite.txt",
+      "sha256": "e0252c209696de0d809770ac9d531fec2fbaaec039c0b14f58ed63636b8c77dc",
+      "size": 7227
+    },
+    {
+      "mtime_ns": 1786500625290775925,
+      "path": "plans/26_langgraph_curriculum_factory/results/evidence/N32_WORKBOOK_TERMINALS/workbook_branch_topology.txt",
+      "sha256": "1c706286d6cf817fd84435ff848019a9428b8c074ccf735ea8634697730f5e31",
+      "size": 1621
+    },
+    {
+      "mtime_ns": 1786530959862108818,
+      "path": "plans/26_langgraph_curriculum_factory/results/evidence/N40_CLI_CUTOVER/cli_help.txt",
+      "sha256": "d73f476296cd4c855fa9b7b91f22976ab51955eed7253a058cb06c0c0601c390",
+      "size": 917
+    },
+    {
+      "mtime_ns": 1786530871633463118,
+      "path": "plans/26_langgraph_curriculum_factory/results/evidence/N40_CLI_CUTOVER/focused_test_run.txt",
+      "sha256": "4da32463ea53fcacbdd511b0143cb193848ff293b3b80e4a5a6d0d633e82e060",
+      "size": 99
+    },
+    {
+      "mtime_ns": 1786530961305431175,
+      "path": "plans/26_langgraph_curriculum_factory/results/evidence/N40_CLI_CUTOVER/import_audit.txt",
+      "sha256": "4dcb66cff60787311be9169ace25cb3ed361a264304ec99d634a3e8c5f901e58",
+      "size": 962
+    },
+    {
+      "mtime_ns": 1786530959864317458,
+      "path": "plans/26_langgraph_curriculum_factory/results/evidence/N40_CLI_CUTOVER/plan25_resume_refusal.txt",
+      "sha256": "a51564524391daddba62860cdaa8531f0ceb48f5cfb699d323d5b28694e973c5",
+      "size": 612
+    },
+    {
+      "mtime_ns": 1786530961302574847,
+      "path": "plans/26_langgraph_curriculum_factory/results/evidence/N40_CLI_CUTOVER/preflight_read_only.txt",
+      "sha256": "4e9d0e75b52d7979ea3d835807393bf5ac42a0e26bbd578a6475c5bc3d29c2f6",
+      "size": 2051
+    },
+    {
+      "mtime_ns": 1786481990783793447,
+      "path": "plans/26_langgraph_curriculum_factory/results/v3/N00_BASELINE_FREEZE.receipt.v1.json",
+      "sha256": "7b7a1d830e239f6bcce471ee02f378022e1f386a5784e7fcb6c0d3d6014f311b",
+      "size": 2160
+    },
+    {
+      "mtime_ns": 1786481992048630970,
+      "path": "plans/26_langgraph_curriculum_factory/results/v3/N10_DEPENDENCY_API.receipt.v1.json",
+      "sha256": "60d4806e207dec37cd2636a92441c0da5a23427d673661404037815da7f8c7bc",
+      "size": 2105
+    },
+    {
+      "mtime_ns": 1786481993133664558,
+      "path": "plans/26_langgraph_curriculum_factory/results/v3/N11_STATE_REDUCERS.receipt.v1.json",
+      "sha256": "adaaaeb7d3122d8c03a5c97fbe2bdc05fdc8c3c7f24d9cfa35a7826eacd884ad",
+      "size": 1908
+    },
+    {
+      "mtime_ns": 1786481993906639715,
+      "path": "plans/26_langgraph_curriculum_factory/results/v3/N12_EVIDENCE_ARTIFACTS.receipt.v1.json",
+      "sha256": "62012012b2d256f1ef3568e810bad0dfb3a1e0ee72ad686de7096ef1a1386a85",
+      "size": 1860
+    },
+    {
+      "mtime_ns": 1786482004154774862,
+      "path": "plans/26_langgraph_curriculum_factory/results/v3/N13_TRANSPORT_AUTH.receipt.v1.json",
+      "sha256": "0e87e8229767f736ac773463fa10d79479e0237913ae3fac3c2637fc97dacb9f",
+      "size": 2556
+    },
+    {
+      "mtime_ns": 1786501482937220889,
+      "path": "plans/26_langgraph_curriculum_factory/results/v3/N20_GRAPH_COMPILER.receipt.v1.json",
+      "sha256": "a2959f2cd7e6ae8a1f7ae7108f35a06dc57d0aac554b79b396f7414e96fedc2d",
+      "size": 14096
+    },
+    {
+      "mtime_ns": 1786482007632388083,
+      "path": "plans/26_langgraph_curriculum_factory/results/v3/N21_PERSISTENCE_RESUME.receipt.v1.json",
+      "sha256": "52b4879c03992f28061f231bf532d8cf29e227ed07978ace3bb1e60e7ff50a35",
+      "size": 1804
+    },
+    {
+      "mtime_ns": 1786482009151018280,
+      "path": "plans/26_langgraph_curriculum_factory/results/v3/N22_DETERMINISTIC_NODES.receipt.v1.json",
+      "sha256": "3a185930408fbbc0e90a36c2670b69d02d7174601d582e9947ab8fede2c0c0fc",
+      "size": 2156
+    },
+    {
+      "mtime_ns": 1786482010489628004,
+      "path": "plans/26_langgraph_curriculum_factory/results/v3/N23_MODEL_NODES.receipt.v1.json",
+      "sha256": "93f312e86f079d21654aaca74cecfc8fba513cbce78b2fdf69d7390eb949ea17",
+      "size": 2036
+    },
+    {
+      "mtime_ns": 1786502184373463968,
+      "path": "plans/26_langgraph_curriculum_factory/results/v3/N30_UNIT_GRAPH.receipt.v1.json",
+      "sha256": "43b6f6828285c173e1ae38a2a6c36b691185659885bf1a2fc0cafc87c55c562c",
+      "size": 13069
+    },
+    {
+      "mtime_ns": 1786498088108405648,
+      "path": "plans/26_langgraph_curriculum_factory/results/v3/N31_REPAIR_ACCEPTANCE.receipt.v1.json",
+      "sha256": "c44349955d18d9112a26b180874aaa222de293bb2558f55d3b84fa9cf340c606",
+      "size": 11213
+    },
+    {
+      "mtime_ns": 1786502370158473117,
+      "path": "plans/26_langgraph_curriculum_factory/results/v3/N32_WORKBOOK_TERMINALS.receipt.v1.json",
+      "sha256": "ca9e6908afb536c7d52e0ac673d2ae6e9fe24f927c9394de874e4c2dc910c361",
+      "size": 10181
+    },
+    {
+      "mtime_ns": 1786530961764180034,
+      "path": "plans/26_langgraph_curriculum_factory/results/v3/N40_CLI_CUTOVER.receipt.v1.json",
+      "sha256": "4324b2e167da174cf56f887dca5c038ce69cfa1bdbcbf87096e722bb95aaa203",
+      "size": 11279
+    },
+    {
+      "mtime_ns": 1786481990778013628,
+      "path": "plans/26_langgraph_curriculum_factory/results/v3/logs/N00_BASELINE_FREEZE/adopt-v2.test1.log",
+      "sha256": "ead99b3d4771d495f8fc45450295bb1f2c59b7bf41e9592368bfb29690ba0b19",
+      "size": 571
+    },
+    {
+      "mtime_ns": 1786481992042257787,
+      "path": "plans/26_langgraph_curriculum_factory/results/v3/logs/N10_DEPENDENCY_API/adopt-v2.test1.log",
+      "sha256": "865aa1aa648696504e0b08769dd8b820260001239d92ed73d6abb252609b0437",
+      "size": 103
+    },
+    {
+      "mtime_ns": 1786481993130994937,
+      "path": "plans/26_langgraph_curriculum_factory/results/v3/logs/N11_STATE_REDUCERS/adopt-v2.test1.log",
+      "sha256": "f4f75d45e7cfed6a5296de7cb0cdae214d5dd39f25eab958d0bbe7b479a7bca1",
+      "size": 157
+    },
+    {
+      "mtime_ns": 1786481993903400521,
+      "path": "plans/26_langgraph_curriculum_factory/results/v3/logs/N12_EVIDENCE_ARTIFACTS/adopt-v2.test1.log",
+      "sha256": "d09e9fe3e283f36bb969e74e02a6859acdb14123e0dab2b75bc3a1f0099042ff",
+      "size": 106
+    },
+    {
+      "mtime_ns": 1786482004142969855,
+      "path": "plans/26_langgraph_curriculum_factory/results/v3/logs/N13_TRANSPORT_AUTH/adopt-v2.test1.log",
+      "sha256": "0138ce0075a17b996b708efed9f46070504398702a7d378e597cb48bf2db0a51",
+      "size": 180
+    },
+    {
+      "mtime_ns": 1786501479511616981,
+      "path": "plans/26_langgraph_curriculum_factory/results/v3/logs/N20_GRAPH_COMPILER/20260811T221340.claude.log",
+      "sha256": "7ce7ed4be70212b3c0b275692db96ee3ec1f34388ab4d20f2385a60677187161",
+      "size": 5460
+    },
+    {
+      "mtime_ns": 1786501482911955923,
+      "path": "plans/26_langgraph_curriculum_factory/results/v3/logs/N20_GRAPH_COMPILER/20260811T221340.test1.log",
+      "sha256": "0394240105e2732cc16fdc152e09f4d9ba195f8f45e3fd5b04b9aa3c0ece2b85",
+      "size": 718
+    },
+    {
+      "mtime_ns": 1786482030643799170,
+      "path": "plans/26_langgraph_curriculum_factory/results/v3/logs/N20_GRAPH_COMPILER/adopt-v2.test1.log",
+      "sha256": "3bbc8940bc5400fa8f19eab1ae73b57e9ccc3a9ffc023392e83fc8109d01a54f",
+      "size": 718
+    },
+    {
+      "mtime_ns": 1786482007629691629,
+      "path": "plans/26_langgraph_curriculum_factory/results/v3/logs/N21_PERSISTENCE_RESUME/adopt-v2.test1.log",
+      "sha256": "546b1d90dfebd025f3d13dab2c571d33ee9a644e179d8e8472030131f450b9be",
+      "size": 154
+    },
+    {
+      "mtime_ns": 1786482009143324870,
+      "path": "plans/26_langgraph_curriculum_factory/results/v3/logs/N22_DETERMINISTIC_NODES/adopt-v2.test1.log",
+      "sha256": "66cffc19a52772180739cd7f5b80167c0debfd9e0a7ecbe4e2c3b5bb022de704",
+      "size": 340
+    },
+    {
+      "mtime_ns": 1786482010482213881,
+      "path": "plans/26_langgraph_curriculum_factory/results/v3/logs/N23_MODEL_NODES/adopt-v2.test1.log",
+      "sha256": "c03e8eb07f12c240a960b0b2097a28f5bf142f4159b2988d7325308a470e74fc",
+      "size": 260
+    },
+    {
+      "mtime_ns": 1786483248715262189,
+      "path": "plans/26_langgraph_curriculum_factory/results/v3/logs/N30_UNIT_GRAPH/20260811T171657.claude.log",
+      "sha256": "13f47f05032193e39d25e60d3a9de0e0329ef126a6a0bb2ab8aa142cd72ce043",
+      "size": 4628
+    },
+    {
+      "mtime_ns": 1786483723233562375,
+      "path": "plans/26_langgraph_curriculum_factory/results/v3/logs/N30_UNIT_GRAPH/20260811T172757.claude.log",
+      "sha256": "c4ddfb5c0cd21a8c841bd6c864a55b1dea59464ec22ee6cc854c59e9d4b10a72",
+      "size": 2811
+    },
+    {
+      "mtime_ns": 1786487130050627970,
+      "path": "plans/26_langgraph_curriculum_factory/results/v3/logs/N30_UNIT_GRAPH/20260811T181231.claude.log",
+      "sha256": "c503cef2ad29139a601d5fff9b2c0a0da90aa475cc2e5fdec9d892849934ddf1",
+      "size": 6959
+    },
+    {
+      "mtime_ns": 1786487137131748165,
+      "path": "plans/26_langgraph_curriculum_factory/results/v3/logs/N30_UNIT_GRAPH/20260811T181231.test1.log",
+      "sha256": "affb9bab443a1ae43179d93482cb446330002e92354bdfab58c06b33bb66f6e6",
+      "size": 179
+    },
+    {
+      "mtime_ns": 1786502176707341335,
+      "path": "plans/26_langgraph_curriculum_factory/results/v3/logs/N30_UNIT_GRAPH/20260811T222725.claude.log",
+      "sha256": "46b3e2b46116a19000f26ae183990d951a563c6d89f7d5673634d2506cb38f1a",
+      "size": 9153
+    },
+    {
+      "mtime_ns": 1786502184346741377,
+      "path": "plans/26_langgraph_curriculum_factory/results/v3/logs/N30_UNIT_GRAPH/20260811T222725.test1.log",
+      "sha256": "907d8b3baaf4c83ed8e2e25de0e621e45591a86caf085e0406ef3953d429598f",
+      "size": 179
+    },
+    {
+      "mtime_ns": 1786489006155327899,
+      "path": "plans/26_langgraph_curriculum_factory/results/v3/logs/N31_REPAIR_ACCEPTANCE/20260811T183054.claude.log",
+      "sha256": "abce179433abf0cacf3f2a4a78e069e835f77e0b0858454169e26499a84392bc",
+      "size": 2937
+    },
+    {
+      "mtime_ns": 1786489235356201391,
+      "path": "plans/26_langgraph_curriculum_factory/results/v3/logs/N31_REPAIR_ACCEPTANCE/20260811T185719.claude.log",
+      "sha256": "9d6e2826254e45b5d929ef8347f302a445f3f93647d477fbd4035a791c03870a",
+      "size": 1765
+    },
+    {
+      "mtime_ns": 1786493324255323649,
+      "path": "plans/26_langgraph_curriculum_factory/results/v3/logs/N31_REPAIR_ACCEPTANCE/20260811T190521.claude.log",
+      "sha256": "3747ba8a47cdea8947182325554b26a9e2f9c7bfaafbac110ca3e0efc4b3f0e8",
+      "size": 3665
+    },
+    {
+      "mtime_ns": 1786496378417155379,
+      "path": "plans/26_langgraph_curriculum_factory/results/v3/logs/N31_REPAIR_ACCEPTANCE/20260811T203030.claude.log",
+      "sha256": "497c5da02d9c233dabeb168334e702c694ecddbdda6f45fd0e308707f2171636",
+      "size": 6520
+    },
+    {
+      "mtime_ns": 1786498086738769133,
+      "path": "plans/26_langgraph_curriculum_factory/results/v3/logs/N31_REPAIR_ACCEPTANCE/20260811T210203.claude.log",
+      "sha256": "b4332a5aed925d562f960fe394b94148c643eccba1228d4a570b84556a753601",
+      "size": 7395
+    },
+    {
+      "mtime_ns": 1786498088093000378,
+      "path": "plans/26_langgraph_curriculum_factory/results/v3/logs/N31_REPAIR_ACCEPTANCE/20260811T210203.test1.log",
+      "sha256": "5209c8d7a493dc1c18bde84532c40c578a7238f1055931a8a6fbb043b563bff3",
+      "size": 99
+    },
+    {
+      "mtime_ns": 1786500756600913572,
+      "path": "plans/26_langgraph_curriculum_factory/results/v3/logs/N32_WORKBOOK_TERMINALS/20260811T212823.claude.log",
+      "sha256": "78807629ab7a7f9d40416203ec277ecb5a8e99756ae4ebbfcc07417c3a6cbb3d",
+      "size": 7921
+    },
+    {
+      "mtime_ns": 1786500766026385783,
+      "path": "plans/26_langgraph_curriculum_factory/results/v3/logs/N32_WORKBOOK_TERMINALS/20260811T212823.test1.log",
+      "sha256": "0ff5c58a5a3ff36ef2581fcf1fdd8dbedf54f3b0c126014b394b13f76ca3605e",
+      "size": 180
+    },
+    {
+      "mtime_ns": 1786502362481985452,
+      "path": "plans/26_langgraph_curriculum_factory/results/v3/logs/N32_WORKBOOK_TERMINALS/20260811T223655.claude.log",
+      "sha256": "2be21c878713f837efc5965df9758e8d310f8fc05f2c6cdecb97c352f4a36a49",
+      "size": 3324
+    },
+    {
+      "mtime_ns": 1786502370150810349,
+      "path": "plans/26_langgraph_curriculum_factory/results/v3/logs/N32_WORKBOOK_TERMINALS/20260811T223655.test1.log",
+      "sha256": "64d054a1f4183cc49dab1e8885b3e65a6c793aaa34ffa5386340a0e0426aa995",
+      "size": 180
+    },
+    {
+      "mtime_ns": 1786530952444269167,
+      "path": "plans/26_langgraph_curriculum_factory/results/v3/logs/N40_CLI_CUTOVER/20260812T060641.claude.log",
+      "sha256": "a8b4d2dc80595cf08f5b9d2f37619c62936918564e3a29c3ba857c2a5b5e2b15",
+      "size": 5476
+    },
+    {
+      "mtime_ns": 1786530961743295896,
+      "path": "plans/26_langgraph_curriculum_factory/results/v3/logs/N40_CLI_CUTOVER/20260812T060641.test1.log",
+      "sha256": "13a5db557db4272257a7df993c66610e5dabac87b4c5287ccf15b2bf75c65361",
+      "size": 99
+    },
+    {
+      "mtime_ns": 1786537705373530386,
+      "path": "plans/26_langgraph_curriculum_factory/results/v3/logs/N50_ADVERSARIAL_REGRESSION/20260812T080401.claude.log",
+      "sha256": "46614cc911bbe336bd7414a1111df387fd1dd9496b22ac99a1aa9a3c40888dcc",
+      "size": 6987
+    },
+    {
+      "mtime_ns": 1786537827568024283,
+      "path": "plans/26_langgraph_curriculum_factory/results/v3/logs/N50_ADVERSARIAL_REGRESSION/20260812T082848.claude.log",
+      "sha256": "3be109411fe927c8a4a87cb1f1427f5b198da4b9f1dfe022059ac86c7662a78a",
+      "size": 4184
+    },
+    {
+      "mtime_ns": 1786486336776485055,
+      "path": "plans/26_langgraph_curriculum_factory/results/v3/logs/preflight/20260811T181206.claude.log",
+      "sha256": "e316cab3734a4b528205f874dd56bbd6f61f4ef6ffd74af0a25226da928e3fcd",
+      "size": 1741
+    },
+    {
+      "mtime_ns": 1786486327125645758,
+      "path": "plans/26_langgraph_curriculum_factory/results/v3/logs/preflight/20260811T181206.reference.log",
+      "sha256": "e143bc467f4d4f6fb89158f8b30f8849791aa5a5f25cca52c735880897645518",
+      "size": 13
+    },
+    {
+      "mtime_ns": 1786486337022849856,
+      "path": "plans/26_langgraph_curriculum_factory/results/v3/logs/preflight/20260811T181206.result.json",
+      "sha256": "fb3156a3b144f8f65964364b8c6ba454a3ccadff2b7cd8aee8e7348bb8f94d32",
+      "size": 1176
+    },
+    {
+      "mtime_ns": 1786543843080127801,
+      "path": "plans/26_langgraph_curriculum_factory/results/v3/logs/preflight/attempt-20260812T141040.565962Z-86abe5eff5.claude.log",
+      "sha256": "052e9db9d135b4e07eef5e324d7f9fbe1ab7729d750c06310a3acf279b979f3f",
+      "size": 5899
+    },
+    {
+      "mtime_ns": 1786543842400038354,
+      "path": "plans/26_langgraph_curriculum_factory/results/v3/logs/preflight/attempt-20260812T141040.565962Z-86abe5eff5.reference.log",
+      "sha256": "e143bc467f4d4f6fb89158f8b30f8849791aa5a5f25cca52c735880897645518",
+      "size": 13
+    },
+    {
+      "mtime_ns": 1786543843740947850,
+      "path": "plans/26_langgraph_curriculum_factory/results/v3/logs/preflight/attempt-20260812T141040.565962Z-86abe5eff5.result.json",
+      "sha256": "62015d50437d7806b8a005d3bf95822253b98fa7ffc31f6ef75caa18a9f035d2",
+      "size": 1252
+    },
+    {
+      "mtime_ns": 1786543875917873138,
+      "path": "plans/26_langgraph_curriculum_factory/results/v3/logs/preflight/attempt-20260812T141108.574835Z-a674d6fa3a.claude.log",
+      "sha256": "046aa702322af5f0b3c76e1bd33678949a432ff17a15b675bbbd79bbe080923b",
+      "size": 9360
+    },
+    {
+      "mtime_ns": 1786543870268170149,
+      "path": "plans/26_langgraph_curriculum_factory/results/v3/logs/preflight/attempt-20260812T141108.574835Z-a674d6fa3a.reference.log",
+      "sha256": "e143bc467f4d4f6fb89158f8b30f8849791aa5a5f25cca52c735880897645518",
+      "size": 13
+    },
+    {
+      "mtime_ns": 1786543876486653089,
+      "path": "plans/26_langgraph_curriculum_factory/results/v3/logs/preflight/attempt-20260812T141108.574835Z-a674d6fa3a.result.json",
+      "sha256": "1f738fdf9067de2558ab75fc5d98b0df50d2c9ab185658454eae47b326c44fb3",
+      "size": 1227
+    }
+  ],
+  "graph_digest": "e8a68f2a1a1fd057a9e9849fd43e78ef6aced7884465fe97501d0754db708d46",
+  "harness_digest": "9fdc601b6a65fa1c2bca322b95c084c87f9d293848c10618cd521b0c67a2cc49",
+  "schema_version": 1
+}

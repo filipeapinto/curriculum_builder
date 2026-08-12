@@ -3,7 +3,54 @@
 status: PASSED
 node_prompt: plans/26_langgraph_curriculum_factory/prompts/N40_cli_cutover.prompt.v1.md
 predecessor: N32_WORKBOOK_TERMINALS (compact state supplied by the controller, status PASSED)
-generation: 1
+generation: 2
+
+## Generation 2 correction (patch P-N40-001)
+
+**What was wrong.** Generation 1's own "Migration disposition" section (below,
+preserved) already disclosed that `tests/runtime/test_run_curriculum.py`
+tested the retired Plan 25 surface — `from runtime.run_curriculum import
+main, parser_for`, `parser_for(runtime)`, and a `--lab-id` dispatch mocking
+`runtime.run_curriculum.CurriculumFactoryGraph`/`CodexWorker` — and that this
+broke collection of `tests/runtime` for `pytest -q tests/runtime`. The file
+was outside this node's write set in generation 1, so it could not be fixed.
+
+**Why this node owns it.** The write set was corrected to include
+`tests/runtime/test_run_curriculum.py`: it is this node's own CLI cutover
+that made the file's assertions stale, so this node retires/rewrites them
+rather than leaving a downstream node to route around a collection-blocking
+import error it did not cause.
+
+**What changed.** `tests/runtime/test_run_curriculum.py`'s
+`RunCurriculumParserTests` class (and its shared `from runtime.run_curriculum
+import main, parser_for` import) was replaced with
+`RunCurriculumMigrationContractTests`, asserting the Plan 26 migration
+contract instead of the removed Plan 25 dispatch behavior:
+- `parser_for` is absent from `runtime.run_curriculum` (`hasattr` is false;
+  `from runtime.run_curriculum import parser_for` raises `ImportError`).
+- The current `build_parser()` rejects every legacy flag the old parser
+  accepted (`--lab-id`, `--max-model-calls-per-lab`, `--max-concurrency`,
+  `--max-meta-revision-cycles`, `--retry-malformed-output`) with
+  `SystemExit(2)`.
+- A static AST scan of `runtime/run_curriculum.py` (consistent with the
+  import-audit style in `tests/runtime/test_plan26_cli.py`) asserts no Plan 25
+  symbol (`CurriculumFactoryGraph`, `CodexWorker`, `GeminiReviewer`,
+  `CurriculumRuntime`, `parser_for`) or module (`runtime.controller`,
+  `runtime.session_bridge`, `runtime.curriculum_factory_graph`,
+  `runtime.model_worker`) is referenced or imported.
+
+`RunCurriculumElapsedTimeTests` — which drives `runtime.controller
+.CurriculumRuntime.simulate(...)` directly, a historical module deliberately
+left in place and unreachable from the production CLI — was left untouched
+except for the shared top-of-file import no longer naming `parser_for`.
+Neither `runtime/run_curriculum.py` nor `tests/runtime/test_plan26_cli.py`
+nor `tests/runtime/test_plan26_workbook.py` were modified (hashes below are
+unchanged from generation 1). Verified with:
+
+```
+{python} -m pytest -q tests/runtime/test_plan26_cli.py tests/runtime/test_plan26_workbook.py tests/runtime/test_run_curriculum.py
+# 76 passed, 14 subtests passed
+```
 
 ## What this node built
 

@@ -1,0 +1,81 @@
+{
+  "changed_files": [
+    "plans/26_langgraph_curriculum_factory/results/N50_ADVERSARIAL_REGRESSION.result.v1.md",
+    "plans/26_langgraph_curriculum_factory/results/evidence/N50_ADVERSARIAL_REGRESSION/focused_test_run.txt",
+    "plans/26_langgraph_curriculum_factory/results/evidence/N50_ADVERSARIAL_REGRESSION/full_plan26_suite.txt",
+    "plans/26_langgraph_curriculum_factory/results/evidence/N50_ADVERSARIAL_REGRESSION/preexisting_legacy_collection_error.txt",
+    "tests/runtime/test_plan26_adversarial.py"
+  ],
+  "commands": [
+    {
+      "argv": [
+        "/tmp/plan26_n30_verify/bin/python",
+        "-m",
+        "pytest",
+        "-q",
+        "tests/runtime/test_plan26_adversarial.py"
+      ],
+      "exit_code": 0,
+      "finished_at": "2026-08-12T18:29:40.507976+00:00",
+      "log": "/Users/filipepinto/Projects/curriculum_builder/plans/26_langgraph_curriculum_factory/results/v3/logs/N50_ADVERSARIAL_REGRESSION/rebase-20260812T182936.112438Z-26c521ac8b.test1.log",
+      "log_sha256": "a9db9481ed311ac74ebcae485743f8ef50d308be0dab27d9446d478284d48263",
+      "started_at": "2026-08-12T18:29:37.977347+00:00",
+      "tail": "...............................................................          [100%]\n63 passed in 1.73s\n",
+      "timed_out": false
+    },
+    {
+      "argv": [
+        "/tmp/plan26_n30_verify/bin/python",
+        "-m",
+        "pytest",
+        "-q",
+        "tests/runtime"
+      ],
+      "exit_code": 0,
+      "finished_at": "2026-08-12T18:31:55.765289+00:00",
+      "log": "/Users/filipepinto/Projects/curriculum_builder/plans/26_langgraph_curriculum_factory/results/v3/logs/N50_ADVERSARIAL_REGRESSION/rebase-20260812T182936.112438Z-26c521ac8b.test2.log",
+      "log_sha256": "c8d37bf5bc9243fea726876fddc222a9e322cde2dbe5a5f932e99b2829b772a2",
+      "started_at": "2026-08-12T18:29:40.508602+00:00",
+      "tail": "........................................................................................................ [  8%]\n.................................................................................................................. [ 17%]\n........................................................................ [ 23%]\n........................................................................ [ 29%]\n........................................................................ [ 35%]\n.......................................................................................s............................................. [ 45%]\n........................................................................ [ 51%]\n........................................................................ [ 57%]\n................................................................................................... [ 65%]\n..................................................................... [ 71%]\n................................ [ 73%]\n........................................................................ [ 79%]\n........................................................................ [ 85%]\n........................................................................ [ 91%]\n.............................................................................................................               [100%]\n1235 passed, 1 skipped, 406 subtests passed in 134.22s (0:02:14)\n",
+      "timed_out": false
+    }
+  ],
+  "created_at": "2026-08-12T18:31:55.773123+00:00",
+  "findings": [],
+  "graph_digest": "3c4177f9a239279b86e1a912a0b704e3b7867693fcb4b98fe00c73c33caee867",
+  "graph_id": "plan26_langgraph_curriculum_factory_implementation",
+  "input_fingerprint": "d7fba7c5b1e035071a8d8d92d773cf2e27f910596a81101b71216f2f63975ede",
+  "node_definition_sha256": "fc8da835dde1c37ff796d1641f7f83c9708d280d1a63dd99cc1a33d36b65c8b8",
+  "node_id": "N50_ADVERSARIAL_REGRESSION",
+  "outputs": {
+    "plans/26_langgraph_curriculum_factory/results/N50_ADVERSARIAL_REGRESSION.result.v1.md": "796e197370e486990f5d47636c8c714bbf62b5422de1bbad03cec72d546cfe7d",
+    "plans/26_langgraph_curriculum_factory/results/evidence/N50_ADVERSARIAL_REGRESSION": "2d412ab08b6dff57bd46e71317cd76e0569eb26a45d7e9970e32d52df175bc4e",
+    "tests/runtime/test_plan26_adversarial.py": "0cbca18f412dd63b1c1a82fb535deb4ab50c8bcb8885fc02f2fa421d601c5a04"
+  },
+  "prompt_sha256": "59c15a5d4b7b6a29d2a789533501783956535b04099e4bbeba880c6398017e5b",
+  "provenance": {
+    "active_patch_ids": [
+      "P-N50-001",
+      "P-N50-002",
+      "P-N50-003"
+    ],
+    "attempt_id": "rebase-20260812T182936.112438Z-26c521ac8b",
+    "base_graph_digest": "3c4177f9a239279b86e1a912a0b704e3b7867693fcb4b98fe00c73c33caee867",
+    "base_prompt_sha256": "3cea5d1a6171510bc38217a8f799aa395c2896ab6d6940a1b9bfcaf8b8bef69a",
+    "branch_id": "rebase-20260812T182936.112438Z-26c521ac8b",
+    "checkpoint": {
+      "N40_CLI_CUTOVER": "2cf9cb3d43839f5c25060de505814ac45e7a3b11409993f4298bab4f8d467cce"
+    },
+    "effective_prompt_sha256": "59c15a5d4b7b6a29d2a789533501783956535b04099e4bbeba880c6398017e5b",
+    "harness_digest": "52c83babd4966c7f34ea1636ca7d974b591503adf782556d17233137651675eb",
+    "patch_chain_sha256": "63a35e97f16b3952318180f958918a3ebc2b6b741f9320c4558475ad34488e9a",
+    "patch_ids": [
+      "P-N50-001",
+      "P-N50-002",
+      "P-N50-003"
+    ]
+  },
+  "schema_version": 1,
+  "source": "rebased_from_attempt-20260812T170853.220219Z-0f7d828ee4_after_predecessor_rework",
+  "status": "PASSED"
+}

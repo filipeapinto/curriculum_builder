@@ -1,0 +1,16 @@
+
+==================================== ERRORS ====================================
+____________ ERROR collecting tests/runtime/test_run_curriculum.py _____________
+ImportError while importing test module '/Users/filipepinto/Projects/curriculum_builder/.plan26-run/plan26/attempts/N50_ADVERSARIAL_REGRESSION/attempt-20260812T170853.220219Z-0f7d828ee4/repo/tests/runtime/test_run_curriculum.py'.
+Hint: make sure your test modules/packages have valid Python names.
+Traceback:
+/opt/homebrew/Cellar/python@3.13/3.13.1/Frameworks/Python.framework/Versions/3.13/lib/python3.13/importlib/__init__.py:88: in import_module
+    return _bootstrap._gcd_import(name[level:], package, level)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+../../attempt-20260812T150242.611535Z-191331b827/repo/tests/runtime/test_run_curriculum.py:12: in <module>
+    from runtime.run_curriculum import main, parser_for
+E   ImportError: cannot import name 'parser_for' from 'runtime.run_curriculum' (/Users/filipepinto/Projects/curriculum_builder/.plan26-run/plan26/attempts/N50_ADVERSARIAL_REGRESSION/attempt-20260812T170853.220219Z-0f7d828ee4/repo/runtime/run_curriculum.py)
+=========================== short test summary info ============================
+ERROR tests/runtime/test_run_curriculum.py
+!!!!!!!!!!!!!!!!!!!! Interrupted: 1 error during collection !!!!!!!!!!!!!!!!!!!!
+1 error in 0.38s

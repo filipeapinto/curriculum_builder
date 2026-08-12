@@ -1,0 +1,8 @@
+$ python3 -c "import json; d=json.load(open('~/.codex/auth.json' expanded)); print('OPENAI_API_KEY:', d.get('OPENAI_API_KEY'))"
+auth_mode: chatgpt
+OPENAI_API_KEY: None
+
+$ env | grep -i OPENAI_API_KEY
+(unset)
+
+Codex is authenticated via the user's ChatGPT subscription; no billed API key is configured or required.

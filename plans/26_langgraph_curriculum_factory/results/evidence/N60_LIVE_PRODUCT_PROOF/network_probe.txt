@@ -1,0 +1,9 @@
+$ curl -s -o /dev/null -w "http_code=%{http_code}" --max-time 5 https://api.openai.com
+http_code=421
+
+$ curl -s -o /dev/null -w "http_code=%{http_code}" --max-time 5 https://generativelanguage.googleapis.com
+http_code=404
+
+Both provider endpoints are network-reachable, ruling out network egress as
+the blocker. The failure isolated in gemini_auth_probe.txt is authentication
+only.

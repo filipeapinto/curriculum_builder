@@ -1,0 +1,32 @@
+schema_version: 1
+patch_id: P-N50-003
+action: overlay
+graph_id: plan26_langgraph_curriculum_factory_implementation
+base_graph_digest: e8a68f2a1a1fd057a9e9849fd43e78ef6aced7884465fe97501d0754db708d46
+target_node: N50_ADVERSARIAL_REGRESSION
+scope: node_only
+reason: 'The N50 result report used ''Status: **PASSED**'' instead of the required
+  bare ''status: PASSED'' line, so the controller''s status-detection regex found
+  no match and blocked the node with node_did_not_report_an_admissible_status even
+  though the underlying work (test matrix, focused+full suite, evidence, N40 restoration)
+  was already complete and correct'
+expected_effect: N50 corrects only the status line in its own result report to the
+  machine-parseable format, allowing the controller to detect PASSED and admit the
+  receipt
+instructions: "The controller only admits a node when its result report contains a\
+  \ bare,\nmachine-parseable status line matching this exact pattern (multiline regex):\n\
+  \n  ^status:\\s*(PASSED|NOT_AVAILABLE|BLOCKED)\\s*$\n\nThat means a line, on its\
+  \ own, starting at column 0 with lowercase `status:`\nfollowed by one of PASSED,\
+  \ NOT_AVAILABLE, or BLOCKED and nothing else \u2014 no\nmarkdown bold (`**...**`),\
+  \ no capitalized `Status:`, no extra words on that\nline. See `plans/26_langgraph_curriculum_factory/results/N40_CLI_CUTOVER.result.v1.md`\n\
+  line 3 for a correct example: a line reading exactly `status: PASSED`.\n\n`plans/26_langgraph_curriculum_factory/results/N50_ADVERSARIAL_REGRESSION.result.v1.md`\n\
+  currently has `Status: **PASSED**` near the top instead, which does not match\n\
+  the required pattern, so the controller cannot detect the reported status and\n\
+  blocks the node even though the work itself is complete and correct.\n\nIf that\
+  \ file already exists with the wrong status line, use the Edit or Write\ntool to\
+  \ replace only that one line with a bare `status: PASSED` line (or\n`status: BLOCKED`\
+  \ / `status: NOT_AVAILABLE` if that is the true outcome).\nChange nothing else in\
+  \ the file \u2014 do not rewrite content, evidence, hashes, or\nany other section.\
+  \ Then verify with Read that the line now matches the\npattern exactly before finishing.\n"
+context: {}
+created_at: '2026-08-12T16:05:49.093748+00:00'

@@ -1,0 +1,48 @@
+........................................................................................................ [  8%]
+.................................................................................................................. [ 17%]
+........................................................................ [ 23%]
+........................................................................ [ 29%]
+........................................................................ [ 35%]
+.......................................................................................s............................................. [ 45%]
+........................................................................ [ 51%]
+........................................................................ [ 57%]
+..............................................................................F.................... [ 65%]
+..................................................................... [ 71%]
+................................ [ 73%]
+........................................................................ [ 79%]
+........................................................................ [ 85%]
+........................................................................ [ 91%]
+.............................................................................................................               [100%]
+=================================== FAILURES ===================================
+_ test_passed_nodes_remain_admissible_and_n50_is_the_sole_frontier_after_harness_change _
+
+    def test_passed_nodes_remain_admissible_and_n50_is_the_sole_frontier_after_harness_change():
+        graph = manifest()
+        scheduler = controller_module.Controller(graph)
+        state = scheduler.status()
+        passed = [
+            "N00_BASELINE_FREEZE",
+            "N10_DEPENDENCY_API",
+            "N11_STATE_REDUCERS",
+            "N12_EVIDENCE_ARTIFACTS",
+            "N13_TRANSPORT_AUTH",
+            "N20_GRAPH_COMPILER",
+            "N21_PERSISTENCE_RESUME",
+            "N22_DETERMINISTIC_NODES",
+            "N23_MODEL_NODES",
+            "N30_UNIT_GRAPH",
+            "N31_REPAIR_ACCEPTANCE",
+            "N32_WORKBOOK_TERMINALS",
+            "N40_CLI_CUTOVER",
+        ]
+        for node_id in passed:
+>           assert state["statuses"][node_id] == "PASSED"
+E           AssertionError: assert 'READY' == 'PASSED'
+E             
+E             - PASSED
+E             + READY
+
+tests/runtime/test_plan26_prompt_graph_controller.py:202: AssertionError
+=========================== short test summary info ============================
+FAILED tests/runtime/test_plan26_prompt_graph_controller.py::test_passed_nodes_remain_admissible_and_n50_is_the_sole_frontier_after_harness_change
+1 failed, 1234 passed, 1 skipped, 406 subtests passed in 133.26s (0:02:13)

@@ -1,0 +1,41 @@
+schema_version: 1
+patch_id: P-N50-001
+action: overlay
+graph_id: plan26_langgraph_curriculum_factory_implementation
+base_graph_digest: e8a68f2a1a1fd057a9e9849fd43e78ef6aced7884465fe97501d0754db708d46
+target_node: N50_ADVERSARIAL_REGRESSION
+scope: node_only
+reason: N50 traces show repeated denied interpreter and shell probes before implementation
+expected_effect: N50 performs implementation first and uses only the preflight-proven
+  pytest command, eliminating permission-loop retries
+instructions: 'The controller preflight has already proved the resolved interpreter
+  and the
+
+  authorized pytest command. Do not probe the interpreter or shell environment.
+
+
+  The only permitted Bash shape is the exact resolved interpreter printed in the
+
+  node packet followed by `-m pytest ...`.
+
+
+  Do not run `which`, `ls`, `python --version`, `python -V`, `python -c`, plain
+
+  `pytest`, pipes, redirects, command chaining, symlink workarounds, venv creation,
+
+  or sandbox-bypass options. Use Read, Glob, and Grep for inspection. Do not ask
+
+  for approval for a command outside the allowlist; omit it.
+
+
+  Implement the missing N50 adversarial test matrix before running tests. Then run
+
+  the focused N50 file with the exact permitted pytest form. Run the full runtime
+
+  suite only after the focused file passes. Treat a permission denial as a harness
+
+  finding and report it immediately without repeating variants of the denied call.
+
+  '
+context: {}
+created_at: '2026-08-12T14:10:31.255308+00:00'

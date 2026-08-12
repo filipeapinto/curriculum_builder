@@ -1,0 +1,21 @@
+$ cat ~/.gemini/settings.json
+{
+  "security": {
+    "auth": {
+      "selectedType": "gemini-api-key"
+    }
+  }
+}
+
+$ cat ~/.gemini/google_accounts.json
+{
+  "active": null,
+  "old": []
+}
+
+$ env | grep -iE "GEMINI_API_KEY|GOOGLE_API_KEY"
+(unset, unset)
+
+Configured auth mode is "gemini-api-key" but no GEMINI_API_KEY/GOOGLE_API_KEY
+is set in the environment, and no Google account is signed in for OAuth
+(google_accounts.json.active is null). There is no usable Gemini credential.

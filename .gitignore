@@ -14,5 +14,10 @@ __pycache__/
 # committed history.
 outputs/
 
+# Retained Plan 26 execution branches are local forensic artifacts. Their
+# immutable metadata is referenced by the tracked scheduler audit log, but each
+# branch contains a complete working copy and must never enter Git history.
+.plan26-run/
+
 # macOS
 .DS_Store

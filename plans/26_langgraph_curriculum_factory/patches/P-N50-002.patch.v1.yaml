@@ -1,0 +1,37 @@
+schema_version: 1
+patch_id: P-N50-002
+action: overlay
+graph_id: plan26_langgraph_curriculum_factory_implementation
+base_graph_digest: e8a68f2a1a1fd057a9e9849fd43e78ef6aced7884465fe97501d0754db708d46
+target_node: N50_ADVERSARIAL_REGRESSION
+scope: node_only
+reason: N40's own tests (test_plan25_root_refusal_evidence, test_preflight_read_only_evidence)
+  rewrite two N40 evidence files with non-deterministic tmp-path content on every
+  run, so running the required unchanged full suite trips N50's write_set_violation
+  gate even though N50 never intentionally touches those files
+expected_effect: N50 restores the two N40 evidence files to their pre-run byte content
+  after the full suite completes, so the merge shows no net change outside N50's declared
+  write set
+instructions: "Two pre-existing tests in the unchanged suite, `tests/runtime/test_plan26_cli.py`\n\
+  (`test_plan25_root_refusal_evidence` and `test_preflight_read_only_evidence`),\n\
+  write live evidence reports as a side effect of simply running, to fixed paths\n\
+  inside N40's evidence directory:\n\n  plans/26_langgraph_curriculum_factory/results/evidence/N40_CLI_CUTOVER/plan25_resume_refusal.txt\n\
+  \  plans/26_langgraph_curriculum_factory/results/evidence/N40_CLI_CUTOVER/preflight_read_only.txt\n\
+  \nEach report embeds a fresh `tempfile.TemporaryDirectory()` path, so the bytes\n\
+  differ on every run even though the test outcome is identical. Both files are\n\
+  outside N50's declared write set. N50 must not permanently change them.\n\nBefore\
+  \ running `{python} -m pytest -q tests/runtime` (the full suite), use the\nRead\
+  \ tool to capture the exact current byte content of both files above.\n\nAfter the\
+  \ full suite finishes (regardless of pass/fail), compare each file's\ncontent to\
+  \ the captured original. If either changed, use the Write tool to\nrestore it to\
+  \ exactly the captured original content, so the repository's final\nstate for both\
+  \ files is byte-identical to what it was before this node ran.\nDo this restoration\
+  \ as the last step, after all other N50 work (test file,\nresult report, N50 evidence)\
+  \ is complete, so it is not clobbered by later steps.\n\nDo not edit `tests/runtime/test_plan26_cli.py`\
+  \ itself to change this behavior \u2014\nit is part of the unchanged suite and out\
+  \ of scope for N50. Do not treat this\nrestoration as a finding to report as a defect\
+  \ in the result report; it is\nexpected housekeeping caused by running the unchanged\
+  \ suite, not a regression.\nDo not restore or touch any file other than these two\
+  \ exact paths.\n"
+context: {}
+created_at: '2026-08-12T15:49:39.263772+00:00'

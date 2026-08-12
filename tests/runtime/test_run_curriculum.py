@@ -1,77 +1,89 @@
 from __future__ import annotations
 
+import ast
 import json
-import io
-from pathlib import Path
-import tempfile
 import unittest
+import tempfile
+from pathlib import Path
 from unittest import mock
-from contextlib import redirect_stdout
 
 from runtime.controller import CurriculumRuntime
-from runtime.run_curriculum import main, parser_for
+import runtime.run_curriculum as run_curriculum_module
 
 
 ENGINE = Path(__file__).resolve().parents[2]
 CURRICULUM = ENGINE / "curricula/arduino_kit"
-REMOVED_FLAGS = (
-    "--max-lab-seconds",
-    "--phase-timeout-seconds",
-    "--max-run-seconds",
+RUN_CURRICULUM_SOURCE_PATH = ENGINE / "runtime" / "run_curriculum.py"
+RUN_CURRICULUM_SOURCE = RUN_CURRICULUM_SOURCE_PATH.read_text(encoding="utf-8")
+RUN_CURRICULUM_AST = ast.parse(RUN_CURRICULUM_SOURCE, filename=str(RUN_CURRICULUM_SOURCE_PATH))
+
+LEGACY_CLI_FLAGS = (
+    "--lab-id",
+    "--max-model-calls-per-lab",
+    "--max-concurrency",
+    "--max-meta-revision-cycles",
+    "--retry-malformed-output",
+)
+
+LEGACY_PLAN25_SYMBOLS = (
+    "CurriculumFactoryGraph",
+    "CodexWorker",
+    "GeminiReviewer",
+    "CurriculumRuntime",
+    "parser_for",
 )
 
 
-class RunCurriculumParserTests(unittest.TestCase):
-    def setUp(self):
-        self.runtime = CurriculumRuntime(ENGINE)
+class RunCurriculumMigrationContractTests(unittest.TestCase):
+    """N40 cutover: `parser_for`/the Plan 25 dispatch surface stay retired."""
 
-    def test_parser_constructs_without_per_phase(self):
-        self.runtime.limit_policy.pop("per_phase", None)
-        parser = parser_for(self.runtime)
-        self.assertIsNotNone(parser.parse_args(["--curriculum", str(CURRICULUM)]))
+    def test_parser_for_is_absent_from_the_module(self):
+        self.assertFalse(hasattr(run_curriculum_module, "parser_for"))
+        with self.assertRaises(ImportError):
+            from runtime.run_curriculum import parser_for  # noqa: F401
 
-    def test_removed_time_flags_are_absent_and_rejected(self):
-        parser = parser_for(self.runtime)
-        help_text = parser.format_help()
-        option_strings = {
-            option
-            for action in parser._actions
-            for option in action.option_strings
-        }
-        for flag in REMOVED_FLAGS:
+    def test_legacy_flags_are_rejected_by_the_current_parser(self):
+        for flag in LEGACY_CLI_FLAGS:
             with self.subTest(flag=flag):
-                self.assertNotIn(flag, help_text)
-                self.assertNotIn(flag, option_strings)
-                with self.assertRaisesRegex(SystemExit, "2"):
-                    parser.parse_args(["--curriculum", str(CURRICULUM), flag, "1"])
+                parser = run_curriculum_module.build_parser()
+                with self.assertRaises(SystemExit) as raised:
+                    parser.parse_args(
+                        ["--engine-root", str(ENGINE), "--curriculum", str(CURRICULUM),
+                         "--output-root", "/tmp/plan26-legacy-flag-check", "--preflight", flag, "1"]
+                    )
+                self.assertEqual(raised.exception.code, 2)
 
-    def test_representative_retained_policy_defaults(self):
-        args = parser_for(self.runtime).parse_args(["--curriculum", str(CURRICULUM)])
-        expected = {
-            "max_model_calls_per_lab": self.runtime.limit_policy["per_lab"]["max_model_calls"]["value"],
-            "max_concurrency": self.runtime.limit_policy["per_run"]["max_concurrency"]["value"],
-            "max_meta_revision_cycles": self.runtime.limit_policy["convergence"]["max_meta_revision_cycles"]["value"],
-            "retry_malformed_output": self.runtime.limit_policy["retry"]["malformed_structured_output"]["value"],
+    def test_no_plan25_dispatch_symbol_is_imported_or_referenced(self):
+        names_in_source = {
+            node.id for node in ast.walk(RUN_CURRICULUM_AST) if isinstance(node, ast.Name)
         }
-        for destination, value in expected.items():
-            with self.subTest(destination=destination):
-                self.assertEqual(getattr(args, destination), value)
+        attributes_in_source = {
+            node.attr for node in ast.walk(RUN_CURRICULUM_AST) if isinstance(node, ast.Attribute)
+        }
+        referenced = names_in_source | attributes_in_source
+        for symbol in LEGACY_PLAN25_SYMBOLS:
+            with self.subTest(symbol=symbol):
+                self.assertNotIn(symbol, referenced)
 
-    @mock.patch("runtime.run_curriculum.CurriculumFactoryGraph")
-    @mock.patch("runtime.run_curriculum.CodexWorker")
-    def test_live_cli_dispatches_exact_manifest_to_factory(self, worker, factory):
-        factory.return_value.run.return_value = {"terminal": "UNIT_ACCEPTED", "run_id": "r1"}
-        output = ENGINE / "outputs/cli-dispatch-not-created"
-        stream = io.StringIO()
-        with redirect_stdout(stream):
-            code = main(["--curriculum", str(CURRICULUM / "arduino_kit_curriculum.v5.yaml"),
-                         "--lab-id", "L01", "--output-root", str(output)])
-        self.assertEqual(0, code)
-        factory.return_value.run.assert_called_once()
-        call = factory.return_value.run.call_args.kwargs
-        self.assertEqual(str(CURRICULUM / "arduino_kit_curriculum.v5.yaml"), call["curriculum"])
-        self.assertEqual("L01", call["lab_id"])
-        self.assertFalse(call["all_units"])
+        imported_modules = {
+            (node.module or "")
+            for node in ast.walk(RUN_CURRICULUM_AST)
+            if isinstance(node, ast.ImportFrom)
+        } | {
+            alias.name
+            for node in ast.walk(RUN_CURRICULUM_AST)
+            if isinstance(node, ast.Import)
+            for alias in node.names
+        }
+        forbidden_modules = {
+            "runtime.controller",
+            "runtime.session_bridge",
+            "runtime.curriculum_factory_graph",
+            "runtime.model_worker",
+        }
+        for module in forbidden_modules:
+            with self.subTest(module=module):
+                self.assertNotIn(module, imported_modules)
 
 
 class RunCurriculumElapsedTimeTests(unittest.TestCase):

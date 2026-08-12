@@ -1,0 +1,65 @@
+schema_version: 1
+patch_id: P-N40-001
+action: overlay
+graph_id: plan26_langgraph_curriculum_factory_implementation
+base_graph_digest: 3c4177f9a239279b86e1a912a0b704e3b7867693fcb4b98fe00c73c33caee867
+target_node: N40_CLI_CUTOVER
+scope: node_only
+reason: N40's own prior result report disclosed that tests/runtime/test_run_curriculum.py
+  tests the retired Plan 25 parser_for/--lab-id CLI surface and fails to import against
+  the new build_parser()-based CLI, but the file was outside N40's write set at the
+  time. The write set now includes it (ownership correction); N40 must retire/rewrite
+  the stale assertions rather than leaving a downstream node to route around a collection-blocking
+  import error it did not cause.
+expected_effect: tests/runtime/test_run_curriculum.py imports cleanly and asserts
+  the Plan 26 migration contract (parser_for absent, legacy flags rejected, no Plan
+  25 symbols reachable) instead of the retired Plan 25 dispatch behavior, unblocking
+  pytest -q tests/runtime collection for all downstream full-suite runs
+instructions: "Ownership correction. This node's own prior result report already disclosed,\n\
+  correctly and explicitly, that `tests/runtime/test_run_curriculum.py` tests\nthe\
+  \ retired Plan 25 CLI surface (`parser_for(runtime)`, `--lab-id` dispatch to\na\
+  \ mocked `CurriculumFactoryGraph`/`CodexWorker`) and fails to import against\nthe\
+  \ new CLI, but was out of this node's write set at the time so it could not\nbe\
+  \ fixed. That file is now in this node's write set. Retire/rewrite it here,\nas\
+  \ the node whose CLI cutover the file's own assertions have gone stale\nagainst.\n\
+  \n`tests/runtime/test_run_curriculum.py` currently has two independent parts:\n\n\
+  1. `RunCurriculumParserTests` and its shared top-of-file import\n   `from runtime.run_curriculum\
+  \ import main, parser_for` \u2014 this is what is\n   broken. `parser_for` no longer\
+  \ exists; `run_curriculum.py` now exposes only\n   `build_parser()` (no arguments,\
+  \ a different and much smaller flag surface:\n   `--engine-root`, `--curriculum`,\
+  \ `--output-root`, one of\n   `--preflight`/`--unit`/`--all`/`--resume`, `--authorization`).\
+  \ Replace this\n   class with new tests asserting the Plan 26 migration contract\
+  \ instead of\n   testing removed behavior:\n   - `parser_for` remains absent: importing\
+  \ it from `runtime.run_curriculum`\n     fails (e.g. `assertRaises(ImportError)`\
+  \ around the import, or\n     `assertFalse(hasattr(run_curriculum_module, \"parser_for\"\
+  ))`).\n   - Legacy CLI surfaces remain rejected: flags the old parser accepted\n\
+  \     (`--lab-id`, and the old per-lab/per-run policy flags such as\n     `--max-model-calls-per-lab`,\
+  \ `--max-concurrency`,\n     `--max-meta-revision-cycles`, `--retry-malformed-output`)\
+  \ are not\n     recognized by the current `build_parser()` and raise `SystemExit(2)`\n\
+  \     when passed.\n   - `runtime/run_curriculum.py` uses only the Plan 26 LangGraph\
+  \ path: no\n     Plan 25 symbol (`CurriculumFactoryGraph`, `CodexWorker`, `GeminiReviewer`,\n\
+  \     `runtime.controller.CurriculumRuntime`, `runtime.session_bridge`, or\n   \
+  \  `parser_for`) is imported or referenced by the module. Prefer a static\n    \
+  \ check (e.g. AST or source inspection of `runtime/run_curriculum.py`),\n     consistent\
+  \ with the import-audit style already used in\n     `tests/runtime/test_plan26_cli.py`,\
+  \ over importing those symbols into the\n     test itself.\n   Do not restore `parser_for`,\
+  \ `CurriculumFactoryGraph`, `CodexWorker`, or any\n   Plan 25 dispatch path in `runtime/run_curriculum.py`\
+  \ to make old assertions\n   pass. The old behavior is retired; the test must assert\
+  \ that it stays\n   retired, not resurrect it.\n\n2. `RunCurriculumElapsedTimeTests`\
+  \ \u2014 this class does not import or use\n   `parser_for`/`main` at all; it drives\
+  \ `runtime.controller.CurriculumRuntime\n   .simulate(...)` directly, a historical\
+  \ module this node's own migration\n   disposition deliberately left in place and\
+  \ unreachable from the production\n   CLI (see this node's existing result report,\
+  \ \"Migration disposition\"\n   section). It is collateral damage from sharing a\
+  \ file with the broken\n   import, not itself broken. Leave this class's body untouched.\
+  \ The only\n   change needed for it is fixing the shared import line at the top\
+  \ of the\n   file so it no longer imports the removed `parser_for` name.\n\nDo not\
+  \ touch any file outside this node's declared write set. Do not weaken\n`tests/runtime/test_plan26_cli.py`\
+  \ or `tests/runtime/test_plan26_workbook.py`\nto route around anything. Run the\
+  \ updated verification command\n(`{python} -m pytest -q tests/runtime/test_plan26_cli.py\n\
+  tests/runtime/test_plan26_workbook.py tests/runtime/test_run_curriculum.py`)\nand\
+  \ confirm it is green before finishing. Update this node's own result\nreport to\
+  \ record this correction: what was wrong, why it is this node's\nresponsibility,\
+  \ and what changed.\n"
+context: {}
+created_at: '2026-08-12T18:05:12.462360+00:00'

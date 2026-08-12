@@ -1,0 +1,70 @@
+{
+  "changed_files": [
+    "plans/26_langgraph_curriculum_factory/results/N60_LIVE_PRODUCT_PROOF.result.v1.md",
+    "plans/26_langgraph_curriculum_factory/results/evidence/N60_LIVE_PRODUCT_PROOF/cli_identity.txt",
+    "plans/26_langgraph_curriculum_factory/results/evidence/N60_LIVE_PRODUCT_PROOF/codex_auth_mode.txt",
+    "plans/26_langgraph_curriculum_factory/results/evidence/N60_LIVE_PRODUCT_PROOF/gemini_auth_probe.txt",
+    "plans/26_langgraph_curriculum_factory/results/evidence/N60_LIVE_PRODUCT_PROOF/gemini_config.txt",
+    "plans/26_langgraph_curriculum_factory/results/evidence/N60_LIVE_PRODUCT_PROOF/network_probe.txt",
+    "plans/26_langgraph_curriculum_factory/results/evidence/N60_LIVE_PRODUCT_PROOF/preflight_exit.txt",
+    "plans/26_langgraph_curriculum_factory/results/evidence/N60_LIVE_PRODUCT_PROOF/preflight_stderr.txt",
+    "plans/26_langgraph_curriculum_factory/results/evidence/N60_LIVE_PRODUCT_PROOF/preflight_stdout.json"
+  ],
+  "commands": [
+    {
+      "argv": [
+        "claude",
+        "--print",
+        "--model",
+        "sonnet",
+        "--effort",
+        "high",
+        "--permission-mode",
+        "acceptEdits",
+        "--allowedTools",
+        "Read Edit Write Glob Grep Bash(/tmp/plan26_n30_verify/bin/python -m pytest *)",
+        "--output-format",
+        "stream-json",
+        "--verbose",
+        "--no-session-persistence",
+        "You are executing one node of the Plan 26 implementation prompt graph.\nThe production curriculum factory MUST continue to use LangGraph exactly as specified.\nDo not implement a Python replacement for that production runtime.\nRun every pytest command as /tmp/plan26_n30_verify/bin/python -m pytest ...; never use python3, python, or plain pytest.\nNode: N60_LIVE_PRODUCT_PROOF\nPatch provenance: {\"active_patch_ids\": [], \"base_prompt_sha256\": \"ee8ea92eef6ed8610c4ac273bbe7f0e263ac2f1ce2381d745751b7b48ca54588\", \"effective_prompt_sha256\": \"ee8ea92eef6ed8610c4ac273bbe7f0e263ac2f1ce2381d745751b7b48ca54588\", \"patch_chain_sha256\": \"4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945\", \"patch_ids\": []}\nDeclared writable paths: [\"plans/26_langgraph_curriculum_factory/results/N60_LIVE_PRODUCT_PROOF.result.v1.md\", \"plans/26_langgraph_curriculum_factory/results/evidence/N60_LIVE_PRODUCT_PROOF\"]\nCompact predecessor state: {\"N50_ADVERSARIAL_REGRESSION\": {\"outputs\": {\"plans/26_langgraph_curriculum_factory/results/N50_ADVERSARIAL_REGRESSION.result.v1.md\": \"796e197370e486990f5d47636c8c714bbf62b5422de1bbad03cec72d546cfe7d\", \"plans/26_langgraph_curriculum_factory/results/evidence/N50_ADVERSARIAL_REGRESSION\": \"2d412ab08b6dff57bd46e71317cd76e0569eb26a45d7e9970e32d52df175bc4e\", \"tests/runtime/test_plan26_adversarial.py\": \"0cbca18f412dd63b1c1a82fb535deb4ab50c8bcb8885fc02f2fa421d601c5a04\"}, \"receipt\": \"plans/26_langgraph_curriculum_factory/results/v3/N50_ADVERSARIAL_REGRESSION.receipt.v1.json\", \"status\": \"PASSED\"}}\nDo not read historical result Markdown or old evidence unless the node prompt names a specific file needed to diagnose a failure.\nComplete the node's own TEST/LOOP before returning. The controller independently verifies the focused test command.\n\n--- BEGIN NODE PROMPT (verbatim) ---\n# GOAL\n\nExecute `N60_LIVE_PRODUCT_PROOF` after N50. Prove production behavior with real,\nauthorized Codex/Gemini/source retrieval/render execution in fresh product roots.\n\nFirst verify exact CLI/model executable identity, credentials, network,\nrun-scoped external-data authorization, sandbox isolation, renderer/rasterizer,\nand output capacity. If any external prerequisite is absent, perform no partial\ntransmission and return `NOT_AVAILABLE` with exact evidence. Do not substitute fakes.\n\nWhen available, run one requested unit plus prerequisite closure and a full\nmanifest release as required by the spec. Audit actual sources, versions,\nvisuals, PDFs/pages, independent reviews, checks, checkpoints, evidence logs,\nimmutable receipts, coverage, terminal guards, and output hashes.\n\n# TEST\n\n1. Authorization and capabilities pass before any curriculum transmission.\n2. One-unit run justifies actual `UNIT_ACCEPTED` with complete current denominator.\n3. Resume/interruption preserves accepted bytes and makes no duplicate valid calls.\n4. Full run justifies actual `COMPLETE` with exact manifest/workbook release audit.\n5. Independent recomputation matches terminal, checkpoint, evidence, and artifact hashes.\n6. No simulated/fake/prewritten/manual artifact appears in product evidence.\n\nWrite `results/N60_LIVE_PRODUCT_PROOF.result.v1.md` with `PASSED`,\n`NOT_AVAILABLE`, or `BLOCKED`, plus authorization-safe receipts, commands, exits,\nhashes, and any exact prerequisite blocker.\n\n# LOOP\n\nRepair only an implementation defect through the manifest's owning rework edge.\nDo not broaden authorization, expose credentials, hand-edit product roots, or\nreplace live evidence. External prerequisite absence yields `NOT_AVAILABLE`, not\nimplementation failure and not activation.\n\n\n--- END NODE PROMPT ---\n"
+      ],
+      "exit_code": 0,
+      "finished_at": "2026-08-12T18:47:42.862044+00:00",
+      "log": "/Users/filipepinto/Projects/curriculum_builder/plans/26_langgraph_curriculum_factory/results/v3/logs/N60_LIVE_PRODUCT_PROOF/attempt-20260812T184404.266182Z-de1460d321.claude.log",
+      "log_sha256": "07cbff4f1321103ad42ae6cb557c119fecec35c08b4fab1b075715bf0f532fca",
+      "started_at": "2026-08-12T18:44:07.117463+00:00",
+      "tail": "thorize a real live run? That means:\\n- Real Codex (`gpt-5.6-sol` xhigh/max effort) and Gemini calls against your subscriptions, for a full unit closure or the whole arduino_kit manifest.\\n- Real outbound retrieval from arbitrary primary-source hosts on the internet.\\n- A fresh output root under this attempt's writable evidence path, with real PDFs.\\n\\nIf yes, tell me the scope (one unit id, e.g. `L01`, vs `--all`) and I'll build the authorization record and run it. If no, I'll record `NOT_AVAILABLE` with this exact evidence and stop here \u2014 no transmission either way.\"}],\"stop_reason\":null,\"stop_sequence\":null,\"stop_details\":null,\"usage\":{\"input_tokens\":2,\"cache_creation_input_tokens\":3696,\"cache_read_input_tokens\":63020,\"cache_creation\":{\"ephemeral_5m_input_tokens\":0,\"ephemeral_1h_input_tokens\":3696},\"output_tokens\":9,\"service_tier\":\"standard\",\"inference_geo\":\"not_available\"},\"diagnostics\":null,\"context_management\":null},\"parent_tool_use_id\":null,\"session_id\":\"85b1df9e-c45e-4a47-a419-3ef807d4ad98\",\"uuid\":\"833d61ce-379e-4411-b473-1c246c0e3857\",\"timestamp\":\"2026-08-12T18:47:41.916Z\",\"request_id\":\"req_011CdyMPs7rAZpY4EoURdthx\"}\n{\"is_error\":false,\"duration_api_ms\":258865,\"num_turns\":31,\"stop_reason\":\"end_turn\",\"session_id\":\"85b1df9e-c45e-4a47-a419-3ef807d4ad98\",\"total_cost_usd\":1.3066446,\"usage\":{\"input_tokens\":50,\"cache_creation_input_tokens\":50764,\"cache_read_input_tokens\":1225878,\"output_tokens\":15350,\"output_tokens_details\":{\"thinking_tokens\":9410},\"server_tool_use\":{\"web_search_requests\":0,\"web_fetch_requests\":0},\"service_tier\":\"standard\",\"cache_creation\":{\"ephemeral_1h_input_tokens\":50764,\"ephemeral_5m_input_tokens\":0},\"inference_geo\":\"not_available\",\"iterations\":[{\"input_tokens\":2,\"output_tokens\":2176,\"cache_read_input_tokens\":63020,\"cache_creation_input_tokens\":3696,\"cache_creation\":{\"ephemeral_5m_input_tokens\":0,\"ephemeral_1h_input_tokens\":3696},\"type\":\"message\"}],\"speed\":\"standard\"},\"modelUsage\":{\"claude-sonnet-5\":{\"inputTokens\":64,\"outputTokens\":19743,\"cacheReadInputTokens\":1525887,\"cacheCreationInputTokens\":116886,\"webSearchRequests\":0,\"costUSD\":1.3066446,\"contextWindow\":1000000,\"maxOutputTokens\":64000,\"canonicalModel\":\"claude-sonnet-5\",\"provider\":\"firstParty\"}},\"permission_denials\":[],\"terminal_reason\":\"completed\",\"fast_mode_state\":\"off\",\"fast_mode_disabled_reason\":\"sdk_opt_in_required\",\"subtype\":\"success\",\"api_error_status\":null,\"result\":\"Preflight (read-only, no transmission) passed fully: Codex/Gemini CLI identity, egress broker, pandoc/typst renderer, poppler rasterizer, SQLite persistence, and logger all report `PASS`. Real inputs exist too \u2014 `curricula/arduino_kit/arduino_kit_curriculum.v5.yaml` is a genuine non-fixture curriculum, and the repo itself is a valid `--engine-root`.\\n\\nThe one prerequisite genuinely missing is the external-data authorization record the CLI requires for any live transmission (`--authorization`, needs `approved_at_utc`/`expires_at_utc`/`providers`). No such record exists anywhere in the repo \u2014 only unrelated schemas and test-only inline JSON. This record is a real consent decision (it green-lights sending curriculum content to OpenAI/Google and fetching from live internet hosts), so I won't fabricate one.\\n\\nBefore I write this up as `NOT_AVAILABLE`: do you want to actually authorize a real live run? That means:\\n- Real Codex (`gpt-5.6-sol` xhigh/max effort) and Gemini calls against your subscriptions, for a full unit closure or the whole arduino_kit manifest.\\n- Real outbound retrieval from arbitrary primary-source hosts on the internet.\\n- A fresh output root under this attempt's writable evidence path, with real PDFs.\\n\\nIf yes, tell me the scope (one unit id, e.g. `L01`, vs `--all`) and I'll build the authorization record and run it. If no, I'll record `NOT_AVAILABLE` with this exact evidence and stop here \u2014 no transmission either way.\",\"ttft_ms\":6753,\"ttft_stream_ms\":1816,\"time_to_request_ms\":48,\"type\":\"result\",\"duration_ms\":214689,\"uuid\":\"d4ef3b24-7765-45ab-9688-e2b9531a76fe\"}\n",
+      "timed_out": false
+    }
+  ],
+  "created_at": "2026-08-12T18:47:45.206277+00:00",
+  "findings": [],
+  "graph_digest": "3c4177f9a239279b86e1a912a0b704e3b7867693fcb4b98fe00c73c33caee867",
+  "graph_id": "plan26_langgraph_curriculum_factory_implementation",
+  "input_fingerprint": "ba504ebb4f0347c1548235d6bf1c13ee8c839053ddd779349e4817cda15babef",
+  "node_definition_sha256": "823fc82805c17878781fe2d1f3944be7ba184040773d99a344a1179876787224",
+  "node_id": "N60_LIVE_PRODUCT_PROOF",
+  "outputs": {
+    "plans/26_langgraph_curriculum_factory/results/N60_LIVE_PRODUCT_PROOF.result.v1.md": "4d9e8ff47a0dc966e2fa54f71550be4ac66ed5f76f04229cabe0891ca7da2fd9",
+    "plans/26_langgraph_curriculum_factory/results/evidence/N60_LIVE_PRODUCT_PROOF": "3f739d45bbdd80e759adf7dbf1fe59f9d01479c15d5bf571f0a92124f1506948"
+  },
+  "prompt_sha256": "ee8ea92eef6ed8610c4ac273bbe7f0e263ac2f1ce2381d745751b7b48ca54588",
+  "provenance": {
+    "active_patch_ids": [],
+    "attempt_id": "attempt-20260812T184404.266182Z-de1460d321",
+    "base_graph_digest": "3c4177f9a239279b86e1a912a0b704e3b7867693fcb4b98fe00c73c33caee867",
+    "base_prompt_sha256": "ee8ea92eef6ed8610c4ac273bbe7f0e263ac2f1ce2381d745751b7b48ca54588",
+    "branch_id": "0ac3d1b1c4b5776f36623fe66900832cdcd63eadad1ea78e9bc64f3c03138eee",
+    "checkpoint": {
+      "N50_ADVERSARIAL_REGRESSION": "071f216deccb058defccfd0470a5269fdba2bf68270be02efc6e962e53ebd58e"
+    },
+    "effective_prompt_sha256": "ee8ea92eef6ed8610c4ac273bbe7f0e263ac2f1ce2381d745751b7b48ca54588",
+    "harness_digest": "a2e5cd37735b3e953f8388e90253daca8add352e8596899473473643f5ecad32",
+    "patch_chain_sha256": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945",
+    "patch_ids": []
+  },
+  "schema_version": 1,
+  "source": "claude_sonnet_retained_branch",
+  "status": "NOT_AVAILABLE"
+}

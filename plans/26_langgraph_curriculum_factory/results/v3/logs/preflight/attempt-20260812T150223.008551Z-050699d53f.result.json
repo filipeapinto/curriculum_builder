@@ -1,0 +1,27 @@
+{
+  "changed_files": [],
+  "command": [
+    "claude",
+    "--print",
+    "--model",
+    "sonnet",
+    "--effort",
+    "high",
+    "--permission-mode",
+    "acceptEdits",
+    "--allowedTools",
+    "Read Edit Write Glob Grep Bash(/tmp/plan26_n30_verify/bin/python -m pytest *)",
+    "--output-format",
+    "stream-json",
+    "--verbose",
+    "--no-session-persistence",
+    "You are proving the Plan 26 non-interactive launcher before any node runs.\nRun exactly this command using the Bash tool: /tmp/plan26_n30_verify/bin/python -m pytest --version\nDo not run any other command. Do not edit, create, or delete any file.\nWhen it succeeds, reply with only one line, exactly:\nPREFLIGHT_OK: <the exact stdout produced by that command>\nIf the command is denied or fails, reply with only one line: PREFLIGHT_FAILED: <reason>.\n"
+  ],
+  "exit_code": 0,
+  "log": "/Users/filipepinto/Projects/curriculum_builder/plans/26_langgraph_curriculum_factory/results/v3/logs/preflight/attempt-20260812T150223.008551Z-050699d53f.claude.log",
+  "log_sha256": "1b41f6c775c183f41a61e1d5921c8e5198686e59e8ad7a7c4cee2c3eb4400584",
+  "passed": true,
+  "preflight": true,
+  "reason": null,
+  "resolved_python": "/tmp/plan26_n30_verify/bin/python"
+}

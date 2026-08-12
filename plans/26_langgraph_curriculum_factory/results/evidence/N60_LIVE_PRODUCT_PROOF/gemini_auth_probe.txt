@@ -1,0 +1,8 @@
+$ gemini -p "reply with the single word: PONG" </dev/null
+When using Gemini API, you must specify the GEMINI_API_KEY environment variable.
+Update your environment and try again (no reload needed if using .env)!
+EXIT=41
+
+This is a local capability probe only (spec 8.1: one local probe per
+capability, no curriculum model job). No curriculum content was constructed
+or transmitted before this call, and the call carried none.

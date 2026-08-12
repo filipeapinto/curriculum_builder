@@ -15,11 +15,15 @@
     "execution": {
       "type": "object",
       "additionalProperties": false,
-      "required": ["controller", "state_dir", "receipt_schema", "legacy_result_pattern", "workspace_mode", "workspace_log_dir", "python_candidates", "claude_command", "max_parallel", "node_timeout_seconds", "test_timeout_seconds", "cache"],
+      "required": ["controller", "state_dir", "receipt_schema", "patch_schema", "patch_dir", "attempt_dir", "audit_log", "legacy_result_pattern", "workspace_mode", "workspace_log_dir", "python_candidates", "claude_command", "max_parallel", "node_timeout_seconds", "test_timeout_seconds", "cache"],
       "properties": {
         "controller": {"type": "string"},
         "state_dir": {"type": "string"},
         "receipt_schema": {"type": "string"},
+        "patch_schema": {"type": "string"},
+        "patch_dir": {"type": "string"},
+        "attempt_dir": {"type": "string"},
+        "audit_log": {"type": "string"},
         "legacy_result_pattern": {"type": "string"},
         "workspace_mode": {"const": "isolated_copy"},
         "workspace_log_dir": {"type": "string"},
