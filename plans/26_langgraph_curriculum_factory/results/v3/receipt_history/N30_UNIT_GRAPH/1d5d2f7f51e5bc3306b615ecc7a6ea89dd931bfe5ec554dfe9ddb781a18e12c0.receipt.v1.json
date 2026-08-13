@@ -10,27 +10,27 @@
         "tests/runtime/test_plan26_unit_graph.py"
       ],
       "exit_code": 0,
-      "finished_at": "2026-08-13T00:05:50.576259+00:00",
-      "log": "plans/26_langgraph_curriculum_factory/results/v3/logs/N30_UNIT_GRAPH/reverify-shared-output-1786579540743.test1.log",
-      "log_sha256": "6f10f0a124348069edc6aa40f84d65feb9c9af4496a23d0dcad4154f8757f212",
-      "started_at": "2026-08-13T00:05:40.743994+00:00",
-      "tail": "........................................................................ [ 77%]\n.....................                                                    [100%]\n93 passed in 8.64s\n",
+      "finished_at": "2026-08-12T23:07:41.582278+00:00",
+      "log": "plans/26_langgraph_curriculum_factory/results/v3/logs/N30_UNIT_GRAPH/reverify-shared-output.test1.log",
+      "log_sha256": "5de2420960eba84aaace8c365dac70feb8a884a9d0ae32af051906fc98c29537",
+      "started_at": "2026-08-12T23:07:34.082826+00:00",
+      "tail": "........................................................................ [ 77%]\n.....................                                                    [100%]\n93 passed in 6.56s\n",
       "timed_out": false
     }
   ],
-  "created_at": "2026-08-13T00:05:50.603116+00:00",
+  "created_at": "2026-08-12T23:07:41.586605+00:00",
   "findings": [],
-  "graph_digest": "18d619bb4eb509d1c6c590699ce2072660f36781c33cbc18a4ad1f9f8501cac7",
+  "graph_digest": "252ed9088a18eb1fd0991291158eb7fd7c06a3c2c3ce6772f487ccffb8a4375a",
   "graph_id": "plan26_langgraph_curriculum_factory_implementation",
-  "input_fingerprint": "6a29ad8b4df63525311971b1f61e533a05127d4c0b62f6f73ea3d179b3645fd9",
+  "input_fingerprint": "3454850e8db30648e78710a02c745ce8321e66408777dc1ffd23e0296657e06c",
   "node_definition_sha256": "e47b6f162855028f57d85d1179f7940805f6a44d19a3a1edfad2c75a8675e452",
   "node_id": "N30_UNIT_GRAPH",
   "outputs": {
     "plans/26_langgraph_curriculum_factory/results/N30_UNIT_GRAPH.result.v1.md": "98249a68aad16ef6fb8c576ecf5f0ad0ca99fc9a475c661bb522f9a145425c8f",
     "plans/26_langgraph_curriculum_factory/results/evidence/N30_UNIT_GRAPH": "e29a6768b8c29a966ffbebcfaa7a4ecf567f6418a9b7e2e98d0df0cb271bed28",
-    "runtime/langgraph_factory/graph.py": "cbd0cdec2d1a0c4fdc14a94e86cc4126ac5ab70f5b0e9ef1fc9e993308dde9c8",
+    "runtime/langgraph_factory/graph.py": "efabbd515c4ba2aab811e47a88ac2ffe2742a23fec9b7e46060ec7e385f06aaa",
     "runtime/langgraph_factory/unit_graph.py": "286995f398826be63bc2263ea5148f87b23ee7683973e4245c4ee3687a6f309c",
-    "tests/runtime/test_plan26_unit_graph.py": "eb491faf6e6a7f602908d4279e9d645af9559d83c8e1a7b998d61eec796d093b"
+    "tests/runtime/test_plan26_unit_graph.py": "db62b49c511cea3cc72e6427fdda0fb356f22e5be5dcb00cc6c3a91f4885e54d"
   },
   "prompt_sha256": "e0f398b91fa5e8a5d0d6e48cd49f4ebf11101641de9a410836ba32e8cf73c8af",
   "provenance": {
@@ -38,11 +38,11 @@
       "P-N30-001"
     ],
     "attempt_id": null,
-    "base_graph_digest": "18d619bb4eb509d1c6c590699ce2072660f36781c33cbc18a4ad1f9f8501cac7",
+    "base_graph_digest": "252ed9088a18eb1fd0991291158eb7fd7c06a3c2c3ce6772f487ccffb8a4375a",
     "base_prompt_sha256": "f78e98cb44f95a2aa108e87301d3e5fcddd0924e68a47333181bf5ebcd7f5e3e",
     "branch_id": null,
     "checkpoint": {
-      "N20_GRAPH_COMPILER": "a9fe25993cead0df3120d48fa444aeeda8293ba6dc44bcd2cf9e3ac653540c7d",
+      "N20_GRAPH_COMPILER": "532ba217134249f2157dce7c0247fff41eac8ca39ae65a7351d81adbdda37187",
       "N21_PERSISTENCE_RESUME": "52b4879c03992f28061f231bf532d8cf29e227ed07978ace3bb1e60e7ff50a35",
       "N22_DETERMINISTIC_NODES": "3a185930408fbbc0e90a36c2670b69d02d7174601d582e9947ab8fede2c0c0fc",
       "N23_MODEL_NODES": "93f312e86f079d21654aaca74cecfc8fba513cbce78b2fdf69d7390eb949ea17"

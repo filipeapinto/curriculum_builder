@@ -23,17 +23,20 @@ from __future__ import annotations
 
 import hashlib
 import json
+import tempfile
 from pathlib import Path
 from typing import Any
 
 import pytest
 
 from runtime.langgraph_factory import graph as G
+from runtime.langgraph_factory import model_nodes as mn
 from runtime.langgraph_factory import routing as R
 from runtime.langgraph_factory import unit_graph as U
 from runtime.langgraph_factory import workbook
 from runtime.langgraph_factory.nodes import SystemFailure, canonical_digest, stream_id, terminal
 from runtime.langgraph_factory.state import FIELD_REDUCERS
+from tests.runtime import test_plan26_unit_graph as UG
 
 REPO_ROOT = Path(__file__).resolve().parents[2]
 WORKBOOK_PY = REPO_ROOT / "runtime" / "langgraph_factory" / "workbook.py"
@@ -753,12 +756,18 @@ def test_repeating_the_terminal_write_after_a_crash_replays_idempotently(tmp_pat
 def test_the_compiled_graph_really_registers_the_workbook_engine(tmp_path: Path) -> None:
     """`register_workbook_topology` wires a real, internally-consistent branch.
 
-    D24 is deliberately unreachable from `D05_SELECT_NEXT_UNIT` in this
-    generation (`test_blocked_d05_cannot_reach_d24_yet` below names why, and
-    who owns closing it), and LangGraph's own `get_graph()` drawing prunes
-    edges with no path from `START` -- so this asserts against the builder's
-    own registered `branches` (the actual routing table LangGraph compiles
-    from), not the pruned visualization `compiled_topology()` returns.
+    This builds its own isolated builder against the narrow `binding_
+    inventory()` (not `full_binding_inventory()`, and not `build_curriculum_
+    factory_graph` itself), so D24 is unreachable from `D05_SELECT_NEXT_UNIT`
+    *in this specific construction* -- `binding_inventory()`'s own docstring
+    explains why it stays narrow, and `test_d05_reaches_d24_in_the_real_
+    compiled_graph_but_not_via_binding_inventory_alone` below proves D24
+    really is reachable from D05 in the actual production compiled graph
+    (P-N32-001, closing N90 finding F2). LangGraph's own `get_graph()`
+    drawing prunes edges with no path from `START` -- so this asserts against
+    the builder's own registered `branches` (the actual routing table
+    LangGraph compiles from), not the pruned visualization `compiled_
+    topology()` returns.
     """
 
     from langgraph.graph import StateGraph
@@ -807,32 +816,37 @@ def test_the_compiled_graph_really_registers_the_workbook_engine(tmp_path: Path)
     assert compiled.name == G.GRAPH_NAME
 
 
-def test_blocked_d05_cannot_reach_d24_yet() -> None:
-    """Owned by N30_UNIT_GRAPH: `D05`'s one registered branch predates D24.
+def test_d05_reaches_d24_in_the_real_compiled_graph_but_not_via_binding_inventory_alone() -> None:
+    """P-N32-001 (closing N90 finding F2): D24 is a real, reachable destination
+    of `D05_SELECT_NEXT_UNIT`'s `manifest_exhausted` guard in the one compiled
+    production graph -- corrected from this test's own prior, now-false claim
+    that it was unreachable (that claim held only for a builder registered
+    directly against the narrow `binding_inventory()`, never for `build_
+    curriculum_factory_graph` itself, and this node's own prior result report
+    repeated the error).
 
     `unit_graph.UNIT_BRANCHES` registers exactly one conditional-edge branch
-    for `D05_SELECT_NEXT_UNIT`, using `unit_graph.py`'s own frozen
-    `MODEL_BRANCH_DESTINATIONS`-independent fallback
-    (`routing.guard_destinations`), narrowed to `unit_graph.py`'s own
-    `available` argument at registration time. `unit_graph.DEFERRED_EDGES`
-    explicitly declares `(D05_SELECT_NEXT_UNIT, manifest_exhausted, D24_...,
-    N32_WORKBOOK_TERMINALS)` as a row whose destination has no node body --
-    a declaration this node cannot invalidate without either registering a
-    second, colliding branch on the same source (LangGraph raises
-    `ValueError: Branch ... already exists`) or editing `unit_graph.py`
-    itself, which is outside this node's write set. D24 is therefore
-    registered as a real node with real outgoing edges (proven above) but is
-    not yet reachable from `D05` in the compiled graph -- an honest,
-    structural consequence of `binding_inventory()` staying exactly what it
-    was before N32 (see that function's own docstring), not a defect in D24's
-    own implementation. Closing this is N30_UNIT_GRAPH's
-    `unit_flow_or_denominator` rework edge: widen `MODEL_BRANCH_DESTINATIONS`/
-    `UNIT_BRANCHES`' fallback to include `D24_PROVE_EXACT_MANIFEST_COVERAGE`.
+    for `D05_SELECT_NEXT_UNIT`, resolved via `unit_graph.branch_destinations`
+    against whatever `available` set `register_skeleton` was called with.
+    `build_curriculum_factory_graph` now calls it with `full_binding_
+    inventory()` (P-N32-001), which includes D24 -- so the `unit_graph
+    .DEFERRED_EDGES` row `(D05_SELECT_NEXT_UNIT, manifest_exhausted, D24_...,
+    N32_WORKBOOK_TERMINALS)` resolves automatically, exactly as N31's six
+    owned rows did for D16/D17. `binding_inventory()` itself still excludes
+    D24 by design (its own docstring explains why: N30's frozen tests
+    recompute their expectation directly from it), so a builder registered
+    against *that* narrower set alone still cannot reach D24 -- the one
+    remaining fact this test still checks directly, alongside the real edge.
     """
 
     assert ("D05_SELECT_NEXT_UNIT", "manifest_exhausted", "D24_PROVE_EXACT_MANIFEST_COVERAGE", "N32_WORKBOOK_TERMINALS") in U.DEFERRED_EDGES
     assert "D24_PROVE_EXACT_MANIFEST_COVERAGE" not in G.binding_inventory()
     assert "D24_PROVE_EXACT_MANIFEST_COVERAGE" in G.full_binding_inventory()
+
+    output_root = Path(tempfile.mkdtemp(prefix="plan26-n32-d05d24-"))
+    compiled = G.build_curriculum_factory_graph(engine_root=REPO_ROOT, output_root=output_root)
+    edges = {(source, target) for source, target, _conditional in G.compiled_topology(compiled)["edges"]}
+    assert ("D05_SELECT_NEXT_UNIT", "D24_PROVE_EXACT_MANIFEST_COVERAGE") in edges
 
 
 def test_blocked_d91_cannot_reach_d29_yet() -> None:
@@ -859,7 +873,234 @@ def test_blocked_d91_cannot_reach_d29_yet() -> None:
     `MODEL_BRANCH_DESTINATIONS["D91_CLASSIFY_MODEL_FAILURE"]`.
     """
 
-    from runtime.langgraph_factory import model_nodes as mn
-
     assert mn._repair_destination("M08_REPAIR_NAMED_WORKBOOK_DEFECT") == "D29_CLASSIFY_AND_PLAN_WORKBOOK_REPAIR"
     assert "D29_CLASSIFY_AND_PLAN_WORKBOOK_REPAIR" not in U.MODEL_BRANCH_DESTINATIONS["D91_CLASSIFY_MODEL_FAILURE"]
+
+
+# ==========================================================================
+# P-N32-001 required proof: D24-D32 are real, wired members of the one
+# production compiled graph (`graph.build_curriculum_factory_graph`), not
+# merely function-level tested. Every assertion below runs the real compiled
+# graph (`compiled.get_graph()`, `compiled.stream()`), never a declared table
+# alone -- N90's own audit (finding F2) checked exactly this way and found
+# D24-D32 registered but unwired, and this node's own prior result report
+# falsely claimed otherwise; this is what makes that finding, and that false
+# claim, closed.
+# ==========================================================================
+
+
+@pytest.fixture(scope="module")
+def compiled() -> Any:
+    output_root = Path(tempfile.mkdtemp(prefix="plan26-n32-"))
+    return G.build_curriculum_factory_graph(engine_root=REPO_ROOT, output_root=output_root)
+
+
+def test_d24_through_d32_and_m07_m08_are_members_of_the_compiled_production_graph(compiled) -> None:
+    nodes = set(compiled.get_graph().nodes)
+    for node_id in workbook.WORKBOOK_TOPOLOGY_SOURCES:
+        assert node_id in nodes, node_id
+
+
+def test_binding_inventory_and_unit_repair_binding_inventory_are_unchanged_by_this_nodes_wiring() -> None:
+    """N30's and N31's own tests recompute their expectations directly from
+    `binding_inventory()`'s and `unit_repair_binding_inventory()`'s return
+    values; P-N32-001 requires both stay provably unchanged even though
+    `build_curriculum_factory_graph` now compiles against the wider `full_
+    binding_inventory()`."""
+
+    narrow = set(G.binding_inventory())
+    assert narrow.isdisjoint(workbook.WORKBOOK_NODE_BODIES)
+    unit_repair = set(G.unit_repair_binding_inventory())
+    assert unit_repair.isdisjoint(workbook.WORKBOOK_NODE_BODIES)
+    full = set(G.full_binding_inventory())
+    assert full == unit_repair | set(workbook.WORKBOOK_NODE_BODIES)
+
+
+def test_the_d05_manifest_exhausted_deferred_edge_is_now_a_real_wired_edge(compiled) -> None:
+    """The one remaining `DEFERRED_EDGES` row this node owns is a real edge of
+    the real compiled graph, not merely absent from a "still deferred" set."""
+
+    owned = [row for row in U.DEFERRED_EDGES if row[3] == "N32_WORKBOOK_TERMINALS"]
+    assert len(owned) == 1
+
+    edges = {(source, target) for source, target, _conditional in G.compiled_topology(compiled)["edges"]}
+    for source, _value, destination, _owner in owned:
+        assert (source, destination) in edges, (source, destination)
+
+
+def test_widening_the_bindings_raises_no_topology_or_binding_error(tmp_path) -> None:
+    """`validate_bindings`'s placeholder/duplicate/uncallable checks and
+    `register_skeleton`/`register_workbook_topology`'s topology checks all
+    pass for D24-D32 exactly as they already do for the pre-existing
+    skeleton -- proven by actually compiling, not by re-reading source."""
+
+    output_root = tmp_path / "widen-check"
+    output_root.mkdir()
+    compiled_here = G.build_curriculum_factory_graph(engine_root=REPO_ROOT, output_root=output_root)
+    nodes = set(compiled_here.get_graph().nodes)
+    for node_id in workbook.WORKBOOK_TOPOLOGY_SOURCES:
+        assert node_id in nodes, node_id
+
+
+class _WorkbookScriptedTransport(UG._ScriptedFakeTransport):
+    """`UG._ScriptedFakeTransport` plus a scripted, page-denominator-exact M07
+    review candidate. M01-M05 stay exactly `UG`'s own scripted behavior
+    (`UG._scripted_candidate`, via `super().execute`); `UG._ScriptedFakeTransport`
+    itself is not modified (`tests/runtime/test_plan26_unit_graph.py` is
+    restricted by P-N32-002 to its own four named residual-failure fixes),
+    so M07 is handled by this subclass instead.
+    """
+
+    def execute(self, *, job_id: str, activation_id: str, projection: Any = None, **kwargs: Any):
+        if job_id != "M07_REVIEW_ACTUAL_WORKBOOK":
+            return super().execute(
+                job_id=job_id, activation_id=activation_id, projection=projection, **kwargs
+            )
+        projection = dict(projection or {})
+        self.calls.append((job_id, activation_id))
+        inventory = projection["page_inventory"]
+        self.responses[job_id] = {
+            "overall_findings": [],
+            "page_findings": [
+                {
+                    "page_number": int(page["page_number"]),
+                    "page_sha256": str(page["page_sha256"]),
+                    "findings": [],
+                }
+                for page in inventory["pages"]
+            ],
+        }
+        return mn.tp.FakeCliTransport.execute(
+            self, job_id=job_id, activation_id=activation_id, projection=projection, **kwargs
+        )
+
+
+def _scripted_model_context_with_workbook(sandbox: Path) -> Any:
+    routes = mn.tp.load_job_registry()
+    return mn.ModelNodeContext(
+        transport=_WorkbookScriptedTransport(sandbox_root=sandbox, registry=routes),
+        registry=routes,
+    )
+
+
+class _FullWorkbookRegistry(UG._StubRegistry):
+    """`UG._StubRegistry`'s unit-level surface (render/inspect/capability) plus
+    this file's own `_Registry`'s workbook-level `assemble_workbook`/
+    `inspect_workbook_pages`, so one real episode can run all the way from
+    D00 through D32 over a single fake transport registry."""
+
+    def __init__(self, sandbox: Path) -> None:
+        super().__init__(sandbox)
+        self._workbook = _Registry(sandbox)
+
+    def assemble_workbook(self, ordered_unit_ids: Any, unit_pdf_hashes: Any, front_matter: Any) -> dict[str, Any]:
+        return self._workbook.assemble_workbook(ordered_unit_ids, unit_pdf_hashes, front_matter)
+
+    def inspect_workbook_pages(self, pdf_path: str, pdf_sha256: str) -> dict[str, Any]:
+        return self._workbook.inspect_workbook_pages(pdf_path, pdf_sha256)
+
+
+class _FullWorkbookHarnessContext:
+    """`UG._HarnessContext`'s own shape, but with `_FullWorkbookRegistry` as
+    its transport registry so D25/D26's assembler/inspector calls resolve
+    too. `UG._HarnessContext` itself hard-codes `UG._StubRegistry` and is not
+    parameterizable, and is not in this file's write set to change."""
+
+    def __init__(self, engine_root: Path, output_root: Path, sandbox: Path) -> None:
+        from runtime.langgraph_factory.artifacts import ArtifactStore
+        from runtime.langgraph_factory.evidence import EvidenceStore
+
+        self.engine_root = engine_root
+        self.output_root = output_root
+        self.path_guard = ArtifactStore(output_root)
+        self.evidence_service = EvidenceStore(output_root)
+        self.transport_registry = _FullWorkbookRegistry(sandbox)
+        self.source_retriever = UG._StubRetriever()
+        self.signal_token = UG._SwitchableToken()
+        self.clock = lambda: "2026-01-01T00:00:00Z"
+
+
+def _run_full_episode_through_the_real_compiled_graph(
+    monkeypatch: Any, fixture: dict[str, Any], *, mode: str, requested: str | None
+) -> dict[str, Any]:
+    """`UG._run_episode`'s own body, over `_FullWorkbookHarnessContext` and the
+    workbook-aware scripted model context instead of `UG`'s unit-path-only
+    ones, so a run can be driven past D24 into D25-D32. A parallel runner,
+    not a parameterization of `UG._run_episode` -- that function is frozen
+    (P-N32-002 restricts `test_plan26_unit_graph.py` to its own four named
+    fixes) and hard-codes its own unit-path-only harness context.
+    """
+
+    lock, invocation, envelope = UG._prepare_episode(fixture, mode=mode, requested=requested)
+    context = _FullWorkbookHarnessContext(fixture["engine"], fixture["output_root"], fixture["sandbox"])
+    monkeypatch.setattr(
+        G, "build_model_node_context",
+        lambda _context, **_kwargs: _scripted_model_context_with_workbook(fixture["sandbox"]),
+    )
+    compiled = G.build_curriculum_factory_graph(
+        engine_root=fixture["engine"], output_root=fixture["output_root"]
+    )
+
+    trace: list[str] = []
+    updates: list[tuple[str, dict[str, Any]]] = []
+    for chunk in compiled.stream(
+        {"invocation": envelope}, config=invocation.config, stream_mode="updates", context=context,
+    ):
+        for node_id, update in chunk.items():
+            trace.append(node_id)
+            updates.append((node_id, dict(update or {})))
+    lock.release()
+    return {
+        "trace": trace,
+        "updates": updates,
+        "state": compiled.get_state(invocation.config).values,
+        "compiled": compiled,
+        "invocation": invocation,
+    }
+
+
+def test_a_real_run_through_the_compiled_production_graph_reaches_workbook_complete(
+    tmp_path: Path, monkeypatch
+) -> None:
+    """P-N32-001's central required proof: the whole chain -- D05 exhaustion,
+    D24 coverage, D25 assembly, D26 render/inventory/inspect, D27 review
+    packet freeze, M07's real dispatch through D90, D28's evidence reduction,
+    D32's release proof, and the real N22-owned D98 -- really executes over
+    the one compiled production graph for an `all`-mode manifest whose one
+    unit is accepted, and really reaches a real, checkpointed `COMPLETE`
+    terminal. Not merely that the nodes exist (`test_d24_through_d32_and_
+    m07_m08_are_members_of_the_compiled_production_graph` already proves
+    that): that a real run actually walks the whole chain and D98 accepts
+    what it finds.
+    """
+
+    fixture = UG._build_episode_fixture(tmp_path, units=1)
+    result = _run_full_episode_through_the_real_compiled_graph(
+        monkeypatch, fixture, mode="all", requested=None
+    )
+
+    for node_id in (
+        "D24_PROVE_EXACT_MANIFEST_COVERAGE",
+        "D25_ASSEMBLE_WORKBOOK",
+        "D26_RENDER_INVENTORY_INSPECT_WORKBOOK",
+        "D27_FREEZE_WORKBOOK_REVIEW_PACKET",
+        "M07_REVIEW_ACTUAL_WORKBOOK",
+        "D28_REDUCE_WORKBOOK_EVIDENCE",
+        "D32_RECOMPUTE_FINAL_RELEASE",
+        "D98_WRITE_TERMINAL",
+    ):
+        assert node_id in result["trace"], (node_id, result["trace"])
+    assert "D29_CLASSIFY_AND_PLAN_WORKBOOK_REPAIR" not in result["trace"], (
+        "a clean, all-passing workbook must never enter the repair loop"
+    )
+
+    state = result["state"]
+    assert state.get("pending_failure") is None
+    terminal_record = state.get("terminal")
+    assert terminal_record is not None and terminal_record["kind"] == "COMPLETE"
+    assert terminal_record["evidence"]["kind"] == "COMPLETE"
+    assert terminal_record["evidence"]["unit_receipt_hashes"] == {
+        "U001": state["accepted_unit_receipts"]["U001"]["receipt_hash"]
+    }
+    assert state["workbook_head"]["workbook"]["hash"]
+    assert len(state.get("terminal_history") or []) == 1

@@ -1,0 +1,63 @@
+schema_version: 1
+patch_id: P-N32-002
+action: overlay
+graph_id: plan26_langgraph_curriculum_factory_implementation
+base_graph_digest: 18d619bb4eb509d1c6c590699ce2072660f36781c33cbc18a4ad1f9f8501cac7
+target_node: N32_WORKBOOK_TERMINALS
+scope: node_only
+reason: N32's own D24-D32 wiring (P-N32-001) causes 4 residual failures in test_plan26_unit_graph.py,
+  the same class of consequence N31 already diagnosed and closed for D16-D23 (P-N31-003).
+  One test's frontier assertion needs to become a positive UNIT_ACCEPTED check; three
+  share a helper that assumed a clean episode always halts at a deferred edge, no
+  longer true now that this is likely the last topology-wiring layer
+expected_effect: 'test_plan26_unit_graph.py reaches full green, closing this recursive
+  cascade; N32 can then report a genuine bare status: PASSED'
+instructions: "`tests/runtime/test_plan26_unit_graph.py` is now also in your write\
+  \ set,\nspecifically for four residual failures your D24-D32 wiring (P-N32-001)\n\
+  causes \u2014 the same class of consequence N31 already diagnosed and closed for\n\
+  its own D16-D23 wiring (P-N31-003), one layer further now that your own\ncorrection\
+  \ is real too. This is very likely the last layer: no further\nnode in this graph\
+  \ adds compiled-graph topology after N32. Fix exactly\nthese, nothing else in that\
+  \ file:\n\n1. `test_a_fresh_episode_executes_the_bootstrap_spine_once_through_langgraph`\n\
+  \   \u2014 its final assertion currently reads `assert state[\"terminal\"][\"kind\"\
+  ]\n   not in (\"UNIT_ACCEPTED\", \"COMPLETE\")`, written when D24 was still\n  \
+  \ unreachable so the clean one-unit (\"mode\": \"one\") episode could never\n  \
+  \ reach a real terminal. With D24-D32 now wired, this exact fixture reaches\n  \
+  \ a genuine `UNIT_ACCEPTED` terminal (verified: `state[\"terminal\"][\"kind\"]\n\
+  \   == \"UNIT_ACCEPTED\"`, checkpointed and real, not `COMPLETE` \u2014 \"one\"\
+  \ mode\n   requesting a single unit correctly stops at unit acceptance rather than\n\
+  \   entering the workbook assembly path, which is \"all\"-mode's concern). This\n\
+  \   is the pipeline finally doing what N90's F1/F2 said it couldn't \u2014 update\n\
+  \   the assertion to require this real, positive outcome (`state[\"terminal\"]\n\
+  \   is not None and state[\"terminal\"][\"kind\"] == \"UNIT_ACCEPTED\"`) instead\
+  \ of\n   asserting the absence of one. Update the test's docstring accordingly;\
+  \ do\n   not leave it describing a halt that no longer happens.\n\n2. `test_a_visual_denominator_permutation_produces_an_identical_admitted_head`,\n\
+  \   `test_the_committed_path_stops_at_a_declared_deferred_edge`, and\n   `test_this_nodes_renderers_are_a_test_double_and_not_exposed_to_n13s_store_gap`\n\
+  \   all call the shared `_assert_frontier_is_a_declared_row(frontier)` helper\n\
+  \   (around line 778), which unconditionally asserts `frontier is not None` \u2014\
+  \n   written when a clean episode could never finish without hitting some\n   still-deferred\
+  \ `DEFERRED_EDGES` row. For whichever of these three now run\n   a fixture that\
+  \ completes cleanly (no `KeyError` in `_run_episode`,\n   `deferred_frontier` stays\
+  \ `None`) rather than halting at a declared row,\n   that is the correct, intended\
+  \ outcome now \u2014 not a defect to route around.\n   Read each of these three\
+  \ tests' own body first (each may drive a\n   different fixture/mode; do not assume\
+  \ all three behave identically) to\n   determine, per test, whether it now completes\
+  \ cleanly or still legitimately\n   halts at a real remaining deferred row (if any\
+  \ such row still exists after\n   your own wiring \u2014 check `unit_graph.DEFERRED_EDGES`\
+  \ for what, if anything,\n   remains undeclared-body). Update `_assert_frontier_is_a_declared_row`\
+  \ (or\n   each call site, whichever is the smaller, more honest change) to accept\n\
+  \   both outcomes correctly: a declared deferred frontier is still valid if\n  \
+  \ one is genuinely still open for that specific fixture, and a clean\n   completion\
+  \ (whatever real terminal/state the now-fully-wired path\n   produces for that fixture)\
+  \ is valid and should be positively asserted,\n   not just tolerated as \"not None\
+  \ was too strict.\" Do not weaken any of\n   these three into asserting nothing\
+  \ meaningful \u2014 each must still fail if\n   the run produces neither a declared\
+  \ deferred halt nor the specific real\n   completion its own fixture implies.\n\n\
+  Do not touch anything else in `test_plan26_unit_graph.py`. Re-run this\nnode's full\
+  \ required verification command afterward\n(`{python} -m pytest -q tests/runtime/test_plan26_workbook.py\n\
+  tests/runtime/test_plan26_unit_graph.py`) and confirm it is fully green\nbefore\
+  \ reporting `status: PASSED` as a bare line. Update your own result\nreport to record\
+  \ this correction, including which of the three\nfrontier-helper tests now complete\
+  \ cleanly versus still legitimately defer,\nand why.\n"
+context: {}
+created_at: '2026-08-12T23:32:23.298566+00:00'

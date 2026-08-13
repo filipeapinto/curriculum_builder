@@ -140,7 +140,7 @@ nodes:
   N32_WORKBOOK_TERMINALS:
     prompt: plans/26_langgraph_curriculum_factory/prompts/N32_workbook_terminals.prompt.v2.md
     depends_on: [N31_REPAIR_ACCEPTANCE]
-    writes: [runtime/langgraph_factory/workbook.py, runtime/langgraph_factory/graph.py, tests/runtime/test_plan26_workbook.py, plans/26_langgraph_curriculum_factory/results/N32_WORKBOOK_TERMINALS.result.v1.md, plans/26_langgraph_curriculum_factory/results/evidence/N32_WORKBOOK_TERMINALS]
+    writes: [runtime/langgraph_factory/workbook.py, runtime/langgraph_factory/graph.py, tests/runtime/test_plan26_workbook.py, tests/runtime/test_plan26_unit_graph.py, plans/26_langgraph_curriculum_factory/results/N32_WORKBOOK_TERMINALS.result.v1.md, plans/26_langgraph_curriculum_factory/results/evidence/N32_WORKBOOK_TERMINALS]
     verification:
       - ['{python}', -m, pytest, -q, tests/runtime/test_plan26_workbook.py, tests/runtime/test_plan26_unit_graph.py]
     test_lane: join

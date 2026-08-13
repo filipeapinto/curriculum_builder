@@ -1,136 +1,83 @@
-.................................................................................................................................................. [ 12%]
-........................................................................ [ 19%]
-........................................................................ [ 25%]
-........................................................................ [ 32%]
-..........................................................s.. [ 37%]
-........................................................................ [ 43%]
-........................................................................ [ 50%]
-......................................................................................................... [ 59%]
-.............FFFF............................................ [ 64%]
-.............................................................F....................F....................... [ 74%]
-........................................................................ [ 80%]
-........................................................................ [ 86%]
-........................................................................ [ 93%]
-.......................................................... [ 98%]
-.................                                                        [100%]
+........................................................................................................ [  8%]
+.................................................................................................................. [ 17%]
+........................................................................ [ 23%]
+........................................................................ [ 29%]
+........................................................................ [ 34%]
+.......................................................................................s............................................. [ 45%]
+........................................................................ [ 51%]
+........................................................................ [ 57%]
+..............................................................................F.................... [ 64%]
+..................................................................... [ 70%]
+................................ [ 73%]
+.....F.................................................................. [ 78%]
+........................................................................ [ 84%]
+........................................................................ [ 90%]
+........................................................................................................................    [100%]
 =================================== FAILURES ===================================
-__ test_mechanical_revalidation_admits_a_receipt_after_a_harness_only_change ___
+___ test_passed_nodes_remain_admissible_after_harness_or_predecessor_change ____
 
-    def test_mechanical_revalidation_admits_a_receipt_after_a_harness_only_change():
-        graph = manifest()
-        scheduler = controller_module.Controller(graph)
-        real_receipt = scheduler.receipts.load("N00_BASELINE_FREEZE")
->       assert real_receipt is not None
-E       assert None is not None
-
-tests/runtime/test_plan26_prompt_graph_controller.py:150: AssertionError
-___ test_mechanical_revalidation_rejects_a_receipt_with_a_stale_output_hash ____
-
-    def test_mechanical_revalidation_rejects_a_receipt_with_a_stale_output_hash():
-        graph = manifest()
-        scheduler = controller_module.Controller(graph)
-        real_receipt = scheduler.receipts.load("N00_BASELINE_FREEZE")
->       assert real_receipt is not None
-E       assert None is not None
-
-tests/runtime/test_plan26_prompt_graph_controller.py:159: AssertionError
-_ test_mechanical_revalidation_rejects_a_receipt_with_a_recorded_nonzero_exit __
-
-    def test_mechanical_revalidation_rejects_a_receipt_with_a_recorded_nonzero_exit():
-        graph = manifest()
-        scheduler = controller_module.Controller(graph)
-        real_receipt = scheduler.receipts.load("N00_BASELINE_FREEZE")
->       assert real_receipt is not None
-E       assert None is not None
-
-tests/runtime/test_plan26_prompt_graph_controller.py:171: AssertionError
-_ test_passed_nodes_remain_admissible_and_n31_is_the_sole_frontier_after_harness_change _
-
-    def test_passed_nodes_remain_admissible_and_n31_is_the_sole_frontier_after_harness_change():
+    def test_passed_nodes_remain_admissible_after_harness_or_predecessor_change():
+        """Guards against a harness-only change, or a legitimate predecessor
+        rework (e.g. an ownership correction), collaterally invalidating
+        already-admitted nodes it did not touch. Deliberately does not hardcode
+        which node is the current frontier: unlike this suite's other fixtures,
+        this test runs against the live receipt store as it actually stands, and
+        the pipeline is expected to keep advancing (more nodes reaching PASSED
+        over time), so pinning an exact snapshot would make the test rot on
+        every real step of progress rather than guard anything.
+        """
         graph = manifest()
         scheduler = controller_module.Controller(graph)
         state = scheduler.status()
-        passed = [
-            "N00_BASELINE_FREEZE",
-            "N10_DEPENDENCY_API",
-            "N11_STATE_REDUCERS",
-            "N12_EVIDENCE_ARTIFACTS",
-            "N13_TRANSPORT_AUTH",
-            "N20_GRAPH_COMPILER",
-            "N21_PERSISTENCE_RESUME",
-            "N22_DETERMINISTIC_NODES",
-            "N23_MODEL_NODES",
-            "N30_UNIT_GRAPH",
-        ]
-        for node_id in passed:
->           assert state["statuses"][node_id] == "PASSED"
-E           AssertionError: assert 'READY' == 'PASSED'
-E             
-E             - PASSED
-E             + READY
+        for node_id in graph.topological_order():
+            receipt = scheduler.receipts.load(node_id)
+            if receipt is None or receipt.get("status") != "PASSED":
+                continue
+            if state["statuses"][node_id] == "PASSED":
+                continue
+>           assert _admissible_tolerating_evidence_drift(scheduler, node_id), (
+                f"{node_id} has a PASSED receipt but is inadmissible for a reason "
+                "other than known evidence-directory drift"
+            )
+E           AssertionError: N20_GRAPH_COMPILER has a PASSED receipt but is inadmissible for a reason other than known evidence-directory drift
+E           assert False
+E            +  where False = _admissible_tolerating_evidence_drift(<plan26_prompt_graph_controller.Controller object at 0x109fdfb50>, 'N20_GRAPH_COMPILER')
 
-tests/runtime/test_plan26_prompt_graph_controller.py:194: AssertionError
-______ test_the_available_catalogue_compiles_against_real_node_callables _______
+tests/runtime/test_plan26_prompt_graph_controller.py:228: AssertionError
+_________ test_an_unwired_undeclared_node_fails_the_build_by_stable_id _________
 
-compiled = <langgraph.graph.state.CompiledStateGraph object at 0x10bbd5950>
+compiled = <langgraph.graph.state.CompiledStateGraph object at 0x109d539d0>
+monkeypatch = <_pytest.monkeypatch.MonkeyPatch object at 0x10a8fd450>
 
-    def test_the_available_catalogue_compiles_against_real_node_callables(compiled):
-        bindings = G.binding_inventory()
-        registry = node_registry()
-    
-        assert compiled.name == G.GRAPH_NAME == "plan26_curriculum_factory"
-        assert isinstance(compiled, CompiledStateGraph)
-    
-        # 22 deterministic bodies (N22) + 8 model adapters + D90/D91 (N23), all real
-        # callables.
-        assert set(registry) == set(NODE_CATALOGUE)
-        assert len(registry) == 22
-        assert set(mn.MODEL_NODE_ADAPTERS) == set(mn.MODEL_NODE_IDS)
-        assert len(mn.MODEL_NODE_ADAPTERS) == 8
-        assert set(mn.MODEL_BOOKKEEPING_NODES) == {R.ATTEMPT_RESERVATION, R.MODEL_FAILURE_CLASSIFIER}
-        assert set(bindings) == (
-            set(registry) | set(mn.MODEL_NODE_ADAPTERS) | set(mn.MODEL_BOOKKEEPING_NODES)
+    def test_an_unwired_undeclared_node_fails_the_build_by_stable_id(compiled, monkeypatch):
+        # P-N20-001: the victim is read from the live table AND filtered against the
+        # live compiled topology, not just picked as the alphabetically-first key. A
+        # `DEFERRED_TOPOLOGY` entry whose node a downstream graph node has since
+        # wired is no longer undeclared-and-unwired -- popping it would not
+        # reproduce N20-NODE-UNDECLARED, so it is not a valid victim any more. Only
+        # a key with no compiled edge at all is still what this negative case needs.
+        wired_endpoints = {
+            endpoint
+            for source, target, _ in G.compiled_topology(compiled)["edges"]
+            for endpoint in (source, target)
+        }
+        candidates = sorted(set(G.DEFERRED_TOPOLOGY) - wired_endpoints)
+        assert candidates, (
+            "every DEFERRED_TOPOLOGY entry is now wired into the compiled graph, so "
+            "this fixture needs a human decision (a real registered-but-unwired-and-"
+            "undeclared node to pop), not a silent skip"
         )
-        assert len(bindings) == 32
-    
-        drawn = compiled.get_graph()
->       assert set(drawn.nodes) - {START, END} == set(bindings)
-E       AssertionError: assert {'D00R_REVALI..._RESUME', ...} == {'D00R_REVALI..._RESUME', ...}
-E         
-E         Extra items in the left set:
-E         'D28_REDUCE_WORKBOOK_EVIDENCE'
-E         'D26_RENDER_INVENTORY_INSPECT_WORKBOOK'
-E         'D27_FREEZE_WORKBOOK_REVIEW_PACKET'
-E         'D31_ADMIT_AND_RETEST_WORKBOOK_REPAIR'
-E         'D32_RECOMPUTE_FINAL_RELEASE'...
-E         
-E         ...Full output truncated (4 lines hidden), use '-vv' to show
+        node_id = candidates[0]
+        deferred = dict(G.DEFERRED_TOPOLOGY)
+        deferred.pop(node_id)
+        monkeypatch.setattr(G, "DEFERRED_TOPOLOGY", deferred)
+>       with pytest.raises(
+            G.GraphBindingError, match=rf"N20-NODE-UNDECLARED:{re.escape(node_id)}"
+        ):
+E       Failed: DID NOT RAISE <class 'runtime.langgraph_factory.graph.GraphBindingError'>
 
-tests/runtime/test_plan26_topology.py:193: AssertionError
-___ test_the_builder_registers_a_fixed_node_set_independent_of_any_manifest ____
-
-compiled = <langgraph.graph.state.CompiledStateGraph object at 0x10bbd5950>
-
-    def test_the_builder_registers_a_fixed_node_set_independent_of_any_manifest(compiled):
-        drawn = set(compiled.get_graph().nodes) - {START, END}
->       assert drawn == set(G.binding_inventory())
-E       AssertionError: assert {'D00R_REVALI..._RESUME', ...} == {'D00R_REVALI..._RESUME', ...}
-E         
-E         Extra items in the left set:
-E         'D28_REDUCE_WORKBOOK_EVIDENCE'
-E         'D26_RENDER_INVENTORY_INSPECT_WORKBOOK'
-E         'D27_FREEZE_WORKBOOK_REVIEW_PACKET'
-E         'D31_ADMIT_AND_RETEST_WORKBOOK_REPAIR'
-E         'D32_RECOMPUTE_FINAL_RELEASE'...
-E         
-E         ...Full output truncated (4 lines hidden), use '-vv' to show
-
-tests/runtime/test_plan26_topology.py:748: AssertionError
+tests/runtime/test_plan26_topology.py:343: Failed
 =========================== short test summary info ============================
-FAILED tests/runtime/test_plan26_prompt_graph_controller.py::test_mechanical_revalidation_admits_a_receipt_after_a_harness_only_change
-FAILED tests/runtime/test_plan26_prompt_graph_controller.py::test_mechanical_revalidation_rejects_a_receipt_with_a_stale_output_hash
-FAILED tests/runtime/test_plan26_prompt_graph_controller.py::test_mechanical_revalidation_rejects_a_receipt_with_a_recorded_nonzero_exit
-FAILED tests/runtime/test_plan26_prompt_graph_controller.py::test_passed_nodes_remain_admissible_and_n31_is_the_sole_frontier_after_harness_change
-FAILED tests/runtime/test_plan26_topology.py::test_the_available_catalogue_compiles_against_real_node_callables
-FAILED tests/runtime/test_plan26_topology.py::test_the_builder_registers_a_fixed_node_set_independent_of_any_manifest
-6 failed, 1123 passed, 1 skipped, 399 subtests passed in 120.72s (0:02:00)
+FAILED tests/runtime/test_plan26_prompt_graph_controller.py::test_passed_nodes_remain_admissible_after_harness_or_predecessor_change
+FAILED tests/runtime/test_plan26_topology.py::test_an_unwired_undeclared_node_fails_the_build_by_stable_id
+2 failed, 1244 passed, 1 skipped, 406 subtests passed in 140.30s (0:02:20)

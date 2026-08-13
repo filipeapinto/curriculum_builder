@@ -1,0 +1,38 @@
+F                                                                        [100%]
+=================================== FAILURES ===================================
+_________ test_an_unwired_undeclared_node_fails_the_build_by_stable_id _________
+
+compiled = <langgraph.graph.state.CompiledStateGraph object at 0x10d912a50>
+monkeypatch = <_pytest.monkeypatch.MonkeyPatch object at 0x10da21480>
+
+    def test_an_unwired_undeclared_node_fails_the_build_by_stable_id(compiled, monkeypatch):
+        # P-N20-001: the victim is read from the live table AND filtered against the
+        # live compiled topology, not just picked as the alphabetically-first key. A
+        # `DEFERRED_TOPOLOGY` entry whose node a downstream graph node has since
+        # wired is no longer undeclared-and-unwired -- popping it would not
+        # reproduce N20-NODE-UNDECLARED, so it is not a valid victim any more. Only
+        # a key with no compiled edge at all is still what this negative case needs.
+        wired_endpoints = {
+            endpoint
+            for source, target, _ in G.compiled_topology(compiled)["edges"]
+            for endpoint in (source, target)
+        }
+        candidates = sorted(set(G.DEFERRED_TOPOLOGY) - wired_endpoints)
+        assert candidates, (
+            "every DEFERRED_TOPOLOGY entry is now wired into the compiled graph, so "
+            "this fixture needs a human decision (a real registered-but-unwired-and-"
+            "undeclared node to pop), not a silent skip"
+        )
+        node_id = candidates[0]
+        deferred = dict(G.DEFERRED_TOPOLOGY)
+        deferred.pop(node_id)
+        monkeypatch.setattr(G, "DEFERRED_TOPOLOGY", deferred)
+>       with pytest.raises(
+            G.GraphBindingError, match=rf"N20-NODE-UNDECLARED:{re.escape(node_id)}"
+        ):
+E       Failed: DID NOT RAISE <class 'runtime.langgraph_factory.graph.GraphBindingError'>
+
+tests/runtime/test_plan26_topology.py:343: Failed
+=========================== short test summary info ============================
+FAILED tests/runtime/test_plan26_topology.py::test_an_unwired_undeclared_node_fails_the_build_by_stable_id
+1 failed in 0.40s

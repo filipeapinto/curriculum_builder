@@ -1,10 +1,72 @@
 # N20_GRAPH_COMPILER result
 
 status: PASSED
-graph_digest: f858289a7e2f4888a078963af151eac980c35ef931a6ee5bb079550c9262875f
+graph_digest: 9c2aa175e86ceac7bdbab97a4443615db02a11d2d189a15635ae054191a0ca9a
 node_prompt: plans/26_langgraph_curriculum_factory/prompts/N20_graph_compiler.prompt.v2.md (577a251c85b80d00fc0ae3929dc620a5c1b28b79ab970729a0b9428744f4f469)
-generation: 9
-patch: P-N20-001 (active_patch_ids=["P-N20-001"], patch_chain_sha256=ac6db487d79bdc554dbd58ecbc830e80824344e61ad9b8250711560fae5a966f)
+generation: 10
+patch: P-N20-002 (active_patch_ids=["P-N20-001", "P-N20-002"], patch_chain_sha256=68d45b6e8729cdd84adba643294bfd0e6dd491368b27adf4951038546b8cd95e)
+
+## Generation-10 rework — P-N20-002 (residual bug in P-N20-001's own repro call)
+
+P-N31-002/P-N32-002 have since landed N31's and N32's wiring for real: N30's
+`compact predecessor state` for this generation confirms N10/N11/N22/N23 as
+the direct inputs, but the compiled graph on disk now widens all the way
+through D16-D32/M06-M08 (48 compiled nodes, up from generation 9's unwidened
+32), the scenario P-N20-001 anticipated but could not reproduce at the time it
+ran. That widening exposed one residual bug in P-N20-001's own fix, precisely
+diagnosed by this patch: `test_an_unwired_undeclared_node_fails_the_build_by_
+stable_id` (`tests/runtime/test_plan26_topology.py:321`) selects its victim
+`node_id` from `candidates`, computed against the *wide* `compiled` fixture's
+`wired_endpoints` (built from `full_binding_inventory()`), but then reproduced
+the expected rejection with the *narrow* `G.binding_inventory()` — which never
+contains any `DEFERRED_TOPOLOGY` key by design, so `_validate_topology`'s
+per-node loop never reached the popped key and the call succeeded instead of
+raising.
+
+**Verified directly, before applying the fix:** reverting only the repro
+call's `full_binding_inventory()` back to `binding_inventory()` and running
+`test_an_unwired_undeclared_node_fails_the_build_by_stable_id` alone reproduces
+exactly the failure the patch describes —
+`evidence/N20_GRAPH_COMPILER/undeclared_node_test_before_p_n20_002_gen10.txt`
+(`Failed: DID NOT RAISE <class 'runtime.langgraph_factory.graph.
+GraphBindingError'>`).
+
+**The fix**, the one line the patch specifies, in
+`tests/runtime/test_plan26_topology.py` (line 346): the register_skeleton
+repro call now reads `G.register_skeleton(fresh_builder(), G.full_binding_
+inventory())` instead of `G.register_skeleton(fresh_builder(), G.binding_
+inventory())` — matching how `candidates` was already (correctly) selected.
+`candidates` selection itself, `graph.py`, and `routing.py` are untouched, per
+the patch's explicit instruction.
+
+**Verification.** `tests/runtime/test_plan26_topology.py`: **39 passed, 0
+failed** (`evidence/N20_GRAPH_COMPILER/venv_topology_gen10.txt`), and the full
+four-file required verification command
+(`test_plan26_topology.py test_plan26_state_reducers.py test_plan26_
+deterministic_nodes.py test_plan26_model_nodes.py`) is fully green: **543
+passed, 187 subtests passed**
+(`evidence/N20_GRAPH_COMPILER/venv_sibling_suites_gen10.txt`).
+
+Production graph digest moved from generation 9's
+`f858289a7e2f4888a078963af151eac980c35ef931a6ee5bb079550c9262875f` to
+`9c2aa175e86ceac7bdbab97a4443615db02a11d2d189a15635ae054191a0ca9a`. This is not
+this node's own edit: `routing.py` is byte-identical to generation 9
+(`6be93bf8…`), and this generation's only change is the one test line above,
+which the digest does not hash. The move is entirely N31's/N32's already-landed
+widening of the one production `build_curriculum_factory_graph` (D16-D32/M06-M08),
+external to this node's write set, reflected here because the digest is
+computed over whatever is actually compiled.
+
+`binding_inventory()` remains the frozen 32-entry contract (unchanged);
+`full_binding_inventory()` now returns 48 — the 32 plus D16-D32/M06-M08's
+16 real bindings N31/N32 registered. `DEFERRED_TOPOLOGY` still holds 16 keys
+(the workbook-repair and terminal-release frontier N31/N32's own generations
+have not yet closed); of those, `D28_REDUCE_WORKBOOK_EVIDENCE`,
+`D32_RECOMPUTE_FINAL_RELEASE`, `M06_REPAIR_NAMED_UNIT_ARTIFACT`,
+`M07_REVIEW_ACTUAL_WORKBOOK`, and `M08_REPAIR_NAMED_WORKBOOK_DEFECT` are still
+genuinely unwired (no compiled edge at all), so `candidates` is non-empty and
+the test's own non-vacuity assertion holds; the fixture picked
+`D28_REDUCE_WORKBOOK_EVIDENCE` (alphabetically first) this generation.
 
 ## Generation-9 rework — P-N20-001 (root cause: N90 finding F1, via P-N31-001)
 
@@ -267,12 +329,23 @@ Other frozen inputs read:
 
 | Path | SHA-256 |
 |---|---|
-| `runtime/langgraph_factory/graph.py` | eae00c21bfe55ce6e2d6c4374611db4d84d286218d498fa520e799288e152e26 (unchanged since generation 8; P-N20-001 is a test-fixture correction only) |
+| `runtime/langgraph_factory/graph.py` | cbd0cdec2d1a0c4fdc14a94e86cc4126ac5ab70f5b0e9ef1fc9e993308dde9c8 (changed since generation 9 by N31's/N32's already-landed widening, not by this node; this node's write set was not touched here) |
 | `runtime/langgraph_factory/routing.py` | 6be93bf8bd951ae9984f74dc9dbe91c709a41edca0a1a6ff6d72be52cd998079 (unchanged since generation 8) |
-| `tests/runtime/test_plan26_topology.py` | 93adacae78ff0e41f9feed023492b10e2a652d14036a93469653939a91977000 (was `87bd5dc6…` at generation 8; generation 9 re-scopes three assertions per P-N20-001, see above) |
+| `tests/runtime/test_plan26_topology.py` | b1e08096788edde9a1ee32025a2157e4aeba82b2a650c28c3b0767bf54823c35 (was `93adacae…` at generation 9; generation 10's P-N20-002 one-line fix, see above) |
 | `plans/26_langgraph_curriculum_factory/results/N20_GRAPH_COMPILER.result.v1.md` | this file |
 
 ## Commands
+
+### Generation 10 (P-N20-002 rework)
+
+Run in `/tmp/plan26_n30_verify` (hash-locked `requirements/plan26.lock`
+environment, `langgraph 1.2.9` confirmed present).
+
+| Command | Exit | Evidence |
+|---|---:|---|
+| `/tmp/plan26_n30_verify/bin/python -m pytest -q tests/runtime/test_plan26_topology.py::test_an_unwired_undeclared_node_fails_the_build_by_stable_id` (before the fix, repro call reverted to `G.binding_inventory()`) | 1 | `results/evidence/N20_GRAPH_COMPILER/undeclared_node_test_before_p_n20_002_gen10.txt` (`Failed: DID NOT RAISE`, reproducing the patch's diagnosis exactly) |
+| `/tmp/plan26_n30_verify/bin/python -m pytest -q tests/runtime/test_plan26_topology.py` (after the one-line fix) | 0 | `results/evidence/N20_GRAPH_COMPILER/venv_topology_gen10.txt` (**39 passed**) |
+| `/tmp/plan26_n30_verify/bin/python -m pytest -q tests/runtime/test_plan26_topology.py tests/runtime/test_plan26_state_reducers.py tests/runtime/test_plan26_deterministic_nodes.py tests/runtime/test_plan26_model_nodes.py` | 0 | `results/evidence/N20_GRAPH_COMPILER/venv_sibling_suites_gen10.txt` (**543 passed, 187 subtests passed**) |
 
 | Command | Exit | Evidence |
 |---|---:|---|
@@ -638,11 +711,16 @@ since landed. Not caused by this node and not this node's to re-scope.
 
 | Artifact | SHA-256 |
 |---|---|
-| `runtime/langgraph_factory/graph.py` | eae00c21bfe55ce6e2d6c4374611db4d84d286218d498fa520e799288e152e26 (unchanged since generation 8) |
+| `runtime/langgraph_factory/graph.py` | cbd0cdec2d1a0c4fdc14a94e86cc4126ac5ab70f5b0e9ef1fc9e993308dde9c8 (changed since generation 9 by N31's/N32's landed widening, not by this node) |
 | `runtime/langgraph_factory/routing.py` | 6be93bf8bd951ae9984f74dc9dbe91c709a41edca0a1a6ff6d72be52cd998079 (unchanged since generation 8) |
-| `tests/runtime/test_plan26_topology.py` | 93adacae78ff0e41f9feed023492b10e2a652d14036a93469653939a91977000 (was `87bd5dc6…` at generation 8; generation 9's P-N20-001 re-scope) |
+| `tests/runtime/test_plan26_topology.py` | b1e08096788edde9a1ee32025a2157e4aeba82b2a650c28c3b0767bf54823c35 (was `93adacae…` at generation 9; generation 10's P-N20-002 one-line fix) |
 | `plans/26_langgraph_curriculum_factory/patches/P-N20-001.patch.v1.yaml` | eb84722a589b5c8b7d42cb94d80f6b5b2378c42bbf56d17ff611e79df57012fe |
 | `plans/26_langgraph_curriculum_factory/patches/sources/P-N20-001.instructions.md` | 705a44a96f038c5cfb3c3f496c8a9899bd0c435b2acaa80a09a0399969bd65b0 |
+| `plans/26_langgraph_curriculum_factory/patches/P-N20-002.patch.v1.yaml` | 77283fa8be3fd1aab02fc8ab50fbc03cf1e1a7adb56a1d59bbc9917137e4d940 |
+| `plans/26_langgraph_curriculum_factory/patches/sources/P-N20-002.instructions.md` | 107b1c40debdb5c90b63e0c972dcb9cc282d479eac285c7fccc733dccaf55150 |
+| `results/evidence/N20_GRAPH_COMPILER/undeclared_node_test_before_p_n20_002_gen10.txt` | 5b82a203443f8ab2075c876e710c808cd4e0e131216116641226d979adefe586 |
+| `results/evidence/N20_GRAPH_COMPILER/venv_topology_gen10.txt` | 299a21e38d9fad56bb1c590177496e52e064ef52e37ab6064255eb05e09e598f |
+| `results/evidence/N20_GRAPH_COMPILER/venv_sibling_suites_gen10.txt` | 02aedf7274d2f6df5538adda61c2ba0ab4c8b65235dbe8f82974a66c01157075 |
 | `implementation.graph.v3.yaml` | ca4835f71750f93880a965a9879e508641b5f9360b82cb5cc8bdec8d57564f30 (was `implementation.graph.v2.yaml` at `96e1948f…` through generation 7) |
 | `prompts/N20_graph_compiler.prompt.v2.md` | 577a251c85b80d00fc0ae3929dc620a5c1b28b79ab970729a0b9428744f4f469 |
 | `spec/langgraph_curriculum_factory.spec.v1.md` | 44e63e6271cae25f14f0bc970c598d1c15da41b67ae3cdf811bbb2f2303536e6 |
@@ -686,11 +764,20 @@ Generation 4's `diag_plugin.py`, `venv_topology_diagnostic.txt`, and
 this record depends on them, and leaving a schema-patching plugin in an
 evidence directory invites a later node to mistake it for a supported harness.
 
-Production graph digest at generation 9 (over the real compiled graph,
-reproducible): `f858289a7e2f4888a078963af151eac980c35ef931a6ee5bb079550c9262875f`
-— unchanged from generation 8, since P-N20-001 touches only the test file,
-which the digest does not hash.
-Generation 8 was the same value; generation 7 was
+Production graph digest at generation 10 (over the real compiled graph,
+reproducible): `9c2aa175e86ceac7bdbab97a4443615db02a11d2d189a15635ae054191a0ca9a`
+— moved from generation 9's `f858289a7e2f4888a078963af151eac980c35ef931a6ee5bb079550c9262875f`
+because N31's and N32's already-landed rework (P-N31-002/P-N32-002) widened
+the one production `build_curriculum_factory_graph` to compile D16-D32/M06-M08
+for real (48 compiled nodes, up from 32); `full_binding_inventory()` now
+returns 48 entries and `binding_inventory()` is unchanged at 32. This node's
+own generation-10 change (P-N20-002) is a one-line test-fixture fix that the
+digest does not hash — confirmed by `routing.py` staying byte-identical to
+generation 8/9 (`6be93bf8…`).
+Generation 9 was unchanged from generation 8, since P-N20-001 touches only the
+test file, which the digest does not hash. Generation 8's value was
+`f858289a7e2f4888a078963af151eac980c35ef931a6ee5bb079550c9262875f`; generation
+7 was
 `297f0b5f1113aceb902d1793ab1669520c4cdc5575ca5e51c79c3d652c1f5fe3`,
 generation 6 `d26798042b0499425055fa4eb995deb2071c00f07f520d4be1fcd3f85429125c`,
 and generation 5 `4b1f7242be5b2f40ac789b38f154ca32d05ef91bd01bdb3745d93ba027fb7361`;

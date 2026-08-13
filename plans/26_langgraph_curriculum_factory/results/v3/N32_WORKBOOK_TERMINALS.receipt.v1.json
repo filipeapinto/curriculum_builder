@@ -1,31 +1,13 @@
 {
-  "changed_files": [],
+  "changed_files": [
+    "plans/26_langgraph_curriculum_factory/results/evidence/N32_WORKBOOK_TERMINALS/focused_test_run.txt",
+    "plans/26_langgraph_curriculum_factory/results/evidence/N32_WORKBOOK_TERMINALS/full_plan26_suite.txt",
+    "plans/26_langgraph_curriculum_factory/results/evidence/N32_WORKBOOK_TERMINALS/workbook_branch_topology.txt",
+    "runtime/langgraph_factory/graph.py",
+    "tests/runtime/test_plan26_unit_graph.py",
+    "tests/runtime/test_plan26_workbook.py"
+  ],
   "commands": [
-    {
-      "argv": [
-        "claude",
-        "--print",
-        "--model",
-        "sonnet",
-        "--effort",
-        "high",
-        "--permission-mode",
-        "acceptEdits",
-        "--allowedTools",
-        "Read Edit Write Glob Grep Bash(/tmp/plan26_n30_verify/bin/python -m pytest *)",
-        "--output-format",
-        "json",
-        "--no-session-persistence",
-        "You are executing one node of the Plan 26 implementation prompt graph.\nThe production curriculum factory MUST continue to use LangGraph exactly as specified.\nDo not implement a Python replacement for that production runtime.\nRun every pytest command as /tmp/plan26_n30_verify/bin/python -m pytest ...; never use python3, python, or plain pytest.\nNode: N32_WORKBOOK_TERMINALS\nDeclared writable paths: [\"runtime/langgraph_factory/workbook.py\", \"runtime/langgraph_factory/graph.py\", \"tests/runtime/test_plan26_workbook.py\", \"plans/26_langgraph_curriculum_factory/results/N32_WORKBOOK_TERMINALS.result.v1.md\", \"plans/26_langgraph_curriculum_factory/results/evidence/N32_WORKBOOK_TERMINALS\"]\nCompact predecessor state: {\"N31_REPAIR_ACCEPTANCE\": {\"outputs\": {\"plans/26_langgraph_curriculum_factory/results/N31_REPAIR_ACCEPTANCE.result.v1.md\": \"325936e48371bf40a638f97d3a5c73137775cfe44f8c8582ee6cb5e048d4224c\", \"plans/26_langgraph_curriculum_factory/results/evidence/N31_REPAIR_ACCEPTANCE\": \"78cdedd8ec451f92a0b508f56646f6be2d7a7b3a04bb798e705c63d146723cb4\", \"runtime/langgraph_factory/acceptance.py\": \"f5c0445eec0f3a4685ac4847565e22294db5ac3a7c030fa1c5a0fea267ae89bb\", \"runtime/langgraph_factory/repair.py\": \"9e9013e51d4e339838e9d72916ee04cf47ff0a6e3dcf80383bd7f2d0a744af1e\", \"tests/runtime/test_plan26_repair_acceptance.py\": \"99add3d695747e901a458d07e673130a999936e91f0fab6657ccd0a2cb651ee8\"}, \"receipt\": \"plans/26_langgraph_curriculum_factory/results/v3/N31_REPAIR_ACCEPTANCE.receipt.v1.json\", \"status\": \"PASSED\"}}\nDo not read historical result Markdown or old evidence unless the node prompt names a specific file needed to diagnose a failure.\nComplete the node's own TEST/LOOP before returning. The controller independently verifies the focused test command.\n\n--- BEGIN NODE PROMPT (verbatim) ---\n# GOAL\n\nImplement `N32_WORKBOOK_TERMINALS` after N31. Integrate D25\u2013D32, M07/M08, and\nD30 for exact workbook assembly, render/page inventory, every-page review,\nworkbook-only repair, prerequisite classification, and final release candidate\nrouting through the pre-existing N22-owned D98.\n\nN32 owns workbook behavior and terminal-candidate construction, not\n`terminal.py` or D98. Workbook repair cannot change accepted unit bytes. D32\nrecomputes all current denominators. Only a named unavailable required external\nfact may propose `PAUSED_PREREQUISITE`; D98 independently enforces the final guard.\n\n# TEST\n\n1. Missing/extra/reordered/wrong-hash unit blocks assembly.\n2. Workbook PDF has positive contiguous inventory and every page in M07.\n3. Missing/stale/failed/`NOT_RUN` workbook evidence blocks release.\n4. M08/deterministic repair cannot alter accepted unit hashes.\n5. Repeated defects exhaust before over-bound activation.\n6. D32 recomputes evidence and ignores cached pass labels.\n7. Workbook success/failure/pause candidates traverse the real N22-owned D98;\n   N32 contains no terminal writer and cannot connect to END directly.\n8. Only interruption/named prerequisite pause is resumable; false pause is rejected.\n9. Fake full-run paths cannot emit/copy product `COMPLETE` evidence.\n10. Crash at assembly/review/repair/release/D98 boundaries is idempotent.\n\nWrite `results/N32_WORKBOOK_TERMINALS.result.v1.md` with coverage/release\ndenominators, D98 integration traces, commands, and hashes.\n\n# LOOP\n\nPatch one workbook, page barrier, review reduction, repair, release, prerequisite,\nor candidate builder. Route terminal-guard defects to N22. Stop if N32 must own\nterminal.py, change accepted units, or bypass D98.\n\n\n--- END NODE PROMPT ---\n"
-      ],
-      "exit_code": 0,
-      "finished_at": "2026-08-12T02:39:22.482181+00:00",
-      "log": "/Users/filipepinto/Projects/curriculum_builder/plans/26_langgraph_curriculum_factory/results/v3/logs/N32_WORKBOOK_TERMINALS/20260811T223655.claude.log",
-      "log_sha256": "2be21c878713f837efc5965df9758e8d310f8fc05f2c6cdecb97c352f4a36a49",
-      "started_at": "2026-08-12T02:36:55.964248+00:00",
-      "tail": "Ignoring 6 permissions.allow entries from .claude/settings.json: this workspace has not been trusted. Run Claude Code interactively here once and accept the trust dialog, or set projects[\"/private/var/folders/kj/z_75gwxx2ls7p55rnx4t5kg00000gn/T/plan26-n32_workbook_terminals-gmtghybv/repo\"].hasTrustDialogAccepted: true in /Users/filipepinto/.claude.json.\n{\"is_error\":false,\"duration_api_ms\":111012,\"num_turns\":18,\"stop_reason\":\"end_turn\",\"session_id\":\"62658817-112b-425d-9638-ed5ff8fc8af7\",\"total_cost_usd\":0.5386697999999999,\"usage\":{\"input_tokens\":32,\"cache_creation_input_tokens\":38177,\"cache_read_input_tokens\":649356,\"output_tokens\":7647,\"output_tokens_details\":{\"thinking_tokens\":3452},\"server_tool_use\":{\"web_search_requests\":0,\"web_fetch_requests\":0},\"service_tier\":\"standard\",\"cache_creation\":{\"ephemeral_1h_input_tokens\":38177,\"ephemeral_5m_input_tokens\":0},\"inference_geo\":\"not_available\",\"iterations\":[{\"input_tokens\":2,\"output_tokens\":620,\"cache_read_input_tokens\":53525,\"cache_creation_input_tokens\":604,\"cache_creation\":{\"ephemeral_5m_input_tokens\":0,\"ephemeral_1h_input_tokens\":604},\"type\":\"message\"}],\"speed\":\"standard\"},\"modelUsage\":{\"claude-sonnet-5\":{\"inputTokens\":32,\"outputTokens\":7647,\"cacheReadInputTokens\":649356,\"cacheCreationInputTokens\":38177,\"webSearchRequests\":0,\"costUSD\":0.5386697999999999,\"contextWindow\":1000000,\"maxOutputTokens\":64000,\"canonicalModel\":\"claude-sonnet-5\",\"provider\":\"firstParty\"}},\"permission_denials\":[{\"tool_name\":\"Bash\",\"tool_use_id\":\"toolu_011xwaBZPNnSJKqxNWQPcaak\",\"tool_input\":{\"command\":\"cd /private/var/folders/kj/z_75gwxx2ls7p55rnx4t5kg00000gn/T/plan26-n30_workbook_terminals-gmtghybv/repo 2>/dev/null || cd \\\"$(pwd)\\\"; pwd; ls runtime/langgraph_factory/ 2>/dev/null; echo ---; ls tests/runtime/ 2>/dev/null | grep -i plan26\"}},{\"tool_name\":\"Bash\",\"tool_use_id\":\"toolu_01EihaxTxnBqFKCbX5FDK6w2\",\"tool_input\":{\"command\":\"cd \\\"/private/var/folders/kj/z_75gwxx2ls7p55rnx4t5kg00000gn/T/plan26-n32_workbook_terminals-gmtghybv/repo\\\" && date && ls -la /tmp/plan26_n30_verify/bin/python 2>&1\"}}],\"terminal_reason\":\"completed\",\"fast_mode_state\":\"off\",\"fast_mode_disabled_reason\":\"sdk_opt_in_required\",\"subtype\":\"success\",\"api_error_status\":null,\"result\":\"N32_WORKBOOK_TERMINALS is already fully implemented and passing: `runtime/langgraph_factory/workbook.py` (D24\u2013D32 engine), the additive `graph.py` topology/binding changes, and `tests/runtime/test_plan26_workbook.py` (34 tests covering all 10 TEST items, including real, unmocked traversal of N22's `nodes/terminal.py` D98 and AST checks proving workbook.py has no terminal writer or graph-compile calls) all verified clean.\\n\\nFull `plan26` suite: 950 passed, 4 failed \u2014 all 4 in `test_plan26_prompt_graph_controller.py`, unrelated to workbook (caused by deleted `results/v3/*.receipt.v1.json` files), and that file/those receipts are outside N32's declared writable paths, so left untouched. `results/N32_WORKBOOK_TERMINALS.result.v1.md` and its evidence dir are already written and accurate (one stale line noting a topology-test risk that doesn't actually materialize \u2014 harmless doc overcaution, not a real failure).\\n\\nNode complete, no further changes needed.\",\"ttft_ms\":2532,\"ttft_stream_ms\":864,\"time_to_request_ms\":39,\"type\":\"result\",\"duration_ms\":144200,\"uuid\":\"eb211a92-8077-4503-9c7e-1652f57d05a9\"}\n",
-      "timed_out": false
-    },
     {
       "argv": [
         "/tmp/plan26_n30_verify/bin/python",
@@ -36,30 +18,51 @@
         "tests/runtime/test_plan26_unit_graph.py"
       ],
       "exit_code": 0,
-      "finished_at": "2026-08-12T02:39:30.150851+00:00",
-      "log": "/Users/filipepinto/Projects/curriculum_builder/plans/26_langgraph_curriculum_factory/results/v3/logs/N32_WORKBOOK_TERMINALS/20260811T223655.test1.log",
-      "log_sha256": "64d054a1f4183cc49dab1e8885b3e65a6c793aaa34ffa5386340a0e0426aa995",
-      "started_at": "2026-08-12T02:39:23.081548+00:00",
-      "tail": "........................................................................ [ 56%]\n.......................................................                  [100%]\n127 passed in 6.02s\n",
+      "finished_at": "2026-08-12T23:59:06.698120+00:00",
+      "log": "/Users/filipepinto/Projects/curriculum_builder/plans/26_langgraph_curriculum_factory/results/v3/logs/N32_WORKBOOK_TERMINALS/rebase-20260812T235852.480407Z-0891f220bb.test1.log",
+      "log_sha256": "c6cd07e27559abb65ee06c7e46914b8095c4d18fe8a3917328509c1167c4a645",
+      "started_at": "2026-08-12T23:58:54.631895+00:00",
+      "tail": "........................................................................ [ 54%]\n............................................................             [100%]\n132 passed in 10.06s\n",
       "timed_out": false
     }
   ],
-  "created_at": "2026-08-12T02:39:30.157672+00:00",
+  "created_at": "2026-08-12T23:59:06.706314+00:00",
   "findings": [],
-  "graph_digest": "ca4835f71750f93880a965a9879e508641b5f9360b82cb5cc8bdec8d57564f30",
+  "graph_digest": "18d619bb4eb509d1c6c590699ce2072660f36781c33cbc18a4ad1f9f8501cac7",
   "graph_id": "plan26_langgraph_curriculum_factory_implementation",
-  "input_fingerprint": "fcbe1ba632f356124b64b914c654477c8b295580ef8807ca418a4203a8fbe5f3",
-  "node_definition_sha256": "bdd8f7d1737d7a088d94e34e317b5892d3fa20467d2683e94b114d96f5c5f478",
+  "input_fingerprint": "65bf81b177395eb7d6136dabe77f5d95545d1a7ba1190523a0a86198e0ae015c",
+  "node_definition_sha256": "ebc283268c42128ca643202df9be2436a17cba502ae02d5f03226e1dd1a8dc4d",
   "node_id": "N32_WORKBOOK_TERMINALS",
   "outputs": {
     "plans/26_langgraph_curriculum_factory/results/N32_WORKBOOK_TERMINALS.result.v1.md": "ceb509d327ccefb03d6d194ce5491279ac02a8ffa7a08574d4868078391399ce",
-    "plans/26_langgraph_curriculum_factory/results/evidence/N32_WORKBOOK_TERMINALS": "d0b6c1c995b303c694468667f2755e10f16249e2d7e5ae608c87ccdde0a774cc",
-    "runtime/langgraph_factory/graph.py": "eae00c21bfe55ce6e2d6c4374611db4d84d286218d498fa520e799288e152e26",
+    "plans/26_langgraph_curriculum_factory/results/evidence/N32_WORKBOOK_TERMINALS": "a214c1d2376b1dacd7eae333a23907222cb9c1971ae8af2b007c9d50daf33144",
+    "runtime/langgraph_factory/graph.py": "cbd0cdec2d1a0c4fdc14a94e86cc4126ac5ab70f5b0e9ef1fc9e993308dde9c8",
     "runtime/langgraph_factory/workbook.py": "903abda0f4df3b01dd91d1c8d515721c91db4df78da36a55b803a4e14b422439",
-    "tests/runtime/test_plan26_workbook.py": "fe32a59154450a76cc03765df7fc009af454ec071609a3b572c88e6477494c72"
+    "tests/runtime/test_plan26_unit_graph.py": "eb491faf6e6a7f602908d4279e9d645af9559d83c8e1a7b998d61eec796d093b",
+    "tests/runtime/test_plan26_workbook.py": "42ab0d5a2f75e0ea71949d9d5c8dc5bc260d567034a6ad19571c90883a889132"
   },
-  "prompt_sha256": "770580456610f24d5cb2565c7edd5f3bd6b2f958b00c637ebe0adb8b8dacd077",
+  "prompt_sha256": "5729e500117aec6be7ecfd81091170fe715b364c257031ee255e2e408fcddf01",
+  "provenance": {
+    "active_patch_ids": [
+      "P-N32-001",
+      "P-N32-002"
+    ],
+    "attempt_id": "rebase-20260812T235852.480407Z-0891f220bb",
+    "base_graph_digest": "18d619bb4eb509d1c6c590699ce2072660f36781c33cbc18a4ad1f9f8501cac7",
+    "base_prompt_sha256": "770580456610f24d5cb2565c7edd5f3bd6b2f958b00c637ebe0adb8b8dacd077",
+    "branch_id": "rebase-20260812T235852.480407Z-0891f220bb",
+    "checkpoint": {
+      "N31_REPAIR_ACCEPTANCE": "dcf3ba34b08271250b3aa4ecf230405db475f51d66b4df15a73289803d58c5e3"
+    },
+    "effective_prompt_sha256": "5729e500117aec6be7ecfd81091170fe715b364c257031ee255e2e408fcddf01",
+    "harness_digest": "a2e5cd37735b3e953f8388e90253daca8add352e8596899473473643f5ecad32",
+    "patch_chain_sha256": "ab77cbad2ddd6d12a1f884d07c8531b9825f58914fc76bf74d8e641abdcb0642",
+    "patch_ids": [
+      "P-N32-001",
+      "P-N32-002"
+    ]
+  },
   "schema_version": 1,
-  "source": "claude_sonnet_isolated_workspace",
+  "source": "rebased_from_attempt-20260812T233231.763782Z-2c5906fec8_after_predecessor_rework",
   "status": "PASSED"
 }

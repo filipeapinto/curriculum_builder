@@ -343,7 +343,7 @@ def test_an_unwired_undeclared_node_fails_the_build_by_stable_id(compiled, monke
     with pytest.raises(
         G.GraphBindingError, match=rf"N20-NODE-UNDECLARED:{re.escape(node_id)}"
     ):
-        G.register_skeleton(fresh_builder(), G.binding_inventory())
+        G.register_skeleton(fresh_builder(), G.full_binding_inventory())
 
 
 def test_an_unrouted_declared_guard_value_fails_the_build_by_stable_id(monkeypatch):

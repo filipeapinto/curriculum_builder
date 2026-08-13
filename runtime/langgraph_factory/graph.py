@@ -135,6 +135,19 @@ PLACEHOLDER_SOURCE_MARKERS: tuple[str, ...] = (
 # `_validate_topology` reads -- so they are declared deferred here for the same
 # reason M06/M07/M08 are: really wired, by a registration step this function
 # does not itself see.
+#
+# D24 needs no row either, for the same reason D16/D17 do not: it is
+# `D05_SELECT_NEXT_UNIT`'s own `manifest_exhausted` destination, a row
+# `unit_graph.DEFERRED_EDGES` already names, so once D24 is a member of
+# `available` it is a real destination `unit_graph.branch_destinations`
+# resolves and `_validate_topology`'s `wired` set already contains it. D30 is
+# an N22-owned node already wired as a normal member of `unit_graph
+# .UNIT_BRANCHES`, not part of this node's own D24-D32 engine at all. D25-D29,
+# D31, D32 are reached only from *inside* the workbook branch itself, which is
+# wired by `workbook.register_workbook_path` (via `register_workbook_topology`,
+# called after `register_unit_repair_topology` returns) rather than by any
+# table `_validate_topology` reads -- so they are declared deferred here for
+# the same reason D18-D23 are.
 DEFERRED_TOPOLOGY: Mapping[str, str] = {
     "D18_PLAN_TARGETED_UNIT_REPAIR": "N31_REPAIR_ACCEPTANCE",
     "D19_ROUTE_UNIT_REPAIR": "N31_REPAIR_ACCEPTANCE",
@@ -143,6 +156,13 @@ DEFERRED_TOPOLOGY: Mapping[str, str] = {
     "D22_ACCEPT_UNIT": "N31_REPAIR_ACCEPTANCE",
     "D23_CHECKPOINT_ACCEPTED_UNIT": "N31_REPAIR_ACCEPTANCE",
     "M06_REPAIR_NAMED_UNIT_ARTIFACT": "N31_REPAIR_ACCEPTANCE",
+    "D25_ASSEMBLE_WORKBOOK": "N32_WORKBOOK_TERMINALS",
+    "D26_RENDER_INVENTORY_INSPECT_WORKBOOK": "N32_WORKBOOK_TERMINALS",
+    "D27_FREEZE_WORKBOOK_REVIEW_PACKET": "N32_WORKBOOK_TERMINALS",
+    "D28_REDUCE_WORKBOOK_EVIDENCE": "N32_WORKBOOK_TERMINALS",
+    "D29_CLASSIFY_AND_PLAN_WORKBOOK_REPAIR": "N32_WORKBOOK_TERMINALS",
+    "D31_ADMIT_AND_RETEST_WORKBOOK_REPAIR": "N32_WORKBOOK_TERMINALS",
+    "D32_RECOMPUTE_FINAL_RELEASE": "N32_WORKBOOK_TERMINALS",
     "M07_REVIEW_ACTUAL_WORKBOOK": "N32_WORKBOOK_TERMINALS",
     "M08_REPAIR_NAMED_WORKBOOK_DEFECT": "N32_WORKBOOK_TERMINALS",
 }
@@ -533,6 +553,12 @@ def register_workbook_topology(builder: StateGraph) -> dict[str, tuple[str, ...]
     workbook_bindings = dict(workbook.WORKBOOK_NODE_BODIES)
     validate_bindings(workbook_bindings, required=tuple(workbook_bindings))
     for node_id in sorted(workbook_bindings):
+        if node_id in builder.nodes:
+            # `build_curriculum_factory_graph` now compiles against `full_
+            # binding_inventory()`, so `register_skeleton` has already added
+            # these nodes; only N32's own direct-builder topology test still
+            # calls this function before any `add_node` for D24-D32 exists.
+            continue
         builder.add_node(node_id, _boundary(node_id, workbook_bindings[node_id], model_node=False))
     return workbook.register_workbook_path(builder, sorted(full_binding_inventory()))
 
@@ -556,12 +582,18 @@ def build_curriculum_factory_graph(
     services are captured at build time, so the compiled object carries no
     run identity and no authorization.
 
-    Compiles against `unit_repair_binding_inventory()`, not `binding_
-    inventory()`: D16-D23 (this node's own unit repair/acceptance cycle) are
-    real, wired members of the one compiled production graph (N90 finding
-    F1), while D24-D32 (N32's still-deferred workbook engine) stay absent --
-    `register_unit_repair_topology` is called immediately after `register_
-    skeleton` to wire the loop internal to D16-D23 that no other module owns.
+    Compiles against `full_binding_inventory()`, not `binding_inventory()` or
+    `unit_repair_binding_inventory()`: D16-D23 (N31's unit repair/acceptance
+    cycle) and D24-D32 (N32's workbook engine) are both real, wired members of
+    the one compiled production graph (N90 findings F1 and F2). `register_
+    unit_repair_topology` is called immediately after `register_skeleton` to
+    wire the loop internal to D16-D23 that no other module owns; `register_
+    workbook_topology` is called immediately after that to wire D24-D32's own
+    internal loop additively over the same builder. Once D24-D32's bodies are
+    members of the bindings `register_skeleton` passes to `unit_graph
+    .register_unit_path`, the `(D05_SELECT_NEXT_UNIT, manifest_exhausted) ->
+    D24_PROVE_EXACT_MANIFEST_COVERAGE` row in `unit_graph.DEFERRED_EDGES`
+    resolves automatically, the same way N31's six rows did.
     """
 
     engine_root = Path(engine_root).resolve()
@@ -572,9 +604,10 @@ def build_curriculum_factory_graph(
         input_schema=FactoryInput,
         output_schema=FactoryOutput,
     )
-    bindings = unit_repair_binding_inventory()
+    bindings = full_binding_inventory()
     register_skeleton(builder, bindings)
     register_unit_repair_topology(builder, sorted(bindings))
+    register_workbook_topology(builder)
     saver, _connection = open_checkpoint_saver(output_root)
     return builder.compile(checkpointer=saver, name=GRAPH_NAME)
 

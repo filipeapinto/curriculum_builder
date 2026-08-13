@@ -1,0 +1,42 @@
+schema_version: 1
+patch_id: P-N20-002
+action: overlay
+graph_id: plan26_langgraph_curriculum_factory_implementation
+base_graph_digest: 18d619bb4eb509d1c6c590699ce2072660f36781c33cbc18a4ad1f9f8501cac7
+target_node: N20_GRAPH_COMPILER
+scope: node_only
+reason: 'P-N20-001''s own fix to test_an_unwired_undeclared_node_fails_the_build_by_stable_id
+  selects its victim node against the wide compiled topology but reproduces the error
+  against the narrow binding_inventory(), a mismatch that only surfaces now that N32''s
+  wiring (P-N32-001) is the last layer and nearly everything is compiled. Precisely
+  diagnosed: swap the repro call to use full_binding_inventory() too'
+expected_effect: test_plan26_topology.py's full suite passes again, closing this residual
+  inconsistency
+instructions: "One small, precisely-diagnosed residual bug in your own P-N20-001 fix,\
+  \ now\nthat N32's wiring (P-N32-001) is the last layer: `test_an_unwired_undeclared_\n\
+  node_fails_the_build_by_stable_id` (around line 320) computes its `candidates`\n\
+  list by comparing `DEFERRED_TOPOLOGY` against the WIDE compiled topology's\n`wired_endpoints`\
+  \ (from the `compiled` fixture, built against `full_binding_\ninventory()`), but\
+  \ then reproduces the expected error with:\n\n    G.register_skeleton(fresh_builder(),\
+  \ G.binding_inventory())\n\n\u2014 the NARROW `binding_inventory()`. Since `binding_inventory()`\
+  \ never\ncontains any of D16-D32 (by design), none of `DEFERRED_TOPOLOGY`'s keys\n\
+  (all D18-D23/D25-D32/M06-M08) are ever in `registered` for that narrower\ncall,\
+  \ so `_validate_topology`'s per-node loop never reaches the popped key\nat all \u2014\
+  \ the call succeeds instead of raising, regardless of which\n`DEFERRED_TOPOLOGY`\
+  \ entry was popped. This mismatch (selecting the victim\nagainst the wide set, reproducing\
+  \ against the narrow one) is what breaks:\nverified directly \u2014 `pytest tests/runtime/test_plan26_topology.py::\n\
+  test_an_unwired_undeclared_node_fails_the_build_by_stable_id` fails with\n\"DID\
+  \ NOT RAISE\" against the current repository state.\n\nFix: make the repro call\
+  \ consistent with how the victim was selected \u2014 use\n`G.full_binding_inventory()`\
+  \ for the `register_skeleton` call too (since\n`candidates` is computed against\
+  \ what that same wide set actually wires).\nDo not change how `candidates` is selected\
+  \ (that logic is already correct);\nonly the call on the line that currently reads\
+  \ `G.register_skeleton(fresh_\nbuilder(), G.binding_inventory())` needs `G.binding_inventory()`\
+  \ replaced\nwith `G.full_binding_inventory()`.\n\nThis is the only change needed.\
+  \ Do not touch anything else in this file, and\ndo not touch `graph.py`, `routing.py`,\
+  \ or any other file. Re-run this node's\nfull required verification command\n(`{python}\
+  \ -m pytest -q tests/runtime/test_plan26_topology.py\ntests/runtime/test_plan26_state_reducers.py\n\
+  tests/runtime/test_plan26_deterministic_nodes.py\ntests/runtime/test_plan26_model_nodes.py`)\
+  \ and confirm it is fully green\nbefore reporting `status: PASSED` as a bare line.\n"
+context: {}
+created_at: '2026-08-13T00:01:04.955693+00:00'

@@ -1,0 +1,63 @@
+{
+  "changed_files": [],
+  "commands": [
+    {
+      "argv": [
+        "/tmp/plan26_n30_verify/bin/python",
+        "-m",
+        "pytest",
+        "-q",
+        "tests/runtime/test_plan26_topology.py",
+        "tests/runtime/test_plan26_state_reducers.py",
+        "tests/runtime/test_plan26_deterministic_nodes.py",
+        "tests/runtime/test_plan26_model_nodes.py"
+      ],
+      "exit_code": 0,
+      "finished_at": "2026-08-12T23:07:34.014918+00:00",
+      "log": "plans/26_langgraph_curriculum_factory/results/v3/logs/N20_GRAPH_COMPILER/reverify-shared-output.test1.log",
+      "log_sha256": "400bb515d313415cbe0fa3a075eec51dec8f9fee7d3ae244edf0a1ed4896edde",
+      "started_at": "2026-08-12T23:07:31.138265+00:00",
+      "tail": "......................................................................... [ 13%]\n............................ [ 18%]\n........................................................................ [ 31%]\n........................................................................ [ 45%]\n........................................................................ [ 58%]\n........................................................................ [ 71%]\n........................................................................ [ 84%]\n........................................................................ [ 98%]\n..........                                                               [100%]\n543 passed, 187 subtests passed in 2.04s\n",
+      "timed_out": false
+    }
+  ],
+  "created_at": "2026-08-12T23:07:34.018188+00:00",
+  "findings": [],
+  "graph_digest": "252ed9088a18eb1fd0991291158eb7fd7c06a3c2c3ce6772f487ccffb8a4375a",
+  "graph_id": "plan26_langgraph_curriculum_factory_implementation",
+  "input_fingerprint": "174b02f7ae39c0898f5be6fdb9be1713df504e2e87063163d148d21e465e3457",
+  "node_definition_sha256": "9b4f41d15e4b3375ee95593fa1a317b54588d50b6fd5d22a8c337ed8dd2ca844",
+  "node_id": "N20_GRAPH_COMPILER",
+  "outputs": {
+    "plans/26_langgraph_curriculum_factory/results/N20_GRAPH_COMPILER.result.v1.md": "e00915414cc03d69c87b87da3d1cbdd7e6488525799e4d179aaa6e1ff5e14129",
+    "plans/26_langgraph_curriculum_factory/results/evidence/N20_GRAPH_COMPILER": "b2771c368e0c02d6ba8a2fa12f6a7c4a08a9cf8612e10e59c84d0e3e0ab4a4a2",
+    "runtime/langgraph_factory/graph.py": "efabbd515c4ba2aab811e47a88ac2ffe2742a23fec9b7e46060ec7e385f06aaa",
+    "runtime/langgraph_factory/routing.py": "6be93bf8bd951ae9984f74dc9dbe91c709a41edca0a1a6ff6d72be52cd998079",
+    "tests/runtime/test_plan26_topology.py": "93adacae78ff0e41f9feed023492b10e2a652d14036a93469653939a91977000"
+  },
+  "prompt_sha256": "7fb8abad3a882738bb2269f18d35f625bda0f829ea43417ff4a296d16fc9b8d5",
+  "provenance": {
+    "active_patch_ids": [
+      "P-N20-001"
+    ],
+    "attempt_id": null,
+    "base_graph_digest": "252ed9088a18eb1fd0991291158eb7fd7c06a3c2c3ce6772f487ccffb8a4375a",
+    "base_prompt_sha256": "577a251c85b80d00fc0ae3929dc620a5c1b28b79ab970729a0b9428744f4f469",
+    "branch_id": null,
+    "checkpoint": {
+      "N10_DEPENDENCY_API": "60d4806e207dec37cd2636a92441c0da5a23427d673661404037815da7f8c7bc",
+      "N11_STATE_REDUCERS": "adaaaeb7d3122d8c03a5c97fbe2bdc05fdc8c3c7f24d9cfa35a7826eacd884ad",
+      "N22_DETERMINISTIC_NODES": "3a185930408fbbc0e90a36c2670b69d02d7174601d582e9947ab8fede2c0c0fc",
+      "N23_MODEL_NODES": "93f312e86f079d21654aaca74cecfc8fba513cbce78b2fdf69d7390eb949ea17"
+    },
+    "effective_prompt_sha256": "7fb8abad3a882738bb2269f18d35f625bda0f829ea43417ff4a296d16fc9b8d5",
+    "harness_digest": "a2e5cd37735b3e953f8388e90253daca8add352e8596899473473643f5ecad32",
+    "patch_chain_sha256": "ac6db487d79bdc554dbd58ecbc830e80824344e61ad9b8250711560fae5a966f",
+    "patch_ids": [
+      "P-N20-001"
+    ]
+  },
+  "schema_version": 1,
+  "source": "reverified_after_downstream_shared_output_update",
+  "status": "PASSED"
+}

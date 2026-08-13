@@ -775,21 +775,34 @@ def _run_episode(
     }
 
 
-def _assert_frontier_is_a_declared_row(frontier: str | None) -> None:
-    """A clean episode's halt must be some real `DEFERRED_EDGES` destination.
+def _assert_frontier_is_a_declared_row_or_a_real_completion(
+    frontier: str | None, terminal: dict[str, Any] | None
+) -> None:
+    """A clean episode's halt is either a declared `DEFERRED_EDGES` row or a
+    real completion, never a fabricated destination and never a silent one.
 
-    Not pinned to today's specific row (`D16_REDUCE_UNIT_EVIDENCE`): the node
-    whose guard actually resolves to the open row (M05 today) runs but its own
-    update is swallowed by the aborted superstep before it reaches the stream,
-    so the frontier cannot be re-derived from the observed trace either — the
-    KeyError `_run_episode` already caught *is* the ground truth, and this only
-    checks that ground truth is a declared row, never a fabricated one. Stays
-    correct as N31/N32 close further rows of that table (P-N30-001, closing
-    N90 finding F1).
+    Every `DEFERRED_EDGES` row this table has ever named a single-unit,
+    single-manifest fresh episode's fixture hits (D16/D17's six rows, D24's
+    one) now has a real node body: D16-D23 (P-N31-001) and D24-D32
+    (P-N32-001) are all wired production members of the compiled graph. A
+    clean single-unit `"one"`-mode episode therefore no longer halts at any
+    of them — it runs all the way to a real, checkpointed `UNIT_ACCEPTED`
+    terminal (`deferred_frontier is None`), which is asserted positively
+    here rather than merely tolerated. A frontier is still accepted if one is
+    genuinely produced (a real, reproducible LangGraph streaming artifact for
+    whichever row, if any, is still actually open for a given fixture — see
+    `_run_episode`'s own `KeyError` handling), so this still fails loudly on
+    a fabricated destination; only "no frontier and no real terminal" is
+    rejected outright.
     """
 
+    if frontier is None:
+        assert terminal is not None and terminal["kind"] == "UNIT_ACCEPTED", (
+            "a clean episode with no deferred frontier must have reached a "
+            "real UNIT_ACCEPTED terminal, not silently stopped short of one"
+        )
+        return
     declared_destinations = {destination for _s, _v, destination, _o in U.DEFERRED_EDGES}
-    assert frontier is not None
     assert frontier in declared_destinations
 
 
@@ -1300,17 +1313,13 @@ def test_a_fresh_episode_executes_the_bootstrap_spine_once_through_langgraph(
 
     With D16-D23 now wired (P-N31-001), this clean one-unit episode really
     reaches acceptance: the second `D05_SELECT_NEXT_UNIT` call finds the
-    manifest exhausted and routes to the still-deferred `D24_PROVE_EXACT_
-    MANIFEST_COVERAGE`, whose `KeyError` is raised in the same tick as that
-    second `D05` call's own routing decision -- a real, reproducible LangGraph
-    `stream(stream_mode="updates")` artifact: the chunk for a step whose
-    *next* step's routing raises in the same tick is never yielded, so
-    `result["trace"]`'s own `D05_SELECT_NEXT_UNIT` count undercounts by
-    exactly one in this exhausted-after-one-unit case (P-N31-003, closing the
-    residual N90 finding F1 diagnosis). The real, checkpointed final state is
-    unaffected by that streaming artifact, so it is asserted directly instead
-    of inferring the outcome from a trace count this specific interaction
-    cannot reliably produce.
+    manifest exhausted and routes to `D24_PROVE_EXACT_MANIFEST_COVERAGE`,
+    which is itself now wired (P-N32-001). For a `"one"`-mode episode
+    requesting a single unit, D24's own `unit_target_accepted` guard value
+    routes straight to the terminal writer rather than into workbook
+    assembly (that is `"all"`-mode's concern), so this fixture now reaches a
+    real, checkpointed `UNIT_ACCEPTED` terminal instead of halting at a
+    deferred edge. The real, checkpointed final state is asserted directly.
     """
 
     fixture = _build_episode_fixture(tmp_path)
@@ -1339,10 +1348,10 @@ def test_a_fresh_episode_executes_the_bootstrap_spine_once_through_langgraph(
     assert state["selected_unit_id"] is None
     assert state["cursor"]["accepted_ordinal"] == 1
     assert "U001" in (state.get("accepted_unit_receipts") or {})
-    # No product success, and no second terminal, however the episode ends.
+    # Exactly one real terminal: a genuine, checkpointed unit acceptance, not
+    # a fabricated product `COMPLETE` ("one" mode never assembles a workbook).
     assert result["trace"].count("D98_WRITE_TERMINAL") <= 1
-    if state.get("terminal") is not None:
-        assert state["terminal"]["kind"] not in ("UNIT_ACCEPTED", "COMPLETE")
+    assert state["terminal"] is not None and state["terminal"]["kind"] == "UNIT_ACCEPTED"
 
 
 def test_the_source_map_reduce_supersteps_execute_as_real_send_fanouts(
@@ -1490,7 +1499,9 @@ def test_a_visual_denominator_permutation_produces_an_identical_admitted_head(
     reverse = run(list(reversed(DECLARED_VISUALS)))
 
     for result in (forward, reverse):
-        _assert_frontier_is_a_declared_row(result["deferred_frontier"])
+        _assert_frontier_is_a_declared_row_or_a_real_completion(
+            result["deferred_frontier"], result["state"].get("terminal")
+        )
         assert result["trace"].count("D11_CREATE_DETERMINISTIC_VISUALS") == 1
         assert result["trace"].count("M04_CREATE_UNIT_VISUALS") == 1
 
@@ -1694,31 +1705,31 @@ def test_the_review_packet_names_the_exact_pdf_and_every_page_once(
 def test_the_committed_path_stops_at_a_declared_deferred_edge(
     tmp_path: Path, monkeypatch
 ) -> None:
-    """The episode's real frontier is a declared row, never a fabricated one.
+    """The episode's real frontier is a declared row, or a real completion,
+    never a fabricated destination and never a silently swallowed one.
 
-    The whole unit path now executes and M05 returns a real independent review.
-    Whichever `DEFERRED_EDGES` row is currently open is where a clean episode
-    halts (today that is `M05_REVIEW_ACTUAL_UNIT`'s `review_returned` guard
-    resolving to `D16_REDUCE_UNIT_EVIDENCE`, N30's own declared handoff to N31;
-    once N31 wires D16-D23 the same clean episode legitimately proceeds through
-    D22/D23 and a second `D05_SELECT_NEXT_UNIT` call to halt on `DEFERRED_EDGES`'
-    still-open `manifest_exhausted` row instead — P-N30-001, closing N90 finding
-    F1). This only checks the halt is *some* declared row, not pinned to
-    today's, so it keeps proving "no fabricated destination" rather than just
-    "today's specific one."
+    The whole unit path now executes and M05 returns a real independent
+    review. With D16-D32 all now wired (P-N31-001, P-N32-001), a clean
+    single-unit `"one"`-mode episode no longer halts at any `DEFERRED_EDGES`
+    row at all — it proceeds through D22/D23, a second `D05_SELECT_NEXT_UNIT`
+    call, D24's manifest-coverage proof, and reaches a real, checkpointed
+    `UNIT_ACCEPTED` terminal. That positive outcome is asserted directly
+    rather than the earlier, now-stale expectation of a bare deferred halt.
     """
 
     fixture = _build_episode_fixture(tmp_path)
     result = _run_episode(monkeypatch, fixture)
 
-    _assert_frontier_is_a_declared_row(result["deferred_frontier"])
-
     state = result["state"]
+    _assert_frontier_is_a_declared_row_or_a_real_completion(
+        result["deferred_frontier"], state.get("terminal")
+    )
+
     assert state.get("pending_failure") is None
-    assert state.get("terminal") is None
+    assert state["terminal"]["kind"] == "UNIT_ACCEPTED"
     assert "D91_CLASSIFY_MODEL_FAILURE" not in result["trace"]
-    # Every deterministic check the path ran passed, so the frontier is a clean
-    # handoff rather than a repair loop that happens to stop here.
+    # Every deterministic check the path ran passed, so the run is a clean
+    # acceptance rather than a repair loop that happened to succeed anyway.
     assert {check["result"] for check in state["deterministic_checks"]} == {"PASS"}
     assert sorted(state["artifact_heads"]) == [
         "units/U001/content",
@@ -2687,7 +2698,9 @@ def test_this_nodes_renderers_are_a_test_double_and_not_exposed_to_n13s_store_ga
     store_root = fixture["output_root"]
     blobs = [path for path in store_root.rglob("*") if path.is_file() and "artifact" in str(path)]
     assert blobs == [], blobs
-    _assert_frontier_is_a_declared_row(result["deferred_frontier"])
+    _assert_frontier_is_a_declared_row_or_a_real_completion(
+        result["deferred_frontier"], result["state"].get("terminal")
+    )
     assert result["state"]["unit_page_inventories"][0]["result"] == "PASS"
 
 
