@@ -1,0 +1,261 @@
+graph_id: plan27_langgraph_curriculum_factory_remediation
+version: 1
+status: SCAFFOLDED_BLOCKED_BY_SPEC_APPROVAL
+source_incident: plans/26_langgraph_curriculum_factory/post_morten/postmortem.v2.md
+source_spec: plans/26_langgraph_curriculum_factory/spec/langgraph_curriculum_factory.spec.v2.md
+runner: plans/27_langgraph_curriculum_factory_remediation/run.prompt.md
+qa_criteria: plans/27_langgraph_curriculum_factory_remediation/qa_criteria.v1.md
+node_result_schema: plans/27_langgraph_curriculum_factory_remediation/schemas/node_result.schema.v1.json
+entry: N00_SPEC_APPROVAL_GATE
+result_pattern: plans/27_langgraph_curriculum_factory_remediation/results/{node_id}.result.v1.json
+
+rules:
+  success_requires_schema_bound_result: true
+  preserve_plan26_history: true
+  invalidate_all_descendants_on_ancestor_change: true
+  markdown_status_is_authority: false
+  allow_parallel_ready_nodes: false
+  max_attempts_per_finding: 3
+  live_proof_required_for_activation: true
+  frozen_before_entry:
+    - plans/27_langgraph_curriculum_factory_remediation/schemas/node_result.schema.v1.json
+  forbidden_production_scan:
+    scan_roots:
+      - runtime/langgraph_factory
+      - runtime/run_curriculum.py
+      - policy/routes.v1.yaml
+      - policy/routing/model_registry.v1.yaml
+      - schemas/routes.schema.v1.json
+      - schemas/model_registry.schema.v1.json
+    excluded_globs:
+      - "**/__pycache__/**"
+      - "**/*.pyc"
+    excluded_roots:
+      - plans
+      - tests
+      - outputs
+    prohibited_dispatch_or_import_terms:
+      - gemini
+      - google.generativeai
+    prohibited_credential_names:
+      - GEMINI_API_KEY
+      - GOOGLE_API_KEY
+      - OPENAI_API_KEY
+      - ANTHROPIC_API_KEY
+    credential_absence_guard_paths:
+      - runtime/run_curriculum.py
+      - runtime/langgraph_factory/transport.py
+    credential_occurrence_policy: >-
+      Credential names may appear only in explicit absence/denial guards inside
+      runtime/run_curriculum.py or runtime/langgraph_factory/transport.py; they
+      may never configure, authenticate, authorize, dispatch, or provide fallback.
+  retired_provider_test_scan:
+    scan_roots:
+      - tests/runtime
+    excluded_globs:
+      - "**/__pycache__/**"
+      - "**/*.pyc"
+    prohibited_terms:
+      - gemini
+      - google
+      - GEMINI_API_KEY
+      - GOOGLE_API_KEY
+    occurrence_policy: zero_occurrences_in_active_test_source
+
+nodes:
+  N00_SPEC_APPROVAL_GATE:
+    prompt: plans/27_langgraph_curriculum_factory_remediation/prompts/N00_spec_approval_gate.prompt.v1.md
+    depends_on: []
+    writes:
+      - plans/27_langgraph_curriculum_factory_remediation/results/N00_SPEC_APPROVAL_GATE.result.v1.json
+      - plans/27_langgraph_curriculum_factory_remediation/results/evidence/N00_SPEC_APPROVAL_GATE
+    verification:
+      - [python3, plans/27_langgraph_curriculum_factory_remediation/tools/validate_plan.py]
+      - [python3, plans/27_langgraph_curriculum_factory_remediation/tools/validate_result.py, --node, N00_SPEC_APPROVAL_GATE]
+    allowed_results: [PASSED, BLOCKED_SPEC_NOT_APPROVED, BLOCKED]
+
+  N10_HARNESS_PROTOCOL:
+    prompt: plans/27_langgraph_curriculum_factory_remediation/prompts/N10_harness_protocol.prompt.v1.md
+    depends_on: [N00_SPEC_APPROVAL_GATE]
+    writes:
+      - plans/27_langgraph_curriculum_factory_remediation/controller
+      - plans/27_langgraph_curriculum_factory_remediation/schemas/scheduler_receipt.schema.v1.json
+      - plans/27_langgraph_curriculum_factory_remediation/schemas/attempt_record.schema.v1.json
+      - plans/27_langgraph_curriculum_factory_remediation/tests/test_run27_controller.py
+      - plans/27_langgraph_curriculum_factory_remediation/tests/test_node_result_protocol.py
+      - plans/27_langgraph_curriculum_factory_remediation/tests/test_forbidden_production_scan.py
+      - plans/27_langgraph_curriculum_factory_remediation/results/N10_HARNESS_PROTOCOL.result.v1.json
+      - plans/27_langgraph_curriculum_factory_remediation/results/evidence/N10_HARNESS_PROTOCOL
+    verification:
+      - [python3, -m, pytest, -q, plans/27_langgraph_curriculum_factory_remediation/tests/test_run27_controller.py, plans/27_langgraph_curriculum_factory_remediation/tests/test_node_result_protocol.py, plans/27_langgraph_curriculum_factory_remediation/tests/test_forbidden_production_scan.py]
+      - [python3, plans/27_langgraph_curriculum_factory_remediation/tools/validate_plan.py]
+      - [python3, plans/27_langgraph_curriculum_factory_remediation/tools/validate_result.py, --node, N10_HARNESS_PROTOCOL]
+    allowed_results: [PASSED, BLOCKED]
+
+  N20_PROVIDER_TRANSPORT:
+    prompt: plans/27_langgraph_curriculum_factory_remediation/prompts/N20_provider_transport.prompt.v1.md
+    depends_on: [N10_HARNESS_PROTOCOL]
+    writes:
+      - runtime/langgraph_factory/transport.py
+      - runtime/langgraph_factory/model_nodes.py
+      - runtime/langgraph_factory/config
+      - runtime/langgraph_factory/prompts
+      - runtime/langgraph_factory/schemas
+      - policy/routes.v1.yaml
+      - policy/routing/model_registry.v1.yaml
+      - schemas/routes.schema.v1.json
+      - schemas/model_registry.schema.v1.json
+      - tests/runtime/test_plan26_transport.py
+      - tests/runtime/test_plan26_model_nodes.py
+      - tests/runtime/test_gemini.py
+      - tests/runtime/test_capabilities.py
+      - tests/runtime/test_curriculum_factory_graph.py
+      - tests/runtime/test_plan26_adversarial.py
+      - tests/runtime/test_plan26_api_contract.py
+      - tests/runtime/test_plan26_lock_drift.py
+      - plans/27_langgraph_curriculum_factory_remediation/results/N20_PROVIDER_TRANSPORT.result.v1.json
+      - plans/27_langgraph_curriculum_factory_remediation/results/evidence/N20_PROVIDER_TRANSPORT
+    verification:
+      - [python3, -m, pytest, -q, tests/runtime/test_plan26_transport.py, tests/runtime/test_plan26_model_nodes.py, tests/runtime/test_capabilities.py, tests/runtime/test_curriculum_factory_graph.py, tests/runtime/test_plan26_adversarial.py, tests/runtime/test_plan26_api_contract.py, tests/runtime/test_plan26_lock_drift.py]
+      - [python3, plans/27_langgraph_curriculum_factory_remediation/controller/check_forbidden_production_refs.py]
+      - [python3, plans/27_langgraph_curriculum_factory_remediation/tools/validate_result.py, --node, N20_PROVIDER_TRANSPORT]
+    allowed_results: [PASSED, BLOCKED]
+
+  N30_PREFLIGHT_EGRESS:
+    prompt: plans/27_langgraph_curriculum_factory_remediation/prompts/N30_preflight_egress.prompt.v1.md
+    depends_on: [N20_PROVIDER_TRANSPORT]
+    writes:
+      - runtime/langgraph_factory/egress.py
+      - runtime/langgraph_factory/nodes/inputs.py
+      - runtime/run_curriculum.py
+      - tests/runtime/test_plan26_egress.py
+      - tests/runtime/test_plan26_cli.py
+      - tests/runtime/test_plan26_deterministic_nodes.py
+      - tests/runtime/test_run_curriculum.py
+      - plans/27_langgraph_curriculum_factory_remediation/results/N30_PREFLIGHT_EGRESS.result.v1.json
+      - plans/27_langgraph_curriculum_factory_remediation/results/evidence/N30_PREFLIGHT_EGRESS
+    verification:
+      - [python3, -m, pytest, -q, tests/runtime/test_plan26_egress.py, tests/runtime/test_plan26_cli.py, tests/runtime/test_run_curriculum.py]
+      - [python3, -m, pytest, -q, tests/runtime/test_plan26_deterministic_nodes.py, -k, "D03 or capability"]
+      - [python3, plans/27_langgraph_curriculum_factory_remediation/controller/check_forbidden_production_refs.py]
+      - [python3, plans/27_langgraph_curriculum_factory_remediation/tools/validate_result.py, --node, N30_PREFLIGHT_EGRESS]
+    allowed_results: [PASSED, BLOCKED]
+
+  N40_INTEGRATION_OWNERSHIP:
+    prompt: plans/27_langgraph_curriculum_factory_remediation/prompts/N40_integration_ownership.prompt.v1.md
+    depends_on: [N30_PREFLIGHT_EGRESS]
+    writes:
+      - runtime/langgraph_factory/graph.py
+      - runtime/langgraph_factory/routing.py
+      - runtime/langgraph_factory/unit_graph.py
+      - runtime/langgraph_factory/repair.py
+      - runtime/langgraph_factory/acceptance.py
+      - runtime/langgraph_factory/workbook.py
+      - tests/runtime/test_plan26_topology.py
+      - tests/runtime/test_plan26_unit_graph.py
+      - tests/runtime/test_plan26_repair_acceptance.py
+      - tests/runtime/test_plan26_workbook.py
+      - plans/27_langgraph_curriculum_factory_remediation/contracts/integration_ownership.v1.yaml
+      - plans/27_langgraph_curriculum_factory_remediation/results/N40_INTEGRATION_OWNERSHIP.result.v1.json
+      - plans/27_langgraph_curriculum_factory_remediation/results/evidence/N40_INTEGRATION_OWNERSHIP
+    verification:
+      - [python3, -m, pytest, -q, tests/runtime/test_plan26_topology.py, tests/runtime/test_plan26_unit_graph.py, tests/runtime/test_plan26_repair_acceptance.py, tests/runtime/test_plan26_workbook.py]
+      - [python3, plans/27_langgraph_curriculum_factory_remediation/controller/check_forbidden_production_refs.py]
+      - [python3, plans/27_langgraph_curriculum_factory_remediation/controller/verify_ownership.py, --contract, plans/27_langgraph_curriculum_factory_remediation/contracts/integration_ownership.v1.yaml]
+      - [python3, plans/27_langgraph_curriculum_factory_remediation/tools/validate_result.py, --node, N40_INTEGRATION_OWNERSHIP]
+    allowed_results: [PASSED, BLOCKED]
+
+  N50_EVIDENCE_AUDIT_CONTROLS:
+    prompt: plans/27_langgraph_curriculum_factory_remediation/prompts/N50_evidence_audit_controls.prompt.v1.md
+    depends_on: [N40_INTEGRATION_OWNERSHIP]
+    writes:
+      - runtime/langgraph_factory/evidence.py
+      - runtime/langgraph_factory/artifacts.py
+      - runtime/langgraph_factory/persistence.py
+      - tests/runtime/test_plan26_evidence.py
+      - tests/runtime/test_plan26_persistence.py
+      - plans/27_langgraph_curriculum_factory_remediation/contracts/evidence_determinism.v1.yaml
+      - plans/27_langgraph_curriculum_factory_remediation/contracts/requirements_lineage.v1.yaml
+      - plans/27_langgraph_curriculum_factory_remediation/results/N50_EVIDENCE_AUDIT_CONTROLS.result.v1.json
+      - plans/27_langgraph_curriculum_factory_remediation/results/evidence/N50_EVIDENCE_AUDIT_CONTROLS
+    verification:
+      - [python3, -m, pytest, -q, tests/runtime/test_plan26_evidence.py, tests/runtime/test_plan26_persistence.py]
+      - [python3, plans/27_langgraph_curriculum_factory_remediation/controller/verify_evidence_determinism.py, --contract, plans/27_langgraph_curriculum_factory_remediation/contracts/evidence_determinism.v1.yaml]
+      - [python3, plans/27_langgraph_curriculum_factory_remediation/controller/verify_requirements_lineage.py, --contract, plans/27_langgraph_curriculum_factory_remediation/contracts/requirements_lineage.v1.yaml]
+      - [python3, plans/27_langgraph_curriculum_factory_remediation/controller/check_forbidden_production_refs.py]
+      - [python3, plans/27_langgraph_curriculum_factory_remediation/tools/validate_result.py, --node, N50_EVIDENCE_AUDIT_CONTROLS]
+    allowed_results: [PASSED, BLOCKED]
+
+  N60_ADVERSARIAL_REGRESSION:
+    prompt: plans/27_langgraph_curriculum_factory_remediation/prompts/N60_adversarial_regression.prompt.v1.md
+    depends_on: [N50_EVIDENCE_AUDIT_CONTROLS]
+    writes:
+      - tests/runtime/test_plan27_adversarial.py
+      - plans/27_langgraph_curriculum_factory_remediation/tests/test_run27_adversarial.py
+      - plans/27_langgraph_curriculum_factory_remediation/results/N60_ADVERSARIAL_REGRESSION.result.v1.json
+      - plans/27_langgraph_curriculum_factory_remediation/results/evidence/N60_ADVERSARIAL_REGRESSION
+    verification:
+      - [python3, -m, pytest, -q, tests/runtime/test_plan27_adversarial.py, plans/27_langgraph_curriculum_factory_remediation/tests/test_run27_adversarial.py]
+      - [python3, -m, pytest, -q, tests/runtime]
+      - [python3, -m, pytest, -q, plans/27_langgraph_curriculum_factory_remediation/tests]
+      - [python3, plans/27_langgraph_curriculum_factory_remediation/controller/check_forbidden_production_refs.py]
+      - [python3, plans/27_langgraph_curriculum_factory_remediation/tools/validate_result.py, --node, N60_ADVERSARIAL_REGRESSION]
+    allowed_results: [PASSED, BLOCKED]
+
+  N70_LIVE_UNIT_PROOF:
+    prompt: plans/27_langgraph_curriculum_factory_remediation/prompts/N70_live_unit_proof.prompt.v1.md
+    depends_on: [N60_ADVERSARIAL_REGRESSION]
+    writes:
+      - outputs/run27/live_unit
+      - plans/27_langgraph_curriculum_factory_remediation/results/N70_LIVE_UNIT_PROOF.result.v1.json
+      - plans/27_langgraph_curriculum_factory_remediation/results/evidence/N70_LIVE_UNIT_PROOF
+    verification:
+      - [python3, plans/27_langgraph_curriculum_factory_remediation/controller/run27_controller.py, verify-live-proof, --node, N70_LIVE_UNIT_PROOF]
+      - [python3, plans/27_langgraph_curriculum_factory_remediation/tools/validate_result.py, --node, N70_LIVE_UNIT_PROOF]
+    allowed_results: [PASSED, NOT_AVAILABLE, BLOCKED]
+
+  N80_LIVE_WORKBOOK_PROOF:
+    prompt: plans/27_langgraph_curriculum_factory_remediation/prompts/N80_live_workbook_proof.prompt.v1.md
+    depends_on: [N70_LIVE_UNIT_PROOF]
+    writes:
+      - outputs/run27/live_workbook
+      - plans/27_langgraph_curriculum_factory_remediation/results/N80_LIVE_WORKBOOK_PROOF.result.v1.json
+      - plans/27_langgraph_curriculum_factory_remediation/results/evidence/N80_LIVE_WORKBOOK_PROOF
+    verification:
+      - [python3, plans/27_langgraph_curriculum_factory_remediation/controller/run27_controller.py, verify-live-proof, --node, N80_LIVE_WORKBOOK_PROOF]
+      - [python3, plans/27_langgraph_curriculum_factory_remediation/tools/validate_result.py, --node, N80_LIVE_WORKBOOK_PROOF]
+    allowed_results: [PASSED, NOT_AVAILABLE, BLOCKED]
+    read_only_inputs:
+      - outputs/run27/live_unit
+
+  N90_REQUIREMENTS_FINAL_AUDIT:
+    prompt: plans/27_langgraph_curriculum_factory_remediation/prompts/N90_requirements_final_audit.prompt.v1.md
+    depends_on: [N80_LIVE_WORKBOOK_PROOF]
+    writes:
+      - plans/27_langgraph_curriculum_factory_remediation/results/N90_REQUIREMENTS_FINAL_AUDIT.result.v1.json
+      - plans/27_langgraph_curriculum_factory_remediation/results/evidence/N90_REQUIREMENTS_FINAL_AUDIT
+    verification:
+      - [python3, plans/27_langgraph_curriculum_factory_remediation/controller/run27_controller.py, verify-final-audit, --node, N90_REQUIREMENTS_FINAL_AUDIT]
+      - [python3, plans/27_langgraph_curriculum_factory_remediation/tools/validate_result.py, --node, N90_REQUIREMENTS_FINAL_AUDIT]
+    allowed_results: [PASSED, BLOCKED]
+
+edges:
+  - {from: N00_SPEC_APPROVAL_GATE, to: N10_HARNESS_PROTOCOL}
+  - {from: N10_HARNESS_PROTOCOL, to: N20_PROVIDER_TRANSPORT}
+  - {from: N20_PROVIDER_TRANSPORT, to: N30_PREFLIGHT_EGRESS}
+  - {from: N30_PREFLIGHT_EGRESS, to: N40_INTEGRATION_OWNERSHIP}
+  - {from: N40_INTEGRATION_OWNERSHIP, to: N50_EVIDENCE_AUDIT_CONTROLS}
+  - {from: N50_EVIDENCE_AUDIT_CONTROLS, to: N60_ADVERSARIAL_REGRESSION}
+  - {from: N60_ADVERSARIAL_REGRESSION, to: N70_LIVE_UNIT_PROOF}
+  - {from: N70_LIVE_UNIT_PROOF, to: N80_LIVE_WORKBOOK_PROOF}
+  - {from: N80_LIVE_WORKBOOK_PROOF, to: N90_REQUIREMENTS_FINAL_AUDIT}
+
+terminals:
+  ACTIVATED:
+    guard: N60 PASSED; N70 and N80 PASSED with authorized live receipts; N90 independently verified all QA criteria
+  REMEDIATION_VERIFIED_NOT_ACTIVATED:
+    guard: N60 PASSED; N70 or N80 is NOT_AVAILABLE for an approved subscription driver; N90 verifies no fallback or false product claim
+  BLOCKED_SPEC_NOT_APPROVED:
+    guard: N00 did not prove a corrected independently verified user-approved specification digest
+  BLOCKED:
+    guard: an implementation, integrity, evidence, convergence, or audit finding remains unresolved

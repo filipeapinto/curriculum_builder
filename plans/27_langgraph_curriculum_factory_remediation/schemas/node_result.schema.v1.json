@@ -1,0 +1,158 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "Run 27 node result v1",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "schema_version",
+    "run_id",
+    "node_id",
+    "attempt_id",
+    "outcome",
+    "source_spec_sha256",
+    "prompt_sha256",
+    "predecessor_receipts",
+    "changed_files",
+    "commands",
+    "evidence",
+    "findings",
+    "invalidated_descendants"
+  ],
+  "properties": {
+    "schema_version": {"const": 1},
+    "run_id": {"type": "string", "minLength": 1},
+    "node_id": {"type": "string", "pattern": "^N[0-9]{2}_[A-Z0-9_]+$"},
+    "attempt_id": {"type": "string", "minLength": 1},
+    "outcome": {
+      "enum": ["PASSED", "NOT_AVAILABLE", "BLOCKED_SPEC_NOT_APPROVED", "BLOCKED"]
+    },
+    "source_spec_sha256": {"type": ["string", "null"], "pattern": "^[a-f0-9]{64}$"},
+    "prompt_sha256": {"type": "string", "pattern": "^[a-f0-9]{64}$"},
+    "predecessor_receipts": {
+      "type": "object",
+      "additionalProperties": {"type": "string", "pattern": "^[a-f0-9]{64}$"}
+    },
+    "changed_files": {
+      "type": "array",
+      "uniqueItems": true,
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": ["path", "change", "sha256"],
+        "properties": {
+          "path": {"type": "string", "minLength": 1},
+          "change": {"enum": ["created", "modified", "deleted"]},
+          "sha256": {"type": ["string", "null"], "pattern": "^[a-f0-9]{64}$"}
+        },
+        "allOf": [
+          {
+            "if": {
+              "properties": {"change": {"const": "deleted"}},
+              "required": ["change"]
+            },
+            "then": {"properties": {"sha256": {"type": "null"}}},
+            "else": {"properties": {"sha256": {"type": "string", "pattern": "^[a-f0-9]{64}$"}}}
+          }
+        ]
+      }
+    },
+    "commands": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": ["argv", "exit_code", "log", "log_sha256"],
+        "properties": {
+          "argv": {"type": "array", "minItems": 1, "items": {"type": "string"}},
+          "exit_code": {"type": "integer"},
+          "log": {"type": "string", "minLength": 1},
+          "log_sha256": {"type": "string", "pattern": "^[a-f0-9]{64}$"}
+        }
+      }
+    },
+    "evidence": {
+      "type": "array",
+      "uniqueItems": true,
+      "items": {"type": "string", "minLength": 1}
+    },
+    "findings": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": ["id", "severity", "summary", "disposition"],
+        "properties": {
+          "id": {"type": "string", "minLength": 1},
+          "severity": {"enum": ["critical", "major", "minor", "observation"]},
+          "summary": {"type": "string", "minLength": 1},
+          "disposition": {"enum": ["resolved", "open", "not_applicable"]}
+        }
+      }
+    },
+    "invalidated_descendants": {
+      "type": "array",
+      "uniqueItems": true,
+      "items": {"type": "string", "pattern": "^N[0-9]{2}_[A-Z0-9_]+$"}
+    },
+    "terminal_recommendation": {
+      "enum": [
+        "ACTIVATED",
+        "REMEDIATION_VERIFIED_NOT_ACTIVATED",
+        "BLOCKED"
+      ]
+    }
+  },
+  "allOf": [
+    {
+      "if": {
+        "properties": {
+          "node_id": {"const": "N90_REQUIREMENTS_FINAL_AUDIT"}
+        },
+        "required": ["node_id"]
+      },
+      "then": {
+        "required": ["terminal_recommendation"],
+        "allOf": [
+          {
+            "if": {
+              "properties": {"outcome": {"const": "BLOCKED"}},
+              "required": ["outcome"]
+            },
+            "then": {
+              "properties": {"terminal_recommendation": {"const": "BLOCKED"}}
+            }
+          },
+          {
+            "if": {
+              "properties": {"outcome": {"const": "PASSED"}},
+              "required": ["outcome"]
+            },
+            "then": {
+              "properties": {
+                "terminal_recommendation": {
+                  "enum": ["ACTIVATED", "REMEDIATION_VERIFIED_NOT_ACTIVATED"]
+                }
+              }
+            }
+          }
+        ]
+      },
+      "else": {
+        "not": {"required": ["terminal_recommendation"]}
+      }
+    },
+    {
+      "if": {
+        "properties": {
+          "outcome": {"const": "BLOCKED_SPEC_NOT_APPROVED"}
+        },
+        "required": ["outcome"]
+      },
+      "then": {
+        "properties": {
+          "node_id": {"const": "N00_SPEC_APPROVAL_GATE"}
+        }
+      }
+    }
+  ]
+}
