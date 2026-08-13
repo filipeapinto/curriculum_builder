@@ -1,0 +1,62 @@
+Eight-job conformance table, derived from spec v2 §6.3/§7.1–§7.4 plus the
+user-approved USER_DECISION_REQUIRED-01 model/effort resolution.
+Every field is resolved; none is unresolved. This is the table N20 must implement.
+
+JOB   job_type                       ROLE / MUTABILITY            FAMILY     DRIVER  MODEL            EFFORT
+M01   research_unit_sources          generate (locators/interp)   anthropic  claude  claude-sonnet-5  xhigh
+M02   create_unit_domain_data        generate (candidate domain)  anthropic  claude  claude-sonnet-5  high
+M03   write_unit_content             generate (candidate content) anthropic  claude  claude-sonnet-5  high
+M04   create_unit_visuals            generate (visual candidate)  anthropic  claude  claude-sonnet-5  high
+M05   review_actual_unit             judge (read-only, findings)  openai     codex   gpt-5.6-sol      xhigh
+M06   repair_named_unit_artifact     mutate (named finding only)  anthropic  claude  claude-sonnet-5  xhigh
+M07   review_actual_workbook         judge (read-only, findings)  openai     codex   gpt-5.6-sol      xhigh
+M08   repair_named_workbook_defect   mutate (workbook-owned only) anthropic  claude  claude-sonnet-5  xhigh
+
+JOB   INPUT BOUNDARY (§9 projection + §7.4 data authorization class)
+M01   anthropic: request, unit, source_rules, discovery_authority | retrieval_group
+M02   anthropic: unit, admitted_sources, domain_schema/config/verifier_interface, calibration
+M03   anthropic: unit, admitted_domain, curriculum_contracts, admitted_evidence_references
+M04   anthropic: one eligible non-authoritative brief + permitted facts
+M05   openai:    frozen unit review packet incl. shipped PDF and EVERY rasterized page
+M06   anthropic: one named finding partition, owner, immutable parent, boundary/retest order
+M07   openai:    frozen coverage/workbook packet incl. EVERY rasterized page
+M08   anthropic: one workbook-owned defect, immutable parent + accepted-unit hashes
+
+JOB   OUTPUT SCHEMA (package-relative, runtime/langgraph_factory/schemas/)
+M01   M01_research_unit_sources.schema.json      (exactly one phase key)
+M02   M02_create_unit_domain_data.schema.json
+M03   M03_write_unit_content.schema.json
+M04   M04_create_unit_visuals.schema.json
+M05   M05_review_actual_unit.schema.json
+M06   M06_repair_named_unit_artifact.schema.json
+M07   M07_review_actual_workbook.schema.json
+M08   M08_repair_named_workbook_defect.schema.json
+All eight: no control-plane/acceptance/terminal property may appear (transport.FORBIDDEN_MODEL_FIELDS).
+
+JOB   IDENTITY CLAIM (decided vs executed; copying the decision is invalid)
+M01-M04, M06, M08 (claude):
+      decided  = route.model/route.family from config/model_jobs.v1.yaml
+      executed = read from the Claude CLI's own machine-readable output.
+      PROVEN live on 2026-08-13 against claude 2.1.231 (evidence 20-23):
+        --output-format stream-json --verbose emits
+          {"type":"system","subtype":"init","model":"claude-sonnet-5", ...}
+          {"type":"assistant","parent_tool_use_id":null,"message":{"model":"claude-sonnet-5",...}}
+          {"type":"result","modelUsage":{"claude-sonnet-5":{...,"canonicalModel":"claude-sonnet-5",
+                                                            "provider":"firstParty"}}, "structured_output":{...}}
+      executed_family = anthropic only when modelUsage[...].provider == "firstParty".
+      Unobservable identity => fail closed before admission (IdentityUnobservable).
+M05, M07 (codex):
+      executed read from the codex --json JSONL events (session_configured/thread.started/
+      turn.started/model_reroute), unchanged from Plan 26 and already proven live at N60.
+
+JOB   FAILURE DISPOSITION
+M01-M04, M06, M08: one D91-authorized schema/transport retry via D90; no admission authority.
+M05, M07:          one D91-authorized retry; ADDITIONALLY executed_family == "anthropic"
+                   (any authoring family) is a SYSTEM failure, never a degraded pass —
+                   a Claude-authored candidate reviewed by Claude collapses generator and
+                   judge into one family (§6.3, model_nodes.FamilyViolation).
+
+Cross-family invariant satisfied: {M01,M02,M03,M04,M06,M08} family = anthropic,
+{M05,M07} family = openai; the final judge differs in family from every author.
+No gemini/google model, credential, endpoint or authorization class appears anywhere
+in the corrected table.

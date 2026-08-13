@@ -1,0 +1,1 @@
+{"ok": false, "requested_scope": "node:LATE", "scanned_files": 1, "violations": [{"code": "RETIRED_PROVIDER_TERM_IN_ACTIVE_TEST", "line": 2, "path": "tests/runtime/dirty_late.py", "scope": "node:LATE", "term": "gemini", "text": "gemini_client = 'still here'"}]}

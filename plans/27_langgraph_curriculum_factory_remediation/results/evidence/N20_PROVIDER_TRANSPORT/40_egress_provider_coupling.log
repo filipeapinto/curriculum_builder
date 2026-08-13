@@ -1,0 +1,25 @@
+spec v2 s7.4 authorization classes required by the corrected table:
+  anthropic  -> M01,M02,M03,M04,M06,M08
+  openai     -> M05,M07
+  primary_source_hosts (unchanged)
+  and: 'No `google` or `gemini` authorization class exists in this specification.'
+
+runtime/langgraph_factory/egress.py (owner: N30_PREFLIGHT_EGRESS) currently declares:
+  PROVIDERS = ('openai', 'google', 'primary_source_hosts')
+  PROVIDER_DATA_CLASSES keys = ['google', 'openai', 'primary_source_hosts']
+
+transport.CliTransport.execute() passes the frozen route's `provider` field
+straight into egress.authorize_subprocess_transmission:
+    authorization_receipt = authorize_subprocess_transmission(
+    self.authorization, provider=route.provider, data_classes=requested,
+
+So setting `provider: anthropic` on M01..M04/M06/M08 in the N20-owned
+config/model_jobs.v1.yaml is rejected by the N30-owned egress allowlist:
+    AuthorizationRecord(providers={'anthropic': [...]}) -> AuthorizationDenied('unknown_provider'): unknown_provider: anthropic
+
+Required fix, owner N30_PREFLIGHT_EGRESS (runtime/langgraph_factory/egress.py):
+  PROVIDERS: ('openai','google','primary_source_hosts')
+         ->  ('anthropic','openai','primary_source_hosts')
+  PROVIDER_DATA_CLASSES['openai'] (authoring classes) -> key 'anthropic'
+  PROVIDER_DATA_CLASSES['google'] (review classes)    -> key 'openai'
+  MODEL_API_HOSTS: drop the four *.googleapis.com model endpoints

@@ -1,0 +1,80 @@
+RUN 26 CONTROLLER BEHAVIOUR DISPOSITION
+source: plans/26_langgraph_curriculum_factory/prompt_graph_controller.py (2110 lines, read for reference only, not copied)
+target: plans/27_langgraph_curriculum_factory_remediation/controller/ (core.py, scheduler.py, run27_controller.py, contracts.py, check_forbidden_production_refs.py, verify_*.py)
+
+Disposition vocabulary:
+  RETAINED  the behaviour is correct and is reimplemented in the Run 27 controller
+  REPLACED  the behaviour was necessary but defective; a different mechanism now serves the same purpose
+  REJECTED  the behaviour is not carried forward at all
+
+--- RETAINED ---------------------------------------------------------------
+R01 RETAINED  sha256_bytes / sha256_file streaming file hashing            -> core.sha256_bytes, core.sha256_file
+R02 RETAINED  canonical_digest over sort_keys JSON                         -> core.canonical_digest / core.canonical_text
+R03 RETAINED  write-once artifact creation via open(path, "x")             -> core.write_once_text / core.write_once_json (now raises WRITE_ONCE_VIOLATION)
+R04 RETAINED  atomic single-rename file replacement (staged temp + os.replace) -> core.atomic_write_text
+R05 RETAINED  append-only JSONL event stream                               -> core.append_jsonl; state audit.jsonl plus per-attempt events.jsonl
+R06 RETAINED  covers() / paths_overlap() path-ownership predicates         -> core.covers, core.paths_overlap
+R07 RETAINED  topological_order and descendants graph traversals           -> Graph.order, Graph.descendants, Graph.ancestors
+R08 RETAINED  ephemeral-name/suffix ignore list for tree snapshots         -> core.is_ephemeral, core.tree_digest
+R09 RETAINED  per-node receipt store with history archive of superseded receipts -> Scheduler.receipt_path + receipts/history/<node>/<sha>.json
+R10 RETAINED  write-set enforcement against the node's declared writes     -> Scheduler.validate_node_result WRITE_SET_VIOLATION (now evaluated before any merge journal)
+R11 RETAINED  rerunning the graph's own verification commands and recording exit codes -> Scheduler.run_verification, receipt.verification[]
+R12 RETAINED  binding predecessor state into the receipt                   -> receipt.predecessor_receipts (scheduler receipt digests) and receipt.predecessor_results (node-declared result digests)
+R13 RETAINED  one attempt directory per attempt                            -> state/attempts/<node_id>/<attempt_id>/, now immutable
+R14 RETAINED  node_definition digest covering the node entry plus graph rules -> Graph.node_definition_digest
+
+--- REPLACED ---------------------------------------------------------------
+P01 REPLACED  _node_reported_status(): scraping a bare "status: X" line out of the node's stdout/Markdown.
+              PM-17. Replaced by core.load_node_result: strict json.loads plus Draft 2020-12 validation against the frozen
+              schemas/node_result.schema.v1.json, then result["outcome"]. Non-JSON input fails with NON_JSON_RESULT and can
+              never produce a receipt. Proven by tests/test_node_result_protocol.py::test_markdown_and_prose_cannot_report_a_status.
+P02 REPLACED  ReceiptStore.mechanically_revalidate(): silently admitting a receipt whose input_fingerprint no longer matched.
+              PM-15/PM-19. Replaced by an explicit, named readmit operation requiring a reason code from a closed enum, an exact
+              --expect-result-sha256 artifact binding, a forced verification rerun, and an immutable audit event.
+P03 REPLACED  stored input_fingerprint compared with tolerance.
+              PM-15. Replaced by Scheduler.currency(): recomputed on every read from graph digest, node definition, prompt,
+              approved specification, predecessor receipt digests, own final-output digests, and recursive ancestor currency.
+              A receipt can never be stale-but-flagged-valid because nothing is stored as a validity flag.
+P04 REPLACED  _merge(): copying an entire sandbox workspace into the main repository path by path, with a premerge backup
+              manifest and per-path rollback, which produced 5 merge rollbacks and one merge completed after interruption.
+              PM-19. Replaced by a single-file journaled merge: pending_merge.json (write-once, carrying both the new receipt
+              bytes and the previous receipt bytes), then exactly one os.replace of the receipt file, then a write-once
+              merged.json. There is no multi-file window, so no partially merged state can exist. recover() completes or rolls
+              back deterministically by comparing the receipt file digest to the journal.
+P05 REPLACED  Controller.postmortem() and audit_anchor() aggregate reporting commands.
+              Replaced by the read-only status / plan / audit commands, which never create the state directory.
+P06 REPLACED  predecessor_checkpoint() as a separate checkpoint concept.
+              Folded into the lineage fingerprint so that predecessor drift and graph drift invalidate through one mechanism.
+
+--- REJECTED ---------------------------------------------------------------
+X01 REJECTED  _heal_out_of_scope_contamination(): silently reverting a node's out-of-scope writes and continuing.
+              An out-of-scope write is now a terminal, immutable attempt failure (failed.json, WRITE_SET_VIOLATION) before any
+              merge is journaled. Run 26 recorded 3 write-set violations that the controller absorbed.
+X02 REJECTED  _copy_workspace(): a full copytree sandbox per attempt.
+              This produced the concurrent-main-workspace conflict in PM-19 and made attempts expensive. Run 27 attempts hold
+              metadata and logs only; the node writes into the repository directly and the controller validates and receipts.
+X03 REJECTED  PatchStore, create_overlay(), revoke(), effective_prompt(): mutating a node's effective prompt through an overlay
+              chain. Run 26 needed 14 immutable patches. In Run 27 a prompt is a frozen input whose digest is bound into the
+              lineage fingerprint, so changing a prompt invalidates the node and every descendant instead of being patched around.
+X04 REJECTED  adopt_v2() and rebase(): in-place manifest/graph migration commands.
+              A graph edit now simply invalidates every admitted receipt (proven by
+              tests/test_run27_controller.py::test_a_graph_edit_invalidates_the_whole_admitted_chain).
+X05 REJECTED  run_generation(), _run_isolated(), _prompt_packet(), terminate_active_processes(), ACTIVE_PROCESSES_LOCK:
+              spawning and signal-killing model subprocesses. Run 26 disclosed that controller subprocesses were killed by an
+              outside mechanism and completed work was later mechanically re-admitted. The Run 27 controller launches no model
+              process at all; it only validates, verifies, and receipts. External kills are handled by the named readmit path.
+X06 REJECTED  select_disjoint(): parallel ready-node selection. rules.allow_parallel_ready_nodes is false and
+              tools/validate_plan.py enforces it.
+X07 REJECTED  preflight(), _evaluate_preflight(), _parse_claude_json_envelope(): provider preflight and Claude envelope parsing.
+              Out of scope for the implementation scheduler; the production preflight belongs to N30.
+X08 REJECTED  _blocked_result() synthesising a BLOCKED receipt. A BLOCKED node result never produces a receipt at all; the
+              attempt fails with OUTCOME_NOT_ADMISSIBLE and is preserved.
+X09 REJECTED  _missing_required_outputs() as a post-merge check. Final outputs are digested at admission time into
+              receipt.final_outputs and are a standing currency condition thereafter, not a one-shot check.
+
+--- EVIDENCE PROVENANCE ----------------------------------------------------
+The Run 26 537-event audit stream is NOT evidence for this controller. It is the record of the defective controller described
+in PM-19 (41 attempt creations, 22 BLOCKED events, 9 controller_failed events, 9 claude_failed reasons, 9 inadmissible-status
+reasons, 5 merge rollbacks, 3 write-set violations, one externally interrupted merge). No Run 26 event, receipt, attempt, or
+patch is cited as passing evidence anywhere in this node's result. The only evidence for the Run 27 controller is the 80-test
+suite in this node's own three test files and the command logs in this evidence directory.

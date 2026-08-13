@@ -1,0 +1,29 @@
+check_forbidden_production_refs.py (default --scope all) exit_code = 1
+
+scope      count  owner node                path
+production 6      N20_PROVIDER_TRANSPORT    runtime/langgraph_factory/config/model_jobs.v1.yaml  terms=['gemini']
+production 2      N20_PROVIDER_TRANSPORT    runtime/langgraph_factory/model_nodes.py  terms=['gemini']
+production 18     N20_PROVIDER_TRANSPORT    runtime/langgraph_factory/transport.py  terms=['gemini']
+tests      3      N20_PROVIDER_TRANSPORT    tests/runtime/test_capabilities.py  terms=['gemini']
+tests      9      N20_PROVIDER_TRANSPORT    tests/runtime/test_curriculum_factory_graph.py  terms=['gemini', 'google']
+tests      13     N20_PROVIDER_TRANSPORT    tests/runtime/test_gemini.py  terms=['gemini']
+tests      5      N20_PROVIDER_TRANSPORT    tests/runtime/test_plan26_adversarial.py  terms=['gemini', 'google']
+tests      4      N20_PROVIDER_TRANSPORT    tests/runtime/test_plan26_api_contract.py  terms=['google']
+tests      3      N30_PREFLIGHT_EGRESS      tests/runtime/test_plan26_cli.py  terms=['gemini', 'google']
+tests      1      N30_PREFLIGHT_EGRESS      tests/runtime/test_plan26_deterministic_nodes.py  terms=['google']
+tests      4      N30_PREFLIGHT_EGRESS      tests/runtime/test_plan26_egress.py  terms=['google']
+tests      2      N20_PROVIDER_TRANSPORT    tests/runtime/test_plan26_lock_drift.py  terms=['google']
+tests      7      N20_PROVIDER_TRANSPORT    tests/runtime/test_plan26_model_nodes.py  terms=['gemini', 'google']
+tests      1      N50_EVIDENCE_AUDIT_CONTROLStests/runtime/test_plan26_persistence.py  terms=['google']
+tests      2      N40_INTEGRATION_OWNERSHIP tests/runtime/test_plan26_topology.py  terms=['google']
+tests      29     N20_PROVIDER_TRANSPORT    tests/runtime/test_plan26_transport.py  terms=['gemini', 'google']
+tests      1      N30_PREFLIGHT_EGRESS      tests/runtime/test_run_curriculum.py  terms=['gemini']
+
+files N20 owns and can fix : 11
+files N20 does NOT own     : 6
+   NOT N20: tests/runtime/test_plan26_cli.py -> ['N30_PREFLIGHT_EGRESS']
+   NOT N20: tests/runtime/test_plan26_deterministic_nodes.py -> ['N30_PREFLIGHT_EGRESS']
+   NOT N20: tests/runtime/test_plan26_egress.py -> ['N30_PREFLIGHT_EGRESS']
+   NOT N20: tests/runtime/test_plan26_persistence.py -> ['N50_EVIDENCE_AUDIT_CONTROLS']
+   NOT N20: tests/runtime/test_plan26_topology.py -> ['N40_INTEGRATION_OWNERSHIP']
+   NOT N20: tests/runtime/test_run_curriculum.py -> ['N30_PREFLIGHT_EGRESS']

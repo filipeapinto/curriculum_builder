@@ -1,0 +1,69 @@
+{
+  "opened_at": "2026-08-13T16-18-44.322172+00-00",
+  "artifact_original": "/Users/filipepinto/Projects/curriculum_builder/plans/26_langgraph_curriculum_factory/spec/v3/langgraph_curriculum_factory.spec.v3.md",
+  "artifact_current": "/Users/filipepinto/Projects/curriculum_builder/plans/26_langgraph_curriculum_factory/spec/v3/langgraph_curriculum_factory.spec.v4.md",
+  "session_id": "019ffbeb-3f45-7440-a83e-aa560938dc98",
+  "chain": "696670b19eca6e08d78932d945bfcdb58fa03b551f5a1a59ec4e1a38100e553a",
+  "rounds_completed": 2,
+  "rounds": [
+    {
+      "round": 1,
+      "timestamp": "2026-08-13T16:22:26.185680+00:00",
+      "verdict": "FAIL",
+      "artifact_path": "/Users/filipepinto/Projects/curriculum_builder/plans/26_langgraph_curriculum_factory/spec/v3/langgraph_curriculum_factory.spec.v3.md",
+      "artifact_sha256": "419d1e91d197e967302dab62e356c3fefa861d45585a089bf29b616264f66d87",
+      "findings_at_threshold": [
+        {
+          "id": "SPEC3-QA-001",
+          "title": "The specification overstates stdin delivery as already proven live",
+          "severity": "major",
+          "criterion_ref": "SPEC3-T08 — prior live-proof language must not assert an already-approved production guarantee beyond what was actually observed."
+        }
+      ],
+      "observations_count": 3,
+      "chain": "36a3b55d5662068fb9c6cb6ea290f164a4be2742f3ddb444a0a68d846106b9e6"
+    },
+    {
+      "round": 2,
+      "timestamp": "2026-08-13T16:27:35.838556+00:00",
+      "verdict": "PASS",
+      "artifact_path": "/Users/filipepinto/Projects/curriculum_builder/plans/26_langgraph_curriculum_factory/spec/v3/langgraph_curriculum_factory.spec.v4.md",
+      "artifact_sha256": "e14df5a36ce12d700fe9fc4aa4aea466771bc89f31bc6e9d49f812c147b1bb3c",
+      "findings_at_threshold": [],
+      "observations_count": 2,
+      "chain": "696670b19eca6e08d78932d945bfcdb58fa03b551f5a1a59ec4e1a38100e553a"
+    }
+  ],
+  "stall_count": 0,
+  "last_fingerprint": "b36f0470d5d5563a3ef242db21943631924e86e2758c971bdb07b0fd1a9d6050",
+  "exec_copied": [],
+  "terminal": {
+    "state": "QA_PASSED",
+    "reason": "CONVERGED",
+    "detail": "Codex passed the artifact at round 2",
+    "artifact": "/Users/filipepinto/Projects/curriculum_builder/plans/26_langgraph_curriculum_factory/spec/v3/langgraph_curriculum_factory.spec.v4.md",
+    "rounds_completed": 2,
+    "max_iterations": 5,
+    "session_id": "019ffbeb-3f45-7440-a83e-aa560938dc98",
+    "thread_id": "019ffbeb-3f45-7440-a83e-aa560938dc98",
+    "transport": "app-server",
+    "rollout_file": "/Users/filipepinto/.codex/sessions/2026/08/13/rollout-2026-08-13T12-18-46-019ffbeb-3f45-7440-a83e-aa560938dc98.jsonl",
+    "chain": "696670b19eca6e08d78932d945bfcdb58fa03b551f5a1a59ec4e1a38100e553a",
+    "qa_dir": "/Users/filipepinto/Projects/curriculum_builder/plans/26_langgraph_curriculum_factory/spec/v3/QA",
+    "finalized_at": "2026-08-13T16:27:35.846004+00:00"
+  },
+  "config": {
+    "criteria": "# QA criteria — Plan 26 LangGraph Curriculum Factory spec v3 (N20-recovery transport correction)\n\nThe artifact under review is\n`plans/26_langgraph_curriculum_factory/spec/langgraph_curriculum_factory.spec.v3.md`.\nIt is a corrected version of\n`plans/26_langgraph_curriculum_factory/spec/langgraph_curriculum_factory.spec.v2.md`\n(sha256 `99052a181052bbbaf8077a152af22db6f248d552f38dd73302a3c34abc11b758`,\nunchanged and immutable). v2 was itself independently QA-verified and\nuser-approved (`plans/27_langgraph_curriculum_factory_remediation/contracts/spec_approval.v1.yaml`);\nthat approval covered v2's production **architecture** decision (Claude\nauthors/repairs six jobs; Codex independently judges two jobs) and is not\nreopened here. What v3 corrects is a defect in v2's **transport mechanics**\nfor the Claude jobs, discovered live by the `N20_PROVIDER_TRANSPORT` node's\n`BLOCKED` attempt\n(`plans/27_langgraph_curriculum_factory_remediation/results/N20_PROVIDER_TRANSPORT.result.v1.json`,\nfindings N20-F03 through N20-F06) and specified in\n`plans/27_langgraph_curriculum_factory_remediation/n20_recovery.plan.v1.md`'s\n\"Correction design, 1. Correct the specification.\"\n\nA correct v3 satisfies every criterion below. Attempt to falsify each one\nagainst the actual text of the artifact — do not accept a claim the artifact\nmakes about itself without checking it against the cited section. Where a\ncriterion asks you to compare v3 against v2, you have read-only access to\nboth files in the live repository.\n\n## Criteria (SPEC3-T00–SPEC3-T08)\n\n1. **SPEC3-T00 — Historical immutability.** Neither\n   `langgraph_curriculum_factory.spec.v1.md` (sha256\n   `44e63e6271cae25f14f0bc970c598d1c15da41b67ae3cdf811bbb2f2303536e6`) nor\n   `langgraph_curriculum_factory.spec.v2.md` (sha256\n   `99052a181052bbbaf8077a152af22db6f248d552f38dd73302a3c34abc11b758`) was\n   edited, moved, or deleted. No Run 27 N00–N20 result, evidence file,\n   receipt, patch, log, policy, schema, model-job configuration, runtime\n   code, test, or implementation-graph file was changed by this artifact's\n   author. (Verify directly against the live repository.)\n2. **SPEC3-T01 — Zero literal retired-provider identifiers.** Search the\n   complete v3 document case-insensitively for `gemini` and `google` (as\n   substrings, so this also catches `GEMINI_API_KEY`, `GOOGLE_API_KEY`,\n   `google-generativeai`, `gemini-3-pro-preview`, and any file path containing\n   either word). There must be **zero** matches. This is stricter than v2's\n   own SPEC-T02 criterion, which tolerated historical-narrative and\n   prohibition-statement occurrences; v3 must convey the identical historical\n   facts and prohibitions using no literal retired-provider or retired-family\n   name anywhere in its own active text, deferring the specific historical\n   name to v1/v2 (unchanged, immutable, and available by cross-reference)\n   where institutional memory needs it.\n3. **SPEC3-T02 — Architecture not reopened.** v3's production provider\n   *architecture* — M01–M04, M06, M08 via Claude/Anthropic; M05, M07 via\n   Codex/OpenAI; family-mismatch-is-system-failure; the five-proof-class\n   preflight; the `anthropic`/`openai`/`primary_source_hosts` authorization\n   classes — is byte-for-byte unchanged in substance from v2 (§6.3, §7.1\n   items 1–3, §7.4). Only the mechanics named in criteria 4–7 below may\n   differ. Flag any architectural drift as a defeat of this criterion.\n4. **SPEC3-T03 — CLI-schema projection.** v3 requires a deterministic\n   CLI-schema projection of each job's canonical output schema — computed by\n   code, not per-activation, stripping `$schema` and rejecting external\n   `$ref` — transmitted inline as JSON text to `--json-schema` for Claude\n   jobs, never as a file path. The unmodified canonical schema remains the\n   sole post-execution admission authority. The receipt separately binds a\n   canonical-schema digest and a CLI-schema-projection digest.\n5. **SPEC3-T04 — stdin projection delivery.** v3 requires the canonical\n   authorized-input projection for a Claude job to be transmitted inline on\n   the process's stdin (JSON-encoded together with the instruction), not\n   read by the worker from a staged workspace file — and explicitly reasons\n   why: an empty `--tools` list leaves the worker with no file-reading tool.\n   `authorized_input.json` may still be staged for receipt/audit hashing, but\n   the specification must not claim the worker reads it.\n6. **SPEC3-T05 — stream-json per-turn identity.** v3 requires\n   `--output-format stream-json --verbose` for Claude jobs and requires\n   executed-model identity to be extracted from the per-turn assistant\n   event's `message.model` field, explicitly prohibiting extraction from the\n   final envelope's aggregate `modelUsage` map (and states why: a live probe\n   found that map is not guaranteed single-entry).\n7. **SPEC3-T06 — observed tool/MCP closure.** v3 requires D03 to prove tool\n   and MCP-server closure by directly inspecting the stream-json\n   initialization event's tool and server lists, and explicitly states that\n   `--tools \"\"`/`--setting-sources \"\"` alone is not sufficient proof (a live\n   probe found MCP servers still listed under `--setting-sources \"\"`).\n   `ready: true` must be impossible on flag-only evidence for this class.\n8. **SPEC3-T07 — no topology/reducer/retry/denominator/persistence/repair/\n   terminal change.** Compare v3 and v2 structurally outside §0 (header/\n   supersession), §2 (authority/historical narrative, retired-term\n   neutralization only), §6.3/§7 (this correction's actual scope), §17.2/§19/\n   §20.2 (new adversarial rows/traceability rows/prerequisite-status updates\n   documenting this correction). Every other section — the node catalogue,\n   edges/guards, checkpointing/resume, targeted repair, acceptance\n   denominators, terminal design, filesystem layout, CLI contract, test\n   layers — must be unchanged in substance from v2.\n9. **SPEC3-T08 — honest resolution status.** v3 does not claim this\n   correction was independently QA-verified by itself (that is this gate's\n   job, not the artifact's own claim), does not claim user approval of v3,\n   and does not claim or imply that Run 27 implementation may proceed. Any\n   language describing prior live proof (e.g., the stream-json identity\n   field, the MCP-listing finding) must attribute it honestly to the N20\n   attempt or this correction's own live check, not assert it as an\n   already-approved production guarantee beyond what was actually observed.\n\n## Falsification targets\n\nSpecifically attempt to falsify each of these claims against the artifact\ntext:\n\n- v3 does not merely rename \"Gemini\"/\"Google\" occurrences with a find/replace\n  that breaks grammar, drops a prohibition's force, or accidentally weakens a\n  MUST/MUST NOT into something softer.\n- v3's corrected Claude invocation shape (§7.2) is internally consistent: the\n  code block's flags match the prose explanation, and neither contradicts the\n  stdin-delivery and stream-json-identity requirements stated elsewhere in\n  the document (§7.1, §17.2, §19).\n- v3 does not silently drop the `USER_DECISION_REQUIRED-01` resolution\n  (Claude model/effort per job) that v2 recorded as resolved via the approved\n  `spec_approval.v1.yaml`.\n- v3 does not introduce a new provider, credential, endpoint, or fallback not\n  present in v2's approved architecture.\n- v3's new adversarial-test rows (§17.2) and traceability rows (§19) name\n  concrete, checkable test IDs consistent with criteria 4–7, not vague\n  aspirational language.\n\n## Severity guidance\n\nUse `major` threshold: a finding is reportable only if it defeats one of the\nnine numbered criteria above (a stated criterion fails on a realistic reading\nof the artifact, not merely a stylistic quibble). Anything you notice that\ndoes not defeat a numbered criterion belongs in observations, not findings.\n",
+    "focus": "Verify the nine SPEC3 criteria in the criteria file, especially SPEC3-T01 (zero literal gemini/google occurrences, stricter than v2), SPEC3-T02 (architecture unchanged from v2), and SPEC3-T03-T06 (the four transport-mechanics corrections: inline CLI-schema projection, stdin projection delivery, stream-json per-turn identity extraction, observed tool/MCP closure). Ground findings in the actual text of v3 and in a diff against v2 where relevant.",
+    "threshold": "major",
+    "max_iterations": 5,
+    "timeout_seconds": 900,
+    "retries": 2,
+    "model": null,
+    "effort": null,
+    "transport": "app-server",
+    "allow_execution": false,
+    "grounding": []
+  },
+  "thread_id": "019ffbeb-3f45-7440-a83e-aa560938dc98"
+}

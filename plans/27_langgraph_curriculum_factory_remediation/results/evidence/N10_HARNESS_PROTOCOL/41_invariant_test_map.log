@@ -1,0 +1,107 @@
+N10 INVARIANT -> PROVING TEST MAP
+prompt: plans/27_langgraph_curriculum_factory_remediation/prompts/N10_harness_protocol.prompt.v1.md (TEST section, items 1-15)
+suites: plans/27_langgraph_curriculum_factory_remediation/tests/{test_run27_controller.py,test_node_result_protocol.py,test_forbidden_production_scan.py}
+result: 80 tests, passing twice with no tracked evidence byte change (24_determinism_diff.log)
+
+1. Node admission consumes only schema-valid JSON; Markdown and rich prose cannot change status.
+   test_node_result_protocol.py::test_markdown_and_prose_cannot_report_a_status [5 parametrizations: bare status line,
+     bold Markdown status, status with explanatory suffix, an ACTIVATED verdict heading, IMPLEMENTED_NOT_ACTIVATED]
+   test_node_result_protocol.py::test_json_wrapped_in_markdown_fences_is_not_a_result
+   test_node_result_protocol.py::test_prose_inside_a_valid_result_cannot_override_the_outcome
+   test_node_result_protocol.py::test_a_result_that_does_not_validate_is_refused [5 parametrizations]
+   test_node_result_protocol.py::test_a_missing_required_field_is_refused
+   test_node_result_protocol.py::test_an_outcome_outside_the_graphs_allowed_results_is_refused
+   test_node_result_protocol.py::test_no_controller_module_scrapes_a_status_token_out_of_text
+
+2. Receipts bind graph, approved-spec, prompt, baseline, predecessor, command, log, changed-file and final-output hashes.
+   test_run27_controller.py::test_receipt_binds_graph_spec_prompt_baseline_predecessor_and_output_digests
+   test_run27_controller.py::test_receipt_and_attempt_records_validate_against_their_schemas
+   schema: schemas/scheduler_receipt.schema.v1.json requires every one of those fields.
+
+3. Any admitted ancestor digest change invalidates every transitive descendant, including descendants whose own bytes
+   did not change.
+   test_run27_controller.py::test_changing_an_admitted_ancestor_invalidates_every_transitive_descendant
+     (asserts the descendant's own bytes are byte-identical before and after)
+   test_run27_controller.py::test_readmitting_an_ancestor_invalidates_descendants_whose_bytes_are_unchanged
+   test_run27_controller.py::test_a_graph_edit_invalidates_the_whole_admitted_chain
+   test_run27_controller.py::test_entry_receipt_stops_binding_when_the_approved_spec_changes
+
+4. Invalidated descendants cannot feed a join or final audit until rerun and re-receipted against current predecessors.
+   test_run27_controller.py::test_an_invalidated_descendant_cannot_feed_the_final_audit_until_rerun
+     (also proves that re-receipting the ancestor alone is insufficient)
+   Scheduler.validate_node_result raises PREDECESSOR_NOT_CURRENT; verify-final-audit raises
+   INVALIDATED_RECEIPT_FEEDS_FINAL_AUDIT.
+
+5. Write-set violations fail before merge and retain an immutable attempt.
+   test_run27_controller.py::test_a_write_set_violation_fails_before_merge_and_keeps_an_immutable_attempt
+     (asserts no merge journal exists, no receipt exists, failed.json and attempt_record.json cannot be rewritten)
+   test_run27_controller.py::test_a_failed_attempt_cannot_be_admitted_again_without_resuming
+
+6. Interrupted attempts never merge implicitly; resume creates a child attempt bound to the parent and current
+   predecessor digests.
+   test_run27_controller.py::test_an_interrupted_merge_never_lands_partial_bytes_or_merges_implicitly
+   test_run27_controller.py::test_resume_creates_a_child_attempt_bound_to_current_predecessor_digests
+     (asserts parent_attempt_id, current predecessor receipt digests, and RESUME_OF_MERGED_ATTEMPT)
+
+7. Recovery/re-admission is a named operation with a machine-readable reason, exact artifact binding, verification
+   rerun and an immutable audit event.
+   test_run27_controller.py::test_readmission_is_named_artifact_bound_verified_and_audited
+     (rejects an unknown reason code, rejects a wrong --expect-result-sha256, requires verification_rerun,
+      archives the superseded receipt, and asserts the audit.jsonl event carries admission=recovery_readmission)
+
+8. A merge interruption is atomic or recoverable without accepting partially merged bytes.
+   test_run27_controller.py::test_an_interrupted_merge_never_lands_partial_bytes_or_merges_implicitly
+   test_run27_controller.py::test_recovery_completes_a_merge_whose_rename_already_landed
+   test_run27_controller.py::test_a_rolled_back_merge_restores_the_previous_receipt_exactly
+
+9. Evidence/log paths are attempt-scoped and write-once.
+   test_run27_controller.py::test_attempt_evidence_paths_are_attempt_scoped_and_write_once
+   test_run27_controller.py::test_verification_failure_blocks_admission_and_records_the_logs
+
+10. Status, validation, dry-run and audit commands are read-only.
+    test_run27_controller.py::test_status_validate_dryrun_and_audit_commands_are_read_only
+      (whole-tree digest of both the state directory and the repository before and after, twice)
+    test_run27_controller.py::test_read_only_commands_do_not_create_the_state_directory
+    test_run27_controller.py::test_validate_reports_problems_without_touching_any_attempt
+    test_run27_controller.py::test_the_real_repo_read_only_plan_command_is_stable_and_creates_no_state
+    evidence: 31_controller_readonly_commands.log, STATE_DIR_CREATED=false
+
+11. The controller refuses to run N10 or any later node without an admitted N00 receipt bound to the current approved
+    v2 digest.
+    test_run27_controller.py::test_no_node_runs_without_an_admitted_entry_receipt
+    test_run27_controller.py::test_entry_receipt_stops_binding_when_the_approved_spec_changes
+
+12. The Plan 27 graph validates and the complete controller test suite passes twice without changing tracked evidence
+    bytes.
+    test_run27_controller.py::test_the_real_plan27_graph_validates
+    evidence: 11_validate_plan.log (exit 0), 20_pytest_run1.log (80 passed), 22_pytest_run2.log (80 passed),
+              21/23 snapshots, 24_determinism_diff.log (empty diff)
+
+13. Every graph node has non-empty machine-runnable verification and the exact validate_result.py --node NODE_ID command.
+    test_node_result_protocol.py::test_every_node_has_machine_runnable_verification_including_its_result_check
+    also enforced upstream by tools/validate_plan.py, which this node runs rather than reimplements.
+
+14. Distinct nodes have no overlapping write paths, even when they are ordered.
+    test_node_result_protocol.py::test_distinct_nodes_never_share_a_write_path
+    test_node_result_protocol.py::test_the_result_schema_is_frozen_before_entry_and_owned_by_no_node
+
+15. N90 requires exactly one legal terminal recommendation; other nodes cannot provide one; only N00 may use
+    BLOCKED_SPEC_NOT_APPROVED.
+    test_node_result_protocol.py::test_only_the_final_audit_node_may_recommend_a_terminal
+    test_node_result_protocol.py::test_the_final_audit_node_must_recommend_exactly_one_legal_terminal
+    test_node_result_protocol.py::test_only_the_entry_gate_may_emit_blocked_spec_not_approved
+    test_run27_controller.py::test_activation_requires_live_proof_and_the_alternative_terminal_requires_unavailability
+    test_run27_controller.py::test_only_the_single_sink_node_may_be_final_audited
+
+SUPPORTING (not numbered invariants, required by the prompt's TEST list)
+    controller/check_forbidden_production_refs.py  -> test_forbidden_production_scan.py, 25 tests, clean tree and
+      dirty tree, scope exclusion of plans/tests/outputs proven positively and negatively
+    controller/verify_ownership.py                 -> test_verify_ownership_accepts_a_true_contract_and_rejects_a_false_one
+    controller/verify_evidence_determinism.py      -> test_verify_evidence_determinism_detects_a_nondeterministic_command
+    controller/verify_requirements_lineage.py      -> test_verify_requirements_lineage_rejects_an_uncovered_requirement
+    controller/run27_controller.py verify-live-proof  -> test_verify_live_proof_requires_the_production_cli_and_real_outputs,
+      test_verify_live_proof_rejects_simulated_evidence, test_not_available_live_proof_must_name_an_open_finding,
+      test_verify_live_proof_refuses_a_node_that_cannot_report_not_available
+    controller/run27_controller.py verify-final-audit -> test_an_invalidated_descendant_cannot_feed_the_final_audit_until_rerun,
+      test_activation_requires_live_proof_and_the_alternative_terminal_requires_unavailability,
+      test_only_the_single_sink_node_may_be_final_audited

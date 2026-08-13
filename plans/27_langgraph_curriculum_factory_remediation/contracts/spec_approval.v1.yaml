@@ -1,0 +1,21 @@
+schema_version: 1
+approved: true
+approved_spec: plans/26_langgraph_curriculum_factory/spec/langgraph_curriculum_factory.spec.v2.md
+approved_spec_sha256: 99052a181052bbbaf8077a152af22db6f248d552f38dd73302a3c34abc11b758
+qa_verdict: QA_PASSED
+qa_verification_sha256: cc4c684e459a66efa59bc9c655a2d02158bbe0fad45daf0a7a7d6818f51e8610
+approved_for: plan27_implementation_remediation
+approved_at: "2026-08-13T14:12:23Z"
+approval_statement: >
+  User explicitly approved
+  plans/26_langgraph_curriculum_factory/spec/langgraph_curriculum_factory.spec.v2.md
+  at SHA-256 99052a181052bbbaf8077a152af22db6f248d552f38dd73302a3c34abc11b758 for
+  plan27_implementation_remediation, citing the witnessed independent QA_PASSED
+  verdict recorded at
+  plans/26_langgraph_curriculum_factory/spec/QA/verification.json (SHA-256
+  cc4c684e459a66efa59bc9c655a2d02158bbe0fad45daf0a7a7d6818f51e8610). The user
+  resolved USER_DECISION_REQUIRED-01 (v2 section 7.1) with the following
+  per-job model/effort assignment: M01 = claude-sonnet-5 at effort xhigh; M02,
+  M03, and M04 = claude-sonnet-5 at effort high; M06 and M08 = claude-sonnet-5
+  at effort xhigh; M05 and M07 = gpt-5.6-sol at effort xhigh, consistent with
+  v2's fixed Claude/Anthropic and Codex/OpenAI family mapping for these jobs.

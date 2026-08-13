@@ -1,0 +1,56 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "Run 27 attempt record v1",
+  "description": "Write-once record created when an attempt begins. Its terminal state is not stored here: it is carried by the write-once marker files merged.json, failed.json, interrupted.json, and abandoned.json beside it, so an attempt's history can never be rewritten in place.",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "schema_version",
+    "attempt_id",
+    "run_id",
+    "node_id",
+    "parent_attempt_id",
+    "created_at",
+    "graph_sha256",
+    "node_definition_sha256",
+    "prompt_sha256",
+    "approved_spec_sha256",
+    "predecessor_receipt_digests",
+    "baseline",
+    "evidence_dir"
+  ],
+  "$defs": {
+    "sha256": {"type": "string", "pattern": "^[a-f0-9]{64}$"},
+    "nullable_sha256": {"type": ["string", "null"], "pattern": "^[a-f0-9]{64}$"}
+  },
+  "properties": {
+    "schema_version": {"const": 1},
+    "attempt_id": {"type": "string", "minLength": 1},
+    "run_id": {"type": "string", "minLength": 1},
+    "node_id": {"type": "string", "pattern": "^N[0-9]{2}_[A-Z0-9_]+$"},
+    "parent_attempt_id": {
+      "description": "Set when this attempt was created by resuming an interrupted, failed, or abandoned parent. A resumed attempt is always a new child, never a reopened parent.",
+      "type": ["string", "null"],
+      "minLength": 1
+    },
+    "created_at": {"type": "string", "minLength": 1},
+    "graph_sha256": {"$ref": "#/$defs/sha256"},
+    "node_definition_sha256": {"$ref": "#/$defs/sha256"},
+    "prompt_sha256": {"$ref": "#/$defs/sha256"},
+    "approved_spec_sha256": {"$ref": "#/$defs/nullable_sha256"},
+    "predecessor_receipt_digests": {
+      "description": "Predecessor receipt digests observed when the attempt was created, so a resumed child is provably bound to current predecessor state.",
+      "type": "object",
+      "additionalProperties": {"$ref": "#/$defs/nullable_sha256"}
+    },
+    "baseline": {
+      "type": "object",
+      "additionalProperties": {"$ref": "#/$defs/nullable_sha256"}
+    },
+    "evidence_dir": {
+      "description": "Attempt-scoped, write-once log directory, relative to the state directory.",
+      "type": "string",
+      "minLength": 1
+    }
+  }
+}

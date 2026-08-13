@@ -1,0 +1,36 @@
+........................s............................................... [ 22%]
+....F................................................................... [ 45%]
+........................................................................ [ 67%]
+...............................................................s.......s [ 90%]
+........................s.......   [100%]
+=================================== FAILURES ===================================
+_____________ test_capability_probes_read_the_real_local_toolchain _____________
+
+tmp_path = PosixPath('/private/var/folders/kj/z_75gwxx2ls7p55rnx4t5kg00000gn/T/pytest-of-filipepinto/pytest-674/test_capability_probes_read_th0')
+
+    def test_capability_probes_read_the_real_local_toolchain(tmp_path: Path):
+        transport = capability_transport(tmp_path)
+    
+        renderer = transport.prove_capability("renderer")
+        assert renderer["result"] == "PASS"
+        assert set(renderer["detail"]["tools"]) == set(tp.RENDER_TOOLS)
+        assert all(version for version in renderer["detail"]["tools"].values())
+    
+        rasterizer = transport.prove_capability("rasterizer")
+        assert rasterizer["result"] == "PASS"
+        assert set(rasterizer["detail"]["tools"]) == set(tp.RASTER_TOOLS)
+    
+        assert transport.prove_capability("persistence")["result"] == "PASS"
+        assert transport.prove_capability("logger")["result"] == "PASS"
+    
+        identity = transport.prove_capability("model_cli_identity")
+>       assert identity["result"] == "PASS"
+E       AssertionError: assert 'MISSING' == 'PASS'
+E         
+E         - PASS
+E         + MISSING
+
+tests/runtime/test_plan26_transport.py:898: AssertionError
+=========================== short test summary info ============================
+FAILED tests/runtime/test_plan26_transport.py::test_capability_probes_read_the_real_local_toolchain
+1 failed, 315 passed, 6 skipped, 110 subtests passed in 24.43s

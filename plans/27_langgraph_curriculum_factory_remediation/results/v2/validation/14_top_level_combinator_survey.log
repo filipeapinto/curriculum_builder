@@ -1,0 +1,8 @@
+runtime/langgraph_factory/schemas/M01_research_unit_sources.schema.json top_level_combinator= {'oneOf'}
+runtime/langgraph_factory/schemas/M02_create_unit_domain_data.schema.json top_level_combinator= None
+runtime/langgraph_factory/schemas/M03_write_unit_content.schema.json top_level_combinator= None
+runtime/langgraph_factory/schemas/M04_create_unit_visuals.schema.json top_level_combinator= None
+runtime/langgraph_factory/schemas/M05_review_actual_unit.schema.json top_level_combinator= None
+runtime/langgraph_factory/schemas/M06_repair_named_unit_artifact.schema.json top_level_combinator= None
+runtime/langgraph_factory/schemas/M07_review_actual_workbook.schema.json top_level_combinator= None
+runtime/langgraph_factory/schemas/M08_repair_named_workbook_defect.schema.json top_level_combinator= None

@@ -1,0 +1,55 @@
+{
+  "opened_at": "2026-08-13T16-38-04.665322+00-00",
+  "artifact_original": "/Users/filipepinto/Projects/curriculum_builder/plans/27_langgraph_curriculum_factory_remediation/implementation.graph.v2.yaml",
+  "artifact_current": "/Users/filipepinto/Projects/curriculum_builder/plans/27_langgraph_curriculum_factory_remediation/implementation.graph.v2.yaml",
+  "session_id": "019ffbfc-edce-7750-a58a-a008cefbd95e",
+  "chain": "f6d18dc7d3b2503ac6d597cfa8894cbb7c47e28649a357f435ee35a1fc2e7436",
+  "rounds_completed": 1,
+  "rounds": [
+    {
+      "round": 1,
+      "timestamp": "2026-08-13T16:41:11.736107+00:00",
+      "verdict": "FAIL",
+      "artifact_path": "/Users/filipepinto/Projects/curriculum_builder/plans/27_langgraph_curriculum_factory_remediation/implementation.graph.v2.yaml",
+      "artifact_sha256": "f297d6528375eeeda5b97a54d654997a65f5d0c7100cf50b54d71c4ca4763b1a",
+      "findings_at_threshold": [
+        {
+          "id": "PKG-QA-001",
+          "title": "Node-scoped verification loads the v1 graph instead of the v2 write sets",
+          "severity": "major",
+          "criterion_ref": "PKG-T05 — “--node must not … skip a file within its node's write set that either whole-tree scope would have scanned.”"
+        }
+      ],
+      "observations_count": 2,
+      "chain": "f6d18dc7d3b2503ac6d597cfa8894cbb7c47e28649a357f435ee35a1fc2e7436"
+    }
+  ],
+  "stall_count": 0,
+  "last_fingerprint": "f5917499a3ecc943f47a64f2bab9e135d0867c4eb5c35622e4de93cbca36cdf0",
+  "exec_copied": [],
+  "terminal": null,
+  "config": {
+    "criteria": "# QA criteria — Run 27 execution package v2 (N20-recovery)\n\nThe primary artifact under review is\n`plans/27_langgraph_curriculum_factory_remediation/implementation.graph.v2.yaml`,\ntogether with its three new/updated prompt files\n(`prompts/N00_spec_approval_gate.prompt.v2.md`,\n`prompts/N20_provider_transport.prompt.v2.md`,\n`prompts/N30_preflight_egress.prompt.v2.md`) and the `--node` extension made\nto `controller/check_forbidden_production_refs.py`. Together these are \"the\nRun 27 execution package v2\" that\n`plans/27_langgraph_curriculum_factory_remediation/n20_recovery.plan.v1.md`'s\n\"Correction design, 2. Correct the Run 27 execution package\" requires.\n\nThis package corrects the v1 execution package\n(`implementation.graph.v1.yaml`, unchanged, immutable), which reached\n`BLOCKED` at `N20_PROVIDER_TRANSPORT`\n(`results/N20_PROVIDER_TRANSPORT.result.v1.json`, findings N20-F01 and\nN20-F02 specifically — provided as grounding). The recovery plan is also\nprovided as grounding; it is the authority for what corrections are in\nscope, not a criteria list to re-derive from scratch.\n\nA correct v2 package satisfies every criterion below.\n\n## Criteria (PKG-T00–PKG-T08)\n\n1. **PKG-T00 — Historical immutability.** `implementation.graph.v1.yaml` and\n   every `results/N00_SPEC_APPROVAL_GATE.result.v1.json`,\n   `results/N10_HARNESS_PROTOCOL.result.v1.json`,\n   `results/N20_PROVIDER_TRANSPORT.result.v1.json`, and their\n   `results/evidence/` directories are unchanged from the live repository\n   state (you have read access to check this directly). The only\n   `controller/` change is the additive `--node` scan mode; the file's\n   existing production-scope and tests-scope behavior (`--scope\n   production`/`tests`/`all`, no `--node`) must be unchanged.\n2. **PKG-T01 — N20-F01 resolved.** The bare whole-tree\n   `check_forbidden_production_refs.py` invocation (no `--node`) is no longer\n   any node's verification command except N60's. N20, N30, N40, N50 each use\n   `--node <their own ID>` instead. Confirm this by reading each node's\n   `verification` list in the graph, not by trusting a comment.\n3. **PKG-T02 — N20-F02 resolved.** `runtime/langgraph_factory/egress.py` and\n   `tests/runtime/test_plan26_egress.py` are in `N20_PROVIDER_TRANSPORT`'s\n   `writes` list and absent from `N30_PREFLIGHT_EGRESS`'s. N30's prompt does\n   not claim ownership of `egress.py`; it explicitly says N30 consumes it\n   read-only (`read_only_inputs` in the graph should list it under N30).\n4. **PKG-T03 — no new write-set overlap.** Every write path in the graph\n   belongs to exactly one node; no two nodes claim overlapping paths (you may\n   verify this by reading every node's `writes` list directly, or by noting\n   that `tools/validate_plan.py --graph implementation.graph.v2.yaml` reports\n   `valid: true`, which includes this exact check — cited as a fact to\n   confirm, not evidence to accept unchecked).\n5. **PKG-T04 — result/evidence root is new.** Every node's `writes` list\n   points results/evidence at `results/v2/...`, not `results/...` (the v1\n   evidence root). `result_pattern` in the graph header reflects this.\n6. **PKG-T05 — node-scoped scanner is a genuine narrowing, not a weakening.**\n   Read `check_forbidden_production_refs.py`'s new `scan_node`/`under_any`\n   functions. Confirm `--node` mode restricts to files that are (a) under\n   `retired_provider_test_scan.scan_roots` (test-style check) or (b) under\n   `forbidden_production_scan.scan_roots` (production-style check) — files\n   outside both (e.g. `plans/`-rooted scaffolding) are not scanned, matching\n   what the two whole-tree scopes already exclude. `--node` must not scan\n   more broadly than the whole-tree scopes would for the same file, and must\n   not skip a file within its node's write set that either whole-tree scope\n   would have scanned.\n7. **PKG-T06 — prompts are consistent with the graph, not just with\n   themselves.** Each of the three v2 prompts' claimed write-set/ownership\n   language matches the graph's actual `writes`/`read_only_inputs` for that\n   node exactly (no prompt claiming an ownership the graph does not grant, or\n   vice versa).\n8. **PKG-T07 — source_spec binding.** The graph's `source_spec` field points\n   at the QA-passed v3 specification\n   (`plans/26_langgraph_curriculum_factory/spec/v3/langgraph_curriculum_factory.spec.v4.md`),\n   not v1 or v2.\n9. **PKG-T08 — no implementation performed.** No file under `runtime/`,\n   `policy/`, `schemas/routes.schema.v1.json`, or\n   `schemas/model_registry.schema.v1.json` was created or changed by this\n   package-correction task. `git status` (available to you read-only) shows\n   only plan/prompt/graph/controller/tooling scaffolding as new or changed.\n\n## Falsification targets\n\n- The `--node` extension does not accidentally make N60's own bare\n  whole-tree scan behave differently (its verification command is unchanged:\n  `check_forbidden_production_refs.py` with no arguments).\n- N30's prompt does not silently re-describe `egress.py`'s allowlist/data\n  classes as if N30 could edit them.\n- The graph's `rules:` block (scan-scope declarations, `frozen_before_entry`,\n  etc.) is unchanged from v1 except where this criteria file says it should\n  differ (it should not differ — only node-level `writes`/`verification` and\n  the header `version`/`source_spec`/`result_pattern` change).\n- `tools/validate_plan.py`'s and `tools/validate_result.py`'s `--graph`\n  extensions default to the v1 graph when `--graph` is omitted, so every\n  v1 node's original verification command (which never passed `--graph`)\n  is unaffected.\n\n## Severity guidance\n\n`major` threshold: a finding is reportable only if it defeats one of the nine\nnumbered criteria above. A stylistic or naming preference that does not\ndefeat a criterion belongs in observations.\n",
+    "focus": "Verify PKG-T00 through PKG-T08. Especially check PKG-T01/T02 (the N20-F01/F02 fixes) by reading each node's writes/verification lists directly, and PKG-T05 by reading check_forbidden_production_refs.py's scan_node/under_any functions to confirm --node mode narrows rather than weakens the two whole-tree scan scopes.",
+    "threshold": "major",
+    "max_iterations": 5,
+    "timeout_seconds": 900,
+    "retries": 2,
+    "model": null,
+    "effort": null,
+    "transport": "app-server",
+    "allow_execution": false,
+    "grounding": [
+      "/Users/filipepinto/Projects/curriculum_builder/plans/27_langgraph_curriculum_factory_remediation/n20_recovery.plan.v1.md",
+      "/Users/filipepinto/Projects/curriculum_builder/plans/27_langgraph_curriculum_factory_remediation/results/N20_PROVIDER_TRANSPORT.result.v1.json",
+      "/Users/filipepinto/Projects/curriculum_builder/plans/27_langgraph_curriculum_factory_remediation/implementation.graph.v1.yaml",
+      "/Users/filipepinto/Projects/curriculum_builder/plans/27_langgraph_curriculum_factory_remediation/controller/check_forbidden_production_refs.py",
+      "/Users/filipepinto/Projects/curriculum_builder/plans/27_langgraph_curriculum_factory_remediation/prompts/N20_provider_transport.prompt.v1.md",
+      "/Users/filipepinto/Projects/curriculum_builder/plans/27_langgraph_curriculum_factory_remediation/prompts/N30_preflight_egress.prompt.v1.md",
+      "/Users/filipepinto/Projects/curriculum_builder/plans/27_langgraph_curriculum_factory_remediation/prompts/N00_spec_approval_gate.prompt.v2.md",
+      "/Users/filipepinto/Projects/curriculum_builder/plans/27_langgraph_curriculum_factory_remediation/prompts/N20_provider_transport.prompt.v2.md",
+      "/Users/filipepinto/Projects/curriculum_builder/plans/27_langgraph_curriculum_factory_remediation/prompts/N30_preflight_egress.prompt.v2.md"
+    ]
+  },
+  "thread_id": "019ffbfc-edce-7750-a58a-a008cefbd95e"
+}

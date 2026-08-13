@@ -1,0 +1,25 @@
+{
+  "state": "QA_FAILED",
+  "reason": "INTEGRITY_BREACH",
+  "chain_valid": false,
+  "rounds_claimed": 4,
+  "rounds_witnessed_by_codex": 4,
+  "session_id": "019ffc3b-6379-7ef3-839d-759ed5c7fc9c",
+  "rollout_file": "/Users/filipepinto/.codex/sessions/2026/08/13/rollout-2026-08-13T13-46-18-019ffc3b-6379-7ef3-839d-759ed5c7fc9c.jsonl",
+  "problems": [
+    "round 2: GROUNDING_CHANGED — /Users/filipepinto/Projects/curriculum_builder/plans/27_langgraph_curriculum_factory_remediation/execution_package_v2/controller/scan_node.py does not match the hash recorded in the previous round",
+    "round 2: GROUNDING_CHANGED — /Users/filipepinto/Projects/curriculum_builder/plans/27_langgraph_curriculum_factory_remediation/execution_package_v2/tools/validate_plan_v2.py does not match the hash recorded in the previous round",
+    "round 2: GROUNDING_CHANGED — /Users/filipepinto/Projects/curriculum_builder/plans/27_langgraph_curriculum_factory_remediation/execution_package_v2/tools/validate_result_v2.py does not match the hash recorded in the previous round",
+    "round 2: GROUNDING_CHANGED — /Users/filipepinto/Projects/curriculum_builder/plans/27_langgraph_curriculum_factory_remediation/execution_package_v2/tests/test_execution_package_v2.py does not match the hash recorded in the previous round",
+    "round 3: GROUNDING_CHANGED — /Users/filipepinto/Projects/curriculum_builder/plans/27_langgraph_curriculum_factory_remediation/execution_package_v2/controller/scan_node.py does not match the hash recorded in the previous round",
+    "round 3: GROUNDING_CHANGED — /Users/filipepinto/Projects/curriculum_builder/plans/27_langgraph_curriculum_factory_remediation/execution_package_v2/tools/validate_plan_v2.py does not match the hash recorded in the previous round",
+    "round 3: GROUNDING_CHANGED — /Users/filipepinto/Projects/curriculum_builder/plans/27_langgraph_curriculum_factory_remediation/execution_package_v2/tools/validate_result_v2.py does not match the hash recorded in the previous round",
+    "round 3: GROUNDING_CHANGED — /Users/filipepinto/Projects/curriculum_builder/plans/27_langgraph_curriculum_factory_remediation/execution_package_v2/tests/test_execution_package_v2.py does not match the hash recorded in the previous round",
+    "round 4: GROUNDING_CHANGED — /Users/filipepinto/Projects/curriculum_builder/plans/27_langgraph_curriculum_factory_remediation/execution_package_v2/controller/scan_node.py does not match the hash recorded in the previous round",
+    "round 4: GROUNDING_CHANGED — /Users/filipepinto/Projects/curriculum_builder/plans/27_langgraph_curriculum_factory_remediation/execution_package_v2/tools/validate_plan_v2.py does not match the hash recorded in the previous round",
+    "round 4: GROUNDING_CHANGED — /Users/filipepinto/Projects/curriculum_builder/plans/27_langgraph_curriculum_factory_remediation/execution_package_v2/tools/validate_result_v2.py does not match the hash recorded in the previous round",
+    "round 4: GROUNDING_CHANGED — /Users/filipepinto/Projects/curriculum_builder/plans/27_langgraph_curriculum_factory_remediation/execution_package_v2/tests/test_execution_package_v2.py does not match the hash recorded in the previous round"
+  ],
+  "artifact": "/Users/filipepinto/Projects/curriculum_builder/plans/27_langgraph_curriculum_factory_remediation/execution_package_v2/implementation.graph.v4.yaml",
+  "qa_dir": "/Users/filipepinto/Projects/curriculum_builder/plans/27_langgraph_curriculum_factory_remediation/execution_package_v2/QA"
+}

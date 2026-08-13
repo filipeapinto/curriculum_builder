@@ -1,0 +1,3 @@
+$ claude --print --output-format json --json-schema output.schema.json ... (schema passed as a FILE PATH)
+Error: --json-schema is not valid JSON: JSON Parse error: Unexpected identifier "output"
+exit=1

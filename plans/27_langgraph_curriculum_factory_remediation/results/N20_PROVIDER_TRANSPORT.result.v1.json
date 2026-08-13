@@ -1,0 +1,164 @@
+{
+  "attempt_id": "N20_PROVIDER_TRANSPORT-attempt-1",
+  "changed_files": [],
+  "commands": [
+    {
+      "argv": [
+        "git",
+        "status",
+        "--porcelain"
+      ],
+      "exit_code": 0,
+      "log": "plans/27_langgraph_curriculum_factory_remediation/results/evidence/N20_PROVIDER_TRANSPORT/10_git_status.log",
+      "log_sha256": "6fad6dde223ffb6c76e65c1ea0ce3f84ef80492b3a3ba042b98da399ff3534bf"
+    },
+    {
+      "argv": [
+        "claude",
+        "--version"
+      ],
+      "exit_code": 0,
+      "log": "plans/27_langgraph_curriculum_factory_remediation/results/evidence/N20_PROVIDER_TRANSPORT/20_claude_version.log",
+      "log_sha256": "d4e8bd8c11ca64fa163e29207c89435bf25c1112194766214d6b095a1c67e38d"
+    },
+    {
+      "argv": [
+        "python3",
+        "plans/27_langgraph_curriculum_factory_remediation/controller/check_forbidden_production_refs.py"
+      ],
+      "exit_code": 1,
+      "log": "plans/27_langgraph_curriculum_factory_remediation/results/evidence/N20_PROVIDER_TRANSPORT/30_scan_scope_all.log",
+      "log_sha256": "862f741e15e4626860bb9d9bd92b2a8a5b18686f84a7e9ef6d5dda20715aa8f4"
+    },
+    {
+      "argv": [
+        "python3",
+        "plans/27_langgraph_curriculum_factory_remediation/controller/check_forbidden_production_refs.py",
+        "--scope",
+        "production"
+      ],
+      "exit_code": 1,
+      "log": "plans/27_langgraph_curriculum_factory_remediation/results/evidence/N20_PROVIDER_TRANSPORT/31_scan_scope_production.log",
+      "log_sha256": "57aa6aa2a355db336f627ad14536b35682245362aca1b41f0321b3b673e5f024"
+    },
+    {
+      "argv": [
+        "python3",
+        "plans/27_langgraph_curriculum_factory_remediation/tools/validate_plan.py"
+      ],
+      "exit_code": 0,
+      "log": "plans/27_langgraph_curriculum_factory_remediation/results/evidence/N20_PROVIDER_TRANSPORT/50_validate_plan.log",
+      "log_sha256": "176e9ba38236264d063a17ac51d86f88018b960bd7c73c01c03e102a06cb6b07"
+    },
+    {
+      "argv": [
+        "python3",
+        "-m",
+        "pytest",
+        "-q",
+        "tests/runtime/test_plan26_transport.py",
+        "tests/runtime/test_plan26_model_nodes.py",
+        "tests/runtime/test_capabilities.py",
+        "tests/runtime/test_curriculum_factory_graph.py",
+        "tests/runtime/test_plan26_adversarial.py",
+        "tests/runtime/test_plan26_api_contract.py",
+        "tests/runtime/test_plan26_lock_drift.py"
+      ],
+      "exit_code": 1,
+      "log": "plans/27_langgraph_curriculum_factory_remediation/results/evidence/N20_PROVIDER_TRANSPORT/60_pytest_n20_baseline.log",
+      "log_sha256": "bb7b0d86a8a6dfdb67f62ba4b7aac09330e2565d0b10b0b9803cf6c0be030284"
+    },
+    {
+      "argv": [
+        "python3",
+        "plans/27_langgraph_curriculum_factory_remediation/tools/validate_result.py",
+        "--node",
+        "N20_PROVIDER_TRANSPORT"
+      ],
+      "exit_code": 0,
+      "log": "plans/27_langgraph_curriculum_factory_remediation/results/evidence/N20_PROVIDER_TRANSPORT/70_validate_result.log",
+      "log_sha256": "eb95203bc13d5c17ca199b829fe710368a4268c46122caa4986612d6d5efe95b"
+    }
+  ],
+  "evidence": [
+    "plans/27_langgraph_curriculum_factory_remediation/results/evidence/N20_PROVIDER_TRANSPORT/10_git_status.log",
+    "plans/27_langgraph_curriculum_factory_remediation/results/evidence/N20_PROVIDER_TRANSPORT/11_eight_job_conformance_table.log",
+    "plans/27_langgraph_curriculum_factory_remediation/results/evidence/N20_PROVIDER_TRANSPORT/20_claude_version.log",
+    "plans/27_langgraph_curriculum_factory_remediation/results/evidence/N20_PROVIDER_TRANSPORT/21_claude_json_schema_path_rejected.log",
+    "plans/27_langgraph_curriculum_factory_remediation/results/evidence/N20_PROVIDER_TRANSPORT/22_claude_meta_schema_ref_rejected.log",
+    "plans/27_langgraph_curriculum_factory_remediation/results/evidence/N20_PROVIDER_TRANSPORT/23_claude_stream_json_identity_events.log",
+    "plans/27_langgraph_curriculum_factory_remediation/results/evidence/N20_PROVIDER_TRANSPORT/30_scan_scope_all.log",
+    "plans/27_langgraph_curriculum_factory_remediation/results/evidence/N20_PROVIDER_TRANSPORT/31_scan_scope_production.log",
+    "plans/27_langgraph_curriculum_factory_remediation/results/evidence/N20_PROVIDER_TRANSPORT/32_scan_violation_owners.log",
+    "plans/27_langgraph_curriculum_factory_remediation/results/evidence/N20_PROVIDER_TRANSPORT/40_egress_provider_coupling.log",
+    "plans/27_langgraph_curriculum_factory_remediation/results/evidence/N20_PROVIDER_TRANSPORT/50_validate_plan.log",
+    "plans/27_langgraph_curriculum_factory_remediation/results/evidence/N20_PROVIDER_TRANSPORT/60_pytest_n20_baseline.log",
+    "plans/27_langgraph_curriculum_factory_remediation/results/evidence/N20_PROVIDER_TRANSPORT/70_validate_result.log"
+  ],
+  "findings": [
+    {
+      "disposition": "open",
+      "id": "N20-F01",
+      "severity": "critical",
+      "summary": "N20 cannot reach PASSED: its graph verification command `python3 plans/27_langgraph_curriculum_factory_remediation/controller/check_forbidden_production_refs.py` defaults to --scope all, which includes the retired_provider_test_scan over the whole tests/runtime tree. Six migration-affected active test files carrying gemini/google terms are owned by later nodes and are outside N20's write set: tests/runtime/test_plan26_cli.py, test_plan26_deterministic_nodes.py, test_plan26_egress.py, test_run_curriculum.py (N30_PREFLIGHT_EGRESS), test_plan26_topology.py (N40_INTEGRATION_OWNERSHIP), test_plan26_persistence.py (N50_EVIDENCE_AUDIT_CONTROLS). The identical bare command is also N30's, N40's and N50's verification, so the scan can first exit 0 only after N50 completes; N20, N30 and N40 are each unsatisfiable as written. Owner: the implementation graph's verification list (with the controller invocation N10 built). Minimal fix: give N20/N30/N40/N50 `--scope production` plus a scope that covers only their own owned test paths, and keep the bare `--scope all` form at N60_ADVERSARIAL_REGRESSION, which already owns the whole-tree pytest denominator. Evidence: 30_scan_scope_all.log, 32_scan_violation_owners.log."
+    },
+    {
+      "disposition": "open",
+      "id": "N20-F02",
+      "severity": "critical",
+      "summary": "N20 cannot express the corrected provider assignment inside its own write set. Spec v2 s7.4 requires the authorization classes `anthropic` (M01-M04/M06/M08) and `openai` (M05/M07) and forbids any `google` class. transport.CliTransport.execute() passes the frozen route's `provider` field directly into egress.authorize_subprocess_transmission, and the allowlist that decides which provider names exist (PROVIDERS and PROVIDER_DATA_CLASSES) lives in runtime/langgraph_factory/egress.py, owned by N30_PREFLIGHT_EGRESS. Constructing an AuthorizationRecord with provider `anthropic` raises AuthorizationDenied('unknown_provider'). Writing `provider: anthropic` into the N20-owned config/model_jobs.v1.yaml therefore breaks every end-to-end transport test the moment it is written, and keeping `provider: openai` on a Claude job would authorize anthropic-class data under the openai class, which s7.4 forbids. Owner: N30_PREFLIGHT_EGRESS. Required egress change: rename PROVIDER_DATA_CLASSES['openai'] (authoring classes) to 'anthropic' and PROVIDER_DATA_CLASSES['google'] (review classes) to 'openai', set PROVIDERS accordingly, and drop the *.googleapis.com model endpoints from MODEL_API_HOSTS. N20's own runtime/langgraph_factory/schemas/internal_authorization_receipt.schema.json provider enum must change in the same atomic step. Evidence: 40_egress_provider_coupling.log."
+    },
+    {
+      "disposition": "open",
+      "id": "N20-F03",
+      "severity": "major",
+      "summary": "Spec v2 s7.2's pinned Claude invocation shape is factually wrong against the installed CLI and cannot be implemented literally. Proven live on 2026-08-13 against claude 2.1.231: (a) `--json-schema output.schema.json` is rejected \u2014 the flag takes the schema inline as a JSON string, not a file path ('--json-schema is not valid JSON: JSON Parse error: Unexpected identifier \"output\"'); (b) passing the package's own job schema inline is also rejected while it carries its draft 2020-12 $schema reference ('no schema with key or ref \"https://json-schema.org/draft/2020-12/schema\"'), so the transport must strip $schema before transmission. The workspace copy of output.schema.json remains correct for hashing and for post-hoc jsonschema validation, but it is not what the CLI consumes. Evidence: 21_claude_json_schema_path_rejected.log, 22_claude_meta_schema_ref_rejected.log."
+    },
+    {
+      "disposition": "open",
+      "id": "N20-F04",
+      "severity": "major",
+      "summary": "Spec v2 s7.1 and s7.2 contradict each other for Claude jobs: s7.1 says the request instruction 'identifies only the staged filenames' while s7.2 pins `--tools \"\"`. Proven live: with `--tools \"\"` the session init event reports tools ['StructuredOutput'] only, so the Claude worker has no file-reading tool and cannot open authorized_input.json or any staged artifact in the workspace that --add-dir scopes. As written, a Claude job would receive its prompt text and nothing else. Resolving this needs an approved decision \u2014 either transmit the authorized projection inline in the instruction, or allow exactly one read-only file tool scoped to --add-dir \u2014 and N20 must not invent it. Owner: the job contract / staged boundary (spec, then N30's staged-input path). Evidence: 23_claude_stream_json_identity_events.log."
+    },
+    {
+      "disposition": "resolved",
+      "id": "N20-F05",
+      "severity": "observation",
+      "summary": "Executed-model identity for the Claude route is observable and the extraction mechanism is now proven, not assumed. `claude --print --output-format stream-json --verbose` on 2.1.231 emits a system/init event carrying \"model\", assistant events carrying message.model with parent_tool_use_id null, and a final result event carrying structured_output plus modelUsage keyed by executed model id with canonicalModel and provider (observed \"firstParty\"). This is a strict machine-readable superset of what `--output-format json` gives and is the s7.2-sanctioned alternative event source. Note the plain `--output-format json` envelope's modelUsage map is NOT single-entry \u2014 a probe recorded claude-haiku-4-5 alongside the requested claude-sonnet-5 \u2014 so a gemini-style 'exactly one model' extractor over modelUsage would fail spuriously; the per-turn assistant message.model is the unambiguous signal. Evidence: 20_claude_version.log, 23_claude_stream_json_identity_events.log."
+    },
+    {
+      "disposition": "open",
+      "id": "N20-F06",
+      "severity": "observation",
+      "summary": "Containment gap observed live for a later node: `--setting-sources \"\"` did not suppress MCP server loading. The session init event listed three claude.ai MCP servers (Google Drive, Gmail, Google Calendar, all status needs-auth). They were unauthenticated and no tool was exposed under `--tools \"\"`, so nothing was reachable in this probe, but s7.2's claim that --setting-sources \"\" 'prevents the invocation from reading ... MCP configuration' is not fully borne out. Owner: N30_PREFLIGHT_EGRESS capability proof and N70's live proof. Evidence: 23_claude_stream_json_identity_events.log."
+    },
+    {
+      "disposition": "open",
+      "id": "N20-F07",
+      "severity": "observation",
+      "summary": "N20's pytest verification already fails on the unmodified tree, independently of anything N20 would change: tests/runtime/test_plan26_transport.py::test_capability_probes_read_the_real_local_toolchain asserts prove_capability('model_cli_identity') == PASS, and the probe resolves every CLI named by the frozen registry, which still includes `gemini`. No gemini executable is installed on this host, so the probe returns MISSING. 315 passed, 1 failed, 6 skipped. The provider migration removes the gemini route and both remaining drivers (claude 2.1.231, codex) are installed, so this failure is expected to clear once the migration lands. Evidence: 60_pytest_n20_baseline.log."
+    },
+    {
+      "disposition": "resolved",
+      "id": "N20-F08",
+      "severity": "observation",
+      "summary": "TEST step 1 and step 10 satisfied: the eight-job table was built from spec v2 s6.3/s7.1-s7.4 plus the user-approved USER_DECISION_REQUIRED-01 resolution, with role, mutability, provider family, subscription driver, model, effort, input boundary, output schema, identity claim and failure disposition resolved for all of M01-M08 and no unresolved field. It records M01/M06/M08 = claude-sonnet-5 xhigh, M02/M03/M04 = claude-sonnet-5 high, M05/M07 = gpt-5.6-sol xhigh, and the family-mismatch-is-system rule for M05/M07. Evidence: 11_eight_job_conformance_table.log."
+    },
+    {
+      "disposition": "open",
+      "id": "N20-F09",
+      "severity": "major",
+      "summary": "No file in N20's declared write set was modified. Because N20-F01 and N20-F02 make a PASSED outcome unreachable before other nodes act, and because a half-applied provider migration would leave the runtime unable to authorize any model job at all (F02), the migration was not partially applied. changed_files is empty and `git status --porcelain` still shows only the admitted N00/N10 scaffold. The corrected table, the proven Claude identity mechanism and the two evidenced spec-shape defects (F03, F04) are recorded so the next N20 attempt does not have to rediscover them."
+    }
+  ],
+  "invalidated_descendants": [],
+  "node_id": "N20_PROVIDER_TRANSPORT",
+  "outcome": "BLOCKED",
+  "predecessor_receipts": {
+    "N10_HARNESS_PROTOCOL": "a1e099c028a2b2f0df166b938f31943f9d662df5fa5eea499a354189aa57a179"
+  },
+  "prompt_sha256": "39f81d618687241e08642884b48697b312b905a3eef2d12b564ad310435693c3",
+  "run_id": "run27-2026-08-13",
+  "schema_version": 1,
+  "source_spec_sha256": "99052a181052bbbaf8077a152af22db6f248d552f38dd73302a3c34abc11b758"
+}

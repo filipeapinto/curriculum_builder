@@ -1,0 +1,344 @@
+{
+  "attempt_id": "N10_HARNESS_PROTOCOL-attempt-1",
+  "changed_files": [
+    {
+      "change": "created",
+      "path": "plans/27_langgraph_curriculum_factory_remediation/controller/__init__.py",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "change": "created",
+      "path": "plans/27_langgraph_curriculum_factory_remediation/controller/check_forbidden_production_refs.py",
+      "sha256": "cb530b326bb68964976b5b074fefa43392af83bd5c3c6a76f744991d30b066ee"
+    },
+    {
+      "change": "created",
+      "path": "plans/27_langgraph_curriculum_factory_remediation/controller/contracts.py",
+      "sha256": "e20a2d3e3524e82feda5f802cff9950354e6cffe58b7957e3a0fff6bf77f97a6"
+    },
+    {
+      "change": "created",
+      "path": "plans/27_langgraph_curriculum_factory_remediation/controller/core.py",
+      "sha256": "6a8201ecd9cfbf9d0ddbbcc9ad0260132e175d89eea03721010b9d31a5ab7ec4"
+    },
+    {
+      "change": "created",
+      "path": "plans/27_langgraph_curriculum_factory_remediation/controller/run27_controller.py",
+      "sha256": "05ebe7e49dc8a1575d250da890df4edda2b3a66fb08f83b495c261a19a13c383"
+    },
+    {
+      "change": "created",
+      "path": "plans/27_langgraph_curriculum_factory_remediation/controller/scheduler.py",
+      "sha256": "821b88eebccb536cea64d3d1ebbd2d195b092204a2dafc570e3e6080b097158e"
+    },
+    {
+      "change": "created",
+      "path": "plans/27_langgraph_curriculum_factory_remediation/controller/verify_evidence_determinism.py",
+      "sha256": "b1b3f83a1d523951068a1d870d2fe677878991c73a5cd53d5ec937585c619d15"
+    },
+    {
+      "change": "created",
+      "path": "plans/27_langgraph_curriculum_factory_remediation/controller/verify_ownership.py",
+      "sha256": "89a4162a3281a3f8f26527375a07adfa0c8abc44a2ec1cb5fe777714c9629330"
+    },
+    {
+      "change": "created",
+      "path": "plans/27_langgraph_curriculum_factory_remediation/controller/verify_requirements_lineage.py",
+      "sha256": "b82e8455354e4e1a6e94e92e3de4ac5497cdfca2cc827433c6334e6260746e17"
+    },
+    {
+      "change": "created",
+      "path": "plans/27_langgraph_curriculum_factory_remediation/schemas/scheduler_receipt.schema.v1.json",
+      "sha256": "c27d6cd1a6f31323d0344486019cf7c628e9a071e651ebeda81b192a29a60b64"
+    },
+    {
+      "change": "created",
+      "path": "plans/27_langgraph_curriculum_factory_remediation/schemas/attempt_record.schema.v1.json",
+      "sha256": "3de14ae1835f5d435c98a5ea51381b1ccfa066bb73d7e2d6e9d33abbd87d1112"
+    },
+    {
+      "change": "created",
+      "path": "plans/27_langgraph_curriculum_factory_remediation/tests/test_run27_controller.py",
+      "sha256": "6415996b3719baa7118a75f0a1e666dfcf01ef3c12d6db25d45c4eb618c0a479"
+    },
+    {
+      "change": "created",
+      "path": "plans/27_langgraph_curriculum_factory_remediation/tests/test_node_result_protocol.py",
+      "sha256": "b435f7b296a7742b288fb449c4e63fe916330310748428fd1f68904a65af7adf"
+    },
+    {
+      "change": "created",
+      "path": "plans/27_langgraph_curriculum_factory_remediation/tests/test_forbidden_production_scan.py",
+      "sha256": "be50925aa5508310a505c438f979597402e006ef3e03746ad186b2451c045e4c"
+    },
+    {
+      "change": "created",
+      "path": "plans/27_langgraph_curriculum_factory_remediation/results/evidence/N10_HARNESS_PROTOCOL/10_git_status.log",
+      "sha256": "1933f68c7d38b82ae000e359d8121af89bf9d14b6b229007b75f2e97a370a926"
+    },
+    {
+      "change": "created",
+      "path": "plans/27_langgraph_curriculum_factory_remediation/results/evidence/N10_HARNESS_PROTOCOL/11_validate_plan.log",
+      "sha256": "176e9ba38236264d063a17ac51d86f88018b960bd7c73c01c03e102a06cb6b07"
+    },
+    {
+      "change": "created",
+      "path": "plans/27_langgraph_curriculum_factory_remediation/results/evidence/N10_HARNESS_PROTOCOL/20_pytest_run1.log",
+      "sha256": "4f9959c2cf4f1ee62d05488f65ea3058655a01c6e85664ca7750f4ac5799ffdf"
+    },
+    {
+      "change": "created",
+      "path": "plans/27_langgraph_curriculum_factory_remediation/results/evidence/N10_HARNESS_PROTOCOL/21_snapshot_after_run1.log",
+      "sha256": "a42e62741dc277b9f276b66515136b0c9293d7a27eef83cc2c17f69246b82168"
+    },
+    {
+      "change": "created",
+      "path": "plans/27_langgraph_curriculum_factory_remediation/results/evidence/N10_HARNESS_PROTOCOL/22_pytest_run2.log",
+      "sha256": "1109ed19db1be0abf64e990dcda543f42a574c146cb7270fe3f62385e605e6e1"
+    },
+    {
+      "change": "created",
+      "path": "plans/27_langgraph_curriculum_factory_remediation/results/evidence/N10_HARNESS_PROTOCOL/23_snapshot_after_run2.log",
+      "sha256": "a42e62741dc277b9f276b66515136b0c9293d7a27eef83cc2c17f69246b82168"
+    },
+    {
+      "change": "created",
+      "path": "plans/27_langgraph_curriculum_factory_remediation/results/evidence/N10_HARNESS_PROTOCOL/24_determinism_diff.log",
+      "sha256": "e350f69e9e111ba3d5d7c0b217e2395470d969527a8f46ac83048c4fcdc2c04f"
+    },
+    {
+      "change": "created",
+      "path": "plans/27_langgraph_curriculum_factory_remediation/results/evidence/N10_HARNESS_PROTOCOL/30_forbidden_scan_current_repo.log",
+      "sha256": "3d28f2cbbaacf0017d5c18dcdf42a494a3a73a28b3778eccf2c5d7bf18c08557"
+    },
+    {
+      "change": "created",
+      "path": "plans/27_langgraph_curriculum_factory_remediation/results/evidence/N10_HARNESS_PROTOCOL/31_controller_readonly_commands.log",
+      "sha256": "5f84cae9d085676a59c82b883dbc3f79780a634c85384abbfa9974723c440355"
+    },
+    {
+      "change": "created",
+      "path": "plans/27_langgraph_curriculum_factory_remediation/results/evidence/N10_HARNESS_PROTOCOL/40_run26_controller_disposition.log",
+      "sha256": "79485f2cfefcc02f9fd49db6ae172abb20f5c4e91f59f99570aeb8efc2da0d1d"
+    },
+    {
+      "change": "created",
+      "path": "plans/27_langgraph_curriculum_factory_remediation/results/evidence/N10_HARNESS_PROTOCOL/41_invariant_test_map.log",
+      "sha256": "f5b648abbcce08d85bc566e8d687f3270b35fc10b1b96352b7420b899b2fa769"
+    }
+  ],
+  "commands": [
+    {
+      "argv": [
+        "git",
+        "status",
+        "--porcelain"
+      ],
+      "exit_code": 0,
+      "log": "plans/27_langgraph_curriculum_factory_remediation/results/evidence/N10_HARNESS_PROTOCOL/10_git_status.log",
+      "log_sha256": "1933f68c7d38b82ae000e359d8121af89bf9d14b6b229007b75f2e97a370a926"
+    },
+    {
+      "argv": [
+        "python3",
+        "plans/27_langgraph_curriculum_factory_remediation/tools/validate_plan.py"
+      ],
+      "exit_code": 0,
+      "log": "plans/27_langgraph_curriculum_factory_remediation/results/evidence/N10_HARNESS_PROTOCOL/11_validate_plan.log",
+      "log_sha256": "176e9ba38236264d063a17ac51d86f88018b960bd7c73c01c03e102a06cb6b07"
+    },
+    {
+      "argv": [
+        "python3",
+        "-m",
+        "pytest",
+        "-q",
+        "plans/27_langgraph_curriculum_factory_remediation/tests/test_run27_controller.py",
+        "plans/27_langgraph_curriculum_factory_remediation/tests/test_node_result_protocol.py",
+        "plans/27_langgraph_curriculum_factory_remediation/tests/test_forbidden_production_scan.py"
+      ],
+      "exit_code": 0,
+      "log": "plans/27_langgraph_curriculum_factory_remediation/results/evidence/N10_HARNESS_PROTOCOL/20_pytest_run1.log",
+      "log_sha256": "4f9959c2cf4f1ee62d05488f65ea3058655a01c6e85664ca7750f4ac5799ffdf"
+    },
+    {
+      "argv": [
+        "bash",
+        "-c",
+        "set -o pipefail\nfind plans/27_langgraph_curriculum_factory_remediation/controller plans/27_langgraph_curriculum_factory_remediation/schemas plans/27_langgraph_curriculum_factory_remediation/tests plans/27_langgraph_curriculum_factory_remediation/tools plans/27_langgraph_curriculum_factory_remediation/results/evidence/N00_SPEC_APPROVAL_GATE \\\n  -type f ! -name '*.pyc' ! -path '*__pycache__*' | LC_ALL=C sort | xargs shasum -a 256\nshasum -a 256 plans/27_langgraph_curriculum_factory_remediation/results/N00_SPEC_APPROVAL_GATE.result.v1.json\nshasum -a 256 plans/27_langgraph_curriculum_factory_remediation/implementation.graph.v1.yaml\necho '--- git status, excluding this node own in-flight evidence and result ---'\ngit status --porcelain | awk '!/N10_HARNESS_PROTOCOL/' | LC_ALL=C sort"
+      ],
+      "exit_code": 0,
+      "log": "plans/27_langgraph_curriculum_factory_remediation/results/evidence/N10_HARNESS_PROTOCOL/21_snapshot_after_run1.log",
+      "log_sha256": "a42e62741dc277b9f276b66515136b0c9293d7a27eef83cc2c17f69246b82168"
+    },
+    {
+      "argv": [
+        "python3",
+        "-m",
+        "pytest",
+        "-q",
+        "plans/27_langgraph_curriculum_factory_remediation/tests/test_run27_controller.py",
+        "plans/27_langgraph_curriculum_factory_remediation/tests/test_node_result_protocol.py",
+        "plans/27_langgraph_curriculum_factory_remediation/tests/test_forbidden_production_scan.py"
+      ],
+      "exit_code": 0,
+      "log": "plans/27_langgraph_curriculum_factory_remediation/results/evidence/N10_HARNESS_PROTOCOL/22_pytest_run2.log",
+      "log_sha256": "1109ed19db1be0abf64e990dcda543f42a574c146cb7270fe3f62385e605e6e1"
+    },
+    {
+      "argv": [
+        "bash",
+        "-c",
+        "set -o pipefail\nfind plans/27_langgraph_curriculum_factory_remediation/controller plans/27_langgraph_curriculum_factory_remediation/schemas plans/27_langgraph_curriculum_factory_remediation/tests plans/27_langgraph_curriculum_factory_remediation/tools plans/27_langgraph_curriculum_factory_remediation/results/evidence/N00_SPEC_APPROVAL_GATE \\\n  -type f ! -name '*.pyc' ! -path '*__pycache__*' | LC_ALL=C sort | xargs shasum -a 256\nshasum -a 256 plans/27_langgraph_curriculum_factory_remediation/results/N00_SPEC_APPROVAL_GATE.result.v1.json\nshasum -a 256 plans/27_langgraph_curriculum_factory_remediation/implementation.graph.v1.yaml\necho '--- git status, excluding this node own in-flight evidence and result ---'\ngit status --porcelain | awk '!/N10_HARNESS_PROTOCOL/' | LC_ALL=C sort"
+      ],
+      "exit_code": 0,
+      "log": "plans/27_langgraph_curriculum_factory_remediation/results/evidence/N10_HARNESS_PROTOCOL/23_snapshot_after_run2.log",
+      "log_sha256": "a42e62741dc277b9f276b66515136b0c9293d7a27eef83cc2c17f69246b82168"
+    },
+    {
+      "argv": [
+        "bash",
+        "-c",
+        "diff plans/27_langgraph_curriculum_factory_remediation/results/evidence/N10_HARNESS_PROTOCOL/21_snapshot_after_run1.log plans/27_langgraph_curriculum_factory_remediation/results/evidence/N10_HARNESS_PROTOCOL/23_snapshot_after_run2.log\nstatus=$?\nif [ $status -eq 0 ]; then echo TRACKED_EVIDENCE_BYTES_UNCHANGED_ACROSS_TWO_SUITE_RUNS; fi\nexit $status"
+      ],
+      "exit_code": 0,
+      "log": "plans/27_langgraph_curriculum_factory_remediation/results/evidence/N10_HARNESS_PROTOCOL/24_determinism_diff.log",
+      "log_sha256": "e350f69e9e111ba3d5d7c0b217e2395470d969527a8f46ac83048c4fcdc2c04f"
+    },
+    {
+      "argv": [
+        "bash",
+        "-c",
+        "echo '== production scope: N20 and N30 have not run yet, so this scope is expected to be dirty =='\npython3 plans/27_langgraph_curriculum_factory_remediation/controller/check_forbidden_production_refs.py --scope production\necho \"production_scope_exit=$?\"\necho\necho '== tests scope: retired-provider policy, owned by N20 =='\npython3 plans/27_langgraph_curriculum_factory_remediation/controller/check_forbidden_production_refs.py --scope tests\necho \"tests_scope_exit=$?\"\necho\necho 'NOTE: this command is N20/N30/N40/N50/N60 verification, not N10 verification.'\necho 'N10 proves the scanner behaves correctly on clean and dirty synthetic trees;'\necho 'see plans/27_langgraph_curriculum_factory_remediation/tests/test_forbidden_production_scan.py.'"
+      ],
+      "exit_code": 0,
+      "log": "plans/27_langgraph_curriculum_factory_remediation/results/evidence/N10_HARNESS_PROTOCOL/30_forbidden_scan_current_repo.log",
+      "log_sha256": "3d28f2cbbaacf0017d5c18dcdf42a494a3a73a28b3778eccf2c5d7bf18c08557"
+    },
+    {
+      "argv": [
+        "bash",
+        "-c",
+        "S=/tmp/run27_readonly_probe_state\nrm -rf \"$S\"\necho '== plan =='; python3 plans/27_langgraph_curriculum_factory_remediation/controller/run27_controller.py --state-dir \"$S\" plan; echo \"plan_exit=$?\"\necho '== status =='; python3 plans/27_langgraph_curriculum_factory_remediation/controller/run27_controller.py --state-dir \"$S\" status; echo \"status_exit=$?\"\necho '== audit =='; python3 plans/27_langgraph_curriculum_factory_remediation/controller/run27_controller.py --state-dir \"$S\" audit; echo \"audit_exit=$?\"\necho '== verify-final-audit: N90 has not run, a nonzero refusal is the correct answer =='\npython3 plans/27_langgraph_curriculum_factory_remediation/controller/run27_controller.py --state-dir \"$S\" verify-final-audit --node N90_REQUIREMENTS_FINAL_AUDIT\necho \"verify_final_audit_exit=$?\"\necho '== verify-live-proof: N70 has not run, a nonzero refusal is the correct answer =='\npython3 plans/27_langgraph_curriculum_factory_remediation/controller/run27_controller.py --state-dir \"$S\" verify-live-proof --node N70_LIVE_UNIT_PROOF\necho \"verify_live_proof_exit=$?\"\necho '== read-only commands created no state directory =='\ntest -e \"$S\" && echo STATE_DIR_CREATED=true || echo STATE_DIR_CREATED=false"
+      ],
+      "exit_code": 0,
+      "log": "plans/27_langgraph_curriculum_factory_remediation/results/evidence/N10_HARNESS_PROTOCOL/31_controller_readonly_commands.log",
+      "log_sha256": "5f84cae9d085676a59c82b883dbc3f79780a634c85384abbfa9974723c440355"
+    }
+  ],
+  "evidence": [
+    "plans/27_langgraph_curriculum_factory_remediation/results/evidence/N10_HARNESS_PROTOCOL/10_git_status.log",
+    "plans/27_langgraph_curriculum_factory_remediation/results/evidence/N10_HARNESS_PROTOCOL/11_validate_plan.log",
+    "plans/27_langgraph_curriculum_factory_remediation/results/evidence/N10_HARNESS_PROTOCOL/20_pytest_run1.log",
+    "plans/27_langgraph_curriculum_factory_remediation/results/evidence/N10_HARNESS_PROTOCOL/21_snapshot_after_run1.log",
+    "plans/27_langgraph_curriculum_factory_remediation/results/evidence/N10_HARNESS_PROTOCOL/22_pytest_run2.log",
+    "plans/27_langgraph_curriculum_factory_remediation/results/evidence/N10_HARNESS_PROTOCOL/23_snapshot_after_run2.log",
+    "plans/27_langgraph_curriculum_factory_remediation/results/evidence/N10_HARNESS_PROTOCOL/24_determinism_diff.log",
+    "plans/27_langgraph_curriculum_factory_remediation/results/evidence/N10_HARNESS_PROTOCOL/30_forbidden_scan_current_repo.log",
+    "plans/27_langgraph_curriculum_factory_remediation/results/evidence/N10_HARNESS_PROTOCOL/31_controller_readonly_commands.log",
+    "plans/27_langgraph_curriculum_factory_remediation/results/evidence/N10_HARNESS_PROTOCOL/40_run26_controller_disposition.log",
+    "plans/27_langgraph_curriculum_factory_remediation/results/evidence/N10_HARNESS_PROTOCOL/41_invariant_test_map.log"
+  ],
+  "findings": [
+    {
+      "disposition": "resolved",
+      "id": "N10-F01",
+      "severity": "major",
+      "summary": "PM-17 corrected. Node admission consumes only a JSON document that validates against the frozen schemas/node_result.schema.v1.json; status is read from result['outcome'] and nowhere else. The Run 26 _node_reported_status bare-status-line parser is not carried forward, and no controller module scrapes a status token out of text. Bold Markdown, an explanatory suffix, an ACTIVATED verdict heading, a fenced JSON block, and IMPLEMENTED_NOT_ACTIVATED are each proven to fail with NON_JSON_RESULT and produce no receipt."
+    },
+    {
+      "disposition": "resolved",
+      "id": "N10-F02",
+      "severity": "major",
+      "summary": "PM-15 corrected. Descendant invalidation is computed, not stored: Scheduler.currency recomputes a lineage fingerprint over graph digest, node definition, prompt, approved specification and predecessor receipt digests, checks the node's own recorded final-output digests against current bytes, and recurses into every ancestor. Changing an admitted ancestor's bytes, re-admitting an ancestor, editing the graph, or replacing the approved specification each automatically invalidate every transitive descendant, including descendants whose own output bytes are byte-identical. No manual compensating audit is required or accepted."
+    },
+    {
+      "disposition": "resolved",
+      "id": "N10-F03",
+      "severity": "major",
+      "summary": "PM-19 corrected. Attempts are write-once directories whose terminal state is carried by immutable marker files (merged/failed/interrupted/abandoned) rather than a mutable status field; a write-set violation fails before any merge journal is opened and preserves the attempt; the merge is a write-once journal plus exactly one os.replace of a single receipt file, so no partially merged state can exist; an interrupted attempt never merges implicitly and refuses further admission with MERGE_JOURNAL_OPEN until recover() has either completed the merge or restored the previous receipt byte-for-byte; and resume() always creates a new child attempt bound to its parent and to current predecessor receipt digests."
+    },
+    {
+      "disposition": "resolved",
+      "id": "N10-F04",
+      "severity": "major",
+      "summary": "Re-admission is a named, auditable operation. run27_controller.py readmit requires a reason code from the closed enum {INTERRUPTED_MERGE_COMPLETED, EXTERNAL_PROCESS_KILL, STATE_STORE_CORRUPTION, ANCESTOR_REWORK_REVALIDATION}, an exact --expect-result-sha256 artifact binding, a forced verification rerun recorded in the receipt, archival of the superseded receipt under receipts/history/, and an immutable audit.jsonl event carrying admission=recovery_readmission. Run 26's mechanically_revalidate silent path is rejected outright."
+    },
+    {
+      "disposition": "resolved",
+      "id": "N10-F05",
+      "severity": "major",
+      "summary": "The controller refuses to begin or admit any non-entry node without an admitted N00 receipt whose approved_spec_sha256 equals the current digest of the graph's source_spec and whose own receipt is current (ENTRY_GATE_NOT_ADMITTED). Replacing the approved specification file revokes the gate immediately."
+    },
+    {
+      "disposition": "resolved",
+      "id": "N10-F06",
+      "severity": "major",
+      "summary": "Attempt evidence is attempt-scoped and write-once: logs live under <state>/attempts/<node_id>/<attempt_id>/logs/, a second write to the same name raises WRITE_ONCE_VIOLATION, and a path-traversing log name is refused. The read-only commands status, plan, validate, audit, verify-live-proof and verify-final-audit are proven non-mutating by whole-tree digests of both the state directory and the repository taken before and after two consecutive runs, and they do not even create the state directory."
+    },
+    {
+      "disposition": "resolved",
+      "id": "N10-F07",
+      "severity": "major",
+      "summary": "tools/validate_plan.py exits 0 and the complete 80-test controller suite passes twice consecutively with a byte-identical snapshot of controller/, schemas/, tests/, tools/, the admitted N00 result and its evidence, the implementation graph, and git status (24_determinism_diff.log is an empty diff)."
+    },
+    {
+      "disposition": "resolved",
+      "id": "N10-F08",
+      "severity": "minor",
+      "summary": "Every Run 26 controller behaviour is enumerated as RETAINED, REPLACED or REJECTED in 40_run26_controller_disposition.log: 14 retained mechanisms (hashing, canonical digests, write-once creation, atomic replace, append-only events, ownership predicates, graph traversal, receipt history, write-set enforcement, verification rerun, predecessor binding, attempt directories, node-definition digests, ephemeral ignore lists), 6 replaced (status parsing, mechanical revalidation, stored fingerprint tolerance, multi-file sandbox merge, aggregate postmortem commands, separate predecessor checkpoint) and 9 rejected (out-of-scope contamination healing, sandbox copytree, prompt patch overlays, manifest rebase, model subprocess spawning and signal kills, parallel ready-node selection, provider preflight, synthesised BLOCKED receipts, post-merge output checks). No code was copied wholesale from plans/26_langgraph_curriculum_factory/prompt_graph_controller.py."
+    },
+    {
+      "disposition": "resolved",
+      "id": "N10-F09",
+      "severity": "observation",
+      "summary": "The Run 26 537-event audit stream is explicitly not treated as evidence for this controller. It is the record of the defective controller described in PM-19. The only evidence cited for the Run 27 controller is this node's own 80-test suite and the command logs in this evidence directory."
+    },
+    {
+      "disposition": "resolved",
+      "id": "N10-F10",
+      "severity": "minor",
+      "summary": "Scope clarification for check_forbidden_production_refs.py. It implements two independently declared graph scopes. The production scope (rules.forbidden_production_scan) reads only scan_roots and honours excluded_roots plans/tests/outputs and excluded_globs, so it never reads Plan 26 history, plan scaffolding, test sources or generated outputs; this is proven positively by asserting the exact scanned file set and negatively by planting gemini and GEMINI_API_KEY contamination under plans/ and outputs/ and requiring the scan to still pass. The tests scope (rules.retired_provider_test_scan) is a separate scope with its own roots and its own zero_occurrences_in_active_test_source policy, and exists because tools/validate_plan.py requires the owner of every migration-affected active test to run this exact command. --scope production runs the production scope alone."
+    },
+    {
+      "disposition": "not_applicable",
+      "id": "N10-F11",
+      "severity": "observation",
+      "summary": "Running check_forbidden_production_refs.py against the live repository currently exits 1 with 26 PROHIBITED_PROVIDER_TERM violations under runtime/ and policy/ and 57 RETIRED_PROVIDER_TERM_IN_ACTIVE_TEST violations under tests/runtime/ (30_forbidden_scan_current_repo.log). This is the expected pre-remediation state: that command is N20/N30/N40/N50/N60 verification, not N10 verification. N10's obligation is that the scanner is correct, which is proven against synthetic clean and dirty trees. A vacuous pass on the live tree is itself asserted against."
+    },
+    {
+      "disposition": "resolved",
+      "id": "N10-F12",
+      "severity": "minor",
+      "summary": "Execution model disclosure. This controller schedules, validates, verifies and receipts Plan 27 implementation nodes; it never launches a model process and it is entirely separate from the production curriculum factory runtime. The node writes its own outputs into the repository, and the controller's merge is the single-file admission of the scheduler receipt. Its default state directory is plans/27_langgraph_curriculum_factory_remediation/.run27_state, which is outside every node's declared write set and is not created by any read-only command; this node created no state directory in the repository."
+    },
+    {
+      "disposition": "resolved",
+      "id": "N10-F13",
+      "severity": "minor",
+      "summary": "The contract verifiers verify_ownership.py, verify_evidence_determinism.py and verify_requirements_lineage.py are generic, functional and kind-checked, sharing one claim engine in contracts.py. N40 and N50 author the contract YAML files these tools consume. Each verifier is proven on a truthful contract (exit 0) and on a falsified one (exit 1 naming the failing claim), including a contract of the wrong kind, a false ownership claim, a nondeterministic command, a command that mutates a path it declares stable, a requirement whose source anchor does not exist, and a requirement id present in the source but absent from the contract."
+    },
+    {
+      "disposition": "resolved",
+      "id": "N10-F14",
+      "severity": "observation",
+      "summary": "schemas/node_result.schema.v1.json was not edited, replaced or versioned. Its digest is 5ae553f83a685847542afebe084e5e7581dbb1057607f8dc5cb9208eb1f1cc18, it remains listed in rules.frozen_before_entry, and no graph node claims it in a write set. The two new schemas scheduler_receipt.schema.v1.json and attempt_record.schema.v1.json describe only the controller's internal bookkeeping and are enforced at runtime: every receipt and every attempt record is validated against them before it is written."
+    },
+    {
+      "disposition": "resolved",
+      "id": "N10-F15",
+      "severity": "observation",
+      "summary": "verify-live-proof and verify-final-audit are real read-only checks, derived generically from the graph: a live-proof node is any node whose allowed_results include NOT_AVAILABLE, and the final audit node is the graph's single sink. verify-live-proof requires a passing live proof to invoke the production CLI (rules.live_proof_cli, default runtime/run_curriculum.py), to have produced non-empty declared live outputs with matching digests, and to carry no simulated/fake/mock/stub transport marker in any evidence log, and requires a NOT_AVAILABLE result to name an open finding. verify-final-audit requires exactly one legal terminal, refuses a terminal on any non-audit node, requires ACTIVATED to be backed by PASSED live proofs and REMEDIATION_VERIFIED_NOT_ACTIVATED to be backed by a NOT_AVAILABLE live proof, and refuses to accept any invalidated ancestor receipt. N70, N80 and N90 remain responsible for confirming these match their own prompts before relying on them."
+    }
+  ],
+  "invalidated_descendants": [],
+  "node_id": "N10_HARNESS_PROTOCOL",
+  "outcome": "PASSED",
+  "predecessor_receipts": {
+    "N00_SPEC_APPROVAL_GATE": "492a63814949d1cf3579a12cecfc7df33deadac9250099b4b63d322ef2b59120"
+  },
+  "prompt_sha256": "2114b50ba59fa1657b51179a7550bbd3bbb7e0770900b2d808f528263d20ae25",
+  "run_id": "run27-2026-08-13",
+  "schema_version": 1,
+  "source_spec_sha256": "99052a181052bbbaf8077a152af22db6f248d552f38dd73302a3c34abc11b758"
+}

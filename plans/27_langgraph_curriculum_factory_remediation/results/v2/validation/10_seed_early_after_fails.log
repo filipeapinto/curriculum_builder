@@ -1,0 +1,1 @@
+{"ok": false, "requested_scope": "node:EARLY", "scanned_files": 1, "violations": [{"code": "PROHIBITED_PROVIDER_TERM", "line": 2, "path": "runtime/langgraph_factory/clean_early.py", "scope": "node:EARLY", "term": "gemini", "text": "gemini_import = True"}]}

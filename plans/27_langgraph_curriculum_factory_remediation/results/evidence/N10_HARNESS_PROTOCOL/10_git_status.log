@@ -1,0 +1,16 @@
+ M plans/27_langgraph_curriculum_factory_remediation/results/N00_SPEC_APPROVAL_GATE.result.v1.json
+?? plans/27_langgraph_curriculum_factory_remediation/contracts/spec_approval.v1.yaml
+?? plans/27_langgraph_curriculum_factory_remediation/controller/
+?? plans/27_langgraph_curriculum_factory_remediation/results/evidence/N00_SPEC_APPROVAL_GATE/10_v1_spec_hash.log
+?? plans/27_langgraph_curriculum_factory_remediation/results/evidence/N00_SPEC_APPROVAL_GATE/11_v2_spec_present.log
+?? plans/27_langgraph_curriculum_factory_remediation/results/evidence/N00_SPEC_APPROVAL_GATE/12_qa_witness.log
+?? plans/27_langgraph_curriculum_factory_remediation/results/evidence/N00_SPEC_APPROVAL_GATE/13_approval_schema_valid.log
+?? plans/27_langgraph_curriculum_factory_remediation/results/evidence/N00_SPEC_APPROVAL_GATE/14_digest_equality.log
+?? plans/27_langgraph_curriculum_factory_remediation/results/evidence/N00_SPEC_APPROVAL_GATE/15_approved_for.log
+?? plans/27_langgraph_curriculum_factory_remediation/results/evidence/N00_SPEC_APPROVAL_GATE/16_user_decision_required_enum.log
+?? plans/27_langgraph_curriculum_factory_remediation/results/evidence/N00_SPEC_APPROVAL_GATE/17_git_status.log
+?? plans/27_langgraph_curriculum_factory_remediation/results/evidence/N00_SPEC_APPROVAL_GATE/18_v1_last_commit.log
+?? plans/27_langgraph_curriculum_factory_remediation/results/evidence/N10_HARNESS_PROTOCOL/
+?? plans/27_langgraph_curriculum_factory_remediation/schemas/attempt_record.schema.v1.json
+?? plans/27_langgraph_curriculum_factory_remediation/schemas/scheduler_receipt.schema.v1.json
+?? plans/27_langgraph_curriculum_factory_remediation/tests/
