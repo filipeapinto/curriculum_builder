@@ -1,0 +1,2 @@
+$ test -f plans/26_langgraph_curriculum_factory/spec/langgraph_curriculum_factory.spec.v2.md
+exit_code=1

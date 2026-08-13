@@ -1,0 +1,201 @@
+{
+  "attempt_id": "N00_SPEC_APPROVAL_GATE-attempt-1",
+  "changed_files": [
+    {
+      "change": "created",
+      "path": "plans/27_langgraph_curriculum_factory_remediation/results/evidence/N00_SPEC_APPROVAL_GATE/01_v1_spec_hash.log",
+      "sha256": "ffe8240de87752469d59c1069a46ed814e61e175f730867eb555c05136fe76f1"
+    },
+    {
+      "change": "created",
+      "path": "plans/27_langgraph_curriculum_factory_remediation/results/evidence/N00_SPEC_APPROVAL_GATE/02_v2_spec_absent.log",
+      "sha256": "4f29f69407dceee63e3947594882fee06b7a428e94d258007ed2e3dba26477fc"
+    },
+    {
+      "change": "created",
+      "path": "plans/27_langgraph_curriculum_factory_remediation/results/evidence/N00_SPEC_APPROVAL_GATE/03_correction_result_absent.log",
+      "sha256": "9790f56eca3e759e7ee5ef34a5134f03e033e662c1d4f07d5c978ca226165eff"
+    },
+    {
+      "change": "created",
+      "path": "plans/27_langgraph_curriculum_factory_remediation/results/evidence/N00_SPEC_APPROVAL_GATE/04_spec_approval_contract_absent.log",
+      "sha256": "971adfee7efb3c37952d1fee8feb8594a7dd12ea7878aefd77ff9ff0781d41d0"
+    },
+    {
+      "change": "created",
+      "path": "plans/27_langgraph_curriculum_factory_remediation/results/evidence/N00_SPEC_APPROVAL_GATE/05_run27_scaffold_git_status.log",
+      "sha256": "23596fd14b4dbe15a3158c9ef8058af527323e6142c728436a44a5f0fc106874"
+    },
+    {
+      "change": "created",
+      "path": "plans/27_langgraph_curriculum_factory_remediation/results/evidence/N00_SPEC_APPROVAL_GATE/06_plan26_v1_artifacts_untouched.log",
+      "sha256": "d2c53d98774fb4cc348db95fddb0379cf349b8163b38fcc2d95cb42ede07f9c8"
+    },
+    {
+      "change": "created",
+      "path": "plans/27_langgraph_curriculum_factory_remediation/results/evidence/N00_SPEC_APPROVAL_GATE/07_rerun_v1_spec_hash.log",
+      "sha256": "ffe8240de87752469d59c1069a46ed814e61e175f730867eb555c05136fe76f1"
+    },
+    {
+      "change": "created",
+      "path": "plans/27_langgraph_curriculum_factory_remediation/results/evidence/N00_SPEC_APPROVAL_GATE/08_rerun_v2_spec_absent.log",
+      "sha256": "d424811aabc53706822e47e9cb6de69cc6990999f77b6dd134205a19b4032ac0"
+    },
+    {
+      "change": "created",
+      "path": "plans/27_langgraph_curriculum_factory_remediation/results/evidence/N00_SPEC_APPROVAL_GATE/09_rerun_spec_approval_contract_absent.log",
+      "sha256": "4b715f757a92601d0f0398015711627855d346557ce9b4ed1137966d1b42fe07"
+    }
+  ],
+  "commands": [
+    {
+      "argv": [
+        "shasum",
+        "-a",
+        "256",
+        "plans/26_langgraph_curriculum_factory/spec/langgraph_curriculum_factory.spec.v1.md"
+      ],
+      "exit_code": 0,
+      "log": "plans/27_langgraph_curriculum_factory_remediation/results/evidence/N00_SPEC_APPROVAL_GATE/01_v1_spec_hash.log",
+      "log_sha256": "ffe8240de87752469d59c1069a46ed814e61e175f730867eb555c05136fe76f1"
+    },
+    {
+      "argv": [
+        "ls",
+        "-la",
+        "plans/26_langgraph_curriculum_factory/spec/"
+      ],
+      "exit_code": 0,
+      "log": "plans/27_langgraph_curriculum_factory_remediation/results/evidence/N00_SPEC_APPROVAL_GATE/02_v2_spec_absent.log",
+      "log_sha256": "4f29f69407dceee63e3947594882fee06b7a428e94d258007ed2e3dba26477fc"
+    },
+    {
+      "argv": [
+        "find",
+        "plans/26_langgraph_curriculum_factory/spec",
+        "-maxdepth",
+        "1",
+        "-iname",
+        "*spec_correction*"
+      ],
+      "exit_code": 0,
+      "log": "plans/27_langgraph_curriculum_factory_remediation/results/evidence/N00_SPEC_APPROVAL_GATE/03_correction_result_absent.log",
+      "log_sha256": "9790f56eca3e759e7ee5ef34a5134f03e033e662c1d4f07d5c978ca226165eff"
+    },
+    {
+      "argv": [
+        "ls",
+        "-la",
+        "plans/27_langgraph_curriculum_factory_remediation/contracts/"
+      ],
+      "exit_code": 0,
+      "log": "plans/27_langgraph_curriculum_factory_remediation/results/evidence/N00_SPEC_APPROVAL_GATE/04_spec_approval_contract_absent.log",
+      "log_sha256": "971adfee7efb3c37952d1fee8feb8594a7dd12ea7878aefd77ff9ff0781d41d0"
+    },
+    {
+      "argv": [
+        "git",
+        "status",
+        "--porcelain"
+      ],
+      "exit_code": 0,
+      "log": "plans/27_langgraph_curriculum_factory_remediation/results/evidence/N00_SPEC_APPROVAL_GATE/05_run27_scaffold_git_status.log",
+      "log_sha256": "23596fd14b4dbe15a3158c9ef8058af527323e6142c728436a44a5f0fc106874"
+    },
+    {
+      "argv": [
+        "git",
+        "log",
+        "-1",
+        "--format=%H",
+        "--",
+        "plans/26_langgraph_curriculum_factory/spec/langgraph_curriculum_factory.spec.v1.md"
+      ],
+      "exit_code": 0,
+      "log": "plans/27_langgraph_curriculum_factory_remediation/results/evidence/N00_SPEC_APPROVAL_GATE/06_plan26_v1_artifacts_untouched.log",
+      "log_sha256": "d2c53d98774fb4cc348db95fddb0379cf349b8163b38fcc2d95cb42ede07f9c8"
+    },
+    {
+      "argv": [
+        "shasum",
+        "-a",
+        "256",
+        "plans/26_langgraph_curriculum_factory/spec/langgraph_curriculum_factory.spec.v1.md"
+      ],
+      "exit_code": 0,
+      "log": "plans/27_langgraph_curriculum_factory_remediation/results/evidence/N00_SPEC_APPROVAL_GATE/07_rerun_v1_spec_hash.log",
+      "log_sha256": "ffe8240de87752469d59c1069a46ed814e61e175f730867eb555c05136fe76f1"
+    },
+    {
+      "argv": [
+        "test",
+        "-f",
+        "plans/26_langgraph_curriculum_factory/spec/langgraph_curriculum_factory.spec.v2.md"
+      ],
+      "exit_code": 1,
+      "log": "plans/27_langgraph_curriculum_factory_remediation/results/evidence/N00_SPEC_APPROVAL_GATE/08_rerun_v2_spec_absent.log",
+      "log_sha256": "d424811aabc53706822e47e9cb6de69cc6990999f77b6dd134205a19b4032ac0"
+    },
+    {
+      "argv": [
+        "test",
+        "-f",
+        "plans/27_langgraph_curriculum_factory_remediation/contracts/spec_approval.v1.yaml"
+      ],
+      "exit_code": 1,
+      "log": "plans/27_langgraph_curriculum_factory_remediation/results/evidence/N00_SPEC_APPROVAL_GATE/09_rerun_spec_approval_contract_absent.log",
+      "log_sha256": "4b715f757a92601d0f0398015711627855d346557ce9b4ed1137966d1b42fe07"
+    }
+  ],
+  "evidence": [
+    "plans/27_langgraph_curriculum_factory_remediation/results/evidence/N00_SPEC_APPROVAL_GATE/01_v1_spec_hash.log",
+    "plans/27_langgraph_curriculum_factory_remediation/results/evidence/N00_SPEC_APPROVAL_GATE/02_v2_spec_absent.log",
+    "plans/27_langgraph_curriculum_factory_remediation/results/evidence/N00_SPEC_APPROVAL_GATE/03_correction_result_absent.log",
+    "plans/27_langgraph_curriculum_factory_remediation/results/evidence/N00_SPEC_APPROVAL_GATE/04_spec_approval_contract_absent.log",
+    "plans/27_langgraph_curriculum_factory_remediation/results/evidence/N00_SPEC_APPROVAL_GATE/05_run27_scaffold_git_status.log",
+    "plans/27_langgraph_curriculum_factory_remediation/results/evidence/N00_SPEC_APPROVAL_GATE/06_plan26_v1_artifacts_untouched.log",
+    "plans/27_langgraph_curriculum_factory_remediation/results/evidence/N00_SPEC_APPROVAL_GATE/07_rerun_v1_spec_hash.log",
+    "plans/27_langgraph_curriculum_factory_remediation/results/evidence/N00_SPEC_APPROVAL_GATE/08_rerun_v2_spec_absent.log",
+    "plans/27_langgraph_curriculum_factory_remediation/results/evidence/N00_SPEC_APPROVAL_GATE/09_rerun_spec_approval_contract_absent.log"
+  ],
+  "findings": [
+    {
+      "disposition": "open",
+      "id": "N00-F01",
+      "severity": "major",
+      "summary": "Corrected specification plans/26_langgraph_curriculum_factory/spec/langgraph_curriculum_factory.spec.v2.md does not exist (test -f exit_code=1, confirmed on two independent read passes)."
+    },
+    {
+      "disposition": "open",
+      "id": "N00-F02",
+      "severity": "major",
+      "summary": "No specification-correction result matching *spec_correction*.result.v1.md exists next to the v1/v2 spec (find returned zero matches)."
+    },
+    {
+      "disposition": "open",
+      "id": "N00-F03",
+      "severity": "major",
+      "summary": "plans/27_langgraph_curriculum_factory_remediation/contracts/spec_approval.v1.yaml does not exist (test -f exit_code=1, confirmed on two independent read passes); no explicit user approval of plan27_implementation_remediation is recorded."
+    },
+    {
+      "disposition": "not_applicable",
+      "id": "N00-F04",
+      "severity": "observation",
+      "summary": "Plan 26 v1 specification hash 44e63e6271cae25f14f0bc970c598d1c15da41b67ae3cdf811bbb2f2303536e6 matches the value required by this gate, confirmed on two independent shasum passes."
+    },
+    {
+      "disposition": "resolved",
+      "id": "N00-F05",
+      "severity": "observation",
+      "summary": "git status --porcelain reported a clean worktree before this node ran; this node wrote only its own result and evidence directory, so no Run 26 v1 spec, result, receipt, patch, log, implementation graph, runtime, test, or policy file was changed."
+    }
+  ],
+  "invalidated_descendants": [],
+  "node_id": "N00_SPEC_APPROVAL_GATE",
+  "outcome": "BLOCKED_SPEC_NOT_APPROVED",
+  "predecessor_receipts": {},
+  "prompt_sha256": "8fc1ccbe6f4b36de1b674d9a304d967b17f8e83c02e4558aca3751c6a49604b8",
+  "run_id": "run27-2026-08-13",
+  "schema_version": 1,
+  "source_spec_sha256": null
+}

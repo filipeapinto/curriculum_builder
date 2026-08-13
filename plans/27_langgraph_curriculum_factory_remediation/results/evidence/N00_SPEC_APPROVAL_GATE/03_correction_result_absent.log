@@ -1,0 +1,2 @@
+$ find plans/26_langgraph_curriculum_factory/spec -maxdepth 1 -iname *spec_correction*
+exit_code=0

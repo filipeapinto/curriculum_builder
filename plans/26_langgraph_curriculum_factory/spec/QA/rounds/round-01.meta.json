@@ -1,0 +1,80 @@
+{
+  "attempt": 1,
+  "exit_code": 0,
+  "duration_seconds": 245.73,
+  "transport": "app-server",
+  "session_id": "019ffb5f-9dcc-74b3-82b8-1899f29d490e",
+  "thread_id": "019ffb5f-9dcc-74b3-82b8-1899f29d490e",
+  "turn_id": "019ffb5f-a4d7-7113-aa6a-23faf9667ed3",
+  "usage": {},
+  "model": null,
+  "effort": null,
+  "plugin_version": "1.0.4",
+  "plugin_lib_path": "/Users/filipepinto/.claude/plugins/cache/openai-codex/codex/1.0.4/scripts/lib/codex.mjs",
+  "argv": [
+    "node",
+    "/Users/filipepinto/Projects/curriculum_builder/.claude/skills/qa-gate-codex-run/scripts/codex_bridge.mjs",
+    "<request on stdin>"
+  ],
+  "started_at": "2026-08-13T13:46:15.031969+00:00",
+  "response_sha256": "6f5d1b645800434edaa727ea8ddc75becd6104620a61a6ab4ce9cedb4fdea8ec",
+  "request_sha256": "150cd24915ba695f348e44618865ef83df5b8834cca2c7441241556deb0a70c6",
+  "round": 1,
+  "cwd": "/Users/filipepinto/Projects/curriculum_builder/plans/26_langgraph_curriculum_factory/spec",
+  "artifact_path": "/Users/filipepinto/Projects/curriculum_builder/plans/26_langgraph_curriculum_factory/spec/langgraph_curriculum_factory.spec.v2.md",
+  "artifact_sha256": "99052a181052bbbaf8077a152af22db6f248d552f38dd73302a3c34abc11b758",
+  "grounding": [
+    {
+      "path": "/Users/filipepinto/Projects/curriculum_builder/plans/26_langgraph_curriculum_factory/post_morten/postmortem.v2.md",
+      "sha256": "d7ed3dd9283cdc2777b34f394ef5874bcb4c7740644dc4f637a2b55e7dfa5b46"
+    },
+    {
+      "path": "/Users/filipepinto/Projects/curriculum_builder/plans/26_langgraph_curriculum_factory/spec/langgraph_curriculum_factory.spec.v1.md",
+      "sha256": "44e63e6271cae25f14f0bc970c598d1c15da41b67ae3cdf811bbb2f2303536e6"
+    },
+    {
+      "path": "/Users/filipepinto/Projects/curriculum_builder/meta_prompt/curriculum.prompt.v1.md",
+      "sha256": "46fc2670dcef5b2326b2f645049b1dd3f3732ce9fdd72d0cd35adbd2c3a02f60"
+    },
+    {
+      "path": "/Users/filipepinto/Projects/curriculum_builder/plans/11_provider_correction/provider_correction.plan.v1.md",
+      "sha256": "68cb96d718f4e735d1e366f8fed97d117a436fcb5de3d3b0975e8649d6d3e28e"
+    },
+    {
+      "path": "/Users/filipepinto/Projects/curriculum_builder/plans/20_subscription_only_execution_model/subscription_only_execution_model.plan.v1.md",
+      "sha256": "3fca7a5b6c60156ac0f6e1c8334c346c22b1b68ed43eb4aea0fbe185290f04c7"
+    },
+    {
+      "path": "/Users/filipepinto/Projects/curriculum_builder/plans/21_graph_engineered_subscription_execution/graph_engineered_subscription_execution.plan.v1.yaml",
+      "sha256": "171af5dff71d33331f263bf73c84219790209700cd15d403f63ee207805b561e"
+    },
+    {
+      "path": "/Users/filipepinto/Projects/curriculum_builder/plans/22_graph_eng_evol_01/evolutionary_approach/evolution_graph_approach.v4.md",
+      "sha256": "cb5a06bd6d0e930f6f7d2137961bbc7095a78d333741456ea086afa7ee3b7ffc"
+    },
+    {
+      "path": "/Users/filipepinto/Projects/curriculum_builder/plans/25_curriculum_factory_graph/previous_plan.obs.v1.md",
+      "sha256": "1238301b60b15d11641859e454c48509af51d34da2b483da78ac20048cc0a2e2"
+    },
+    {
+      "path": "/Users/filipepinto/Projects/curriculum_builder/plans/25_curriculum_factory_graph/curriculum_factory.graph.v1.md",
+      "sha256": "9f17367d46af97e638ff0035fd9f2978cf9c9d6edc8479e59eec9346f824da75"
+    },
+    {
+      "path": "/Users/filipepinto/Projects/curriculum_builder/plans/26_langgraph_curriculum_factory/results/N60_LIVE_PRODUCT_PROOF.result.v1.md",
+      "sha256": "4d9e8ff47a0dc966e2fa54f71550be4ac66ed5f76f04229cabe0891ca7da2fd9"
+    },
+    {
+      "path": "/Users/filipepinto/Projects/curriculum_builder/plans/26_langgraph_curriculum_factory/results/N90_FINAL_AUDIT.result.v1.md",
+      "sha256": "dfa513f69a60f1ebfd8f4b3336ac2700685eb609a81fc58698bdb1b8a13e2cc7"
+    },
+    {
+      "path": "/Users/filipepinto/Projects/curriculum_builder/.claude/skills/qa-gate-codex-run/SKILL.md",
+      "sha256": "2ba1ad596fdc00b7877f52885beb192e0847da24add29be177a8baa18da197dc"
+    }
+  ],
+  "chain_prev": "GENESIS",
+  "chain": "df343af066a0db052bef138026c0cbc493f0d8af89e06c6ee8fe91108dcbe362",
+  "rollout_file": "/Users/filipepinto/.codex/sessions/2026/08/13/rollout-2026-08-13T09-46-15-019ffb5f-9dcc-74b3-82b8-1899f29d490e.jsonl",
+  "timestamp": "2026-08-13T13:50:20.813620+00:00"
+}

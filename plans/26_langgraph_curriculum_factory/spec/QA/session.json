@@ -1,0 +1,65 @@
+{
+  "opened_at": "2026-08-13T13-46-15.026508+00-00",
+  "artifact_original": "/Users/filipepinto/Projects/curriculum_builder/plans/26_langgraph_curriculum_factory/spec/langgraph_curriculum_factory.spec.v2.md",
+  "artifact_current": "/Users/filipepinto/Projects/curriculum_builder/plans/26_langgraph_curriculum_factory/spec/langgraph_curriculum_factory.spec.v2.md",
+  "session_id": "019ffb5f-9dcc-74b3-82b8-1899f29d490e",
+  "chain": "df343af066a0db052bef138026c0cbc493f0d8af89e06c6ee8fe91108dcbe362",
+  "rounds_completed": 1,
+  "rounds": [
+    {
+      "round": 1,
+      "timestamp": "2026-08-13T13:50:20.813620+00:00",
+      "verdict": "PASS",
+      "artifact_path": "/Users/filipepinto/Projects/curriculum_builder/plans/26_langgraph_curriculum_factory/spec/langgraph_curriculum_factory.spec.v2.md",
+      "artifact_sha256": "99052a181052bbbaf8077a152af22db6f248d552f38dd73302a3c34abc11b758",
+      "findings_at_threshold": [],
+      "observations_count": 3,
+      "chain": "df343af066a0db052bef138026c0cbc493f0d8af89e06c6ee8fe91108dcbe362"
+    }
+  ],
+  "stall_count": 0,
+  "last_fingerprint": null,
+  "exec_copied": [],
+  "terminal": {
+    "state": "QA_PASSED",
+    "reason": "CONVERGED",
+    "detail": "Codex passed the artifact at round 1",
+    "artifact": "/Users/filipepinto/Projects/curriculum_builder/plans/26_langgraph_curriculum_factory/spec/langgraph_curriculum_factory.spec.v2.md",
+    "rounds_completed": 1,
+    "max_iterations": 5,
+    "session_id": "019ffb5f-9dcc-74b3-82b8-1899f29d490e",
+    "thread_id": "019ffb5f-9dcc-74b3-82b8-1899f29d490e",
+    "transport": "app-server",
+    "rollout_file": "/Users/filipepinto/.codex/sessions/2026/08/13/rollout-2026-08-13T09-46-15-019ffb5f-9dcc-74b3-82b8-1899f29d490e.jsonl",
+    "chain": "df343af066a0db052bef138026c0cbc493f0d8af89e06c6ee8fe91108dcbe362",
+    "qa_dir": "/Users/filipepinto/Projects/curriculum_builder/plans/26_langgraph_curriculum_factory/spec/QA",
+    "finalized_at": "2026-08-13T13:50:20.821567+00:00"
+  },
+  "config": {
+    "criteria": "# QA criteria — Plan 26 LangGraph Curriculum Factory spec v2 (provider-architecture correction)\n\nThe artifact under review is\n`plans/26_langgraph_curriculum_factory/spec/langgraph_curriculum_factory.spec.v2.md`.\nIt is a corrected version of\n`plans/26_langgraph_curriculum_factory/spec/langgraph_curriculum_factory.spec.v1.md`\n(sha256 `44e63e6271cae25f14f0bc970c598d1c15da41b67ae3cdf811bbb2f2303536e6`,\nunchanged and immutable). v1's defect: it required Gemini for the M05/M07\nreview jobs even though the user's recorded, governing constraint is\nsubscription-only execution using Claude Code and ChatGPT Pro/Codex, with no\nGemini CLI, no Google credential, and no billed API key ever, for this\nproject. `post_morten/postmortem.v2.md` is the independently-reviewed\nincident record that specifies exactly what the correction must contain\n(its §8, \"Corrected-specification minimum acceptance criteria,\" and its\nrequired order of operations in §7).\n\nA correct v2 satisfies every criterion below. Attempt to falsify each one\nagainst the actual text of the artifact — do not accept a claim the artifact\nmakes about itself without checking it against the cited section.\n\n## Criteria (SPEC-T00–SPEC-T10)\n\n1. **SPEC-T00 — Historical immutability.** `langgraph_curriculum_factory.spec.v1.md`\n   is unchanged (its sha256 must still be\n   `44e63e6271cae25f14f0bc970c598d1c15da41b67ae3cdf811bbb2f2303536e6`). No\n   forbidden runtime, test, plan-result, receipt, patch, log, policy, schema,\n   model-job, or implementation-graph file was changed by this artifact's\n   author. (You may verify this directly against the live repository, which\n   you have read-only access to.)\n2. **SPEC-T01 — Authority and supersession.** v2 explicitly orders governing\n   user constraints, the active meta-prompt requirements, Plans 20–22, Plan\n   25 product requirements, Plan 26 retained mechanics, and observed current\n   code. Every retained or superseded provider decision cites its source and\n   disposition.\n3. **SPEC-T02 — Gemini elimination.** Search the complete v2 document\n   case-insensitively for `gemini`, `google`, `GEMINI_API_KEY`,\n   `GOOGLE_API_KEY`, and `gemini-3-pro-preview`. The only allowed occurrences\n   are historical defect statements or explicit prohibitions. No occurrence\n   may define a production job, provider, credential, authorization,\n   endpoint, prerequisite, fallback, or activation remedy.\n4. **SPEC-T03 — Subscription-only invariant.** v2 prohibits billed API keys,\n   raw model HTTP APIs, custom provider endpoints, and hidden fallbacks, and\n   requires Claude Code and Codex to operate through the user's\n   subscription-backed authentication.\n5. **SPEC-T04 — Cross-family role mapping.** All eight model jobs\n   (M01–M08) have one explicit role, provider family, subscription driver,\n   input boundary, output schema, identity claim, and failure disposition.\n   Content-generating/mutating roles are Claude/Anthropic; independent\n   judgment roles are Codex/OpenAI. Any intentional exception is separately\n   justified and preserves different-family final judgment.\n6. **SPEC-T05 — Complete consistency.** Every provider/model/transport/\n   authentication occurrence in v2 — tables, prose, diagrams, acceptance\n   denominators, adversarial cases, authorizations, prerequisites, resolved\n   decisions, and checklists — agrees with the same corrected profile (Claude\n   authors/repairs, Codex independently judges). Flag any stray v1 phrase\n   that was not actually corrected.\n7. **SPEC-T06 — Preflight truthfulness.** v2 makes `ready: true` impossible\n   when a mandatory model driver cannot authenticate or demonstrate permitted\n   subscription-backed operation. The exact N60 false-ready condition\n   (preflight reported `ready: true` from executable-identity/hash/version\n   proof alone, while a real Gemini call still failed with exit 41) is an\n   explicit negative regression case in v2.\n8. **SPEC-T07 — Data-boundary correction.** No Google/Gemini transmission\n   authorization survives anywhere in v2, and the Claude/Codex staged inputs\n   are explicit, least-privilege, content-aware, and approved before\n   transmission.\n9. **SPEC-T08 — LangGraph preservation.** Compare v1 and v2 structurally.\n   Provider correction does not silently redesign the compiled graph,\n   deterministic routing/acceptance, reducers, checkpoint/resume, repair\n   bounds, artifact immutability, unit/workbook denominators, or terminal\n   authority. (The only intended change to the D03 node and its edge-guard\n   text is the disclosed strengthening from one capability-proof class into\n   five explicit proof classes — that specific, named change is expected and\n   correct, not a violation of this criterion.)\n10. **SPEC-T09 — Honest lifecycle.** v2 states that specification approval\n    precedes implementation remediation, that implementation tests do not\n    equal activation, and that activation requires real authorized unit and\n    workbook product proofs. v2 does not start or authorize Run 27 anywhere\n    in its text.\n11. **SPEC-T10 — Historical regressions.** v2 contains explicit controls (or\n    an explicit, honest statement of why a given item is out of a\n    specification's scope and deferred to a later implementation run,\n    naming which later run/action owns it) for: Plan 25 false attribution;\n    installed-CLI/authorization confusion; late provider feasibility; N60's\n    false-ready preflight; unauthorized provider egress; production-topology\n    reachability; descendant receipt invalidation; deterministic evidence;\n    machine-readable status; and requirements-level final audit.\n\n## Falsification targets\n\nSpecifically attempt to falsify each of these claims against the artifact\ntext:\n\n- v2 fully removes Gemini as a production dependency rather than hiding it\n  behind generic provider wording.\n- v2 does not accidentally assign both generation and final judgment to\n  OpenAI/Codex (check the M01–M08 table and the family-mismatch rule in\n  §6.3/§10 of the artifact).\n- v2 does not confuse the specification-review plugin (`qa-gate-codex-run`,\n  used to review this very document) with the production model transport\n  the specification defines for the compiled graph's M05/M07 nodes.\n- v2 does not claim subscription entitlement or executed-model identity that\n  the installed `claude`/`codex` drivers cannot actually be shown to prove.\n- v2 does not weaken cross-family review, actual-page review, evidence\n  denominators, or real-product activation requirements relative to v1.\n- v2 does not use the current implementation (`runtime/langgraph_factory/`,\n  still Gemini-configured) as authority to override the user's constraints.\n- v2 is sufficiently complete to govern a later remediation plan without\n  inventing provider decisions the repository's sources do not settle. Where\n  it cannot settle one (the exact per-job Claude model/effort pin), check\n  that it is marked as an explicit, precisely-named open decision\n  (`USER_DECISION_REQUIRED-01`) rather than invented or silently deferred.\n\n## Severity guidance\n\nUse `major` threshold: a finding is reportable only if it defeats one of the\neleven numbered criteria above (a stated criterion fails on a realistic\nreading of the artifact, not merely a stylistic quibble). Anything you notice\nthat does not defeat a numbered criterion belongs in observations, not\nfindings.\n",
+    "focus": "Verify the provider-architecture correction (Claude authors/repairs, Codex independently judges, Gemini fully eliminated) is complete, consistent, and honestly bounded across the whole document, per the eleven numbered criteria.",
+    "threshold": "major",
+    "max_iterations": 5,
+    "timeout_seconds": 900,
+    "retries": 2,
+    "model": null,
+    "effort": null,
+    "transport": "app-server",
+    "allow_execution": false,
+    "grounding": [
+      "/Users/filipepinto/Projects/curriculum_builder/plans/26_langgraph_curriculum_factory/post_morten/postmortem.v2.md",
+      "/Users/filipepinto/Projects/curriculum_builder/plans/26_langgraph_curriculum_factory/spec/langgraph_curriculum_factory.spec.v1.md",
+      "/Users/filipepinto/Projects/curriculum_builder/meta_prompt/curriculum.prompt.v1.md",
+      "/Users/filipepinto/Projects/curriculum_builder/plans/11_provider_correction/provider_correction.plan.v1.md",
+      "/Users/filipepinto/Projects/curriculum_builder/plans/20_subscription_only_execution_model/subscription_only_execution_model.plan.v1.md",
+      "/Users/filipepinto/Projects/curriculum_builder/plans/21_graph_engineered_subscription_execution/graph_engineered_subscription_execution.plan.v1.yaml",
+      "/Users/filipepinto/Projects/curriculum_builder/plans/22_graph_eng_evol_01/evolutionary_approach/evolution_graph_approach.v4.md",
+      "/Users/filipepinto/Projects/curriculum_builder/plans/25_curriculum_factory_graph/previous_plan.obs.v1.md",
+      "/Users/filipepinto/Projects/curriculum_builder/plans/25_curriculum_factory_graph/curriculum_factory.graph.v1.md",
+      "/Users/filipepinto/Projects/curriculum_builder/plans/26_langgraph_curriculum_factory/results/N60_LIVE_PRODUCT_PROOF.result.v1.md",
+      "/Users/filipepinto/Projects/curriculum_builder/plans/26_langgraph_curriculum_factory/results/N90_FINAL_AUDIT.result.v1.md",
+      "/Users/filipepinto/Projects/curriculum_builder/.claude/skills/qa-gate-codex-run/SKILL.md"
+    ]
+  },
+  "thread_id": "019ffb5f-9dcc-74b3-82b8-1899f29d490e"
+}

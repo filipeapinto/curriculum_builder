@@ -1,0 +1,6 @@
+$ ls -la plans/27_langgraph_curriculum_factory_remediation/contracts/
+total 8
+drwxr-xr-x@  3 filipepinto  staff   96 Aug 13 07:27 .
+drwxr-xr-x@ 12 filipepinto  staff  384 Aug 13 08:25 ..
+-rw-r--r--@  1 filipepinto  staff  742 Aug 13 07:27 README.md
+exit_code=0

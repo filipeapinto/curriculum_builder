@@ -1,0 +1,3 @@
+$ git status --porcelain
+?? plans/27_langgraph_curriculum_factory_remediation/results/
+exit_code=0

@@ -1,0 +1,2 @@
+$ test -f plans/27_langgraph_curriculum_factory_remediation/contracts/spec_approval.v1.yaml
+exit_code=1

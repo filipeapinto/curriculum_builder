@@ -1,0 +1,3 @@
+$ shasum -a 256 plans/26_langgraph_curriculum_factory/spec/langgraph_curriculum_factory.spec.v1.md
+44e63e6271cae25f14f0bc970c598d1c15da41b67ae3cdf811bbb2f2303536e6  plans/26_langgraph_curriculum_factory/spec/langgraph_curriculum_factory.spec.v1.md
+exit_code=0

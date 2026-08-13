@@ -1,0 +1,3 @@
+$ git log -1 --format=%H -- plans/26_langgraph_curriculum_factory/spec/langgraph_curriculum_factory.spec.v1.md
+ac7ff3a7507c2adefbcbbd3e5d3938edf1924a39
+exit_code=0

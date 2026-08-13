@@ -1,0 +1,6 @@
+$ ls -la plans/26_langgraph_curriculum_factory/spec/
+total 184
+drwxr-xr-x@  3 filipepinto  staff     96 Aug 11 10:19 .
+drwxr-xr-x@ 18 filipepinto  staff    576 Aug 13 06:53 ..
+-rw-r--r--@  1 filipepinto  staff  92953 Aug 11 10:01 langgraph_curriculum_factory.spec.v1.md
+exit_code=0
