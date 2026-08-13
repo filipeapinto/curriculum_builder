@@ -1,0 +1,22 @@
+N90 independent receipt hash recomputation
+Method: prompt_graph_controller.path_digest() (the controller's own
+sha256-file / sha256-of-sorted-tree-manifest algorithm), rerun directly
+against the live repository, not read from any prior node's prose claim.
+
+N00_BASELINE_FREEZE          status=PASSED         outputs_checked=2
+N10_DEPENDENCY_API           status=PASSED         outputs_checked=6
+N11_STATE_REDUCERS           status=PASSED         outputs_checked=4
+N12_EVIDENCE_ARTIFACTS       status=PASSED         outputs_checked=4
+N13_TRANSPORT_AUTH           status=PASSED         outputs_checked=9
+N20_GRAPH_COMPILER           status=PASSED         outputs_checked=5
+N21_PERSISTENCE_RESUME       status=PASSED         outputs_checked=3
+N22_DETERMINISTIC_NODES      status=PASSED         outputs_checked=4
+N23_MODEL_NODES              status=PASSED         outputs_checked=4
+N30_UNIT_GRAPH               status=PASSED         outputs_checked=5
+N31_REPAIR_ACCEPTANCE        status=PASSED         outputs_checked=7
+N32_WORKBOOK_TERMINALS       status=PASSED         outputs_checked=6
+N40_CLI_CUTOVER              status=PASSED         outputs_checked=5
+N50_ADVERSARIAL_REGRESSION   status=PASSED         outputs_checked=3
+N60_LIVE_PRODUCT_PROOF       status=NOT_AVAILABLE  outputs_checked=2
+
+RESULT: 0 mismatches across all 15 node receipts (all outputs).

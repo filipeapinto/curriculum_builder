@@ -1,0 +1,56 @@
+=== git diff after full suite rerun (N40 evidence dir) ===
+diff --git a/plans/26_langgraph_curriculum_factory/results/evidence/N40_CLI_CUTOVER/plan25_resume_refusal.txt b/plans/26_langgraph_curriculum_factory/results/evidence/N40_CLI_CUTOVER/plan25_resume_refusal.txt
+index fd3818d..652488b 100644
+--- a/plans/26_langgraph_curriculum_factory/results/evidence/N40_CLI_CUTOVER/plan25_resume_refusal.txt
++++ b/plans/26_langgraph_curriculum_factory/results/evidence/N40_CLI_CUTOVER/plan25_resume_refusal.txt
+@@ -2,8 +2,8 @@ TEST 7: a Plan 25-shaped output root (checkpoints/0001.json, no
+ .langgraph/) passed to --resume.
+ 
+ exit_code: 3
+-stdout: {"contract_version": "1", "error_code": "RESUME-NO-IDENTITY", "message": "--output-root has no Plan 26 run identity to resume: /private/var/folders/kj/z_75gwxx2ls7p55rnx4t5kg00000gn/T/tmpflyko8v1/legacy"}
+-stderr: RESUME-NO-IDENTITY: --output-root has no Plan 26 run identity to resume: /private/var/folders/kj/z_75gwxx2ls7p55rnx4t5kg00000gn/T/tmpflyko8v1/legacy
++stdout: {"contract_version": "1", "error_code": "RESUME-NO-IDENTITY", "message": "--output-root has no Plan 26 run identity to resume: /private/var/folders/kj/z_75gwxx2ls7p55rnx4t5kg00000gn/T/tmp9cre097q/legacy"}
++stderr: RESUME-NO-IDENTITY: --output-root has no Plan 26 run identity to resume: /private/var/folders/kj/z_75gwxx2ls7p55rnx4t5kg00000gn/T/tmp9cre097q/legacy
+ files_before: ['checkpoints', 'checkpoints/0001.json']
+ files_after:  ['checkpoints', 'checkpoints/0001.json']
+ root_untouched: True
+diff --git a/plans/26_langgraph_curriculum_factory/results/evidence/N40_CLI_CUTOVER/preflight_read_only.txt b/plans/26_langgraph_curriculum_factory/results/evidence/N40_CLI_CUTOVER/preflight_read_only.txt
+index 23dab84..9ff4381 100644
+--- a/plans/26_langgraph_curriculum_factory/results/evidence/N40_CLI_CUTOVER/preflight_read_only.txt
++++ b/plans/26_langgraph_curriculum_factory/results/evidence/N40_CLI_CUTOVER/preflight_read_only.txt
+@@ -1,6 +1,6 @@
+ TEST 4: --preflight against an output root that does not yet exist.
+ 
+ exit_code: 0
+-stdout: {"contract_version": "1", "kind": "PREFLIGHT", "ready": true, "engine_root": "/Users/filipepinto/Projects/curriculum_builder/.plan26-run/plan26/attempts/N40_CLI_CUTOVER/attempt-20260812T180522.724742Z-82022fe842/repo", "curriculum_root": "/Users/filipepinto/Projects/curriculum_builder/.plan26-run/plan26/attempts/N40_CLI_CUTOVER/attempt-20260812T180522.724742Z-82022fe842/repo", "output_root": "/private/var/folders/kj/z_75gwxx2ls7p55rnx4t5kg00000gn/T/tmp68juph30/preflight-target", "capabilities": {"model_cli_identity": {"result": "PASS", "capability": "model_cli_identity", "detail": {"executables": {"codex": {"name": "codex", "path": "/opt/homebrew/Caskroom/codex/0.147.0/bin/codex", "sha256": "19c4f144c5226a9f17c58e6f0fa854843b0f77a6eb420f40e2745a12f10f5d37", "version": "codex-cli 0.147.0"}, "gemini": {"name": "gemini", "path": "/opt/homebrew/Cellar/gemini-cli/0.24.5/libexec/lib/node_modules/@google/gemini-cli/dist/index.js", "sha256": "6937efcaa68a18320c872a43719284de2a6b9f250ffae712a87339d05b7abbaa", "version": "0.24.5"}}}}, "retrieval": {"result": "PASS", "capability": "retrieval", "detail": {"egress_broker": "EgressGuard", "mechanism": "socket.socket interception"}}, "renderer": {"result": "PASS", "capability": "renderer", "detail": {"tools": {"pandoc": "pandoc 3.6.2", "typst": "typst 0.15.0 (unknown commit)"}}}, "rasterizer": {"result": "PASS", "capability": "rasterizer", "detail": {"tools": {"pdftoppm": "pdftoppm version 26.04.0", "pdfinfo": "pdfinfo version 26.04.0", "pdftotext": "pdftotext version 26.04.0", "pdfimages": "pdfimages version 26.04.0"}}}, "persistence": {"result": "PASS", "capability": "persistence", "detail": {"output_root": "/private/var/folders/kj/z_75gwxx2ls7p55rnx4t5kg00000gn/T/plan26-preflight-w_fm4yxa", "sqlite_version": "3.51.2"}}, "logger": {"result": "PASS", "capability": "logger", "detail": {"evidence_root": "/private/var/folders/kj/z_75gwxx2ls7p55rnx4t5kg00000gn/T/plan26-preflight-w_fm4yxa/evidence"}}}, "missing_capabilities": [], "collision": null}
++stdout: {"contract_version": "1", "kind": "PREFLIGHT", "ready": true, "engine_root": "/Users/filipepinto/Projects/curriculum_builder", "curriculum_root": "/Users/filipepinto/Projects/curriculum_builder", "output_root": "/private/var/folders/kj/z_75gwxx2ls7p55rnx4t5kg00000gn/T/tmp7nt1r7ef/preflight-target", "capabilities": {"model_cli_identity": {"result": "PASS", "capability": "model_cli_identity", "detail": {"executables": {"codex": {"name": "codex", "path": "/opt/homebrew/Caskroom/codex/0.147.0/bin/codex", "sha256": "19c4f144c5226a9f17c58e6f0fa854843b0f77a6eb420f40e2745a12f10f5d37", "version": "codex-cli 0.147.0"}, "gemini": {"name": "gemini", "path": "/opt/homebrew/Cellar/gemini-cli/0.24.5/libexec/lib/node_modules/@google/gemini-cli/dist/index.js", "sha256": "6937efcaa68a18320c872a43719284de2a6b9f250ffae712a87339d05b7abbaa", "version": "0.24.5"}}}}, "retrieval": {"result": "PASS", "capability": "retrieval", "detail": {"egress_broker": "EgressGuard", "mechanism": "socket.socket interception"}}, "renderer": {"result": "PASS", "capability": "renderer", "detail": {"tools": {"pandoc": "pandoc 3.6.2", "typst": "typst 0.15.0 (unknown commit)"}}}, "rasterizer": {"result": "PASS", "capability": "rasterizer", "detail": {"tools": {"pdftoppm": "pdftoppm version 26.04.0", "pdfinfo": "pdfinfo version 26.04.0", "pdftotext": "pdftotext version 26.04.0", "pdfimages": "pdfimages version 26.04.0"}}}, "persistence": {"result": "PASS", "capability": "persistence", "detail": {"output_root": "/private/var/folders/kj/z_75gwxx2ls7p55rnx4t5kg00000gn/T/plan26-preflight-tiqdsffm", "sqlite_version": "3.51.2"}}, "logger": {"result": "PASS", "capability": "logger", "detail": {"evidence_root": "/private/var/folders/kj/z_75gwxx2ls7p55rnx4t5kg00000gn/T/plan26-preflight-tiqdsffm/evidence"}}}, "missing_capabilities": [], "collision": null}
+ stderr: 
+ output_root_created: False
+
+Analysis (per patch P-N90-001):
+- Both drifting files are written by tests/runtime/test_plan26_cli.py tests
+  that open a tempfile.TemporaryDirectory() and embed the resulting path
+  (or a path derived from it, e.g. runtime's own preflight sqlite/evidence
+  scratch dir "plan26-preflight-<random>") into the evidence text via the
+  CLI's own JSON/stderr output:
+    - test_preflight_read_only_evidence -> preflight_read_only.txt
+    - test_plan25_root_refusal_evidence -> plan25_resume_refusal.txt
+- Confirmed by running the affected tests twice in a row and diffing output:
+  the ONLY difference each time is the random tempdir substring
+  (e.g. /tmp/tmptdtyfk0t vs /tmp/tmpl8n7hvl5, plan26-preflight-d9me0uol vs
+  plan26-preflight-xq9ny742). No other field, byte, or behavior differs.
+- This is a structural non-determinism in these two evidence-writing tests
+  themselves (both in N40_CLI_CUTOVER's own write set, part of the required
+  unchanged full suite) -- neither file's receipted bytes can ever be
+  reproduced by rerunning the suite, regardless of any code change.
+- Restored to last-committed (receipted) state via `git checkout --` before
+  and after this analysis; 0 hash mismatches confirmed in
+  receipt_hash_verification.txt with the evidence tree in its committed
+  state.
+- Disposition: non-blocking, informational (P-N90-001). Note this analysis
+  independently found the SAME structural drift also affects
+  plan25_resume_refusal.txt, not only preflight_read_only.txt as P-N90-001
+  names explicitly -- but it is the identical mechanism (tempfile.
+  TemporaryDirectory() path embedded in CLI-echoed text), not a different
+  kind of difference or a behavioral regression, so it is treated under the
+  same non-blocking disposition per the patch's own stated principle.

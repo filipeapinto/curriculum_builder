@@ -1,0 +1,40 @@
+Receipt graph_digest (sha256 of implementation.graph.v3.yaml at receipt time),
+in order, from plans/26_langgraph_curriculum_factory/results/v3/*.receipt.v1.json:
+
+N00_BASELINE_FREEZE .. N23_MODEL_NODES, N21_PERSISTENCE_RESUME, N22:
+  graph_digest ac8587de...  (earliest manifest revision)
+N40_CLI_CUTOVER, N50_ADVERSARIAL_REGRESSION, N60_LIVE_PRODUCT_PROOF:
+  graph_digest 3c4177f9a239279b86e1a912a0b704e3b7867693fcb4b98fe00c73c33caee867
+N20_GRAPH_COMPILER, N30_UNIT_GRAPH, N31_REPAIR_ACCEPTANCE, N32_WORKBOOK_TERMINALS
+  (re-receipted after later patch rounds P-N20-002/P-N31-001..003/P-N32-001..002):
+  graph_digest 18d619bb4eb509d1c6c590699ce2072660f36781c33cbc18a4ad1f9f8501cac7
+
+Current implementation.graph.v3.yaml sha256 (this attempt, live):
+  18d619bb4eb509d1c6c590699ce2072660f36781c33cbc18a4ad1f9f8501cac7
+  -- matches N20/N30/N31/N32's receipts, NOT N40/N50/N60's.
+
+Finding: the manifest's own stated rule (rules.invalidate_descendants_on_rework:
+true) implies N40/N50/N60 should have been invalidated and re-receipted once
+N31/N32's later rework (commit 165555d: runtime/langgraph_factory/graph.py
++102, acceptance.py +163, repair.py +96) and the P-N20-002/P-N32-002 patch
+round (commit d27b7dc) postdated their original receipts -- but their
+receipts were never refreshed. This is a harness/scheduler bookkeeping gap,
+not a claim of product misbehavior, and is not owned by any curriculum
+N-node (no rework_edges key in implementation.graph.v3.yaml's rework_edges
+block corresponds to "harness receipt invalidation" -- it is scheduler
+mechanics, outside the N-node ownership vocabulary).
+
+Disposition: closed by direct re-verification, not by trusting the stale
+receipt. This attempt independently reran the complete tests/runtime suite
+against the CURRENT, final (post-all-rework) code -- see full_suite_rerun.txt
+-- and it passed clean (1246 passed, 1 skipped, 406 subtests, 0 failures).
+It also independently re-verified the production-path and 8-invariant claims
+directly against current source (production_path_audit.txt,
+invariant_audit.txt), not against N40/N50/N60's own receipted prose. The
+substantive risk this staleness could have hidden (a rework silently
+breaking something N50/N40 previously certified) is therefore closed by
+direct evidence, independent of receipt bookkeeping.
+
+Non-blocking. Recommendation (process hygiene, not a rework_edges finding):
+the controller should auto-invalidate descendant receipts when an ancestor's
+graph_digest changes post-hoc, per its own stated rule.

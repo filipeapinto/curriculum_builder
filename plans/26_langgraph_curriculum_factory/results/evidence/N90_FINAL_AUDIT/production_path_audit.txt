@@ -1,0 +1,58 @@
+N90 independent production-path audit (this attempt, rerun against live repo)
+
+=== StateGraph()/.compile() occurrences under runtime/langgraph_factory/*.py ===
+runtime/langgraph_factory/acceptance.py:468:# path` use: no `add_node`, no `StateGraph()`, no `compile()`. Unlike
+runtime/langgraph_factory/artifacts.py:29:_TOKEN_RE = re.compile(r"^[A-Za-z0-9][A-Za-z0-9._-]{0,127}$")
+runtime/langgraph_factory/artifacts.py:30:_HASH_RE = re.compile(r"^[0-9a-f]{64}$")
+runtime/langgraph_factory/graph.py:601:    builder: StateGraph = StateGraph(
+runtime/langgraph_factory/graph.py:612:    return builder.compile(checkpointer=saver, name=GRAPH_NAME)
+runtime/langgraph_factory/transport.py:56:STAGED_NAME_PATTERN = re.compile(r"^[A-Za-z0-9][A-Za-z0-9._-]{0,120}$")
+runtime/langgraph_factory/transport.py:964:_PAGE_SIZE_RE = re.compile(r'^width="([\d.]+)" height="([\d.]+)"')
+runtime/langgraph_factory/transport.py:965:_LINE_BOX_RE = re.compile(
+runtime/langgraph_factory/workbook.py:1231:# `StateGraph()`, no `compile()`. D90/D91 are deliberately absent from this
+
+Conclusion: exactly one StateGraph() construction (graph.py:601) and exactly
+one .compile() call (graph.py:612); every other hit is `re.compile(...)`
+(unrelated regex) or a comment describing the absence of a second graph.
+
+=== build_curriculum_factory_graph: definition + all call sites under runtime/ ===
+runtime/langgraph_factory/graph.py:575:def build_curriculum_factory_graph(
+runtime/run_curriculum.py:554:            compiled = build_curriculum_factory_graph(engine_root=engine_root, output_root=output_root)   # resume branch, _run_live
+runtime/run_curriculum.py:570:            compiled = build_curriculum_factory_graph(engine_root=engine_root, output_root=output_root)   # fresh branch, _run_live
+
+Conclusion: one definition, exactly two call sites, both inside the CLI's
+single live-execution function (_run_live), both calling the identical
+function -- no second production graph builder exists.
+
+=== forbidden production imports (langchain non-core / openai / google.generativeai) under runtime/ ===
+grep -rE '^\s*(import|from)\s+(langchain(_openai|_google_genai)?|openai|google\.generativeai)\b' runtime/*.py runtime/langgraph_factory/*.py
+-> no matches
+
+=== session_bridge (Plan 25 legacy) reachability from production code ===
+grep -rl 'session_bridge' runtime/*.py runtime/langgraph_factory/*.py
+-> no matches (file exists on disk as runtime/session_bridge.py but is
+   imported only by test files, never by runtime/run_curriculum.py or
+   anything under runtime/langgraph_factory/)
+
+=== live CLI --help surface (current code, live repo) ===
+usage: python3 -m runtime.run_curriculum [-h] --engine-root PATH
+                                         --curriculum PATH --output-root PATH
+                                         (--preflight | --unit UNIT_ID |
+                                         --all | --resume)
+                                         [--authorization PATH]
+
+Sole production CLI entry to the compiled Plan 26 curriculum factory.
+
+options:
+  -h, --help            show this help message and exit
+  --engine-root PATH
+  --curriculum PATH
+  --output-root PATH
+  --preflight           read-only readiness check; creates no run
+  --unit UNIT_ID        run one requested unit plus its prerequisite closure
+  --all                 run the full exact manifest
+  --resume              resume a legally resumable episode
+  --authorization PATH  external-data authorization record; required for
+                        --unit, --all, and --resume
+
+No legacy simulation/session-bridge/custom-controller flag is exposed.

@@ -1,0 +1,43 @@
+schema_version: 1
+patch_id: P-N90-002
+action: overlay
+graph_id: plan26_langgraph_curriculum_factory_implementation
+base_graph_digest: 18d619bb4eb509d1c6c590699ce2072660f36781c33cbc18a4ad1f9f8501cac7
+target_node: N90_FINAL_AUDIT
+scope: node_only
+reason: N90's domain verdict vocabulary (ACTIVATED/IMPLEMENTED_NOT_ACTIVATED/BLOCKED)
+  doesn't map 1:1 onto the harness's generic status-line vocabulary (PASSED/NOT_AVAILABLE/BLOCKED);
+  N90 wrote its verdict as a markdown heading the harness regex can't parse at all,
+  and IMPLEMENTED_NOT_ACTIVATED/ACTIVATED aren't harness-recognized values regardless
+  of formatting. A genuine prompt gap, not previously hit since this is N90's first
+  real (non-BLOCKED) verdict
+expected_effect: 'N90 emits a bare status: PASSED (for ACTIVATED/IMPLEMENTED_NOT_ACTIVATED)
+  or status: BLOCKED (for BLOCKED) line alongside its own unchanged verdict section,
+  letting the controller admit a correctly-completed audit'
+instructions: "The controller only admits a node when its result report contains a\
+  \ bare,\nmachine-parseable status line matching this exact pattern (multiline regex):\n\
+  \n  ^status:\\s*(PASSED|NOT_AVAILABLE|BLOCKED)\\s*$\n\nThat is the harness's own\
+  \ generic \"did this node complete\" vocabulary,\nseparate from your own domain\
+  \ verdict vocabulary (`ACTIVATED`,\n`IMPLEMENTED_NOT_ACTIVATED`, `BLOCKED`) \u2014\
+  \ the two only happen to share the\nspelling \"BLOCKED\" by coincidence, and your\
+  \ own report currently uses\n`## VERDICT: \\`IMPLEMENTED_NOT_ACTIVATED\\`` as a\
+  \ markdown heading, which the\nharness's regex does not match at all (it is not\
+  \ a bare `status:` line, and\n`IMPLEMENTED_NOT_ACTIVATED`/`ACTIVATED` are not harness-recognized\
+  \ values\nregardless of formatting).\n\nAdd a bare, separate `status:` line near\
+  \ the top of your report (after the\ntitle, on its own line, exactly as shown, with\
+  \ nothing else on that line),\nin addition to \u2014 not instead of \u2014 your\
+  \ own domain verdict heading/section,\nmapped as follows:\n\n  - Your verdict is\
+  \ `ACTIVATED` or `IMPLEMENTED_NOT_ACTIVATED` -> the line\n    reads exactly `status:\
+  \ PASSED`. Both are genuine, complete, valid\n    conclusions of a fully-executed\
+  \ audit; the harness has no separate\n    concept for them, and `PASSED` here means\
+  \ \"this node did its job\n    correctly and reached a defensible conclusion,\"\
+  \ not \"the product is\n    fully live\" \u2014 that distinction stays recorded\
+  \ in your own verdict\n    section, which a reader must still consult for the real\
+  \ disposition.\n  - Your verdict is `BLOCKED` -> the line reads exactly `status:\
+  \ BLOCKED`,\n    matching the harness's own non-admission semantics for a node whose\
+  \ own\n    audit found a real, unresolved, routable finding.\n\nDo not change anything\
+  \ else in the report \u2014 your verdict section, findings,\nevidence, and hashes\
+  \ are unaffected. This is purely adding one bare line so\nthe controller can parse\
+  \ what you already concluded.\n"
+context: {}
+created_at: '2026-08-13T01:03:43.692154+00:00'

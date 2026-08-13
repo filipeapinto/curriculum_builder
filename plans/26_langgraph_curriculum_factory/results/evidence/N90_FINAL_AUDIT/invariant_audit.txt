@@ -1,0 +1,73 @@
+N90 invariant audit -- delegated to an independent, read-only agent with no
+access to this session's conversation (so it could not simply restate prior
+nodes' or prior N90 attempts' claims), instructed to verify each invariant
+directly from source, not from result-markdown prose.
+
+1. Eight model jobs -- PASS. MODEL_JOB_IDS = M01-M08 at
+   runtime/langgraph_factory/model_nodes.py:102-109. Registry loaded from
+   runtime/langgraph_factory/config/model_jobs.v1.yaml (job_count: 8, all 8
+   listed). Count hard-enforced: transport.py:158-161
+   (if declared != 8 or len(entries) != 8: raise RouteRejected). Prompts and
+   schemas loaded package-relative via PACKAGE_ROOT =
+   Path(__file__).resolve().parent (transport.py:44-47), not cwd.
+
+2. Authority -- PASS. FORBIDDEN_MODEL_FIELDS frozenset (routing/join/
+   acceptance/terminal vocabulary) at transport.py:58-64, enforced by
+   assert_no_authoritative_fields() (transport.py:237-244), called against
+   model output schemas at load time (transport.py:841) and against every
+   candidate (transport.py:725; model_nodes.py:431,545,560).
+
+3. Denominators -- PASS. compute_unit_denominator() (acceptance.py:108-268)
+   recomputes all 12 categories fresh from state every call (invoked
+   independently at D16 acceptance.py:327 and D22 acceptance.py:366),
+   filtering every source list by record.get("unit_id") == unit_id,
+   rejecting cross-unit/stale members by construction.
+
+4. Repair -- PASS. admit_repair_child (repair.py:883-957): recomputes diff
+   itself via json_pointer_diff(parent_body, new_body) (repair.py:944),
+   rejects stale parent hash (repair.py:937-942), hard-fails as SystemFailure
+   on any out-of-boundary pointer (repair.py:946-952).
+
+5. Persistence/resume -- PASS. Real SqliteSaver built at persistence.py:
+   538-545. validate_resume_inputs() (persistence.py:1011-1031) refuses on
+   any identity/frozen-digest/executable/evidence/accepted-bytes drift,
+   including unclassified fields. _validate_terminal_legality()
+   (persistence.py:1034-1039) refuses resume outside allowed (resumable)
+   terminals via NON_RESUMABLE_TERMINALS.
+
+6. Terminals -- PASS. Exactly 6 terminal kinds: UNIT_ACCEPTED, COMPLETE,
+   INTERRUPTED, PAUSED_PREREQUISITE, CONVERGENCE_EXHAUSTED, SYSTEM_FAILURE
+   (nodes/terminal.py:48-108). write_terminal() (nodes/terminal.py:472-500)
+   is the sole terminal writer; validate_terminal_candidate()
+   (nodes/terminal.py:396-415) independently re-derives each precondition
+   from state and never trusts the proposing guard; unsupported/stale claims
+   are downgraded to SYSTEM_FAILURE via _rejection_terminal()
+   (nodes/terminal.py:446-469, called at line 494).
+
+7. CLI single path -- PASS. build_curriculum_factory_graph (graph.py:575)
+   called from exactly two sites in run_curriculum.py:554 (resume branch)
+   and :570 (fresh branch), both inside _run_live. runtime/session_bridge.py
+   (Plan-25 legacy) is tracked in git but imported only by test files --
+   never by run_curriculum.py or anything under langgraph_factory/ --
+   confirming it is unreachable from the production path. Spec section 18
+   documents this retirement boundary and names test_no_second_production_
+   factory (present at tests/runtime/test_plan26_adversarial.py:1475).
+
+8. Single StateGraph/compile, no forbidden imports -- PASS. Exactly one
+   StateGraph( at graph.py:601 and one .compile( at graph.py:612; no other
+   occurrences in runtime/langgraph_factory/*.py (grep-confirmed, other hits
+   were re.compile unrelated regex calls). No langchain (non-core), openai,
+   or google.generativeai imports anywhere under runtime/.
+
+Spec/QA gap sampling: no NotImplementedError/TODO in production code (the
+two graph.py:117-118 hits are string literals in an anti-stub-placeholder
+detector, PLACEHOLDER_SOURCE_MARKERS, not actual stubs). Spec section 19
+traceability matrix and section 21 checklist map cleanly to files found.
+Section 20.2 lists external-activation prerequisites (live credentials,
+sandbox proof) as intentionally-deferred activation conditions, not
+implementation gaps -- consistent with the spec's own
+IMPLEMENTED_NOT_ACTIVATED verdict vocabulary. No unmapped "must/shall"
+requirement or dangling reference to a nonexistent function was found in
+this sampling pass.
+
+Result: 8/8 invariants PASS. No spec/QA traceability gap found.

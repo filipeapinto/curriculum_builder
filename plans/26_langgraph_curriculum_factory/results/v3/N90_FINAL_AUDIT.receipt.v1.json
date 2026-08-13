@@ -1,0 +1,43 @@
+{
+  "changed_files": [
+    "plans/26_langgraph_curriculum_factory/results/N90_FINAL_AUDIT.result.v1.md",
+    "plans/26_langgraph_curriculum_factory/results/evidence/N90_FINAL_AUDIT"
+  ],
+  "commands": [],
+  "created_at": "2026-08-13T01:35:17.559945+00:00",
+  "findings": [],
+  "graph_digest": "18d619bb4eb509d1c6c590699ce2072660f36781c33cbc18a4ad1f9f8501cac7",
+  "graph_id": "plan26_langgraph_curriculum_factory_implementation",
+  "input_fingerprint": "56f4fef9cb03348226c2a2fbad1590dba0a908df846a92d947ed911f980b21f5",
+  "node_definition_sha256": "7bda5704389119c17eced97cbd8c8e1bca85dfac75fd9c77c866db9912ae0097",
+  "node_id": "N90_FINAL_AUDIT",
+  "outputs": {
+    "plans/26_langgraph_curriculum_factory/results/N90_FINAL_AUDIT.result.v1.md": "dfa513f69a60f1ebfd8f4b3336ac2700685eb609a81fc58698bdb1b8a13e2cc7",
+    "plans/26_langgraph_curriculum_factory/results/evidence/N90_FINAL_AUDIT": "90fb095ffb66a1201d4a72b3077ca32e37ff7017b8b4a37f3114bba9d73396d2"
+  },
+  "prompt_sha256": "51e965638898382560396e1aa35a96e2514f1f43975798b80a59a3dd6cd99850",
+  "provenance": {
+    "active_patch_ids": [
+      "P-N90-001",
+      "P-N90-002"
+    ],
+    "attempt_id": null,
+    "base_graph_digest": "18d619bb4eb509d1c6c590699ce2072660f36781c33cbc18a4ad1f9f8501cac7",
+    "base_prompt_sha256": "f32ca36ed6301fbe43cccb8c0da1c15b4e99105616052ecf30921f48340a1fc2",
+    "branch_id": null,
+    "checkpoint": {
+      "N50_ADVERSARIAL_REGRESSION": "071f216deccb058defccfd0470a5269fdba2bf68270be02efc6e962e53ebd58e",
+      "N60_LIVE_PRODUCT_PROOF": "6476913ae4e8a73dafa6361d77d1f6ea5ecec05967397f1ef367814dc1a5c27c"
+    },
+    "effective_prompt_sha256": "51e965638898382560396e1aa35a96e2514f1f43975798b80a59a3dd6cd99850",
+    "harness_digest": "a2e5cd37735b3e953f8388e90253daca8add352e8596899473473643f5ecad32",
+    "patch_chain_sha256": "1af72283ea54dc6b5cee083cfab5592dc91bdbcd9b8ee1c58a4cb22fc6591946",
+    "patch_ids": [
+      "P-N90-001",
+      "P-N90-002"
+    ]
+  },
+  "schema_version": 1,
+  "source": "completed_interrupted_merge_files_already_correctly_copied",
+  "status": "PASSED"
+}

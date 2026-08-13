@@ -1,0 +1,57 @@
+schema_version: 1
+patch_id: P-N90-001
+action: overlay
+graph_id: plan26_langgraph_curriculum_factory_implementation
+base_graph_digest: 18d619bb4eb509d1c6c590699ce2072660f36781c33cbc18a4ad1f9f8501cac7
+target_node: N90_FINAL_AUDIT
+scope: node_only
+reason: N90's own required full-suite run necessarily re-triggers a pre-existing,
+  already-diagnosed non-deterministic evidence write in N40's own test suite (test_preflight_read_only_evidence),
+  causing N90 to repeatedly find and route a stale-receipt finding for a file that
+  can never reproduce its receipted bytes by the test's own design. N90 has no write
+  access to fix it (unlike N50's own P-N50-002 pattern) and routing it to N40 for
+  rework would fix nothing since there is no real implementation defect
+expected_effect: N90 treats this specific, already-diagnosed non-deterministic drift
+  as non-blocking informational, evaluating ACTIVATED/IMPLEMENTED_NOT_ACTIVATED/BLOCKED
+  on the actual substance of the work instead of an unfixable byte-reproducibility
+  artifact
+instructions: "Your own prior attempt found \"Finding 1: N40_CLI_CUTOVER receipt is\
+  \ stale\" \u2014\n`results/evidence/N40_CLI_CUTOVER`'s hash no longer matches its\
+  \ receipt. Read\nyour own prior attempt's full diagnosis of this (already precise\
+  \ and\ncorrect) before proceeding: the cause is `tests/runtime/test_plan26_cli.py::\n\
+  PreflightTests::test_preflight_read_only_evidence` (N40's own write set,\npart of\
+  \ the required unchanged suite), which writes `results/evidence/\nN40_CLI_CUTOVER/preflight_read_only.txt`\
+  \ embedding a `tempfile`-randomized\npath on every invocation. This file can never\
+  \ reproduce its receipted bytes,\nregardless of any code change \u2014 not because\
+  \ N40's CLI cutover is broken, but\nbecause this is a structural, pre-existing non-determinism\
+  \ in one evidence\nfile of the required, unchanged full suite you must run as part\
+  \ of your own\naudit (per your own GOAL: \"audit... tests... live proof status\"\
+  , exercised\nby actually running the full suite, not just reading source).\n\nThis\
+  \ means: the very act of you (or any earlier node, e.g. N50) running the\nfull suite\
+  \ recreates this exact drift as a side effect, every time,\nindependent of whether\
+  \ N40's actual CLI cutover work is correct. You do not\nhave write access to `results/evidence/N40_CLI_CUTOVER`\
+  \ (outside your write\nset \u2014 restoring it yourself, the way N50's own P-N50-002\
+  \ patch restores\nfiles within its own write set, is not available to you here),\
+  \ so you\ncannot close this the way N50 does. Routing it to N40 as `cli_or_cutover`\n\
+  rework would not fix anything either: N90 finding F1/F2's own precedent\nestablished\
+  \ that a rework routing exists to correct real implementation\ndefects, and there\
+  \ is no implementation defect here \u2014 the receipted content\nwas correct at\
+  \ admission time; only this one already-diagnosed,\nalready-understood non-deterministic\
+  \ evidence byte-stream can never\nreproduce itself, by the test's own design, regardless\
+  \ of what N40 does.\n\nDo not route this as a blocking `cli_or_cutover` finding.\
+  \ Instead: verify\nthat the CURRENT `results/evidence/N40_CLI_CUTOVER` directory's\
+  \ *other*\nthree files (`import_audit.txt`, `cli_help.txt`, `plan25_resume_refusal.txt`)\n\
+  still match their receipted content, and that the ONLY drift, if any, is in\n`preflight_read_only.txt`\
+  \ specifically, with the same shape of drift your\nown prior attempt already documented\
+  \ (a `tempfile`-randomized path substring,\nnothing else differing). If \u2014 and\
+  \ only if \u2014 that is the full extent of the\ndrift, record it as a non-blocking,\
+  \ informational note (the same way your\nown prior attempt's Finding 3 recorded\
+  \ N60's external-credential gap as\ninformational, not blocking), and evaluate `ACTIVATED`/`IMPLEMENTED_NOT_\n\
+  ACTIVATED`/`BLOCKED` based on the actual substance of N50's and N60's work,\nnot\
+  \ on this one file's byte-reproducibility. If you find ANY OTHER drift \u2014\n\
+  a different file, a different kind of difference, or evidence this reflects\na real\
+  \ behavioral regression rather than a randomized-path artifact \u2014 treat\nthat\
+  \ as a genuine blocking finding and route it normally; do not use this\npatch to\
+  \ excuse an unrelated problem.\n"
+context: {}
+created_at: '2026-08-13T00:49:14.944656+00:00'
