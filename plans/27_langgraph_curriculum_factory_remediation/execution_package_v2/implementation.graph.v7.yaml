@@ -264,6 +264,15 @@ nodes:
     depends_on: [N20_PROVIDER_TRANSPORT]
     writes:
       - runtime/langgraph_factory/nodes/inputs.py
+      # nodes/sources.py added live (N30V7-F03/N20V7-F11 lineage): D06B's own
+      # call into egress.py's SourceRetriever.fetch is the only caller of that
+      # method's keyword-only authorization_receipt/data_class contract, and no
+      # node's write set covered this file until a real N70 production run hit
+      # a genuine TypeError there (SourceRetriever.fetch() takes 2 positional
+      # arguments but 4 were given). egress.py's fetch signature itself
+      # (N20-owned, N30 read-only) is correct and already test-covered exactly
+      # as called correctly elsewhere; the defect is this call site.
+      - runtime/langgraph_factory/nodes/sources.py
       - runtime/run_curriculum.py
       - tests/runtime/test_plan26_cli.py
       - tests/runtime/test_plan26_deterministic_nodes.py
@@ -274,7 +283,7 @@ nodes:
       - runtime/langgraph_factory/egress.py
     verification:
       - [python3, -m, pytest, -q, tests/runtime/test_plan26_cli.py, tests/runtime/test_run_curriculum.py]
-      - [python3, -m, pytest, -q, tests/runtime/test_plan26_deterministic_nodes.py, -k, "D03 or capability"]
+      - [python3, -m, pytest, -q, tests/runtime/test_plan26_deterministic_nodes.py, -k, "D03 or capability or D06B"]
       - [python3, plans/27_langgraph_curriculum_factory_remediation/execution_package_v2/controller/scan_node.py, --node, N30_PREFLIGHT_EGRESS, --graph, plans/27_langgraph_curriculum_factory_remediation/execution_package_v2/implementation.graph.v7.yaml]
       - [python3, plans/27_langgraph_curriculum_factory_remediation/execution_package_v2/tools/validate_result_v2.py, --node, N30_PREFLIGHT_EGRESS]
     allowed_results: [PASSED, BLOCKED]

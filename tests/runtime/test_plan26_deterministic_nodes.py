@@ -428,6 +428,47 @@ def test_a_retrieval_tool_fault_is_a_system_failure_not_a_pause() -> None:
     assert update["pending_failure"]["cause"] == "tool"
 
 
+def test_D06B_calls_the_real_source_retriever_fetch_signature() -> None:
+    """N30V7-F03 regression: D06B's own call into SourceRetriever.fetch (egress.py)
+    passed a third positional argument -- `requests[request_key].get("scope")`, a
+    fact-category tag like "applications", never a legitimate `data_class` -- against
+    a keyword-only `authorization_receipt`/`data_class` signature, always raising
+    "SourceRetriever.fetch() takes 2 positional arguments but 4 were given" the
+    moment a real discovery ever produced a locator to retrieve. Every prior test
+    here stubbed `fetch` with `lambda *args: ...`, which accepts any positional
+    call shape and so never caught the mismatch -- live-verified against a real
+    N70 production run reaching this exact call for the first time. This stub
+    mirrors the real method's keyword-only contract exactly.
+    """
+
+    def real_shaped_fetch(locator: str, *, authorization_receipt: Any,
+                          data_class: str = "primary_source_bytes") -> dict[str, Any]:
+        assert authorization_receipt is not None
+        assert data_class == "primary_source_bytes"
+        return {"sha256": "a" * 64, "status": 200, "content_type": "text/html"}
+
+    state = {
+        "selected_unit_id": "U001",
+        "run_id": "run-x",
+        "episode_id": "ep-x",
+        "effective_run": {"unit_records": [{"id": "U001", "title": "Unit One"}]},
+        "source_requests": [
+            {"key": "U001/1/f", "unit_id": "U001", "required": True, "scope": "applications",
+             "source_epoch": 1, "fact_id": "f", "question": "q?"}
+        ],
+        "source_denominators": {
+            "U001/1": {"unit_id": "U001", "source_epoch": 1, "request_keys": ["U001/1/f"], "size": 1}
+        },
+        "source_discoveries": {"U001/1/f": {"locators": ["https://example.invalid/a"]}},
+        "external_authorizations": [{"providers": ["primary_source_hosts"]}],
+    }
+    context = _Context(source_retriever=_Registry(fetch=real_shaped_fetch))
+    update = sources.D06B_RETRIEVE_SOURCE_CANDIDATES(state, context)
+
+    assert "pending_failure" not in update
+    assert update["retrievals"]["U001/1/f"]["sha256"] == "a" * 64
+
+
 def test_an_unexpected_exception_is_not_caught_inside_the_node(monkeypatch: Any) -> None:
     class Unexpected(Exception):
         pass
@@ -2621,7 +2662,7 @@ def test_a_staged_interpretation_packet_carries_only_its_own_retrieval_group() -
         },
         _Context(
             source_retriever=_Registry(
-                fetch=lambda locator, authorization, scope: {
+                fetch=lambda locator, *, authorization_receipt, data_class="primary_source_bytes": {
                     "sha256": digest,
                     "status": 200,
                     "content_type": "text/html",

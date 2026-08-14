@@ -1,5 +1,5 @@
 {
-  "attempt_id": "N20_PROVIDER_TRANSPORT-execpkgv2-v7-attempt-7",
+  "attempt_id": "N20_PROVIDER_TRANSPORT-execpkgv2-v7-attempt-8",
   "changed_files": [
     {
       "change": "modified",
@@ -28,8 +28,13 @@
     },
     {
       "change": "modified",
+      "path": "tests/runtime/test_plan26_adversarial.py",
+      "sha256": "965018da704e91a4873cff5f2e7f9d53d7fa776b47a0a27c24192c4d43960596"
+    },
+    {
+      "change": "modified",
       "path": "plans/27_langgraph_curriculum_factory_remediation/execution_package_v2/results/v7/evidence/N20_PROVIDER_TRANSPORT/01_pytest_n20.log",
-      "sha256": "f087574721b65eb36e5cff031fe9b6ab84e83c891cb5a3b04fab2cf22ea7268d"
+      "sha256": "6212fee4f4136744aeb8bd6f8d5e1b69b1b1ea70ce7230324b055db33f7069ec"
     },
     {
       "change": "modified",
@@ -37,14 +42,14 @@
       "sha256": "2d471cf440eeeead175a5f5eb2abd59afe0c56f62a78b8fd11d834c7a55d2b9a"
     },
     {
-      "change": "created",
-      "path": "plans/27_langgraph_curriculum_factory_remediation/execution_package_v2/results/v7/evidence/N20_PROVIDER_TRANSPORT/03_n20v7_f10_repair_regression_tests.log",
-      "sha256": "3dff5a6eb6f240b40ed9608927262932e7a6c860f1f689386cda74fa8b986295"
-    },
-    {
       "change": "modified",
       "path": "plans/27_langgraph_curriculum_factory_remediation/execution_package_v2/results/v7/evidence/N20_PROVIDER_TRANSPORT/04_git_status_production_scope.log",
-      "sha256": "fcc6b33c4eb938df4e7c191eb6f7685c0fdc0ac67b59076dac2fc2e41cfb1bcc"
+      "sha256": "0f30860c8368c41fd29251386ac3d991491e0fe5735f616961cb002d7a883de0"
+    },
+    {
+      "change": "created",
+      "path": "plans/27_langgraph_curriculum_factory_remediation/execution_package_v2/results/v7/evidence/N20_PROVIDER_TRANSPORT/05_n20v7_f11_adversarial_stub_signature_fix.log",
+      "sha256": "442a9564ef7c611c9981fb5817188bb6308f2310c01bef9a2133a1b2a1c12fe3"
     }
   ],
   "commands": [
@@ -52,7 +57,7 @@
       "argv": ["python3", "-m", "pytest", "-q", "tests/runtime/test_plan26_transport.py", "tests/runtime/test_plan26_model_nodes.py", "tests/runtime/test_plan26_egress.py", "tests/runtime/test_capabilities.py", "tests/runtime/test_curriculum_factory_graph.py", "tests/runtime/test_plan26_adversarial.py", "tests/runtime/test_plan26_api_contract.py", "tests/runtime/test_plan26_lock_drift.py"],
       "exit_code": 0,
       "log": "plans/27_langgraph_curriculum_factory_remediation/execution_package_v2/results/v7/evidence/N20_PROVIDER_TRANSPORT/01_pytest_n20.log",
-      "log_sha256": "f087574721b65eb36e5cff031fe9b6ab84e83c891cb5a3b04fab2cf22ea7268d"
+      "log_sha256": "6212fee4f4136744aeb8bd6f8d5e1b69b1b1ea70ce7230324b055db33f7069ec"
     },
     {
       "argv": ["python3", "plans/27_langgraph_curriculum_factory_remediation/execution_package_v2/controller/scan_node.py", "--node", "N20_PROVIDER_TRANSPORT", "--graph", "plans/27_langgraph_curriculum_factory_remediation/execution_package_v2/implementation.graph.v7.yaml"],
@@ -61,30 +66,30 @@
       "log_sha256": "2d471cf440eeeead175a5f5eb2abd59afe0c56f62a78b8fd11d834c7a55d2b9a"
     },
     {
-      "argv": ["python3", "-m", "pytest", "-q", "tests/runtime/test_plan26_model_nodes.py", "-k", "pending_failure", "-v"],
+      "argv": ["python3", "-m", "pytest", "-q", "tests/runtime/test_plan26_adversarial.py", "-v"],
       "exit_code": 0,
-      "log": "plans/27_langgraph_curriculum_factory_remediation/execution_package_v2/results/v7/evidence/N20_PROVIDER_TRANSPORT/03_n20v7_f10_repair_regression_tests.log",
-      "log_sha256": "3dff5a6eb6f240b40ed9608927262932e7a6c860f1f689386cda74fa8b986295"
+      "log": "plans/27_langgraph_curriculum_factory_remediation/execution_package_v2/results/v7/evidence/N20_PROVIDER_TRANSPORT/05_n20v7_f11_adversarial_stub_signature_fix.log",
+      "log_sha256": "442a9564ef7c611c9981fb5817188bb6308f2310c01bef9a2133a1b2a1c12fe3"
     },
     {
       "argv": ["git", "status", "--porcelain", "--", "runtime/", "policy/", "schemas/"],
       "exit_code": 0,
       "log": "plans/27_langgraph_curriculum_factory_remediation/execution_package_v2/results/v7/evidence/N20_PROVIDER_TRANSPORT/04_git_status_production_scope.log",
-      "log_sha256": "fcc6b33c4eb938df4e7c191eb6f7685c0fdc0ac67b59076dac2fc2e41cfb1bcc"
+      "log_sha256": "0f30860c8368c41fd29251386ac3d991491e0fe5735f616961cb002d7a883de0"
     }
   ],
   "evidence": [
     "plans/27_langgraph_curriculum_factory_remediation/execution_package_v2/results/v7/evidence/N20_PROVIDER_TRANSPORT/01_pytest_n20.log",
     "plans/27_langgraph_curriculum_factory_remediation/execution_package_v2/results/v7/evidence/N20_PROVIDER_TRANSPORT/02_scan_node_n20.log",
-    "plans/27_langgraph_curriculum_factory_remediation/execution_package_v2/results/v7/evidence/N20_PROVIDER_TRANSPORT/03_n20v7_f10_repair_regression_tests.log",
-    "plans/27_langgraph_curriculum_factory_remediation/execution_package_v2/results/v7/evidence/N20_PROVIDER_TRANSPORT/04_git_status_production_scope.log"
+    "plans/27_langgraph_curriculum_factory_remediation/execution_package_v2/results/v7/evidence/N20_PROVIDER_TRANSPORT/04_git_status_production_scope.log",
+    "plans/27_langgraph_curriculum_factory_remediation/execution_package_v2/results/v7/evidence/N20_PROVIDER_TRANSPORT/05_n20v7_f11_adversarial_stub_signature_fix.log"
   ],
   "findings": [
     {
       "disposition": "resolved",
-      "id": "N20V7-F10",
-      "severity": "critical",
-      "summary": "A sixth live-verified defect found by N70's real production unit run -- and a correction of a mistaken diagnosis (N20V7-F09, attempts 6) made earlier in this same lineage against a stale/incomplete checkpoint read. Live rerun of N70 with N20V7-F09's fix in place progressed further (now genuinely entering D17_CLASSIFY_UNIT_FINDINGS from D91's repair destination -- proof the routing concern F09 targeted was never actually broken: D91's own outgoing edge is `routing.route_model_failure`, which reads `pending_guard` directly and never consults `pending_failure` or the generic `_failure_destination` hijack path at all) but then failed inside D17 itself: 'D17 was routed with an empty or missing findings list'. Root cause, confirmed via direct SQLite checkpoint archaeology of this exact live run (`outputs/run27/live_unit`, run_id `1f279267aabb080ca4cf58293303f2915e6f2f9eab0bb79eadfb48a6d19e3c5b`): `D17_CLASSIFY_UNIT_FINDINGS` (repair.py) has two entry branches -- one reads a classified `pending_failure` (`classification == 'repair'`) that D91 leaves in place specifically for D17 to build its one raw finding from, then D17 clears it itself once consumed; the other reads `pending_guard.detail.findings` for D08/D09/D12/D14/D16-sourced repairs. N20V7-F09's fix nulled `pending_failure` inside D91 for the 'repair' decision, which starved D17 of the only data it had to work with the moment a real M01 discovery sub-request failed content policy (`candidate_undeclared_artifact`, safety_focus:002, 'discovery must emit locators, not interpretations') and D91 routed it to D17 for repair. Fixed within N20's write set (runtime/langgraph_factory/model_nodes.py): D91_CLASSIFY_MODEL_FAILURE reverted to clearing `pending_failure` only on the 'retry' decision -- the original, correct behavior. The prior regression test asserting the wrong (F09) behavior was replaced with an integration-style test that drives D91 then repair.D17_CLASSIFY_UNIT_FINDINGS directly against a real M01 discovery-failure shape, proving the classified pending_failure survives to D17, D17 builds a real finding_partitions entry from it, D17 clears pending_failure itself, and D17's own subsequent routing correctly resolves to D18_PLAN_TARGETED_UNIT_REPAIR. Full 8-file N20 suite: 475 passed, 1 skipped, 140 subtests passed. Zero scan violations."
+      "id": "N20V7-F11",
+      "severity": "minor",
+      "summary": "A stale test double, not a production defect. Diagnosing N70's sixth live production run (see N30V7-F03/N40V7-F12) found that a real SourceRetriever.fetch (egress.py) caller in nodes/sources.py was calling it with three positional arguments against a keyword-only authorization_receipt/data_class contract, always raising TypeError the moment a real M01 discovery locator was ever retrieved. tests/runtime/test_plan26_adversarial.py's own _StubRetriever.fetch test double independently encoded the identical wrong three-positional-argument convention (a coincidental match to the real bug, not a copy of the fix) -- harmless while the harness graph never exercised a genuine retrieval failure/success boundary this deep, but now inconsistent with the corrected real signature. Updated the stub to the real keyword-only shape (locator positional, authorization_receipt/data_class keyword-only) so this file's own test double stays representative of the real API it doubles for. Full 8-file N20 suite: 475 passed, 1 skipped, 140 subtests passed. Zero scan violations."
     }
   ],
   "invalidated_descendants": ["N30_PREFLIGHT_EGRESS", "N40_INTEGRATION_OWNERSHIP", "N50_EVIDENCE_AUDIT_CONTROLS", "N60_ADVERSARIAL_REGRESSION"],

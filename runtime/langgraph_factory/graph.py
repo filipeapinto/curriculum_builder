@@ -274,6 +274,19 @@ def _boundary(node_id: str, body: Callable[..., Any], *, model_node: bool) -> Ca
             # product failure and must reach the engine untouched.
             raise
         except Exception as error:  # the classified-failure contract of spec 6.1
+            # A terminal_candidate is built here, not left for some later node to
+            # supply: `_failure_destination` routes straight to D98_WRITE_TERMINAL
+            # the moment `pending_failure` is truthy, with no dynamic-guard hop
+            # through a classifier in between (unlike a model node's failure,
+            # which D91 gets to classify first). Without one, D98's own
+            # independent revalidation (nodes/terminal.py) always rejects a bare
+            # `None` candidate as "not a JSON object" -- discarding the real
+            # `error` message into an uninformative generic rejection. Shape
+            # matches every other SYSTEM_FAILURE writer (model_nodes.py D91,
+            # repair.py D17/D18, workbook.py D29) exactly: D98's validator is one
+            # shared, independent re-derivation, not a per-writer contract.
+            failure_state = state if isinstance(state, Mapping) else {}
+            artifact_heads = failure_state.get("artifact_heads") or {}
             return {
                 "pending_failure": {
                     "node": node_id,
@@ -283,6 +296,17 @@ def _boundary(node_id: str, body: Callable[..., Any], *, model_node: bool) -> Ca
                     "evidence": {"boundary": "node"},
                 },
                 "pending_guard": None,
+                "terminal_candidate": {
+                    "kind": "SYSTEM_FAILURE",
+                    "failure": {"class": "system", "cause": "unhandled"},
+                    "node": node_id,
+                    "safe_heads": {
+                        stream: head.get("hash")
+                        for stream, head in sorted(artifact_heads.items())
+                        if isinstance(head, dict)
+                    },
+                    "audit_high_water_mark": len(failure_state.get("evidence_index_entries") or []),
+                },
             }
         token = getattr(context, "signal_token", None)
         if token is not None and bool(getattr(token, "is_set", lambda: False)()):

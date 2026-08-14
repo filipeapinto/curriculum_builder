@@ -935,6 +935,19 @@ def test_the_node_boundary_injects_the_runtime_context_langgraph_would_not():
 
 
 def test_the_node_boundary_classifies_an_unexpected_exception_as_a_system_failure():
+    """N40V7-F11 regression: an unhandled exception must also build a valid
+    terminal_candidate, not just a pending_failure. `_failure_destination`
+    routes straight to D98_WRITE_TERMINAL with no classifier hop in between
+    (unlike a model node's failure, which D91 gets to shape first) -- without
+    one, D98's own independent revalidation always rejected a bare `None`
+    candidate as "not a JSON object", discarding the real exception message
+    into an uninformative generic rejection. Live-verified against a real N70
+    production run (a call-site bug elsewhere raised a genuine TypeError that
+    reached this exact boundary and was swallowed this way).
+    """
+
+    from runtime.langgraph_factory.nodes import terminal as nt
+
     def body(state, context):
         raise ValueError("unexpected")
 
@@ -943,11 +956,22 @@ def test_the_node_boundary_classifies_an_unexpected_exception_as_a_system_failur
     class FakeRuntime:
         context = None
 
-    update = bound({}, FakeRuntime())
+    state = {"artifact_heads": {"content": {"hash": "abc123"}}, "evidence_index_entries": [{}, {}]}
+    update = bound(state, FakeRuntime())
     assert update["pending_failure"]["class"] == "system"
     assert update["pending_failure"]["cause"] == "unhandled"
+    assert update["pending_failure"]["message"] == "ValueError: unexpected"
     assert update["pending_guard"] is None
     assert R.decide("X", update) == R.TERMINAL
+
+    candidate = update["terminal_candidate"]
+    assert candidate["kind"] == "SYSTEM_FAILURE"
+    assert candidate["node"] == "X"
+    assert candidate["safe_heads"] == {"content": "abc123"}
+    assert candidate["audit_high_water_mark"] == 2
+    projection = {"artifact_heads": state["artifact_heads"], "evidence_index_entries": state["evidence_index_entries"]}
+    validation = nt.validate_terminal_candidate(candidate, projection)
+    assert validation.accepted, validation.rejections
 
 
 def test_a_graceful_signal_at_the_boundary_routes_through_the_interrupt_gate():

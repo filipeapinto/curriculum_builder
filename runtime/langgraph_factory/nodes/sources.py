@@ -374,7 +374,7 @@ def D06B_RETRIEVE_SOURCE_CANDIDATES(
             continue
         locator = locators[0]
         try:
-            response = fetch(locator, authorization, requests[request_key].get("scope"))
+            response = fetch(locator, authorization_receipt=authorization)
         except FileNotFoundError as error:
             unavailable.append({"request_key": request_key, "reason": str(error)})
             continue

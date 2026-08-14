@@ -1,10 +1,15 @@
 {
-  "attempt_id": "N30_PREFLIGHT_EGRESS-execpkgv2-v7-attempt-7",
+  "attempt_id": "N30_PREFLIGHT_EGRESS-execpkgv2-v7-attempt-8",
   "changed_files": [
     {
       "change": "modified",
       "path": "runtime/langgraph_factory/nodes/inputs.py",
       "sha256": "04651f38a5d762a69edfa1827046637cb06f8705805a1b661212223d63f61047"
+    },
+    {
+      "change": "modified",
+      "path": "runtime/langgraph_factory/nodes/sources.py",
+      "sha256": "e3760bd91ef356a7db714747f0c17c2b1299ece09c911a7ad1e7a6c0706dc062"
     },
     {
       "change": "modified",
@@ -19,7 +24,7 @@
     {
       "change": "modified",
       "path": "tests/runtime/test_plan26_deterministic_nodes.py",
-      "sha256": "71ca5c418b3457d0c43c0c9a19e71de9832f0a177d88b0d640e12245d52a9f26"
+      "sha256": "c41d72b56cb228e94a1b1c4cf0d0153e51dc840e6c05abec68c9743eeea54721"
     },
     {
       "change": "modified",
@@ -29,17 +34,17 @@
     {
       "change": "modified",
       "path": "plans/27_langgraph_curriculum_factory_remediation/execution_package_v2/results/v7/evidence/N30_PREFLIGHT_EGRESS/01_pytest_n30_cli.log",
-      "sha256": "67c410d4852f9ed5fc73af343cb4db0b494cbcbbd34054b7619800956c6d2468"
+      "sha256": "fd7f1e6635f83f8ee7b524657ab151ce7b680b0a9e1ebb5329986c2d36090a87"
     },
     {
       "change": "modified",
       "path": "plans/27_langgraph_curriculum_factory_remediation/execution_package_v2/results/v7/evidence/N30_PREFLIGHT_EGRESS/02_pytest_n30_d03.log",
-      "sha256": "b497289a7a2ab7d3809ec52528571c739aece8451356919297bc2f22cd7516ad"
+      "sha256": "b7395cbf1ea927134d3e9d96415f7a08517f776a90ac2381502193d8b460d702"
     },
     {
       "change": "modified",
       "path": "plans/27_langgraph_curriculum_factory_remediation/execution_package_v2/results/v7/evidence/N30_PREFLIGHT_EGRESS/03_scan_node_n30.log",
-      "sha256": "4cf3deae3cb48734e0d94818ad664ec5f7f263b390a2fa4810c86a64266130a2"
+      "sha256": "9e197b3f302b2aa14dafacfe002cc5e4f597914f3246e9719b40e9b965285326"
     },
     {
       "change": "modified",
@@ -52,19 +57,19 @@
       "argv": ["python3", "-m", "pytest", "-q", "tests/runtime/test_plan26_cli.py", "tests/runtime/test_run_curriculum.py"],
       "exit_code": 0,
       "log": "plans/27_langgraph_curriculum_factory_remediation/execution_package_v2/results/v7/evidence/N30_PREFLIGHT_EGRESS/01_pytest_n30_cli.log",
-      "log_sha256": "67c410d4852f9ed5fc73af343cb4db0b494cbcbbd34054b7619800956c6d2468"
+      "log_sha256": "fd7f1e6635f83f8ee7b524657ab151ce7b680b0a9e1ebb5329986c2d36090a87"
     },
     {
-      "argv": ["python3", "-m", "pytest", "-q", "tests/runtime/test_plan26_deterministic_nodes.py", "-k", "D03 or capability"],
+      "argv": ["python3", "-m", "pytest", "-q", "tests/runtime/test_plan26_deterministic_nodes.py", "-k", "D03 or capability or D06B"],
       "exit_code": 0,
       "log": "plans/27_langgraph_curriculum_factory_remediation/execution_package_v2/results/v7/evidence/N30_PREFLIGHT_EGRESS/02_pytest_n30_d03.log",
-      "log_sha256": "b497289a7a2ab7d3809ec52528571c739aece8451356919297bc2f22cd7516ad"
+      "log_sha256": "b7395cbf1ea927134d3e9d96415f7a08517f776a90ac2381502193d8b460d702"
     },
     {
       "argv": ["python3", "plans/27_langgraph_curriculum_factory_remediation/execution_package_v2/controller/scan_node.py", "--node", "N30_PREFLIGHT_EGRESS", "--graph", "plans/27_langgraph_curriculum_factory_remediation/execution_package_v2/implementation.graph.v7.yaml"],
       "exit_code": 0,
       "log": "plans/27_langgraph_curriculum_factory_remediation/execution_package_v2/results/v7/evidence/N30_PREFLIGHT_EGRESS/03_scan_node_n30.log",
-      "log_sha256": "4cf3deae3cb48734e0d94818ad664ec5f7f263b390a2fa4810c86a64266130a2"
+      "log_sha256": "9e197b3f302b2aa14dafacfe002cc5e4f597914f3246e9719b40e9b965285326"
     },
     {
       "argv": ["python3", "-c", "import json; import runtime.run_curriculum as R; print(json.dumps(R._prove_driver_capabilities(), indent=2, default=str))"],
@@ -82,16 +87,16 @@
   "findings": [
     {
       "disposition": "resolved",
-      "id": "N30V7-CASCADE-F04",
-      "severity": "observation",
-      "summary": "Pure re-verification, cascading from N20V7-F10 (correction of the mistaken N20V7-F09 pending_failure fix -- D91 now reverted to clearing pending_failure only on 'retry', restoring D17_CLASSIFY_UNIT_FINDINGS's ability to read the classified failure it needs for a model-repair finding). N30's own write-set files are byte-identical to attempt-6. All four required verification commands rerun in full and report the same outcomes: 62 passed/27 subtests, 10 passed (D03/capability), zero scan violations, live driver_capabilities.ready: true for both drivers. Admitted as a new attempt strictly to rebind predecessor_receipts to N20 attempt-7's new digest."
+      "id": "N30V7-F03",
+      "severity": "critical",
+      "summary": "A sixth live-verified defect found by N70's real production unit run: `SourceRetriever.fetch` (egress.py, N20-owned, N30 read-only) has a keyword-only `authorization_receipt`/`data_class` contract, but its one production caller -- `D06B_RETRIEVE_SOURCE_CANDIDATES` (runtime/langgraph_factory/nodes/sources.py) -- called it as `fetch(locator, authorization, requests[request_key].get('scope'))`, three positional arguments against a signature that accepts exactly one. Every real discovered locator retrieval therefore raised 'SourceRetriever.fetch() takes 2 positional arguments but 4 were given' unconditionally, live-verified against the real N70 production run for unit L01 (request safety_focus:002's discovery locator). The third argument, `scope` (a fact-category tag like 'applications', not a legitimate `data_class` value -- confirmed by scanning every existing call site and test, none of which ever overrides `data_class` from its 'primary_source_bytes' default), was never a valid parameter for this call at all. Root-caused via direct SQLite checkpoint archaeology of the live run's `writes` table, which showed two concurrent superstep tasks -- D91's own correct repair-classification, and a SEPARATE, independent `_boundary`-caught exception from D06B_RETRIEVE_SOURCE_CANDIDATES racing to the same terminal writer -- exposing this as the true, second, independent root cause behind N70's repeated 'terminal candidate is not a JSON object' symptom (the first being N40V7-F12, filed alongside this finding). Fixed the one call site: `fetch(locator, authorization_receipt=authorization)`, dropping the invalid third argument entirely; egress.py's own signature is correct and untouched. `nodes/sources.py` was not previously covered by any node's write set in this remediation graph -- amended N30_PREFLIGHT_EGRESS's `writes:` list in implementation.graph.v7.yaml to add it (egress/retrieval is squarely this node's domain: N30 already owns the co-located `nodes/inputs.py` and the shared `test_plan26_deterministic_nodes.py`, and already reads `egress.py`), and widened this node's `test_plan26_deterministic_nodes.py` verification filter from 'D03 or capability' to 'D03 or capability or D06B' to cover the new regression test. One prior test double in this same file (`fetch=lambda locator, authorization, scope: ...`) independently encoded the identical wrong calling convention and never caught the bug because it accepted any shape; replaced with the real keyword-only signature, and added a new dedicated regression test (`test_D06B_calls_the_real_source_retriever_fetch_signature`) using a fetch stub that enforces the real signature exactly, proving D06B's call succeeds end-to-end (real `retrievals` entry produced, no `pending_failure`). Full N30 suite: 62 passed/27 subtests (cli/run_curriculum), 16 passed (D03/capability/D06B, up from 10), zero scan violations (6 files now scanned, up from 5), live driver_capabilities.ready: true for both drivers."
     }
   ],
-  "invalidated_descendants": [],
+  "invalidated_descendants": ["N40_INTEGRATION_OWNERSHIP", "N50_EVIDENCE_AUDIT_CONTROLS", "N60_ADVERSARIAL_REGRESSION"],
   "node_id": "N30_PREFLIGHT_EGRESS",
   "outcome": "PASSED",
   "predecessor_receipts": {
-    "N20_PROVIDER_TRANSPORT": "55b55d26aa4bb105f249f30c955a33ddf4d43a4fe6ae19b22631ebdfdd0ce2d7"
+    "N20_PROVIDER_TRANSPORT": "f8303f193fd68fbfa541a50c1c31e9289a0e8ebeb8b258071bf0e747b0d70bf1"
   },
   "prompt_sha256": "c590af3176ad36f2b021dfdf2a231bbbe525fa92e6d2395f1e284ad88a92e1e8",
   "run_id": "run27-execpkgv2-v7-2026-08-14",

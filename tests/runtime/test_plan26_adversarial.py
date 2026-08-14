@@ -234,9 +234,10 @@ class _StubRetriever:
     def __init__(self) -> None:
         self.fetched: list[str] = []
 
-    def fetch(self, locator: Any, authorization: Any, scope: Any) -> dict[str, Any]:
+    def fetch(self, locator: Any, *, authorization_receipt: Any,
+              data_class: str = "primary_source_bytes") -> dict[str, Any]:
         self.fetched.append(str(locator))
-        body = json.dumps({"locator": locator, "scope": scope}, sort_keys=True).encode()
+        body = json.dumps({"locator": locator}, sort_keys=True).encode()
         return {
             "locator": locator,
             "sha256": hashlib.sha256(body).hexdigest(),
