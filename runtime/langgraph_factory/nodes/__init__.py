@@ -670,9 +670,37 @@ def deterministic_node(node_id: str) -> Callable[[Callable[..., Any]], Callable[
             except ExpectedFailure as error:
                 # Spec 6.1: every outgoing guard reads `pending_failure` first, so a
                 # classified failure clears any stale routing classification.
+                #
+                # A terminal_candidate is built here too, not left for some later
+                # node to supply: `_failure_destination` (routing.py) routes
+                # straight to D98_WRITE_TERMINAL the moment `pending_failure` is
+                # truthy, with no classifier hop in between for a deterministic
+                # node's failure (unlike a model node's, which D91 gets to shape
+                # first). Without one, D98's own independent revalidation always
+                # rejected a bare `None` candidate as "not a JSON object" --
+                # discarding the real, already-classified failure into an
+                # uninformative generic rejection. The same gap, and the same fix,
+                # as graph.py's `_boundary` (N40V7-F12): shape matches every other
+                # SYSTEM_FAILURE writer exactly. `state` here is the full incoming
+                # state, before `project()` narrows it to this node's own
+                # projection, so `artifact_heads`/`evidence_index_entries` are
+                # still reachable.
+                full_state = state if isinstance(state, Mapping) else {}
+                artifact_heads = full_state.get("artifact_heads") or {}
                 return {
                     "pending_failure": failure_record(node_id, error),
                     "pending_guard": None,
+                    "terminal_candidate": {
+                        "kind": "SYSTEM_FAILURE",
+                        "failure": {"class": error.failure_class, "cause": error.cause},
+                        "node": node_id,
+                        "safe_heads": {
+                            stream: head.get("hash")
+                            for stream, head in sorted(artifact_heads.items())
+                            if isinstance(head, dict)
+                        },
+                        "audit_high_water_mark": len(full_state.get("evidence_index_entries") or []),
+                    },
                 }
             if not isinstance(update, dict):
                 raise CatalogueViolation(

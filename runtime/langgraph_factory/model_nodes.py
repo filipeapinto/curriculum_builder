@@ -186,6 +186,12 @@ RETRYABLE_FAILURE_CLASSES: frozenset[str] = frozenset({
     # outcome, so it is transient by construction and a later attempt must still
     # pass D90 (spec 6.2 D92, section 11.3).
     "aborted_activation",
+    # M01 discover, WebSearch-backed (N20V7-F13): the worker searched and found
+    # nothing it could verify. Never a fabricated locator and never a silent
+    # success -- bounded retry, then honest CONVERGENCE_EXHAUSTED, exactly like
+    # any other transient outcome; never the human-facing prerequisite pause
+    # D06B raises for the unrelated case of no discovery having run at all.
+    "no_verified_source",
 })
 
 # Content the model actually produced but that violates its declared scope. These are
@@ -1215,12 +1221,16 @@ def _failure_update(*, spec: ProjectionSpec, reservation: Mapping[str, Any],
 
 
 def _dispatch(spec_name: str, packet: Mapping[str, Any], context: ModelNodeContext,
-              *, needs_correlation_key: bool = False,
+              *, needs_correlation_key: bool = False, web_search: bool = False,
               ) -> tuple[_Dispatch | None, dict[str, Any] | None]:
     """The module's only transport call site.
 
     Returning ``(None, failure_update)`` rather than raising keeps a model failure a
     routable state fact: D91 classifies it and only D90 may authorize another attempt.
+
+    ``web_search`` defaults to False for every job; only M01's ``discover`` phase
+    passes True (N20V7-F13, spec decision) so the worker can find and verify real
+    candidate locators instead of refusing when it cannot confirm a URL exists.
     """
 
     spec = PROJECTION_SPECS[spec_name]
@@ -1242,6 +1252,7 @@ def _dispatch(spec_name: str, packet: Mapping[str, Any], context: ModelNodeConte
             episode_id=correlation["episode_id"],
             projection=projection,
             staged_inputs=staged,
+            web_search=web_search,
         )
     except tp.TransportError as error:
         failure_class = getattr(error, "failure_class", type(error).__name__)
@@ -1352,17 +1363,32 @@ def m01_discover_unit_sources(packet: Mapping[str, Any],
     """
 
     dispatch, failure = _dispatch("M01_discovery", packet, context,
-                                  needs_correlation_key=True)
+                                  needs_correlation_key=True, web_search=True)
     if dispatch is None:
         return failure  # type: ignore[return-value]
     try:
         _validate_candidate_shape(dispatch.candidate, dispatch.route)
     except CANDIDATE_VALIDATION_ERRORS as error:
         return _reject(dispatch, "candidate_control_field", str(error))
+    request_id = dispatch.projection["request"].get("request_id")
+    if "no_verified_source" in dispatch.candidate:
+        # WebSearch (N20V7-F13) ran and found nothing this worker could verify.
+        # A typed, retryable-then-exhaustible failure -- never a silent success,
+        # never a fabricated locator, and never the human-facing prerequisite
+        # pause D06B raises for an unrelated "no discovery ran at all" case.
+        for entry in dispatch.candidate["no_verified_source"]:
+            if entry.get("request_id") != request_id:
+                return _reject(dispatch, "candidate_undeclared_artifact",
+                               f"no_verified_source cites request "
+                               f"{entry.get('request_id')!r}, projection declared "
+                               f"{request_id!r}")
+        reasons = "; ".join(
+            str(entry.get("reason")) for entry in dispatch.candidate["no_verified_source"])
+        return _reject(dispatch, "no_verified_source",
+                       f"no source could be verified for {request_id!r}: {reasons}")
     if "locators" not in dispatch.candidate:
         return _reject(dispatch, "candidate_undeclared_artifact",
                        "discovery must emit locators, not interpretations")
-    request_id = dispatch.projection["request"].get("request_id")
     for locator in dispatch.candidate["locators"]:
         if locator.get("request_id") != request_id:
             return _reject(dispatch, "candidate_undeclared_artifact",

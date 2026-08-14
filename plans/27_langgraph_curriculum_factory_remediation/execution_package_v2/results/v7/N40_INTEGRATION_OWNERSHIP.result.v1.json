@@ -1,5 +1,5 @@
 {
-  "attempt_id": "N40_INTEGRATION_OWNERSHIP-execpkgv2-v7-attempt-7",
+  "attempt_id": "N40_INTEGRATION_OWNERSHIP-execpkgv2-v7-attempt-9",
   "changed_files": [
     {
       "change": "modified",
@@ -32,9 +32,14 @@
       "sha256": "903abda0f4df3b01dd91d1c8d515721c91db4df78da36a55b803a4e14b422439"
     },
     {
+      "change": "created",
+      "path": "runtime/langgraph_factory/nodes/__init__.py",
+      "sha256": "16f5815975b9eaeac0cfa4dce80c75aa50576422041cd8a934f7a21bbce41754"
+    },
+    {
       "change": "modified",
       "path": "tests/runtime/test_plan26_topology.py",
-      "sha256": "2e469c459ce3797bd12f533682c28a9b339d13fa363301ac59e4ae6f2917a296"
+      "sha256": "dbc435c439b6ddb9a327ec560c0b5d6bf32dbb8716d207d8c8146fb7e038502a"
     },
     {
       "change": "modified",
@@ -54,17 +59,22 @@
     {
       "change": "modified",
       "path": "plans/27_langgraph_curriculum_factory_remediation/execution_package_v2/results/v7/evidence/N40_INTEGRATION_OWNERSHIP/01_pytest_n40.log",
-      "sha256": "e5e3f8eb80fd34232b5b8e9c86df5e989edc6e67f8e4cc9f0cf9e7cca84056fb"
+      "sha256": "2f2a31c3497e50e80ba571d98f764ad16a348e4f374f7ea7dbe1a5ea301f8d73"
     },
     {
       "change": "modified",
       "path": "plans/27_langgraph_curriculum_factory_remediation/execution_package_v2/results/v7/evidence/N40_INTEGRATION_OWNERSHIP/02_scan_node_n40.log",
-      "sha256": "a6d566cbfd72e03f6353894065c1d18ae9702f3f51b2e87e43c432dcf4d47ac0"
+      "sha256": "c25336abd9a5f6e756384d031c358217960e4de7ff2c202e9211ada05f8096d4"
     },
     {
       "change": "modified",
       "path": "plans/27_langgraph_curriculum_factory_remediation/execution_package_v2/results/v7/evidence/N40_INTEGRATION_OWNERSHIP/03_verify_ownership.log",
       "sha256": "25d74851a58994b406e2073ecee8a8481f6189d1936e1c62325ca7e30920cfb9"
+    },
+    {
+      "change": "created",
+      "path": "plans/27_langgraph_curriculum_factory_remediation/execution_package_v2/results/v7/evidence/N40_INTEGRATION_OWNERSHIP/04_n40v7_f13_boundary_regression_tests.log",
+      "sha256": "477fe22034ac7db5d9b3d0a66a9d563ea0bf4104a8fee79a4e797ae6c97d9d4a"
     }
   ],
   "commands": [
@@ -72,39 +82,46 @@
       "argv": ["python3", "-m", "pytest", "-q", "tests/runtime/test_plan26_topology.py", "tests/runtime/test_plan26_unit_graph.py", "tests/runtime/test_plan26_repair_acceptance.py", "tests/runtime/test_plan26_workbook.py"],
       "exit_code": 0,
       "log": "plans/27_langgraph_curriculum_factory_remediation/execution_package_v2/results/v7/evidence/N40_INTEGRATION_OWNERSHIP/01_pytest_n40.log",
-      "log_sha256": "e5e3f8eb80fd34232b5b8e9c86df5e989edc6e67f8e4cc9f0cf9e7cca84056fb"
+      "log_sha256": "2f2a31c3497e50e80ba571d98f764ad16a348e4f374f7ea7dbe1a5ea301f8d73"
     },
     {
       "argv": ["python3", "plans/27_langgraph_curriculum_factory_remediation/execution_package_v2/controller/scan_node.py", "--node", "N40_INTEGRATION_OWNERSHIP", "--graph", "plans/27_langgraph_curriculum_factory_remediation/execution_package_v2/implementation.graph.v7.yaml"],
       "exit_code": 0,
       "log": "plans/27_langgraph_curriculum_factory_remediation/execution_package_v2/results/v7/evidence/N40_INTEGRATION_OWNERSHIP/02_scan_node_n40.log",
-      "log_sha256": "a6d566cbfd72e03f6353894065c1d18ae9702f3f51b2e87e43c432dcf4d47ac0"
+      "log_sha256": "c25336abd9a5f6e756384d031c358217960e4de7ff2c202e9211ada05f8096d4"
     },
     {
       "argv": ["python3", "plans/27_langgraph_curriculum_factory_remediation/controller/verify_ownership.py", "--contract", "plans/27_langgraph_curriculum_factory_remediation/contracts/integration_ownership.v1.yaml", "--graph", "plans/27_langgraph_curriculum_factory_remediation/execution_package_v2/implementation.graph.v7.yaml"],
       "exit_code": 0,
       "log": "plans/27_langgraph_curriculum_factory_remediation/execution_package_v2/results/v7/evidence/N40_INTEGRATION_OWNERSHIP/03_verify_ownership.log",
       "log_sha256": "25d74851a58994b406e2073ecee8a8481f6189d1936e1c62325ca7e30920cfb9"
+    },
+    {
+      "argv": ["python3", "-m", "pytest", "-q", "tests/runtime/test_plan26_topology.py", "-k", "deterministic_nodes_own or boundary", "-v"],
+      "exit_code": 0,
+      "log": "plans/27_langgraph_curriculum_factory_remediation/execution_package_v2/results/v7/evidence/N40_INTEGRATION_OWNERSHIP/04_n40v7_f13_boundary_regression_tests.log",
+      "log_sha256": "477fe22034ac7db5d9b3d0a66a9d563ea0bf4104a8fee79a4e797ae6c97d9d4a"
     }
   ],
   "evidence": [
     "plans/27_langgraph_curriculum_factory_remediation/execution_package_v2/results/v7/evidence/N40_INTEGRATION_OWNERSHIP/01_pytest_n40.log",
     "plans/27_langgraph_curriculum_factory_remediation/execution_package_v2/results/v7/evidence/N40_INTEGRATION_OWNERSHIP/02_scan_node_n40.log",
-    "plans/27_langgraph_curriculum_factory_remediation/execution_package_v2/results/v7/evidence/N40_INTEGRATION_OWNERSHIP/03_verify_ownership.log"
+    "plans/27_langgraph_curriculum_factory_remediation/execution_package_v2/results/v7/evidence/N40_INTEGRATION_OWNERSHIP/03_verify_ownership.log",
+    "plans/27_langgraph_curriculum_factory_remediation/execution_package_v2/results/v7/evidence/N40_INTEGRATION_OWNERSHIP/04_n40v7_f13_boundary_regression_tests.log"
   ],
   "findings": [
     {
       "disposition": "resolved",
-      "id": "N40V7-F12",
+      "id": "N40V7-F13",
       "severity": "critical",
-      "summary": "The first of two independent, concurrent defects live-verified as the true root cause behind N70's repeatedly-observed 'terminal candidate is not a JSON object' SYSTEM_FAILURE symptom (the second is N30V7-F03, filed alongside this finding). Direct SQLite checkpoint archaeology of the live N70 run's `writes` table showed two tasks racing in the same LangGraph superstep: D91's own correct repair-classification of one M01 discovery content violation, and a SEPARATE `_boundary`-caught unhandled exception from D06B_RETRIEVE_SOURCE_CANDIDATES (the N30V7-F03 TypeError) independently routing to D98_WRITE_TERMINAL. graph.py's `_boundary` (spec 6.1's common node boundary, the sole place every node body's exceptions are classified) built a `pending_failure` on any unhandled exception but never a matching `terminal_candidate` -- so the instant `_failure_destination` routed straight to D98 (no classifier hop in between, unlike a model node's failure which D91 gets to shape first), D98's own independent revalidation (nodes/terminal.py) always rejected the bare `None` candidate as 'not a JSON object', discarding the real exception message (faithfully recorded in `pending_failure.message`, e.g. this run's genuine 'SourceRetriever.fetch() takes 2 positional arguments but 4 were given') behind a generic, uninformative rejection. This explains why the SAME shallow symptom kept recurring across multiple fix rounds this session even as the underlying cause changed each time. Fixed within N40's write set (graph.py): the exception handler now also builds a well-formed SYSTEM_FAILURE `terminal_candidate` (kind/failure/node/safe_heads/audit_high_water_mark), matching every other SYSTEM_FAILURE writer's shape (model_nodes.py D91, repair.py D17/D18, workbook.py D29) exactly, so D98's shared, independent validator accepts it and the real failure is preserved in the terminal record instead of masked. Extended the existing boundary-exception test in place (`test_plan26_topology.py`) to drive `_boundary` with a real `artifact_heads`/`evidence_index_entries` state and round-trip the synthesized candidate through the real `validate_terminal_candidate`, proving it is accepted. One pre-existing test double (`test_plan26_unit_graph.py`'s `_StubRetriever.fetch`) independently encoded the same wrong three-positional-argument `SourceRetriever.fetch` convention N30V7-F03 fixed in production, which broke once the real call site was corrected and a genuine end-to-end retrieval could complete inside these fixtures for the first time; updated the stub to the real keyword-only signature. Full N40 suite: 209/209 passed (unchanged count -- the regression test extended an existing one rather than adding a new one), zero scan violations, 75/75 ownership claims valid."
+      "summary": "The second of two independent, concurrent defects surfaced by this round's N70 live production run (the first is N30V7-F05, filed alongside this finding): the same missing-terminal_candidate gap `_boundary` had (N40V7-F12, fixed earlier this lineage), one layer further in. `deterministic_node` (nodes/__init__.py) catches `ExpectedFailure` itself -- before an exception ever reaches graph.py's `_boundary` -- and had the identical bug: its except-block returned `{pending_failure, pending_guard: None}` with no `terminal_candidate`, so `_failure_destination` (routing.py) routed straight to D98_WRITE_TERMINAL (no classifier hop for a deterministic node's failure, unlike a model node's, which D91 shapes first) and D98's independent revalidation rejected the bare `None` candidate as 'not a JSON object' -- discarding the real, already-classified failure (this run: D06B's SystemFailure over the N30V7-F05 locator bug) into the same uninformative generic rejection this whole finding lineage keeps tracing back to. `nodes/__init__.py` was not previously covered by any node's write set -- amended N40_INTEGRATION_OWNERSHIP's `writes:` list in implementation.graph.v7.yaml to add it (the same architectural boundary concern as the already-owned graph.py, one layer inward). Fixed: the except-block now also builds a SYSTEM_FAILURE-shaped `terminal_candidate` (kind/failure/node/safe_heads/audit_high_water_mark) from the caught error's own `failure_class`/`cause`, matching every other SYSTEM_FAILURE writer's shape exactly, using the full incoming `state` (available before `project()` narrows it) for `artifact_heads`/`evidence_index_entries`. New regression test drives `deterministic_node` directly with a body that raises `SystemFailure`, proving the synthesized candidate is accepted by the real `validate_terminal_candidate`. One existing test (`test_d30_refuses_to_pause_on_a_non_pause_failure`, N30-owned) asserted the absence of `terminal_candidate` -- encoding the very bug being fixed -- corrected to assert its presence and validity instead. Full N40 suite: 210 passed (up from 209, +1 for the new deterministic_node regression test), zero scan violations (11 files now scanned, up from 10), 75/75 ownership claims valid."
     }
   ],
   "invalidated_descendants": ["N50_EVIDENCE_AUDIT_CONTROLS", "N60_ADVERSARIAL_REGRESSION"],
   "node_id": "N40_INTEGRATION_OWNERSHIP",
   "outcome": "PASSED",
   "predecessor_receipts": {
-    "N30_PREFLIGHT_EGRESS": "0fce77aef1ee1c6577c059c350c559cb5fcc3fe04bd1c110399222fc9887fb56"
+    "N30_PREFLIGHT_EGRESS": "ae17503196ad4d5571791ff916cec698853f5e2173fe7311cf789ab9e0fd5440"
   },
   "prompt_sha256": "a517a0198de0cecca6340b317c9380410a400af11d7f358baa08bf68c5b8b797",
   "run_id": "run27-execpkgv2-v7-2026-08-14",

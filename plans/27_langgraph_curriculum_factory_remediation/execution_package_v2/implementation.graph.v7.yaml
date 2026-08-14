@@ -298,6 +298,13 @@ nodes:
       - runtime/langgraph_factory/repair.py
       - runtime/langgraph_factory/acceptance.py
       - runtime/langgraph_factory/workbook.py
+      # nodes/__init__.py added live (N40V7-F13, sibling to the N40V7-F12
+      # graph.py boundary fix): deterministic_node's own ExpectedFailure catch
+      # has the identical missing-terminal_candidate gap `_boundary` had --
+      # same architectural concern, different layer -- and no node's write set
+      # covered this file until a real N70 production run hit it (D06B's
+      # PrerequisitePause/SystemFailure classification, uncaught until here).
+      - runtime/langgraph_factory/nodes/__init__.py
       - tests/runtime/test_plan26_topology.py
       - tests/runtime/test_plan26_unit_graph.py
       - tests/runtime/test_plan26_repair_acceptance.py

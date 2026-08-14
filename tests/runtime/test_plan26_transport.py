@@ -204,6 +204,38 @@ def run_m03(transport: tp.CliTransport) -> tp.TransportResult:
         projection={"unit_id": "U01"})
 
 
+def test_execute_web_search_grants_the_tool_only_when_asked(tmp_path: Path):
+    """N20V7-F13: `execute(web_search=True)` is the one path that ever launches Claude
+    with a non-empty `--tools`, and it grants exactly `WebSearch`, nothing broader.
+    """
+
+    no_verified_source = {"no_verified_source": [
+        {"request_id": "L01/1/x", "reason": "search returned nothing usable"}]}
+    runner = FakeRunner(Step(stdout=claude_stream_events(structured_output=no_verified_source)))
+    transport = make_transport(tmp_path, runner)
+    transport.execute(
+        job_id="M01_RESEARCH_UNIT_SOURCES", activation_id="act-ws", episode_id="ep-000001",
+        projection={"unit_id": "U01"}, web_search=True)
+    argv = runner.calls[-1]["argv"]
+    assert argv[argv.index("--tools") + 1] == "WebSearch"
+
+    runner2 = FakeRunner(Step(stdout=claude_stream_events(structured_output=M03_CANDIDATE)))
+    transport2 = make_transport(tmp_path, runner2)
+    run_m03(transport2)
+    argv2 = runner2.calls[-1]["argv"]
+    assert argv2[argv2.index("--tools") + 1] == ""
+
+
+def test_execute_rejects_web_search_for_a_non_claude_route(tmp_path: Path):
+    runner = FakeRunner(Step(stdout=codex_events()))
+    transport = make_transport(tmp_path, runner)
+    with pytest.raises(tp.RouteRejected):
+        transport.execute(
+            job_id="M05_REVIEW_ACTUAL_UNIT", activation_id="act-ws2", episode_id="ep-000001",
+            projection={"unit_id": "U01"}, web_search=True)
+    assert runner.calls == []
+
+
 # ------------------------------------------------------- TEST 1: exactly eight routes
 
 
@@ -1191,6 +1223,39 @@ def test_build_job_argv_requires_the_right_delivery_for_each_cli():
     codex_route = tp.resolve_route("M05_REVIEW_ACTUAL_UNIT")
     with pytest.raises(tp.RouteRejected):
         tp.build_job_argv(codex_route, workspace=Path("/tmp/ws"))
+
+
+def test_claude_argv_grants_no_tools_by_default_and_only_websearch_when_asked():
+    """N20V7-F13: every job keeps `--tools ""` unless a caller explicitly opts in.
+
+    `tools` is the one narrow, named exception to the blanket "the worker gets
+    no tools" contract (spec 7.2) -- model_nodes.py's M01-discover call site is
+    the only one that ever asks for it, and only ever asks for exactly
+    "WebSearch", never a broader grant.
+    """
+
+    default_argv = tp.build_claude_argv(
+        workspace="/tmp/ws", model="m", effort="high", cli_schema_projection={})
+    assert default_argv[default_argv.index("--tools") + 1] == ""
+
+    assert default_argv[default_argv.index("--permission-mode") + 1] == "plan"
+
+    search_argv = tp.build_claude_argv(
+        workspace="/tmp/ws", model="m", effort="high", cli_schema_projection={},
+        tools="WebSearch")
+    assert search_argv[search_argv.index("--tools") + 1] == "WebSearch"
+    assert search_argv[search_argv.index("--permission-mode") + 1] == "bypassPermissions"
+    # Only --tools and --permission-mode differ from the pinned default argv --
+    # bypassPermissions grants nothing --tools did not already name (live-verified,
+    # N20V7-F13: plan mode blocks tool use outright; default mode headless-denies
+    # every call with no TTY to approve a prompt).
+    diffs = {i for i, (a, b) in enumerate(zip(default_argv, search_argv)) if a != b}
+    assert diffs == {default_argv.index("--tools") + 1, default_argv.index("--permission-mode") + 1}
+
+    claude_route = tp.resolve_route("M01_RESEARCH_UNIT_SOURCES")
+    routed = tp.build_job_argv(claude_route, workspace=Path("/tmp/ws"),
+                               cli_schema_projection={}, tools="WebSearch")
+    assert routed[routed.index("--tools") + 1] == "WebSearch"
 
 
 def test_workspace_contains_only_the_authorized_staging_set(tmp_path: Path):

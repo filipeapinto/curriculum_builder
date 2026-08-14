@@ -22,6 +22,7 @@ from . import (
     staged_dispatch,
     worker_packet,
 )
+from ..egress import AuthorizationRecord, authorize_transmission
 
 __all__ = [
     "SOURCE_REQUEST_FIELDS",
@@ -354,7 +355,15 @@ def D06B_RETRIEVE_SOURCE_CANDIDATES(
         "authorization",
         "retrieval requires a current external-data authorization record",
     )
-    authorization = authorizations[-1]
+    authorization_raw = _record(authorizations[-1], "external authorization")
+    authorization_record = AuthorizationRecord(
+        run_id=projection["run_id"],
+        curriculum_digest=authorization_raw.get("curriculum_digest", ""),
+        output_root=authorization_raw.get("output_root", ""),
+        approved_at_utc=str(authorization_raw.get("approved_at_utc", "")),
+        expires_at_utc=str(authorization_raw.get("expires_at_utc", "")),
+        providers=authorization_raw.get("providers") or {},
+    )
 
     retrievals: dict[str, Any] = {}
     unavailable: list[dict[str, Any]] = []
@@ -373,8 +382,20 @@ def D06B_RETRIEVE_SOURCE_CANDIDATES(
                 unavailable.append({"request_key": request_key, "reason": "no locator discovered"})
             continue
         locator = locators[0]
+        locator_url = candidate_field(locator, "url")
+        require(
+            isinstance(locator_url, str) and locator_url,
+            "schema_contract",
+            f"discovery for {request_key} declares a locator with no url",
+        )
         try:
-            response = fetch(locator, authorization_receipt=authorization)
+            authorization_receipt = authorize_transmission(
+                authorization_record, provider="primary_source_hosts",
+                data_classes=["primary_source_bytes"],
+                curriculum_digest=authorization_record.curriculum_digest,
+                run_id=authorization_record.run_id,
+                output_root=authorization_record.output_root)
+            response = fetch(locator_url, authorization_receipt=authorization_receipt)
         except FileNotFoundError as error:
             unavailable.append({"request_key": request_key, "reason": str(error)})
             continue

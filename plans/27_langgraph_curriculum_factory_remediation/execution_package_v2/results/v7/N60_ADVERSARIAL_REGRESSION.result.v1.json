@@ -1,30 +1,30 @@
 {
-  "attempt_id": "N60_ADVERSARIAL_REGRESSION-execpkgv2-v7-attempt-7",
+  "attempt_id": "N60_ADVERSARIAL_REGRESSION-execpkgv2-v7-attempt-9",
   "changed_files": [
     {
       "change": "modified",
       "path": "plans/27_langgraph_curriculum_factory_remediation/execution_package_v2/results/v7/evidence/N60_ADVERSARIAL_REGRESSION/01_pytest_n60_own.log",
-      "sha256": "f8346391dae3fd31b4f603b1e1c7640f1aac6b3570b9ed041b1cde4285cbf6a5"
+      "sha256": "fdb96dfed6e3b50494c8d05ca25cc10cde9d568d899790f3516c44ddb5bf8638"
     },
     {
       "change": "modified",
       "path": "plans/27_langgraph_curriculum_factory_remediation/execution_package_v2/results/v7/evidence/N60_ADVERSARIAL_REGRESSION/02_pytest_tests_runtime_run1.log",
-      "sha256": "cb97e9551ecfbfa3ffdae3550a6a886f1292af790e6741052567907bc2f99948"
+      "sha256": "aa1914dc6f5523a23b4e41e062748b283a76e14862474e5dd9a7b1f39b86f3e9"
     },
     {
       "change": "modified",
       "path": "plans/27_langgraph_curriculum_factory_remediation/execution_package_v2/results/v7/evidence/N60_ADVERSARIAL_REGRESSION/03_pytest_tests_runtime_run2.log",
-      "sha256": "1037b6d2a33c1265cf8d36075eb702d8f4641e93db4198e3f0723f204bf3f119"
+      "sha256": "c70a232f312b094a4e834706b40e27ad87bbdbd3166fec8b2e263e56f73eb5fc"
     },
     {
       "change": "modified",
       "path": "plans/27_langgraph_curriculum_factory_remediation/execution_package_v2/results/v7/evidence/N60_ADVERSARIAL_REGRESSION/04_pytest_plan27_tests_run1.log",
-      "sha256": "6ec068ee5d9a1dcdebfd3bd72b6cabdf22c1580def29dbd6249fa7ffb02af3e9"
+      "sha256": "b661d75f8e2289f4e94b0a258ea25bd5a56d6db0c4ec608a4f9a49026da4f7d3"
     },
     {
       "change": "modified",
       "path": "plans/27_langgraph_curriculum_factory_remediation/execution_package_v2/results/v7/evidence/N60_ADVERSARIAL_REGRESSION/05_pytest_plan27_tests_run2.log",
-      "sha256": "490d055b5cfe53d660ce8b96a5a347546a13f836b10e1f8942ec0ff6feda7863"
+      "sha256": "30a0f34b37e21f98acffb28c51f095ee9e652cdb8f717d61728f227a12cfff7f"
     },
     {
       "change": "modified",
@@ -42,7 +42,7 @@
       "argv": ["python3", "-m", "pytest", "-q", "tests/runtime/test_plan27_adversarial.py", "plans/27_langgraph_curriculum_factory_remediation/tests/test_run27_adversarial.py"],
       "exit_code": 0,
       "log": "plans/27_langgraph_curriculum_factory_remediation/execution_package_v2/results/v7/evidence/N60_ADVERSARIAL_REGRESSION/01_pytest_n60_own.log",
-      "log_sha256": "f8346391dae3fd31b4f603b1e1c7640f1aac6b3570b9ed041b1cde4285cbf6a5"
+      "log_sha256": "fdb96dfed6e3b50494c8d05ca25cc10cde9d568d899790f3516c44ddb5bf8638"
     },
     {
       "argv": ["python3", "plans/27_langgraph_curriculum_factory_remediation/execution_package_v2/controller/scan_node.py", "--graph", "plans/27_langgraph_curriculum_factory_remediation/execution_package_v2/implementation.graph.v7.yaml"],
@@ -63,16 +63,16 @@
   "findings": [
     {
       "disposition": "resolved",
-      "id": "N60V7-CASCADE-F06",
+      "id": "N60V7-CASCADE-F08",
       "severity": "observation",
-      "summary": "Pure re-verification, cascading from N30V7-F03 (SourceRetriever.fetch call-site fix) and N40V7-F12 (graph.py boundary terminal_candidate fix) -- the two independent root causes behind N70's repeated 'terminal candidate is not a JSON object' symptom, live-diagnosed via checkpoint/writes-table archaeology of a real production run. N60's own two owned files are byte-identical to attempt-6. Complete denominator rerun twice for stability: tests/runtime -- 1311 passed, 2 skipped, 419 subtests passed, 1 failed, identical both runs (evidence 02, 03), the same sole pre-existing/unrelated failure already independently baseline-proven (evidence 07, still unaffected, byte-identical, reused unchanged). plans/27_langgraph_curriculum_factory_remediation/tests -- 83 passed, identical both runs (evidence 04, 05). scan_node.py complete active-tree mode -- 67 files scanned (unchanged: complete-tree mode walks the whole active production/test tree by directory, not the per-node writes union, so a newly-declared write-set member of an already-on-disk file does not change this count), zero violations (evidence 06). Admitted as a new attempt strictly to rebind predecessor_receipts to N50 attempt-7's new digest."
+      "summary": "Pure re-verification, cascading from N30V7-F05 (D06B locator.url extraction fix) and N40V7-F13 (deterministic_node's own terminal_candidate fix). N60's own two owned files are byte-identical to attempt-8. Complete denominator rerun twice for stability: tests/runtime -- 1319 passed (up from 1318: +1 new N40V7-F13 regression test), 2 skipped, 419 subtests passed, 1 failed, identical both runs (evidence 02, 03), the same sole pre-existing/unrelated failure already independently baseline-proven (evidence 07, still unaffected, byte-identical, reused unchanged). plans/27_langgraph_curriculum_factory_remediation/tests -- 83 passed, identical both runs (evidence 04, 05). scan_node.py complete active-tree mode -- 67 files scanned, zero violations (evidence 06). Admitted as a new attempt strictly to rebind predecessor_receipts to N50 attempt-9's new digest."
     }
   ],
   "invalidated_descendants": [],
   "node_id": "N60_ADVERSARIAL_REGRESSION",
   "outcome": "PASSED",
   "predecessor_receipts": {
-    "N50_EVIDENCE_AUDIT_CONTROLS": "1cac1c5c43fe7ae41ceecd865a0eebf318b0be2f2167723163d0995c16069d22"
+    "N50_EVIDENCE_AUDIT_CONTROLS": "9f37bfc3067a654d0261e31a6573255e64b0a5ae9a2936d7965eb119952fc2fc"
   },
   "prompt_sha256": "2f4e8155eeefc5ee9ea4c9a3a4f95c8cc48425463e47a78bb824db7e6016b4e3",
   "run_id": "run27-execpkgv2-v7-2026-08-14",

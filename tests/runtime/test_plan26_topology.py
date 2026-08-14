@@ -974,6 +974,43 @@ def test_the_node_boundary_classifies_an_unexpected_exception_as_a_system_failur
     assert validation.accepted, validation.rejections
 
 
+def test_deterministic_nodes_own_expected_failure_catch_also_builds_a_terminal_candidate():
+    """N40V7-F13: the same missing-terminal_candidate gap `_boundary` had
+    (N40V7-F12), one layer further in -- `deterministic_node` (nodes/__init__.py)
+    catches `ExpectedFailure` itself, before an exception ever reaches
+    `_boundary`, and had the identical bug. Live-verified against a real N70
+    production run: D06B_RETRIEVE_SOURCE_CANDIDATES raised a SystemFailure that
+    reached D98 with no terminal_candidate at all, the same uninformative "not
+    a JSON object" rejection this whole finding lineage keeps tracing back to.
+    """
+
+    from runtime.langgraph_factory import nodes as node_pkg
+    from runtime.langgraph_factory.nodes import terminal as nt2
+
+    @node_pkg.deterministic_node("D05_SELECT_NEXT_UNIT")
+    def body(projection, context):
+        raise node_pkg.SystemFailure("tool", "a tool fault", {"detail": "x"})
+
+    state = {"artifact_heads": {"domain": {"hash": "d" * 8}},
+             "evidence_index_entries": [{}, {}, {}]}
+    update = body(state, None)
+
+    assert update["pending_failure"]["class"] == "system"
+    assert update["pending_failure"]["cause"] == "tool"
+    assert update["pending_guard"] is None
+    assert R.decide("D05_SELECT_NEXT_UNIT", update) == R.TERMINAL
+
+    candidate = update["terminal_candidate"]
+    assert candidate["kind"] == "SYSTEM_FAILURE"
+    assert candidate["node"] == "D05_SELECT_NEXT_UNIT"
+    assert candidate["safe_heads"] == {"domain": "d" * 8}
+    assert candidate["audit_high_water_mark"] == 3
+    projection = {"artifact_heads": state["artifact_heads"],
+                  "evidence_index_entries": state["evidence_index_entries"]}
+    validation = nt2.validate_terminal_candidate(candidate, projection)
+    assert validation.accepted, validation.rejections
+
+
 def test_a_graceful_signal_at_the_boundary_routes_through_the_interrupt_gate():
     class Token:
         def is_set(self):

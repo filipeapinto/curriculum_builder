@@ -111,10 +111,11 @@ class RecordingTransport:
         self.calls: list[dict[str, Any]] = []
 
     def execute(self, *, job_id: str, activation_id: str, episode_id: str,
-                projection: Any, staged_inputs: Any = (), **_: Any) -> tp.TransportResult:
+                projection: Any, staged_inputs: Any = (), web_search: bool = False,
+                **_: Any) -> tp.TransportResult:
         self.calls.append({"job_id": job_id, "activation_id": activation_id,
                            "episode_id": episode_id, "projection": copy.deepcopy(projection),
-                           "staged_inputs": tuple(staged_inputs)})
+                           "staged_inputs": tuple(staged_inputs), "web_search": web_search})
         if self.errors:
             raise self.errors.pop(0)
         route = tp.resolve_route(job_id)
@@ -526,6 +527,69 @@ def test_m01_schema_still_enforces_exactly_one_of_locators_or_interpretations():
     assert validator.is_valid({"interpretations": [interpretation]})
     assert not validator.is_valid({})
     assert not validator.is_valid({"locators": [locator], "interpretations": [interpretation]})
+
+
+def test_m01_schema_also_accepts_no_verified_source_exclusively():
+    """N20V7-F13: `no_verified_source` is a third, mutually exclusive DISCOVER-phase
+    outcome -- WebSearch ran and found nothing verifiable. Must validate alone, and
+    must still conflict with either of the other two branches.
+    """
+    route = tp.resolve_route("M01_RESEARCH_UNIT_SOURCES")
+    schema = tp.load_output_schema(route)
+    validator = jsonschema.Draft202012Validator(schema)
+
+    locator = {"request_id": "r1", "url": "https://example.com", "title": "t",
+               "publisher": "p", "locator_kind": "primary", "rationale": "why"}
+    nvs = {"request_id": "r1", "reason": "search returned nothing usable"}
+
+    assert validator.is_valid({"no_verified_source": [nvs]})
+    assert not validator.is_valid({"locators": [locator], "no_verified_source": [nvs]})
+    assert not validator.is_valid({"no_verified_source": []})  # minItems: 1
+
+
+def test_m01_discover_is_the_only_dispatch_granted_web_search():
+    """N20V7-F13: web_search defaults to False for every _dispatch call site; the
+    M01-discover wrapper is the one spec name that opts in. Live-verified: every
+    other job must keep the blanket no-tools contract untouched.
+    """
+    context, transport = context_for("M01_discovery")
+    mn.m01_discover_unit_sources(packet_for("M01_discovery"), context)
+    assert transport.calls[0]["web_search"] is True
+
+    context2, transport2 = context_for("M01_interpretation")
+    mn.m01_interpret_unit_sources(packet_for("M01_interpretation"), context2)
+    assert transport2.calls[0]["web_search"] is False
+
+    for spec_name in sorted(SPEC_SECTION_9):
+        if spec_name in ("M01_discovery", "M01_interpretation"):
+            continue
+        context3, transport3 = context_for(spec_name)
+        ADAPTER_FOR_SPEC[spec_name](packet_for(spec_name), context3)
+        assert transport3.calls[0]["web_search"] is False, spec_name
+
+
+def test_m01_discover_no_verified_source_becomes_a_typed_retryable_failure():
+    """N20V7-F13: a WebSearch-backed 'nothing verifiable' response must become a
+    pending_failure D91 classifies as retryable-then-exhaustible -- never a silent
+    success (no source_discoveries write) and never a fabricated locator.
+    """
+    candidate = {"no_verified_source": [
+        {"request_id": "REQ-1", "reason": "no indexable source for this topic"}]}
+    update = run("M01_discovery", candidate=candidate)
+    assert "source_discoveries" not in update
+    failure = update["pending_failure"]
+    assert failure["failure_class"] == "no_verified_source"
+    assert "no_verified_source" in mn.RETRYABLE_FAILURE_CLASSES
+
+    classified = mn.classify_model_failure(failure, attempts_used=1)
+    assert classified["pending_guard"]["decision"] == "retry"
+
+
+def test_m01_discover_no_verified_source_must_match_the_staged_request():
+    candidate = {"no_verified_source": [
+        {"request_id": "SOMEONE-ELSES-REQUEST", "reason": "nothing found"}]}
+    update = run("M01_discovery", candidate=candidate)
+    assert update["pending_failure"]["failure_class"] == "candidate_undeclared_artifact"
 
 
 def test_m04_refuses_an_authoritative_brief():

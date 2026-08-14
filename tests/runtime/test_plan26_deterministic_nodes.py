@@ -380,7 +380,7 @@ def test_expected_pause_lands_in_pending_failure_with_the_pause_class() -> None:
             "U001/1": {"unit_id": "U001", "source_epoch": 1, "request_keys": ["U001/1/f"], "size": 1}
         },
         "source_discoveries": {},
-        "external_authorizations": [{"providers": ["primary_source_hosts"]}],
+        "external_authorizations": [{"providers": {"primary_source_hosts": ["primary_source_bytes"]}, "approved_at_utc": "2026-01-01T00:00:00Z", "expires_at_utc": "2099-01-01T00:00:00Z", "curriculum_digest": "c" * 64, "output_root": "/tmp/out"}],
     }
     context = _Context(source_retriever=_Registry(fetch=lambda *args: {}))
     update = sources.D06B_RETRIEVE_SOURCE_CANDIDATES(state, context)
@@ -419,8 +419,10 @@ def test_a_retrieval_tool_fault_is_a_system_failure_not_a_pause() -> None:
         "source_denominators": {
             "U001/1": {"unit_id": "U001", "source_epoch": 1, "request_keys": ["U001/1/f"], "size": 1}
         },
-        "source_discoveries": {"U001/1/f": {"locators": ["https://example.invalid/a"]}},
-        "external_authorizations": [{"providers": ["primary_source_hosts"]}],
+        "source_discoveries": {"U001/1/f": {"locators": [
+            {"request_id": "U001/1/f", "url": "https://example.invalid/a", "title": "t",
+             "publisher": "p", "locator_kind": "primary", "rationale": "why"}]}},
+        "external_authorizations": [{"providers": {"primary_source_hosts": ["primary_source_bytes"]}, "approved_at_utc": "2026-01-01T00:00:00Z", "expires_at_utc": "2099-01-01T00:00:00Z", "curriculum_digest": "c" * 64, "output_root": "/tmp/out"}],
     }
     context = _Context(source_retriever=_Registry(fetch=exploding_fetch))
     update = sources.D06B_RETRIEVE_SOURCE_CANDIDATES(state, context)
@@ -459,14 +461,95 @@ def test_D06B_calls_the_real_source_retriever_fetch_signature() -> None:
         "source_denominators": {
             "U001/1": {"unit_id": "U001", "source_epoch": 1, "request_keys": ["U001/1/f"], "size": 1}
         },
-        "source_discoveries": {"U001/1/f": {"locators": ["https://example.invalid/a"]}},
-        "external_authorizations": [{"providers": ["primary_source_hosts"]}],
+        "source_discoveries": {"U001/1/f": {"locators": [
+            {"request_id": "U001/1/f", "url": "https://example.invalid/a", "title": "t",
+             "publisher": "p", "locator_kind": "primary", "rationale": "why"}]}},
+        "external_authorizations": [{"providers": {"primary_source_hosts": ["primary_source_bytes"]}, "approved_at_utc": "2026-01-01T00:00:00Z", "expires_at_utc": "2099-01-01T00:00:00Z", "curriculum_digest": "c" * 64, "output_root": "/tmp/out"}],
     }
     context = _Context(source_retriever=_Registry(fetch=real_shaped_fetch))
     update = sources.D06B_RETRIEVE_SOURCE_CANDIDATES(state, context)
 
     assert "pending_failure" not in update
     assert update["retrievals"]["U001/1/f"]["sha256"] == "a" * 64
+
+
+def test_D06B_mints_a_real_provider_scoped_receipt_not_the_raw_declaration() -> None:
+    """N30V7-F06 regression: D06B passed the raw, multi-provider authorization
+    DECLARATION straight through as if it were already a per-provider RECEIPT.
+    `SourceRetriever.fetch` requires `authorization_receipt["provider"] ==
+    "primary_source_hosts"` -- a field the raw declaration never carries -- so
+    every real retrieval was denied with `wrong_provider_authorization`, live-
+    verified against a real N70 production run only after WebSearch (N20V7-F13)
+    and the locator.url fix (N30V7-F05) let a genuine retrieval attempt happen
+    for the first time. D06B now mints a real receipt via `authorize_transmission`
+    from the frozen (write-once) declaration plus its own trusted `run_id`.
+    """
+
+    seen: dict[str, Any] = {}
+
+    def recording_fetch(locator: str, *, authorization_receipt: Any,
+                        data_class: str = "primary_source_bytes") -> dict[str, Any]:
+        seen["receipt"] = authorization_receipt
+        return {"sha256": "b" * 64, "status": 200, "content_type": "text/html"}
+
+    state = {
+        "selected_unit_id": "U001",
+        "run_id": "run-x",
+        "episode_id": "ep-x",
+        "effective_run": {"unit_records": [{"id": "U001", "title": "Unit One"}]},
+        "source_requests": [
+            {"key": "U001/1/f", "unit_id": "U001", "required": True, "scope": "applications",
+             "source_epoch": 1, "fact_id": "f", "question": "q?"}
+        ],
+        "source_denominators": {
+            "U001/1": {"unit_id": "U001", "source_epoch": 1, "request_keys": ["U001/1/f"], "size": 1}
+        },
+        "source_discoveries": {"U001/1/f": {"locators": [
+            {"request_id": "U001/1/f", "url": "https://example.invalid/a", "title": "t",
+             "publisher": "p", "locator_kind": "primary", "rationale": "why"}]}},
+        "external_authorizations": [{"providers": {"primary_source_hosts": ["primary_source_bytes"]},
+                                     "approved_at_utc": "2026-01-01T00:00:00Z",
+                                     "expires_at_utc": "2099-01-01T00:00:00Z",
+                                     "curriculum_digest": "c" * 64, "output_root": "/tmp/out"}],
+    }
+    context = _Context(source_retriever=_Registry(fetch=recording_fetch))
+    update = sources.D06B_RETRIEVE_SOURCE_CANDIDATES(state, context)
+
+    assert "pending_failure" not in update
+    assert seen["receipt"]["provider"] == "primary_source_hosts"
+    assert "primary_source_bytes" in seen["receipt"]["data_classes"]
+
+
+def test_D06B_denies_retrieval_when_the_declaration_never_authorized_source_hosts() -> None:
+    """The provider check must still deny honestly when primary_source_hosts truly
+    isn't authorized -- proving the fix does not just always pass.
+    """
+
+    state = {
+        "selected_unit_id": "U001",
+        "run_id": "run-x",
+        "episode_id": "ep-x",
+        "effective_run": {"unit_records": [{"id": "U001", "title": "Unit One"}]},
+        "source_requests": [
+            {"key": "U001/1/f", "unit_id": "U001", "required": True, "scope": "applications",
+             "source_epoch": 1, "fact_id": "f", "question": "q?"}
+        ],
+        "source_denominators": {
+            "U001/1": {"unit_id": "U001", "source_epoch": 1, "request_keys": ["U001/1/f"], "size": 1}
+        },
+        "source_discoveries": {"U001/1/f": {"locators": [
+            {"request_id": "U001/1/f", "url": "https://example.invalid/a", "title": "t",
+             "publisher": "p", "locator_kind": "primary", "rationale": "why"}]}},
+        "external_authorizations": [{"providers": {"anthropic": ["schemas_and_rubrics"]},
+                                     "approved_at_utc": "2026-01-01T00:00:00Z",
+                                     "expires_at_utc": "2099-01-01T00:00:00Z",
+                                     "curriculum_digest": "c" * 64, "output_root": "/tmp/out"}],
+    }
+    context = _Context(source_retriever=_Registry(fetch=lambda *a, **k: {}))
+    update = sources.D06B_RETRIEVE_SOURCE_CANDIDATES(state, context)
+
+    assert update["pending_failure"]["class"] == "system"
+    assert update["pending_failure"]["cause"] == "tool"
 
 
 def test_an_unexpected_exception_is_not_caught_inside_the_node(monkeypatch: Any) -> None:
@@ -1069,7 +1152,13 @@ def test_d30_refuses_to_pause_on_a_non_pause_failure() -> None:
     }
     update = sources.D30_CLASSIFY_PREREQUISITE(state, _Context())
     assert update["pending_failure"]["class"] == "system"
-    assert "terminal_candidate" not in update
+    # N40V7-F12-style regression (deterministic_node's own ExpectedFailure catch,
+    # nodes/__init__.py): a terminal_candidate is now built alongside pending_failure,
+    # so D98 never again rejects this as a bare, uninformative "not a JSON object".
+    candidate = update["terminal_candidate"]
+    assert candidate["kind"] == "SYSTEM_FAILURE"
+    assert candidate["node"] == "D30_CLASSIFY_PREREQUISITE"
+    assert candidate["failure"]["class"] == "system"
 
 
 def test_d30_refuses_to_pause_on_more_than_one_unresolved_fact() -> None:
@@ -2654,9 +2743,15 @@ def test_a_staged_interpretation_packet_carries_only_its_own_retrieval_group() -
                 }
             },
             "source_discoveries": {
-                "U001/1/required_explanation:000": {"locators": ["https://example.test/a"]}
+                "U001/1/required_explanation:000": {"locators": [
+                    {"request_id": "U001/1/required_explanation:000",
+                     "url": "https://example.test/a", "title": "t", "publisher": "p",
+                     "locator_kind": "primary", "rationale": "why"}]}
             },
-            "external_authorizations": [{"key": "auth-1"}],
+            "external_authorizations": [{"providers": {"primary_source_hosts": ["primary_source_bytes"]},
+                                         "approved_at_utc": "2026-01-01T00:00:00Z",
+                                         "expires_at_utc": "2099-01-01T00:00:00Z",
+                                         "curriculum_digest": "c" * 64, "output_root": "/tmp/out"}],
             "effective_run": {"unit_records": [{"id": "U001", "title": "t"}]},
             **_CORRELATION,
         },

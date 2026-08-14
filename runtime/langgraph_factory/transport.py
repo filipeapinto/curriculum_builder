@@ -328,6 +328,7 @@ def build_claude_argv(
     model: str,
     effort: str,
     cli_schema_projection: Mapping[str, Any],
+    tools: str = "",
 ) -> list[str]:
     """The pinned Claude invocation (spec 7.2).
 
@@ -338,14 +339,33 @@ def build_claude_argv(
     as JSON text, not a file path — a live probe against the installed CLI proved a
     bare path argument and the canonical schema's own `$schema` dialect reference are
     both rejected (spec 7.2, N20-F03).
+
+    `tools` defaults to empty (no change to every other job's contract). The one
+    named exception is M01's `discover` phase (spec decision, N20V7-F13): it is
+    dispatched with `tools="WebSearch"` so the worker can find and verify real
+    candidate source locators instead of refusing outright when it has no way to
+    confirm a URL exists. WebSearch is Claude Code's own built-in, subscription-
+    authenticated tool -- it never touches this sandbox's file system or egress
+    guard; the worker still cannot write a file (`--tools` grants nothing else),
+    and `SourceRetriever` (egress.py) remains the only path that ever fetches,
+    validates, hashes, or receipts source bytes. Every other job keeps `tools=""`.
+
+    Permission mode tracks the same grant: `--permission-mode plan` (every other
+    job) blocks tool execution outright even when a tool is named in `--tools` --
+    live-verified (N20V7-F13): the worker refused to search at all, citing plan
+    mode. `default` mode still headless-denies every call (no TTY to approve a
+    prompt) -- also live-verified. `bypassPermissions` is the one mode that lets
+    an already-`--tools`-restricted worker actually use the single tool it was
+    granted without a prompt neither side can answer; it grants nothing `--tools`
+    did not already name, so it is used only alongside a non-empty `tools`.
     """
     return [
         "claude", "--print",
         "--output-format", "stream-json", "--verbose",
         "--json-schema", canonical_json(dict(cli_schema_projection)),
         "--model", model, "--effort", effort,
-        "--permission-mode", "plan",
-        "--tools", "",
+        "--permission-mode", ("bypassPermissions" if tools else "plan"),
+        "--tools", tools,
         "--add-dir", str(workspace),
         "--no-session-persistence",
         "--setting-sources", "",
@@ -358,6 +378,7 @@ def build_job_argv(
     workspace: Path,
     instruction: str | None = None,
     cli_schema_projection: Mapping[str, Any] | None = None,
+    tools: str = "",
 ) -> list[str]:
     if route.cli == "codex":
         if instruction is None:
@@ -369,7 +390,8 @@ def build_job_argv(
         raise RouteRejected(f"{route.job_id}: claude requires a cli_schema_projection")
     return build_claude_argv(workspace=workspace, model=route.model,
                              effort=route.reasoning_effort,
-                             cli_schema_projection=cli_schema_projection)
+                             cli_schema_projection=cli_schema_projection,
+                             tools=tools)
 
 
 def build_cli_schema_projection(schema: Mapping[str, Any]) -> dict[str, Any]:
@@ -1827,6 +1849,7 @@ class CliTransport:
         projection: Mapping[str, Any],
         staged_inputs: Sequence[StagedInput] = (),
         data_classes: Sequence[str] | None = None,
+        web_search: bool = False,
     ) -> TransportResult:
         route = resolve_route(job_id, self.registry)
         resolve_prompt_path(route)
@@ -1835,6 +1858,8 @@ class CliTransport:
         undeclared = sorted(set(requested) - set(route.data_classes))
         if undeclared:
             raise RouteRejected(f"{route.job_id}: undeclared data classes {undeclared}")
+        if web_search and route.cli != "claude":
+            raise RouteRejected(f"{route.job_id}: web_search is a Claude-only tool grant")
 
         authorization_receipt = authorize_subprocess_transmission(
             self.authorization, provider=route.provider, data_classes=requested,
@@ -1855,7 +1880,7 @@ class CliTransport:
                     route=route, reservation=reservation,
                     activation_id=attempt_activation, episode_id=episode_id,
                     projection=projection, staged_inputs=staged_inputs,
-                    authorization_receipt=authorization_receipt)
+                    authorization_receipt=authorization_receipt, web_search=web_search)
             except TransportRetryable as error:
                 attempts.append(error.receipt)  # type: ignore[attr-defined]
                 last_error = error
@@ -1876,6 +1901,7 @@ class CliTransport:
         projection: Mapping[str, Any],
         staged_inputs: Sequence[StagedInput],
         authorization_receipt: Mapping[str, Any],
+        web_search: bool = False,
     ) -> tuple[dict[str, Any], dict[str, Any]]:
         executable = self.executable(route.cli)
         cli_schema_projection = (
@@ -1889,7 +1915,8 @@ class CliTransport:
         stdin_text: str | None = None
         if route.cli == "claude":
             argv = build_job_argv(route, workspace=workspace.path,
-                                  cli_schema_projection=cli_schema_projection)
+                                  cli_schema_projection=cli_schema_projection,
+                                  tools=("WebSearch" if web_search else ""))
             stdin_text = build_claude_stdin_payload(instruction=instruction, projection=projection)
         else:
             argv = build_job_argv(route, workspace=workspace.path, instruction=instruction)

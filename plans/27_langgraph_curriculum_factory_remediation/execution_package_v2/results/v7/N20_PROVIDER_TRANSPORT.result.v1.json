@@ -1,40 +1,40 @@
 {
-  "attempt_id": "N20_PROVIDER_TRANSPORT-execpkgv2-v7-attempt-8",
+  "attempt_id": "N20_PROVIDER_TRANSPORT-execpkgv2-v7-attempt-9",
   "changed_files": [
     {
       "change": "modified",
       "path": "runtime/langgraph_factory/transport.py",
-      "sha256": "b0e2ad246f21a4d4632a239c1bf339e2e7451548b74afc11810343732884b791"
+      "sha256": "852813cbcd294a86bdbedff539816990321eb991b8037a33913324ee2233483a"
     },
     {
       "change": "modified",
       "path": "runtime/langgraph_factory/model_nodes.py",
-      "sha256": "ba145a82794e27bbcc772ca7aa9ed1b25de62a87801659f0aa947a575d63afb0"
+      "sha256": "4ff7ee3f55416d6131148725757c583a298c7a39b712a6bb661f77b2aa4ff93c"
     },
     {
       "change": "modified",
       "path": "runtime/langgraph_factory/schemas/M01_research_unit_sources.schema.json",
-      "sha256": "b4d0032c268b447e44137003983539064340c547329926db12c7e31c0d7b40ab"
+      "sha256": "b0b959d79c4a167a5b95ad8244bb01cc398f3c043ec975247ee497fbdb339910"
+    },
+    {
+      "change": "modified",
+      "path": "runtime/langgraph_factory/prompts/M01_research_unit_sources.prompt.md",
+      "sha256": "7cb47d2e933505f0e4be066ce97e78c3fa4a23836a522ee73a2fd8c4fa49e35d"
     },
     {
       "change": "modified",
       "path": "tests/runtime/test_plan26_transport.py",
-      "sha256": "437e5579c003a6bc46b761204010b132c0c306a37fc9ac97ec746ef8f7c9de12"
+      "sha256": "78cd3288bb2c40255efbdd221c071181df18de0459c550bda44b4ac8428a4d11"
     },
     {
       "change": "modified",
       "path": "tests/runtime/test_plan26_model_nodes.py",
-      "sha256": "051cab91eec941a97913109dc8b9e27f77c9ba8a4894591cd6f881364cb04d8b"
-    },
-    {
-      "change": "modified",
-      "path": "tests/runtime/test_plan26_adversarial.py",
-      "sha256": "965018da704e91a4873cff5f2e7f9d53d7fa776b47a0a27c24192c4d43960596"
+      "sha256": "7d43a965aaf4567b84ff56f287f9e25427fc7a6b8538c832ffa8d872f6262395"
     },
     {
       "change": "modified",
       "path": "plans/27_langgraph_curriculum_factory_remediation/execution_package_v2/results/v7/evidence/N20_PROVIDER_TRANSPORT/01_pytest_n20.log",
-      "sha256": "6212fee4f4136744aeb8bd6f8d5e1b69b1b1ea70ce7230324b055db33f7069ec"
+      "sha256": "b5e80e64d209ce2b44949dd3f35848cdf083b9352670c6733a9376aa5e2bfa21"
     },
     {
       "change": "modified",
@@ -44,12 +44,12 @@
     {
       "change": "modified",
       "path": "plans/27_langgraph_curriculum_factory_remediation/execution_package_v2/results/v7/evidence/N20_PROVIDER_TRANSPORT/04_git_status_production_scope.log",
-      "sha256": "0f30860c8368c41fd29251386ac3d991491e0fe5735f616961cb002d7a883de0"
+      "sha256": "4e34046862700c0c701cf966c268bbe5c3436d3c2cfaa40908274f1fecf73382"
     },
     {
       "change": "created",
-      "path": "plans/27_langgraph_curriculum_factory_remediation/execution_package_v2/results/v7/evidence/N20_PROVIDER_TRANSPORT/05_n20v7_f11_adversarial_stub_signature_fix.log",
-      "sha256": "442a9564ef7c611c9981fb5817188bb6308f2310c01bef9a2133a1b2a1c12fe3"
+      "path": "plans/27_langgraph_curriculum_factory_remediation/execution_package_v2/results/v7/evidence/N20_PROVIDER_TRANSPORT/06_n20v7_f13_websearch_regression_tests.log",
+      "sha256": "2b6e899de12c8dbac023fca3aeac62ebfee783b22f48ae899640b645afef0a8d"
     }
   ],
   "commands": [
@@ -57,7 +57,7 @@
       "argv": ["python3", "-m", "pytest", "-q", "tests/runtime/test_plan26_transport.py", "tests/runtime/test_plan26_model_nodes.py", "tests/runtime/test_plan26_egress.py", "tests/runtime/test_capabilities.py", "tests/runtime/test_curriculum_factory_graph.py", "tests/runtime/test_plan26_adversarial.py", "tests/runtime/test_plan26_api_contract.py", "tests/runtime/test_plan26_lock_drift.py"],
       "exit_code": 0,
       "log": "plans/27_langgraph_curriculum_factory_remediation/execution_package_v2/results/v7/evidence/N20_PROVIDER_TRANSPORT/01_pytest_n20.log",
-      "log_sha256": "6212fee4f4136744aeb8bd6f8d5e1b69b1b1ea70ce7230324b055db33f7069ec"
+      "log_sha256": "b5e80e64d209ce2b44949dd3f35848cdf083b9352670c6733a9376aa5e2bfa21"
     },
     {
       "argv": ["python3", "plans/27_langgraph_curriculum_factory_remediation/execution_package_v2/controller/scan_node.py", "--node", "N20_PROVIDER_TRANSPORT", "--graph", "plans/27_langgraph_curriculum_factory_remediation/execution_package_v2/implementation.graph.v7.yaml"],
@@ -66,30 +66,31 @@
       "log_sha256": "2d471cf440eeeead175a5f5eb2abd59afe0c56f62a78b8fd11d834c7a55d2b9a"
     },
     {
-      "argv": ["python3", "-m", "pytest", "-q", "tests/runtime/test_plan26_adversarial.py", "-v"],
+      "argv": ["python3", "-m", "pytest", "-q", "tests/runtime/test_plan26_transport.py", "tests/runtime/test_plan26_model_nodes.py", "-k", "web_search or no_verified_source or m01_discover_is_the_only or pinned", "-v"],
       "exit_code": 0,
-      "log": "plans/27_langgraph_curriculum_factory_remediation/execution_package_v2/results/v7/evidence/N20_PROVIDER_TRANSPORT/05_n20v7_f11_adversarial_stub_signature_fix.log",
-      "log_sha256": "442a9564ef7c611c9981fb5817188bb6308f2310c01bef9a2133a1b2a1c12fe3"
+      "log": "plans/27_langgraph_curriculum_factory_remediation/execution_package_v2/results/v7/evidence/N20_PROVIDER_TRANSPORT/06_n20v7_f13_websearch_regression_tests.log",
+      "log_sha256": "2b6e899de12c8dbac023fca3aeac62ebfee783b22f48ae899640b645afef0a8d"
     },
     {
       "argv": ["git", "status", "--porcelain", "--", "runtime/", "policy/", "schemas/"],
       "exit_code": 0,
       "log": "plans/27_langgraph_curriculum_factory_remediation/execution_package_v2/results/v7/evidence/N20_PROVIDER_TRANSPORT/04_git_status_production_scope.log",
-      "log_sha256": "0f30860c8368c41fd29251386ac3d991491e0fe5735f616961cb002d7a883de0"
+      "log_sha256": "4e34046862700c0c701cf966c268bbe5c3436d3c2cfaa40908274f1fecf73382"
     }
   ],
   "evidence": [
     "plans/27_langgraph_curriculum_factory_remediation/execution_package_v2/results/v7/evidence/N20_PROVIDER_TRANSPORT/01_pytest_n20.log",
     "plans/27_langgraph_curriculum_factory_remediation/execution_package_v2/results/v7/evidence/N20_PROVIDER_TRANSPORT/02_scan_node_n20.log",
     "plans/27_langgraph_curriculum_factory_remediation/execution_package_v2/results/v7/evidence/N20_PROVIDER_TRANSPORT/04_git_status_production_scope.log",
-    "plans/27_langgraph_curriculum_factory_remediation/execution_package_v2/results/v7/evidence/N20_PROVIDER_TRANSPORT/05_n20v7_f11_adversarial_stub_signature_fix.log"
+    "plans/27_langgraph_curriculum_factory_remediation/execution_package_v2/results/v7/evidence/N20_PROVIDER_TRANSPORT/05_n20v7_f11_adversarial_stub_signature_fix.log",
+    "plans/27_langgraph_curriculum_factory_remediation/execution_package_v2/results/v7/evidence/N20_PROVIDER_TRANSPORT/06_n20v7_f13_websearch_regression_tests.log"
   ],
   "findings": [
     {
       "disposition": "resolved",
-      "id": "N20V7-F11",
-      "severity": "minor",
-      "summary": "A stale test double, not a production defect. Diagnosing N70's sixth live production run (see N30V7-F03/N40V7-F12) found that a real SourceRetriever.fetch (egress.py) caller in nodes/sources.py was calling it with three positional arguments against a keyword-only authorization_receipt/data_class contract, always raising TypeError the moment a real M01 discovery locator was ever retrieved. tests/runtime/test_plan26_adversarial.py's own _StubRetriever.fetch test double independently encoded the identical wrong three-positional-argument convention (a coincidental match to the real bug, not a copy of the fix) -- harmless while the harness graph never exercised a genuine retrieval failure/success boundary this deep, but now inconsistent with the corrected real signature. Updated the stub to the real keyword-only shape (locator positional, authorization_receipt/data_class keyword-only) so this file's own test double stays representative of the real API it doubles for. Full 8-file N20 suite: 475 passed, 1 skipped, 140 subtests passed. Zero scan violations."
+      "id": "N20V7-F13",
+      "severity": "critical",
+      "summary": "User-directed product decision (not a code defect): enable subscription-backed Claude WebSearch, scoped exclusively to M01's discover phase, so the worker can find and verify real candidate source locators instead of refusing outright when it has no way to confirm a URL exists (N70 live evidence: the model correctly cited Claude's own no-URL-fabrication policy and refused, producing prose with no structured_output, for 2 of 9 real L01 discovery sub-requests). Implementation, entirely within N20's write set: (1) transport.py's build_claude_argv/build_job_argv gained an optional `tools` parameter (default ''), threaded through CliTransport.execute/_attempt as a new `web_search: bool = False` parameter that RouteRejects for any non-Claude route; only model_nodes.py's M01-discover _dispatch call site ever passes web_search=True. (2) Live-verified against the real installed CLI (three probes, escalating): `--permission-mode plan` (every other job's pinned mode) blocks tool execution outright even with a tool named in `--tools`; `default` mode headless-denies every call (no TTY to approve a prompt); `bypassPermissions` is the one mode that lets an already-`--tools`-restricted worker actually use the one tool it was granted, confirmed via a real sandboxed WebSearch call (webSearchRequests:1, zero permission_denials, correct structured_output) -- so build_claude_argv now selects `bypassPermissions` if and only if `tools` is non-empty, granting nothing `--tools` did not already name. WebSearch never touches this sandbox's file system or egress guard (it is Claude Code's own built-in, subscription-authenticated tool reaching Anthropic's API over the same channel every Claude job already uses) and the worker still cannot write a file; SourceRetriever (egress.py, N20-owned) remains the only path that ever fetches, validates, hashes, or receipts source bytes -- unchanged. (3) M01's output schema gained a third, mutually exclusive top-level branch, `no_verified_source` (array of {request_id, reason}, minItems 1), restructured via nested if/then/else (no top-level combinator, preserving N20V7-F08's fix) to keep the exclusive-choice semantics across all three shapes. (4) The M01 discover prompt now documents WebSearch and the honest 'no_verified_source' escape hatch, and explicitly forbids presenting a memory-guessed URL as a search result. (5) model_nodes.py's m01_discover_unit_sources now detects a `no_verified_source` candidate before the locators check, validates its request_id against the staged request (mismatches reject as candidate_undeclared_artifact, matching every other candidate-shape check here), and rejects with the new typed failure_class `no_verified_source` -- added to RETRYABLE_FAILURE_CLASSES so D91 routes it through the same bounded retry/exhaustion every other transient outcome gets: never a silent success (no source_discoveries write), never a fabricated locator, and distinct from D06B's unrelated human-facing prerequisite pause for the 'no discovery ran at all' case. New regression tests: argv/permission-mode scoping (transport.py), execute() web_search threading and its Claude-only guard, schema three-way exclusivity, M01-discover-is-the-only-web_search-grant across all eight model jobs, and the no_verified_source candidate becoming a correctly-classified retryable failure (both matching and mismatching request_id). Full 8-file N20 suite: 482 passed (up from 475, +7), 1 skipped, 140 subtests passed. Zero scan violations."
     }
   ],
   "invalidated_descendants": ["N30_PREFLIGHT_EGRESS", "N40_INTEGRATION_OWNERSHIP", "N50_EVIDENCE_AUDIT_CONTROLS", "N60_ADVERSARIAL_REGRESSION"],

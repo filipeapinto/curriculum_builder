@@ -1,15 +1,15 @@
 {
-  "attempt_id": "N50_EVIDENCE_AUDIT_CONTROLS-execpkgv2-v7-attempt-7",
+  "attempt_id": "N50_EVIDENCE_AUDIT_CONTROLS-execpkgv2-v7-attempt-9",
   "changed_files": [
     {
       "change": "modified",
       "path": "plans/27_langgraph_curriculum_factory_remediation/execution_package_v2/results/v7/evidence/N50_EVIDENCE_AUDIT_CONTROLS/01_pytest_n50_run1.log",
-      "sha256": "99fefd0197677a01714e54d56e424ba039050ab430c643aa97e9410fc6363ee7"
+      "sha256": "b32adf97878ac97b0e6455f75cc27c483b73b408456792b082cbecc1772a71cb"
     },
     {
       "change": "modified",
       "path": "plans/27_langgraph_curriculum_factory_remediation/execution_package_v2/results/v7/evidence/N50_EVIDENCE_AUDIT_CONTROLS/02_pytest_n50_run2.log",
-      "sha256": "1fc617e1610de9b4d0f6158d17971f6d1c17300455d747e7a46dde14de4fbee0"
+      "sha256": "979df3aea5c186833d83224af79163ecf3cb80676f5f4ada9e3b0bf6dfd60f36"
     },
     {
       "change": "modified",
@@ -32,13 +32,13 @@
       "argv": ["python3", "-m", "pytest", "-q", "tests/runtime/test_plan26_evidence.py", "tests/runtime/test_plan26_persistence.py"],
       "exit_code": 0,
       "log": "plans/27_langgraph_curriculum_factory_remediation/execution_package_v2/results/v7/evidence/N50_EVIDENCE_AUDIT_CONTROLS/01_pytest_n50_run1.log",
-      "log_sha256": "99fefd0197677a01714e54d56e424ba039050ab430c643aa97e9410fc6363ee7"
+      "log_sha256": "b32adf97878ac97b0e6455f75cc27c483b73b408456792b082cbecc1772a71cb"
     },
     {
       "argv": ["python3", "-m", "pytest", "-q", "tests/runtime/test_plan26_evidence.py", "tests/runtime/test_plan26_persistence.py"],
       "exit_code": 0,
       "log": "plans/27_langgraph_curriculum_factory_remediation/execution_package_v2/results/v7/evidence/N50_EVIDENCE_AUDIT_CONTROLS/02_pytest_n50_run2.log",
-      "log_sha256": "1fc617e1610de9b4d0f6158d17971f6d1c17300455d747e7a46dde14de4fbee0"
+      "log_sha256": "979df3aea5c186833d83224af79163ecf3cb80676f5f4ada9e3b0bf6dfd60f36"
     },
     {
       "argv": ["python3", "plans/27_langgraph_curriculum_factory_remediation/controller/verify_evidence_determinism.py", "--contract", "plans/27_langgraph_curriculum_factory_remediation/contracts/evidence_determinism.v1.yaml", "--graph", "plans/27_langgraph_curriculum_factory_remediation/execution_package_v2/implementation.graph.v7.yaml"],
@@ -69,16 +69,16 @@
   "findings": [
     {
       "disposition": "resolved",
-      "id": "N50V7-CASCADE-F06",
+      "id": "N50V7-CASCADE-F08",
       "severity": "observation",
-      "summary": "Pure re-verification, cascading from N30V7-F03 (SourceRetriever.fetch call-site fix) and N40V7-F12 (graph.py boundary terminal_candidate fix), the two independent root causes behind N70's repeated 'terminal candidate is not a JSON object' symptom. N50's own write-set files are byte-identical to attempt-6. All five required verification commands rerun in full: 64/64 passed twice (determinism preserved), both contracts still fully valid, zero scan violations. Admitted as a new attempt strictly to rebind predecessor_receipts to N40 attempt-7's new digest."
+      "summary": "Pure re-verification, cascading from N30V7-F05 (D06B locator.url extraction fix) and N40V7-F13 (deterministic_node's own ExpectedFailure catch also builds a terminal_candidate now, mirroring N40V7-F12's graph.py boundary fix). N50's own write-set files are byte-identical to attempt-8. All five required verification commands rerun in full: 64/64 passed twice (determinism preserved), both contracts still fully valid, zero scan violations. Admitted as a new attempt strictly to rebind predecessor_receipts to N40 attempt-9's new digest."
     }
   ],
   "invalidated_descendants": [],
   "node_id": "N50_EVIDENCE_AUDIT_CONTROLS",
   "outcome": "PASSED",
   "predecessor_receipts": {
-    "N40_INTEGRATION_OWNERSHIP": "2927d978c29a9724fc9d02db9c1690722f7fc27d74f23d75cf3ebdd3e9326721"
+    "N40_INTEGRATION_OWNERSHIP": "fe3b85ab57bdff91158a358eca994028cfc4b30f9fd02cb455f27b9f1c79ff3f"
   },
   "prompt_sha256": "4fe5cd2f076409e9e1616f36f26c35adf16701cb34664e8e5c0991422eed0f82",
   "run_id": "run27-execpkgv2-v7-2026-08-14",

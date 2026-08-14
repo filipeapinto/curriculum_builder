@@ -52,9 +52,26 @@
           }
         }
       }
+    },
+    "no_verified_source": {
+      "type": "array",
+      "minItems": 1,
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": ["request_id", "reason"],
+        "properties": {
+          "request_id": {"type": "string", "minLength": 1, "maxLength": 200},
+          "reason": {"type": "string", "minLength": 1, "maxLength": 2000}
+        }
+      }
     }
   },
   "if": {"required": ["locators"]},
-  "then": {"not": {"required": ["interpretations"]}},
-  "else": {"required": ["interpretations"]}
+  "then": {"not": {"anyOf": [{"required": ["interpretations"]}, {"required": ["no_verified_source"]}]}},
+  "else": {
+    "if": {"required": ["interpretations"]},
+    "then": {"not": {"required": ["no_verified_source"]}},
+    "else": {"required": ["no_verified_source"]}
+  }
 }
