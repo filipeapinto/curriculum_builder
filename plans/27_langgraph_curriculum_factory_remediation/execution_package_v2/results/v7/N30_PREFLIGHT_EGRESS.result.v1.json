@@ -1,5 +1,5 @@
 {
-  "attempt_id": "N30_PREFLIGHT_EGRESS-execpkgv2-v7-attempt-10",
+  "attempt_id": "N30_PREFLIGHT_EGRESS-execpkgv2-v7-attempt-12",
   "changed_files": [
     {
       "change": "modified",
@@ -9,12 +9,27 @@
     {
       "change": "modified",
       "path": "runtime/langgraph_factory/nodes/sources.py",
-      "sha256": "ad5db60fcea7b6bfa8a100a67603c47eb69a7bab0e7d8a58240883508827b9f0"
+      "sha256": "b96bab07e807b4e1aa93d6d68697c48ea96a2f69f5bb7c78fa760dd9b8f304cf"
     },
     {
       "change": "modified",
       "path": "runtime/run_curriculum.py",
-      "sha256": "edcdcec6ca03c7a7d953b6da649f75095f8c75ff3c662eb881d447ba45d435f8"
+      "sha256": "10236810e66ff4afb064635b77082a840c4f7bf8ba107970ba80d6e80a8d1e8b"
+    },
+    {
+      "change": "created",
+      "path": "policy/retrieval_hosts.v1.yaml",
+      "sha256": "ee56cf4988691647ebd1f28bd90724208112bcae6a4b7324543b42bbc21c32be"
+    },
+    {
+      "change": "modified",
+      "path": "schemas/curriculum.schema.v5.json",
+      "sha256": "7ee2b15e22f14eeb5e297b55dac626df03de072e7d9ee4be86ec3f26498acd89"
+    },
+    {
+      "change": "modified",
+      "path": "curricula/arduino_kit/arduino_kit_curriculum.v5.yaml",
+      "sha256": "0dd0e0d441c3881e136c2be56143a10e49b4bc0a631e2ae9d935b853a1a37280"
     },
     {
       "change": "modified",
@@ -24,7 +39,7 @@
     {
       "change": "modified",
       "path": "tests/runtime/test_plan26_deterministic_nodes.py",
-      "sha256": "d7e8aa24be8d311810d5a592b808ad5167f38315eeb31acc7b82916a67e9f8b1"
+      "sha256": "e640259e58e221a3ab45f7c9e77f5920c2cdbef21bc7b5d146c4cfa563670ca0"
     },
     {
       "change": "modified",
@@ -34,12 +49,12 @@
     {
       "change": "modified",
       "path": "plans/27_langgraph_curriculum_factory_remediation/execution_package_v2/results/v7/evidence/N30_PREFLIGHT_EGRESS/01_pytest_n30_cli.log",
-      "sha256": "542b0a73ceebf9e2fabb738d728c939f7b707d264de74c8d353687983f8eb282"
+      "sha256": "da4109428844b373f89dd8df6bfab180b6144e6cb9abcd93b2cbe68d0f61822f"
     },
     {
       "change": "modified",
       "path": "plans/27_langgraph_curriculum_factory_remediation/execution_package_v2/results/v7/evidence/N30_PREFLIGHT_EGRESS/02_pytest_n30_d03.log",
-      "sha256": "64aa998ae4fec2fae23c1001cfe0eb81feb0567a24e4eb2b2ae6aba94cbebc0d"
+      "sha256": "770646e6e6b2264002c18c83eaf02ac56051e651863d7365ae8dfd1afe545e09"
     },
     {
       "change": "modified",
@@ -52,9 +67,14 @@
       "sha256": "2e3cf582a5d1a31af3c600d86ff0f8cf4ac851e16afa27cf8b8e83589a717aed"
     },
     {
+      "change": "modified",
+      "path": "plans/27_langgraph_curriculum_factory_remediation/execution_package_v2/results/v7/evidence/N30_PREFLIGHT_EGRESS/06_n30v7_f06_receipt_minting_regression_tests.log",
+      "sha256": "09502e7de79c23ae541052c595029f39c8d601999566dfa44a4a6bfc8668f9ff"
+    },
+    {
       "change": "created",
-      "path": "plans/27_langgraph_curriculum_factory_remediation/execution_package_v2/results/v7/evidence/N30_PREFLIGHT_EGRESS/05_n30v7_f05_locator_url_extraction_regression_tests.log",
-      "sha256": "a757d0bebda01c04abb1e0fe22c5ee7d21af4ba66e7698a90e39d679e2a78e10"
+      "path": "plans/27_langgraph_curriculum_factory_remediation/execution_package_v2/results/v7/evidence/N30_PREFLIGHT_EGRESS/07_n30v7_f07_retrieval_hosts_regression_tests.log",
+      "sha256": "798c26a7fc4d204e20a18c4f3e34d16ae7003230aa4e817ff86e8d4db4ab01d2"
     }
   ],
   "commands": [
@@ -62,13 +82,13 @@
       "argv": ["python3", "-m", "pytest", "-q", "tests/runtime/test_plan26_cli.py", "tests/runtime/test_run_curriculum.py"],
       "exit_code": 0,
       "log": "plans/27_langgraph_curriculum_factory_remediation/execution_package_v2/results/v7/evidence/N30_PREFLIGHT_EGRESS/01_pytest_n30_cli.log",
-      "log_sha256": "542b0a73ceebf9e2fabb738d728c939f7b707d264de74c8d353687983f8eb282"
+      "log_sha256": "da4109428844b373f89dd8df6bfab180b6144e6cb9abcd93b2cbe68d0f61822f"
     },
     {
-      "argv": ["python3", "-m", "pytest", "-q", "tests/runtime/test_plan26_deterministic_nodes.py", "-k", "D03 or capability or D06B"],
+      "argv": ["python3", "-m", "pytest", "-q", "tests/runtime/test_plan26_deterministic_nodes.py", "-k", "D03 or capability or D06B or d06_grants"],
       "exit_code": 0,
       "log": "plans/27_langgraph_curriculum_factory_remediation/execution_package_v2/results/v7/evidence/N30_PREFLIGHT_EGRESS/02_pytest_n30_d03.log",
-      "log_sha256": "64aa998ae4fec2fae23c1001cfe0eb81feb0567a24e4eb2b2ae6aba94cbebc0d"
+      "log_sha256": "770646e6e6b2264002c18c83eaf02ac56051e651863d7365ae8dfd1afe545e09"
     },
     {
       "argv": ["python3", "plans/27_langgraph_curriculum_factory_remediation/execution_package_v2/controller/scan_node.py", "--node", "N30_PREFLIGHT_EGRESS", "--graph", "plans/27_langgraph_curriculum_factory_remediation/execution_package_v2/implementation.graph.v7.yaml"],
@@ -85,8 +105,8 @@
     {
       "argv": ["python3", "-m", "pytest", "-q", "tests/runtime/test_plan26_deterministic_nodes.py", "-v"],
       "exit_code": 0,
-      "log": "plans/27_langgraph_curriculum_factory_remediation/execution_package_v2/results/v7/evidence/N30_PREFLIGHT_EGRESS/05_n30v7_f05_locator_url_extraction_regression_tests.log",
-      "log_sha256": "a757d0bebda01c04abb1e0fe22c5ee7d21af4ba66e7698a90e39d679e2a78e10"
+      "log": "plans/27_langgraph_curriculum_factory_remediation/execution_package_v2/results/v7/evidence/N30_PREFLIGHT_EGRESS/07_n30v7_f07_retrieval_hosts_regression_tests.log",
+      "log_sha256": "798c26a7fc4d204e20a18c4f3e34d16ae7003230aa4e817ff86e8d4db4ab01d2"
     }
   ],
   "evidence": [
@@ -94,21 +114,22 @@
     "plans/27_langgraph_curriculum_factory_remediation/execution_package_v2/results/v7/evidence/N30_PREFLIGHT_EGRESS/02_pytest_n30_d03.log",
     "plans/27_langgraph_curriculum_factory_remediation/execution_package_v2/results/v7/evidence/N30_PREFLIGHT_EGRESS/03_scan_node_n30.log",
     "plans/27_langgraph_curriculum_factory_remediation/execution_package_v2/results/v7/evidence/N30_PREFLIGHT_EGRESS/04_live_driver_capability_proof.log",
-    "plans/27_langgraph_curriculum_factory_remediation/execution_package_v2/results/v7/evidence/N30_PREFLIGHT_EGRESS/05_n30v7_f05_locator_url_extraction_regression_tests.log"
+    "plans/27_langgraph_curriculum_factory_remediation/execution_package_v2/results/v7/evidence/N30_PREFLIGHT_EGRESS/06_n30v7_f06_receipt_minting_regression_tests.log",
+    "plans/27_langgraph_curriculum_factory_remediation/execution_package_v2/results/v7/evidence/N30_PREFLIGHT_EGRESS/07_n30v7_f07_retrieval_hosts_regression_tests.log"
   ],
   "findings": [
     {
       "disposition": "resolved",
-      "id": "N30V7-F05",
+      "id": "N30V7-F07",
       "severity": "critical",
-      "summary": "A seventh live-verified defect found by N70's real production unit run -- the first ever to surface downstream of a genuinely successful WebSearch-backed locator discovery (N20V7-F13): D06B_RETRIEVE_SOURCE_CANDIDATES's `locator = locators[0]` is the whole locator OBJECT ({request_id, url, title, publisher, locator_kind, rationale} per the M01 schema), but `fetch(locator, authorization_receipt=authorization)` (N30V7-F03's own fix, earlier this lineage) passes that whole object as `SourceRetriever.fetch`'s `locator` parameter, which requires a bare URL string. Live-verified: the model found a real SparkFun Electronics tutorial via WebSearch and returned a well-formed locator; D06B's retrieval crashed with 'requested_target ... is not of type string' the instant it tried to use it -- this exact call path had never been reached with a real, well-formed locator by any prior run in this whole lineage, so N30V7-F03's own incompleteness (passing the object instead of `locator['url']`) went undetected until now. Fixed within N30's write set (nodes/sources.py): extracts `locator_url = candidate_field(locator, 'url')`, requires it to be a non-empty string (schema_contract failure otherwise, matching every other require() guard in this function), and passes that string to fetch. Every existing test fixture using a bare URL string in place of a real locator object (a shape D06B's real code path never actually produced, only ever accepted by coincidence) was corrected to the real M01 locator object shape; one of them was N30V7-F03's own regression test. Full N30 suite: 62 passed/27 subtests (cli/run_curriculum), 16 passed (D03/capability/D06B), 249 passed (deterministic_nodes, full file), zero scan violations, live driver_capabilities.ready: true for both drivers."
+      "summary": "User-directed spec decision: a versioned, named-profile retrieval host allowlist, closing the gap N70 live-verified after the authorization-receipt fix (N30V7-F06) let real retrieval reach `SourceRetriever._check_host` for the first time -- every host was denied because `retrieval_hosts` had never been wired to any real configuration source in production (`build_runtime_context`'s parameter defaulted to an empty tuple; `run_curriculum.py` never passed one). N30's share of the implementation: (1) new `policy/retrieval_hosts.v1.yaml`, a versioned policy file with one named profile so far (`electronics`: learn.sparkfun.com, docs.arduino.cc, www.arduino.cc, learn.adafruit.com, support.microbit.org, www.cpsc.gov, www.allaboutcircuits.com) -- exact user-specified hosts, no wildcards. (2) `run_curriculum.py._retrieval_host_selection` reads the curriculum's own `retrieval_host_profile:` manifest field, resolves it via egress.py's (N20-owned) loader, and `_invoke` threads the resolved hosts into `build_runtime_context(retrieval_hosts=...)` -- the same `RetrievalPolicy` SourceRetriever already enforces exact-host, HTTPS, DNS/private-address, and allowlisted-redirect-at-every-hop checks against, unchanged, now finally populated. (3) The policy digest and resolved hosts are bound into the run's own authorization envelope (`_authorization_envelope`'s `retrieval_host_profile`/`resolved_hosts`/`retrieval_hosts_digest` fields), the same frozen, write-once record D06B already reads for its authorization receipt -- an auditable binding, not a new trust boundary. (4) D06_COMPILE_SOURCE_REQUESTS reads `external_authorizations[-1].resolved_hosts` (added to its own NODE_CATALOGUE inputs, N40-owned) and grants exactly that list to M01 as `discovery_authority.allowed_hosts`, so the worker's own WebSearch-informed proposals are always checked against the real, current run's real grant -- never a host the model invented for itself. (5) `schemas/curriculum.schema.v5.json` (also previously uncovered by any node) gained one new optional top-level property, `retrieval_host_profile`, closing the exact gap that first blocked this: the schema's own `additionalProperties: false` rejected the new manifest field until declared. (6) `curricula/arduino_kit/arduino_kit_curriculum.v5.yaml` now declares `retrieval_host_profile: electronics`. New D06-level regression test proves the exact resolved-hosts list flows into the packet's `discovery_authority.allowed_hosts`, and that an empty/absent authorization grants nothing. Live-verified end to end (a direct Python smoke test resolving the real curriculum manifest through to a real `RuntimeContext.source_retriever.policy.allowed_hosts` set) before this admission. Full N30 suite: 62 passed/27 subtests (cli/run_curriculum), 19 passed (D03/capability/D06B/d06_grants, up from 18), 252 passed (deterministic_nodes, full file, up from 249), zero scan violations, live driver_capabilities.ready: true for both drivers."
     }
   ],
   "invalidated_descendants": ["N40_INTEGRATION_OWNERSHIP", "N50_EVIDENCE_AUDIT_CONTROLS", "N60_ADVERSARIAL_REGRESSION"],
   "node_id": "N30_PREFLIGHT_EGRESS",
   "outcome": "PASSED",
   "predecessor_receipts": {
-    "N20_PROVIDER_TRANSPORT": "2a784fc911e9e647e2e5483292ca6003edb7a019fa2a7f0de5c22fe39dd5e1da"
+    "N20_PROVIDER_TRANSPORT": "5629467c297497c842caaf768fc0dfe700ad26c86ffdea32318a879409ba95ec"
   },
   "prompt_sha256": "c590af3176ad36f2b021dfdf2a231bbbe525fa92e6d2395f1e284ad88a92e1e8",
   "run_id": "run27-execpkgv2-v7-2026-08-14",

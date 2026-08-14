@@ -362,6 +362,7 @@ NODE_CATALOGUE: dict[str, NodeSpec] = {
                 "engine_root",
                 "run_id",
                 "episode_id",
+                "external_authorizations",
             ),
             outputs=("source_requests", "source_denominators", "pending_packet"),
             failures=("pause",),

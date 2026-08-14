@@ -1,30 +1,30 @@
 {
-  "attempt_id": "N60_ADVERSARIAL_REGRESSION-execpkgv2-v7-attempt-9",
+  "attempt_id": "N60_ADVERSARIAL_REGRESSION-execpkgv2-v7-attempt-10",
   "changed_files": [
     {
       "change": "modified",
       "path": "plans/27_langgraph_curriculum_factory_remediation/execution_package_v2/results/v7/evidence/N60_ADVERSARIAL_REGRESSION/01_pytest_n60_own.log",
-      "sha256": "fdb96dfed6e3b50494c8d05ca25cc10cde9d568d899790f3516c44ddb5bf8638"
+      "sha256": "1997c803566c9ea96ab164bee3c2f662c3c0ed368416a49a4483ec63a25ee54e"
     },
     {
       "change": "modified",
       "path": "plans/27_langgraph_curriculum_factory_remediation/execution_package_v2/results/v7/evidence/N60_ADVERSARIAL_REGRESSION/02_pytest_tests_runtime_run1.log",
-      "sha256": "aa1914dc6f5523a23b4e41e062748b283a76e14862474e5dd9a7b1f39b86f3e9"
+      "sha256": "decd04813d7a4e423c7d80544ea4bdc8e901e2aa4def17b6f412ac477290bbf9"
     },
     {
       "change": "modified",
       "path": "plans/27_langgraph_curriculum_factory_remediation/execution_package_v2/results/v7/evidence/N60_ADVERSARIAL_REGRESSION/03_pytest_tests_runtime_run2.log",
-      "sha256": "c70a232f312b094a4e834706b40e27ad87bbdbd3166fec8b2e263e56f73eb5fc"
+      "sha256": "d07442a672526ff3b021a62ed941808559483712fbfb21de87de4598d6160269"
     },
     {
       "change": "modified",
       "path": "plans/27_langgraph_curriculum_factory_remediation/execution_package_v2/results/v7/evidence/N60_ADVERSARIAL_REGRESSION/04_pytest_plan27_tests_run1.log",
-      "sha256": "b661d75f8e2289f4e94b0a258ea25bd5a56d6db0c4ec608a4f9a49026da4f7d3"
+      "sha256": "1ec6fe129d2ee8c1f911d43d6e9ab0d4709ec52ed5b3df6ff2206f6d5933014f"
     },
     {
       "change": "modified",
       "path": "plans/27_langgraph_curriculum_factory_remediation/execution_package_v2/results/v7/evidence/N60_ADVERSARIAL_REGRESSION/05_pytest_plan27_tests_run2.log",
-      "sha256": "30a0f34b37e21f98acffb28c51f095ee9e652cdb8f717d61728f227a12cfff7f"
+      "sha256": "82f3ee35a436b51fa0863856d68c64c5060f0119a5ad9a9bc35c6170ea13fbe3"
     },
     {
       "change": "modified",
@@ -42,7 +42,7 @@
       "argv": ["python3", "-m", "pytest", "-q", "tests/runtime/test_plan27_adversarial.py", "plans/27_langgraph_curriculum_factory_remediation/tests/test_run27_adversarial.py"],
       "exit_code": 0,
       "log": "plans/27_langgraph_curriculum_factory_remediation/execution_package_v2/results/v7/evidence/N60_ADVERSARIAL_REGRESSION/01_pytest_n60_own.log",
-      "log_sha256": "fdb96dfed6e3b50494c8d05ca25cc10cde9d568d899790f3516c44ddb5bf8638"
+      "log_sha256": "1997c803566c9ea96ab164bee3c2f662c3c0ed368416a49a4483ec63a25ee54e"
     },
     {
       "argv": ["python3", "plans/27_langgraph_curriculum_factory_remediation/execution_package_v2/controller/scan_node.py", "--graph", "plans/27_langgraph_curriculum_factory_remediation/execution_package_v2/implementation.graph.v7.yaml"],
@@ -63,16 +63,16 @@
   "findings": [
     {
       "disposition": "resolved",
-      "id": "N60V7-CASCADE-F08",
+      "id": "N60V7-CASCADE-F09",
       "severity": "observation",
-      "summary": "Pure re-verification, cascading from N30V7-F05 (D06B locator.url extraction fix) and N40V7-F13 (deterministic_node's own terminal_candidate fix). N60's own two owned files are byte-identical to attempt-8. Complete denominator rerun twice for stability: tests/runtime -- 1319 passed (up from 1318: +1 new N40V7-F13 regression test), 2 skipped, 419 subtests passed, 1 failed, identical both runs (evidence 02, 03), the same sole pre-existing/unrelated failure already independently baseline-proven (evidence 07, still unaffected, byte-identical, reused unchanged). plans/27_langgraph_curriculum_factory_remediation/tests -- 83 passed, identical both runs (evidence 04, 05). scan_node.py complete active-tree mode -- 67 files scanned, zero violations (evidence 06). Admitted as a new attempt strictly to rebind predecessor_receipts to N50 attempt-9's new digest."
+      "summary": "Pure re-verification, cascading from N20V7-F14, N30V7-F06, and N40V7-F14 (harness authorization fixture fixes and D06B's real receipt-minting fix). N60's own two owned files are byte-identical to attempt-9. First stability run hit a genuine environmental fault unrelated to any code change: the local disk was at 100% capacity (181MiB free of 228GiB), so pytest's own tmp-dir allocator failed 'after 10 tries' for ~19 tests, none of them Run 27 code defects (confirmed: the failures were all `OSError: could not create numbered dir`, not assertion failures). Freed space by removing this session's own stale, disposable `pytest-of-filipepinto` scratch directories (520MB, safe pytest-owned temp output, not project data) -- no other files touched. Both stability runs then rerun clean and identical: tests/runtime -- 1321 passed, 2 skipped, 419 subtests passed, 1 failed, identical both runs (evidence 02, 03), the same sole pre-existing/unrelated failure already independently baseline-proven (evidence 07, still unaffected, byte-identical, reused unchanged). plans/27_langgraph_curriculum_factory_remediation/tests -- 83 passed, identical both runs (evidence 04, 05). scan_node.py complete active-tree mode -- 67 files scanned, zero violations (evidence 06). Admitted as a new attempt strictly to rebind predecessor_receipts to N50 attempt-10's new digest."
     }
   ],
   "invalidated_descendants": [],
   "node_id": "N60_ADVERSARIAL_REGRESSION",
   "outcome": "PASSED",
   "predecessor_receipts": {
-    "N50_EVIDENCE_AUDIT_CONTROLS": "9f37bfc3067a654d0261e31a6573255e64b0a5ae9a2936d7965eb119952fc2fc"
+    "N50_EVIDENCE_AUDIT_CONTROLS": "9dc41a68a72f5fa3b74d7b96c1fc245196bb361c53fbbdb6fab35f6e142939c3"
   },
   "prompt_sha256": "2f4e8155eeefc5ee9ea4c9a3a4f95c8cc48425463e47a78bb824db7e6016b4e3",
   "run_id": "run27-execpkgv2-v7-2026-08-14",

@@ -19,6 +19,7 @@ from collections.abc import Mapping, Sequence
 from datetime import datetime, timezone
 from pathlib import Path
 from typing import Any, Callable
+from urllib.parse import urlparse
 
 import jsonschema
 
@@ -1389,11 +1390,22 @@ def m01_discover_unit_sources(packet: Mapping[str, Any],
     if "locators" not in dispatch.candidate:
         return _reject(dispatch, "candidate_undeclared_artifact",
                        "discovery must emit locators, not interpretations")
+    allowed_hosts = set(dispatch.projection["discovery_authority"].get("allowed_hosts") or ())
     for locator in dispatch.candidate["locators"]:
         if locator.get("request_id") != request_id:
             return _reject(dispatch, "candidate_undeclared_artifact",
                            f"locator cites request {locator.get('request_id')!r}, "
                            f"projection declared {request_id!r}")
+        host = (urlparse(str(locator.get("url") or "")).hostname or "").lower()
+        # N30V7-F07: every result is rejected before retrieval unless its host is
+        # one of the exact strings D06 granted (never a substring/suffix match) --
+        # WebSearch is told this list and asked to steer by it, but the model's
+        # own output is never trusted for this boundary; D06B enforces the same
+        # allowlist again at actual fetch time (egress.py), independently.
+        if host not in allowed_hosts:
+            return _reject(dispatch, "candidate_boundary_violation",
+                           f"locator host {host!r} is not in the granted allowed_hosts "
+                           f"{sorted(allowed_hosts)}")
     key = dispatch.correlation["correlation_key"]
     return _accept(dispatch, {"source_discoveries": {key: _candidate_record(
         dispatch, phase="DISCOVER", request_id=request_id,

@@ -1,0 +1,10 @@
+============================= test session starts ==============================
+platform darwin -- Python 3.13.1, pytest-9.0.3, pluggy-1.6.0
+rootdir: /Users/filipepinto/Projects/curriculum_builder
+plugins: anyio-4.14.2, langsmith-0.10.17
+collected 63 items
+
+tests/runtime/test_plan26_adversarial.py ............................... [ 49%]
+................................                                         [100%]
+
+============================== 63 passed in 2.47s ==============================

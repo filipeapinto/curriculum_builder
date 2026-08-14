@@ -20,11 +20,13 @@ from runtime.langgraph_factory.egress import (
     EgressDenied,
     EgressGuard,
     ReceiptLog,
+    RetrievalHostProfileError,
     RetrievalPolicy,
     RetrievalResponse,
     SourceRetriever,
     authorize_subprocess_transmission,
     authorize_transmission,
+    load_retrieval_host_profile,
 )
 
 CURRICULUM_DIGEST = "a" * 64
@@ -332,6 +334,53 @@ def test_retrieval_denials_are_receipted(
         fetcher.fetch(locator, authorization_receipt=receipt_grant)
     assert denied.value.reason == expected_reason
     assert receipts.denials[-1]["denial_reason"] == expected_reason
+
+
+def test_load_retrieval_host_profile_returns_the_declared_electronics_profile(tmp_path: Path):
+    """N30V7-F07: a curriculum selects a profile by name; it never supplies hosts."""
+
+    from runtime.langgraph_factory.egress import DEFAULT_RETRIEVAL_HOSTS_PATH
+
+    hosts, digest = load_retrieval_host_profile("electronics")
+    assert hosts == (
+        "docs.arduino.cc", "learn.adafruit.com", "learn.sparkfun.com",
+        "support.microbit.org", "www.allaboutcircuits.com", "www.arduino.cc",
+        "www.cpsc.gov",
+    )
+    assert len(digest) == 64
+    # Same file, same bytes, same digest -- a deterministic binding, not a random one.
+    _, digest2 = load_retrieval_host_profile(
+        "electronics", path=DEFAULT_RETRIEVAL_HOSTS_PATH)
+    assert digest == digest2
+
+
+def test_load_retrieval_host_profile_rejects_an_unknown_profile_name():
+    with pytest.raises(RetrievalHostProfileError, match="not declared"):
+        load_retrieval_host_profile("does-not-exist")
+
+
+def test_load_retrieval_host_profile_rejects_a_wildcard_host(tmp_path: Path):
+    path = tmp_path / "retrieval_hosts.v1.yaml"
+    path.write_text(
+        "retrieval_hosts_version: '1.0'\n"
+        "profiles:\n"
+        "  bad:\n"
+        "    hosts: ['*.example.org']\n",
+        encoding="utf-8")
+    with pytest.raises(RetrievalHostProfileError, match="bare hostname"):
+        load_retrieval_host_profile("bad", path=path)
+
+
+def test_load_retrieval_host_profile_rejects_a_url_instead_of_a_bare_host(tmp_path: Path):
+    path = tmp_path / "retrieval_hosts.v1.yaml"
+    path.write_text(
+        "retrieval_hosts_version: '1.0'\n"
+        "profiles:\n"
+        "  bad:\n"
+        "    hosts: ['https://example.org/']\n",
+        encoding="utf-8")
+    with pytest.raises(RetrievalHostProfileError, match="bare hostname"):
+        load_retrieval_host_profile("bad", path=path)
 
 
 def test_oversized_response_is_denied(guard: EgressGuard, output_root: Path):

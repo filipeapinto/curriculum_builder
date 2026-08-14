@@ -22,6 +22,7 @@ from typing import Any, Callable, Iterable, Mapping, Sequence
 from urllib.parse import urlparse
 
 import jsonschema
+import yaml
 
 SCHEMA_DIR = Path(__file__).resolve().parent / "schemas"
 
@@ -370,6 +371,62 @@ class RetrievalPolicy:
         "text/html", "text/plain", "application/pdf", "application/json",
         "application/xhtml+xml", "text/markdown",
     })
+
+
+REPO_ROOT = Path(__file__).resolve().parents[2]
+DEFAULT_RETRIEVAL_HOSTS_PATH = REPO_ROOT / "policy" / "retrieval_hosts.v1.yaml"
+
+
+class RetrievalHostProfileError(EgressError):
+    """A named retrieval-host profile could not be loaded exactly as declared."""
+
+
+def load_retrieval_host_profile(
+    profile_name: str, *, path: Path | None = None,
+) -> tuple[tuple[str, ...], str]:
+    """Return `(hosts, policy_digest)` for one named profile (N30V7-F07, spec decision).
+
+    A curriculum selects a profile by name; it never supplies hosts directly, and
+    nothing here ever adds a host a model proposed for itself. Every host must be a
+    bare, lowercase, wildcard-free hostname -- `SourceRetriever._check_host` already
+    does exact-set membership, HTTPS, DNS/private-address, and allowlisted-redirect
+    checks on top of whatever this returns; this function only guards the *shape* of
+    the declared allowlist itself, before it ever reaches that enforcement.
+    """
+    document_path = path or DEFAULT_RETRIEVAL_HOSTS_PATH
+    try:
+        raw = document_path.read_text(encoding="utf-8")
+    except OSError as error:
+        raise RetrievalHostProfileError(f"cannot read retrieval host policy: {error}") from error
+    document = yaml.safe_load(raw)
+    if not isinstance(document, dict):
+        raise RetrievalHostProfileError("retrieval host policy is not a mapping")
+    profiles = document.get("profiles")
+    if not isinstance(profiles, dict):
+        raise RetrievalHostProfileError("retrieval host policy declares no profiles")
+    profile = profiles.get(profile_name)
+    if not isinstance(profile, dict):
+        raise RetrievalHostProfileError(
+            f"retrieval host profile {profile_name!r} is not declared in {document_path}")
+    hosts = profile.get("hosts")
+    if not isinstance(hosts, list) or not hosts:
+        raise RetrievalHostProfileError(f"profile {profile_name!r} declares no hosts")
+    normalized: list[str] = []
+    for host in hosts:
+        if not isinstance(host, str) or not host:
+            raise RetrievalHostProfileError(f"profile {profile_name!r} carries a non-string host")
+        if any(character in host for character in "*?/:@ "):
+            raise RetrievalHostProfileError(
+                f"profile {profile_name!r} host {host!r} is not a bare hostname "
+                f"(no wildcards, no scheme, no port, no path)")
+        if host != host.lower():
+            raise RetrievalHostProfileError(
+                f"profile {profile_name!r} host {host!r} must be lowercase")
+        normalized.append(host)
+    if len(set(normalized)) != len(normalized):
+        raise RetrievalHostProfileError(f"profile {profile_name!r} declares a duplicate host")
+    policy_digest = hashlib.sha256(raw.encode("utf-8")).hexdigest()
+    return tuple(sorted(normalized)), policy_digest
 
 
 @dataclass(frozen=True)

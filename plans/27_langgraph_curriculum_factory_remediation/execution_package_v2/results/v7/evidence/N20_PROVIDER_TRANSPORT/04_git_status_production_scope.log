@@ -1,4 +1,8 @@
+ M runtime/langgraph_factory/egress.py
  M runtime/langgraph_factory/model_nodes.py
+ M runtime/langgraph_factory/nodes/__init__.py
+ M runtime/langgraph_factory/nodes/sources.py
  M runtime/langgraph_factory/prompts/M01_research_unit_sources.prompt.md
- M runtime/langgraph_factory/schemas/M01_research_unit_sources.schema.json
- M runtime/langgraph_factory/transport.py
+ M runtime/run_curriculum.py
+ M schemas/curriculum.schema.v5.json
+?? policy/retrieval_hosts.v1.yaml

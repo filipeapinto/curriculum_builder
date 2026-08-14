@@ -496,7 +496,12 @@ def _prepare_episode(fixture: dict[str, Any], *, mode: str = "one", requested: s
     }
     probe = _HarnessContext(fixture["engine"], fixture["output_root"], fixture["sandbox"])
     digest = inputs.D01_VALIDATE_AND_FREEZE_INPUTS({"invocation": envelope}, probe)["frozen_digest"]
-    envelope["authorization"] = {"scope": "test", "executables": [], "curriculum_digest": digest}
+    envelope["authorization"] = {
+        "scope": "test", "executables": [], "curriculum_digest": digest,
+        "approved_at_utc": "2026-01-01T00:00:00Z", "expires_at_utc": "2099-01-01T00:00:00Z",
+        "providers": {"primary_source_hosts": ["primary_source_bytes"]},
+        "resolved_hosts": ["example.invalid"],
+    }
     return lock, invocation, envelope
 
 

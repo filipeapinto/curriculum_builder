@@ -37,6 +37,8 @@ from datetime import datetime, timezone
 from pathlib import Path
 from typing import Any, Callable, Mapping, Sequence
 
+import yaml
+
 from runtime.langgraph_factory import persistence as P
 from runtime.langgraph_factory import transport as tp
 from runtime.langgraph_factory.artifacts import canonical_digest
@@ -46,6 +48,8 @@ from runtime.langgraph_factory.egress import (
     AuthorizationRecord,
     EgressGuard,
     ReceiptLog,
+    RetrievalHostProfileError,
+    load_retrieval_host_profile,
 )
 from runtime.langgraph_factory.graph import build_curriculum_factory_graph, build_runtime_context
 from runtime.langgraph_factory.nodes.inputs import (
@@ -245,10 +249,39 @@ def _collision_reason(output_root: Path) -> str | None:
 # --------------------------------------------------------------------------- authorization/capability
 
 
-def _authorization_envelope(raw: Mapping[str, Any], *, curriculum_digest: str, output_root: Path) -> dict[str, Any]:
+def _retrieval_host_selection(active_manifest_path: Path) -> tuple[str, tuple[str, ...], str]:
+    """The curriculum's own named retrieval-host profile, resolved and validated.
+
+    A curriculum selects a profile by name (`retrieval_host_profile:` in its own
+    manifest); it never supplies hosts directly (N30V7-F07, spec decision). Absent
+    entirely, retrieval stays fully denied -- the pre-existing, safe default -- not
+    silently open.
+    """
+    try:
+        manifest = yaml.safe_load(active_manifest_path.read_text(encoding="utf-8"))
+    except OSError as error:
+        raise CliNotReadyError("MANIFEST-UNREADABLE", str(error)) from error
+    profile_name = (manifest or {}).get("retrieval_host_profile") if isinstance(manifest, dict) else None
+    if not isinstance(profile_name, str) or not profile_name:
+        return "", (), ""
+    try:
+        hosts, policy_digest = load_retrieval_host_profile(profile_name)
+    except RetrievalHostProfileError as error:
+        raise CliNotReadyError("RETRIEVAL-HOST-PROFILE-INVALID", str(error)) from error
+    return profile_name, hosts, policy_digest
+
+
+def _authorization_envelope(
+    raw: Mapping[str, Any], *, curriculum_digest: str, output_root: Path,
+    retrieval_host_profile: str = "", retrieval_hosts: Sequence[str] = (),
+    retrieval_hosts_digest: str = "",
+) -> dict[str, Any]:
     envelope = dict(raw)
     envelope["curriculum_digest"] = curriculum_digest
     envelope["output_root"] = str(output_root)
+    envelope["retrieval_host_profile"] = retrieval_host_profile
+    envelope["resolved_hosts"] = list(retrieval_hosts)
+    envelope["retrieval_hosts_digest"] = retrieval_hosts_digest
     return envelope
 
 
@@ -764,6 +797,9 @@ def _invoke(
     authorization_raw: Mapping[str, Any],
     seed_values: Mapping[str, Any] | None,
     compiled: Any,
+    retrieval_host_profile: str = "",
+    retrieval_hosts: Sequence[str] = (),
+    retrieval_hosts_digest: str = "",
 ) -> dict[str, Any]:
     context = build_runtime_context(
         engine_root=engine_root,
@@ -774,9 +810,12 @@ def _invoke(
             authorization_raw, run_id=invocation.run_id, curriculum_digest=frozen_digest, output_root=output_root
         ),
         capability_proof=None,
+        retrieval_hosts=retrieval_hosts,
     )
     envelope["authorization"] = _authorization_envelope(
-        authorization_raw, curriculum_digest=frozen_digest, output_root=output_root
+        authorization_raw, curriculum_digest=frozen_digest, output_root=output_root,
+        retrieval_host_profile=retrieval_host_profile, retrieval_hosts=retrieval_hosts,
+        retrieval_hosts_digest=retrieval_hosts_digest,
     )
 
     guard = context.transport_registry.guard
@@ -865,6 +904,10 @@ def _run_live(args: argparse.Namespace) -> tuple[dict[str, Any], int]:
             f"--output-root has no Plan 26 run identity to resume: {output_root}",
         )
 
+    active_manifest_path = _resolve_active_manifest(curriculum_root)
+    retrieval_host_profile, retrieval_hosts, retrieval_hosts_digest = _retrieval_host_selection(
+        active_manifest_path)
+
     lock = _acquire_lock(output_root)
     try:
         if args.resume:
@@ -895,6 +938,9 @@ def _run_live(args: argparse.Namespace) -> tuple[dict[str, Any], int]:
             authorization_raw=authorization_raw,
             seed_values=seed_values,
             compiled=compiled,
+            retrieval_host_profile=retrieval_host_profile,
+            retrieval_hosts=retrieval_hosts,
+            retrieval_hosts_digest=retrieval_hosts_digest,
         )
     finally:
         lock.release()

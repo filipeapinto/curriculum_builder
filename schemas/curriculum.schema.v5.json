@@ -163,6 +163,11 @@
       "description": "Optional declared count. When present it must equal len(labs); the controller asserts this.",
       "type": "integer",
       "minimum": 1
+    },
+    "retrieval_host_profile": {
+      "description": "Optional named profile from policy/retrieval_hosts.v1.yaml (N30V7-F07). A curriculum selects a profile by name; it never declares hosts here. Absent entirely, source retrieval stays fully denied.",
+      "type": "string",
+      "minLength": 1
     }
   },
   "$defs": {

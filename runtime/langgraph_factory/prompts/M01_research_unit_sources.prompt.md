@@ -20,12 +20,21 @@ not judge whether a source is admitted, and you do not rank sources for acceptan
 Every locator must carry the `request_id` it answers and a rationale tied to the
 question.
 
-If you search and find nothing you can respond with as a genuine, verifiable
-candidate — for example a topic with no indexable public documentation, or search
-results that are all off-topic, paywalled, or otherwise unusable as a cited source —
-return `no_verified_source` instead of `locators`. Name the `request_id` and state
-plainly why nothing verifiable turned up. This is the honest, expected response when a
-search comes up empty; it is never a fallback for skipping the search itself.
+`discovery_authority.allowed_hosts` names the exact, complete set of hosts the
+controller can retrieve from — nothing else will ever be fetched, no matter what you
+return. Steer your search accordingly (e.g. `site:` a listed host, or judge a result by
+its domain before proposing it), and only ever return a locator whose URL's host is one
+of the exact strings in that list. A search result from any other host is not a usable
+candidate, however relevant it looks — do not return it, and do not tweak, shorten, or
+guess a URL to make its host match one on the list.
+
+If you search and find nothing you can respond with as a genuine, verifiable candidate
+from an allowed host — for example a topic with no indexable documentation on any
+listed host, or every result being off-topic, paywalled, host-mismatched, or otherwise
+unusable as a cited source — return `no_verified_source` instead of `locators`. Name
+the `request_id` and state plainly why nothing verifiable turned up. This is the
+honest, expected response when a search comes up empty; it is never a fallback for
+skipping the search itself.
 
 ## Phase `interpret`
 

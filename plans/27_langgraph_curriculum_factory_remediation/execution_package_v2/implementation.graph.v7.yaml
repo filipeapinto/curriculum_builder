@@ -274,6 +274,14 @@ nodes:
       # as called correctly elsewhere; the defect is this call site.
       - runtime/langgraph_factory/nodes/sources.py
       - runtime/run_curriculum.py
+      # Added live (N30V7-F07, user-directed spec decision): the retrieval host
+      # allowlist policy, its curriculum-manifest schema hook, and the one
+      # curriculum this run exercises, so a named profile can be declared and
+      # resolved end to end. egress.py's loader (N20-owned) is called, not
+      # written, from here.
+      - policy/retrieval_hosts.v1.yaml
+      - schemas/curriculum.schema.v5.json
+      - curricula/arduino_kit/arduino_kit_curriculum.v5.yaml
       - tests/runtime/test_plan26_cli.py
       - tests/runtime/test_plan26_deterministic_nodes.py
       - tests/runtime/test_run_curriculum.py

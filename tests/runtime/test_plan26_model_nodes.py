@@ -229,7 +229,8 @@ def packet_for(spec_name: str) -> dict[str, Any]:
     if spec_name == "M01_discovery":
         base.update({"phase": "DISCOVER", "request": dict(REQUEST), "unit": dict(UNIT),
                      "source_rules": dict(SOURCE_RULES),
-                     "discovery_authority": {"granted": True, "scope": "hosted_discovery"}})
+                     "discovery_authority": {"granted": True, "scope": "hosted_discovery",
+                                             "allowed_hosts": ["example.org"]}})
     elif spec_name == "M01_interpretation":
         base.update({"phase": "INTERPRET", "request": dict(REQUEST), "unit": dict(UNIT),
                      "source_rules": dict(SOURCE_RULES),
@@ -590,6 +591,40 @@ def test_m01_discover_no_verified_source_must_match_the_staged_request():
         {"request_id": "SOMEONE-ELSES-REQUEST", "reason": "nothing found"}]}
     update = run("M01_discovery", candidate=candidate)
     assert update["pending_failure"]["failure_class"] == "candidate_undeclared_artifact"
+
+
+def test_m01_discover_accepts_a_locator_whose_host_is_granted():
+    """N30V7-F07 positive case: `packet_for('M01_discovery')` grants exactly
+    `example.org`, and `CANDIDATES['M01_discovery']` proposes a locator on that
+    exact host -- the ordinary success path, unaffected by the new check.
+    """
+    update = run("M01_discovery")
+    assert "source_discoveries" in update
+    assert "pending_failure" not in update
+
+
+def test_m01_discover_rejects_a_locator_whose_host_is_not_granted():
+    """N30V7-F07 negative case: every candidate is rejected before retrieval
+    unless its host is one of the exact strings D06 granted -- the model's own
+    output is never trusted for this boundary, even when everything else about
+    the candidate (request_id, schema shape) is otherwise correct.
+    """
+    candidate = {"locators": [{"request_id": "REQ-1", "url": "https://not-granted.example.net/x",
+                              "title": "t", "publisher": "p", "locator_kind": "primary",
+                              "rationale": "why"}]}
+    update = run("M01_discovery", candidate=candidate)
+    assert "source_discoveries" not in update
+    assert update["pending_failure"]["failure_class"] == "candidate_boundary_violation"
+    assert "not-granted.example.net" in update["pending_failure"]["detail"]
+
+
+def test_m01_discover_rejects_when_no_host_was_granted_at_all():
+    """An empty/missing allowed_hosts grant denies every locator, never opens up."""
+
+    packet = packet_for("M01_discovery")
+    packet["discovery_authority"] = {**packet["discovery_authority"], "allowed_hosts": []}
+    update = run("M01_discovery", packet=packet)
+    assert update["pending_failure"]["failure_class"] == "candidate_boundary_violation"
 
 
 def test_m04_refuses_an_authoritative_brief():

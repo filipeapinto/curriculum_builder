@@ -2266,6 +2266,31 @@ def test_d06_compiles_a_positive_denominator_scaled_to_the_unit() -> None:
     assert update["pending_guard"]["value"] == "discovery_fanout"
 
 
+def test_d06_grants_m01_discover_exactly_the_resolved_retrieval_hosts() -> None:
+    """N30V7-F07: D06 reads the frozen `resolved_hosts` (D01's own binding of the
+    curriculum's named profile) and hands them to M01 as `discovery_authority.
+    allowed_hosts` -- never a host the model itself proposed, and nothing at all
+    when no authorization was ever frozen.
+    """
+    unit = {"id": "U001", "required_explanation": ["a"]}
+    base = {
+        "effective_run": {"unit_records": [unit]}, "selected_unit_id": "U001",
+        "source_admissions": [], "engine_root": "/engine", **_CORRELATION,
+    }
+    granted = sources.D06_COMPILE_SOURCE_REQUESTS(
+        {**base, "external_authorizations": [
+            {"resolved_hosts": ["learn.sparkfun.com", "www.arduino.cc"]}]},
+        _Context())
+    packet = granted["pending_packet"]["packets"][0]
+    assert packet["discovery_authority"]["allowed_hosts"] == [
+        "learn.sparkfun.com", "www.arduino.cc"]
+
+    ungranted = sources.D06_COMPILE_SOURCE_REQUESTS(
+        {**base, "external_authorizations": []}, _Context())
+    packet2 = ungranted["pending_packet"]["packets"][0]
+    assert packet2["discovery_authority"]["allowed_hosts"] == []
+
+
 def test_d06_scales_with_the_unit_rather_than_a_fixed_count() -> None:
     small = {"id": "U001", "required_explanation": ["a"]}
     large = {"id": "U002", "required_explanation": [f"fact {index}" for index in range(19)]}
@@ -3288,6 +3313,7 @@ def test_d06b_reads_locators_from_the_discovery_candidates_payload(tmp_path: Pat
             "phase": "DISCOVER",
             "locators_only": True,
             "may_retrieve_bytes": False,
+            "allowed_hosts": ["example.invalid"],
         },
     }
     candidate = {

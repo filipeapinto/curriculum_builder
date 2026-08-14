@@ -218,6 +218,13 @@ def D06_COMPILE_SOURCE_REQUESTS(projection: dict[str, Any], runtime_context: Any
     require(isinstance(unit_id, str) and unit_id, "invalid_input", "no unit is selected")
     unit = _unit_record(projection["effective_run"], unit_id)
 
+    authorizations = projection["external_authorizations"]
+    allowed_hosts: list[str] = []
+    if authorizations:
+        latest = _record(authorizations[-1], "external authorization")
+        allowed_hosts = sorted(
+            host for host in (latest.get("resolved_hosts") or []) if isinstance(host, str))
+
     reusable = {
         admission.get("fact_id")
         for admission in projection["source_admissions"]
@@ -283,6 +290,7 @@ def D06_COMPILE_SOURCE_REQUESTS(projection: dict[str, Any], runtime_context: Any
                     "phase": "DISCOVER",
                     "locators_only": True,
                     "may_retrieve_bytes": False,
+                    "allowed_hosts": allowed_hosts,
                 },
             },
         )
