@@ -1,28 +1,18 @@
 {
-  "attempt_id": "N40_INTEGRATION_OWNERSHIP-execpkgv2-v7-attempt-1",
+  "attempt_id": "N40_INTEGRATION_OWNERSHIP-execpkgv2-v7-attempt-6",
   "changed_files": [
     {
-      "change": "created",
-      "path": "plans/27_langgraph_curriculum_factory_remediation/contracts/integration_ownership.v1.yaml",
-      "sha256": "cd8a47a7ce2c1d39f34f667a54893e80857769d4f1c3ce24b9f610e2d8c5cc74"
+      "change": "modified",
+      "path": "plans/27_langgraph_curriculum_factory_remediation/execution_package_v2/results/v7/evidence/N40_INTEGRATION_OWNERSHIP/01_pytest_n40.log",
+      "sha256": "924bce85516c9d58a31b3d86f9e113b52afc0c3b57d74033a60af1f268efa857"
     },
     {
       "change": "modified",
-      "path": "tests/runtime/test_plan26_topology.py",
-      "sha256": "00206fbd7684db23b4622821ab73f00cb8f473601ab21ea8cad31d76590462e1"
-    },
-    {
-      "change": "created",
-      "path": "plans/27_langgraph_curriculum_factory_remediation/execution_package_v2/results/v7/evidence/N40_INTEGRATION_OWNERSHIP/01_pytest_n40.log",
-      "sha256": "96df5e6bf48d492321a74589249bc0d2ebe35e75c66bb1528de4b207d382bd8d"
-    },
-    {
-      "change": "created",
       "path": "plans/27_langgraph_curriculum_factory_remediation/execution_package_v2/results/v7/evidence/N40_INTEGRATION_OWNERSHIP/02_scan_node_n40.log",
       "sha256": "a6d566cbfd72e03f6353894065c1d18ae9702f3f51b2e87e43c432dcf4d47ac0"
     },
     {
-      "change": "created",
+      "change": "modified",
       "path": "plans/27_langgraph_curriculum_factory_remediation/execution_package_v2/results/v7/evidence/N40_INTEGRATION_OWNERSHIP/03_verify_ownership.log",
       "sha256": "25d74851a58994b406e2073ecee8a8481f6189d1936e1c62325ca7e30920cfb9"
     }
@@ -32,7 +22,7 @@
       "argv": ["python3", "-m", "pytest", "-q", "tests/runtime/test_plan26_topology.py", "tests/runtime/test_plan26_unit_graph.py", "tests/runtime/test_plan26_repair_acceptance.py", "tests/runtime/test_plan26_workbook.py"],
       "exit_code": 0,
       "log": "plans/27_langgraph_curriculum_factory_remediation/execution_package_v2/results/v7/evidence/N40_INTEGRATION_OWNERSHIP/01_pytest_n40.log",
-      "log_sha256": "96df5e6bf48d492321a74589249bc0d2ebe35e75c66bb1528de4b207d382bd8d"
+      "log_sha256": "924bce85516c9d58a31b3d86f9e113b52afc0c3b57d74033a60af1f268efa857"
     },
     {
       "argv": ["python3", "plans/27_langgraph_curriculum_factory_remediation/execution_package_v2/controller/scan_node.py", "--node", "N40_INTEGRATION_OWNERSHIP", "--graph", "plans/27_langgraph_curriculum_factory_remediation/execution_package_v2/implementation.graph.v7.yaml"],
@@ -55,22 +45,16 @@
   "findings": [
     {
       "disposition": "resolved",
-      "id": "N40V7-F01",
+      "id": "N40V7-CASCADE-F05",
       "severity": "observation",
-      "summary": "Plan 26's production topology (runtime/langgraph_factory/graph.py, routing.py, unit_graph.py, repair.py, acceptance.py, workbook.py) was already correct and fully passing (209/209 across the four owned integration-test files) before this node's own changes -- this attempt's job was to prove and permanently encode that ownership, not to build the topology. A machine-readable ownership matrix (plans/27_langgraph_curriculum_factory_remediation/contracts/integration_ownership.v1.yaml, 75 claims) now checks, against real repository bytes rather than assertion: single, exclusive Run 27 ownership of all six modules and all four owned integration tests; every D-node body/registration-seam symbol this node is responsible for (build_curriculum_factory_graph, register_skeleton/register_unit_repair_topology/register_workbook_topology, binding_inventory family, validate_bindings; every route_* decision function; D16-D23's repair/acceptance bodies across repair.py/acceptance.py; D24-D32's workbook/release bodies across workbook.py); graph.py imports the shared node registry and never imports gemini; and no retired-provider credential name appears in any of the four owned tests. This contract is itself the 'ownership-closure check the scheduler can run before each future node attempt' the prompt's item 7 requires -- controller/verify_ownership.py (built by N10, reused unchanged here) is the generic, already-reusable engine; N40's contribution is authoring this node's own claims against it."
-    },
-    {
-      "disposition": "resolved",
-      "id": "N40V7-F02",
-      "severity": "minor",
-      "summary": "scan_node.py --node N40_INTEGRATION_OWNERSHIP genuinely failed on first real run: tests/runtime/test_plan26_topology.py's own forbidden-import guard (test_production_graph_imports_contain_no_fallback_controller) legitimately named the two retired Gemini-family import targets it asserts must be absent (\"langchain_google_genai\", \"google.generativeai\") as literal strings, which the blunt, non-semantic retired_provider_test_scan term scan cannot distinguish from an actual live reference. Per this node's own prompt ('Remove every retired-provider reference from its owned active topology test and keep the zero-occurrence test scan green'), the fix removes the retired provider's own name from the test and instead asserts absence by the shared module-name suffix common to that whole SDK family (\"generativeai\", \"_genai\") -- strictly broader (catches every fork of that SDK family, not just the two named ones), not weaker, and scan_node.py --node N40_INTEGRATION_OWNERSHIP now reports zero violations across all ten of this node's scanned files."
+      "summary": "Pure re-verification, cascading from N20V7-F10 (correction of the mistaken N20V7-F09 pending_failure fix). N40's own write-set files are byte-identical to attempt-5. All three required verification commands rerun in full: 209/209 passed, zero scan violations, 75/75 ownership claims valid. Admitted as a new attempt strictly to rebind predecessor_receipts to N30 attempt-7's new digest."
     }
   ],
   "invalidated_descendants": [],
   "node_id": "N40_INTEGRATION_OWNERSHIP",
   "outcome": "PASSED",
   "predecessor_receipts": {
-    "N30_PREFLIGHT_EGRESS": "033a991bc4cf7c665b82547852a756ceb6b314d69a952ea52701d78e946c0901"
+    "N30_PREFLIGHT_EGRESS": "a5fc16a941e84ceff2cdbca0b5143411d0344a7ac02393b191068d752c815163"
   },
   "prompt_sha256": "a517a0198de0cecca6340b317c9380410a400af11d7f358baa08bf68c5b8b797",
   "run_id": "run27-execpkgv2-v7-2026-08-14",

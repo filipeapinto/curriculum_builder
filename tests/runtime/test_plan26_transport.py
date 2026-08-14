@@ -2,6 +2,7 @@
 from __future__ import annotations
 
 import json
+import os
 import shutil
 import subprocess
 import sys
@@ -448,6 +449,149 @@ def test_sandbox_profile_confines_reads_and_writes_to_the_workspace(tmp_path: Pa
     assert "(deny network*)" in profile
     assert str(tmp_path / "ws") in profile
     assert str(tp.REPO_ROOT) not in profile
+
+
+def test_sandbox_profile_allows_the_claude_cli_its_own_runtime_scratch_dir():
+    """N70 live-verified defect: the installed `claude` binary always touches
+    `/tmp/claude-<uid>` on startup regardless of the sandboxed `$HOME`/`$TMPDIR`,
+    which this profile's own `(deny default)` made unreachable. Under a real,
+    concurrent multi-request fan-out this reproducibly (not rarely) turned into a
+    fatal EPERM for a subset of sandboxed launches -- confirmed live by directly
+    firing nine concurrent sandboxed `claude` invocations before this fix (9/9
+    failed with exactly `EPERM: operation not permitted, open '/tmp/claude-<uid>'`)
+    and after it (0/9, the same failure class gone). `/tmp` is itself a symlink to
+    `/private/tmp` on macOS, so both the literal and resolved forms must be named
+    for sandbox-exec's own resolved-path-sensitive `subpath` matching -- this is
+    not curriculum content or workspace data, so granting it does not weaken
+    content/workspace isolation.
+    """
+    import os
+
+    profile = tp.render_sandbox_profile(
+        workspace=Path("/tmp/nonexistent-ws"), home=Path("/tmp/nonexistent-home"),
+        allow_network=False)
+    claude_scratch = f"/tmp/claude-{os.getuid()}"
+    assert f'(subpath "{claude_scratch}")' in profile
+    assert f'(subpath "{os.path.realpath(claude_scratch)}")' in profile
+
+
+def test_sandbox_profile_grants_only_the_named_keychain_services(tmp_path: Path):
+    """N70/N20 recovery: the installed `claude` CLI's own macOS Keychain OAuth
+    lookup needs `mach-lookup` reach to a small, named set of system security
+    services -- live-verified as sufficient by narrowing down from a blanket
+    `(allow mach-lookup)` to exactly these five service names and re-confirming
+    a real sandboxed CLI call still authenticates. A blanket, unscoped
+    `(allow mach-lookup)` must never appear: that would reach every mach service
+    on the system, not just the ones this driver's auth path actually needs.
+    """
+    profile = tp.render_sandbox_profile(workspace=tmp_path / "ws", home=tmp_path / "home")
+    assert "(allow mach-lookup)\n" not in profile
+    for service in ("com.apple.SecurityServer", "com.apple.securityd",
+                    "com.apple.trustd", "com.apple.trustd.agent", "com.apple.ocspd"):
+        assert f'(global-name "{service}")' in profile
+    assert str(Path.home() / "Library" / "Keychains") in profile
+
+
+def test_sandbox_profile_grants_read_to_only_the_real_codex_auth_file(tmp_path: Path):
+    """N70/N30 recovery: `codex_auth_provision`'s symlink resolves to a file outside
+    the isolated `$CODEX_HOME`'s own writable `home` tree; sandbox-exec's own
+    `subpath` matching resolves symlinks before checking access, so without this
+    explicit rule, reading through that symlink was denied even though the link
+    itself lives inside `home`. Scoped to the one file, not the whole `~/.codex/`
+    tree (which also holds unrelated real session history).
+    """
+    profile = tp.render_sandbox_profile(workspace=tmp_path / "ws", home=tmp_path / "home")
+    assert str(Path.home() / ".codex" / "auth.json") in profile
+    assert str(Path.home() / ".codex" / "sessions") not in profile
+
+
+def test_claude_auth_provision_copies_only_identity_fields_never_project_content(tmp_path: Path):
+    """Never the operator's full `$HOME`: only `oauthAccount`/`userID` (plus two
+    fixed, non-secret onboarding flags) leave the operator's real `~/.claude.json`
+    -- its `projects`/history/session state, which is where curriculum-unrelated
+    conversation content actually lives, must never be copied or linked.
+    """
+    real_home = tmp_path / "real_home"
+    real_home.mkdir()
+    (real_home / ".claude.json").write_text(json.dumps({
+        "oauthAccount": {"emailAddress": "test@example.com", "accountUuid": "abc-123"},
+        "userID": "deadbeef" * 8,
+        "projects": {"/some/real/path": {"history": ["sensitive prior conversation"]}},
+        "history.jsonl": "should never be read",
+    }), encoding="utf-8")
+    (real_home / "Library" / "Keychains").mkdir(parents=True)
+    (real_home / "Library" / "Keychains" / "login.keychain-db").write_bytes(b"not a real keychain")
+
+    isolated_home = tmp_path / "isolated_home"
+    isolated_home.mkdir()
+    provisioned = tp.claude_auth_provision(isolated_home, real_home=real_home)
+
+    assert provisioned is True
+    written = json.loads((isolated_home / ".claude.json").read_text(encoding="utf-8"))
+    assert set(written) == {"oauthAccount", "userID", "hasCompletedOnboarding", "autoUpdates"}
+    assert written["oauthAccount"] == {"emailAddress": "test@example.com", "accountUuid": "abc-123"}
+    assert written["userID"] == "deadbeef" * 8
+    assert "projects" not in written
+    link = isolated_home / "Library" / "Keychains"
+    assert link.is_symlink()
+    assert link.resolve() == (real_home / "Library" / "Keychains").resolve()
+    # The symlink reaches the real keychain database; provisioning itself never
+    # copies its bytes anywhere.
+    assert not (isolated_home / "Library" / "Keychains" / "login.keychain-db").is_symlink()
+    assert (isolated_home / "Library" / "Keychains" / "login.keychain-db").read_bytes() == b"not a real keychain"
+
+
+def test_claude_auth_provision_is_honest_when_no_real_subscription_config_exists(tmp_path: Path):
+    real_home = tmp_path / "real_home_empty"
+    real_home.mkdir()
+    isolated_home = tmp_path / "isolated_home"
+    isolated_home.mkdir()
+    assert tp.claude_auth_provision(isolated_home, real_home=real_home) is False
+    assert not (isolated_home / ".claude.json").exists()
+
+
+def test_claude_auth_provision_is_honest_when_the_real_config_names_no_account(tmp_path: Path):
+    real_home = tmp_path / "real_home_no_account"
+    real_home.mkdir()
+    (real_home / ".claude.json").write_text(json.dumps({"someOtherKey": True}), encoding="utf-8")
+    isolated_home = tmp_path / "isolated_home"
+    isolated_home.mkdir()
+    assert tp.claude_auth_provision(isolated_home, real_home=real_home) is False
+    assert not (isolated_home / ".claude.json").exists()
+
+
+def test_codex_auth_provision_links_only_the_one_auth_file(tmp_path: Path):
+    """N70/N30 recovery: unlike Claude, the installed Codex CLI's subscription
+    session is a bearer token directly inside `~/.codex/auth.json` -- there is no
+    OS-Keychain-mediated equivalent to fall back on. Provisioning must still name
+    only that one file (never `~/.codex/sessions/` or any other real state) and
+    must symlink rather than copy it, so a real token refresh/rotation is reflected
+    rather than silently going stale.
+    """
+    real_codex_home = tmp_path / "real_codex_home"
+    real_codex_home.mkdir()
+    (real_codex_home / "auth.json").write_text(
+        json.dumps({"auth_mode": "chatgpt", "tokens": {"access_token": "fake-token-value"}}),
+        encoding="utf-8")
+    (real_codex_home / "sessions").mkdir()
+    (real_codex_home / "sessions" / "unrelated-history.jsonl").write_text("secret\n", encoding="utf-8")
+
+    isolated_codex_home = tmp_path / "isolated_codex_home"
+    provisioned = tp.codex_auth_provision(isolated_codex_home, real_codex_home=real_codex_home)
+
+    assert provisioned is True
+    link = isolated_codex_home / "auth.json"
+    assert link.is_symlink()
+    assert link.resolve() == (real_codex_home / "auth.json").resolve()
+    assert not (isolated_codex_home / "sessions").exists()
+
+
+def test_codex_auth_provision_is_honest_when_no_real_auth_file_exists(tmp_path: Path):
+    real_codex_home = tmp_path / "real_codex_home_empty"
+    real_codex_home.mkdir()
+    isolated_codex_home = tmp_path / "isolated_codex_home"
+    assert tp.codex_auth_provision(isolated_codex_home, real_codex_home=real_codex_home) is False
+    assert not (isolated_codex_home / "auth.json").exists()
 
 
 # -------------------------------------------- TEST 5: decided versus observed identity
@@ -1132,8 +1276,14 @@ def test_worker_environment_is_allowlisted_over_a_temporary_home(tmp_path: Path)
     environment = tp.build_worker_environment(home=tmp_path / "home")
     assert environment["HOME"] == str(tmp_path / "home")
     assert environment["CODEX_HOME"].startswith(str(tmp_path / "home"))
-    assert set(environment) == {"PATH", "HOME", "TMPDIR", "XDG_CONFIG_HOME",
-                                "XDG_CACHE_HOME", "CODEX_HOME", "LANG"}
+    expected = {"PATH", "HOME", "TMPDIR", "XDG_CONFIG_HOME", "XDG_CACHE_HOME", "CODEX_HOME", "LANG"}
+    # USER is the one real-identity value carried through unconditionally (never a
+    # secret; load-bearing for the installed Claude CLI's own macOS Keychain OAuth
+    # lookup under an isolated $HOME, N70/N20 recovery) -- present only when the
+    # real ambient environment actually has one to carry.
+    if os.environ.get("USER"):
+        expected.add("USER")
+    assert set(environment) == expected
 
 
 @requires_sandbox

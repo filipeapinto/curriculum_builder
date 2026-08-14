@@ -1,0 +1,9 @@
+============================= test session starts ==============================
+platform darwin -- Python 3.13.1, pytest-9.0.3, pluggy-1.6.0
+rootdir: /Users/filipepinto/Projects/curriculum_builder
+plugins: anyio-4.14.2, langsmith-0.10.17
+collected 196 items / 195 deselected / 1 selected
+
+tests/runtime/test_plan26_model_nodes.py .                               [100%]
+
+====================== 1 passed, 195 deselected in 0.09s =======================

@@ -471,6 +471,145 @@ def _subpath_rules(paths: Sequence[Path]) -> str:
     return " ".join(f'(subpath "{candidate}")' for candidate in seen)
 
 
+def _cli_runtime_scratch_rule() -> str:
+    """The Claude Code CLI's own per-UID coordination directory (`/tmp/claude-<uid>`).
+
+    Live-verified (N70): the installed `claude` binary always touches this path on
+    startup regardless of `$HOME`/`$TMPDIR` -- it is not workspace content and carries
+    no curriculum data, but under this profile's `(deny default)` it is unreachable,
+    and a concurrent fan-out of sandboxed launches reproducibly (not merely rarely)
+    turned that into a fatal `EPERM` for some fraction of them. `/tmp` is itself a
+    symlink to `/private/tmp` on macOS, so both forms are named (`_subpath_rules`'
+    existing literal+resolved convention) -- sandbox-exec's own `subpath` matching is
+    resolved-path-sensitive and silently would not have matched the symlink form alone.
+    """
+    return _subpath_rules([Path(f"/tmp/claude-{os.getuid()}")])
+
+
+# The macOS system services genuinely needed to complete a Keychain item lookup
+# (unlock + ACL check + certificate trust evaluation for the TLS handshake that
+# follows) -- named individually rather than a blanket `(allow mach-lookup)`,
+# live-verified (N70/N20 recovery) as the exact, narrow set sufficient for the
+# real installed `claude` CLI's own subscription OAuth lookup.
+_KEYCHAIN_MACH_SERVICES = (
+    "com.apple.SecurityServer",
+    "com.apple.securityd",
+    "com.apple.trustd",
+    "com.apple.trustd.agent",
+    "com.apple.ocspd",
+)
+
+
+def _keychain_access_rule() -> str:
+    """Read-only reach to the operator's real login keychain, plus the narrow
+    mach-lookup set that completes an OAuth item fetch through it.
+
+    Never the operator's `$HOME`: the isolated worker's own `$HOME` still points at
+    its disposable per-activation directory (`build_worker_environment`); this is
+    the one, single, explicitly-named exception, and it grants no read access to
+    curriculum-unrelated files -- `~/Library/Keychains` is an encrypted database
+    macOS itself still gates per-item by requesting-process ACL and Keychain
+    unlock state (`security find-generic-password`, live-verified), not a plaintext
+    credential this sandbox rule alone exposes.
+    """
+    keychains = _subpath_rules([Path.home() / "Library" / "Keychains"])
+    services = " ".join(f'(global-name "{name}")' for name in _KEYCHAIN_MACH_SERVICES)
+    return f"(allow file-read* {keychains})\n(allow mach-lookup {services})\n"
+
+
+def _codex_auth_file_rule() -> str:
+    """Read-only reach to the one real file `codex_auth_provision` symlinks in.
+
+    sandbox-exec's own `subpath` matching resolves symlinks to their target before
+    checking access (live-verified: the isolated `$CODEX_HOME`'s own `writable`
+    rule did not cover this, since the symlink's *target* sits outside `home`), so
+    the profile must name the real, operator-home file explicitly -- scoped to the
+    one file, never the whole `~/.codex/` tree (which also holds unrelated session
+    history this sandbox has no reason to read).
+    """
+    return f"(allow file-read* {_subpath_rules([Path.home() / '.codex' / 'auth.json'])})\n"
+
+
+def claude_auth_provision(home: Path, *, real_home: Path | None = None) -> bool:
+    """Give an isolated per-activation `home` the minimal, non-content-bearing local
+    state the installed Claude Code CLI needs to recognize an already-authorized
+    subscription account and complete the real macOS Keychain OAuth lookup for it.
+
+    Never an API key, never the operator's full `$HOME`: this copies only the four
+    fields (`oauthAccount`, `userID`, `hasCompletedOnboarding`, `autoUpdates`) the
+    live-verified minimal-config path needs out of the operator's real
+    `~/.claude.json` -- never its `projects`/history/session content -- and links
+    (never copies) `~/Library/Keychains` read-only so the actual OAuth secret is
+    still resolved through the real, ACL-gated Keychain item, never duplicated to
+    disk. Returns ``False`` (a legitimate, honest "not provisioned", not an error)
+    when the operator's own machine has no real subscription config to draw from --
+    the sandboxed CLI then genuinely reports not logged in, exactly as it should.
+
+    `real_home` defaults to `Path.home()`; a test may point it at a synthetic
+    directory to prove the copy/link behavior without touching the operator's own
+    real account state.
+    """
+    real_home = Path(real_home) if real_home is not None else Path.home()
+    real_config = real_home / ".claude.json"
+    if not real_config.is_file():
+        return False
+    try:
+        data = json.loads(real_config.read_text(encoding="utf-8"))
+    except (OSError, json.JSONDecodeError):
+        return False
+    if not isinstance(data, Mapping):
+        return False
+    oauth_account = data.get("oauthAccount")
+    user_id = data.get("userID")
+    if not isinstance(oauth_account, Mapping) or not isinstance(user_id, str) or not user_id:
+        return False
+    minimal = {
+        "oauthAccount": dict(oauth_account),
+        "userID": user_id,
+        "hasCompletedOnboarding": True,
+        "autoUpdates": False,
+    }
+    home = Path(home)
+    (home / ".claude.json").write_text(canonical_json(minimal), encoding="utf-8")
+    real_keychains = real_home / "Library" / "Keychains"
+    if real_keychains.is_dir():
+        library_dir = home / "Library"
+        library_dir.mkdir(exist_ok=True)
+        link_path = library_dir / "Keychains"
+        if not link_path.exists():
+            link_path.symlink_to(real_keychains)
+    return True
+
+
+def codex_auth_provision(codex_home: Path, *, real_codex_home: Path | None = None) -> bool:
+    """Give an isolated per-activation `$CODEX_HOME` reach to the operator's existing
+    Codex CLI subscription session -- never a fresh API key, never the operator's
+    full `$HOME`.
+
+    Materially different from `claude_auth_provision`: the installed Codex CLI's own
+    subscription auth is not macOS-Keychain-mediated at all -- its ChatGPT OAuth
+    session (`auth_mode: "chatgpt"`) lives as a bearer token directly inside
+    `~/.codex/auth.json` (mode 0600), which is itself the credential, not a local
+    pointer to one an OS access-control layer still gates per read. This still never
+    copies the token to a new location (a symlink, resolved fresh on every read, so
+    a real token rotation/refresh is reflected rather than silently going stale) and
+    still names only this one file -- never `~/.codex/sessions/` or any other real
+    Codex CLI state -- but the isolated `$CODEX_HOME` that receives it must remain
+    exactly as disposable and workspace-scoped as it already is; this function grants
+    no broader reach than that one link.
+    """
+    real_codex_home = Path(real_codex_home) if real_codex_home is not None else Path.home() / ".codex"
+    real_auth = real_codex_home / "auth.json"
+    if not real_auth.is_file():
+        return False
+    codex_home = Path(codex_home)
+    codex_home.mkdir(parents=True, exist_ok=True)
+    link_path = codex_home / "auth.json"
+    if not link_path.exists():
+        link_path.symlink_to(real_auth)
+    return True
+
+
 def render_sandbox_profile(
     *,
     workspace: Path,
@@ -493,6 +632,9 @@ def render_sandbox_profile(
         "(allow sysctl-read)",
         "(allow file-read-metadata)",
         "(allow signal (target self))",
+        f"(allow file-read* file-write* {_cli_runtime_scratch_rule()})",
+        _keychain_access_rule(),
+        _codex_auth_file_rule(),
     ]
     if readable_rule:
         lines.append(f"(allow file-read* {readable_rule})")
@@ -1110,6 +1252,10 @@ def stage_workspace(
     home_parent.mkdir(parents=True, exist_ok=True)
     home = Path(tempfile.mkdtemp(prefix="plan26-home-", dir=str(home_parent)))
     os.chmod(home, 0o700)
+    if route.cli == "claude":
+        claude_auth_provision(home)
+    elif route.cli == "codex":
+        codex_auth_provision(home / "codex")
 
     prompt_source = resolve_prompt_path(route)
     schema_source = resolve_schema_path(route)
@@ -1158,7 +1304,14 @@ def stage_workspace(
 
 
 def build_worker_environment(*, home: Path, passthrough: Sequence[str] = ()) -> dict[str, str]:
-    """Allowlisted environment over a dedicated temporary home; secrets pass by name only."""
+    """Allowlisted environment over a dedicated temporary home; secrets pass by name only.
+
+    `USER` is the one identity value carried through unconditionally, not behind
+    `passthrough`: it is the real OS username, never a secret (already implicit in
+    the process's real UID), but live-verified (N70/N20 recovery) as load-bearing
+    for the installed Claude Code CLI's own macOS Keychain OAuth lookup to succeed
+    at all under an otherwise fully isolated `$HOME`.
+    """
     home = Path(home)
     environment = {
         "PATH": "/usr/bin:/bin:/usr/sbin:/sbin:/opt/homebrew/bin",
@@ -1169,6 +1322,9 @@ def build_worker_environment(*, home: Path, passthrough: Sequence[str] = ()) -> 
         "CODEX_HOME": str(home / "codex"),
         "LANG": "C.UTF-8",
     }
+    real_user = os.environ.get("USER")
+    if real_user:
+        environment["USER"] = real_user
     for child in ("config", "cache", "codex"):
         (home / child).mkdir(parents=True, exist_ok=True)
     for name in passthrough:

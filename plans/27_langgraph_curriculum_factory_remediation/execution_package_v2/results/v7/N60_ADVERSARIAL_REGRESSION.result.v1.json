@@ -1,0 +1,81 @@
+{
+  "attempt_id": "N60_ADVERSARIAL_REGRESSION-execpkgv2-v7-attempt-6",
+  "changed_files": [
+    {
+      "change": "modified",
+      "path": "plans/27_langgraph_curriculum_factory_remediation/execution_package_v2/results/v7/evidence/N60_ADVERSARIAL_REGRESSION/01_pytest_n60_own.log",
+      "sha256": "fdb96dfed6e3b50494c8d05ca25cc10cde9d568d899790f3516c44ddb5bf8638"
+    },
+    {
+      "change": "modified",
+      "path": "plans/27_langgraph_curriculum_factory_remediation/execution_package_v2/results/v7/evidence/N60_ADVERSARIAL_REGRESSION/02_pytest_tests_runtime_run1.log",
+      "sha256": "e59b33df01bd95533e438c1492b10932c5f403d0c235f2c0e5ee71255eba8ae2"
+    },
+    {
+      "change": "modified",
+      "path": "plans/27_langgraph_curriculum_factory_remediation/execution_package_v2/results/v7/evidence/N60_ADVERSARIAL_REGRESSION/03_pytest_tests_runtime_run2.log",
+      "sha256": "a418f09af38bee248fbca2b0f11be3a1ef45932f5cd96690115df99e5fa59df3"
+    },
+    {
+      "change": "modified",
+      "path": "plans/27_langgraph_curriculum_factory_remediation/execution_package_v2/results/v7/evidence/N60_ADVERSARIAL_REGRESSION/04_pytest_plan27_tests_run1.log",
+      "sha256": "6bb019c64b752643a1ee821fd3257129643c89d258eae73d5ae81a72f5614c04"
+    },
+    {
+      "change": "modified",
+      "path": "plans/27_langgraph_curriculum_factory_remediation/execution_package_v2/results/v7/evidence/N60_ADVERSARIAL_REGRESSION/05_pytest_plan27_tests_run2.log",
+      "sha256": "aced1502056be05dde8d9070d79abbdeb7c143749e9722d4d2a9a382439dafb8"
+    },
+    {
+      "change": "modified",
+      "path": "plans/27_langgraph_curriculum_factory_remediation/execution_package_v2/results/v7/evidence/N60_ADVERSARIAL_REGRESSION/06_scan_node_whole_tree.log",
+      "sha256": "05a0225b85a3b3f4f1e3691b68c2d4e9eeb037b7eafa86e28e27ec8ee4e08e18"
+    },
+    {
+      "change": "modified",
+      "path": "plans/27_langgraph_curriculum_factory_remediation/execution_package_v2/results/v7/evidence/N60_ADVERSARIAL_REGRESSION/07_pre_existing_failure_baseline_proof.log",
+      "sha256": "5ddf3bfccf6e26f28edbdb647e70fb3e8733b1a326922f7621e7bb77626369cb"
+    }
+  ],
+  "commands": [
+    {
+      "argv": ["python3", "-m", "pytest", "-q", "tests/runtime/test_plan27_adversarial.py", "plans/27_langgraph_curriculum_factory_remediation/tests/test_run27_adversarial.py"],
+      "exit_code": 0,
+      "log": "plans/27_langgraph_curriculum_factory_remediation/execution_package_v2/results/v7/evidence/N60_ADVERSARIAL_REGRESSION/01_pytest_n60_own.log",
+      "log_sha256": "fdb96dfed6e3b50494c8d05ca25cc10cde9d568d899790f3516c44ddb5bf8638"
+    },
+    {
+      "argv": ["python3", "plans/27_langgraph_curriculum_factory_remediation/execution_package_v2/controller/scan_node.py", "--graph", "plans/27_langgraph_curriculum_factory_remediation/execution_package_v2/implementation.graph.v7.yaml"],
+      "exit_code": 0,
+      "log": "plans/27_langgraph_curriculum_factory_remediation/execution_package_v2/results/v7/evidence/N60_ADVERSARIAL_REGRESSION/06_scan_node_whole_tree.log",
+      "log_sha256": "05a0225b85a3b3f4f1e3691b68c2d4e9eeb037b7eafa86e28e27ec8ee4e08e18"
+    }
+  ],
+  "evidence": [
+    "plans/27_langgraph_curriculum_factory_remediation/execution_package_v2/results/v7/evidence/N60_ADVERSARIAL_REGRESSION/01_pytest_n60_own.log",
+    "plans/27_langgraph_curriculum_factory_remediation/execution_package_v2/results/v7/evidence/N60_ADVERSARIAL_REGRESSION/02_pytest_tests_runtime_run1.log",
+    "plans/27_langgraph_curriculum_factory_remediation/execution_package_v2/results/v7/evidence/N60_ADVERSARIAL_REGRESSION/03_pytest_tests_runtime_run2.log",
+    "plans/27_langgraph_curriculum_factory_remediation/execution_package_v2/results/v7/evidence/N60_ADVERSARIAL_REGRESSION/04_pytest_plan27_tests_run1.log",
+    "plans/27_langgraph_curriculum_factory_remediation/execution_package_v2/results/v7/evidence/N60_ADVERSARIAL_REGRESSION/05_pytest_plan27_tests_run2.log",
+    "plans/27_langgraph_curriculum_factory_remediation/execution_package_v2/results/v7/evidence/N60_ADVERSARIAL_REGRESSION/06_scan_node_whole_tree.log",
+    "plans/27_langgraph_curriculum_factory_remediation/execution_package_v2/results/v7/evidence/N60_ADVERSARIAL_REGRESSION/07_pre_existing_failure_baseline_proof.log"
+  ],
+  "findings": [
+    {
+      "disposition": "resolved",
+      "id": "N60V7-CASCADE-F05",
+      "severity": "observation",
+      "summary": "Pure re-verification, cascading from N20V7-F10 (correction of the mistaken N20V7-F09 pending_failure fix, live-verified to now let a real M01 discovery-content-violation reach D17 with a genuine finding to classify). N60's own two owned files are byte-identical to attempt-5. Complete denominator rerun twice for stability: tests/runtime -- 1310 passed, 2 skipped, 419 subtests passed, 1 failed, identical both runs (evidence 02, 03), the same sole pre-existing/unrelated failure already independently baseline-proven (evidence 07, still unaffected, byte-identical, reused unchanged). plans/27_langgraph_curriculum_factory_remediation/tests -- 83 passed, identical both runs (evidence 04, 05). scan_node.py complete active-tree mode -- 67 files scanned, zero violations (evidence 06). Admitted as a new attempt strictly to rebind predecessor_receipts to N50 attempt-6's new digest."
+    }
+  ],
+  "invalidated_descendants": [],
+  "node_id": "N60_ADVERSARIAL_REGRESSION",
+  "outcome": "PASSED",
+  "predecessor_receipts": {
+    "N50_EVIDENCE_AUDIT_CONTROLS": "fb5c0c80d5aa18f924ff2bc78a662b83a2a3527331ccb538db43d0a1989cc2b1"
+  },
+  "prompt_sha256": "2f4e8155eeefc5ee9ea4c9a3a4f95c8cc48425463e47a78bb824db7e6016b4e3",
+  "run_id": "run27-execpkgv2-v7-2026-08-14",
+  "schema_version": 1,
+  "source_spec_sha256": "e14df5a36ce12d700fe9fc4aa4aea466771bc89f31bc6e9d49f812c147b1bb3c"
+}

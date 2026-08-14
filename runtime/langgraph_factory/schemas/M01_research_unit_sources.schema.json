@@ -54,8 +54,7 @@
       }
     }
   },
-  "oneOf": [
-    {"required": ["locators"], "not": {"required": ["interpretations"]}},
-    {"required": ["interpretations"], "not": {"required": ["locators"]}}
-  ]
+  "if": {"required": ["locators"]},
+  "then": {"not": {"required": ["interpretations"]}},
+  "else": {"required": ["interpretations"]}
 }

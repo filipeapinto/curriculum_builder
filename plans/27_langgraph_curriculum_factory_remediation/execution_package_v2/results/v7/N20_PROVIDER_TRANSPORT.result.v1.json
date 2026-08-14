@@ -1,20 +1,35 @@
 {
-  "attempt_id": "N20_PROVIDER_TRANSPORT-execpkgv2-v7-attempt-2",
+  "attempt_id": "N20_PROVIDER_TRANSPORT-execpkgv2-v7-attempt-7",
   "changed_files": [
     {
       "change": "modified",
       "path": "runtime/langgraph_factory/transport.py",
-      "sha256": "2dbde5648cff2b643913abc0c3f741dd30ae3cc546e9749ab114df5c5d399f00"
+      "sha256": "b0e2ad246f21a4d4632a239c1bf339e2e7451548b74afc11810343732884b791"
+    },
+    {
+      "change": "modified",
+      "path": "runtime/langgraph_factory/model_nodes.py",
+      "sha256": "ba145a82794e27bbcc772ca7aa9ed1b25de62a87801659f0aa947a575d63afb0"
+    },
+    {
+      "change": "modified",
+      "path": "runtime/langgraph_factory/schemas/M01_research_unit_sources.schema.json",
+      "sha256": "b4d0032c268b447e44137003983539064340c547329926db12c7e31c0d7b40ab"
     },
     {
       "change": "modified",
       "path": "tests/runtime/test_plan26_transport.py",
-      "sha256": "b27a55aa598ea252ac12c3e82b11e734062ef705504b06b80a98ba0c95266d68"
+      "sha256": "437e5579c003a6bc46b761204010b132c0c306a37fc9ac97ec746ef8f7c9de12"
+    },
+    {
+      "change": "modified",
+      "path": "tests/runtime/test_plan26_model_nodes.py",
+      "sha256": "051cab91eec941a97913109dc8b9e27f77c9ba8a4894591cd6f881364cb04d8b"
     },
     {
       "change": "modified",
       "path": "plans/27_langgraph_curriculum_factory_remediation/execution_package_v2/results/v7/evidence/N20_PROVIDER_TRANSPORT/01_pytest_n20.log",
-      "sha256": "823c0a5a2e5fa755c98e353e527c9c0a81058052345b2daab8b0f8c5a8ec420c"
+      "sha256": "f087574721b65eb36e5cff031fe9b6ab84e83c891cb5a3b04fab2cf22ea7268d"
     },
     {
       "change": "modified",
@@ -23,13 +38,13 @@
     },
     {
       "change": "created",
-      "path": "plans/27_langgraph_curriculum_factory_remediation/execution_package_v2/results/v7/evidence/N20_PROVIDER_TRANSPORT/03_n20v7_f05_repair_regression_tests.log",
-      "sha256": "7033edf82314deea34f388ab0a634ade0ce30e479d9a893ff96cdae19c733a74"
+      "path": "plans/27_langgraph_curriculum_factory_remediation/execution_package_v2/results/v7/evidence/N20_PROVIDER_TRANSPORT/03_n20v7_f10_repair_regression_tests.log",
+      "sha256": "3dff5a6eb6f240b40ed9608927262932e7a6c860f1f689386cda74fa8b986295"
     },
     {
       "change": "modified",
       "path": "plans/27_langgraph_curriculum_factory_remediation/execution_package_v2/results/v7/evidence/N20_PROVIDER_TRANSPORT/04_git_status_production_scope.log",
-      "sha256": "a65ddabf8dafc48e640e64644d392496f52c53306fc0f6e2cb9d0e364eaf345e"
+      "sha256": "fcc6b33c4eb938df4e7c191eb6f7685c0fdc0ac67b59076dac2fc2e41cfb1bcc"
     }
   ],
   "commands": [
@@ -37,7 +52,7 @@
       "argv": ["python3", "-m", "pytest", "-q", "tests/runtime/test_plan26_transport.py", "tests/runtime/test_plan26_model_nodes.py", "tests/runtime/test_plan26_egress.py", "tests/runtime/test_capabilities.py", "tests/runtime/test_curriculum_factory_graph.py", "tests/runtime/test_plan26_adversarial.py", "tests/runtime/test_plan26_api_contract.py", "tests/runtime/test_plan26_lock_drift.py"],
       "exit_code": 0,
       "log": "plans/27_langgraph_curriculum_factory_remediation/execution_package_v2/results/v7/evidence/N20_PROVIDER_TRANSPORT/01_pytest_n20.log",
-      "log_sha256": "823c0a5a2e5fa755c98e353e527c9c0a81058052345b2daab8b0f8c5a8ec420c"
+      "log_sha256": "f087574721b65eb36e5cff031fe9b6ab84e83c891cb5a3b04fab2cf22ea7268d"
     },
     {
       "argv": ["python3", "plans/27_langgraph_curriculum_factory_remediation/execution_package_v2/controller/scan_node.py", "--node", "N20_PROVIDER_TRANSPORT", "--graph", "plans/27_langgraph_curriculum_factory_remediation/execution_package_v2/implementation.graph.v7.yaml"],
@@ -46,45 +61,33 @@
       "log_sha256": "2d471cf440eeeead175a5f5eb2abd59afe0c56f62a78b8fd11d834c7a55d2b9a"
     },
     {
-      "argv": ["python3", "-m", "pytest", "-q", "tests/runtime/test_plan26_transport.py", "-k", "codex_identity or codex_reroute or codex_stream", "-v"],
+      "argv": ["python3", "-m", "pytest", "-q", "tests/runtime/test_plan26_model_nodes.py", "-k", "pending_failure", "-v"],
       "exit_code": 0,
-      "log": "plans/27_langgraph_curriculum_factory_remediation/execution_package_v2/results/v7/evidence/N20_PROVIDER_TRANSPORT/03_n20v7_f05_repair_regression_tests.log",
-      "log_sha256": "7033edf82314deea34f388ab0a634ade0ce30e479d9a893ff96cdae19c733a74"
+      "log": "plans/27_langgraph_curriculum_factory_remediation/execution_package_v2/results/v7/evidence/N20_PROVIDER_TRANSPORT/03_n20v7_f10_repair_regression_tests.log",
+      "log_sha256": "3dff5a6eb6f240b40ed9608927262932e7a6c860f1f689386cda74fa8b986295"
     },
     {
       "argv": ["git", "status", "--porcelain", "--", "runtime/", "policy/", "schemas/"],
       "exit_code": 0,
       "log": "plans/27_langgraph_curriculum_factory_remediation/execution_package_v2/results/v7/evidence/N20_PROVIDER_TRANSPORT/04_git_status_production_scope.log",
-      "log_sha256": "a65ddabf8dafc48e640e64644d392496f52c53306fc0f6e2cb9d0e364eaf345e"
+      "log_sha256": "fcc6b33c4eb938df4e7c191eb6f7685c0fdc0ac67b59076dac2fc2e41cfb1bcc"
     }
   ],
   "evidence": [
     "plans/27_langgraph_curriculum_factory_remediation/execution_package_v2/results/v7/evidence/N20_PROVIDER_TRANSPORT/01_pytest_n20.log",
     "plans/27_langgraph_curriculum_factory_remediation/execution_package_v2/results/v7/evidence/N20_PROVIDER_TRANSPORT/02_scan_node_n20.log",
-    "plans/27_langgraph_curriculum_factory_remediation/execution_package_v2/results/v7/evidence/N20_PROVIDER_TRANSPORT/03_n20v7_f05_repair_regression_tests.log",
+    "plans/27_langgraph_curriculum_factory_remediation/execution_package_v2/results/v7/evidence/N20_PROVIDER_TRANSPORT/03_n20v7_f10_repair_regression_tests.log",
     "plans/27_langgraph_curriculum_factory_remediation/execution_package_v2/results/v7/evidence/N20_PROVIDER_TRANSPORT/04_git_status_production_scope.log"
   ],
   "findings": [
     {
       "disposition": "resolved",
-      "id": "N20V7-F04",
+      "id": "N20V7-F10",
       "severity": "critical",
-      "summary": "N30V7-F05 (routed here from N30_PREFLIGHT_EGRESS attempt-1, BLOCKED): transport.observe_codex_identity could not extract an executed model from the real, installed Codex CLI's actual --json exec event stream (codex-cli 0.147.0; thread.started/turn.started/item.completed/turn.completed never carry a model field on any variant, live-verified). Root cause: the pinned invocation's own --ephemeral flag suppresses the one machine-readable Codex receipt that does carry the executed model -- the on-disk rollout file's turn_context.payload.model. Fix, scoped entirely to N20's write set (runtime/langgraph_factory/transport.py, tests/runtime/test_plan26_transport.py): build_codex_argv drops --ephemeral; observe_codex_identity now binds this exact invocation's stdout thread.started.thread_id to exactly one rollout file under codex_home whose own session_meta.payload.session_id matches, and reads that file's final turn_context.payload.model (last one wins, mirroring the existing reroute-supersedes-initial rule already used for Claude identity). Zero or multiple rollout matches are refused as an unobservable identity, never guessed by mtime or path recency -- load-bearing because the driver-capability preflight probe (N30-owned runtime/run_curriculum.py, unchanged call contract, now passed an explicit codex_home) deliberately runs against the operator's real, shared ~/.codex, which can hold rollout files from unrelated, concurrent, or historical invocations. New observe_identity(..., codex_home=...) parameter added; the one production call site (CliTransport._attempt) passes workspace.home / 'codex', the same disposable per-activation CODEX_HOME build_worker_environment already establishes for every real job."
-    },
-    {
-      "disposition": "resolved",
-      "id": "N20V7-F04-REGRESSION",
-      "severity": "major",
-      "summary": "Deterministic positive and negative regression proof added (tests/runtime/test_plan26_transport.py): identity reads the rollout file bound by thread_id (positive); reroute's later turn_context supersedes the initial one and correctly raises IdentityMismatch against a stale decided model (positive); the real captured codex-cli 0.147.0 stdout shape alone (no thread_id or no matching rollout) still fails closed (negative, two variants); and -- the specific proof the routing instruction required -- an unrelated, concurrent rollout file for a different thread_id under the same codex_home is never mistaken for the invoked process, plus zero-match and multiple-match (ambiguous binding) are both explicitly refused rather than guessed. 7/7 new/updated identity tests pass in isolation; full N20 verification suite (464 passed, 1 skipped, 140 subtests) is unaffected."
-    },
-    {
-      "disposition": "resolved",
-      "id": "N20V7-F04-LIVE",
-      "severity": "observation",
-      "summary": "Live-verified against the genuinely installed codex-cli 0.147.0 (not simulated): runtime.run_curriculum._prove_driver_capabilities() now reports the codex driver's observable_subscription_backed_usability as PASS (observed_model: gpt-5.6-sol) and overall ready: true, where it previously reported FAIL/malformed_or_unobservable_output (N30V7-F05 evidence, 04_live_driver_capability_proof.log under N30's prior attempt-1). N20V7-F01 through F03 (write-set/scan-scope conformance, prior graph-v5 implementation, test-count parity) remain resolved and unaffected -- production code touched by this attempt is limited to the one function family this finding names."
+      "summary": "A sixth live-verified defect found by N70's real production unit run -- and a correction of a mistaken diagnosis (N20V7-F09, attempts 6) made earlier in this same lineage against a stale/incomplete checkpoint read. Live rerun of N70 with N20V7-F09's fix in place progressed further (now genuinely entering D17_CLASSIFY_UNIT_FINDINGS from D91's repair destination -- proof the routing concern F09 targeted was never actually broken: D91's own outgoing edge is `routing.route_model_failure`, which reads `pending_guard` directly and never consults `pending_failure` or the generic `_failure_destination` hijack path at all) but then failed inside D17 itself: 'D17 was routed with an empty or missing findings list'. Root cause, confirmed via direct SQLite checkpoint archaeology of this exact live run (`outputs/run27/live_unit`, run_id `1f279267aabb080ca4cf58293303f2915e6f2f9eab0bb79eadfb48a6d19e3c5b`): `D17_CLASSIFY_UNIT_FINDINGS` (repair.py) has two entry branches -- one reads a classified `pending_failure` (`classification == 'repair'`) that D91 leaves in place specifically for D17 to build its one raw finding from, then D17 clears it itself once consumed; the other reads `pending_guard.detail.findings` for D08/D09/D12/D14/D16-sourced repairs. N20V7-F09's fix nulled `pending_failure` inside D91 for the 'repair' decision, which starved D17 of the only data it had to work with the moment a real M01 discovery sub-request failed content policy (`candidate_undeclared_artifact`, safety_focus:002, 'discovery must emit locators, not interpretations') and D91 routed it to D17 for repair. Fixed within N20's write set (runtime/langgraph_factory/model_nodes.py): D91_CLASSIFY_MODEL_FAILURE reverted to clearing `pending_failure` only on the 'retry' decision -- the original, correct behavior. The prior regression test asserting the wrong (F09) behavior was replaced with an integration-style test that drives D91 then repair.D17_CLASSIFY_UNIT_FINDINGS directly against a real M01 discovery-failure shape, proving the classified pending_failure survives to D17, D17 builds a real finding_partitions entry from it, D17 clears pending_failure itself, and D17's own subsequent routing correctly resolves to D18_PLAN_TARGETED_UNIT_REPAIR. Full 8-file N20 suite: 475 passed, 1 skipped, 140 subtests passed. Zero scan violations."
     }
   ],
-  "invalidated_descendants": ["N30_PREFLIGHT_EGRESS"],
+  "invalidated_descendants": ["N30_PREFLIGHT_EGRESS", "N40_INTEGRATION_OWNERSHIP", "N50_EVIDENCE_AUDIT_CONTROLS", "N60_ADVERSARIAL_REGRESSION"],
   "node_id": "N20_PROVIDER_TRANSPORT",
   "outcome": "PASSED",
   "predecessor_receipts": {

@@ -317,23 +317,6 @@ _TOOL_CLOSURE_NOT_APPLICABLE: dict[str, Any] = {
 }
 
 
-def _probe_env() -> dict[str, str]:
-    """The real ambient environment, minus every forbidden credential.
-
-    Unlike a real M0x job's disposable, fully isolated `$HOME` (spec 7.2's
-    content-isolation boundary: untrusted curriculum content must never see the
-    operator's real home), this probe carries no curriculum content at all, so there
-    is nothing to isolate it *from* -- it deliberately runs under the operator's real,
-    already-authenticated environment, because "observable subscription-backed
-    usability" means observing whether *this* machine's installed CLI is actually
-    logged in right now, not whether a freshly emptied home would be. Stripping the
-    forbidden credential names here is belt-and-suspenders: `permitted_auth_mode`
-    already refuses to launch the probe at all once one is present.
-    """
-
-    return {key: value for key, value in os.environ.items() if key not in _FORBIDDEN_AUTH_ENV_VARS}
-
-
 def _prove_one_driver(
     cli: str,
     *,
@@ -392,12 +375,14 @@ def _prove_one_driver(
         "transmitted_authorized_input_projection": {},
     }
 
-    if fields["permitted_auth_mode"]["status"] != "PASS":
-        fields["observable_subscription_backed_usability"] = {
-            "status": "FAIL", "reason": "skipped_forbidden_auth_mode",
-        }
+    if fields["permitted_auth_mode"]["status"] != "PASS" or fields["executable_identity"]["status"] != "PASS":
+        reason = (
+            "skipped_forbidden_auth_mode" if fields["permitted_auth_mode"]["status"] != "PASS"
+            else "skipped_executable_unproven"
+        )
+        fields["observable_subscription_backed_usability"] = {"status": "FAIL", "reason": reason}
         fields["tool_mcp_closure"] = (
-            {"status": "FAIL", "reason": "skipped_forbidden_auth_mode"} if cli == "claude"
+            {"status": "FAIL", "reason": reason} if cli == "claude"
             else dict(_TOOL_CLOSURE_NOT_APPLICABLE)
         )
         failed_fields = sorted(name for name, detail in fields.items() if detail.get("status") == "FAIL")
@@ -406,13 +391,27 @@ def _prove_one_driver(
             "failed_fields": failed_fields, "fields": fields,
         }
 
+    # The real, sandboxed dispatch route (spec 7.1/7.2) -- the same
+    # stage_workspace/render_sandbox_profile/build_worker_environment path every
+    # real M0x job uses, not a shortcut that only proves *this* unsandboxed shell
+    # is logged in. N70's live proof found those two routes genuinely differ: the
+    # installed Claude CLI's macOS Keychain OAuth lookup depends on isolation-
+    # breaking state (`USER`, a minimal `~/.claude.json`, and reach to
+    # `~/Library/Keychains`) that only `claude_auth_provision` + the sandbox
+    # profile's own keychain rule provide -- an unsandboxed probe could not have
+    # caught that gap because it never hit it.
+    probe_home = Path(workspace) / "_preflight_home"
+    probe_home.mkdir(parents=True, exist_ok=True)
+
     probe_stdin: str | None = None
     if cli == "claude":
+        tp.claude_auth_provision(probe_home)
         projection = tp.build_cli_schema_projection(_PROBE_SCHEMA)
         probe_stdin = tp.build_claude_stdin_payload(instruction=_PROBE_INSTRUCTION, projection={})
         argv = tp.build_claude_argv(
             workspace=workspace, model=model, effort="low", cli_schema_projection=projection)
     else:
+        tp.codex_auth_provision(probe_home / "codex")
         # `build_codex_argv` pins `--output-schema output.schema.json -o result.json`,
         # both resolved against `-C <workspace>` (spec 7.2): codex reads the schema
         # from that staged file rather than accepting one inline, so the probe must
@@ -422,10 +421,17 @@ def _prove_one_driver(
         argv = tp.build_codex_argv(
             workspace=workspace, model=model, reasoning_effort="low", instruction=_PROBE_INSTRUCTION)
 
-    probe_env = _probe_env()
+    profile_path = probe_home / "profile.sb"
+    profile_path.write_text(
+        tp.render_sandbox_profile(
+            workspace=workspace, home=probe_home, readable=tp.executable_read_roots(identity.path)),
+        encoding="utf-8")
+    sandboxed_argv = tp.build_sandboxed_argv(argv, profile_path=profile_path)
+    probe_env = tp.build_worker_environment(home=probe_home)
     try:
         outcome = runner(
-            argv, cwd=workspace, env=probe_env, timeout_seconds=_PROBE_TIMEOUT_SECONDS, stdin=probe_stdin,
+            sandboxed_argv, cwd=workspace, env=probe_env, timeout_seconds=_PROBE_TIMEOUT_SECONDS,
+            stdin=probe_stdin,
         )
     except OSError as error:
         fields["observable_subscription_backed_usability"] = {

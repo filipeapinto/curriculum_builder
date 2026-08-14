@@ -1,5 +1,5 @@
 {
-  "attempt_id": "N30_PREFLIGHT_EGRESS-execpkgv2-v7-attempt-2",
+  "attempt_id": "N30_PREFLIGHT_EGRESS-execpkgv2-v7-attempt-7",
   "changed_files": [
     {
       "change": "modified",
@@ -9,7 +9,7 @@
     {
       "change": "modified",
       "path": "runtime/run_curriculum.py",
-      "sha256": "332d432832356c65db61354d628ad0f6fc8b336140df6e21c1a974b3fcf3363e"
+      "sha256": "edcdcec6ca03c7a7d953b6da649f75095f8c75ff3c662eb881d447ba45d435f8"
     },
     {
       "change": "modified",
@@ -29,12 +29,12 @@
     {
       "change": "modified",
       "path": "plans/27_langgraph_curriculum_factory_remediation/execution_package_v2/results/v7/evidence/N30_PREFLIGHT_EGRESS/01_pytest_n30_cli.log",
-      "sha256": "9ef2145f3e1e1c4ab3f0993716d4558e4ac794a3aedf54463a9e0ef282cea2e6"
+      "sha256": "67c410d4852f9ed5fc73af343cb4db0b494cbcbbd34054b7619800956c6d2468"
     },
     {
       "change": "modified",
       "path": "plans/27_langgraph_curriculum_factory_remediation/execution_package_v2/results/v7/evidence/N30_PREFLIGHT_EGRESS/02_pytest_n30_d03.log",
-      "sha256": "d4084792f75da45b1f64e518a54c75d015f21f042f1e3cdcd943610df3a888bc"
+      "sha256": "b497289a7a2ab7d3809ec52528571c739aece8451356919297bc2f22cd7516ad"
     },
     {
       "change": "modified",
@@ -44,7 +44,7 @@
     {
       "change": "modified",
       "path": "plans/27_langgraph_curriculum_factory_remediation/execution_package_v2/results/v7/evidence/N30_PREFLIGHT_EGRESS/04_live_driver_capability_proof.log",
-      "sha256": "71cd376182e4419f8446552ca364d38edfeac8e331b39da5a33dcb8364fcec38"
+      "sha256": "2e3cf582a5d1a31af3c600d86ff0f8cf4ac851e16afa27cf8b8e83589a717aed"
     }
   ],
   "commands": [
@@ -52,13 +52,13 @@
       "argv": ["python3", "-m", "pytest", "-q", "tests/runtime/test_plan26_cli.py", "tests/runtime/test_run_curriculum.py"],
       "exit_code": 0,
       "log": "plans/27_langgraph_curriculum_factory_remediation/execution_package_v2/results/v7/evidence/N30_PREFLIGHT_EGRESS/01_pytest_n30_cli.log",
-      "log_sha256": "9ef2145f3e1e1c4ab3f0993716d4558e4ac794a3aedf54463a9e0ef282cea2e6"
+      "log_sha256": "67c410d4852f9ed5fc73af343cb4db0b494cbcbbd34054b7619800956c6d2468"
     },
     {
       "argv": ["python3", "-m", "pytest", "-q", "tests/runtime/test_plan26_deterministic_nodes.py", "-k", "D03 or capability"],
       "exit_code": 0,
       "log": "plans/27_langgraph_curriculum_factory_remediation/execution_package_v2/results/v7/evidence/N30_PREFLIGHT_EGRESS/02_pytest_n30_d03.log",
-      "log_sha256": "d4084792f75da45b1f64e518a54c75d015f21f042f1e3cdcd943610df3a888bc"
+      "log_sha256": "b497289a7a2ab7d3809ec52528571c739aece8451356919297bc2f22cd7516ad"
     },
     {
       "argv": ["python3", "plans/27_langgraph_curriculum_factory_remediation/execution_package_v2/controller/scan_node.py", "--node", "N30_PREFLIGHT_EGRESS", "--graph", "plans/27_langgraph_curriculum_factory_remediation/execution_package_v2/implementation.graph.v7.yaml"],
@@ -70,7 +70,7 @@
       "argv": ["python3", "-c", "import json; import runtime.run_curriculum as R; print(json.dumps(R._prove_driver_capabilities(), indent=2, default=str))"],
       "exit_code": 0,
       "log": "plans/27_langgraph_curriculum_factory_remediation/execution_package_v2/results/v7/evidence/N30_PREFLIGHT_EGRESS/04_live_driver_capability_proof.log",
-      "log_sha256": "71cd376182e4419f8446552ca364d38edfeac8e331b39da5a33dcb8364fcec38"
+      "log_sha256": "2e3cf582a5d1a31af3c600d86ff0f8cf4ac851e16afa27cf8b8e83589a717aed"
     }
   ],
   "evidence": [
@@ -82,46 +82,16 @@
   "findings": [
     {
       "disposition": "resolved",
-      "id": "N30V7-F01",
-      "severity": "major",
-      "summary": "Carried forward unchanged from attempt-1 (superseded/N30_PREFLIGHT_EGRESS_attempt1): five differentiated driver-capability proof fields implemented for both mandatory drivers, wired into --preflight and the live dispatch path, consumed inside the compiled graph's D03 gate. Re-verified in this attempt: still true, unaffected by the N20 ancestor repair or this attempt's own run_curriculum.py wiring change."
-    },
-    {
-      "disposition": "resolved",
-      "id": "N30V7-F02",
-      "severity": "minor",
-      "summary": "Carried forward unchanged from attempt-1: approved_data_boundary correctly limited to provider membership, no run-scoped per-job authorization re-implemented in preflight."
-    },
-    {
-      "disposition": "resolved",
-      "id": "N30V7-F03",
-      "severity": "minor",
-      "summary": "Carried forward unchanged from attempt-1: stale test fixture data-class correction in test_run_curriculum.py remains in place and passing."
-    },
-    {
-      "disposition": "resolved",
-      "id": "N30V7-F04",
-      "severity": "major",
-      "summary": "Carried forward unchanged from attempt-1: D03's driver_capability_proof best-effort/hard-stop split remains correct; full tests/ tree unaffected by this attempt beyond the one pre-existing, unrelated failure noted below."
-    },
-    {
-      "disposition": "resolved",
-      "id": "N30V7-F05",
-      "severity": "major",
-      "summary": "The ancestor defect this attempt exists to reverify: N20 attempt-2 (results/v7/N20_PROVIDER_TRANSPORT.result.v1.json, finding N20V7-F04) repaired transport.observe_codex_identity to bind thread.started.thread_id to its own on-disk rollout file instead of the --json stdout stream that never carried a model field. This attempt's own contribution, inside N30's write-set authority: runtime/run_curriculum.py's _prove_one_driver now resolves the effective codex_home from the same _probe_env() already used to launch the probe (tp.resolve_codex_home, N20-owned helper) and passes it into tp.observe_codex_identity. Live-verified against the genuinely installed codex-cli 0.147.0 (not simulated, not mocked): runtime.run_curriculum._prove_driver_capabilities() now returns ready: true overall, with the codex driver's observable_subscription_backed_usability PASS (observed_model: gpt-5.6-sol) -- see 04_live_driver_capability_proof.log, directly comparable to attempt-1's identically-named log which recorded the FAIL this finding is closing out. No fallback, simulation, or workaround: the same production dispatch path, the same pinned CLI, genuinely reads the executed model now."
-    },
-    {
-      "disposition": "not_applicable",
-      "id": "N30V7-F06-PREEXISTING-UNRELATED",
+      "id": "N30V7-CASCADE-F04",
       "severity": "observation",
-      "summary": "tests/runtime/test_plan26_prompt_graph_controller.py::test_passed_nodes_remain_admissible_after_harness_or_predecessor_change fails identically to attempt-1's own account (N30V7-F04's evidence): confirmed pre-existing and unrelated to Run 27, concerning Plan 26's own prompt-graph receipt store and node N10_DEPENDENCY_API. Full tests/ tree otherwise: 1295 passed, 2 skipped, 419 subtests passed, 1 failed (this one) -- 4 more passes than attempt-1's own count, from this attempt's new N20-owned regression tests."
+      "summary": "Pure re-verification, cascading from N20V7-F10 (correction of the mistaken N20V7-F09 pending_failure fix -- D91 now reverted to clearing pending_failure only on 'retry', restoring D17_CLASSIFY_UNIT_FINDINGS's ability to read the classified failure it needs for a model-repair finding). N30's own write-set files are byte-identical to attempt-6. All four required verification commands rerun in full and report the same outcomes: 62 passed/27 subtests, 10 passed (D03/capability), zero scan violations, live driver_capabilities.ready: true for both drivers. Admitted as a new attempt strictly to rebind predecessor_receipts to N20 attempt-7's new digest."
     }
   ],
   "invalidated_descendants": [],
   "node_id": "N30_PREFLIGHT_EGRESS",
   "outcome": "PASSED",
   "predecessor_receipts": {
-    "N20_PROVIDER_TRANSPORT": "25518e2a37f649051beca8920c2041b85902d24b5fed6f4d0825ecd26eae2945"
+    "N20_PROVIDER_TRANSPORT": "55b55d26aa4bb105f249f30c955a33ddf4d43a4fe6ae19b22631ebdfdd0ce2d7"
   },
   "prompt_sha256": "c590af3176ad36f2b021dfdf2a231bbbe525fa92e6d2395f1e284ad88a92e1e8",
   "run_id": "run27-execpkgv2-v7-2026-08-14",

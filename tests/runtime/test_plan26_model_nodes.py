@@ -11,6 +11,7 @@ import pytest
 
 from runtime.langgraph_factory import model_nodes as mn
 from runtime.langgraph_factory import transport as tp
+from runtime.langgraph_factory.nodes import terminal as nt
 from runtime.langgraph_factory.reducers import (
     DuplicateConflict,
     HeadAdvanceError,
@@ -489,6 +490,44 @@ def test_m01_phase_selection_reads_the_explicit_packet_phase():
         mn.m01_research_unit_sources({"phase": "GUESS"}, context)
 
 
+def test_m01_output_schema_carries_no_top_level_combinator_the_real_api_rejects():
+    """N70 live-verified defect: Claude's tool-use API rejects `oneOf`/`allOf`/`anyOf`
+    at a `--json-schema` tool's document root ('input_schema does not support oneOf,
+    allOf, or anyOf at the top level') -- confirmed live, 5/5 reproductions, against
+    the real M01 schema before this fix, and 0/5 after replacing the top-level
+    `oneOf` with an equivalent `if`/`then`/`else`. Every M01 discovery/interpretation
+    call in the one real production unit run this whole lineage has ever attempted
+    hit this identically; the graph's own retry/exhaustion machinery worked exactly
+    as designed and still could not route around a schema the API would never accept.
+    This is a static, cheap proxy for that live proof: no job schema may carry a
+    top-level combinator, ever, regardless of which job it belongs to.
+    """
+    route = tp.resolve_route("M01_RESEARCH_UNIT_SOURCES")
+    schema = tp.load_output_schema(route)
+    assert not any(key in schema for key in ("oneOf", "allOf", "anyOf"))
+
+
+def test_m01_schema_still_enforces_exactly_one_of_locators_or_interpretations():
+    """The `if`/`then`/`else` replacement must be a semantically exact substitute for
+    the retired top-level `oneOf`, not a weakening: locators-only and
+    interpretations-only both validate; neither, and both together, must still fail.
+    """
+    route = tp.resolve_route("M01_RESEARCH_UNIT_SOURCES")
+    schema = tp.load_output_schema(route)
+    validator = jsonschema.Draft202012Validator(schema)
+
+    locator = {"request_id": "r1", "url": "https://example.com", "title": "t",
+               "publisher": "p", "locator_kind": "primary", "rationale": "why"}
+    interpretation = {"request_id": "r1", "retrieval_id": "ret-1",
+                       "claims": [{"claim_text": "c", "source_quote": "q",
+                                   "source_location": "p.1"}], "limitations": []}
+
+    assert validator.is_valid({"locators": [locator]})
+    assert validator.is_valid({"interpretations": [interpretation]})
+    assert not validator.is_valid({})
+    assert not validator.is_valid({"locators": [locator], "interpretations": [interpretation]})
+
+
 def test_m04_refuses_an_authoritative_brief():
     for poison in ({"authoritative": True}, {"visual_class": "circuit"},
                    {"visual_class": "pinout"}, {"eligibility": "deterministic_only"}):
@@ -875,11 +914,23 @@ def test_a_workbook_content_failure_routes_to_the_workbook_repair_planner():
 
 
 def test_a_retryable_failure_at_the_limit_becomes_exhaustion():
+    state = {"attempt_counters": {"k": mn.MODEL_NODE_ATTEMPT_LIMIT}}
     classified = mn.classify_model_failure(
         {"failure_class": "timeout", "job_id": "M03_WRITE_UNIT_CONTENT",
-         "counter_key": "k"}, attempts_used=mn.MODEL_NODE_ATTEMPT_LIMIT)
+         "counter_key": "k"}, attempts_used=mn.MODEL_NODE_ATTEMPT_LIMIT, state=state)
     assert classified["pending_guard"]["decision"] == "exhausted"
-    assert classified["terminal_candidate"]["terminal_kind"] == "CONVERGENCE_EXHAUSTED"
+    assert classified["terminal_candidate"]["kind"] == "CONVERGENCE_EXHAUSTED"
+    # N30V7-F05-shaped regression, generalized (N20V7-F0x): this must be the exact
+    # same key/shape D98's real, independent revalidation (nodes/terminal.py) requires
+    # -- not merely what this module's own writer happens to produce. A prior version
+    # of this function wrote "terminal_kind" instead of "kind", which every D91-proposed
+    # exhaustion/system-failure terminal would then always fail D98's revalidation for,
+    # undetected here because this test never round-tripped through the real validator.
+    projection = {"attempt_counters": state["attempt_counters"], "failure_fingerprints": [{}],
+                  "effective_run": None, "accepted_unit_receipts": {}}
+    validation = nt.validate_terminal_candidate(classified["terminal_candidate"], projection)
+    assert validation.accepted, validation.rejections
+    assert validation.kind == "CONVERGENCE_EXHAUSTED"
 
 
 @pytest.mark.parametrize("failure_class", ["IdentityMismatch", "CapabilityProofFailed",
@@ -889,7 +940,10 @@ def test_integrity_failures_are_never_retried(failure_class):
         {"failure_class": failure_class, "job_id": "M05_REVIEW_ACTUAL_UNIT",
          "counter_key": "k"}, attempts_used=1)
     assert classified["pending_guard"]["decision"] == "system"
-    assert classified["terminal_candidate"]["terminal_kind"] == "SYSTEM_FAILURE"
+    assert classified["terminal_candidate"]["kind"] == "SYSTEM_FAILURE"
+    validation = nt.validate_terminal_candidate(classified["terminal_candidate"], {})
+    assert validation.accepted, validation.rejections
+    assert validation.kind == "SYSTEM_FAILURE"
 
 
 def test_d91_writes_only_deterministic_classification_channels():
@@ -1419,8 +1473,12 @@ def test_d91_at_the_committed_limit_exhausts_rather_than_retrying():
     update = mn.D91_CLASSIFY_MODEL_FAILURE(state, None)
 
     assert update["pending_guard"]["decision"] == "exhausted"
-    assert update["terminal_candidate"]["terminal_kind"] == "CONVERGENCE_EXHAUSTED"
+    assert update["terminal_candidate"]["kind"] == "CONVERGENCE_EXHAUSTED"
     assert routing.route_model_failure(update) == "D98_WRITE_TERMINAL"
+    projection = {"attempt_counters": state["attempt_counters"], "failure_fingerprints": [{}],
+                  "effective_run": None, "accepted_unit_receipts": {}}
+    validation = nt.validate_terminal_candidate(update["terminal_candidate"], projection)
+    assert validation.accepted, validation.rejections
 
 
 def test_d91_repair_destination_resolves_through_the_dynamic_guard():
@@ -1436,6 +1494,42 @@ def test_d91_repair_destination_resolves_through_the_dynamic_guard():
 
     assert update["pending_guard"]["decision"] == "repair"
     assert routing.route_model_failure(update) == "D17_CLASSIFY_UNIT_FINDINGS"
+
+
+def test_d91_repair_leaves_the_classified_pending_failure_for_d17_to_consume():
+    """N20V7-F09 corrected regression (an earlier fix here was itself wrong --
+    live-verified against a real N70 production run): D91's own outgoing edge
+    (routing.route_model_failure) reads pending_guard, never pending_failure,
+    so nothing about D91's own routing needs pending_failure cleared on
+    "repair". D17_CLASSIFY_UNIT_FINDINGS (repair.py) reads exactly this
+    classified pending_failure to build its one raw finding for a model-repair
+    job, then clears it itself once consumed. Nulling it in D91 instead left
+    D17 with no findings to classify at all ("routed with an empty or missing
+    findings list") the moment a real M01 discovery sub-request failed content
+    policy and D91 routed it to D17 for repair.
+    """
+    from runtime.langgraph_factory import repair, routing
+
+    job_id = "M01_RESEARCH_UNIT_SOURCES"
+    key = mn.attempt_counter_key(job_id, "u01")
+    state = {"attempt_counters": {key: 1},
+             "pending_failure": {"job_id": job_id, "counter_key": key,
+                                 "failure_class": "candidate_undeclared_artifact",
+                                 "detail": "discovery must emit locators, not interpretations"}}
+
+    update = mn.D91_CLASSIFY_MODEL_FAILURE(state, None)
+    assert update["pending_guard"]["decision"] == "repair"
+    assert update["pending_failure"]["classification"] == "repair", \
+        "D17 reads this tag directly; nulling pending_failure here starves D17 of its finding"
+    assert routing.route_model_failure(update) == "D17_CLASSIFY_UNIT_FINDINGS"
+
+    d17_state = {**state, **update, "selected_unit_id": "u01", "accepted_unit_receipts": {}}
+    d17_update = repair.D17_CLASSIFY_UNIT_FINDINGS(d17_state, None)
+
+    assert d17_update["pending_failure"] is None, "D17 must clear it itself once consumed"
+    assert d17_update["finding_partitions"], "D91's classified failure must become a real partition"
+    merged = {**d17_state, **d17_update}
+    assert routing.route_finding_classification(merged) == "D18_PLAN_TARGETED_UNIT_REPAIR"
 
 
 def test_d91_classifies_an_activation_d92_could_not_account_for():

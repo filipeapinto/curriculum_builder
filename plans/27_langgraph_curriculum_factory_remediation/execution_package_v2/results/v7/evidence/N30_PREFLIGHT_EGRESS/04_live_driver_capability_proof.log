@@ -62,20 +62,7 @@
               "StructuredOutput"
             ],
             "extra_tools": [],
-            "observed_mcp_servers": [
-              {
-                "name": "claude.ai Google Drive",
-                "status": "needs-auth"
-              },
-              {
-                "name": "claude.ai Gmail",
-                "status": "needs-auth"
-              },
-              {
-                "name": "claude.ai Google Calendar",
-                "status": "needs-auth"
-              }
-            ],
+            "observed_mcp_servers": [],
             "invokable_mcp_servers": []
           }
         }

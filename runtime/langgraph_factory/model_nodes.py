@@ -787,12 +787,19 @@ def classify_model_failure(
     attempts_used: int,
     limit: int = MODEL_NODE_ATTEMPT_LIMIT,
     clock: Callable[[], str] = _utc_now,
+    state: Mapping[str, Any] | None = None,
 ) -> dict[str, Any]:
     """D91: decide retry, repair, exhaustion, or system from one execution failure.
 
     A retry is authorized only for a malformed/transient transport class that is still
     inside the frozen limit, and it must go back through D90. Policy and content
     failures are repaired, never transport-retried; integrity faults are terminal.
+
+    `state` (the full episode state D91 receives, not a narrowed projection: it is a
+    model-bookkeeping node outside `NODE_CATALOGUE`) supplies the fields D98's real
+    `validate_terminal_candidate` requires of any CONVERGENCE_EXHAUSTED/SYSTEM_FAILURE
+    candidate this function proposes -- optional and defaulting empty so every existing
+    direct caller (this module's own unit tests) keeps working unchanged.
     """
 
     _require_mapping(failure, "D91 failure")
@@ -801,6 +808,7 @@ def classify_model_failure(
     counter_key = failure.get("counter_key")
     now = clock()
     fingerprint = (f"{job_id}|{counter_key}|{failure_class}")
+    state = state or {}
 
     if failure_class in SYSTEM_FAILURE_CLASSES:
         decision, destination, terminal = "system", "D98_WRITE_TERMINAL", "SYSTEM_FAILURE"
@@ -815,17 +823,18 @@ def classify_model_failure(
     else:
         decision, destination, terminal = "system", "D98_WRITE_TERMINAL", "SYSTEM_FAILURE"
 
+    fingerprint_record = {
+        "key": f"{fingerprint}|{attempts_used}",
+        "fingerprint": fingerprint,
+        "job_id": job_id,
+        "counter_key": counter_key,
+        "failure_class": failure_class,
+        "attempts_used": attempts_used,
+        "limit": limit,
+        "classified_at_utc": now,
+    }
     update: dict[str, Any] = {
-        "failure_fingerprints": [{
-            "key": f"{fingerprint}|{attempts_used}",
-            "fingerprint": fingerprint,
-            "job_id": job_id,
-            "counter_key": counter_key,
-            "failure_class": failure_class,
-            "attempts_used": attempts_used,
-            "limit": limit,
-            "classified_at_utc": now,
-        }],
+        "failure_fingerprints": [fingerprint_record],
         "pending_failure": {**dict(failure), "classification": decision},
         "pending_guard": {
             "kind": "model_failure",
@@ -843,14 +852,30 @@ def classify_model_failure(
             "limit": limit,
         },
     }
-    if terminal is not None:
+    if terminal == "CONVERGENCE_EXHAUSTED":
+        # Field names/shape match every other CONVERGENCE_EXHAUSTED writer
+        # (repair.py D17/D18, workbook.py D29) exactly: D98's real
+        # `validate_terminal_candidate` (nodes/terminal.py) is one shared,
+        # independent re-derivation, not a per-writer contract.
         update["terminal_candidate"] = {
-            "terminal_kind": terminal,
-            "cause": failure_class,
-            "job_id": job_id,
-            "counter_key": counter_key,
-            "fingerprint": fingerprint,
-            "proposed_at_utc": now,
+            "kind": "CONVERGENCE_EXHAUSTED",
+            "bound": "attempt_bound",
+            "counters": dict(state.get("attempt_counters") or {}),
+            "fingerprints": [fingerprint_record],
+            "last_findings": [dict(failure)],
+        }
+    elif terminal == "SYSTEM_FAILURE":
+        artifact_heads = state.get("artifact_heads") or {}
+        update["terminal_candidate"] = {
+            "kind": "SYSTEM_FAILURE",
+            "failure": {"class": "system", "cause": failure_class},
+            "node": str(job_id) if job_id else "D91_CLASSIFY_MODEL_FAILURE",
+            "safe_heads": {
+                stream: head.get("hash")
+                for stream, head in sorted(artifact_heads.items())
+                if isinstance(head, dict)
+            },
+            "audit_high_water_mark": len(state.get("evidence_index_entries") or []),
         }
     return update
 
@@ -1066,6 +1091,18 @@ def D91_CLASSIFY_MODEL_FAILURE(state: Mapping[str, Any],
     failure record, so a retry is authorized against the reservation that is
     actually durable. A `retry` clears `pending_failure`: D90 is the next node,
     and an uncleared failure would route it to the terminal writer instead.
+    A `repair` deliberately leaves `pending_failure` set (with its
+    `classification` tag): D91's own outgoing edge (`routing.route_model_
+    failure`) reads `pending_guard`, never `pending_failure`, so nothing about
+    D91's own routing needs it cleared -- and `D17_CLASSIFY_UNIT_FINDINGS`
+    (repair.py) reads exactly this classified `pending_failure` to build its
+    one raw finding for a model-repair job, then clears it itself once
+    consumed (repair.py's own `update["pending_failure"] = None`). Live-
+    verified (N70): nulling it here instead left D17 with a `pending_guard`
+    that carries no `detail.findings` list at all (D91's guard shape, not
+    D08/D09/D12/D14/D16's), so D17 raised "routed with an empty or missing
+    findings list" -- a regression from an earlier, mistaken diagnosis that
+    D91's own routing was the one being hijacked; it never was.
     """
 
     failure = state.get("pending_failure")
@@ -1074,7 +1111,7 @@ def D91_CLASSIFY_MODEL_FAILURE(state: Mapping[str, Any],
     counter_key = failure.get("counter_key")
     counters = state.get("attempt_counters") or {}
     attempts_used = int(counters.get(counter_key, failure.get("attempt_ordinal") or 1))
-    update = classify_model_failure(failure, attempts_used=attempts_used)
+    update = classify_model_failure(failure, attempts_used=attempts_used, state=state)
     if update["pending_guard"]["decision"] == "retry":
         update["pending_failure"] = None
     return update

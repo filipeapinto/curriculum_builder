@@ -1,48 +1,28 @@
 {
-  "attempt_id": "N50_EVIDENCE_AUDIT_CONTROLS-execpkgv2-v7-attempt-1",
+  "attempt_id": "N50_EVIDENCE_AUDIT_CONTROLS-execpkgv2-v7-attempt-6",
   "changed_files": [
     {
-      "change": "created",
-      "path": "plans/27_langgraph_curriculum_factory_remediation/contracts/evidence_determinism.v1.yaml",
-      "sha256": "d20be37d411ab58ecca060e992a20f1a3975900f4ce7be1c245f1397df551ed9"
-    },
-    {
-      "change": "created",
-      "path": "plans/27_langgraph_curriculum_factory_remediation/contracts/requirements_lineage.v1.yaml",
-      "sha256": "1c6b5d2e05f9078d303b657d4f48325d85683df209a8c7485b272abc54b8540e"
-    },
-    {
       "change": "modified",
-      "path": "tests/runtime/test_plan26_evidence.py",
-      "sha256": "229aabeae0bde9795f3f11e820d9f50f915aa0d715ed2ae32dbf643e83068345"
-    },
-    {
-      "change": "modified",
-      "path": "tests/runtime/test_plan26_persistence.py",
-      "sha256": "4d113741e346be44815d2c640110a60a1ffadd11496d0db5a77f52cf028d9dcc"
-    },
-    {
-      "change": "created",
       "path": "plans/27_langgraph_curriculum_factory_remediation/execution_package_v2/results/v7/evidence/N50_EVIDENCE_AUDIT_CONTROLS/01_pytest_n50_run1.log",
+      "sha256": "2e6c0c4a2035d788822934581786028832e494bc755bc975af02227c2864ee38"
+    },
+    {
+      "change": "modified",
+      "path": "plans/27_langgraph_curriculum_factory_remediation/execution_package_v2/results/v7/evidence/N50_EVIDENCE_AUDIT_CONTROLS/02_pytest_n50_run2.log",
       "sha256": "10795753a3250bba01964a7fd64242993859f376b5f8c47c5b3c6477226a5598"
     },
     {
-      "change": "created",
-      "path": "plans/27_langgraph_curriculum_factory_remediation/execution_package_v2/results/v7/evidence/N50_EVIDENCE_AUDIT_CONTROLS/02_pytest_n50_run2.log",
-      "sha256": "298ca63a5a71913ff6f5ceaa37dd5b170303904fae9063270d0fb5416090ba29"
-    },
-    {
-      "change": "created",
+      "change": "modified",
       "path": "plans/27_langgraph_curriculum_factory_remediation/execution_package_v2/results/v7/evidence/N50_EVIDENCE_AUDIT_CONTROLS/03_verify_evidence_determinism.log",
       "sha256": "0bd321b994748023225c4a9585f8a0753067b06a8aba84bd2ace2af7399b5846"
     },
     {
-      "change": "created",
+      "change": "modified",
       "path": "plans/27_langgraph_curriculum_factory_remediation/execution_package_v2/results/v7/evidence/N50_EVIDENCE_AUDIT_CONTROLS/04_scan_node_n50.log",
       "sha256": "7609d3a3b034cddb2eeae333dce50fbd725dcee51ef2f787d9249a450e963c65"
     },
     {
-      "change": "created",
+      "change": "modified",
       "path": "plans/27_langgraph_curriculum_factory_remediation/execution_package_v2/results/v7/evidence/N50_EVIDENCE_AUDIT_CONTROLS/05_verify_requirements_lineage.log",
       "sha256": "ba3e8796ca7527bc3785f32fad820fb3769bf84478970e33989df06001243ed4"
     }
@@ -52,13 +32,13 @@
       "argv": ["python3", "-m", "pytest", "-q", "tests/runtime/test_plan26_evidence.py", "tests/runtime/test_plan26_persistence.py"],
       "exit_code": 0,
       "log": "plans/27_langgraph_curriculum_factory_remediation/execution_package_v2/results/v7/evidence/N50_EVIDENCE_AUDIT_CONTROLS/01_pytest_n50_run1.log",
-      "log_sha256": "10795753a3250bba01964a7fd64242993859f376b5f8c47c5b3c6477226a5598"
+      "log_sha256": "2e6c0c4a2035d788822934581786028832e494bc755bc975af02227c2864ee38"
     },
     {
       "argv": ["python3", "-m", "pytest", "-q", "tests/runtime/test_plan26_evidence.py", "tests/runtime/test_plan26_persistence.py"],
       "exit_code": 0,
       "log": "plans/27_langgraph_curriculum_factory_remediation/execution_package_v2/results/v7/evidence/N50_EVIDENCE_AUDIT_CONTROLS/02_pytest_n50_run2.log",
-      "log_sha256": "298ca63a5a71913ff6f5ceaa37dd5b170303904fae9063270d0fb5416090ba29"
+      "log_sha256": "10795753a3250bba01964a7fd64242993859f376b5f8c47c5b3c6477226a5598"
     },
     {
       "argv": ["python3", "plans/27_langgraph_curriculum_factory_remediation/controller/verify_evidence_determinism.py", "--contract", "plans/27_langgraph_curriculum_factory_remediation/contracts/evidence_determinism.v1.yaml", "--graph", "plans/27_langgraph_curriculum_factory_remediation/execution_package_v2/implementation.graph.v7.yaml"],
@@ -89,28 +69,16 @@
   "findings": [
     {
       "disposition": "resolved",
-      "id": "N50V7-F01",
+      "id": "N50V7-CASCADE-F05",
       "severity": "observation",
-      "summary": "Plan 26's evidence/artifact/persistence layer (runtime/langgraph_factory/evidence.py, artifacts.py, persistence.py) was already deterministic and passing (63/63, then 64/64 after this attempt's own new test) before this node's changes; both owned test files were run twice from a clean state and produced identical pass counts each time (item 2/8). A new evidence_determinism.v1.yaml contract (2 claims) exercises the real, unmocked EvidenceStore.append -> write_audit_report path three times inside this node's own evidence scope and requires byte-identical stdout every time -- the payload carries only fixed run_id/episode_id/activation_id/node_id/phase fields, never a timestamp, tempfile path, or random id, so this is a genuine determinism proof, not a tautology. A new requirements_lineage.v1.yaml contract (8 claims) encodes the full seven-layer denominator this node's prompt item 6 requires (current user approval, approved v2 specification, Plans 20-22, retained PM postmortem product requirements, code, tests, product evidence), each layer checked against real, existing repository artifacts (spec_approval.v4.yaml, spec v4, Plans 20/21/22, the six-plus-module code/test set, and this node's own evidence), plus a self-consistency requirement_ids_cover claim so a layer id can never be referenced without a declared, falsifiable requirement backing it -- this is the mechanically-checkable form of 'the final audit must fail if any layer is omitted' N90 will consume."
-    },
-    {
-      "disposition": "resolved",
-      "id": "N50V7-F02",
-      "severity": "minor",
-      "summary": "Added tests/runtime/test_plan26_evidence.py::test_audit_report_never_claims_a_log_event_that_was_never_appended (item 3): a permanent negative regression guard for the historical PM-11/PM-12 false-claim pattern ('unit/workbook topology implemented but not registered in build_curriculum_factory_graph()'), generalized to N50's own owned layer -- seeds only the 'activations' evidence log, proves the write_audit_report() output for the never-appended 'executions' log honestly shows record_count 0 / status PASS / file_digest null, and that its per-log object carries no field capable of asserting a claim beyond what record_count/status/high_water_mark/file_digest mechanically say about real bytes on disk."
-    },
-    {
-      "disposition": "resolved",
-      "id": "N50V7-F03",
-      "severity": "minor",
-      "summary": "scan_node.py --node N50_EVIDENCE_AUDIT_CONTROLS genuinely failed on first real run, in the same shape N40 independently hit: tests/runtime/test_plan26_persistence.py's own forbidden-import guard (test_persistence_module_imports_no_product_or_model_module) legitimately named 'google.generativeai' as a forbidden import target, which the blunt, non-semantic retired_provider_test_scan term scan cannot distinguish from a live reference. Per this node's own prompt ('Remove every retired-provider reference from its owned active persistence test and keep the zero-occurrence test scan green'), fixed by asserting absence via the shared module-name suffix ('generativeai', '_genai') instead of the retired provider's own name -- strictly broader, not weaker. scan_node.py --node N50_EVIDENCE_AUDIT_CONTROLS now reports zero violations across all five of this node's scanned files."
+      "summary": "Pure re-verification, cascading from N20V7-F10 (correction of the mistaken N20V7-F09 pending_failure fix). N50's own write-set files are byte-identical to attempt-5. All five required verification commands rerun in full: 64/64 passed twice (determinism preserved), both contracts still fully valid, zero scan violations. Admitted as a new attempt strictly to rebind predecessor_receipts to N40 attempt-6's new digest."
     }
   ],
   "invalidated_descendants": [],
   "node_id": "N50_EVIDENCE_AUDIT_CONTROLS",
   "outcome": "PASSED",
   "predecessor_receipts": {
-    "N40_INTEGRATION_OWNERSHIP": "b74b9ef3dd801379519d3f010201b55caf8df6a1a9841de569d21585c8ce3bf7"
+    "N40_INTEGRATION_OWNERSHIP": "048a267858bbb81d000c175c4bcb40f7f495142c990221bb8f8ec3a5b8056b24"
   },
   "prompt_sha256": "4fe5cd2f076409e9e1616f36f26c35adf16701cb34664e8e5c0991422eed0f82",
   "run_id": "run27-execpkgv2-v7-2026-08-14",
