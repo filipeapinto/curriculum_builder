@@ -28,19 +28,29 @@ neither one decides acceptance, routing, or a terminal.
 from __future__ import annotations
 
 import argparse
+import hashlib
 import json
+import os
 import sys
 import tempfile
 from datetime import datetime, timezone
 from pathlib import Path
-from typing import Any, Mapping
+from typing import Any, Callable, Mapping, Sequence
 
 from runtime.langgraph_factory import persistence as P
 from runtime.langgraph_factory import transport as tp
 from runtime.langgraph_factory.artifacts import canonical_digest
-from runtime.langgraph_factory.egress import AuthorizationRecord, EgressGuard, ReceiptLog
+from runtime.langgraph_factory.egress import (
+    PROVIDER_DATA_CLASSES,
+    PROVIDERS,
+    AuthorizationRecord,
+    EgressGuard,
+    ReceiptLog,
+)
 from runtime.langgraph_factory.graph import build_curriculum_factory_graph, build_runtime_context
 from runtime.langgraph_factory.nodes.inputs import (
+    DRIVER_CAPABILITY_FIELDS,
+    MANDATORY_DRIVER_CLIS,
     REQUIRED_CAPABILITIES,
     _frozen_input_records,
     _resolve_active_manifest,
@@ -259,6 +269,287 @@ def _capability_forbidden_paths(engine_root: Path) -> list[Path]:
     return [path for path in (engine_root / "pyproject.toml", engine_root / "runtime") if path.exists()]
 
 
+# ------------------------------------------------------------- driver capability proof
+#
+# spec 7.1's five differentiated proof classes, corrected after the Run 26 false-ready
+# defect (binaries present, one required provider unauthenticated, preflight still
+# reported ready): a single undifferentiated flag never proves a CLI driver is really
+# usable. Every field below is genuine and independently checkable; `ready` requires
+# every mandatory field for every mandatory driver in `MANDATORY_DRIVER_CLIS`, so one
+# unproven field makes the whole driver -- and the whole proof -- not ready.
+#
+# This is the production CLI's own logic (not a node body, so it may call
+# `runtime.langgraph_factory.transport` directly, exactly as `_prove_live_capabilities`
+# already does): it never reimplements N20's provider allowlist or data-class mapping,
+# consuming `egress.PROVIDERS`/`egress.PROVIDER_DATA_CLASSES` read-only for the
+# `approved_data_boundary` field, and it wires N20's tool/MCP-closure check (spec 7.1 class five,
+# `transport.prove_claude_tool_closure`/`require_claude_tool_closure`) into this real
+# dispatch path rather than leaving it a standalone, unwired function.
+
+_FORBIDDEN_AUTH_ENV_VARS: tuple[str, ...] = (
+    "ANTHROPIC_API_KEY",
+    "ANTHROPIC_AUTH_TOKEN",
+    "OPENAI_API_KEY",
+    "CLAUDE_API_KEY",
+    "CODEX_API_KEY",
+)
+
+_PROBE_TIMEOUT_SECONDS = 60
+
+# A fixed, hardcoded literal: no curriculum digest, output root, file path, or source
+# text is ever interpolated into it, which is what makes `content_free_operation`
+# provable rather than merely asserted.
+_PROBE_INSTRUCTION: str = (
+    'Preflight capability probe. Do not read, write, or invoke any tool. '
+    'Reply with exactly the structured object {"ok": true} and nothing else.'
+)
+
+_PROBE_SCHEMA: dict[str, Any] = {
+    "type": "object",
+    "additionalProperties": False,
+    "required": ["ok"],
+    "properties": {"ok": {"type": "boolean"}},
+}
+
+_TOOL_CLOSURE_NOT_APPLICABLE: dict[str, Any] = {
+    "status": "not_applicable",
+    "reason": "tool/MCP closure applies to the claude worker channel only",
+}
+
+
+def _probe_env() -> dict[str, str]:
+    """The real ambient environment, minus every forbidden credential.
+
+    Unlike a real M0x job's disposable, fully isolated `$HOME` (spec 7.2's
+    content-isolation boundary: untrusted curriculum content must never see the
+    operator's real home), this probe carries no curriculum content at all, so there
+    is nothing to isolate it *from* -- it deliberately runs under the operator's real,
+    already-authenticated environment, because "observable subscription-backed
+    usability" means observing whether *this* machine's installed CLI is actually
+    logged in right now, not whether a freshly emptied home would be. Stripping the
+    forbidden credential names here is belt-and-suspenders: `permitted_auth_mode`
+    already refuses to launch the probe at all once one is present.
+    """
+
+    return {key: value for key, value in os.environ.items() if key not in _FORBIDDEN_AUTH_ENV_VARS}
+
+
+def _prove_one_driver(
+    cli: str,
+    *,
+    model: str,
+    provider: str,
+    data_classes: Sequence[str],
+    runner: Callable[..., tp.ProcessOutcome],
+    workspace: Path,
+) -> dict[str, Any]:
+    fields: dict[str, Any] = {}
+
+    try:
+        identity = tp.probe_executable(cli)
+    except tp.CapabilityProofFailed as error:
+        fields["executable_identity"] = {
+            "status": "FAIL", "reason": "executable_unproven", "detail": str(error),
+        }
+    else:
+        fields["executable_identity"] = {
+            "status": "PASS", "path": identity.path, "sha256": identity.sha256, "version": identity.version,
+        }
+
+    forbidden_present = sorted(name for name in _FORBIDDEN_AUTH_ENV_VARS if os.environ.get(name))
+    if forbidden_present:
+        fields["permitted_auth_mode"] = {
+            "status": "FAIL", "reason": "forbidden_api_key_present", "credentials": forbidden_present,
+        }
+    else:
+        fields["permitted_auth_mode"] = {"status": "PASS", "mode": "subscription"}
+
+    # A preflight/driver-level check, never a per-job one: preflight explicitly takes
+    # no `--authorization` (spec 16), so it has no run-scoped `AuthorizationRecord` to
+    # evaluate a data class against -- that per-job, per-run check is
+    # `egress.authorize_subprocess_transmission`'s own job at real dispatch time,
+    # already exercised by N20's suite, and not re-derivable here without either
+    # fabricating an authorization or reimplementing its rule. What a driver-level
+    # proof *can* honestly establish, read-only against `egress.PROVIDERS`, is that
+    # this driver's provider is still one of the approved, non-retired classes at
+    # all -- an unapproved or retired provider fails closed here rather than only at
+    # first real transmission.
+    if provider not in PROVIDERS:
+        fields["approved_data_boundary"] = {
+            "status": "FAIL", "reason": "unapproved_provider", "provider": provider,
+        }
+    else:
+        fields["approved_data_boundary"] = {
+            "status": "PASS",
+            "provider": provider,
+            "registered_data_classes": sorted(set(data_classes)),
+            "provider_data_classes": sorted(PROVIDER_DATA_CLASSES.get(provider, frozenset())),
+        }
+
+    fields["content_free_operation"] = {
+        "status": "PASS",
+        "probe_instruction_sha256": hashlib.sha256(_PROBE_INSTRUCTION.encode("utf-8")).hexdigest(),
+        "transmitted_authorized_input_projection": {},
+    }
+
+    if fields["permitted_auth_mode"]["status"] != "PASS":
+        fields["observable_subscription_backed_usability"] = {
+            "status": "FAIL", "reason": "skipped_forbidden_auth_mode",
+        }
+        fields["tool_mcp_closure"] = (
+            {"status": "FAIL", "reason": "skipped_forbidden_auth_mode"} if cli == "claude"
+            else dict(_TOOL_CLOSURE_NOT_APPLICABLE)
+        )
+        failed_fields = sorted(name for name, detail in fields.items() if detail.get("status") == "FAIL")
+        return {
+            "cli": cli, "model": model, "provider": provider, "ready": not failed_fields,
+            "failed_fields": failed_fields, "fields": fields,
+        }
+
+    probe_stdin: str | None = None
+    if cli == "claude":
+        projection = tp.build_cli_schema_projection(_PROBE_SCHEMA)
+        probe_stdin = tp.build_claude_stdin_payload(instruction=_PROBE_INSTRUCTION, projection={})
+        argv = tp.build_claude_argv(
+            workspace=workspace, model=model, effort="low", cli_schema_projection=projection)
+    else:
+        # `build_codex_argv` pins `--output-schema output.schema.json -o result.json`,
+        # both resolved against `-C <workspace>` (spec 7.2): codex reads the schema
+        # from that staged file rather than accepting one inline, so the probe must
+        # stage it exactly as a real job would, with the same content-free literal.
+        (workspace / "output.schema.json").write_text(
+            tp.canonical_json(_PROBE_SCHEMA), encoding="utf-8")
+        argv = tp.build_codex_argv(
+            workspace=workspace, model=model, reasoning_effort="low", instruction=_PROBE_INSTRUCTION)
+
+    try:
+        outcome = runner(
+            argv, cwd=workspace, env=_probe_env(), timeout_seconds=_PROBE_TIMEOUT_SECONDS, stdin=probe_stdin,
+        )
+    except OSError as error:
+        fields["observable_subscription_backed_usability"] = {
+            "status": "FAIL", "reason": "probe_launch_failed", "detail": str(error),
+        }
+        fields["tool_mcp_closure"] = (
+            {"status": "FAIL", "reason": "no_stream_output_to_evaluate_closure"} if cli == "claude"
+            else dict(_TOOL_CLOSURE_NOT_APPLICABLE)
+        )
+        failed_fields = sorted(name for name, detail in fields.items() if detail.get("status") == "FAIL")
+        return {
+            "cli": cli, "model": model, "provider": provider, "ready": not failed_fields,
+            "failed_fields": failed_fields, "fields": fields,
+        }
+
+    if outcome.returncode != 0:
+        fields["observable_subscription_backed_usability"] = {
+            "status": "FAIL", "reason": "nonzero_bounded_probe",
+            "returncode": outcome.returncode, "termination": outcome.termination,
+            "stderr": outcome.stderr[:500],
+        }
+    else:
+        try:
+            observed = (
+                tp.observe_claude_identity(outcome.stdout) if cli == "claude"
+                else tp.observe_codex_identity(outcome.stdout)
+            )
+        except tp.IdentityUnobservable as error:
+            fields["observable_subscription_backed_usability"] = {
+                "status": "FAIL", "reason": "malformed_or_unobservable_output", "detail": str(error),
+            }
+        else:
+            if observed.model != model:
+                fields["observable_subscription_backed_usability"] = {
+                    "status": "FAIL", "reason": "model_driver_mismatch",
+                    "expected_model": model, "observed_model": observed.model,
+                }
+            else:
+                fields["observable_subscription_backed_usability"] = {
+                    "status": "PASS", "observed_model": observed.model,
+                }
+
+    if cli == "claude":
+        closure: Mapping[str, Any] | None = None
+        try:
+            closure = tp.prove_claude_tool_closure(outcome.stdout)
+            tp.require_claude_tool_closure(closure)
+        except tp.CapabilityProofFailed as error:
+            fields["tool_mcp_closure"] = {
+                "status": "FAIL", "reason": str(error),
+                "observed_tools": closure.get("observed_tools") if closure else None,
+                "invokable_mcp_servers": closure.get("invokable_mcp_servers") if closure else None,
+            }
+        else:
+            fields["tool_mcp_closure"] = {"status": "PASS", "closure": dict(closure)}
+    else:
+        fields["tool_mcp_closure"] = dict(_TOOL_CLOSURE_NOT_APPLICABLE)
+
+    failed_fields = sorted(
+        name for name, detail in fields.items()
+        if detail.get("status") not in ("PASS", "not_applicable")
+    )
+    return {
+        "cli": cli, "model": model, "provider": provider, "ready": not failed_fields,
+        "failed_fields": failed_fields, "fields": fields,
+    }
+
+
+def _prove_driver_capabilities(
+    *, runner: Callable[..., tp.ProcessOutcome] | None = None, workspace: Path | None = None,
+) -> dict[str, Any]:
+    """The real, differentiated per-driver capability proof spec 7.1 requires.
+
+    Bounded and content-free: no curriculum artifact, source text, PDF, rendered page,
+    evidence, or user-owned file is ever read or transmitted by this probe. Never a
+    curriculum model job -- exactly the same "bounded local capability check" contract
+    `tp.prove_transport_capabilities` already carries for the transport-isolation
+    facets, extended here to the driver identity/auth/usability/closure/boundary
+    facets spec 7.1 additionally requires.
+    """
+
+    registry = tp.load_job_registry()
+    routes_by_cli: dict[str, list[tp.JobRoute]] = {}
+    for route in registry.values():
+        routes_by_cli.setdefault(route.cli, []).append(route)
+
+    active_runner = runner or tp.run_process
+    with tempfile.TemporaryDirectory(prefix="plan26-driver-probe-") as raw_workspace:
+        probe_workspace = workspace or Path(raw_workspace)
+        drivers: dict[str, dict[str, Any]] = {}
+        for cli in MANDATORY_DRIVER_CLIS:
+            cli_routes = routes_by_cli.get(cli, ())
+            if not cli_routes:
+                drivers[cli] = {
+                    "cli": cli, "model": None, "provider": None, "ready": False,
+                    "failed_fields": list(DRIVER_CAPABILITY_FIELDS),
+                    "fields": {
+                        name: {"status": "FAIL", "reason": "no_registered_route_for_driver"}
+                        for name in DRIVER_CAPABILITY_FIELDS
+                    },
+                }
+                continue
+            models = {route.model for route in cli_routes}
+            providers = {route.provider for route in cli_routes}
+            if len(models) != 1 or len(providers) != 1:
+                drivers[cli] = {
+                    "cli": cli, "model": sorted(models), "provider": sorted(providers), "ready": False,
+                    "failed_fields": list(DRIVER_CAPABILITY_FIELDS),
+                    "fields": {
+                        name: {"status": "FAIL", "reason": "ambiguous_driver_route_binding"}
+                        for name in DRIVER_CAPABILITY_FIELDS
+                    },
+                }
+                continue
+            model = next(iter(models))
+            provider = next(iter(providers))
+            data_classes = sorted({data_class for route in cli_routes for data_class in route.data_classes})
+            drivers[cli] = _prove_one_driver(
+                cli, model=model, provider=provider, data_classes=data_classes,
+                runner=active_runner, workspace=probe_workspace,
+            )
+        ready = all(detail["ready"] for detail in drivers.values())
+    return {"ready": ready, "drivers": drivers}
+
+
 def _prove_live_capabilities(context: Any, engine_root: Path, output_root: Path) -> dict[str, Any]:
     """Prove the transport isolation facets before the first model transmission.
 
@@ -277,10 +568,24 @@ def _prove_live_capabilities(context: Any, engine_root: Path, output_root: Path)
         forbidden_paths=_capability_forbidden_paths(engine_root),
     )
     transport.capability_proof = proof
+    # spec 7.1: the same real, differentiated driver-capability proof preflight uses,
+    # attached to the exact registry instance the compiled graph's own capability-proof
+    # gate reads (best-effort there, for registries that expose it), so a live run's
+    # first transmission is gated by the same proof preflight already reported. This
+    # is also the hard, unconditional stop that actually closes Run 26's false-ready
+    # defect at the one real production entry point: raised here, before
+    # `compiled.invoke()` is ever reached, exactly like `prove_transport_capabilities`
+    # above already stops a live run on an unproven transport-isolation facet.
+    driver_proof = _prove_driver_capabilities(runner=transport.runner)
+    transport.driver_capability_proof = driver_proof
+    if not driver_proof["ready"]:
+        not_ready = sorted(name for name, detail in driver_proof["drivers"].items() if not detail["ready"])
+        raise tp.CapabilityProofFailed(
+            f"required driver capability unproven for: {not_ready}")
     return proof
 
 
-def _preflight_capabilities() -> tuple[dict[str, dict[str, Any]], list[str]]:
+def _preflight_capabilities() -> tuple[dict[str, dict[str, Any]], list[str], dict[str, Any]]:
     """Bounded local capability probes only; never populates the real output root."""
 
     with tempfile.TemporaryDirectory(prefix="plan26-preflight-") as raw_probe_root:
@@ -307,9 +612,12 @@ def _preflight_capabilities() -> tuple[dict[str, dict[str, Any]], list[str]]:
                 results[capability] = proof
                 if proof.get("result") != "PASS":
                     missing.append(capability)
+            driver_capabilities = _prove_driver_capabilities(runner=transport.runner)
+            if not driver_capabilities["ready"]:
+                missing.append("driver_capability_proof")
         finally:
             guard.uninstall()
-    return results, missing
+    return results, missing, driver_capabilities
 
 
 # --------------------------------------------------------------------------- preflight
@@ -317,7 +625,7 @@ def _preflight_capabilities() -> tuple[dict[str, dict[str, Any]], list[str]]:
 
 def _run_preflight(engine_root: Path, curriculum_root: Path, output_root: Path) -> tuple[dict[str, Any], int]:
     collision = _collision_reason(output_root)
-    capabilities, missing = _preflight_capabilities()
+    capabilities, missing, driver_capabilities = _preflight_capabilities()
     ready = collision is None and not missing
     payload: dict[str, Any] = {
         "contract_version": CONTRACT_VERSION,
@@ -327,6 +635,7 @@ def _run_preflight(engine_root: Path, curriculum_root: Path, output_root: Path) 
         "curriculum_root": str(curriculum_root),
         "output_root": str(output_root),
         "capabilities": capabilities,
+        "driver_capabilities": driver_capabilities,
         "missing_capabilities": missing,
         "collision": collision,
     }

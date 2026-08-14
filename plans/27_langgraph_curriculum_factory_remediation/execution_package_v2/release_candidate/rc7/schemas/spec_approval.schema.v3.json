@@ -1,0 +1,114 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "Run 27 execution package v2 specification approval v3",
+  "$comment": "Package-scoped successor to schemas/spec_approval.schema.v2.json. v2 const-locks approved_graph to implementation.graph.v5.yaml -- the graph that reached BLOCKED at N20_PROVIDER_TRANSPORT with finding N20V2-F01 (retired_provider_test_scan.scan_roots swept the whole tests/runtime directory, including two unrelated Gemini-pipeline test files no node in this graph owns). implementation.graph.v6.yaml corrects exactly that write-set/scan-scope defect and is now this package's active graph, so approved_graph must const-lock to v6's path instead -- v5 remains a legitimate historical approved_graph value for the rc3/rc5 lineage it governed, preserved unedited at deprecated/implementation.graph.v5.yaml, but it is no longer *this* package's active graph. Every other field is unchanged in shape and meaning from schema v2; this is the same narrow, single-field correction discipline v2 itself used when it moved approved_spec off the parent v1 package's schema.",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "schema_version",
+    "approved",
+    "approved_spec",
+    "approved_spec_sha256",
+    "spec_qa_verdict",
+    "spec_qa_verification_sha256",
+    "approved_rc_manifest",
+    "approved_rc_manifest_sha256",
+    "execution_package_qa_verdict",
+    "execution_package_qa_verification_sha256",
+    "approved_graph",
+    "approved_graph_sha256",
+    "approved_for",
+    "model_assignments",
+    "approved_at",
+    "approval_statement"
+  ],
+  "properties": {
+    "schema_version": {"const": 3},
+    "approved": {"const": true},
+    "approved_spec": {
+      "const": "plans/26_langgraph_curriculum_factory/spec/v3/langgraph_curriculum_factory.spec.v4.md",
+      "$comment": "Unchanged from schema v2: this package's own single governing specification did not change in this correction."
+    },
+    "approved_spec_sha256": {"type": "string", "pattern": "^[a-f0-9]{64}$"},
+    "spec_qa_verdict": {"const": "QA_PASSED"},
+    "spec_qa_verification_sha256": {
+      "type": "string",
+      "pattern": "^[a-f0-9]{64}$",
+      "$comment": "SHA-256 of plans/26_langgraph_curriculum_factory/spec/v3/QA/verification.json, the specification's own independent QA verification record. Unchanged from schema v2."
+    },
+    "approved_rc_manifest": {
+      "type": "string",
+      "pattern": "^plans/27_langgraph_curriculum_factory_remediation/execution_package_v2/release_candidate/rc[1-9][0-9]*/manifest\\.v1\\.json$",
+      "$comment": "Unchanged from schema v2: still a versioned review-lineage pointer, not this package's governing identity. This correction does not re-anchor the package's approval-of-record to a new release candidate -- rc3 remains the approved package-structure snapshot; this graph-level scan-scope correction is validated by its own rc6 lineage (release_candidate/rc6/, and any rcN+ built to reach QA_PASSED), which is supporting engineering QA, not a fresh package approval. The validator recomputes approved_rc_manifest_sha256 against the file this path names and rejects a mismatch."
+    },
+    "approved_rc_manifest_sha256": {"type": "string", "pattern": "^[a-f0-9]{64}$"},
+    "execution_package_qa_verdict": {"const": "QA_PASSED"},
+    "execution_package_qa_verification_sha256": {
+      "type": "string",
+      "pattern": "^[a-f0-9]{64}$",
+      "$comment": "SHA-256 of the approved RC's own QA/verification.json. Unchanged from schema v2."
+    },
+    "approved_graph": {
+      "const": "plans/27_langgraph_curriculum_factory_remediation/execution_package_v2/implementation.graph.v6.yaml",
+      "$comment": "Const-locked to this package's own active graph, exactly as v2 const-locks to v5. A future graph v7+ requiring fresh approval gets its own schema version, the same discipline this schema itself exists to apply. implementation.graph.v5.yaml remains a legitimate, unedited historical approved_graph value at deprecated/implementation.graph.v5.yaml, governed by schema v2, which is itself unedited and still valid for records that cite it."
+    },
+    "approved_graph_sha256": {"type": "string", "pattern": "^[a-f0-9]{64}$"},
+    "approved_for": {"const": "plan27_implementation_remediation"},
+    "model_assignments": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "M01_RESEARCH_UNIT_SOURCES",
+        "M02_CREATE_UNIT_DOMAIN_DATA",
+        "M03_WRITE_UNIT_CONTENT",
+        "M04_CREATE_UNIT_VISUALS",
+        "M05_REVIEW_ACTUAL_UNIT",
+        "M06_REPAIR_NAMED_UNIT_ARTIFACT",
+        "M07_REVIEW_ACTUAL_WORKBOOK",
+        "M08_REPAIR_NAMED_WORKBOOK_DEFECT"
+      ],
+      "$comment": "Unchanged from schema v2: USER_DECISION_REQUIRED-01 is not reopened by this correction.",
+      "properties": {
+        "M01_RESEARCH_UNIT_SOURCES": {"$ref": "#/$defs/model_assignment_sonnet5_xhigh"},
+        "M02_CREATE_UNIT_DOMAIN_DATA": {"$ref": "#/$defs/model_assignment_sonnet5_high"},
+        "M03_WRITE_UNIT_CONTENT": {"$ref": "#/$defs/model_assignment_sonnet5_high"},
+        "M04_CREATE_UNIT_VISUALS": {"$ref": "#/$defs/model_assignment_sonnet5_high"},
+        "M05_REVIEW_ACTUAL_UNIT": {"$ref": "#/$defs/model_assignment_gpt56sol_xhigh"},
+        "M06_REPAIR_NAMED_UNIT_ARTIFACT": {"$ref": "#/$defs/model_assignment_sonnet5_xhigh"},
+        "M07_REVIEW_ACTUAL_WORKBOOK": {"$ref": "#/$defs/model_assignment_gpt56sol_xhigh"},
+        "M08_REPAIR_NAMED_WORKBOOK_DEFECT": {"$ref": "#/$defs/model_assignment_sonnet5_xhigh"}
+      }
+    },
+    "approved_at": {"type": "string", "format": "date-time"},
+    "approval_statement": {"type": "string", "minLength": 20}
+  },
+  "$defs": {
+    "model_assignment_sonnet5_xhigh": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["model", "effort"],
+      "properties": {
+        "model": {"const": "claude-sonnet-5"},
+        "effort": {"const": "xhigh"}
+      }
+    },
+    "model_assignment_sonnet5_high": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["model", "effort"],
+      "properties": {
+        "model": {"const": "claude-sonnet-5"},
+        "effort": {"const": "high"}
+      }
+    },
+    "model_assignment_gpt56sol_xhigh": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["model", "effort"],
+      "properties": {
+        "model": {"const": "gpt-5.6-sol"},
+        "effort": {"const": "xhigh"}
+      }
+    }
+  }
+}

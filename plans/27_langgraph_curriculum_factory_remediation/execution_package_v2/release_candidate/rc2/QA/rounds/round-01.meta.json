@@ -1,0 +1,72 @@
+{
+  "attempt": 1,
+  "exit_code": 0,
+  "duration_seconds": 146.26,
+  "transport": "app-server",
+  "session_id": "019ffcbe-538e-7d01-a99b-8ebb28592688",
+  "thread_id": "019ffcbe-538e-7d01-a99b-8ebb28592688",
+  "turn_id": "019ffcbe-5a23-71a0-86b3-5f9581eaea1f",
+  "usage": {},
+  "model": null,
+  "effort": null,
+  "plugin_version": "1.0.4",
+  "plugin_lib_path": "/Users/filipepinto/.claude/plugins/cache/openai-codex/codex/1.0.4/scripts/lib/codex.mjs",
+  "argv": [
+    "node",
+    "/Users/filipepinto/Projects/curriculum_builder/.claude/skills/qa-gate-codex-run/scripts/codex_bridge.mjs",
+    "<request on stdin>"
+  ],
+  "started_at": "2026-08-13T20:09:19.404931+00:00",
+  "response_sha256": "ffd016c15d875d10003a39d0ea2fb331148b777e340cd275d3a3162124224566",
+  "request_sha256": "0d9f770cf1b81fe07ae93dbc177d2569d14faf3c6bad1c25392676ab62bf715b",
+  "round": 1,
+  "cwd": "/Users/filipepinto/Projects/curriculum_builder/plans/27_langgraph_curriculum_factory_remediation/execution_package_v2/release_candidate/rc2",
+  "artifact_path": "/Users/filipepinto/Projects/curriculum_builder/plans/27_langgraph_curriculum_factory_remediation/execution_package_v2/release_candidate/rc2/rc2_review_bundle.v1.md",
+  "artifact_sha256": "5a0deece8bf50d094d3dde9b4ac420f3d27ae3944f3134c822292eb89380f7b9",
+  "grounding": [
+    {
+      "path": "/Users/filipepinto/Projects/curriculum_builder/plans/27_langgraph_curriculum_factory_remediation/n20_recovery.plan.v2.md",
+      "sha256": "9e40d35498fd4bcd01a99625da2cf12fa361aa850374c339570408390e626746"
+    },
+    {
+      "path": "/Users/filipepinto/Projects/curriculum_builder/plans/27_langgraph_curriculum_factory_remediation/results/N20_PROVIDER_TRANSPORT.result.v1.json",
+      "sha256": "554f0b1c1a7dd39d1257d0b72eced9235ab438793a527860c3b35ba1c3146316"
+    },
+    {
+      "path": "/Users/filipepinto/Projects/curriculum_builder/plans/27_langgraph_curriculum_factory_remediation/implementation.graph.v1.yaml",
+      "sha256": "ec414fa4f2464e3aaa6f51e142fe2b21b81c321e6d6f06834294a97360417244"
+    },
+    {
+      "path": "/Users/filipepinto/Projects/curriculum_builder/plans/27_langgraph_curriculum_factory_remediation/implementation.graph.v2.yaml",
+      "sha256": "f297d6528375eeeda5b97a54d654997a65f5d0c7100cf50b54d71c4ca4763b1a"
+    },
+    {
+      "path": "/Users/filipepinto/Projects/curriculum_builder/plans/27_langgraph_curriculum_factory_remediation/QA/session.json",
+      "sha256": "d0340ee35ecf28ab5444bdf51ecd1fe01358667276e7a0ee29f76c6e38f02189"
+    },
+    {
+      "path": "/Users/filipepinto/Projects/curriculum_builder/plans/27_langgraph_curriculum_factory_remediation/controller/check_forbidden_production_refs.py",
+      "sha256": "cb530b326bb68964976b5b074fefa43392af83bd5c3c6a76f744991d30b066ee"
+    },
+    {
+      "path": "/Users/filipepinto/Projects/curriculum_builder/plans/27_langgraph_curriculum_factory_remediation/execution_package_v2/QA/session.json",
+      "sha256": "f7578605d0de2c3e419f88b203612419ac1d18b6bf34a69055fac7dfdcd5de6b"
+    },
+    {
+      "path": "/Users/filipepinto/Projects/curriculum_builder/plans/27_langgraph_curriculum_factory_remediation/execution_package_v2/QA/verification.json",
+      "sha256": "f7aaf4b5f3fd5b34af97363784b7810fe7cda6772e6a23dc2ebcd8cbe63b647b"
+    },
+    {
+      "path": "/Users/filipepinto/Projects/curriculum_builder/plans/27_langgraph_curriculum_factory_remediation/execution_package_v2/release_candidate/rc1/manifest.v1.json",
+      "sha256": "2c0cb9529aeb9b10172a23658a5a66410207d632d71e31bd015cda8049c3e6cd"
+    },
+    {
+      "path": "/Users/filipepinto/Projects/curriculum_builder/plans/27_langgraph_curriculum_factory_remediation/execution_package_v2/release_candidate/rc1/QA/session.json",
+      "sha256": "126898354e4c6f7c705fa2b85e1903e8883db840a10ae9a93258d2825ad35a78"
+    }
+  ],
+  "chain_prev": "GENESIS",
+  "chain": "98a34ccc81588db3ce24bf4bc0544f8a322bf834ba9634e613dd1b4e56005619",
+  "rollout_file": "/Users/filipepinto/.codex/sessions/2026/08/13/rollout-2026-08-13T16-09-19-019ffcbe-538e-7d01-a99b-8ebb28592688.jsonl",
+  "timestamp": "2026-08-13T20:11:45.718733+00:00"
+}

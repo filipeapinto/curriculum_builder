@@ -1,0 +1,79 @@
+--- git status --porcelain ---
+ M plans/27_langgraph_curriculum_factory_remediation/execution_package_v2/controller/scan_node.py
+RM plans/27_langgraph_curriculum_factory_remediation/execution_package_v2/implementation.graph.v4.yaml -> plans/27_langgraph_curriculum_factory_remediation/execution_package_v2/deprecated/implementation.graph.v4.yaml
+ M plans/27_langgraph_curriculum_factory_remediation/execution_package_v2/tests/test_execution_package_v2.py
+ M plans/27_langgraph_curriculum_factory_remediation/execution_package_v2/tools/validate_plan_v2.py
+ M plans/27_langgraph_curriculum_factory_remediation/execution_package_v2/tools/validate_result_v2.py
+ M policy/routes.v1.yaml
+ M policy/routing/model_registry.v1.yaml
+ M runtime/langgraph_factory/config/model_jobs.v1.yaml
+ M runtime/langgraph_factory/egress.py
+ M runtime/langgraph_factory/model_nodes.py
+ M runtime/langgraph_factory/schemas/internal_authorization_receipt.schema.json
+ M runtime/langgraph_factory/schemas/internal_execution_receipt.schema.json
+ M runtime/langgraph_factory/transport.py
+ M tests/runtime/test_curriculum_factory_graph.py
+ M tests/runtime/test_plan26_adversarial.py
+ M tests/runtime/test_plan26_api_contract.py
+ M tests/runtime/test_plan26_egress.py
+ M tests/runtime/test_plan26_lock_drift.py
+ M tests/runtime/test_plan26_model_nodes.py
+ M tests/runtime/test_plan26_transport.py
+?? plans/27_langgraph_curriculum_factory_remediation/execution_package_v2/contracts/
+?? plans/27_langgraph_curriculum_factory_remediation/execution_package_v2/deprecated/implementation.graph.v5.yaml
+?? plans/27_langgraph_curriculum_factory_remediation/execution_package_v2/deprecated/implementation.graph.v6.yaml
+?? plans/27_langgraph_curriculum_factory_remediation/execution_package_v2/implementation.graph.v5.yaml
+?? plans/27_langgraph_curriculum_factory_remediation/execution_package_v2/implementation.graph.v6.yaml
+?? plans/27_langgraph_curriculum_factory_remediation/execution_package_v2/implementation.graph.v7.yaml
+?? plans/27_langgraph_curriculum_factory_remediation/execution_package_v2/prompts/N00_spec_approval_gate.prompt.v4.md
+?? plans/27_langgraph_curriculum_factory_remediation/execution_package_v2/prompts/N00_spec_approval_gate.prompt.v5.md
+?? plans/27_langgraph_curriculum_factory_remediation/execution_package_v2/prompts/N00_spec_approval_gate.prompt.v6.md
+?? plans/27_langgraph_curriculum_factory_remediation/execution_package_v2/prompts/N00_spec_approval_gate.prompt.v7.md
+?? plans/27_langgraph_curriculum_factory_remediation/execution_package_v2/prompts/N20_provider_transport.prompt.v4.md
+?? plans/27_langgraph_curriculum_factory_remediation/execution_package_v2/prompts/N20_provider_transport.prompt.v5.md
+?? plans/27_langgraph_curriculum_factory_remediation/execution_package_v2/prompts/N20_provider_transport.prompt.v6.md
+?? plans/27_langgraph_curriculum_factory_remediation/execution_package_v2/prompts/N20_provider_transport.prompt.v7.md
+?? plans/27_langgraph_curriculum_factory_remediation/execution_package_v2/prompts/N30_preflight_egress.prompt.v4.md
+?? plans/27_langgraph_curriculum_factory_remediation/execution_package_v2/prompts/N30_preflight_egress.prompt.v5.md
+?? plans/27_langgraph_curriculum_factory_remediation/execution_package_v2/prompts/N30_preflight_egress.prompt.v6.md
+?? plans/27_langgraph_curriculum_factory_remediation/execution_package_v2/prompts/N30_preflight_egress.prompt.v7.md
+?? plans/27_langgraph_curriculum_factory_remediation/execution_package_v2/release_candidate/
+?? plans/27_langgraph_curriculum_factory_remediation/execution_package_v2/results/
+?? plans/27_langgraph_curriculum_factory_remediation/execution_package_v2/schemas/
+
+--- key historical hashes ---
+v1 package graph:
+ec414fa4f2464e3aaa6f51e142fe2b21b81c321e6d6f06834294a97360417244  plans/27_langgraph_curriculum_factory_remediation/implementation.graph.v1.yaml
+failed v2 package graph:
+f297d6528375eeeda5b97a54d654997a65f5d0c7100cf50b54d71c4ca4763b1a  plans/27_langgraph_curriculum_factory_remediation/implementation.graph.v2.yaml
+deprecated graph v5:
+ce2362787a9760c9db3b2f667a0561ebd877ec89f24d690b2210ec9b6f3777b8  plans/27_langgraph_curriculum_factory_remediation/execution_package_v2/deprecated/implementation.graph.v5.yaml
+deprecated graph v6:
+b186b58828fd1f490a57dd3cfe7d26bcdff70a37f78d6d996f2f8234ef2b5c26  plans/27_langgraph_curriculum_factory_remediation/execution_package_v2/deprecated/implementation.graph.v6.yaml
+schema v1/v2/v3:
+829943e745cf6eb550e6319f42df4086f187a08d373f7e08f9fddf822d9fde36  plans/27_langgraph_curriculum_factory_remediation/schemas/spec_approval.schema.v1.json
+d6a160aa79921c0ce0bab57504e5c36f921c7b6a5b66798786f118aec0ab6cd4  plans/27_langgraph_curriculum_factory_remediation/execution_package_v2/schemas/spec_approval.schema.v2.json
+cdb71a99ea5714d59a9bf9a360217fda849548eddbd140527e1892c139f7f0c4  plans/27_langgraph_curriculum_factory_remediation/execution_package_v2/schemas/spec_approval.schema.v3.json
+contract v1/v2/v3:
+665d243bd080497e49053ddb9a2fc5a419fba3d0bbd9b03ae59def5098cc609e  plans/27_langgraph_curriculum_factory_remediation/execution_package_v2/contracts/spec_approval.v1.yaml
+b6519442e532753fde795c892a5d386d1afa060cfa5df9dff8ad86351c0bc4c9  plans/27_langgraph_curriculum_factory_remediation/execution_package_v2/contracts/spec_approval.v2.yaml
+c57c1cae4e35d81509a3624797de13e6ea7c0905d7a649e8158a16b867201d6d  plans/27_langgraph_curriculum_factory_remediation/execution_package_v2/contracts/spec_approval.v3.yaml
+prompt v5/v6:
+30fdd2b9445c1a24527866f0342e35cd99937cf420e4e13d0ced54537c001ad9  plans/27_langgraph_curriculum_factory_remediation/execution_package_v2/prompts/N00_spec_approval_gate.prompt.v5.md
+ebd2fc6aa75812ea1e0371f0f1dce3c91f887ca9b6354131cd224850fe6ebaf9  plans/27_langgraph_curriculum_factory_remediation/execution_package_v2/prompts/N00_spec_approval_gate.prompt.v6.md
+N20 v5 BLOCKED result:
+BLOCKED
+rc1 QA terminal:
+QA_FAILED
+rc2 QA terminal:
+QA_FAILED
+rc3 QA terminal:
+QA_PASSED
+rc4 QA terminal:
+QA_FAILED
+rc5 QA terminal:
+QA_PASSED
+rc6 QA terminal:
+QA_FAILED
+rc7 QA terminal:
+QA_PASSED

@@ -1,0 +1,47 @@
+schema_version: 1
+approved: true
+approved_spec: plans/26_langgraph_curriculum_factory/spec/v3/langgraph_curriculum_factory.spec.v4.md
+approved_spec_sha256: e14df5a36ce12d700fe9fc4aa4aea466771bc89f31bc6e9d49f812c147b1bb3c
+qa_verdict: QA_PASSED
+qa_verification_sha256: 899c9720be48f071d6caf26eceafa81be626cd3bda685afa05eb0cc1dfe9a631
+approved_for: plan27_implementation_remediation
+approved_at: "2026-08-13T20:57:25Z"
+approval_statement: >
+  User explicitly approved, by exact digest, the following five artifacts for
+  execution package v2 of plan27_implementation_remediation:
+  specification v4 at
+  plans/26_langgraph_curriculum_factory/spec/v3/langgraph_curriculum_factory.spec.v4.md
+  (SHA-256 e14df5a36ce12d700fe9fc4aa4aea466771bc89f31bc6e9d49f812c147b1bb3c);
+  that specification's independent QA verification record at
+  plans/26_langgraph_curriculum_factory/spec/v3/QA/verification.json
+  (SHA-256 899c9720be48f071d6caf26eceafa81be626cd3bda685afa05eb0cc1dfe9a631,
+  session 019ffbeb-3f45-7440-a83e-aa560938dc98, chain_valid true); the
+  release-candidate-3 manifest at
+  plans/27_langgraph_curriculum_factory_remediation/execution_package_v2/release_candidate/rc3/manifest.v1.json
+  (SHA-256 0e4fbfe2c258ae6176931e5490f8a2b55bdf8708d3ef0f257b50a05c9e582a6d),
+  which binds the exact reviewed graph, scanner, validators, prompts, and
+  test suite for this package; that release candidate's independent QA
+  verification record at
+  plans/27_langgraph_curriculum_factory_remediation/execution_package_v2/release_candidate/rc3/QA/verification.json
+  (SHA-256 202e2f214dd732ce24eb758c7cee5965cfcc113d71d03350d8bc5fefa7773217,
+  session 019ffcc7-a48f-7870-a933-5d80bb61dac3, chain_valid true, rounds 1,
+  0 problems); and the active execution graph bound into and executed from
+  this package at
+  plans/27_langgraph_curriculum_factory_remediation/execution_package_v2/implementation.graph.v4.yaml
+  (SHA-256 0d5b5af8b0c60847e3b52ac93c4c10328f48a1404130a6b785485bcbbae3d571,
+  byte-identical to the copy bound inside the RC3 manifest above). All five
+  digests were independently recomputed against live repository bytes
+  immediately before this approval was recorded and matched the user's
+  stated values exactly. This approval authorizes proceeding sequentially
+  from N00 through N90 of
+  plans/27_langgraph_curriculum_factory_remediation/execution_package_v2/implementation.graph.v4.yaml,
+  preserving all prior attempts and evidence (the Run 27 v1 attempt blocked
+  at N20_PROVIDER_TRANSPORT, the first failed execution-package correction
+  implementation.graph.v2.yaml and its INTEGRITY_BREACH QA session, and
+  release candidates rc1 and rc2 and their FAIL verdicts), without
+  redesigning the execution package. USER_DECISION_REQUIRED-01 remains
+  resolved exactly as recorded in
+  plans/27_langgraph_curriculum_factory_remediation/contracts/spec_approval.v1.yaml's
+  approval_statement: M01, M06, and M08 = claude-sonnet-5 at effort xhigh;
+  M02, M03, and M04 = claude-sonnet-5 at effort high; M05 and M07 =
+  gpt-5.6-sol at effort xhigh.

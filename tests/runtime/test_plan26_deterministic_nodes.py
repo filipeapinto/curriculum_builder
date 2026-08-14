@@ -1405,7 +1405,7 @@ def test_no_node_body_declares_a_graph_edge_or_references_end() -> None:
 
 
 def test_no_node_module_imports_a_forbidden_model_dependency() -> None:
-    forbidden = ("langchain", "langchain_openai", "langchain_google_genai", "openai", "google.generativeai")
+    forbidden = ("langchain", "langchain_openai", "openai")
     for module in NODE_MODULES + (node_pkg,):
         tree = ast.parse(Path(module.__file__).read_text(encoding="utf-8"))
         for statement in ast.walk(tree):
@@ -1803,10 +1803,39 @@ def test_d01_refuses_a_relative_traversal_root(tmp_path: Path) -> None:
     assert update["pending_failure"]["cause"] == "invalid_input"
 
 
+def _driver_capability_fields(*, status: str = "PASS") -> dict[str, Any]:
+    return {name: {"status": status} for name in inputs.DRIVER_CAPABILITY_FIELDS}
+
+
+def _driver_capability_proof(**driver_overrides: Any) -> dict[str, Any]:
+    """A ready `driver_capability_proof` fixture, overridable per driver.
+
+    `driver_overrides["claude"] = {"ready": False, "failed_fields": [...], ...}`
+    replaces that one driver's entry wholesale; every other mandatory driver stays
+    a passing, fully-differentiated (no single flag) fixture.
+    """
+
+    drivers: dict[str, Any] = {
+        cli: {
+            "cli": cli,
+            "model": "claude-sonnet-5" if cli == "claude" else "gpt-5.6-sol",
+            "provider": "anthropic" if cli == "claude" else "openai",
+            "ready": True,
+            "failed_fields": [],
+            "fields": _driver_capability_fields(),
+        }
+        for cli in inputs.MANDATORY_DRIVER_CLIS
+    }
+    for cli, patch in driver_overrides.items():
+        drivers[cli] = patch
+    return {"ready": all(detail["ready"] for detail in drivers.values()), "drivers": drivers}
+
+
 def test_d03_proves_capabilities_and_records_one_receipt_each() -> None:
     registry = _Registry(
         prove_capability=lambda name: {"result": "PASS", "capability": name},
         observe_executable=lambda name: {"path": f"/usr/bin/{name}", "sha256": "e" * 64},
+        driver_capability_proof=_driver_capability_proof(),
     )
     authorization = {"providers": ["openai"], "curriculum_digest": "fd", "output_root": "/out"}
     state = {
@@ -1823,11 +1852,17 @@ def test_d03_proves_capabilities_and_records_one_receipt_each() -> None:
     update = inputs.D03_PROVE_CAPABILITIES(state, _Context(transport_registry=registry))
     kinds = [receipt["capability"] for receipt in update["capability_receipts"]]
     assert set(inputs.REQUIRED_CAPABILITIES) <= set(kinds)
+    driver_receipts = [r for r in update["capability_receipts"] if r["capability"] == "driver_capability_proof"]
+    assert len(driver_receipts) == 1
+    assert driver_receipts[0]["proof"]["ready"] is True
     assert update["pending_guard"]["value"] == "capabilities_proven"
 
 
 def test_d03_refuses_an_authorization_scoped_to_another_run() -> None:
-    registry = _Registry(prove_capability=lambda name: {"result": "PASS"})
+    registry = _Registry(
+        prove_capability=lambda name: {"result": "PASS"},
+        driver_capability_proof=_driver_capability_proof(),
+    )
     state = {
         "invocation": {"kind": "fresh"},
         "validated_recovery_envelope": None,
@@ -1847,6 +1882,7 @@ def test_d03_refuses_an_executable_whose_identity_drifted() -> None:
     registry = _Registry(
         prove_capability=lambda name: {"result": "PASS"},
         observe_executable=lambda name: {"path": "/usr/bin/codex", "sha256": "different" * 7},
+        driver_capability_proof=_driver_capability_proof(),
     )
     state = {
         "invocation": {"kind": "fresh"},
@@ -1880,8 +1916,109 @@ def test_d03_pauses_on_exactly_one_unavailable_external_fact() -> None:
         "engine_root": "/engine",
         "output_root": "/out",
     }
-    update = inputs.D03_PROVE_CAPABILITIES(state, _Context(transport_registry=_Registry(prove_capability=prove)))
+    update = inputs.D03_PROVE_CAPABILITIES(
+        state,
+        _Context(
+            transport_registry=_Registry(
+                prove_capability=prove, driver_capability_proof=_driver_capability_proof()
+            )
+        ),
+    )
     assert update["pending_failure"]["class"] == "pause"
+
+
+def test_d03_skips_the_driver_gate_for_a_registry_that_never_exposes_the_proof() -> None:
+    """A registry built for an unrelated topology/plumbing test (the pre-N30
+    contract: `prove_capability`/`observe_executable` only) is not forced to
+    fabricate a `driver_capability_proof` it was never asked to carry -- this
+    attribute gets the same optional, best-effort duck-typed treatment
+    `observe_executable` already gets a few lines above it. The production CLI
+    (`runtime.run_curriculum._prove_live_capabilities`) is the actual, unconditional
+    stop: it always populates this attribute on the real registry before invoking the
+    graph at all, and raises outright if it is not ready -- proven separately in
+    `tests/runtime/test_run_curriculum.py`."""
+    registry = _Registry(prove_capability=lambda name: {"result": "PASS"})
+    state = {
+        "invocation": {"kind": "fresh"},
+        "validated_recovery_envelope": None,
+        "effective_run": {"ordered_unit_ids": ["U001"]},
+        "frozen_executable_identities": [],
+        "external_authorizations": [{"providers": [], "curriculum_digest": "fd"}],
+        "frozen_digest": "fd",
+        "run_id": "r",
+        "engine_root": "/engine",
+        "output_root": "/out",
+    }
+    update = inputs.D03_PROVE_CAPABILITIES(state, _Context(transport_registry=registry))
+    assert "pending_failure" not in update
+    assert update["pending_guard"]["value"] == "capabilities_proven"
+
+
+def test_d03_refuses_when_one_mandatory_driver_field_is_unproven() -> None:
+    """Run 26's exact false-ready condition, reproduced at the D03 gate: binaries
+    present (`executable_identity` PASS), but the provider is unauthenticated
+    (`observable_subscription_backed_usability` FAIL) -- `ready` must be false and
+    D03 must refuse, never silently admit a driver with one failed field."""
+    failing_claude = {
+        "cli": "claude", "model": "claude-sonnet-5", "provider": "anthropic",
+        "ready": False,
+        "failed_fields": ["observable_subscription_backed_usability"],
+        "fields": {
+            **_driver_capability_fields(),
+            "observable_subscription_backed_usability": {
+                "status": "FAIL", "reason": "nonzero_bounded_probe",
+            },
+        },
+    }
+    registry = _Registry(
+        prove_capability=lambda name: {"result": "PASS"},
+        driver_capability_proof=_driver_capability_proof(claude=failing_claude),
+    )
+    state = {
+        "invocation": {"kind": "fresh"},
+        "validated_recovery_envelope": None,
+        "effective_run": {"ordered_unit_ids": ["U001"]},
+        "frozen_executable_identities": [],
+        "external_authorizations": [{"providers": [], "curriculum_digest": "fd"}],
+        "frozen_digest": "fd",
+        "run_id": "r",
+        "engine_root": "/engine",
+        "output_root": "/out",
+    }
+    update = inputs.D03_PROVE_CAPABILITIES(state, _Context(transport_registry=registry))
+    assert update["pending_failure"]["cause"] == "capability"
+    assert update["pending_failure"]["evidence"]["not_ready_drivers"] == ["claude"]
+    assert "driver_capability_proof" in update["pending_failure"]["evidence"]["missing"]
+
+
+def test_d03_refuses_when_a_driver_capability_proof_omits_a_required_field() -> None:
+    """A registry that reports `ready: true` but is missing one of the six
+    differentiated fields (e.g. a stale or buggy CLI build) must not be trusted at
+    face value: D03 validates the proof's own shape, not just its top-level flag."""
+    incomplete_claude = {
+        "cli": "claude", "model": "claude-sonnet-5", "provider": "anthropic",
+        "ready": True, "failed_fields": [],
+        "fields": {name: {"status": "PASS"} for name in inputs.DRIVER_CAPABILITY_FIELDS
+                   if name != "tool_mcp_closure"},
+    }
+    registry = _Registry(
+        prove_capability=lambda name: {"result": "PASS"},
+        driver_capability_proof=_driver_capability_proof(claude=incomplete_claude),
+    )
+    state = {
+        "invocation": {"kind": "fresh"},
+        "validated_recovery_envelope": None,
+        "effective_run": {"ordered_unit_ids": ["U001"]},
+        "frozen_executable_identities": [],
+        "external_authorizations": [{"providers": [], "curriculum_digest": "fd"}],
+        "frozen_digest": "fd",
+        "run_id": "r",
+        "engine_root": "/engine",
+        "output_root": "/out",
+    }
+    update = inputs.D03_PROVE_CAPABILITIES(state, _Context(transport_registry=registry))
+    assert update["pending_failure"]["cause"] == "capability"
+    assert "required proof field" in update["pending_failure"]["message"]
 
 
 def test_d04_opens_a_fresh_episode_with_the_frozen_thread_id_format() -> None:

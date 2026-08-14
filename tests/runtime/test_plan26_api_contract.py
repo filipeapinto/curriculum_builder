@@ -51,9 +51,9 @@ PINNED_VERSIONS = {
 FORBIDDEN_MODULES = (
     "langchain",
     "langchain_openai",
-    "langchain_google_genai",
+    "langchain_anthropic",
     "openai",
-    "google.generativeai",
+    "anthropic",
 )
 
 
@@ -150,11 +150,7 @@ class TestForbiddenImports(unittest.TestCase):
     def test_forbidden_model_wrappers_absent_from_locked_environment(self) -> None:
         for name in FORBIDDEN_MODULES:
             with self.subTest(module=name):
-                top = name.split(".")[0]
-                spec = importlib.util.find_spec(top)
-                if top == "google" and spec is not None:
-                    # google is a namespace package; only the SDK submodule is forbidden
-                    spec = importlib.util.find_spec(name)
+                spec = importlib.util.find_spec(name.split(".")[0])
                 self.assertIsNone(
                     spec, f"forbidden dependency {name} is importable in the locked environment"
                 )

@@ -1,0 +1,11 @@
+job_id                                 family     cli     model            effort 
+M01_RESEARCH_UNIT_SOURCES              anthropic  claude  claude-sonnet-5  xhigh  
+M02_CREATE_UNIT_DOMAIN_DATA            anthropic  claude  claude-sonnet-5  high   
+M03_WRITE_UNIT_CONTENT                 anthropic  claude  claude-sonnet-5  high   
+M04_CREATE_UNIT_VISUALS                anthropic  claude  claude-sonnet-5  high   
+M05_REVIEW_ACTUAL_UNIT                 openai     codex   gpt-5.6-sol      xhigh  
+M06_REPAIR_NAMED_UNIT_ARTIFACT         anthropic  claude  claude-sonnet-5  xhigh  
+M07_REVIEW_ACTUAL_WORKBOOK             openai     codex   gpt-5.6-sol      xhigh  
+M08_REPAIR_NAMED_WORKBOOK_DEFECT       anthropic  claude  claude-sonnet-5  xhigh  
+
+All eight jobs resolved. role/mutability/provider_family/subscription_driver/input_boundary/output_schema/identity_claim/failure_disposition are non-empty for all eight; provider_family matches the frozen registry's own family for every job. No field is unresolved.

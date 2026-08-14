@@ -16,11 +16,13 @@ Covers the node's own TEST checklist:
    model HTTP
 
 The heavy graph/transport machinery (real LangGraph compilation, real model
-transport, real checkpoint durability) is proven elsewhere (N20/N21/N30/N32's
-own suites); this module proves the CLI *wires* those pieces correctly, using
-the real persistence layer wherever it is cheap and safe to do so (no model
-subprocess, no network) and narrow mocks only where a real call would need a
-live Codex/Gemini installation this environment does not have.
+transport, real checkpoint durability) is proven elsewhere (N20/N30's own
+suites); this module proves the CLI *wires* those pieces correctly, using
+the real persistence layer wherever it is cheap and safe to do so, real
+bounded subprocess probes against the installed `claude`/`codex` CLIs where
+N30's own preflight/capability behavior is under test, and narrow mocks only
+where a real call would require a live subscription session this
+environment does not have.
 """
 
 from __future__ import annotations
@@ -53,6 +55,28 @@ def _run_main(argv: list[str]) -> tuple[int, dict, str]:
     text = out.getvalue()
     assert text.count("\n") == 1, f"expected exactly one JSON line on stdout, got: {text!r}"
     return code, json.loads(text), err.getvalue()
+
+
+def _passing_driver_capability_proof() -> dict:
+    """A ready `driver_capability_proof`, for tests that stub the live-invoke path and
+    must not launch a real, subscription-dependent `claude`/`codex` subprocess."""
+
+    fields = {name: {"status": "PASS"} for name in R.DRIVER_CAPABILITY_FIELDS}
+    drivers = {
+        cli: {
+            "cli": cli,
+            "model": "claude-sonnet-5" if cli == "claude" else "gpt-5.6-sol",
+            "provider": "anthropic" if cli == "claude" else "openai",
+            "ready": True,
+            "failed_fields": [],
+            "fields": dict(fields),
+        }
+        for cli in R.MANDATORY_DRIVER_CLIS
+    }
+    return {"ready": True, "drivers": drivers}
+
+
+_PASSING_DRIVER_CAPABILITIES = _passing_driver_capability_proof()
 
 
 def _authorization_file(tmp_path: Path, **overrides) -> Path:
@@ -99,15 +123,28 @@ class ImportGraphAuditTests(unittest.TestCase):
             "runtime.checkpoint",
             "runtime.capability_cycle",
         }
-        forbidden_names = {"CurriculumFactoryGraph", "CodexWorker", "CurriculumRuntime", "GeminiReviewer"}
+        forbidden_names = {"CurriculumFactoryGraph", "CodexWorker", "CurriculumRuntime"}
         for module, name in self._imported_names():
             self.assertNotIn(module, forbidden_modules, f"legacy module imported: {module}")
             self.assertNotIn(name, forbidden_names, f"legacy symbol imported: {name}")
 
     def test_only_two_narrow_pure_helpers_are_imported_from_nodes_inputs(self):
-        """The one declared exception: identity/freeze helpers, not node bodies."""
+        """The declared exception: identity/freeze helpers, plus frozen constant
+        vocabulary shared with D03's own proof-field/driver names (never node bodies,
+        never logic re-implemented here) -- not a fifth or sixth exception each time
+        this grows, but the same "narrow, pure, side-effect-free" discipline the
+        module docstring already applies to the two functions below."""
         from_nodes = sorted(name for module, name in self._imported_names() if module.endswith("nodes.inputs"))
-        self.assertEqual(from_nodes, ["REQUIRED_CAPABILITIES", "_frozen_input_records", "_resolve_active_manifest"])
+        self.assertEqual(
+            from_nodes,
+            [
+                "DRIVER_CAPABILITY_FIELDS",
+                "MANDATORY_DRIVER_CLIS",
+                "REQUIRED_CAPABILITIES",
+                "_frozen_input_records",
+                "_resolve_active_manifest",
+            ],
+        )
 
     def test_no_import_from_any_other_nodes_or_routing_or_workbook_module(self):
         forbidden_module_suffixes = (
@@ -125,7 +162,7 @@ class ImportGraphAuditTests(unittest.TestCase):
                 )
 
     def test_no_langchain_provider_sdk_or_direct_http_imports(self):
-        forbidden = ("langchain", "openai", "anthropic", "google.generativeai", "requests", "httpx", "urllib3")
+        forbidden = ("langchain", "openai", "anthropic", "requests", "httpx", "urllib3")
         for module, name in self._imported_names():
             haystack = f"{module}.{name}".lower()
             for bad in forbidden:
@@ -293,29 +330,37 @@ class ArgumentValidationTests(unittest.TestCase):
 
 
 class PreflightTests(unittest.TestCase):
+    """These exercise preflight's *structural* contract (no writes, no product
+    success, collision handling), so the driver probe is stubbed to a passing
+    fixture -- the real, unmocked, live probe is exercised once, deliberately, by
+    `LiveDriverCapabilityProbeTests` below."""
+
     def test_preflight_never_creates_or_writes_the_output_root(self):
         import tempfile
         with tempfile.TemporaryDirectory() as raw:
             output_root = Path(raw) / "preflight-target"
-            code, payload, _err = _run_main(
-                ["--engine-root", str(REPO_ROOT), "--curriculum", str(REPO_ROOT),
-                 "--output-root", str(output_root), "--preflight"]
-            )
+            with mock.patch.object(R, "_prove_driver_capabilities", return_value=_PASSING_DRIVER_CAPABILITIES):
+                code, payload, _err = _run_main(
+                    ["--engine-root", str(REPO_ROOT), "--curriculum", str(REPO_ROOT),
+                     "--output-root", str(output_root), "--preflight"]
+                )
             self.assertFalse(output_root.exists(), "preflight must not populate its output path")
             self.assertEqual(payload["kind"], "PREFLIGHT")
             self.assertIn(code, (0, R.NOT_READY_EXIT))
             self.assertEqual(code == 0, payload["ready"])
             self.assertNotIn("terminal", payload)
             self.assertIsInstance(payload["missing_capabilities"], list)
+            self.assertIn("driver_capabilities", payload)
 
     def test_preflight_cannot_emit_product_success(self):
         import tempfile
         with tempfile.TemporaryDirectory() as raw:
             output_root = Path(raw) / "preflight-target"
-            _code, payload, _err = _run_main(
-                ["--engine-root", str(REPO_ROOT), "--curriculum", str(REPO_ROOT),
-                 "--output-root", str(output_root), "--preflight"]
-            )
+            with mock.patch.object(R, "_prove_driver_capabilities", return_value=_PASSING_DRIVER_CAPABILITIES):
+                _code, payload, _err = _run_main(
+                    ["--engine-root", str(REPO_ROOT), "--curriculum", str(REPO_ROOT),
+                     "--output-root", str(output_root), "--preflight"]
+                )
         self.assertNotIn(payload.get("kind"), ("UNIT_ACCEPTED", "COMPLETE"))
         self.assertNotIn("accepted_receipt", payload)
         self.assertNotIn("release_receipt", payload)
@@ -326,10 +371,11 @@ class PreflightTests(unittest.TestCase):
             output_root = Path(raw) / "dirty"
             output_root.mkdir()
             (output_root / "stray.txt").write_text("keep-me", encoding="utf-8")
-            code, payload, _err = _run_main(
-                ["--engine-root", str(REPO_ROOT), "--curriculum", str(REPO_ROOT),
-                 "--output-root", str(output_root), "--preflight"]
-            )
+            with mock.patch.object(R, "_prove_driver_capabilities", return_value=_PASSING_DRIVER_CAPABILITIES):
+                code, payload, _err = _run_main(
+                    ["--engine-root", str(REPO_ROOT), "--curriculum", str(REPO_ROOT),
+                     "--output-root", str(output_root), "--preflight"]
+                )
             self.assertEqual(code, R.NOT_READY_EXIT)
             self.assertFalse(payload["ready"])
             self.assertIsNotNone(payload["collision"])
@@ -517,11 +563,12 @@ class FreshRunWiringTests(unittest.TestCase):
             manifest.parent.mkdir(parents=True)
             manifest.write_text("labs: []\n", encoding="utf-8")
             output_root = root / "out"
-            authorization = _authorization_file(root, providers={"openai": ["manifest_unit_projection"]})
+            authorization = _authorization_file(root, providers={"openai": ["frozen_unit_artifacts"]})
 
             with mock.patch.object(R, "build_curriculum_factory_graph", side_effect=_fake_builder), \
                  mock.patch.object(R.tp, "prove_transport_capabilities",
-                                    return_value={"satisfied": True, "unsatisfied_required_facets": []}):
+                                    return_value={"satisfied": True, "unsatisfied_required_facets": []}), \
+                 mock.patch.object(R, "_prove_driver_capabilities", return_value=_PASSING_DRIVER_CAPABILITIES):
                 code, payload, _err = _run_main(
                     ["--engine-root", str(REPO_ROOT), "--curriculum", str(manifest),
                      "--output-root", str(output_root), "--unit", "L01",
@@ -546,7 +593,7 @@ class FreshRunWiringTests(unittest.TestCase):
         self.assertEqual(envelope["authorization"]["output_root"], str(output_root.resolve()))
 
         context = recorded["context"]
-        self.assertEqual(context.transport_registry.authorization.providers.get("openai"), ("manifest_unit_projection",))
+        self.assertEqual(context.transport_registry.authorization.providers.get("openai"), ("frozen_unit_artifacts",))
         self.assertIsNotNone(context.transport_registry.capability_proof)
         self.assertFalse(context.transport_registry.guard.installed, "the guard must be uninstalled again after invoke")
 
@@ -581,7 +628,8 @@ class FreshRunWiringTests(unittest.TestCase):
 
             with mock.patch.object(R, "build_curriculum_factory_graph", return_value=_StubCompiled()), \
                  mock.patch.object(R.tp, "prove_transport_capabilities",
-                                    return_value={"satisfied": True, "unsatisfied_required_facets": []}):
+                                    return_value={"satisfied": True, "unsatisfied_required_facets": []}), \
+                 mock.patch.object(R, "_prove_driver_capabilities", return_value=_PASSING_DRIVER_CAPABILITIES):
                 code, payload, _err = _run_main(
                     ["--engine-root", str(REPO_ROOT), "--curriculum", str(manifest),
                      "--output-root", str(output_root), "--all",
@@ -616,7 +664,8 @@ class FreshRunWiringTests(unittest.TestCase):
 
             with mock.patch.object(R, "build_curriculum_factory_graph", return_value=_StubCompiled()), \
                  mock.patch.object(R.tp, "prove_transport_capabilities",
-                                    return_value={"satisfied": True, "unsatisfied_required_facets": []}):
+                                    return_value={"satisfied": True, "unsatisfied_required_facets": []}), \
+                 mock.patch.object(R, "_prove_driver_capabilities", return_value=_PASSING_DRIVER_CAPABILITIES):
                 first_code, _payload, _err = _run_main(argv)
                 self.assertEqual(first_code, 10)
                 second_code, second_payload, _err2 = _run_main(argv)

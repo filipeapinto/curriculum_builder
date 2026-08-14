@@ -1,0 +1,80 @@
+{
+  "manifest_version": 1,
+  "snapshot": "rc4",
+  "purpose": "Immutable release-candidate snapshot fixing the N00 schema blocker found only after rc3 (session 019ffcc7-a48f-7870-a933-5d80bb61dac3) reached QA_PASSED / chain_valid true and was approved by exact digest in contracts/spec_approval.v1.yaml: plans/27_langgraph_curriculum_factory_remediation/schemas/spec_approval.schema.v1.json -- the parent v1 Run 27 package's own frozen approval schema -- const-locks approved_spec to the parent package's own spec, a path this package's approved specification v4 can never equal, so N00 could never actually validate an approval record against it; N00_spec_approval_gate.prompt.v4.md's TEST step 6 additionally misclaimed that schema as frozen per this package's own rules.frozen_before_entry, which it never was. This snapshot adds a package-scoped schemas/spec_approval.schema.v2.json, a contracts/spec_approval.v2.yaml carrying forward (not reinventing) the exact already-approved digests and model decision as schema-validated structured fields, implementation.graph.v5.yaml (a gate-lineage rename of v4 declaring schema v2 in its own rules.frozen_before_entry), N00_spec_approval_gate.prompt.v5.md (validates against schema v2, states the frozen claim accurately), and mechanical gate-lineage renames of N20_provider_transport.prompt.v5.md / N30_preflight_egress.prompt.v5.md (needed because the graph's own filename changed under them).",
+  "corrects_post_approval_defect": {
+    "prior_session_qa_dir": "plans/27_langgraph_curriculum_factory_remediation/execution_package_v2/release_candidate/rc3/QA",
+    "prior_session_id": "019ffcc7-a48f-7870-a933-5d80bb61dac3",
+    "prior_terminal_state": "QA_PASSED",
+    "prior_chain_valid": true,
+    "note": "rc3 itself is not at fault and is not reopened, edited, or overridden: its own QA criteria correctly covered graph/scanner/validator/prompt internal consistency. The defect this snapshot fixes -- a cross-package schema-compatibility fact -- was outside rc1/rc2/rc3's criteria and was found only when N00 was actually attempted against the resulting, already-approved package."
+  },
+  "source_directory": "plans/27_langgraph_curriculum_factory_remediation/execution_package_v2",
+  "source_note": "Every file below is byte-identical to the live package-v2 file at the same relative path at snapshot time, reconfirmed immediately before this snapshot was taken: `python3 -m pytest -q plans/27_langgraph_curriculum_factory_remediation/execution_package_v2/tests/test_execution_package_v2.py` -> 133 passed; `python3 plans/27_langgraph_curriculum_factory_remediation/execution_package_v2/tools/validate_plan_v2.py` -> valid: true.",
+  "reviewed_artifact": "rc4_review_bundle.v1.md",
+  "reviewed_artifact_note": "The single file submitted to qa-gate-codex-run as --artifact. It embeds the full verbatim text of every file below whose logic is under review, so Codex's judged content is the reviewed logic itself, never a description of it and never a --ground source outside the hash chain.",
+  "deterministic_validation_note": "controller/scan_node.py, tools/validate_plan_v2.py, tools/validate_result_v2.py, and tests/test_execution_package_v2.py bind to their own absolute repo-relative path (Path(__file__).resolve() arithmetic), unchanged since rc1/rc2/rc3 -- not new to this generation. A byte-identical copy placed under release_candidate/rc4/ therefore cannot be independently re-executed in place, exactly as rc1/rc2/rc3 each confirmed. Behavioral identity is established by SHA-256 equality against the live plans/27_.../execution_package_v2/ files (below), reconfirmed passing immediately before this snapshot was taken (see source_note).",
+  "created_at": "2026-08-13T21:19:34.708353+00:00",
+  "files": [
+    {
+      "path": "implementation.graph.v5.yaml",
+      "sha256": "ce2362787a9760c9db3b2f667a0561ebd877ec89f24d690b2210ec9b6f3777b8",
+      "bytes": 24723
+    },
+    {
+      "path": "controller/scan_node.py",
+      "sha256": "4f9483c974c4613ed23f728acc123093c004a40c7073e3c190f16e71658d06ff",
+      "bytes": 6700
+    },
+    {
+      "path": "tools/validate_plan_v2.py",
+      "sha256": "141382a68754a6859bfffdf09e8a6b8281677dda92d70fee0fe5815a93a0e84d",
+      "bytes": 34209
+    },
+    {
+      "path": "tools/validate_result_v2.py",
+      "sha256": "db62e5c230beb71e7df4c7ded1f632af6321c53162c5313bdb19bad4c4818dd4",
+      "bytes": 6373
+    },
+    {
+      "path": "tests/test_execution_package_v2.py",
+      "sha256": "050634350aae45e5d38c1b5c5d71b0a768656597490b86d1c9c5c3dbe40f66fe",
+      "bytes": 64113
+    },
+    {
+      "path": "prompts/N00_spec_approval_gate.prompt.v5.md",
+      "sha256": "30fdd2b9445c1a24527866f0342e35cd99937cf420e4e13d0ced54537c001ad9",
+      "bytes": 8561
+    },
+    {
+      "path": "prompts/N20_provider_transport.prompt.v5.md",
+      "sha256": "80bb6af8e32fbb7714d67ef689795869a30ef066d514db0ba29270c96f12f5bb",
+      "bytes": 8207
+    },
+    {
+      "path": "prompts/N30_preflight_egress.prompt.v5.md",
+      "sha256": "920f2270c8557dfef5b1f0d7db588815a68f16732627c878526c6e2763d4f5b4",
+      "bytes": 5437
+    },
+    {
+      "path": "schemas/spec_approval.schema.v2.json",
+      "sha256": "d6a160aa79921c0ce0bab57504e5c36f921c7b6a5b66798786f118aec0ab6cd4",
+      "bytes": 7088
+    },
+    {
+      "path": "contracts/spec_approval.v2.yaml",
+      "sha256": "b6519442e532753fde795c892a5d386d1afa060cfa5df9dff8ad86351c0bc4c9",
+      "bytes": 5603
+    },
+    {
+      "path": "QA_criteria.rc4.v1.md",
+      "sha256": "7228707e23c38d22d6a286c599a594c51c43bb8997864a844269dfad419687ef",
+      "bytes": 18074
+    },
+    {
+      "path": "rc4_review_bundle.v1.md",
+      "sha256": "016ecbaad441620ad9695d720a7c48a94c5361018d794b967b17553fe784a97f",
+      "bytes": 178673
+    }
+  ]
+}

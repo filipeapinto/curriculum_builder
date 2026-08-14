@@ -13,6 +13,7 @@
     "started_utc", "ended_utc", "duration_seconds",
     "timeout_seconds", "termination",
     "workspace_path", "authorized_input_sha256", "output_schema_sha256",
+    "cli_schema_projection_sha256",
     "prompt_sha256", "staged_input_sha256", "result_sha256",
     "stdout_evidence_path", "stderr_evidence_path",
     "stdout_sha256", "stderr_sha256",
@@ -44,6 +45,9 @@
     "workspace_path": {"type": "string", "minLength": 1},
     "authorized_input_sha256": {"type": "string", "pattern": "^[0-9a-f]{64}$"},
     "output_schema_sha256": {"type": "string", "pattern": "^[0-9a-f]{64}$"},
+    "cli_schema_projection_sha256": {
+      "anyOf": [{"type": "string", "pattern": "^[0-9a-f]{64}$"}, {"type": "null"}]
+    },
     "prompt_sha256": {"type": "string", "pattern": "^[0-9a-f]{64}$"},
     "staged_input_sha256": {
       "type": "object",

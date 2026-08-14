@@ -1,0 +1,87 @@
+{
+  "manifest_version": 1,
+  "snapshot": "rc6",
+  "purpose": "Immutable release-candidate snapshot fixing N20V2-F01: real execution of N20_PROVIDER_TRANSPORT against implementation.graph.v5.yaml (the rc3-approved, rc5-schema-corrected active graph) reached a genuine, well-evidenced BLOCKED because rules.retired_provider_test_scan.scan_roots (['tests/runtime'], walked recursively) caught 16 real occurrences of \"gemini\" in tests/runtime/test_gemini.py and tests/runtime/test_capabilities.py -- two files that test a wholly separate, still-active Plan 11/19/20/21 Gemini pipeline this migration does not own and no node in this graph owns. implementation.graph.v6.yaml fixes this by dropping both files from N20_PROVIDER_TRANSPORT's write set and narrowing retired_provider_test_scan.scan_roots to the explicit, exact union of every migration-owned active test file across N20-N60 (17 files), replacing the directory walk. This is a mechanical write-set/scan-scope engineering correction, not a specification or provider decision, and does not touch N20's own real, independently-verified production implementation.",
+  "corrects_prior_generation_finding": {
+    "prior_result": "plans/27_langgraph_curriculum_factory_remediation/execution_package_v2/results/N20_PROVIDER_TRANSPORT.result.v1.json",
+    "prior_graph": "plans/27_langgraph_curriculum_factory_remediation/execution_package_v2/deprecated/implementation.graph.v5.yaml",
+    "prior_graph_sha256": "ce2362787a9760c9db3b2f667a0561ebd877ec89f24d690b2210ec9b6f3777b8",
+    "prior_outcome": "BLOCKED",
+    "finding_id": "N20V2-F01",
+    "finding_title": "N20's node-scoped scan_node.py --node N20_PROVIDER_TRANSPORT fails on two test files unrelated to this migration",
+    "note": "This is not a correction of a prior FAILED release candidate (rc1-rc5 are all preserved exactly as they were, and rc3/rc5 both reached QA_PASSED / chain_valid true and remain the user-approved package-structure lineage). It is a correction of the graph itself, discovered only once N20 was actually, genuinely executed for real against rc5's approved graph -- N20's own real production code (transport.py, egress.py, model_nodes.py, config/model_jobs.v1.yaml, policy/routes.v1.yaml, policy/routing/model_registry.v1.yaml, and their schemas) is untouched by this correction and remains exactly as N20 built it."
+  },
+  "source_directory": "plans/27_langgraph_curriculum_factory_remediation/execution_package_v2",
+  "source_note": "Every file below (other than deprecated/implementation.graph.v5.yaml, which is immutable historical content unchanged since N20's real execution against it) is byte-identical to the live package-v2 file at the same relative path at snapshot time, reconfirmed immediately before this snapshot was taken: `python3 -m pytest -q plans/27_langgraph_curriculum_factory_remediation/execution_package_v2/tests/test_execution_package_v2.py` -> 160 passed; `python3 plans/27_langgraph_curriculum_factory_remediation/execution_package_v2/tools/validate_plan_v2.py` -> valid: true.",
+  "reviewed_artifact": "rc6_review_bundle.v1.md",
+  "reviewed_artifact_note": "The single file submitted to qa-gate-codex-run as --artifact. It embeds the full verbatim text of every file under review. deprecated/implementation.graph.v5.yaml is genuinely static historical content, not logic under review, and is supplied separately as --ground material rather than embedded in the bundle.",
+  "deterministic_validation_note": "controller/scan_node.py, tools/validate_plan_v2.py, tools/validate_result_v2.py, and tests/test_execution_package_v2.py bind to their own absolute repo-relative path (Path(__file__).resolve() arithmetic), unchanged since rc1. A byte-identical copy placed under release_candidate/rc6/ therefore cannot be independently re-executed in place, exactly as every prior generation confirmed. Behavioral identity is established by SHA-256 equality against the live plans/27_.../execution_package_v2/ files (below), reconfirmed passing immediately before this snapshot was taken (see source_note).",
+  "created_at": "2026-08-13T21:45:00.000000+00:00",
+  "files": [
+    {
+      "path": "implementation.graph.v6.yaml",
+      "sha256": "b186b58828fd1f490a57dd3cfe7d26bcdff70a37f78d6d996f2f8234ef2b5c26",
+      "bytes": 27475
+    },
+    {
+      "path": "controller/scan_node.py",
+      "sha256": "f47935029256d523bc9a589eb38fb799797b0fb4d8e2e84354b1cf0aefd8e09e",
+      "bytes": 6700
+    },
+    {
+      "path": "tools/validate_plan_v2.py",
+      "sha256": "90b38a62fd6aa6e0a7cd4e1c3506001cd27a2b31f69c239d653eb8e6412b34c2",
+      "bytes": 37532
+    },
+    {
+      "path": "tools/validate_result_v2.py",
+      "sha256": "1790462f4aebb6a7df3f5023811c024464409fbbb7ef23b1b2a04c7268bf193b",
+      "bytes": 6373
+    },
+    {
+      "path": "tests/test_execution_package_v2.py",
+      "sha256": "c9b6b1e8e0555856756cbf24aa78a7814ba65bbcfd8f77fd993052bf8168b310",
+      "bytes": 78108
+    },
+    {
+      "path": "prompts/N00_spec_approval_gate.prompt.v6.md",
+      "sha256": "ebd2fc6aa75812ea1e0371f0f1dce3c91f887ca9b6354131cd224850fe6ebaf9",
+      "bytes": 9279
+    },
+    {
+      "path": "prompts/N20_provider_transport.prompt.v6.md",
+      "sha256": "9d666ffb83878f802436d070b9c4afcb4566c9f83a3d565e5e51b492872d75e9",
+      "bytes": 9370
+    },
+    {
+      "path": "prompts/N30_preflight_egress.prompt.v6.md",
+      "sha256": "4810fde0e5377ad1e6e56700bb248d31b54f41b7ac2ccf20df305d44d17bbfdc",
+      "bytes": 5722
+    },
+    {
+      "path": "schemas/spec_approval.schema.v3.json",
+      "sha256": "cdb71a99ea5714d59a9bf9a360217fda849548eddbd140527e1892c139f7f0c4",
+      "bytes": 6501
+    },
+    {
+      "path": "contracts/spec_approval.v3.yaml",
+      "sha256": "c57c1cae4e35d81509a3624797de13e6ea7c0905d7a649e8158a16b867201d6d",
+      "bytes": 6321
+    },
+    {
+      "path": "deprecated/implementation.graph.v5.yaml",
+      "sha256": "ce2362787a9760c9db3b2f667a0561ebd877ec89f24d690b2210ec9b6f3777b8",
+      "bytes": 24723
+    },
+    {
+      "path": "rc6_review_bundle.v1.md",
+      "sha256": "1fb3b60bfaa3216dbce339b8ad7f586807c828f8687724fa5f71a6ca9ed688e4",
+      "bytes": 204912
+    },
+    {
+      "path": "QA_criteria.rc6.v1.md",
+      "sha256": "074262703a20aa6b5e5fe764ded5961d2043173c3add84834e80ce294b71ce16",
+      "bytes": 21422
+    }
+  ]
+}

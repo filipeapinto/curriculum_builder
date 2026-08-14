@@ -1,0 +1,70 @@
+{
+  "manifest_version": 1,
+  "snapshot": "rc2",
+  "purpose": "Immutable release-candidate snapshot correcting rc1's RC1-QA-001 finding: N00/N20/N30's fresh prompts now reference this package's actually enforced graph (implementation.graph.v4.yaml), and the automated suite gained a real, mutation-proven regression test proving it.",
+  "supersedes_failed_session": {
+    "qa_dir": "plans/27_langgraph_curriculum_factory_remediation/execution_package_v2/release_candidate/rc1/QA",
+    "session_id": "019ffcaa-f6b4-7d71-9005-0e53c79a5cc4",
+    "terminal_state": "QA_FAILED",
+    "terminal_reason": "MAX_ITERATIONS_EXHAUSTED",
+    "note": "Preserved byte-for-byte unchanged and not reopened, edited, or overridden. Its one finding, RC1-QA-001 (\"Automated suite does not prove fresh-prompt consistency\"), was real and specific: N00/N20/N30 referenced a nonexistent implementation.graph.v1.yaml instead of this package's actually enforced implementation.graph.v4.yaml, and no test read or validated the prompts to catch it. This rc2 snapshot exists solely to fix that defect; rc1 itself, and its own supersession of the original 4-round session, are untouched."
+  },
+  "source_directory": "plans/27_langgraph_curriculum_factory_remediation/execution_package_v2",
+  "source_note": "Every file below is byte-identical to the live package-v2 file at the same relative path at snapshot time, reconfirmed immediately before this snapshot was taken: `python3 -m pytest -q plans/27_langgraph_curriculum_factory_remediation/execution_package_v2/tests/test_execution_package_v2.py` -> 97 passed; `python3 plans/27_langgraph_curriculum_factory_remediation/execution_package_v2/tools/validate_plan_v2.py` -> valid: true.",
+  "reviewed_artifact": "rc2_review_bundle.v1.md",
+  "reviewed_artifact_note": "The single file submitted to qa-gate-codex-run as --artifact. It embeds the full verbatim text of every file below whose logic is under review, so Codex's judged content is the reviewed logic itself, never a description of it and never a --ground source outside the hash chain.",
+  "deterministic_validation_note": "controller/scan_node.py, tools/validate_plan_v2.py, and tests/test_execution_package_v2.py bind to their own absolute repo-relative path (e.g. tools/validate_plan_v2.py's hardcoded graph_flag, and every file's PACKAGE_DIR/REPO_ROOT arithmetic derived from Path(__file__).resolve()) as a deliberate PKGV2-QA-001/002 hardening, not an oversight -- unchanged since rc1. A byte-identical copy placed under release_candidate/rc2/ therefore cannot be independently re-executed in place -- confirmed directly, exactly as rc1 confirmed it: running this snapshot's own tools/validate_plan_v2.py raises 'No such file or directory .../release_candidate/schemas/...' because its REPO_ROOT arithmetic assumes the original nesting depth. Behavioral identity is therefore established by SHA-256 equality against the live plans/27_.../execution_package_v2/ files (below), which were reconfirmed passing immediately before this snapshot was taken (see source_note).",
+  "created_at": "2026-08-13T20:03:08.433143+00:00",
+  "files": [
+    {
+      "path": "implementation.graph.v4.yaml",
+      "sha256": "0d5b5af8b0c60847e3b52ac93c4c10328f48a1404130a6b785485bcbbae3d571",
+      "bytes": 23757
+    },
+    {
+      "path": "controller/scan_node.py",
+      "sha256": "a68141343848f2cfdb5f4656f103c84c2d79a7883f01bf5bdd95c078ce33f11f",
+      "bytes": 6700
+    },
+    {
+      "path": "tools/validate_plan_v2.py",
+      "sha256": "18afb393c19adcf7eb1191b7f8d4286ee62134ce7ee2d6654e5e7bc1155ffc74",
+      "bytes": 30756
+    },
+    {
+      "path": "tools/validate_result_v2.py",
+      "sha256": "6b6b1c261864a95e009a663224bce127527c29ad4fd414e9c9c2013f9d40d89a",
+      "bytes": 6373
+    },
+    {
+      "path": "tests/test_execution_package_v2.py",
+      "sha256": "72481922a4b6df1754e962f9c801902b228ffa986669d1392426ddfd2d70f7c7",
+      "bytes": 44660
+    },
+    {
+      "path": "prompts/N00_spec_approval_gate.prompt.v4.md",
+      "sha256": "06200109bbaca5513ba4738164d818a8cdc84caaf3527923495880b88165dea9",
+      "bytes": 5407
+    },
+    {
+      "path": "prompts/N20_provider_transport.prompt.v4.md",
+      "sha256": "f9e468c92b1c0afabfbb07c475b45f8c2de42187264827c274672858cbe16200",
+      "bytes": 7975
+    },
+    {
+      "path": "prompts/N30_preflight_egress.prompt.v4.md",
+      "sha256": "37e983cc0b68f9140514ae4a71479951d2707d33c82b74ce7db83d8d5076d465",
+      "bytes": 5225
+    },
+    {
+      "path": "QA_criteria.rc2.v1.md",
+      "sha256": "ca1de44e32827c71670517494b5bbaeaa149169e8d7d33dbe9eba73257e6f129",
+      "bytes": 14259
+    },
+    {
+      "path": "rc2_review_bundle.v1.md",
+      "sha256": "5a0deece8bf50d094d3dde9b4ac420f3d27ae3944f3134c822292eb89380f7b9",
+      "bytes": 135402
+    }
+  ]
+}

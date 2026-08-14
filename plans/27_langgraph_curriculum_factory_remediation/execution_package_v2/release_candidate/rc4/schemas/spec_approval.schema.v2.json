@@ -1,0 +1,114 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "Run 27 execution package v2 specification approval v2",
+  "$comment": "Package-scoped successor to plans/27_langgraph_curriculum_factory_remediation/schemas/spec_approval.schema.v1.json. v1 is the *parent* Run 27 package's own frozen schema and const-locks approved_spec to that package's spec (plans/26_langgraph_curriculum_factory/spec/langgraph_curriculum_factory.spec.v2.md) -- a path this package's approved specification (spec v4, at plans/26_langgraph_curriculum_factory/spec/v3/langgraph_curriculum_factory.spec.v4.md) can never equal, so v1 can never validate this package's approval record no matter how it is filled in. This schema lives under this package's own schemas/ directory, is declared in this package's own implementation.graph.v5.yaml rules.frozen_before_entry (not v1's, which remains exclusively the parent v1 package's own frozen contract), and const-locks paths to this package's own artifacts instead. v1 itself is untouched by this schema's existence.",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "schema_version",
+    "approved",
+    "approved_spec",
+    "approved_spec_sha256",
+    "spec_qa_verdict",
+    "spec_qa_verification_sha256",
+    "approved_rc_manifest",
+    "approved_rc_manifest_sha256",
+    "execution_package_qa_verdict",
+    "execution_package_qa_verification_sha256",
+    "approved_graph",
+    "approved_graph_sha256",
+    "approved_for",
+    "model_assignments",
+    "approved_at",
+    "approval_statement"
+  ],
+  "properties": {
+    "schema_version": {"const": 2},
+    "approved": {"const": true},
+    "approved_spec": {
+      "const": "plans/26_langgraph_curriculum_factory/spec/v3/langgraph_curriculum_factory.spec.v4.md",
+      "$comment": "Const-locked to this package's own single governing specification, exactly as v1 const-locks approved_spec to the parent package's own spec -- the fix here is pointing the same discipline at the correct file, not relaxing it."
+    },
+    "approved_spec_sha256": {"type": "string", "pattern": "^[a-f0-9]{64}$"},
+    "spec_qa_verdict": {"const": "QA_PASSED"},
+    "spec_qa_verification_sha256": {
+      "type": "string",
+      "pattern": "^[a-f0-9]{64}$",
+      "$comment": "SHA-256 of plans/26_langgraph_curriculum_factory/spec/v3/QA/verification.json, the specification's own independent QA verification record."
+    },
+    "approved_rc_manifest": {
+      "type": "string",
+      "pattern": "^plans/27_langgraph_curriculum_factory_remediation/execution_package_v2/release_candidate/rc[1-9][0-9]*/manifest\\.v1\\.json$",
+      "$comment": "Deliberately NOT a const, unlike approved_spec/approved_graph: the RC manifest is a versioned review-lineage pointer, not this package's governing identity. A const locked to one generation (e.g. rc3) would force a schema version bump for every future re-approval that lands on a later RC (rc5, rc6, ...) even when nothing else about this schema's shape changed. The pattern fixes the family/location and numbering convention; the validator (not this schema, which cannot read file bytes) recomputes approved_rc_manifest_sha256 against the file this path names and rejects a mismatch."
+    },
+    "approved_rc_manifest_sha256": {"type": "string", "pattern": "^[a-f0-9]{64}$"},
+    "execution_package_qa_verdict": {"const": "QA_PASSED"},
+    "execution_package_qa_verification_sha256": {
+      "type": "string",
+      "pattern": "^[a-f0-9]{64}$",
+      "$comment": "SHA-256 of the approved RC's own QA/verification.json (the RC manifest's sibling QA record), not the specification's QA record."
+    },
+    "approved_graph": {
+      "const": "plans/27_langgraph_curriculum_factory_remediation/execution_package_v2/implementation.graph.v5.yaml",
+      "$comment": "Const-locked, like approved_spec: the active execution graph is this package's other governing identity document, not a review-lineage pointer, so it gets the same strict treatment. A future graph v6+ requiring fresh approval gets its own schema version (exactly as this schema itself exists because v1's const pointed at the wrong package's spec) -- that is the correct discipline for a document N00 gates entry against, not the defect being fixed here. The RC manifest's own generation is allowed to float (see approved_rc_manifest) because it is supporting QA-lineage evidence for the graph, not the graph itself."
+    },
+    "approved_graph_sha256": {"type": "string", "pattern": "^[a-f0-9]{64}$"},
+    "approved_for": {"const": "plan27_implementation_remediation"},
+    "model_assignments": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "M01_RESEARCH_UNIT_SOURCES",
+        "M02_CREATE_UNIT_DOMAIN_DATA",
+        "M03_WRITE_UNIT_CONTENT",
+        "M04_CREATE_UNIT_VISUALS",
+        "M05_REVIEW_ACTUAL_UNIT",
+        "M06_REPAIR_NAMED_UNIT_ARTIFACT",
+        "M07_REVIEW_ACTUAL_WORKBOOK",
+        "M08_REPAIR_NAMED_WORKBOOK_DEFECT"
+      ],
+      "$comment": "USER_DECISION_REQUIRED-01 (spec v4 S7.1), structured per exact job ID (spec v4 S6.3) instead of embedded only in approval_statement prose. Every job's model/effort is const-locked to the exact already-resolved decision -- this is a positive assertion of one specific frozen decision, not an open enum, mirroring how v1/v2 const-lock approved_spec/approved_graph rather than merely type-checking them.",
+      "properties": {
+        "M01_RESEARCH_UNIT_SOURCES": {"$ref": "#/$defs/model_assignment_sonnet5_xhigh"},
+        "M02_CREATE_UNIT_DOMAIN_DATA": {"$ref": "#/$defs/model_assignment_sonnet5_high"},
+        "M03_WRITE_UNIT_CONTENT": {"$ref": "#/$defs/model_assignment_sonnet5_high"},
+        "M04_CREATE_UNIT_VISUALS": {"$ref": "#/$defs/model_assignment_sonnet5_high"},
+        "M05_REVIEW_ACTUAL_UNIT": {"$ref": "#/$defs/model_assignment_gpt56sol_xhigh"},
+        "M06_REPAIR_NAMED_UNIT_ARTIFACT": {"$ref": "#/$defs/model_assignment_sonnet5_xhigh"},
+        "M07_REVIEW_ACTUAL_WORKBOOK": {"$ref": "#/$defs/model_assignment_gpt56sol_xhigh"},
+        "M08_REPAIR_NAMED_WORKBOOK_DEFECT": {"$ref": "#/$defs/model_assignment_sonnet5_xhigh"}
+      }
+    },
+    "approved_at": {"type": "string", "format": "date-time"},
+    "approval_statement": {"type": "string", "minLength": 20}
+  },
+  "$defs": {
+    "model_assignment_sonnet5_xhigh": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["model", "effort"],
+      "properties": {
+        "model": {"const": "claude-sonnet-5"},
+        "effort": {"const": "xhigh"}
+      }
+    },
+    "model_assignment_sonnet5_high": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["model", "effort"],
+      "properties": {
+        "model": {"const": "claude-sonnet-5"},
+        "effort": {"const": "high"}
+      }
+    },
+    "model_assignment_gpt56sol_xhigh": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["model", "effort"],
+      "properties": {
+        "model": {"const": "gpt-5.6-sol"},
+        "effort": {"const": "xhigh"}
+      }
+    }
+  }
+}

@@ -1,0 +1,162 @@
+{
+  "attempt_id": "N20_PROVIDER_TRANSPORT-execpkgv2-v7-attempt-1",
+  "changed_files": [
+    {
+      "change": "modified",
+      "path": "runtime/langgraph_factory/transport.py",
+      "sha256": "84f3d9a61260f0ec52689566445d727ac3452f2e75bd495b2a2804f68bc7403c"
+    },
+    {
+      "change": "modified",
+      "path": "runtime/langgraph_factory/model_nodes.py",
+      "sha256": "89eda700be45f35961c3bcd40de9a336e09f713ebead0ed5e3e5fa06d09861e0"
+    },
+    {
+      "change": "modified",
+      "path": "runtime/langgraph_factory/egress.py",
+      "sha256": "90ada286e5f2c20f10b4ad7786c5a4963e2b5a8c009bba33952b98b9069629d8"
+    },
+    {
+      "change": "modified",
+      "path": "policy/routes.v1.yaml",
+      "sha256": "baa96fbe52bb8863f467ae16d02a2caeceed0ab49b00510a4dd185a683766b2a"
+    },
+    {
+      "change": "modified",
+      "path": "policy/routing/model_registry.v1.yaml",
+      "sha256": "adfa0672fd4c150e8c18b98d5b4687d4fc6334c3710823759ae282548c3348c5"
+    },
+    {
+      "change": "modified",
+      "path": "runtime/langgraph_factory/config/model_jobs.v1.yaml",
+      "sha256": "62c9c9c33a164bd5e02a0008ea289c83e5cae34ab1c951f32c9dec22c8236c3d"
+    },
+    {
+      "change": "modified",
+      "path": "runtime/langgraph_factory/schemas/internal_authorization_receipt.schema.json",
+      "sha256": "3983ede1b0ca25fdcd194e561cdc272d066d13c21434be94098a824a9f3a1e84"
+    },
+    {
+      "change": "modified",
+      "path": "runtime/langgraph_factory/schemas/internal_execution_receipt.schema.json",
+      "sha256": "dc94a205908b5f0eb6e7bef2c00ea7aac4b9cdd72efdf9c61b43845d404e79e1"
+    },
+    {
+      "change": "modified",
+      "path": "tests/runtime/test_plan26_transport.py",
+      "sha256": "6ff15b0d32aa7b9fd7f0a022f6e41917643b53cbd567778147d3154329ce4d15"
+    },
+    {
+      "change": "modified",
+      "path": "tests/runtime/test_plan26_model_nodes.py",
+      "sha256": "2918842b72fcc8beb6e256c0992552fa386f803cb36f0bb6b2a1e70b479c9f3c"
+    },
+    {
+      "change": "modified",
+      "path": "tests/runtime/test_plan26_egress.py",
+      "sha256": "54db08c632d96078666e94d242ec7bc0918507ac24a416afa1fa06f75cee3474"
+    },
+    {
+      "change": "modified",
+      "path": "tests/runtime/test_curriculum_factory_graph.py",
+      "sha256": "337c1cd34122988f6b3a2c05c70ebd0d3a4a31bc9a5e8129ec2e91ad9a015790"
+    },
+    {
+      "change": "modified",
+      "path": "tests/runtime/test_plan26_adversarial.py",
+      "sha256": "e68bebbdabae1c3bad4831c3542a768a51dc5843ccaff1e3f7c9673c4486f521"
+    },
+    {
+      "change": "modified",
+      "path": "tests/runtime/test_plan26_api_contract.py",
+      "sha256": "8369203073fdcf1b553669774c52c780836f5e86f328ef428e899e0cdce873c5"
+    },
+    {
+      "change": "modified",
+      "path": "tests/runtime/test_plan26_lock_drift.py",
+      "sha256": "211a1e0e7627fcd6762540acde5fbb7f2dd7df665ea7e3c72cca3dda719f4761"
+    },
+    {
+      "change": "created",
+      "path": "plans/27_langgraph_curriculum_factory_remediation/execution_package_v2/results/v7/evidence/N20_PROVIDER_TRANSPORT/01_pytest_n20.log",
+      "sha256": "624362f523931af247ece180c3b4034e03db9df81ae2b6dbb2962c3809f9a3ae"
+    },
+    {
+      "change": "created",
+      "path": "plans/27_langgraph_curriculum_factory_remediation/execution_package_v2/results/v7/evidence/N20_PROVIDER_TRANSPORT/02_scan_node_n20.log",
+      "sha256": "2d471cf440eeeead175a5f5eb2abd59afe0c56f62a78b8fd11d834c7a55d2b9a"
+    },
+    {
+      "change": "created",
+      "path": "plans/27_langgraph_curriculum_factory_remediation/execution_package_v2/results/v7/evidence/N20_PROVIDER_TRANSPORT/03_prior_blocked_findings_carried_forward.log",
+      "sha256": "8a136d17a9bbcda6366485886a6c77d43fbb582366098f1c8d1923b19a6c8c0c"
+    },
+    {
+      "change": "created",
+      "path": "plans/27_langgraph_curriculum_factory_remediation/execution_package_v2/results/v7/evidence/N20_PROVIDER_TRANSPORT/04_git_status_production_scope.log",
+      "sha256": "3a63863e73010e7a725d128d2ed17f16fb04bf247afbaba60a5f73379f17e7ab"
+    }
+  ],
+  "commands": [
+    {
+      "argv": ["python3", "-m", "pytest", "-q", "tests/runtime/test_plan26_transport.py", "tests/runtime/test_plan26_model_nodes.py", "tests/runtime/test_plan26_egress.py", "tests/runtime/test_capabilities.py", "tests/runtime/test_curriculum_factory_graph.py", "tests/runtime/test_plan26_adversarial.py", "tests/runtime/test_plan26_api_contract.py", "tests/runtime/test_plan26_lock_drift.py"],
+      "exit_code": 0,
+      "log": "plans/27_langgraph_curriculum_factory_remediation/execution_package_v2/results/v7/evidence/N20_PROVIDER_TRANSPORT/01_pytest_n20.log",
+      "log_sha256": "624362f523931af247ece180c3b4034e03db9df81ae2b6dbb2962c3809f9a3ae"
+    },
+    {
+      "argv": ["python3", "plans/27_langgraph_curriculum_factory_remediation/execution_package_v2/controller/scan_node.py", "--node", "N20_PROVIDER_TRANSPORT", "--graph", "plans/27_langgraph_curriculum_factory_remediation/execution_package_v2/implementation.graph.v7.yaml"],
+      "exit_code": 0,
+      "log": "plans/27_langgraph_curriculum_factory_remediation/execution_package_v2/results/v7/evidence/N20_PROVIDER_TRANSPORT/02_scan_node_n20.log",
+      "log_sha256": "2d471cf440eeeead175a5f5eb2abd59afe0c56f62a78b8fd11d834c7a55d2b9a"
+    },
+    {
+      "argv": ["bash", "-c", "python3 -c \"import json; d=json.load(open('plans/27_langgraph_curriculum_factory_remediation/execution_package_v2/results/N20_PROVIDER_TRANSPORT.result.v1.json')); [print(f'[{f[\\\"severity\\\"]}] {f[\\\"id\\\"]} ({f[\\\"disposition\\\"]}): {f[\\\"summary\\\"][:200]}') for f in d['findings']]\""],
+      "exit_code": 0,
+      "log": "plans/27_langgraph_curriculum_factory_remediation/execution_package_v2/results/v7/evidence/N20_PROVIDER_TRANSPORT/03_prior_blocked_findings_carried_forward.log",
+      "log_sha256": "8a136d17a9bbcda6366485886a6c77d43fbb582366098f1c8d1923b19a6c8c0c"
+    },
+    {
+      "argv": ["git", "status", "--porcelain", "--", "runtime/", "policy/", "schemas/"],
+      "exit_code": 0,
+      "log": "plans/27_langgraph_curriculum_factory_remediation/execution_package_v2/results/v7/evidence/N20_PROVIDER_TRANSPORT/04_git_status_production_scope.log",
+      "log_sha256": "3a63863e73010e7a725d128d2ed17f16fb04bf247afbaba60a5f73379f17e7ab"
+    }
+  ],
+  "evidence": [
+    "plans/27_langgraph_curriculum_factory_remediation/execution_package_v2/results/v7/evidence/N20_PROVIDER_TRANSPORT/01_pytest_n20.log",
+    "plans/27_langgraph_curriculum_factory_remediation/execution_package_v2/results/v7/evidence/N20_PROVIDER_TRANSPORT/02_scan_node_n20.log",
+    "plans/27_langgraph_curriculum_factory_remediation/execution_package_v2/results/v7/evidence/N20_PROVIDER_TRANSPORT/03_prior_blocked_findings_carried_forward.log",
+    "plans/27_langgraph_curriculum_factory_remediation/execution_package_v2/results/v7/evidence/N20_PROVIDER_TRANSPORT/04_git_status_production_scope.log"
+  ],
+  "findings": [
+    {
+      "disposition": "resolved",
+      "id": "N20V7-F01",
+      "severity": "critical",
+      "summary": "N20V2-F01 (the write-set/scan-scope defect: tests/runtime/test_gemini.py and test_capabilities.py, testing an unrelated Plan 11/19/20/21 Gemini pipeline, were asymmetrically placed in N20's write set with no exemption mechanism in retired_provider_test_scan) is resolved by the graph v6/v7 recovery lineage (rc6-rc8, independently QA-passed, chain-valid, user-approved). scan_node.py --node N20_PROVIDER_TRANSPORT --graph implementation.graph.v7.yaml now returns ok: true, violations: [] -- reconfirmed directly in this attempt, not merely inherited by assertion."
+    },
+    {
+      "disposition": "resolved",
+      "id": "N20V7-F02",
+      "severity": "major",
+      "summary": "N20V2-F02 through F11 (the eight-job conformance table; the four corrected Claude transport mechanics -- deterministic CLI-schema projection, stdin delivery, stream-json per-turn identity extraction, tool/MCP-closure D03 check; the egress.py provider-class migration; the self-caught observe_codex_identity family-constant bug; and the retired-provider test cleanup) were all genuinely implemented and independently verified in the prior attempt under graph v5 (production code untouched since, byte-identical, reconfirmed by hash before this attempt began). This attempt re-verifies the same, unmodified production implementation against graph v7's corrected scan scope rather than re-implementing anything."
+    },
+    {
+      "disposition": "resolved",
+      "id": "N20V7-F03",
+      "severity": "observation",
+      "summary": "460 tests passed, 1 skipped, 140 subtests passed across the full required pytest command, identical in substance to the count independently verified for the same, unmodified production code under graph v5."
+    }
+  ],
+  "invalidated_descendants": [],
+  "node_id": "N20_PROVIDER_TRANSPORT",
+  "outcome": "PASSED",
+  "predecessor_receipts": {
+    "N10_HARNESS_PROTOCOL": "0df33e169ed0e29ad5172e81a48e8dfe98beb73fcff051ff0e89ac6cb8e01f0d"
+  },
+  "prompt_sha256": "29ecc1d83bee06c8c929c71588fba51859bdd8e6ced4e9540a99b5cfc8873f87",
+  "run_id": "run27-execpkgv2-v7-2026-08-13",
+  "schema_version": 1,
+  "source_spec_sha256": "e14df5a36ce12d700fe9fc4aa4aea466771bc89f31bc6e9d49f812c147b1bb3c"
+}

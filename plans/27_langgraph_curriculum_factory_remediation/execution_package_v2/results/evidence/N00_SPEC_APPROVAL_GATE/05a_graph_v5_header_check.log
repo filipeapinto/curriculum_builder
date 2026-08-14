@@ -1,0 +1,3 @@
+version: 2
+source_spec: plans/26_langgraph_curriculum_factory/spec/v3/langgraph_curriculum_factory.spec.v4.md
+GRAPH_V5_HEADER_OK

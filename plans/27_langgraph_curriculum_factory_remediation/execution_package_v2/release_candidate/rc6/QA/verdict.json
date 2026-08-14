@@ -1,0 +1,15 @@
+{
+  "state": "QA_FAILED",
+  "reason": "MAX_ITERATIONS_EXHAUSTED",
+  "detail": "2 finding(s) still at threshold after 1 rounds",
+  "artifact": "/Users/filipepinto/Projects/curriculum_builder/plans/27_langgraph_curriculum_factory_remediation/execution_package_v2/release_candidate/rc6/rc6_review_bundle.v1.md",
+  "rounds_completed": 1,
+  "max_iterations": 1,
+  "session_id": "019ffd79-1dc8-7b02-a665-73a510859535",
+  "thread_id": "019ffd79-1dc8-7b02-a665-73a510859535",
+  "transport": "app-server",
+  "rollout_file": "/Users/filipepinto/.codex/sessions/2026/08/13/rollout-2026-08-13T19-33-20-019ffd79-1dc8-7b02-a665-73a510859535.jsonl",
+  "chain": "94a2a0000a2520e082f727c0c3cf09b6fc147783328225b904c7f10d8caf5499",
+  "qa_dir": "/Users/filipepinto/Projects/curriculum_builder/plans/27_langgraph_curriculum_factory_remediation/execution_package_v2/release_candidate/rc6/QA",
+  "finalized_at": "2026-08-13T23:38:24.250827+00:00"
+}

@@ -1,0 +1,70 @@
+{
+  "manifest_version": 1,
+  "snapshot": "rc1",
+  "purpose": "Immutable release-candidate snapshot of Run 27 execution package v2's round-4-passing content, created to open a correctly-scoped QA session in which controller/scan_node.py, tools/validate_plan_v2.py, tools/validate_result_v2.py, and tests/test_execution_package_v2.py are reviewed artifact content, never mutable --ground sources.",
+  "supersedes_failed_session": {
+    "qa_dir": "plans/27_langgraph_curriculum_factory_remediation/execution_package_v2/QA",
+    "session_id": "019ffc3b-6379-7ef3-839d-759ed5c7fc9c",
+    "terminal_state": "QA_FAILED",
+    "terminal_reason": "INTEGRITY_BREACH",
+    "note": "Preserved byte-for-byte unchanged and not reopened, edited, or overridden. Its INTEGRITY_BREACH verdict stands. This snapshot exists because four files under review were misclassified as grounding in that session, not because its round-by-round content findings (PKGV2-QA-001, PKGV2-QA-002) or its round-4 PASS were themselves unsound."
+  },
+  "source_directory": "plans/27_langgraph_curriculum_factory_remediation/execution_package_v2",
+  "source_round": "round 4 of QA session 019ffc3b-6379-7ef3-839d-759ed5c7fc9c (the last content the session reviewed before the grounding-chain breach was detected at verify)",
+  "reviewed_artifact": "rc1_review_bundle.v1.md",
+  "reviewed_artifact_note": "The single file submitted to qa-gate-codex-run as --artifact. It embeds the full verbatim text of every file below whose logic is under review, so Codex's judged content is the reviewed logic itself, never a description of it and never a --ground source outside the hash chain.",
+  "deterministic_validation_note": "controller/scan_node.py, tools/validate_plan_v2.py, and tests/test_execution_package_v2.py bind to their own absolute repo-relative path (e.g. tools/validate_plan_v2.py's hardcoded graph_flag, and every file's PACKAGE_DIR/REPO_ROOT arithmetic derived from Path(__file__).resolve()) as a deliberate PKGV2-QA-001/002 hardening, not an oversight. A byte-identical copy placed under release_candidate/rc1/ therefore cannot be independently re-executed in place -- confirmed directly: running this snapshot's own tools/validate_plan_v2.py raises 'No such file or directory .../release_candidate/schemas/...' because its REPO_ROOT arithmetic assumes the original nesting depth. Behavioral identity is therefore established by SHA-256 equality against the live plans/27_.../execution_package_v2/ files (below), which were reconfirmed passing immediately before this snapshot was taken: `python3 -m pytest -q plans/27_langgraph_curriculum_factory_remediation/execution_package_v2/tests/test_execution_package_v2.py` -> 87 passed; `python3 plans/27_langgraph_curriculum_factory_remediation/execution_package_v2/tools/validate_plan_v2.py` -> valid: true.",
+  "created_at": "2026-08-13T19:47:02.640239+00:00",
+  "files": [
+    {
+      "path": "implementation.graph.v4.yaml",
+      "sha256": "e1e7f0219e6c91fe3717eed0ecff0309738807b3da71d5a38470060bb5365f28",
+      "bytes": 23757
+    },
+    {
+      "path": "controller/scan_node.py",
+      "sha256": "a68141343848f2cfdb5f4656f103c84c2d79a7883f01bf5bdd95c078ce33f11f",
+      "bytes": 6700
+    },
+    {
+      "path": "tools/validate_plan_v2.py",
+      "sha256": "18afb393c19adcf7eb1191b7f8d4286ee62134ce7ee2d6654e5e7bc1155ffc74",
+      "bytes": 30756
+    },
+    {
+      "path": "tools/validate_result_v2.py",
+      "sha256": "6b6b1c261864a95e009a663224bce127527c29ad4fd414e9c9c2013f9d40d89a",
+      "bytes": 6373
+    },
+    {
+      "path": "tests/test_execution_package_v2.py",
+      "sha256": "732c0dc36b5553fd309acf0782c64e710caeb908398c3afcc5d7067d94a43e9e",
+      "bytes": 39247
+    },
+    {
+      "path": "prompts/N00_spec_approval_gate.prompt.v3.md",
+      "sha256": "b86d217704348b75ed25040fc01747da8b7fe37107ef8bbd981f6f7eb08825e3",
+      "bytes": 4978
+    },
+    {
+      "path": "prompts/N20_provider_transport.prompt.v3.md",
+      "sha256": "48ff86fb12de767c14700a556c825da10b8b03050e0b7e47c6d772fd55303198",
+      "bytes": 7541
+    },
+    {
+      "path": "prompts/N30_preflight_egress.prompt.v3.md",
+      "sha256": "44917fa6ef8aa1d208e88d35a0473f89e10c4a03dcdc49f959601d7d96fb33c9",
+      "bytes": 4777
+    },
+    {
+      "path": "QA_review_criteria.v1.md",
+      "sha256": "50d780ccfd8037db5992ed6b47e390d5607ff704c05746b7d224e684a051aee7",
+      "bytes": 9771
+    },
+    {
+      "path": "rc1_review_bundle.v1.md",
+      "sha256": "e11a88af3e57a901747da51ac795792e4cff4a71b912a2eda0c6050b7651e698",
+      "bytes": 127980
+    }
+  ]
+}

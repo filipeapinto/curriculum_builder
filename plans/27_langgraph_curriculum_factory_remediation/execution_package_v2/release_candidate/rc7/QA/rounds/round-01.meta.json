@@ -1,0 +1,40 @@
+{
+  "attempt": 1,
+  "exit_code": 0,
+  "duration_seconds": 292.06,
+  "transport": "app-server",
+  "session_id": "019ffd88-b735-77c0-ad8d-145ba014751a",
+  "thread_id": "019ffd88-b735-77c0-ad8d-145ba014751a",
+  "turn_id": "019ffd88-bdc7-7173-b24d-bc14ccfcd2b4",
+  "usage": {},
+  "model": null,
+  "effort": null,
+  "plugin_version": "1.0.4",
+  "plugin_lib_path": "/Users/filipepinto/.claude/plugins/cache/openai-codex/codex/1.0.4/scripts/lib/codex.mjs",
+  "argv": [
+    "node",
+    "/Users/filipepinto/Projects/curriculum_builder/.claude/skills/qa-gate-codex-run/scripts/codex_bridge.mjs",
+    "<request on stdin>"
+  ],
+  "started_at": "2026-08-13T23:50:23.183794+00:00",
+  "response_sha256": "fca74b90f63eed032cbb05770c4368e363341fe2fa76c578e70517bb2d91e9d7",
+  "request_sha256": "e2fb0321914de06c77baabd88a6222b1208531cac1b77765b76aa96284e880db",
+  "round": 1,
+  "cwd": "/Users/filipepinto/Projects/curriculum_builder/plans/27_langgraph_curriculum_factory_remediation/execution_package_v2/release_candidate/rc7",
+  "artifact_path": "/Users/filipepinto/Projects/curriculum_builder/plans/27_langgraph_curriculum_factory_remediation/execution_package_v2/release_candidate/rc7/rc7_review_bundle.v1.md",
+  "artifact_sha256": "1d9288bcff8ab995991e85c77e39d2eb93f16176483c2b80891d179e78ed5b0e",
+  "grounding": [
+    {
+      "path": "/Users/filipepinto/Projects/curriculum_builder/plans/27_langgraph_curriculum_factory_remediation/execution_package_v2/release_candidate/rc7/deprecated/implementation.graph.v5.yaml",
+      "sha256": "ce2362787a9760c9db3b2f667a0561ebd877ec89f24d690b2210ec9b6f3777b8"
+    },
+    {
+      "path": "/Users/filipepinto/Projects/curriculum_builder/plans/27_langgraph_curriculum_factory_remediation/execution_package_v2/release_candidate/rc7/manifest.v1.json",
+      "sha256": "a6512de76b7e36b3e5548620b22df222a231a4bf00edf35bacec61d999a50d2d"
+    }
+  ],
+  "chain_prev": "GENESIS",
+  "chain": "8cc73f7dc9568540204bc98d55b1740968e6b18656b4d3589c1a0bf203894d53",
+  "rollout_file": "/Users/filipepinto/.codex/sessions/2026/08/13/rollout-2026-08-13T19-50-23-019ffd88-b735-77c0-ad8d-145ba014751a.jsonl",
+  "timestamp": "2026-08-13T23:55:15.290465+00:00"
+}

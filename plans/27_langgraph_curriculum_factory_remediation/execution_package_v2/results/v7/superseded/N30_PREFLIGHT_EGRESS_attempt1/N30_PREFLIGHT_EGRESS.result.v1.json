@@ -1,0 +1,104 @@
+{
+  "attempt_id": "N30_PREFLIGHT_EGRESS-execpkgv2-v7-attempt-1",
+  "changed_files": [
+    {
+      "change": "modified",
+      "path": "runtime/langgraph_factory/nodes/inputs.py",
+      "sha256": "04651f38a5d762a69edfa1827046637cb06f8705805a1b661212223d63f61047"
+    },
+    {
+      "change": "modified",
+      "path": "runtime/run_curriculum.py",
+      "sha256": "ed7843aaded6c4ca54ef0fd1346951cca01c09b26c6203186817b93829c51289"
+    },
+    {
+      "change": "modified",
+      "path": "tests/runtime/test_plan26_cli.py",
+      "sha256": "ef5ef6f817cf16c542d1abb1da0a4b5acc2b1df8c79c5563cee22179310bcbe2"
+    },
+    {
+      "change": "modified",
+      "path": "tests/runtime/test_plan26_deterministic_nodes.py",
+      "sha256": "71ca5c418b3457d0c43c0c9a19e71de9832f0a177d88b0d640e12245d52a9f26"
+    },
+    {
+      "change": "modified",
+      "path": "tests/runtime/test_run_curriculum.py",
+      "sha256": "914bb9e61b7d52de563ef814e5c4e106f2cbe96c32926c26b54ab8a9c2d744a7"
+    }
+  ],
+  "commands": [
+    {
+      "argv": ["python3", "-m", "pytest", "-q", "tests/runtime/test_plan26_cli.py", "tests/runtime/test_run_curriculum.py"],
+      "exit_code": 0,
+      "log": "plans/27_langgraph_curriculum_factory_remediation/execution_package_v2/results/v7/evidence/N30_PREFLIGHT_EGRESS/01_pytest_n30_cli.log",
+      "log_sha256": "bbd1c30625b418ebcd1ee690dfe8e32d4943a187cde0b840c1b250754d7f134c"
+    },
+    {
+      "argv": ["python3", "-m", "pytest", "-q", "tests/runtime/test_plan26_deterministic_nodes.py", "-k", "D03 or capability"],
+      "exit_code": 0,
+      "log": "plans/27_langgraph_curriculum_factory_remediation/execution_package_v2/results/v7/evidence/N30_PREFLIGHT_EGRESS/02_pytest_n30_d03.log",
+      "log_sha256": "d4084792f75da45b1f64e518a54c75d015f21f042f1e3cdcd943610df3a888bc"
+    },
+    {
+      "argv": ["python3", "plans/27_langgraph_curriculum_factory_remediation/execution_package_v2/controller/scan_node.py", "--node", "N30_PREFLIGHT_EGRESS", "--graph", "plans/27_langgraph_curriculum_factory_remediation/execution_package_v2/implementation.graph.v7.yaml"],
+      "exit_code": 0,
+      "log": "plans/27_langgraph_curriculum_factory_remediation/execution_package_v2/results/v7/evidence/N30_PREFLIGHT_EGRESS/03_scan_node_n30.log",
+      "log_sha256": "4cf3deae3cb48734e0d94818ad664ec5f7f263b390a2fa4810c86a64266130a2"
+    },
+    {
+      "argv": ["python3", "-c", "import json; import runtime.run_curriculum as R; print(json.dumps(R._prove_driver_capabilities(), indent=2, default=str))"],
+      "exit_code": 0,
+      "log": "plans/27_langgraph_curriculum_factory_remediation/execution_package_v2/results/v7/evidence/N30_PREFLIGHT_EGRESS/04_live_driver_capability_proof.log",
+      "log_sha256": "d0e61b6f06d59e5990e702dd9816d60c3b3c05b9776716b5f2eac94dbd7d09ae"
+    }
+  ],
+  "evidence": [
+    "plans/27_langgraph_curriculum_factory_remediation/execution_package_v2/results/v7/evidence/N30_PREFLIGHT_EGRESS/01_pytest_n30_cli.log",
+    "plans/27_langgraph_curriculum_factory_remediation/execution_package_v2/results/v7/evidence/N30_PREFLIGHT_EGRESS/02_pytest_n30_d03.log",
+    "plans/27_langgraph_curriculum_factory_remediation/execution_package_v2/results/v7/evidence/N30_PREFLIGHT_EGRESS/03_scan_node_n30.log",
+    "plans/27_langgraph_curriculum_factory_remediation/execution_package_v2/results/v7/evidence/N30_PREFLIGHT_EGRESS/04_live_driver_capability_proof.log"
+  ],
+  "findings": [
+    {
+      "disposition": "resolved",
+      "id": "N30V7-F01",
+      "severity": "major",
+      "summary": "Five differentiated driver-capability proof fields (executable_identity, permitted_auth_mode, observable_subscription_backed_usability, content_free_operation, tool_mcp_closure) plus approved_data_boundary were implemented for both mandatory drivers (claude, codex) in runtime/run_curriculum.py (_prove_one_driver/_prove_driver_capabilities), wired into both --preflight and the live --unit/--all/--resume path (_prove_live_capabilities), and consumed inside the compiled graph's own D03_PROVE_CAPABILITIES gate. N20's D03 tool/MCP-closure functions (transport.prove_claude_tool_closure/require_claude_tool_closure) are now genuinely called from real production dispatch, not left standalone. A permanent regression test reproduces the exact Run 26 defect (binaries present, provider unauthenticated -> not ready) and a permanent regression test reproduces N20-F06 (an MCP server listed under --setting-sources \"\" but needs-auth -> still correctly evaluated as closed)."
+    },
+    {
+      "disposition": "resolved",
+      "id": "N30V7-F02",
+      "severity": "minor",
+      "summary": "N30's own design initially checked a driver-level union of all its jobs' data_classes against egress.PROVIDER_DATA_CLASSES[provider] as part of approved_data_boundary. Live testing against the real job registry showed this produces a false conflict for the claude driver (M08_REPAIR_NAMED_WORKBOOK_DEFECT, provider=anthropic, legitimately declares data class frozen_workbook_artifacts, which egress.py only lists under openai). On reflection this was N30 overreaching: preflight explicitly takes no --authorization (spec 16), so it has no run-scoped AuthorizationRecord to evaluate a data class against -- that per-job, per-run authorization is egress.authorize_subprocess_transmission's job at real dispatch time, already covered by N20's own suite. approved_data_boundary was corrected to check only provider membership in egress.PROVIDERS (still read-only, no local reimplementation), which is the honest limit of what a driver-level, authorization-free preflight check can prove. Not routed to N20: this was N30's own design correction, not a defect in N20's code -- egress.py itself was never touched."
+    },
+    {
+      "disposition": "resolved",
+      "id": "N30V7-F03",
+      "severity": "minor",
+      "summary": "tests/runtime/test_run_curriculum.py::FreshRunWiringTests::test_fresh_unit_run_builds_the_graph_once_and_invokes_with_a_fresh_envelope (pre-existing, in N30's write set) used a fixture authorization of {\"openai\": [\"manifest_unit_projection\"]}; manifest_unit_projection is only a valid data class under \"anthropic\" in N20's already-migrated egress.PROVIDER_DATA_CLASSES, so AuthorizationRecord.__post_init__ genuinely rejects it. This is a stale test fixture left over from before N20's provider-class migration, independent of any change N30 made (reproduced against a clean N30 checkout with N20's current egress.py). Corrected the fixture to a valid openai data class (frozen_unit_artifacts) inside N30's own write-set file."
+    },
+    {
+      "disposition": "resolved",
+      "id": "N30V7-F04",
+      "severity": "major",
+      "summary": "The first working version of D03's new driver-capability gate required transport_registry.driver_capability_proof unconditionally, which broke 41 tests in files outside N30's write set (test_plan26_unit_graph.py, test_plan26_workbook.py, test_plan26_adversarial.py, test_plan26_repair_acceptance.py -- all N40-owned or elsewhere) because those integration tests build their own minimal registry test doubles, unaware of this new attribute, to exercise unrelated graph topology/plumbing. Corrected: D03 now reads driver_capability_proof best-effort (skips gracefully when the registry does not expose it, the same optional-duck-typing treatment observe_executable already receives a few lines below), while runtime.run_curriculum._prove_live_capabilities became the actual, unconditional, hard stop -- it always populates this attribute on the real registry and raises tp.CapabilityProofFailed before compiled.invoke() is ever reached if any mandatory driver is not ready. Reran the full tests/ tree after the fix: 1291 passed, 2 skipped, 419 subtests passed, 1 failed -- the 1 remaining failure (test_plan26_prompt_graph_controller.py::test_passed_nodes_remain_admissible_after_harness_or_predecessor_change) is confirmed pre-existing and unrelated (reproduces identically on a clean checkout with none of N30's changes applied; it concerns Plan 26's own prompt-graph receipt store, node N10_DEPENDENCY_API, nothing in Run 27's scope)."
+    },
+    {
+      "disposition": "open",
+      "id": "N30V7-F05",
+      "severity": "major",
+      "summary": "Live-verified defect, outside N30's write-set authority: transport.observe_codex_identity cannot extract an executed model from the real, installed Codex CLI's actual --json exec event stream. Reproduced with N20's own unmodified transport.build_codex_argv/observe_codex_identity against the genuinely installed `codex` binary (codex-cli 0.147.0, evidence/N30_PREFLIGHT_EGRESS/04_live_driver_capability_proof.log): the real events are {\"type\":\"thread.started\",...}, {\"type\":\"turn.started\"}, {\"type\":\"item.completed\",...}, {\"type\":\"turn.completed\",...} -- none of which ever carries a \"model\" key on any event whose type is in transport._CODEX_IDENTITY_EVENTS, so observe_codex_identity always raises IdentityUnobservable for a live codex call. tests/runtime/test_plan26_transport.py's own observe_codex_identity tests only exercise a synthetic fixture shaped like the older msg-wrapped protocol ({\"id\":\"0\",\"msg\":{\"type\":\"session_configured\",...}}), never the real installed CLI's actual output, so this gap was never caught by N20's suite. Consequence: N30's new, correctly-implemented observable_subscription_backed_usability field honestly and correctly reports the codex driver as not ready in this live environment (claude fully passes all five/six fields for real, evidence/04 above) -- this is N30 behaving correctly given N20's current transport.py, not an N30 defect, and was not patched here. Recommended owner: N20 (runtime/langgraph_factory/transport.py, observe_codex_identity / _CODEX_IDENTITY_EVENTS). This finding is why this result's outcome is BLOCKED rather than PASSED: per this node's own instructions, a defect outside N30's write-set authority is routed, not patched or worked around."
+    }
+  ],
+  "invalidated_descendants": [],
+  "node_id": "N30_PREFLIGHT_EGRESS",
+  "outcome": "BLOCKED",
+  "predecessor_receipts": {
+    "N20_PROVIDER_TRANSPORT": "7c437f6cc166338842fffb6d8a91a8936ef2a7f52103dbc7e237554eac0c0a16"
+  },
+  "prompt_sha256": "c590af3176ad36f2b021dfdf2a231bbbe525fa92e6d2395f1e284ad88a92e1e8",
+  "run_id": "run27-execpkgv2-v7-2026-08-13",
+  "schema_version": 1,
+  "source_spec_sha256": "e14df5a36ce12d700fe9fc4aa4aea466771bc89f31bc6e9d49f812c147b1bb3c"
+}

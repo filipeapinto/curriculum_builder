@@ -1,0 +1,31 @@
+ M plans/27_langgraph_curriculum_factory_remediation/execution_package_v2/controller/scan_node.py
+RM plans/27_langgraph_curriculum_factory_remediation/execution_package_v2/implementation.graph.v4.yaml -> plans/27_langgraph_curriculum_factory_remediation/execution_package_v2/deprecated/implementation.graph.v4.yaml
+ M plans/27_langgraph_curriculum_factory_remediation/execution_package_v2/tests/test_execution_package_v2.py
+ M plans/27_langgraph_curriculum_factory_remediation/execution_package_v2/tools/validate_plan_v2.py
+ M plans/27_langgraph_curriculum_factory_remediation/execution_package_v2/tools/validate_result_v2.py
+ M policy/routes.v1.yaml
+ M policy/routing/model_registry.v1.yaml
+ M runtime/langgraph_factory/config/model_jobs.v1.yaml
+ M runtime/langgraph_factory/egress.py
+ M runtime/langgraph_factory/model_nodes.py
+ M runtime/langgraph_factory/schemas/internal_authorization_receipt.schema.json
+ M runtime/langgraph_factory/schemas/internal_execution_receipt.schema.json
+ M runtime/langgraph_factory/transport.py
+ M tests/runtime/test_curriculum_factory_graph.py
+ M tests/runtime/test_plan26_adversarial.py
+ M tests/runtime/test_plan26_api_contract.py
+ M tests/runtime/test_plan26_egress.py
+ M tests/runtime/test_plan26_lock_drift.py
+ M tests/runtime/test_plan26_model_nodes.py
+ M tests/runtime/test_plan26_transport.py
+?? plans/27_langgraph_curriculum_factory_remediation/execution_package_v2/contracts/
+?? plans/27_langgraph_curriculum_factory_remediation/execution_package_v2/implementation.graph.v5.yaml
+?? plans/27_langgraph_curriculum_factory_remediation/execution_package_v2/prompts/N00_spec_approval_gate.prompt.v4.md
+?? plans/27_langgraph_curriculum_factory_remediation/execution_package_v2/prompts/N00_spec_approval_gate.prompt.v5.md
+?? plans/27_langgraph_curriculum_factory_remediation/execution_package_v2/prompts/N20_provider_transport.prompt.v4.md
+?? plans/27_langgraph_curriculum_factory_remediation/execution_package_v2/prompts/N20_provider_transport.prompt.v5.md
+?? plans/27_langgraph_curriculum_factory_remediation/execution_package_v2/prompts/N30_preflight_egress.prompt.v4.md
+?? plans/27_langgraph_curriculum_factory_remediation/execution_package_v2/prompts/N30_preflight_egress.prompt.v5.md
+?? plans/27_langgraph_curriculum_factory_remediation/execution_package_v2/release_candidate/
+?? plans/27_langgraph_curriculum_factory_remediation/execution_package_v2/results/
+?? plans/27_langgraph_curriculum_factory_remediation/execution_package_v2/schemas/

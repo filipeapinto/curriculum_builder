@@ -40,6 +40,18 @@ models:
     reasoning_efforts: [low, medium, high]
     supports_pro_mode: false
     allowed_for: [mechanical_processing]
+  claude-sonnet-5:
+    provider: Anthropic
+    role: flagship_authoring
+    strengths:
+      - long-context content authoring
+      - structured domain-data generation
+      - visual prompt drafting
+      - targeted repair
+      - source research
+    reasoning_efforts: [high, xhigh]
+    supports_pro_mode: true
+    allowed_for: [content_authoring, domain_data_authoring, visual_authoring, targeted_repair, source_research]
 availability_note: "This registry is a policy input, not a guarantee of entitlement. The active runtime is authoritative."
 
 # Every routing value the meta prompt must never inline, and the anchored pattern
@@ -61,6 +73,9 @@ prose_patterns:
   gpt-5.6-luna:
     kind: model_id
     prose_pattern: '(?i)\bgpt[ _-]?5\.6[ _-]?luna\b'
+  claude-sonnet-5:
+    kind: model_id
+    prose_pattern: '(?i)\bclaude[ _-]?sonnet[ _-]?5\b'
   low:
     kind: reasoning_effort
     prose_pattern: '(?i)\b(?:reasoning[ _-]?)?effort\b[^.\n]{0,24}?\blow\b'

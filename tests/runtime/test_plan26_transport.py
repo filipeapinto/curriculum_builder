@@ -32,22 +32,22 @@ CURRICULUM_DIGEST = "c" * 64
 RUN_ID = "run-plan26-transport"
 
 EXPECTED_ROUTES = {
-    "M01_RESEARCH_UNIT_SOURCES": ("research_unit_sources", "codex", "openai",
-                                  "gpt-5.6-sol", "component_research", "xhigh"),
-    "M02_CREATE_UNIT_DOMAIN_DATA": ("create_unit_domain_data", "codex", "openai",
-                                    "gpt-5.6-sol", "final_acceptance", "max"),
-    "M03_WRITE_UNIT_CONTENT": ("write_unit_content", "codex", "openai",
-                               "gpt-5.6-sol", "child_explanatory_writing", "high"),
-    "M04_CREATE_UNIT_VISUALS": ("create_unit_visuals", "codex", "openai",
-                                "gpt-5.6-sol", "photorealistic_visual_prompt", "high"),
-    "M05_REVIEW_ACTUAL_UNIT": ("review_actual_unit", "gemini", "google",
-                               "gemini-3-pro-preview", None, "cli_model_default"),
-    "M06_REPAIR_NAMED_UNIT_ARTIFACT": ("repair_named_unit_artifact", "codex", "openai",
-                                       "gpt-5.6-sol", "final_acceptance", "max"),
-    "M07_REVIEW_ACTUAL_WORKBOOK": ("review_actual_workbook", "gemini", "google",
-                                   "gemini-3-pro-preview", None, "cli_model_default"),
-    "M08_REPAIR_NAMED_WORKBOOK_DEFECT": ("repair_named_workbook_defect", "codex", "openai",
-                                         "gpt-5.6-sol", "workbook_assembly", "high"),
+    "M01_RESEARCH_UNIT_SOURCES": ("research_unit_sources", "claude", "anthropic",
+                                  "claude-sonnet-5", "component_research", "xhigh"),
+    "M02_CREATE_UNIT_DOMAIN_DATA": ("create_unit_domain_data", "claude", "anthropic",
+                                    "claude-sonnet-5", "final_acceptance", "high"),
+    "M03_WRITE_UNIT_CONTENT": ("write_unit_content", "claude", "anthropic",
+                               "claude-sonnet-5", "child_explanatory_writing", "high"),
+    "M04_CREATE_UNIT_VISUALS": ("create_unit_visuals", "claude", "anthropic",
+                                "claude-sonnet-5", "photorealistic_visual_prompt", "high"),
+    "M05_REVIEW_ACTUAL_UNIT": ("review_actual_unit", "codex", "openai",
+                               "gpt-5.6-sol", None, "xhigh"),
+    "M06_REPAIR_NAMED_UNIT_ARTIFACT": ("repair_named_unit_artifact", "claude", "anthropic",
+                                       "claude-sonnet-5", "final_acceptance", "xhigh"),
+    "M07_REVIEW_ACTUAL_WORKBOOK": ("review_actual_workbook", "codex", "openai",
+                                   "gpt-5.6-sol", None, "xhigh"),
+    "M08_REPAIR_NAMED_WORKBOOK_DEFECT": ("repair_named_workbook_defect", "claude", "anthropic",
+                                         "claude-sonnet-5", "workbook_assembly", "xhigh"),
 }
 
 M03_CANDIDATE = {
@@ -76,15 +76,47 @@ def codex_events(model: str = "gpt-5.6-sol", reroute: str | None = None) -> str:
     return "\n".join(lines) + "\n"
 
 
-def gemini_envelope(model: str = "gemini-3-pro-preview", response: str = "{}",
-                    requests: int = 1) -> str:
-    return json.dumps({
-        "session_id": "abc",
-        "response": response,
-        "stats": {"models": {model: {"api": {"totalRequests": requests, "totalErrors": 0,
-                                             "totalLatencyMs": 10},
-                                     "tokens": {"total": 10}}}},
-    })
+def claude_stream_events(
+    *,
+    model: str = "claude-sonnet-5",
+    structured_output: dict | None = None,
+    tools: list[str] | None = None,
+    mcp_servers: list[dict] | None = None,
+    include_assistant_event: bool = True,
+    assistant_model: str | None = None,
+    parent_tool_use_id: str | None = None,
+) -> str:
+    """A realistic `claude --print --output-format stream-json --verbose` transcript.
+
+    Shaped exactly like a live probe against the installed CLI (2.1.231) on
+    2026-08-13: a system/init event carrying `tools`/`mcp_servers`/`model`, one
+    per-turn assistant event carrying `message.model` with `parent_tool_use_id`
+    null, and a final result event carrying `structured_output` plus a
+    `modelUsage` map that is deliberately not single-entry (matching N20-F05).
+    """
+    lines = [json.dumps({
+        "type": "system", "subtype": "init", "session_id": "sess-0",
+        "tools": tools if tools is not None else ["StructuredOutput"],
+        "mcp_servers": mcp_servers if mcp_servers is not None else [],
+        "model": model,
+    })]
+    if include_assistant_event:
+        lines.append(json.dumps({
+            "type": "assistant",
+            "message": {"model": assistant_model or model, "role": "assistant",
+                       "content": [{"type": "tool_use", "name": "StructuredOutput",
+                                    "input": structured_output or {}}]},
+            "parent_tool_use_id": parent_tool_use_id,
+        }))
+    lines.append(json.dumps({
+        "type": "result", "subtype": "success", "is_error": False,
+        "structured_output": structured_output or {},
+        "modelUsage": {
+            "claude-haiku-4-5-20251001": {"inputTokens": 500, "outputTokens": 10},
+            model: {"inputTokens": 2, "outputTokens": 200},
+        },
+    }))
+    return "\n".join(lines) + "\n"
 
 
 @dataclass
@@ -102,10 +134,10 @@ class FakeRunner:
         self.reserved_at_call: list[int] = []
         self.ledger: tp.AttemptLedger | None = None
 
-    def __call__(self, argv, *, cwd, env, timeout_seconds):
+    def __call__(self, argv, *, cwd, env, timeout_seconds, stdin=None):
         step = self.steps[min(len(self.calls), len(self.steps) - 1)]
         self.calls.append({"argv": list(argv), "cwd": Path(cwd), "env": dict(env),
-                           "timeout": timeout_seconds})
+                           "timeout": timeout_seconds, "stdin": stdin})
         if self.ledger is not None:
             self.reserved_at_call.append(self.ledger.total_reserved)
         if step.result_text is not None:
@@ -141,7 +173,7 @@ def authorization(output_root: Path, **overrides) -> AuthorizationRecord:
 
 FAKE_EXECUTABLES = {
     "codex": tp.ExecutableIdentity("codex", "/opt/homebrew/bin/codex", "d" * 64, "codex-cli 0.147.0"),
-    "gemini": tp.ExecutableIdentity("gemini", "/opt/homebrew/bin/gemini", "e" * 64, "0.24.5"),
+    "claude": tp.ExecutableIdentity("claude", "/opt/homebrew/bin/claude", "e" * 64, "2.1.231 (Claude Code)"),
 }
 
 
@@ -200,7 +232,7 @@ def test_registry_with_the_wrong_job_count_is_rejected(tmp_path: Path):
 
 def test_registry_with_a_mismatched_family_is_rejected(tmp_path: Path):
     document = yaml.safe_load(tp.REGISTRY_PATH.read_text(encoding="utf-8"))
-    document["jobs"][0]["family"] = "google"
+    document["jobs"][0]["family"] = "openai"
     path = tmp_path / "wrong_family.yaml"
     path.write_text(yaml.safe_dump(document), encoding="utf-8")
     with pytest.raises(tp.RouteRejected):
@@ -305,11 +337,11 @@ def test_missing_or_mismatched_authorization_makes_zero_calls(tmp_path: Path, mu
     elif mutation == "wrong_run":
         record = authorization(output_root, run_id="a-different-run")
     elif mutation == "no_provider":
-        record = authorization(output_root, providers={"google": ["shipped_pdf"]})
+        record = authorization(output_root, providers={"openai": ["shipped_pdf"]})
     else:
-        record = authorization(output_root, providers={"openai": ["schemas_and_rubrics"]})
+        record = authorization(output_root, providers={"anthropic": ["schemas_and_rubrics"]})
 
-    runner = FakeRunner(Step(stdout=codex_events(), result_text=json.dumps(M03_CANDIDATE)))
+    runner = FakeRunner(Step(stdout=claude_stream_events(structured_output=M03_CANDIDATE)))
     transport = make_transport(tmp_path, runner, record=record)
     with pytest.raises(AuthorizationDenied):
         run_m03(transport)
@@ -355,7 +387,7 @@ def test_capability_proof_is_satisfied_on_this_host(tmp_path: Path):
         proof = tp.prove_transport_capabilities(
             guard=guard, probe_root=tmp_path / "probe",
             forbidden_paths=[tp.REPO_ROOT / "pyproject.toml", tp.REPO_ROOT / "runtime"],
-            identity_help={"codex": "--json", "gemini": "--output-format"})
+            identity_help={"codex": "--json", "claude": "--json-schema"})
     finally:
         guard.uninstall()
     assert proof["satisfied"] is True
@@ -365,7 +397,7 @@ def test_capability_proof_is_satisfied_on_this_host(tmp_path: Path):
 
 
 @requires_sandbox
-@pytest.mark.parametrize("cli", ["codex", "gemini"])
+@pytest.mark.parametrize("cli", ["codex", "claude"])
 def test_the_real_cli_starts_sandboxed_yet_cannot_read_outside_the_workspace(
     tmp_path: Path, cli: str
 ):
@@ -403,7 +435,7 @@ def test_the_real_cli_starts_sandboxed_yet_cannot_read_outside_the_workspace(
 
 
 def test_executable_read_roots_covers_the_installation_prefix():
-    assert tp.executable_read_roots("/opt/homebrew/Cellar/gemini-cli/0.24.5/bin/gemini") == (
+    assert tp.executable_read_roots("/opt/homebrew/Cellar/claude-code/2.1.231/bin/claude") == (
         Path("/opt/homebrew"),)
     assert tp.executable_read_roots("/usr/bin/cat") == (Path("/usr"),)
 
@@ -431,7 +463,7 @@ def test_codex_reroute_supersedes_the_initial_session_model():
     observed = tp.observe_codex_identity(codex_events("gpt-5.6-sol", reroute="gpt-5-mini"))
     assert observed.model == "gpt-5-mini"
     with pytest.raises(tp.IdentityMismatch):
-        tp.assert_identity_matches(tp.resolve_route("M03_WRITE_UNIT_CONTENT"), observed)
+        tp.assert_identity_matches(tp.resolve_route("M05_REVIEW_ACTUAL_UNIT"), observed)
 
 
 def test_codex_stream_without_a_model_is_unobservable():
@@ -440,31 +472,101 @@ def test_codex_stream_without_a_model_is_unobservable():
         tp.observe_codex_identity(stream)
 
 
-def test_gemini_identity_is_read_from_session_metrics():
-    observed = tp.observe_gemini_identity(gemini_envelope())
-    assert observed.model == "gemini-3-pro-preview"
-    assert observed.family == "google"
-    assert observed.model_source == "gemini_envelope:stats.models"
+def real_codex_cli_0_147_0_json_events() -> str:
+    """Byte-for-byte the `--json` stdout of a live `codex exec` run (codex-cli 0.147.0).
+
+    Captured against the real, installed binary using the exact pinned invocation
+    (spec 7.2: `codex exec --ephemeral --ignore-user-config --ignore-rules -s read-only
+    --skip-git-repo-check ... --json`), across a bare JSON-echo probe and a probe that
+    forced a `command_execution` item. Neither the four `ThreadEvent` types
+    (thread.started/turn.started/item.completed/turn.completed) nor any `item.completed`
+    item variant (agent_message, command_execution) ever carries a `model` key in this
+    CLI version -- the model is only visible internally (RUST_LOG debug trace, not a
+    machine-readable contract) or in the on-disk rollout file, which `--ephemeral`
+    deliberately never writes. This fixture pins that live-verified gap (N30V7-F05).
+    """
+    return "\n".join([
+        json.dumps({"type": "thread.started", "thread_id": "01a00096-3a44-7380-8a1a-9d0790afbe2c"}),
+        json.dumps({"type": "turn.started"}),
+        json.dumps({"id": "item_1", "type": "item.started", "item": {
+            "id": "item_1", "type": "command_execution", "command": "/bin/zsh -lc 'echo probe'",
+            "aggregated_output": "", "exit_code": None, "status": "in_progress"}}),
+        json.dumps({"type": "item.completed", "item": {
+            "id": "item_1", "type": "command_execution", "command": "/bin/zsh -lc 'echo probe'",
+            "aggregated_output": "probe\n", "exit_code": 0, "status": "completed"}}),
+        json.dumps({"type": "item.completed", "item": {
+            "id": "item_0", "type": "agent_message", "text": "{\"ack\": \"ok\"}"}}),
+        json.dumps({"type": "turn.completed", "usage": {
+            "input_tokens": 27048, "cached_input_tokens": 13056, "cache_write_input_tokens": 0,
+            "output_tokens": 157, "reasoning_output_tokens": 57}}),
+    ]) + "\n"
 
 
-def test_gemini_envelope_without_metrics_is_unobservable():
+def test_codex_identity_is_unobservable_against_the_real_installed_cli_protocol():
+    """codex-cli 0.147.0's real `--json` event stream never names the executed model.
+
+    N30 found this live (N30V7-F05): the installed CLI emits the newer, minimal
+    `thread.started`/`turn.started`/`item.completed`/`turn.completed` protocol, and no
+    event or item type in that protocol carries a `model` field for the common
+    (non-rerouted) path -- unlike the older `session_configured`-wrapped protocol the
+    rest of this test file's `codex_events()` fixture models. `_CODEX_IDENTITY_EVENTS`
+    already lists `thread.started`/`turn.started` by name (it is not an event-type-name
+    bug); the field these events would need to carry is simply absent from the real
+    payload. The correct, honest behavior -- proven here against the live-captured
+    shape -- is to raise IdentityUnobservable, not to silently pass.
+    """
     with pytest.raises(tp.IdentityUnobservable):
-        tp.observe_gemini_identity(json.dumps({"response": "{}"}))
+        tp.observe_codex_identity(real_codex_cli_0_147_0_json_events())
+
+
+def test_claude_identity_is_read_from_the_per_turn_assistant_event():
+    observed = tp.observe_claude_identity(claude_stream_events(model="claude-sonnet-5"))
+    assert observed.model == "claude-sonnet-5"
+    assert observed.family == "anthropic"
+    assert observed.model_source == "claude_stream_json:assistant.message.model"
+
+
+def test_claude_identity_prefers_the_last_per_turn_assistant_event():
+    """Matches Codex's reroute-supersedes-initial rule: the last per-turn event wins."""
+    first = json.dumps({"type": "assistant", "message": {"model": "claude-haiku-4-5"},
+                        "parent_tool_use_id": None})
+    second = json.dumps({"type": "assistant", "message": {"model": "claude-sonnet-5"},
+                         "parent_tool_use_id": None})
+    observed = tp.observe_claude_identity(f"{first}\n{second}\n")
+    assert observed.model == "claude-sonnet-5"
+
+
+def test_claude_identity_ignores_a_sub_agent_event_with_a_parent_tool_use_id():
+    sub_agent = json.dumps({"type": "assistant", "message": {"model": "claude-haiku-4-5"},
+                            "parent_tool_use_id": "toolu_01"})
     with pytest.raises(tp.IdentityUnobservable):
-        tp.observe_gemini_identity(gemini_envelope(requests=0))
+        tp.observe_claude_identity(sub_agent)
+
+
+def test_claude_stream_without_a_per_turn_assistant_event_is_unobservable():
+    with pytest.raises(tp.IdentityUnobservable):
+        tp.observe_claude_identity(claude_stream_events(include_assistant_event=False))
+
+
+def test_claude_identity_is_never_read_from_the_aggregate_model_usage_map():
+    """The aggregate map is not single-entry (N20-F05); only the per-turn event counts."""
+    stream = claude_stream_events(model="claude-sonnet-5")
+    assert "claude-haiku-4-5-20251001" in stream
+    observed = tp.observe_claude_identity(stream)
+    assert observed.model == "claude-sonnet-5"
 
 
 def test_review_route_must_not_execute_in_the_authoring_family():
     route = tp.resolve_route("M05_REVIEW_ACTUAL_UNIT")
-    authoring = tp.ObservedIdentity("openai", "gemini-3-pro-preview", "e", "f")
+    authoring = tp.ObservedIdentity("anthropic", "claude-sonnet-5", "e", "f")
     with pytest.raises(tp.IdentityMismatch):
         tp.assert_identity_matches(route, authoring)
 
 
 @requires_sandbox
 def test_execute_fails_when_the_observed_model_differs_from_the_decision(tmp_path: Path):
-    runner = FakeRunner(Step(stdout=codex_events("gpt-4o"),
-                             result_text=json.dumps(M03_CANDIDATE)))
+    runner = FakeRunner(Step(stdout=claude_stream_events(
+        model="claude-haiku-4-5", structured_output=M03_CANDIDATE)))
     transport = make_transport(tmp_path, runner)
     with pytest.raises(tp.IdentityMismatch):
         run_m03(transport)
@@ -473,10 +575,142 @@ def test_execute_fails_when_the_observed_model_differs_from_the_decision(tmp_pat
 
 @requires_sandbox
 def test_execute_fails_when_identity_cannot_be_observed(tmp_path: Path):
-    runner = FakeRunner(Step(stdout="ran fine\n", result_text=json.dumps(M03_CANDIDATE)))
+    runner = FakeRunner(Step(stdout="ran fine\n"))
     transport = make_transport(tmp_path, runner)
     with pytest.raises(tp.IdentityUnobservable):
         run_m03(transport)
+
+
+# ----------------------------------------------------------- TEST 3d: tool/MCP closure
+
+
+def test_claude_tool_closure_is_proven_from_the_init_event():
+    closure = tp.prove_claude_tool_closure(claude_stream_events())
+    assert closure["closed"] is True
+    assert closure["observed_tools"] == ["StructuredOutput"]
+    assert closure["invokable_mcp_servers"] == []
+    tp.require_claude_tool_closure(closure)
+
+
+def test_claude_tool_closure_fails_closed_on_an_extra_tool():
+    closure = tp.prove_claude_tool_closure(
+        claude_stream_events(tools=["StructuredOutput", "Bash"]))
+    assert closure["closed"] is False
+    assert closure["extra_tools"] == ["Bash"]
+    with pytest.raises(tp.CapabilityProofFailed):
+        tp.require_claude_tool_closure(closure)
+
+
+def test_claude_tool_closure_ignores_a_needs_auth_mcp_server():
+    """A live probe found `--setting-sources ""` still lists needs-auth MCP servers
+    (N20-F06); they carry no invokable tool, so closure holds."""
+    closure = tp.prove_claude_tool_closure(claude_stream_events(
+        mcp_servers=[{"name": "claude.ai Drive Integration", "status": "needs-auth"}]))
+    assert closure["closed"] is True
+    assert closure["invokable_mcp_servers"] == []
+
+
+def test_claude_tool_closure_fails_closed_on_an_authenticated_mcp_server():
+    closure = tp.prove_claude_tool_closure(claude_stream_events(
+        mcp_servers=[{"name": "some-server", "status": "connected"}]))
+    assert closure["closed"] is False
+    assert len(closure["invokable_mcp_servers"]) == 1
+    with pytest.raises(tp.CapabilityProofFailed):
+        tp.require_claude_tool_closure(closure)
+
+
+def test_claude_tool_closure_requires_an_init_event():
+    with pytest.raises(tp.CapabilityProofFailed):
+        tp.prove_claude_tool_closure(json.dumps({"type": "result"}))
+
+
+# --------------------------------------------------- TEST 3a: CLI-schema projection
+
+
+def test_cli_schema_projection_strips_the_dialect_reference():
+    schema = {"$schema": "https://json-schema.org/draft/2020-12/schema",
+             "type": "object", "properties": {"a": {"type": "string"}}}
+    projection = tp.build_cli_schema_projection(schema)
+    assert "$schema" not in projection
+    assert projection == {"type": "object", "properties": {"a": {"type": "string"}}}
+
+
+def test_cli_schema_projection_is_byte_identical_across_repeated_builds():
+    route = tp.resolve_route("M03_WRITE_UNIT_CONTENT")
+    schema = tp.load_output_schema(route)
+    first = tp.canonical_json(tp.build_cli_schema_projection(schema))
+    second = tp.canonical_json(tp.build_cli_schema_projection(schema))
+    assert first == second
+
+
+def test_cli_schema_projection_rejects_an_external_ref():
+    schema = {"type": "object", "properties": {"a": {"$ref": "https://example.com/other.json"}}}
+    with pytest.raises(tp.TransportError):
+        tp.build_cli_schema_projection(schema)
+
+
+def test_cli_schema_projection_permits_an_internal_ref():
+    schema = {"type": "object", "$defs": {"a": {"type": "string"}},
+             "properties": {"a": {"$ref": "#/$defs/a"}}}
+    projection = tp.build_cli_schema_projection(schema)
+    assert projection["properties"]["a"]["$ref"] == "#/$defs/a"
+
+
+def test_every_real_job_schema_produces_a_valid_cli_schema_projection():
+    for job_id in EXPECTED_ROUTES:
+        route = tp.resolve_route(job_id)
+        if route.cli != "claude":
+            continue
+        schema = tp.load_output_schema(route)
+        projection = tp.build_cli_schema_projection(schema)
+        assert "$schema" not in projection
+        jsonschema.Draft202012Validator.check_schema({**projection, "$schema":
+                                                        "https://json-schema.org/draft/2020-12/schema"})
+
+
+# --------------------------------------------------- TEST 3b: stdin delivery
+
+
+def test_claude_stdin_payload_carries_instruction_and_projection():
+    payload = tp.build_claude_stdin_payload(
+        instruction="do the job", projection={"unit_id": "U01"})
+    decoded = json.loads(payload)
+    assert decoded == {"instruction": "do the job",
+                       "authorized_input_projection": {"unit_id": "U01"}}
+
+
+def test_claude_stdin_payload_is_deterministic():
+    first = tp.build_claude_stdin_payload(instruction="x", projection={"b": 1, "a": 2})
+    second = tp.build_claude_stdin_payload(instruction="x", projection={"a": 2, "b": 1})
+    assert first == second
+
+
+@requires_sandbox
+def test_claude_job_delivers_instruction_and_projection_on_stdin_not_argv(tmp_path: Path):
+    runner = FakeRunner(Step(stdout=claude_stream_events(structured_output=M03_CANDIDATE)))
+    transport = make_transport(tmp_path, runner)
+    run_m03(transport)
+    call = runner.calls[0]
+    assert call["stdin"] is not None
+    decoded = json.loads(call["stdin"])
+    assert decoded["authorized_input_projection"] == {"unit_id": "U01"}
+    assert decoded["instruction"]
+    assert not any("U01" in token for token in call["argv"])
+
+
+@requires_sandbox
+def test_codex_job_receives_no_stdin_and_keeps_the_positional_instruction(tmp_path: Path):
+    runner = FakeRunner(Step(stdout=codex_events(), result_text=json.dumps({
+        "overall_findings": [], "page_findings": []})))
+    transport = make_transport(tmp_path, runner)
+    with pytest.raises(tp.TransportError):
+        # M05's real schema shape is exercised in test_plan26_model_nodes.py; here we
+        # only need to prove the stdin/argv delivery split for the codex driver.
+        transport.execute(job_id="M05_REVIEW_ACTUAL_UNIT", activation_id="act-201",
+                          episode_id="ep-1", projection={"unit_id": "U01"})
+    call = runner.calls[0]
+    assert call["stdin"] is None
+    assert call["argv"][-1] != ""
 
 
 # ----------------------------------------------------------- TEST 8: capability proof
@@ -490,7 +724,7 @@ def test_unproven_capability_fails_closed():
 
 
 def test_execute_refuses_to_launch_without_a_capability_proof(tmp_path: Path):
-    runner = FakeRunner(Step(stdout=codex_events(), result_text=json.dumps(M03_CANDIDATE)))
+    runner = FakeRunner(Step(stdout=claude_stream_events(structured_output=M03_CANDIDATE)))
     transport = make_transport(tmp_path, runner, proof=capability_proof(enforced=False))
     with pytest.raises(tp.CapabilityProofFailed):
         run_m03(transport)
@@ -529,10 +763,21 @@ def test_only_one_clean_json_document_is_accepted(document: str, failure_class: 
     assert error.value.failure_class == failure_class
 
 
-def test_envelope_extractor_requires_a_response_string():
-    assert tp.extract_envelope_response(gemini_envelope(response='{"x": 1}')) == '{"x": 1}'
+def test_claude_structured_output_extractor_reads_the_final_result_event():
+    stream = claude_stream_events(structured_output={"x": 1})
+    assert tp.extract_claude_structured_output(stream) == json.dumps({"x": 1},
+        sort_keys=True, ensure_ascii=False, separators=(",", ":"))
+    assert json.loads(tp.extract_claude_structured_output(stream)) == {"x": 1}
+
+
+def test_claude_structured_output_extractor_requires_a_result_event():
     with pytest.raises(tp.ResultParseError):
-        tp.extract_envelope_response(json.dumps({"session_id": "a"}))
+        tp.extract_claude_structured_output(json.dumps({"type": "system", "subtype": "init"}))
+
+
+def test_claude_structured_output_extractor_requires_the_field():
+    with pytest.raises(tp.ResultParseError):
+        tp.extract_claude_structured_output(json.dumps({"type": "result"}))
 
 
 def test_m01_must_emit_exactly_one_phase(tmp_path: Path):
@@ -552,7 +797,7 @@ def test_m01_must_emit_exactly_one_phase(tmp_path: Path):
 
 @requires_sandbox
 def test_malformed_result_gets_exactly_one_retry_then_fails(tmp_path: Path):
-    runner = FakeRunner(Step(stdout=codex_events(), result_text="{oops"))
+    runner = FakeRunner(Step(stdout=claude_stream_events(structured_output="{oops")))
     transport = make_transport(tmp_path, runner)
     with pytest.raises(tp.ResultParseError):
         run_m03(transport)
@@ -562,8 +807,8 @@ def test_malformed_result_gets_exactly_one_retry_then_fails(tmp_path: Path):
 
 @requires_sandbox
 def test_schema_invalid_result_gets_exactly_one_retry(tmp_path: Path):
-    runner = FakeRunner(Step(stdout=codex_events(),
-                             result_text=json.dumps({"unit_content": {"unit_id": "U01"}})))
+    runner = FakeRunner(Step(stdout=claude_stream_events(
+        structured_output={"unit_content": {"unit_id": "U01"}})))
     transport = make_transport(tmp_path, runner)
     with pytest.raises(tp.ResultParseError) as error:
         run_m03(transport)
@@ -574,8 +819,8 @@ def test_schema_invalid_result_gets_exactly_one_retry(tmp_path: Path):
 @requires_sandbox
 def test_the_single_retry_can_succeed(tmp_path: Path):
     runner = FakeRunner(
-        Step(stdout=codex_events(), result_text="{trailing junk"),
-        Step(stdout=codex_events(), result_text=json.dumps(M03_CANDIDATE)))
+        Step(stdout=claude_stream_events(structured_output="{trailing junk")),
+        Step(stdout=claude_stream_events(structured_output=M03_CANDIDATE)))
     transport = make_transport(tmp_path, runner)
     result = run_m03(transport)
     assert result.candidate == M03_CANDIDATE
@@ -587,8 +832,8 @@ def test_the_single_retry_can_succeed(tmp_path: Path):
 
 @requires_sandbox
 def test_identity_mismatch_is_never_retried(tmp_path: Path):
-    runner = FakeRunner(Step(stdout=codex_events("gpt-4o"),
-                             result_text=json.dumps(M03_CANDIDATE)))
+    runner = FakeRunner(Step(stdout=claude_stream_events(
+        model="claude-haiku-4-5", structured_output=M03_CANDIDATE)))
     transport = make_transport(tmp_path, runner)
     with pytest.raises(tp.IdentityMismatch):
         run_m03(transport)
@@ -609,7 +854,7 @@ def test_attempt_ledger_refuses_a_third_attempt():
 
 @requires_sandbox
 def test_attempt_is_reserved_before_the_process_starts(tmp_path: Path):
-    runner = FakeRunner(Step(stdout=codex_events(), result_text=json.dumps(M03_CANDIDATE)))
+    runner = FakeRunner(Step(stdout=claude_stream_events(structured_output=M03_CANDIDATE)))
     transport = make_transport(tmp_path, runner)
     run_m03(transport)
     assert runner.reserved_at_call == [1]
@@ -617,7 +862,7 @@ def test_attempt_is_reserved_before_the_process_starts(tmp_path: Path):
 
 @requires_sandbox
 def test_receipt_carries_every_required_piece_of_evidence(tmp_path: Path):
-    runner = FakeRunner(Step(stdout=codex_events(), result_text=json.dumps(M03_CANDIDATE)))
+    runner = FakeRunner(Step(stdout=claude_stream_events(structured_output=M03_CANDIDATE)))
     transport = make_transport(tmp_path, runner)
     receipt = run_m03(transport).receipt
 
@@ -627,19 +872,33 @@ def test_receipt_carries_every_required_piece_of_evidence(tmp_path: Path):
     assert set(schema["required"]) <= set(receipt)
     assert [name for name in schema["required"] if receipt[name] is None] == []
 
-    assert receipt["decided_model"] == "gpt-5.6-sol"
+    assert receipt["decided_model"] == "claude-sonnet-5"
     assert receipt["decided_reasoning_effort"] == "high"
-    assert receipt["observed_model"] == "gpt-5.6-sol"
-    assert receipt["observed_family"] == "openai"
-    assert "codex_event:session_configured" in receipt["observed_identity_source"]
-    assert receipt["executable_version"] == "codex-cli 0.147.0"
+    assert receipt["observed_model"] == "claude-sonnet-5"
+    assert receipt["observed_family"] == "anthropic"
+    assert "claude_stream_json:assistant.message.model" in receipt["observed_identity_source"]
+    assert receipt["executable_version"] == "2.1.231 (Claude Code)"
     assert receipt["termination"] == "exited"
     assert receipt["pid"] == 4242
     assert receipt["sandbox_mechanism"] == "sandbox-exec"
     assert receipt["reservation_id"] == "act-001#1"
+    assert len(receipt["cli_schema_projection_sha256"]) == 64
     assert Path(receipt["stdout_evidence_path"]).is_file()
     assert Path(receipt["stderr_evidence_path"]).is_file()
     assert len(receipt["result_sha256"]) == 64
+
+
+@requires_sandbox
+def test_codex_workspace_stages_no_cli_schema_projection(tmp_path: Path):
+    output_root = tmp_path / "output"
+    output_root.mkdir()
+    route = tp.resolve_route("M05_REVIEW_ACTUAL_UNIT")
+    workspace = tp.stage_workspace(
+        output_root=output_root, episode_id="ep-1", activation_id="act-1", route=route,
+        projection={}, authorization_receipt={"receipt_id": "r"})
+    assert workspace.cli_schema_projection_sha256 is None
+    assert "cli_schema_projection.json" not in workspace.inventory()
+    workspace.destroy()
 
 
 @requires_sandbox
@@ -661,7 +920,16 @@ def test_process_runner_kills_a_hung_process_group():
     assert outcome.returncode != 0
 
 
-# ------------------------------------------------- workspace staging and argv pinning
+def test_process_runner_delivers_stdin_and_closes_it():
+    outcome = tp.run_process(
+        [sys.executable, "-c", "import sys; sys.stdout.write(sys.stdin.read())"],
+        cwd=Path.cwd(), env={"PATH": "/usr/bin:/bin"}, timeout_seconds=10,
+        stdin="hello from stdin")
+    assert outcome.stdout == "hello from stdin"
+    assert outcome.returncode == 0
+
+
+# ------------------------------------------------------ workspace staging and argv pinning
 
 
 def test_codex_argv_is_pinned():
@@ -676,18 +944,44 @@ def test_codex_argv_is_pinned():
     ]
 
 
-def test_gemini_argv_is_pinned():
-    assert tp.build_gemini_argv(model="gemini-3-pro-preview", instruction="review it") == [
-        "gemini", "-m", "gemini-3-pro-preview", "-s", "--approval-mode", "default",
-        "--output-format", "json", "review it",
+def test_claude_argv_is_pinned():
+    projection = {"type": "object", "properties": {"a": {"type": "string"}}}
+    assert tp.build_claude_argv(
+        workspace="/tmp/ws", model="claude-sonnet-5", effort="high",
+        cli_schema_projection=projection) == [
+        "claude", "--print",
+        "--output-format", "stream-json", "--verbose",
+        "--json-schema", tp.canonical_json(projection),
+        "--model", "claude-sonnet-5", "--effort", "high",
+        "--permission-mode", "plan",
+        "--tools", "",
+        "--add-dir", "/tmp/ws",
+        "--no-session-persistence",
+        "--setting-sources", "",
     ]
+    assert "--json-schema" in tp.build_claude_argv(
+        workspace="/tmp/ws", model="m", effort="high", cli_schema_projection={})
+    assert not any(
+        token.startswith("/tmp/ws") and token != "/tmp/ws"
+        for token in tp.build_claude_argv(
+            workspace="/tmp/ws", model="m", effort="high", cli_schema_projection={}))
 
 
-def test_gemini_route_rejects_an_invented_reasoning_effort(tmp_path: Path):
-    route = tp.resolve_route("M05_REVIEW_ACTUAL_UNIT")
-    faked = tp.JobRoute(**{**route.__dict__, "reasoning_effort": "max"})
+def test_claude_argv_carries_no_positional_instruction():
+    argv = tp.build_claude_argv(
+        workspace="/tmp/ws", model="claude-sonnet-5", effort="high",
+        cli_schema_projection={"type": "object"})
+    assert argv[-1] == ""  # the empty --setting-sources value, not an instruction
+    assert argv[-2] == "--setting-sources"
+
+
+def test_build_job_argv_requires_the_right_delivery_for_each_cli():
+    claude_route = tp.resolve_route("M03_WRITE_UNIT_CONTENT")
     with pytest.raises(tp.RouteRejected):
-        tp.build_job_argv(faked, workspace=tmp_path, instruction="x")
+        tp.build_job_argv(claude_route, workspace=Path("/tmp/ws"), instruction="x")
+    codex_route = tp.resolve_route("M05_REVIEW_ACTUAL_UNIT")
+    with pytest.raises(tp.RouteRejected):
+        tp.build_job_argv(codex_route, workspace=Path("/tmp/ws"))
 
 
 def test_workspace_contains_only_the_authorized_staging_set(tmp_path: Path):
@@ -711,6 +1005,22 @@ def test_workspace_contains_only_the_authorized_staging_set(tmp_path: Path):
     workspace.destroy()
 
 
+def test_workspace_stages_the_cli_schema_projection_for_a_claude_job(tmp_path: Path):
+    output_root = tmp_path / "output"
+    output_root.mkdir()
+    route = tp.resolve_route("M03_WRITE_UNIT_CONTENT")
+    projection = {"type": "object", "properties": {"a": {"type": "string"}}}
+    workspace = tp.stage_workspace(
+        output_root=output_root, episode_id="ep-1", activation_id="act-1", route=route,
+        projection={}, authorization_receipt={"receipt_id": "r"},
+        cli_schema_projection=projection)
+    staged = json.loads((workspace.path / "cli_schema_projection.json").read_text())
+    assert staged == projection
+    assert workspace.cli_schema_projection_sha256 == tp.sha256_bytes(
+        tp.canonical_json(projection).encode("utf-8"))
+    workspace.destroy()
+
+
 def test_staged_input_hash_mismatch_is_refused(tmp_path: Path):
     output_root = tmp_path / "output"
     output_root.mkdir()
@@ -725,7 +1035,8 @@ def test_staged_input_hash_mismatch_is_refused(tmp_path: Path):
 
 
 @pytest.mark.parametrize("name", ["../escape.json", "sub/dir.json", "output.schema.json",
-                                  "result.json", "authorized_input.json"])
+                                  "result.json", "authorized_input.json",
+                                  "cli_schema_projection.json"])
 def test_staged_input_names_cannot_escape_or_shadow(tmp_path: Path, name: str):
     output_root = tmp_path / "output"
     output_root.mkdir()
@@ -762,19 +1073,19 @@ def test_worker_environment_is_allowlisted_over_a_temporary_home(tmp_path: Path)
 
 @requires_sandbox
 def test_launch_runs_under_the_sandbox_with_the_workspace_as_cwd(tmp_path: Path):
-    runner = FakeRunner(Step(stdout=codex_events(), result_text=json.dumps(M03_CANDIDATE)))
+    runner = FakeRunner(Step(stdout=claude_stream_events(structured_output=M03_CANDIDATE)))
     transport = make_transport(tmp_path, runner)
     run_m03(transport)
     argv = runner.calls[0]["argv"]
     assert argv[0] == "/usr/bin/sandbox-exec"
-    assert argv[3] == "codex"
+    assert argv[3] == "claude"
     assert runner.calls[0]["cwd"].name == "act-001"
     assert runner.calls[0]["timeout"] == 900
 
 
 @requires_sandbox
 def test_workspace_is_destroyed_after_the_activation(tmp_path: Path):
-    runner = FakeRunner(Step(stdout=codex_events(), result_text=json.dumps(M03_CANDIDATE)))
+    runner = FakeRunner(Step(stdout=claude_stream_events(structured_output=M03_CANDIDATE)))
     transport = make_transport(tmp_path, runner)
     receipt = run_m03(transport).receipt
     assert not Path(receipt["workspace_path"]).exists()
@@ -811,15 +1122,15 @@ def test_fake_transport_returns_only_schema_valid_candidates():
     assert result.candidate == M03_CANDIDATE
     assert result.receipt["sandbox_mechanism"] == "fake_transport_no_process"
     with pytest.raises(tp.RouteRejected):
-        fake.execute(job_id="M05_REVIEW_ACTUAL_UNIT", activation_id="b")
+        fake.execute(job_id="M09_INVENTED_JOB", activation_id="b")
 
 
 # ---------------------------------- TEST 12: product capability surface (finding B-8)
 #
-# D03, D11, D13 and D14 call five methods on `RuntimeContext.transport_registry`, which
-# `graph.build_runtime_context` installs `CliTransport` as. N30's B-8 found all five
-# absent, so a production runtime context failed D03 immediately. These exercise the
-# real implementations against the real local toolchain, not a double.
+# D03, D11, D13 and D14 reach for five methods on `RuntimeContext.transport_registry`.
+# They are capability work, not curriculum work: each does one bounded local job and
+# raises on any tool fault, so the calling node classifies it as a system failure
+# instead of letting a broken renderer reach the record as a product finding.
 
 CAPABILITY_SURFACE = (
     "prove_capability", "observe_executable",
@@ -1067,8 +1378,8 @@ def test_a_declared_visual_carries_no_control_plane_field():
 @pytest.mark.parametrize("module", ["transport.py", "egress.py"])
 def test_no_forbidden_provider_sdk_imports(module: str):
     source = (tp.PACKAGE_ROOT / module).read_text(encoding="utf-8")
-    for forbidden in ("langchain", "langchain_openai", "langchain_google_genai",
-                      "openai", "google.generativeai"):
+    for forbidden in ("langchain", "langchain_openai", "langchain_anthropic", "openai",
+                      "anthropic"):
         assert f"import {forbidden}" not in source
         assert f"from {forbidden}" not in source
 
@@ -1076,5 +1387,5 @@ def test_no_forbidden_provider_sdk_imports(module: str):
 def test_transport_never_shells_out_to_a_model_http_endpoint():
     source = (tp.PACKAGE_ROOT / "transport.py").read_text(encoding="utf-8")
     assert "api.openai.com" not in source
-    assert "generativelanguage" not in source
+    assert "api.anthropic.com" not in source
     assert "requests." not in source

@@ -30,12 +30,12 @@ class FakeWorker:
         return {"status": "PASS"}
 
     def _decision(self, activation_id: str, job: str) -> dict:
-        model = "gpt-5.4" if self.family == "openai" else "gemini-3-pro-preview"
+        model = "gpt-5.4" if self.family == "openai" else "fake-review-model-x1"
         return {
             "task_id": activation_id, "task_class": job, "risk": "high",
             "candidate_pool": [model], "decided_model": model, "executed_model": model,
-            "reasoning_effort": "max" if self.family == "google" else "high",
-            "pro_mode": self.family == "google", "quality_gate": ["bounded artifact"],
+            "reasoning_effort": "max" if self.family == "azure" else "high",
+            "pro_mode": self.family == "azure", "quality_gate": ["bounded artifact"],
             "decision_rationale": "test transport for controller integration",
             "evidence_inputs": ["authorized_input.json"], "escalate_when": [],
             "substitution": None, "status": "approved_to_run",
@@ -114,7 +114,7 @@ class FactoryStateTests(unittest.TestCase):
 class FactoryPackageTests(unittest.TestCase):
     def test_model_nodes_bind_exact_package_relative_prompts(self):
         graph = CurriculumFactoryGraph(ENGINE, author=FakeWorker("openai"),
-                                       reviewer=FakeWorker("google"),
+                                       reviewer=FakeWorker("azure"),
                                        capabilities=FakeCapabilities())
         hashes = graph._require_package()
         self.assertEqual(set(PROMPT_FILES) | {"graph"}, set(hashes))
@@ -153,7 +153,7 @@ class FactoryPackageTests(unittest.TestCase):
 
     def test_exact_active_manifest_path_is_accepted(self):
         graph = CurriculumFactoryGraph(ENGINE, author=FakeWorker("openai"),
-                                       reviewer=FakeWorker("google"),
+                                       reviewer=FakeWorker("azure"),
                                        capabilities=FakeCapabilities())
         curriculum, manifest = graph._resolve_curriculum_input(MANIFEST)
         self.assertEqual(MANIFEST.resolve(), manifest)
@@ -166,7 +166,7 @@ class FactoryOneUnitIntegrationTests(unittest.TestCase):
         with tempfile.TemporaryDirectory(dir=ENGINE / "outputs") as directory:
             output = Path(directory) / "factory-run"
             graph = CurriculumFactoryGraph(
-                ENGINE, author=FakeWorker("openai"), reviewer=FakeWorker("google"),
+                ENGINE, author=FakeWorker("openai"), reviewer=FakeWorker("azure"),
                 fetcher=lambda _url: source_bytes, capabilities=FakeCapabilities())
             with mock.patch("runtime.curriculum_factory_graph.readability_problems",
                             return_value=[]):
@@ -190,7 +190,7 @@ class FactoryOneUnitIntegrationTests(unittest.TestCase):
         with tempfile.TemporaryDirectory(dir=ENGINE / "outputs") as directory:
             output = Path(directory) / "resume-run"
             interrupted = CurriculumFactoryGraph(
-                ENGINE, author=FakeWorker("openai"), reviewer=InterruptingReviewer("google"),
+                ENGINE, author=FakeWorker("openai"), reviewer=InterruptingReviewer("azure"),
                 fetcher=lambda _url: source_bytes, capabilities=FakeCapabilities())
             with mock.patch("runtime.curriculum_factory_graph.readability_problems",
                             return_value=[]):
@@ -202,7 +202,7 @@ class FactoryOneUnitIntegrationTests(unittest.TestCase):
             domain_hash = domain_record["sha256"]
 
             resumed = CurriculumFactoryGraph(
-                ENGINE, author=FakeWorker("openai"), reviewer=FakeWorker("google"),
+                ENGINE, author=FakeWorker("openai"), reviewer=FakeWorker("azure"),
                 fetcher=lambda _url: source_bytes, capabilities=FakeCapabilities())
             with mock.patch("runtime.curriculum_factory_graph.readability_problems",
                             return_value=[]):
@@ -218,7 +218,7 @@ class FactoryOneUnitIntegrationTests(unittest.TestCase):
             output = Path(directory) / "coverage-run"
             output.mkdir()
             graph = CurriculumFactoryGraph(
-                ENGINE, author=FakeWorker("openai"), reviewer=FakeWorker("google"),
+                ENGINE, author=FakeWorker("openai"), reviewer=FakeWorker("azure"),
                 capabilities=FakeCapabilities())
             graph.output = output
             graph.curriculum, graph.manifest_path = graph._resolve_curriculum_input(MANIFEST)

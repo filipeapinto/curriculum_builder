@@ -71,6 +71,58 @@ routes:
         Both parameters are required on every call. A call that omits them inherits a
         default no decision chose, and its routing record cannot be trusted.
 
+  - id: claude_worker
+    purpose: every bounded Claude model call — authoring, research, visual drafting, targeted repair
+    command: >-
+      claude --print --output-format stream-json --verbose --json-schema <cli_schema_projection>
+      --model <decided_model> --effort <decided_effort> --permission-mode plan --tools ""
+      --add-dir <workspace> --no-session-persistence --setting-sources ""
+    parameters:
+      note: >-
+        This route owns the channel a routing decision travels down, never the value
+        it carries, matching the worker route's own convention. The instruction and
+        the authorized-input projection are delivered together on stdin as one JSON
+        document ({instruction, authorized_input_projection}), never as a positional
+        argument or a staged file the worker reads, because --tools "" leaves the
+        worker no file-reading tool. --json-schema takes the CLI-schema projection
+        inline as JSON text, never a file path or the canonical schema's own
+        $schema-bearing form (both rejected live by the installed CLI).
+      decided_model:
+        flag: --model
+        supplied_by: the routing decision's decided_model, per runtime/langgraph_factory/config/model_jobs.v1.yaml
+      decided_effort:
+        flag: --effort
+        supplied_by: the routing decision's reasoning_effort
+    proof:
+      executed_on: '2026-08-13'
+      executed: >-
+        printf '%s' '{"instruction":"Write one sentence describing what a lever is,
+        suitable for a 10-year-old. Put it in the summary field.",
+        "authorized_input_projection":{"topic":"simple machines","grade_band":"4-6"}}'
+        | claude --print --output-format stream-json --verbose
+        --json-schema '{"type":"object","properties":{"summary":{"type":"string"}},
+        "required":["summary"],"additionalProperties":false}'
+        --model claude-sonnet-5 --effort high --permission-mode plan --tools ""
+        --add-dir /tmp/n20probe --no-session-persistence --setting-sources ""
+      returned: >-
+        exit 0; stream-json system/init event reported tools=["StructuredOutput"],
+        model="claude-sonnet-5"; the per-turn assistant event (parent_tool_use_id
+        null) reported message.model="claude-sonnet-5"; the final result event's
+        structured_output was {"summary": "A lever is a simple machine — like a
+        long bar that rests on a point called a fulcrum — that lets you push down
+        on one end to lift something heavy on the other end."}, schema-conformant.
+        The same probe run with the real M03_write_unit_content.schema.json's own
+        $schema field attached was rejected before execution ("no schema with key
+        or ref \"https://json-schema.org/draft/2020-12/schema\""), confirming the
+        CLI-schema projection's $schema-stripping step is load-bearing, not
+        decorative.
+    constraints:
+      - Instruction and authorized_input_projection are delivered on stdin, never as a positional argument, because --tools "" leaves the worker no file-reading tool.
+      - --json-schema takes the CLI-schema projection inline as JSON text, never a file path; the unmodified canonical schema remains the sole post-execution jsonschema admission authority.
+      - Executed identity MUST be read from the stream-json per-turn assistant event's message.model field (parent_tool_use_id null), never from the final envelope's aggregate modelUsage map, which a live probe proved can carry more than one model.
+      - --setting-sources "" does not by itself prove MCP isolation; D03 inspects the stream-json init event's tool and MCP-server lists directly (runtime/langgraph_factory/transport.py prove_claude_tool_closure).
+      - This proof is a trivial bounded, content-free-of-curriculum probe (spec 7.1 class 4), not a live proof of a real M01-M04/M06/M08 curriculum job; that live proof is N70/N80's responsibility.
+
   - id: pdf
     purpose: render a lab or the workbook to PDF
     command: 'pandoc <input>.md --pdf-engine=typst -V mainfont="Helvetica" -o <output>.pdf'

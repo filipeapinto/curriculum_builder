@@ -378,14 +378,50 @@ def test_the_real_graph_scopes_load_and_name_the_expected_policy() -> None:
     )
 
 
-def test_the_scanner_reports_the_current_repository_debt_precisely() -> None:
-    """N20 and N30 have not run yet, so the live tree must still be dirty and the
-    scanner must say exactly where, rather than passing vacuously."""
+def test_the_production_scan_reads_the_expected_real_repository_scope() -> None:
+    """Stable, time-independent proof that the scanner's own reach and reporting
+    logic are correct against the real Plan 27 graph. This must hold whether or
+    not N20/N30 have actually cleaned up production bytes yet -- it is not
+    coupled to migration progress, only to the scanner reading the right files
+    and reporting them consistently, so it can never be flipped by N20's real
+    bytes existing or not existing on disk."""
 
     graph = Graph.load(REAL_GRAPH, REPO_ROOT)
     report = scanner.run(graph, "production")
-    assert not report["valid"], "a vacuous pass here would mean the scanner reads nothing"
-    paths = {item["path"] for item in report["violations"]}
-    assert "runtime/langgraph_factory/transport.py" in paths
-    assert all(not item.startswith(("plans/", "tests/", "outputs/")) for item in paths)
-    assert {item["code"] for item in report["violations"]} == {"PROHIBITED_PROVIDER_TERM"}
+    production = report["scopes"][0]
+    scanned = set(production["scanned_files"])
+    assert scanned, "the production scope must read at least one real file"
+    assert "runtime/langgraph_factory/transport.py" in scanned
+    assert not any(item.startswith(("plans/", "tests/", "outputs/")) for item in scanned)
+    assert report["valid"] == (report["violations"] == [])
+    permitted_codes = {
+        "PROHIBITED_PROVIDER_TERM",
+        "CREDENTIAL_OUTSIDE_GUARD_REGION",
+        "CREDENTIAL_OUTSIDE_GUARD_FILE",
+    }
+    for item in report["violations"]:
+        assert item["path"] in scanned
+        assert item["code"] in permitted_codes
+
+
+def test_a_prohibited_provider_reference_inserted_into_a_synthetic_repo_is_caught(
+    repo: FakeRepo,
+) -> None:
+    """Synthetic negative proof of the same anti-vacuity guarantee, decoupled
+    from whether N20's real bytes already exist: insert a prohibited reference
+    into a controlled fixture and require the scanner to report it precisely,
+    including at the CLI/exit-code layer."""
+
+    repo.write(
+        "runtime/langgraph_factory/transport.py",
+        CLEAN_TRANSPORT + 'FALLBACK_CLI = "gemini"\n',
+    )
+    report = repo.scan("production")
+    assert report["valid"] is False
+    assert len(report["violations"]) == 1
+    violation = report["violations"][0]
+    assert violation["path"] == "runtime/langgraph_factory/transport.py"
+    assert violation["code"] == "PROHIBITED_PROVIDER_TERM"
+    code, payload = repo.cli()
+    assert code == 1
+    assert payload["ok"] is False

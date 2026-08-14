@@ -84,14 +84,14 @@ SPEC_SECTION_9 = {
 }
 
 EXPECTED_FAMILY = {
-    "M01_RESEARCH_UNIT_SOURCES": "openai",
-    "M02_CREATE_UNIT_DOMAIN_DATA": "openai",
-    "M03_WRITE_UNIT_CONTENT": "openai",
-    "M04_CREATE_UNIT_VISUALS": "openai",
-    "M05_REVIEW_ACTUAL_UNIT": "google",
-    "M06_REPAIR_NAMED_UNIT_ARTIFACT": "openai",
-    "M07_REVIEW_ACTUAL_WORKBOOK": "google",
-    "M08_REPAIR_NAMED_WORKBOOK_DEFECT": "openai",
+    "M01_RESEARCH_UNIT_SOURCES": "anthropic",
+    "M02_CREATE_UNIT_DOMAIN_DATA": "anthropic",
+    "M03_WRITE_UNIT_CONTENT": "anthropic",
+    "M04_CREATE_UNIT_VISUALS": "anthropic",
+    "M05_REVIEW_ACTUAL_UNIT": "openai",
+    "M06_REPAIR_NAMED_UNIT_ARTIFACT": "anthropic",
+    "M07_REVIEW_ACTUAL_WORKBOOK": "openai",
+    "M08_REPAIR_NAMED_WORKBOOK_DEFECT": "anthropic",
 }
 
 
@@ -372,14 +372,14 @@ def test_family_split_matches_the_frozen_registry():
     assert mn.MODEL_NODE_FAMILIES == EXPECTED_FAMILY
     for job_id, family in EXPECTED_FAMILY.items():
         assert registry[job_id].family == family
-        assert registry[job_id].cli == ("gemini" if family == "google" else "codex")
+        assert registry[job_id].cli == ("codex" if family == "openai" else "claude")
+    claude = {job for job, family in EXPECTED_FAMILY.items() if family == "anthropic"}
     codex = {job for job, family in EXPECTED_FAMILY.items() if family == "openai"}
-    gemini = {job for job, family in EXPECTED_FAMILY.items() if family == "google"}
-    assert codex == {"M01_RESEARCH_UNIT_SOURCES", "M02_CREATE_UNIT_DOMAIN_DATA",
-                     "M03_WRITE_UNIT_CONTENT", "M04_CREATE_UNIT_VISUALS",
-                     "M06_REPAIR_NAMED_UNIT_ARTIFACT",
-                     "M08_REPAIR_NAMED_WORKBOOK_DEFECT"}
-    assert gemini == {"M05_REVIEW_ACTUAL_UNIT", "M07_REVIEW_ACTUAL_WORKBOOK"}
+    assert claude == {"M01_RESEARCH_UNIT_SOURCES", "M02_CREATE_UNIT_DOMAIN_DATA",
+                      "M03_WRITE_UNIT_CONTENT", "M04_CREATE_UNIT_VISUALS",
+                      "M06_REPAIR_NAMED_UNIT_ARTIFACT",
+                      "M08_REPAIR_NAMED_WORKBOOK_DEFECT"}
+    assert codex == {"M05_REVIEW_ACTUAL_UNIT", "M07_REVIEW_ACTUAL_WORKBOOK"}
 
 
 def test_a_projection_exists_for_every_job_and_both_m01_phases():

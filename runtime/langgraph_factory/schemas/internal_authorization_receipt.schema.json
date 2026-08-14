@@ -12,7 +12,7 @@
   "properties": {
     "receipt_id": {"type": "string", "minLength": 1},
     "authorization_digest": {"type": "string", "pattern": "^[0-9a-f]{64}$"},
-    "provider": {"type": "string", "enum": ["openai", "google", "primary_source_hosts"]},
+    "provider": {"type": "string", "enum": ["anthropic", "openai", "primary_source_hosts"]},
     "data_classes": {"type": "array", "minItems": 1, "items": {"type": "string", "minLength": 1}},
     "curriculum_digest": {"type": "string", "pattern": "^[0-9a-f]{64}$"},
     "run_id": {"type": "string", "minLength": 1},

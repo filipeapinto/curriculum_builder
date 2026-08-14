@@ -13,6 +13,8 @@ import pytest
 
 from runtime.langgraph_factory.egress import (
     MODEL_API_HOSTS,
+    PROVIDER_DATA_CLASSES,
+    PROVIDERS,
     AuthorizationDenied,
     AuthorizationRecord,
     EgressDenied,
@@ -38,8 +40,8 @@ def make_record(output_root: Path, **overrides) -> AuthorizationRecord:
         "approved_at_utc": "2026-08-11T00:00:00+00:00",
         "expires_at_utc": (datetime.now(timezone.utc) + timedelta(days=1)).isoformat(),
         "providers": {
-            "openai": ["manifest_unit_projection", "schemas_and_rubrics"],
-            "google": ["shipped_pdf", "rasterized_pages"],
+            "anthropic": ["manifest_unit_projection", "schemas_and_rubrics"],
+            "openai": ["shipped_pdf", "rasterized_pages"],
             "primary_source_hosts": ["primary_source_bytes"],
         },
     }
@@ -76,16 +78,63 @@ def grant(record: AuthorizationRecord, output_root: Path, provider="primary_sour
         curriculum_digest=CURRICULUM_DIGEST, run_id=RUN_ID, output_root=output_root)
 
 
+# ------------------------------------------------ retired third-party provider is gone
+
+
+def test_the_allowlist_carries_exactly_the_three_approved_provider_classes():
+    """spec 7.4: no authorization class for any provider other than anthropic, openai,
+    and primary_source_hosts exists in this specification."""
+    assert PROVIDERS == ("anthropic", "openai", "primary_source_hosts")
+    assert set(PROVIDER_DATA_CLASSES) == {"anthropic", "openai", "primary_source_hosts"}
+
+
+def test_the_retired_provider_class_is_dropped_not_merely_renamed(output_root: Path):
+    """The old review-family provider key does not survive under a new spelling: it is
+    unknown to the allowlist and cannot authorize or transmit anything."""
+    with pytest.raises(AuthorizationDenied) as denied:
+        make_record(output_root, providers={"third_party_review": ["shipped_pdf"]})
+    assert denied.value.reason == "unknown_provider"
+
+    record = make_record(output_root)
+    with pytest.raises(AuthorizationDenied) as via_transmission:
+        authorize_transmission(
+            record, provider="third_party_review", data_classes=("shipped_pdf",),
+            curriculum_digest=CURRICULUM_DIGEST, run_id=RUN_ID, output_root=output_root)
+    assert via_transmission.value.reason == "unknown_provider"
+
+
+def test_the_retired_providers_model_api_hosts_are_dropped_entirely():
+    """spec 7.4: the retired review-family provider's model-API hosts are removed from
+    the allowlist entirely, not merely relabeled — MODEL_API_HOSTS now names only the
+    two approved providers' own endpoints."""
+    assert MODEL_API_HOSTS == frozenset({"api.openai.com", "chatgpt.com", "api.anthropic.com"})
+    assert len(MODEL_API_HOSTS) == 3
+
+
+def test_a_host_no_longer_on_the_allowlist_still_fails_closed_not_open(
+    guard: EgressGuard, receipts: ReceiptLog
+):
+    """Dropping a host from MODEL_API_HOSTS must never silently widen access: an
+    unpinned model-style endpoint still hits the generic no-active-retrieval denial,
+    it does not become reachable just because it is no longer named explicitly."""
+    unpinned_host = "unpinned-model-endpoint.example.net"
+    assert unpinned_host not in MODEL_API_HOSTS
+    with pytest.raises(EgressDenied) as denied:
+        socket.socket().connect((unpinned_host, 443))
+    assert denied.value.reason == "unauthorized_socket_no_active_retrieval"
+    assert receipts.denials[-1]["denial_reason"] == "unauthorized_socket_no_active_retrieval"
+
+
 # --------------------------------------------------------------- authorization record
 
 
 def test_record_rejects_unknown_provider_and_undeclared_data_class(output_root: Path):
     with pytest.raises(AuthorizationDenied) as unknown:
-        make_record(output_root, providers={"anthropic": ["shipped_pdf"]})
+        make_record(output_root, providers={"azure": ["shipped_pdf"]})
     assert unknown.value.reason == "unknown_provider"
 
     with pytest.raises(AuthorizationDenied) as undeclared:
-        make_record(output_root, providers={"google": ["manifest_unit_projection"]})
+        make_record(output_root, providers={"openai": ["manifest_unit_projection"]})
     assert undeclared.value.reason == "undeclared_data_class"
 
 
@@ -95,12 +144,12 @@ def test_record_rejects_unknown_provider_and_undeclared_data_class(output_root: 
         ({"record": None}, "authorization_absent"),
         ({"run_id": "some-other-run"}, "wrong_run_scope"),
         ({"curriculum_digest": OTHER_DIGEST}, "wrong_curriculum_digest"),
-        ({"provider": "google", "data_classes": ("shipped_pdf",),
+        ({"provider": "openai", "data_classes": ("shipped_pdf",),
           "output_root": "elsewhere"}, "wrong_output_scope"),
         ({"provider": "primary_source_hosts",
           "data_classes": ("primary_source_bytes",), "drop_provider": True},
          "provider_not_authorized"),
-        ({"provider": "openai", "data_classes": ("named_repair_findings",)},
+        ({"provider": "anthropic", "data_classes": ("named_repair_findings",)},
          "data_class_not_authorized"),
         ({"expired": True}, "authorization_expired"),
     ],
@@ -110,7 +159,7 @@ def test_authorization_fails_closed_for_every_scope_mismatch(
 ):
     providers = None
     if mutation.get("drop_provider"):
-        providers = {"openai": ["manifest_unit_projection"]}
+        providers = {"anthropic": ["manifest_unit_projection"]}
     kwargs = {}
     if mutation.get("expired"):
         kwargs["expires_at_utc"] = "2020-01-01T00:00:00+00:00"
@@ -124,7 +173,7 @@ def test_authorization_fails_closed_for_every_scope_mismatch(
     with pytest.raises(AuthorizationDenied) as denied:
         authorize_transmission(
             record,
-            provider=mutation.get("provider", "openai"),
+            provider=mutation.get("provider", "anthropic"),
             data_classes=mutation.get("data_classes", ("manifest_unit_projection",)),
             curriculum_digest=mutation.get("curriculum_digest", CURRICULUM_DIGEST),
             run_id=mutation.get("run_id", RUN_ID),
@@ -134,10 +183,10 @@ def test_authorization_fails_closed_for_every_scope_mismatch(
 
 
 def test_granted_receipt_carries_full_scope(output_root: Path):
-    receipt = grant(make_record(output_root), output_root, provider="openai",
+    receipt = grant(make_record(output_root), output_root, provider="anthropic",
                     data_classes=("manifest_unit_projection",))
     assert receipt["decision"] == "granted"
-    assert receipt["provider"] == "openai"
+    assert receipt["provider"] == "anthropic"
     assert receipt["curriculum_digest"] == CURRICULUM_DIGEST
     assert receipt["run_id"] == RUN_ID
     assert receipt["output_root"] == str(output_root.resolve())
@@ -146,14 +195,14 @@ def test_granted_receipt_carries_full_scope(output_root: Path):
 
 def test_subprocess_authorization_receipts_both_outcomes(output_root: Path, receipts: ReceiptLog):
     authorize_subprocess_transmission(
-        make_record(output_root), provider="openai",
+        make_record(output_root), provider="anthropic",
         data_classes=("manifest_unit_projection",), curriculum_digest=CURRICULUM_DIGEST,
         run_id=RUN_ID, output_root=output_root, receipts=receipts)
     assert receipts.allowed[-1]["channel"] == "subprocess_transmission"
 
     with pytest.raises(AuthorizationDenied):
         authorize_subprocess_transmission(
-            None, provider="openai", data_classes=("manifest_unit_projection",),
+            None, provider="anthropic", data_classes=("manifest_unit_projection",),
             curriculum_digest=CURRICULUM_DIGEST, run_id=RUN_ID,
             output_root=output_root, receipts=receipts)
     assert receipts.denials[-1]["denial_reason"] == "authorization_absent"
@@ -332,7 +381,7 @@ def test_unauthorized_retrieval_makes_no_connection(guard: EgressGuard, output_r
         fetcher.fetch("https://standards.example.org/spec.html", authorization_receipt=None)
     assert absent.value.reason == "authorization_absent"
 
-    wrong_provider = grant(make_record(output_root), output_root, provider="google",
+    wrong_provider = grant(make_record(output_root), output_root, provider="openai",
                            data_classes=("shipped_pdf",))
     with pytest.raises(EgressDenied) as mismatched:
         fetcher.fetch("https://standards.example.org/spec.html",

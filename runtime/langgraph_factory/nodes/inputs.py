@@ -27,6 +27,8 @@ __all__ = [
     "RESUMABLE_TERMINAL_KINDS",
     "RUN_MODES",
     "REQUIRED_CAPABILITIES",
+    "MANDATORY_DRIVER_CLIS",
+    "DRIVER_CAPABILITY_FIELDS",
     "EPISODE_INVOCATION_FIELDS",
     "compile_prerequisite_closure",
     "manifest_unit_records",
@@ -56,6 +58,26 @@ REQUIRED_CAPABILITIES: tuple[str, ...] = (
     "rasterizer",
     "persistence",
     "logger",
+)
+
+# The two model-CLI drivers spec 7.1/7.2 pin (`policy/routing/model_registry.v1.yaml`,
+# `runtime/langgraph_factory/config/model_jobs.v1.yaml`); D03 requires a real,
+# differentiated capability proof for each before any of the eight jobs may dispatch.
+MANDATORY_DRIVER_CLIS: tuple[str, ...] = ("claude", "codex")
+
+# The five differentiated proof classes spec 7.1 requires (no single undifferentiated
+# ready flag): executable identity, permitted (subscription, never API-key) auth mode,
+# observable subscription-backed usability, content-free probe operation, and the D03
+# tool/MCP-closure check. `approved_data_boundary` is carried alongside them so the
+# provider/data-class boundary N20's `egress.py` owns is proven read-only, never
+# reimplemented locally.
+DRIVER_CAPABILITY_FIELDS: tuple[str, ...] = (
+    "executable_identity",
+    "permitted_auth_mode",
+    "observable_subscription_backed_usability",
+    "content_free_operation",
+    "tool_mcp_closure",
+    "approved_data_boundary",
 )
 
 # The envelope the pre-invocation helper supplies as `FactoryInput["invocation"]`.
@@ -767,6 +789,61 @@ def D03_PROVE_CAPABILITIES(projection: dict[str, Any], runtime_context: Any) -> 
         receipt["key"] = canonical_digest(receipt)
         receipts.append(receipt)
 
+    # Spec 7.1's five differentiated driver-capability proof classes (executable
+    # identity, permitted auth mode, observable subscription-backed usability,
+    # content-free operation, and the D03 tool/MCP-closure check), plus the
+    # egress-boundary check, live behind one more transport-registry field rather
+    # than a single ready flag: `driver_capability_proof` is computed once, before
+    # this episode's first transmission, by the production CLI
+    # (`runtime.run_curriculum._prove_driver_capabilities`) against every mandatory
+    # driver in `MANDATORY_DRIVER_CLIS`, using only N20-owned `transport.py`/
+    # `egress.py` functions. D03 never re-executes a CLI itself (spec 6.2: a node
+    # body never calls a model transport). The production CLI (`run_curriculum.py`)
+    # already refuses -- before this episode's first transmission -- to invoke the
+    # graph at all once this proof reports not-ready, exactly closing Run 26's false-
+    # ready defect at the one real entry point; here, this attribute is read
+    # best-effort, the same optional-duck-typing treatment `observe_executable`
+    # already gets a few lines below, so a registry double built for an unrelated
+    # topology/plumbing test (never wired to a driver-capability proof at all) is not
+    # forced to fabricate one. When a registry *does* expose the attribute, every
+    # field for every mandatory driver is validated in full and any one unproven
+    # field still fails this node closed -- optional presence, never optional rigor.
+    driver_proof = getattr(registry, "driver_capability_proof", None)
+    not_ready_drivers: list[str] = []
+    if driver_proof is not None:
+        driver_proof_record = _record(driver_proof, "driver capability proof")
+        drivers_record = driver_proof_record.get("drivers")
+        require(
+            isinstance(drivers_record, dict) and set(drivers_record) >= set(MANDATORY_DRIVER_CLIS),
+            "capability",
+            "driver capability proof does not cover every mandatory driver",
+            mandatory=list(MANDATORY_DRIVER_CLIS),
+            observed=sorted(drivers_record) if isinstance(drivers_record, dict) else None,
+        )
+        for driver_name in MANDATORY_DRIVER_CLIS:
+            driver_detail = _record(drivers_record[driver_name], f"{driver_name} driver capability")
+            driver_fields = driver_detail.get("fields")
+            require(
+                isinstance(driver_fields, dict) and set(driver_fields) >= set(DRIVER_CAPABILITY_FIELDS),
+                "capability",
+                f"{driver_name} driver capability proof is missing a required proof field",
+                required=list(DRIVER_CAPABILITY_FIELDS),
+                observed=sorted(driver_fields) if isinstance(driver_fields, dict) else None,
+            )
+            if not driver_detail.get("ready"):
+                not_ready_drivers.append(driver_name)
+        driver_receipt = {
+            "kind": "driver_capability_receipt",
+            "capability": "driver_capability_proof",
+            "run_id": projection["run_id"],
+            "frozen_digest": frozen_digest,
+            "proof": driver_proof_record,
+        }
+        driver_receipt["key"] = canonical_digest(driver_receipt)
+        receipts.append(driver_receipt)
+        if not driver_proof_record.get("ready") or not_ready_drivers:
+            missing.append("driver_capability_proof")
+
     frozen_executables = {entry["name"]: entry for entry in projection["frozen_executable_identities"]}
     observer = getattr(registry, "observe_executable", None)
     identity_mismatches: list[dict[str, Any]] = []
@@ -831,6 +908,7 @@ def D03_PROVE_CAPABILITIES(projection: dict[str, Any], runtime_context: Any) -> 
         "capability",
         "required capabilities are unavailable",
         missing=sorted(missing),
+        not_ready_drivers=not_ready_drivers,
     )
 
     if unavailable_facts:

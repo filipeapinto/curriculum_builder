@@ -47,11 +47,14 @@ SCHEMA_DIR = PACKAGE_ROOT / "schemas"
 PROMPT_DIR = PACKAGE_ROOT / "prompts"
 REPO_ROOT = PACKAGE_ROOT.parents[1]
 
-AUTHORING_FAMILY = "openai"
-REVIEW_FAMILY = "google"
+AUTHORING_FAMILY = "anthropic"
+REVIEW_FAMILY = "openai"
+
+CLAUDE_PERMITTED_TOOLS = frozenset({"StructuredOutput"})
 
 RESERVED_WORKSPACE_NAMES = frozenset({
     "authorized_input.json", "output.schema.json", "result.json",
+    "cli_schema_projection.json",
 })
 STAGED_NAME_PATTERN = re.compile(r"^[A-Za-z0-9][A-Za-z0-9._-]{0,120}$")
 
@@ -176,12 +179,12 @@ def load_job_registry(path: Path | str = REGISTRY_PATH) -> Mapping[str, JobRoute
             retry_limit=int(entry["retry_limit"]),
             data_classes=tuple(entry["data_classes"]),
         )
-        if route.cli not in {"codex", "gemini"}:
+        if route.cli not in {"codex", "claude"}:
             raise RouteRejected(f"unknown cli for {route.job_id}: {route.cli}")
-        if route.cli == "codex" and route.family != AUTHORING_FAMILY:
-            raise RouteRejected(f"codex route {route.job_id} must be family {AUTHORING_FAMILY}")
-        if route.cli == "gemini" and route.family != REVIEW_FAMILY:
-            raise RouteRejected(f"gemini route {route.job_id} must be family {REVIEW_FAMILY}")
+        if route.cli == "claude" and route.family != AUTHORING_FAMILY:
+            raise RouteRejected(f"claude route {route.job_id} must be family {AUTHORING_FAMILY}")
+        if route.cli == "codex" and route.family != REVIEW_FAMILY:
+            raise RouteRejected(f"codex route {route.job_id} must be family {REVIEW_FAMILY}")
         if route.job_id in routes:
             raise RouteRejected(f"duplicate job id {route.job_id}")
         routes[route.job_id] = route
@@ -309,31 +312,113 @@ def build_codex_argv(
     ]
 
 
-def build_gemini_argv(*, model: str, instruction: str) -> list[str]:
-    """The pinned Gemini invocation (spec 7.3)."""
+def build_claude_argv(
+    *,
+    workspace: Path | str,
+    model: str,
+    effort: str,
+    cli_schema_projection: Mapping[str, Any],
+) -> list[str]:
+    """The pinned Claude invocation (spec 7.2).
+
+    No positional instruction: `--tools ""` leaves the worker no file-reading tool, so
+    the instruction and the authorized-input projection are delivered together on
+    stdin (`build_claude_stdin_payload`), never as an argv token or a staged file the
+    worker would have to open. `--json-schema` takes the CLI-schema projection inline
+    as JSON text, not a file path — a live probe against the installed CLI proved a
+    bare path argument and the canonical schema's own `$schema` dialect reference are
+    both rejected (spec 7.2, N20-F03).
+    """
     return [
-        "gemini", "-m", model, "-s", "--approval-mode", "default",
-        "--output-format", "json", instruction,
+        "claude", "--print",
+        "--output-format", "stream-json", "--verbose",
+        "--json-schema", canonical_json(dict(cli_schema_projection)),
+        "--model", model, "--effort", effort,
+        "--permission-mode", "plan",
+        "--tools", "",
+        "--add-dir", str(workspace),
+        "--no-session-persistence",
+        "--setting-sources", "",
     ]
 
 
-def build_job_argv(route: JobRoute, *, workspace: Path, instruction: str) -> list[str]:
+def build_job_argv(
+    route: JobRoute,
+    *,
+    workspace: Path,
+    instruction: str | None = None,
+    cli_schema_projection: Mapping[str, Any] | None = None,
+) -> list[str]:
     if route.cli == "codex":
+        if instruction is None:
+            raise RouteRejected(f"{route.job_id}: codex requires an instruction argument")
         return build_codex_argv(workspace=workspace, model=route.model,
                                 reasoning_effort=route.reasoning_effort,
                                 instruction=instruction)
-    if route.reasoning_effort != "cli_model_default":
-        raise RouteRejected(
-            f"{route.job_id}: gemini exposes no effort argument; "
-            f"reasoning must be cli_model_default, not {route.reasoning_effort!r}")
-    return build_gemini_argv(model=route.model, instruction=instruction)
+    if cli_schema_projection is None:
+        raise RouteRejected(f"{route.job_id}: claude requires a cli_schema_projection")
+    return build_claude_argv(workspace=workspace, model=route.model,
+                             effort=route.reasoning_effort,
+                             cli_schema_projection=cli_schema_projection)
+
+
+def build_cli_schema_projection(schema: Mapping[str, Any]) -> dict[str, Any]:
+    """The deterministic CLI-schema projection `--json-schema` actually accepts (spec 7.2).
+
+    Strips `$schema` and any other dialect metadata the CLI's schema parameter does not
+    accept, and rejects — never silently drops — an external `$ref` (one that does not
+    resolve inside the document itself), since a silently dropped external reference
+    would change validation semantics the canonical schema expresses. Pure function of
+    the input schema, so two calls on the same canonical schema produce byte-identical
+    output once serialized by `canonical_json`.
+    """
+
+    def _walk(node: Any, *, path: str) -> Any:
+        if isinstance(node, Mapping):
+            projected: dict[str, Any] = {}
+            for key, value in node.items():
+                if key == "$schema":
+                    continue
+                if key == "$ref":
+                    if not (isinstance(value, str) and value.startswith("#")):
+                        raise TransportError(
+                            f"cli schema projection: external $ref not permitted at "
+                            f"{path}: {value!r}")
+                projected[key] = _walk(value, path=f"{path}/{key}")
+            return projected
+        if isinstance(node, list):
+            return [_walk(item, path=f"{path}[{index}]") for index, item in enumerate(node)]
+        return node
+
+    return _walk(dict(schema), path="$")
+
+
+def build_claude_stdin_payload(*, instruction: str, projection: Mapping[str, Any]) -> str:
+    """The JSON-encoded `{instruction, authorized_input_projection}` document (spec 7.2).
+
+    The same canonical projection also staged to `authorized_input.json` for durable
+    receipt/audit hashing, delivered here on stdin because `--tools ""` leaves the
+    Claude worker no file-reading tool to open that staged file with.
+    """
+
+    return canonical_json({
+        "instruction": instruction,
+        "authorized_input_projection": dict(projection),
+    })
 
 
 def redact_command(argv: Sequence[str]) -> list[str]:
+    """Redact any long token, not only the last one.
+
+    Codex's instruction is the final argv token, but Claude's inline CLI-schema
+    projection (`--json-schema <text>`) is not last, so redaction cannot assume
+    position; any token long enough to carry instruction or schema content is
+    redacted by its own hash instead.
+    """
     redacted: list[str] = []
-    for index, token in enumerate(argv):
-        if index == len(argv) - 1 and len(token) > 200:
-            redacted.append(f"<instruction:{sha256_bytes(token.encode())[:16]}>")
+    for token in argv:
+        if len(token) > 200:
+            redacted.append(f"<redacted:{sha256_bytes(token.encode())[:16]}>")
         else:
             redacted.append(token)
     return redacted
@@ -486,7 +571,7 @@ def prove_transport_capabilities(
 
     routes = registry if registry is not None else load_job_registry()
     clis = sorted({route.cli for route in routes.values()})
-    required_flags = {"codex": "--json", "gemini": "--output-format"}
+    required_flags = {"codex": "--json", "claude": "--json-schema"}
     observed_flags: dict[str, bool] = {}
     for cli in clis:
         help_text = (identity_help or {}).get(cli)
@@ -515,7 +600,9 @@ def prove_transport_capabilities(
         "identity_observation": {
             "required": True,
             "enforced": all(observed_flags.values()),
-            "mechanism": "codex --json JSONL events; gemini --output-format json stats.models",
+            "mechanism": (
+                "codex --json JSONL events; claude --output-format stream-json --verbose "
+                "per-turn assistant message.model"),
             "evidence": canonical_json(observed_flags),
             "limitation": None,
         },
@@ -606,44 +693,117 @@ def observe_codex_identity(event_stream: str) -> ObservedIdentity:
         raise IdentityUnobservable(
             "codex event stream names no executed model; route conformance cannot be claimed")
     return ObservedIdentity(
-        family=AUTHORING_FAMILY,
+        family=REVIEW_FAMILY,
         model=model,
         model_source=f"codex_event:{model_source}",
         family_source=(f"codex_event:{provider}" if provider else "executable_identity:codex-cli"),
     )
 
 
-def observe_gemini_identity(stdout: str) -> ObservedIdentity:
-    """Read the executed model out of the Gemini JSON envelope's session metrics."""
-    try:
-        envelope = json.loads(stdout)
-    except json.JSONDecodeError as error:
-        raise IdentityUnobservable(f"gemini envelope is not JSON: {error}") from error
-    stats = envelope.get("stats") if isinstance(envelope, Mapping) else None
-    models = stats.get("models") if isinstance(stats, Mapping) else None
-    if not isinstance(models, Mapping) or not models:
+def _iter_stream_json_events(stream_text: str) -> list[Mapping[str, Any]]:
+    events: list[Mapping[str, Any]] = []
+    for line in stream_text.splitlines():
+        line = line.strip()
+        if not line.startswith("{"):
+            continue
+        try:
+            event = json.loads(line)
+        except json.JSONDecodeError:
+            continue
+        if isinstance(event, Mapping):
+            events.append(event)
+    return events
+
+
+def observe_claude_identity(stream_text: str) -> ObservedIdentity:
+    """Read the executed model from the per-turn assistant event's `message.model`.
+
+    Never from the final envelope's aggregate `modelUsage` map: a live probe against
+    the installed CLI (2.1.231) proved that map is not guaranteed single-entry (a
+    probe recorded `claude-haiku-4-5-20251001` alongside the requested
+    `claude-sonnet-5`), so it cannot be the identity source (spec 7.2, N20-F05). The
+    per-turn assistant event with `parent_tool_use_id` null is the unambiguous signal;
+    the last such event wins, matching Codex's reroute-supersedes-initial rule.
+    """
+    model: str | None = None
+    for event in _iter_stream_json_events(stream_text):
+        if event.get("type") != "assistant":
+            continue
+        if event.get("parent_tool_use_id") is not None:
+            continue
+        message = event.get("message")
+        if not isinstance(message, Mapping):
+            continue
+        observed = message.get("model")
+        if isinstance(observed, str) and observed:
+            model = observed
+    if not model:
         raise IdentityUnobservable(
-            "gemini envelope carries no stats.models; executed identity is unobservable")
-    called = [
-        name for name, metrics in models.items()
-        if isinstance(metrics, Mapping)
-        and int((metrics.get("api") or {}).get("totalRequests", 0) or 0) > 0
-    ]
-    if len(called) != 1:
-        raise IdentityUnobservable(
-            f"gemini envelope reports {len(called)} models with requests; expected exactly one")
+            "claude stream-json output names no per-turn assistant message.model "
+            "(parent_tool_use_id null); route conformance cannot be claimed")
     return ObservedIdentity(
-        family=REVIEW_FAMILY,
-        model=called[0],
-        model_source="gemini_envelope:stats.models",
-        family_source="executable_identity:gemini-cli",
+        family=AUTHORING_FAMILY,
+        model=model,
+        model_source="claude_stream_json:assistant.message.model",
+        family_source="executable_identity:claude-cli",
     )
 
 
 def observe_identity(route: JobRoute, *, stdout: str) -> ObservedIdentity:
     if route.cli == "codex":
         return observe_codex_identity(stdout)
-    return observe_gemini_identity(stdout)
+    return observe_claude_identity(stdout)
+
+
+def prove_claude_tool_closure(
+    stream_text: str, *, permitted_tools: frozenset[str] = CLAUDE_PERMITTED_TOOLS,
+) -> dict[str, Any]:
+    """Inspect the stream-json init event's tool/MCP-server lists directly (spec 7.1 class 5).
+
+    Independent of what `--tools`/`--setting-sources` claim: a live probe found
+    `--setting-sources ""` still listed three claude.ai MCP servers (all
+    `needs-auth`, no tool) in the init event (N20-F06). Closure requires no tool
+    beyond the permitted structured-output channel, and no MCP server whose status
+    is not an auth/connection failure (i.e. nothing actually invokable).
+    """
+    init_event: Mapping[str, Any] | None = None
+    for event in _iter_stream_json_events(stream_text):
+        if event.get("type") == "system" and event.get("subtype") == "init":
+            init_event = event
+            break
+    if init_event is None:
+        raise CapabilityProofFailed(
+            "claude stream-json output carries no system/init event; tool/MCP closure "
+            "is unproven")
+    tools = init_event.get("tools")
+    if not isinstance(tools, list):
+        raise CapabilityProofFailed("claude init event carries no tools list")
+    observed_tools = sorted(str(item) for item in tools)
+    extra_tools = sorted(set(observed_tools) - set(permitted_tools))
+
+    mcp_servers = init_event.get("mcp_servers")
+    observed_servers = list(mcp_servers) if isinstance(mcp_servers, list) else []
+    non_invokable_status = {"needs-auth", "failed", "disconnected", "error"}
+    invokable_servers = [
+        server for server in observed_servers
+        if isinstance(server, Mapping)
+        and str(server.get("status", "")).lower() not in non_invokable_status
+    ]
+    closed = not extra_tools and not invokable_servers
+    return {
+        "closed": closed,
+        "observed_tools": observed_tools,
+        "extra_tools": extra_tools,
+        "observed_mcp_servers": observed_servers,
+        "invokable_mcp_servers": invokable_servers,
+    }
+
+
+def require_claude_tool_closure(closure: Mapping[str, Any]) -> None:
+    if not closure.get("closed"):
+        raise CapabilityProofFailed(
+            f"claude tool/MCP closure unproven: extra_tools={closure.get('extra_tools')} "
+            f"invokable_mcp_servers={closure.get('invokable_mcp_servers')}")
 
 
 def assert_identity_matches(route: JobRoute, observed: ObservedIdentity) -> None:
@@ -694,13 +854,25 @@ def parse_single_json_document(text: str) -> dict[str, Any]:
     return value
 
 
-def extract_envelope_response(stdout: str) -> str:
-    """One registered deterministic extractor for CLIs that emit an outer envelope."""
-    envelope = parse_single_json_document(stdout)
-    response = envelope.get("response")
-    if not isinstance(response, str) or not response.strip():
-        raise ResultParseError("envelope_carries_no_response")
-    return response
+def extract_claude_structured_output(stdout: str) -> str:
+    """One registered deterministic extractor: the final stream-json result event's
+    `structured_output` field.
+
+    The only channel available for a Claude job: `--tools ""` leaves the worker no
+    file-write tool, so it can never write `result.json` itself.
+    """
+    result_event: Mapping[str, Any] | None = None
+    for event in _iter_stream_json_events(stdout):
+        if event.get("type") == "result":
+            result_event = event
+    if result_event is None:
+        raise ResultParseError("no_claude_result_event")
+    structured = result_event.get("structured_output")
+    if structured is None:
+        raise ResultParseError("claude_result_carries_no_structured_output")
+    if isinstance(structured, str):
+        return structured
+    return canonical_json(structured)
 
 
 def load_candidate(
@@ -714,9 +886,11 @@ def load_candidate(
     if result_path.is_file():
         document = result_path.read_text(encoding="utf-8")
         source = "result_file"
+    elif route.cli == "claude":
+        document = extract_claude_structured_output(stdout)
+        source = "claude_stream_json_structured_output"
     else:
-        document = extract_envelope_response(stdout)
-        source = "envelope_extractor"
+        raise ResultParseError("no_result_file_and_no_registered_envelope_extractor")
     candidate = parse_single_json_document(document)
     try:
         jsonschema.Draft202012Validator(dict(schema)).validate(candidate)
@@ -787,6 +961,7 @@ class Workspace:
     prompt_sha256: str
     schema_sha256: str
     input_sha256: str
+    cli_schema_projection_sha256: str | None = None
     staged_sha256: dict[str, str] = field(default_factory=dict)
     baseline: dict[str, str] = field(default_factory=dict)
 
@@ -822,6 +997,7 @@ def stage_workspace(
     authorization_receipt: Mapping[str, Any],
     staged_inputs: Sequence[StagedInput] = (),
     home_root: Path | str | None = None,
+    cli_schema_projection: Mapping[str, Any] | None = None,
 ) -> Workspace:
     """Build the disposable activation directory described by spec 7.1."""
     root = Path(output_root).resolve() / ".workspaces" / episode_id / activation_id
@@ -846,6 +1022,12 @@ def stage_workspace(
     shutil.copyfile(schema_source, root / "output.schema.json")
     shutil.copyfile(prompt_source, root / route.prompt)
 
+    cli_schema_sha256: str | None = None
+    if cli_schema_projection is not None:
+        cli_schema_text = canonical_json(dict(cli_schema_projection))
+        (root / "cli_schema_projection.json").write_text(cli_schema_text, encoding="utf-8")
+        cli_schema_sha256 = sha256_bytes(cli_schema_text.encode("utf-8"))
+
     staged_digests: dict[str, str] = {}
     reserved = RESERVED_WORKSPACE_NAMES | {route.prompt}
     for item in staged_inputs:
@@ -868,6 +1050,7 @@ def stage_workspace(
         prompt_sha256=sha256_file(prompt_source),
         schema_sha256=sha256_file(schema_source),
         input_sha256=sha256_file(input_path),
+        cli_schema_projection_sha256=cli_schema_sha256,
         staged_sha256=staged_digests,
     )
     workspace.baseline = workspace.inventory()
@@ -913,15 +1096,22 @@ def run_process(
     cwd: Path,
     env: Mapping[str, str],
     timeout_seconds: int,
+    stdin: str | None = None,
     term_grace_seconds: float = 5.0,
 ) -> ProcessOutcome:
-    """Process-group wall-clock timeout: TERM, wait five seconds, then KILL."""
+    """Process-group wall-clock timeout: TERM, wait five seconds, then KILL.
+
+    `stdin` carries a Claude job's JSON-encoded `{instruction,
+    authorized_input_projection}` document (spec 7.2); Codex jobs pass `None` and
+    inherit no stdin, matching their existing positional-instruction shape.
+    """
     process = subprocess.Popen(
         list(argv), cwd=str(cwd), env=dict(env), text=True,
+        stdin=subprocess.PIPE if stdin is not None else subprocess.DEVNULL,
         stdout=subprocess.PIPE, stderr=subprocess.PIPE, start_new_session=True)
     termination = "exited"
     try:
-        stdout, stderr = process.communicate(timeout=timeout_seconds)
+        stdout, stderr = process.communicate(input=stdin, timeout=timeout_seconds)
     except subprocess.TimeoutExpired:
         termination = "timeout_term"
         _signal_group(process, signal.SIGTERM)
@@ -1432,12 +1622,21 @@ class CliTransport:
         authorization_receipt: Mapping[str, Any],
     ) -> tuple[dict[str, Any], dict[str, Any]]:
         executable = self.executable(route.cli)
+        cli_schema_projection = (
+            build_cli_schema_projection(load_output_schema(route))
+            if route.cli == "claude" else None)
         workspace = stage_workspace(
             output_root=self.output_root, episode_id=episode_id, activation_id=activation_id,
             route=route, projection=projection, authorization_receipt=authorization_receipt,
-            staged_inputs=staged_inputs)
+            staged_inputs=staged_inputs, cli_schema_projection=cli_schema_projection)
         instruction = (workspace.path / route.prompt).read_text(encoding="utf-8")
-        argv = build_job_argv(route, workspace=workspace.path, instruction=instruction)
+        stdin_text: str | None = None
+        if route.cli == "claude":
+            argv = build_job_argv(route, workspace=workspace.path,
+                                  cli_schema_projection=cli_schema_projection)
+            stdin_text = build_claude_stdin_payload(instruction=instruction, projection=projection)
+        else:
+            argv = build_job_argv(route, workspace=workspace.path, instruction=instruction)
         profile_path = workspace.home / "profile.sb"
         profile_path.write_text(
             render_sandbox_profile(
@@ -1452,7 +1651,7 @@ class CliTransport:
         monotonic = time.monotonic()
         outcome = self.runner(
             sandboxed, cwd=workspace.path, env=environment,
-            timeout_seconds=route.timeout_seconds)
+            timeout_seconds=route.timeout_seconds, stdin=stdin_text)
         ended = utc_now()
 
         evidence_dir = self.evidence_root / episode_id / activation_id
@@ -1488,6 +1687,7 @@ class CliTransport:
             "workspace_path": str(workspace.path),
             "authorized_input_sha256": workspace.input_sha256,
             "output_schema_sha256": workspace.schema_sha256,
+            "cli_schema_projection_sha256": workspace.cli_schema_projection_sha256,
             "prompt_sha256": workspace.prompt_sha256,
             "staged_input_sha256": dict(workspace.staged_sha256),
             "result_sha256": None,

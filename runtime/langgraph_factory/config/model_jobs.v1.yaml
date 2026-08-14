@@ -8,18 +8,18 @@ identity_observation:
     mechanism: codex_jsonl_events
     required_flag: "--json"
     events: [session_configured, thread.started, model_reroute]
-  gemini:
-    mechanism: gemini_json_envelope_session_metrics
-    required_flag: "--output-format json"
-    pointer: stats.models
+  claude:
+    mechanism: claude_stream_json_per_turn_assistant_message_model
+    required_flag: "--output-format stream-json --verbose"
+    pointer: assistant.message.model (parent_tool_use_id null)
 
 jobs:
   - job_id: M01_RESEARCH_UNIT_SOURCES
     job_type: research_unit_sources
-    cli: codex
-    family: openai
-    provider: openai
-    model: gpt-5.6-sol
+    cli: claude
+    family: anthropic
+    provider: anthropic
+    model: claude-sonnet-5
     task_class: component_research
     reasoning_effort: xhigh
     schema: M01_research_unit_sources.schema.json
@@ -34,12 +34,12 @@ jobs:
 
   - job_id: M02_CREATE_UNIT_DOMAIN_DATA
     job_type: create_unit_domain_data
-    cli: codex
-    family: openai
-    provider: openai
-    model: gpt-5.6-sol
+    cli: claude
+    family: anthropic
+    provider: anthropic
+    model: claude-sonnet-5
     task_class: final_acceptance
-    reasoning_effort: max
+    reasoning_effort: high
     schema: M02_create_unit_domain_data.schema.json
     prompt: M02_create_unit_domain_data.prompt.md
     timeout_seconds: 900
@@ -51,10 +51,10 @@ jobs:
 
   - job_id: M03_WRITE_UNIT_CONTENT
     job_type: write_unit_content
-    cli: codex
-    family: openai
-    provider: openai
-    model: gpt-5.6-sol
+    cli: claude
+    family: anthropic
+    provider: anthropic
+    model: claude-sonnet-5
     task_class: child_explanatory_writing
     reasoning_effort: high
     schema: M03_write_unit_content.schema.json
@@ -68,10 +68,10 @@ jobs:
 
   - job_id: M04_CREATE_UNIT_VISUALS
     job_type: create_unit_visuals
-    cli: codex
-    family: openai
-    provider: openai
-    model: gpt-5.6-sol
+    cli: claude
+    family: anthropic
+    provider: anthropic
+    model: claude-sonnet-5
     task_class: photorealistic_visual_prompt
     reasoning_effort: high
     schema: M04_create_unit_visuals.schema.json
@@ -84,12 +84,12 @@ jobs:
 
   - job_id: M05_REVIEW_ACTUAL_UNIT
     job_type: review_actual_unit
-    cli: gemini
-    family: google
-    provider: google
-    model: gemini-3-pro-preview
+    cli: codex
+    family: openai
+    provider: openai
+    model: gpt-5.6-sol
     task_class: null
-    reasoning_effort: cli_model_default
+    reasoning_effort: xhigh
     schema: M05_review_actual_unit.schema.json
     prompt: M05_review_actual_unit.prompt.md
     timeout_seconds: 900
@@ -103,12 +103,12 @@ jobs:
 
   - job_id: M06_REPAIR_NAMED_UNIT_ARTIFACT
     job_type: repair_named_unit_artifact
-    cli: codex
-    family: openai
-    provider: openai
-    model: gpt-5.6-sol
+    cli: claude
+    family: anthropic
+    provider: anthropic
+    model: claude-sonnet-5
     task_class: final_acceptance
-    reasoning_effort: max
+    reasoning_effort: xhigh
     schema: M06_repair_named_unit_artifact.schema.json
     prompt: M06_repair_named_unit_artifact.prompt.md
     timeout_seconds: 900
@@ -122,12 +122,12 @@ jobs:
 
   - job_id: M07_REVIEW_ACTUAL_WORKBOOK
     job_type: review_actual_workbook
-    cli: gemini
-    family: google
-    provider: google
-    model: gemini-3-pro-preview
+    cli: codex
+    family: openai
+    provider: openai
+    model: gpt-5.6-sol
     task_class: null
-    reasoning_effort: cli_model_default
+    reasoning_effort: xhigh
     schema: M07_review_actual_workbook.schema.json
     prompt: M07_review_actual_workbook.prompt.md
     timeout_seconds: 900
@@ -141,12 +141,12 @@ jobs:
 
   - job_id: M08_REPAIR_NAMED_WORKBOOK_DEFECT
     job_type: repair_named_workbook_defect
-    cli: codex
-    family: openai
-    provider: openai
-    model: gpt-5.6-sol
+    cli: claude
+    family: anthropic
+    provider: anthropic
+    model: claude-sonnet-5
     task_class: workbook_assembly
-    reasoning_effort: high
+    reasoning_effort: xhigh
     schema: M08_repair_named_workbook_defect.schema.json
     prompt: M08_repair_named_workbook_defect.prompt.md
     timeout_seconds: 900

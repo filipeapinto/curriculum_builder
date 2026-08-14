@@ -1,0 +1,4 @@
+CONTRACT_V2_SCHEMA_V2_VALID
+frozen_before_entry: ['plans/27_langgraph_curriculum_factory_remediation/schemas/node_result.schema.v1.json', 'plans/27_langgraph_curriculum_factory_remediation/execution_package_v2/schemas/spec_approval.schema.v2.json']
+SCHEMA_V2_GENUINELY_FROZEN_IN_GRAPH_V5
+PARENT_SCHEMA_V1_NOT_LOADED_HERE

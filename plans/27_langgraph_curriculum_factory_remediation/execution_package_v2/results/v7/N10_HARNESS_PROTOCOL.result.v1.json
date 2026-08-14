@@ -1,0 +1,92 @@
+{
+  "attempt_id": "N10_HARNESS_PROTOCOL-execpkgv2-v7-attempt-1",
+  "changed_files": [
+    {
+      "change": "modified",
+      "path": "plans/27_langgraph_curriculum_factory_remediation/tests/test_forbidden_production_scan.py",
+      "sha256": "9ce7fe5b187620968ce289f73bbfc48a38ed1262386c25dc15116d0d8b3b2436"
+    },
+    {
+      "change": "created",
+      "path": "plans/27_langgraph_curriculum_factory_remediation/execution_package_v2/results/v7/evidence/N10_HARNESS_PROTOCOL/01_pytest_run1.log",
+      "sha256": "14fbe92cf2a69ba336fd5f365714ce79abe9ec27f7326161b3b5c677d32d32e8"
+    },
+    {
+      "change": "created",
+      "path": "plans/27_langgraph_curriculum_factory_remediation/execution_package_v2/results/v7/evidence/N10_HARNESS_PROTOCOL/02_pytest_run2.log",
+      "sha256": "e5291ac3cfbef8e4e1a83b2a5db85a39e4a987f0a09aa071a8cf5af6de307c0c"
+    },
+    {
+      "change": "created",
+      "path": "plans/27_langgraph_curriculum_factory_remediation/execution_package_v2/results/v7/evidence/N10_HARNESS_PROTOCOL/03_validate_plan_v2.log",
+      "sha256": "176e9ba38236264d063a17ac51d86f88018b960bd7c73c01c03e102a06cb6b07"
+    }
+  ],
+  "commands": [
+    {
+      "argv": ["python3", "-m", "pytest", "-q", "plans/27_langgraph_curriculum_factory_remediation/tests/test_run27_controller.py", "plans/27_langgraph_curriculum_factory_remediation/tests/test_node_result_protocol.py", "plans/27_langgraph_curriculum_factory_remediation/tests/test_forbidden_production_scan.py"],
+      "exit_code": 0,
+      "log": "plans/27_langgraph_curriculum_factory_remediation/execution_package_v2/results/v7/evidence/N10_HARNESS_PROTOCOL/01_pytest_run1.log",
+      "log_sha256": "14fbe92cf2a69ba336fd5f365714ce79abe9ec27f7326161b3b5c677d32d32e8"
+    },
+    {
+      "argv": ["python3", "-m", "pytest", "-q", "plans/27_langgraph_curriculum_factory_remediation/tests/test_run27_controller.py", "plans/27_langgraph_curriculum_factory_remediation/tests/test_node_result_protocol.py", "plans/27_langgraph_curriculum_factory_remediation/tests/test_forbidden_production_scan.py"],
+      "exit_code": 0,
+      "log": "plans/27_langgraph_curriculum_factory_remediation/execution_package_v2/results/v7/evidence/N10_HARNESS_PROTOCOL/02_pytest_run2.log",
+      "log_sha256": "e5291ac3cfbef8e4e1a83b2a5db85a39e4a987f0a09aa071a8cf5af6de307c0c"
+    },
+    {
+      "argv": ["python3", "plans/27_langgraph_curriculum_factory_remediation/execution_package_v2/tools/validate_plan_v2.py"],
+      "exit_code": 0,
+      "log": "plans/27_langgraph_curriculum_factory_remediation/execution_package_v2/results/v7/evidence/N10_HARNESS_PROTOCOL/03_validate_plan_v2.log",
+      "log_sha256": "176e9ba38236264d063a17ac51d86f88018b960bd7c73c01c03e102a06cb6b07"
+    }
+  ],
+  "evidence": [
+    "plans/27_langgraph_curriculum_factory_remediation/execution_package_v2/results/v7/evidence/N10_HARNESS_PROTOCOL/01_pytest_run1.log",
+    "plans/27_langgraph_curriculum_factory_remediation/execution_package_v2/results/v7/evidence/N10_HARNESS_PROTOCOL/02_pytest_run2.log",
+    "plans/27_langgraph_curriculum_factory_remediation/execution_package_v2/results/v7/evidence/N10_HARNESS_PROTOCOL/03_validate_plan_v2.log"
+  ],
+  "findings": [
+    {
+      "disposition": "resolved",
+      "id": "N10V7-F01",
+      "severity": "major",
+      "summary": "Re-running N10's admitted controller test suite against the current, more-advanced repository state (N20's real production implementation already exists on disk) surfaced one time-dependent test, test_the_scanner_reports_the_current_repository_debt_precisely, whose premise ('N20 and N30 have not run yet, so the live tree must still be dirty') was falsified by N20's genuine, already-completed cleanup of runtime/langgraph_factory/transport.py -- not a regression in the controller, but confirmation N20's real work is effective."
+    },
+    {
+      "disposition": "resolved",
+      "id": "N10V7-F02",
+      "severity": "major",
+      "summary": "Replaced the time-dependent test with two stable proofs per explicit user direction: (1) test_the_production_scan_reads_the_expected_real_repository_scope, a real-repository scope proof asserting the production scan reads a non-empty expected file set including transport.py, excludes plans/tests/outputs, and that report['valid'] == (violations == []) with every violation's path/code constrained -- true regardless of whether N20's bytes are clean or dirty; (2) test_a_prohibited_provider_reference_inserted_into_a_synthetic_repo_is_caught, a synthetic negative proof using the existing FakeRepo fixture that inserts a prohibited provider reference and requires valid: false, the exact path/code, and CLI exit 1. The pre-existing clean-fixture test (test_a_clean_tree_passes_both_scopes, asserting exit 0) was left unchanged. This decouples N10's own test suite from migration-progress state without weakening the anti-vacuity guarantee to 'dirty or clean' -- both new tests are unconditional, not tolerant of either state."
+    },
+    {
+      "disposition": "resolved",
+      "id": "N10V7-F03",
+      "severity": "observation",
+      "summary": "This edit is within N10_HARNESS_PROTOCOL's own declared write set (tests/test_run27_controller.py, test_node_result_protocol.py, test_forbidden_production_scan.py, controller/, schemas/scheduler_receipt.schema.v1.json, schemas/attempt_record.schema.v1.json) -- confirmed directly against implementation.graph.v7.yaml before editing. No production file, scanner behavior, or controller logic was modified; only the test file's own assertions changed."
+    },
+    {
+      "disposition": "resolved",
+      "id": "N10V7-F04",
+      "severity": "major",
+      "summary": "The complete 81-test controller suite (80 original plus one net additional test from the 1-test-to-2-test replacement) passed twice consecutively with identical pass counts, and plans/27_langgraph_curriculum_factory_remediation/execution_package_v2/tools/validate_plan_v2.py reports execution package v2's own implementation.graph.v7.yaml valid: true."
+    },
+    {
+      "disposition": "resolved",
+      "id": "N10V7-F05",
+      "severity": "critical",
+      "summary": "The historical N10 result at plans/27_langgraph_curriculum_factory_remediation/execution_package_v2/results/N10_HARNESS_PROTOCOL.result.v1.json remains byte-for-byte unchanged (sha256 a3b678c49c62254517d847b60537e7ed5372b29d81db458f13aadae4ecce7c70, reconfirmed directly). Its own changed_files array never referenced tests/test_forbidden_production_scan.py's hash (it only bound its own three evidence log files), so editing that shared test file today does not retroactively invalidate or require restating the historical record's own internal hash bindings."
+    }
+  ],
+  "invalidated_descendants": [],
+  "node_id": "N10_HARNESS_PROTOCOL",
+  "outcome": "PASSED",
+  "predecessor_receipts": {
+    "N00_SPEC_APPROVAL_GATE": "ec75a2bf31382da02a845ab6ae2625181df422cc15cd320040ea0a25107ad0db"
+  },
+  "prompt_sha256": "2114b50ba59fa1657b51179a7550bbd3bbb7e0770900b2d808f528263d20ae25",
+  "run_id": "run27-execpkgv2-v7-2026-08-13",
+  "schema_version": 1,
+  "source_spec_sha256": "e14df5a36ce12d700fe9fc4aa4aea466771bc89f31bc6e9d49f812c147b1bb3c"
+}

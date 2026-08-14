@@ -48,9 +48,9 @@ DIRECT_PINS = {
 FORBIDDEN_DISTRIBUTIONS = (
     "langchain",
     "langchain-openai",
-    "langchain-google-genai",
+    "langchain-anthropic",
     "openai",
-    "google-generativeai",
+    "anthropic",
 )
 
 PINNED_LINE = re.compile(r"^(?P<name>[A-Za-z0-9._-]+)==(?P<version>[^\s\\]+)")

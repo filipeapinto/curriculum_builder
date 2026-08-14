@@ -1,0 +1,69 @@
+{
+  "attempt_id": "N10_HARNESS_PROTOCOL-execpkgv2-attempt-1",
+  "changed_files": [
+    {
+      "change": "created",
+      "path": "plans/27_langgraph_curriculum_factory_remediation/execution_package_v2/results/evidence/N10_HARNESS_PROTOCOL/01_pytest_run1.log",
+      "sha256": "94511ac12b88ba4fc069c6cf28bb9ffcfe3280eb2788a21e2324f2dd0b84be68"
+    },
+    {
+      "change": "created",
+      "path": "plans/27_langgraph_curriculum_factory_remediation/execution_package_v2/results/evidence/N10_HARNESS_PROTOCOL/02_pytest_run2.log",
+      "sha256": "829acdb020cdbe67fb32295be2394966a4d0cf998e9d94b0de90e77e3e0da240"
+    },
+    {
+      "change": "created",
+      "path": "plans/27_langgraph_curriculum_factory_remediation/execution_package_v2/results/evidence/N10_HARNESS_PROTOCOL/03_validate_plan_v2.log",
+      "sha256": "176e9ba38236264d063a17ac51d86f88018b960bd7c73c01c03e102a06cb6b07"
+    }
+  ],
+  "commands": [
+    {
+      "argv": ["python3", "-m", "pytest", "-q", "plans/27_langgraph_curriculum_factory_remediation/tests/test_run27_controller.py", "plans/27_langgraph_curriculum_factory_remediation/tests/test_node_result_protocol.py", "plans/27_langgraph_curriculum_factory_remediation/tests/test_forbidden_production_scan.py"],
+      "exit_code": 0,
+      "log": "plans/27_langgraph_curriculum_factory_remediation/execution_package_v2/results/evidence/N10_HARNESS_PROTOCOL/01_pytest_run1.log",
+      "log_sha256": "94511ac12b88ba4fc069c6cf28bb9ffcfe3280eb2788a21e2324f2dd0b84be68"
+    },
+    {
+      "argv": ["python3", "-m", "pytest", "-q", "plans/27_langgraph_curriculum_factory_remediation/tests/test_run27_controller.py", "plans/27_langgraph_curriculum_factory_remediation/tests/test_node_result_protocol.py", "plans/27_langgraph_curriculum_factory_remediation/tests/test_forbidden_production_scan.py"],
+      "exit_code": 0,
+      "log": "plans/27_langgraph_curriculum_factory_remediation/execution_package_v2/results/evidence/N10_HARNESS_PROTOCOL/02_pytest_run2.log",
+      "log_sha256": "829acdb020cdbe67fb32295be2394966a4d0cf998e9d94b0de90e77e3e0da240"
+    },
+    {
+      "argv": ["python3", "plans/27_langgraph_curriculum_factory_remediation/execution_package_v2/tools/validate_plan_v2.py"],
+      "exit_code": 0,
+      "log": "plans/27_langgraph_curriculum_factory_remediation/execution_package_v2/results/evidence/N10_HARNESS_PROTOCOL/03_validate_plan_v2.log",
+      "log_sha256": "176e9ba38236264d063a17ac51d86f88018b960bd7c73c01c03e102a06cb6b07"
+    }
+  ],
+  "evidence": [
+    "plans/27_langgraph_curriculum_factory_remediation/execution_package_v2/results/evidence/N10_HARNESS_PROTOCOL/01_pytest_run1.log",
+    "plans/27_langgraph_curriculum_factory_remediation/execution_package_v2/results/evidence/N10_HARNESS_PROTOCOL/02_pytest_run2.log",
+    "plans/27_langgraph_curriculum_factory_remediation/execution_package_v2/results/evidence/N10_HARNESS_PROTOCOL/03_validate_plan_v2.log"
+  ],
+  "findings": [
+    {
+      "disposition": "resolved",
+      "id": "N10V2-F01",
+      "severity": "observation",
+      "summary": "N10's controller code, schemas, and test suite are unchanged, byte-identical to the original Run 27 v1 package's admitted N10_HARNESS_PROTOCOL attempt (every controller/*.py, schemas/scheduler_receipt.schema.v1.json, schemas/attempt_record.schema.v1.json, and the three test files hash-match the sha256 values recorded in the original admitted plans/27_langgraph_curriculum_factory_remediation/results/N10_HARNESS_PROTOCOL.result.v1.json). This node re-verifies that admitted controller against execution package v2's own graph rather than re-implementing it: graph v5 reuses N10_harness_protocol.prompt.v1.md unchanged, and the controller is a shared, package-agnostic scheduling/verification library, not tied to any one graph document."
+    },
+    {
+      "disposition": "resolved",
+      "id": "N10V2-F02",
+      "severity": "major",
+      "summary": "The complete 80-test controller suite passed twice consecutively (test_run27_controller.py, test_node_result_protocol.py, test_forbidden_production_scan.py) with no tracked evidence bytes changing between runs, and plans/27_langgraph_curriculum_factory_remediation/execution_package_v2/tools/validate_plan_v2.py reports execution package v2's own implementation.graph.v5.yaml valid: true."
+    }
+  ],
+  "invalidated_descendants": [],
+  "node_id": "N10_HARNESS_PROTOCOL",
+  "outcome": "PASSED",
+  "predecessor_receipts": {
+    "N00_SPEC_APPROVAL_GATE": "1592643a4d48b011bf5338b77fa949887da960e086ff081907bddd510f65cda6"
+  },
+  "prompt_sha256": "2114b50ba59fa1657b51179a7550bbd3bbb7e0770900b2d808f528263d20ae25",
+  "run_id": "run27-execpkgv2-2026-08-13",
+  "schema_version": 1,
+  "source_spec_sha256": "e14df5a36ce12d700fe9fc4aa4aea466771bc89f31bc6e9d49f812c147b1bb3c"
+}

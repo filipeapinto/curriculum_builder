@@ -1569,7 +1569,7 @@ def _assert_workbook_repair_boundary(packet: Mapping[str, Any]) -> None:
 
 def m05_review_actual_unit(packet: Mapping[str, Any],
                            context: ModelNodeContext) -> dict[str, Any]:
-    """Gemini review of the frozen actual unit packet, every page included."""
+    """Codex review of the frozen actual unit packet, every page included."""
 
     denominator = _page_denominator(packet, label="M05")
     dispatch, failure = _dispatch("M05_unit_review", packet, context)
@@ -1590,7 +1590,7 @@ def m05_review_actual_unit(packet: Mapping[str, Any],
 
 def m07_review_actual_workbook(packet: Mapping[str, Any],
                                context: ModelNodeContext) -> dict[str, Any]:
-    """Gemini review of the frozen actual workbook packet, every page included."""
+    """Codex review of the frozen actual workbook packet, every page included."""
 
     denominator = _page_denominator(packet, label="M07")
     dispatch, failure = _dispatch("M07_workbook_review", packet, context)

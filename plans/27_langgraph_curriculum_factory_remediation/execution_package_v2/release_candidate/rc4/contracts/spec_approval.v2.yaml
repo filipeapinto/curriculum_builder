@@ -1,0 +1,78 @@
+schema_version: 2
+approved: true
+approved_spec: plans/26_langgraph_curriculum_factory/spec/v3/langgraph_curriculum_factory.spec.v4.md
+approved_spec_sha256: e14df5a36ce12d700fe9fc4aa4aea466771bc89f31bc6e9d49f812c147b1bb3c
+spec_qa_verdict: QA_PASSED
+spec_qa_verification_sha256: 899c9720be48f071d6caf26eceafa81be626cd3bda685afa05eb0cc1dfe9a631
+approved_rc_manifest: plans/27_langgraph_curriculum_factory_remediation/execution_package_v2/release_candidate/rc3/manifest.v1.json
+approved_rc_manifest_sha256: 0e4fbfe2c258ae6176931e5490f8a2b55bdf8708d3ef0f257b50a05c9e582a6d
+execution_package_qa_verdict: QA_PASSED
+execution_package_qa_verification_sha256: 202e2f214dd732ce24eb758c7cee5965cfcc113d71d03350d8bc5fefa7773217
+approved_graph: plans/27_langgraph_curriculum_factory_remediation/execution_package_v2/implementation.graph.v5.yaml
+approved_graph_sha256: ce2362787a9760c9db3b2f667a0561ebd877ec89f24d690b2210ec9b6f3777b8
+approved_for: plan27_implementation_remediation
+model_assignments:
+  M01_RESEARCH_UNIT_SOURCES: {model: claude-sonnet-5, effort: xhigh}
+  M02_CREATE_UNIT_DOMAIN_DATA: {model: claude-sonnet-5, effort: high}
+  M03_WRITE_UNIT_CONTENT: {model: claude-sonnet-5, effort: high}
+  M04_CREATE_UNIT_VISUALS: {model: claude-sonnet-5, effort: high}
+  M05_REVIEW_ACTUAL_UNIT: {model: gpt-5.6-sol, effort: xhigh}
+  M06_REPAIR_NAMED_UNIT_ARTIFACT: {model: claude-sonnet-5, effort: xhigh}
+  M07_REVIEW_ACTUAL_WORKBOOK: {model: gpt-5.6-sol, effort: xhigh}
+  M08_REPAIR_NAMED_WORKBOOK_DEFECT: {model: claude-sonnet-5, effort: xhigh}
+approved_at: "2026-08-13T20:57:25Z"
+approval_statement: >
+  This record carries forward, unchanged and reinvented nowhere, the exact
+  approval already given in
+  plans/27_langgraph_curriculum_factory_remediation/execution_package_v2/contracts/spec_approval.v1.yaml
+  (approved_at 2026-08-13T20:57:25Z, preserved byte-for-byte, not edited by
+  this record). That approval could not be validated at N00 because
+  plans/27_langgraph_curriculum_factory_remediation/schemas/spec_approval.schema.v1.json
+  -- the parent v1 package's own frozen schema -- const-locks approved_spec to
+  the parent package's spec, a path this package's approved spec v4 can never
+  equal; N00_spec_approval_gate.prompt.v4.md S6 additionally misstated that
+  schema as frozen per this package's own rules.frozen_before_entry, which it
+  was not. This record and its package-scoped schema
+  (execution_package_v2/schemas/spec_approval.schema.v2.json) fix exactly
+  that structural defect: the same five already-approved digests, now bound
+  as schema-validated structured fields instead of prose alone. User
+  explicitly approved, by exact digest, the following five artifacts for
+  execution package v2 of plan27_implementation_remediation: specification v4
+  at plans/26_langgraph_curriculum_factory/spec/v3/langgraph_curriculum_factory.spec.v4.md
+  (SHA-256 e14df5a36ce12d700fe9fc4aa4aea466771bc89f31bc6e9d49f812c147b1bb3c);
+  that specification's independent QA verification record at
+  plans/26_langgraph_curriculum_factory/spec/v3/QA/verification.json (SHA-256
+  899c9720be48f071d6caf26eceafa81be626cd3bda685afa05eb0cc1dfe9a631, session
+  019ffbeb-3f45-7440-a83e-aa560938dc98, chain_valid true); the
+  release-candidate-3 manifest at
+  plans/27_langgraph_curriculum_factory_remediation/execution_package_v2/release_candidate/rc3/manifest.v1.json
+  (SHA-256 0e4fbfe2c258ae6176931e5490f8a2b55bdf8708d3ef0f257b50a05c9e582a6d),
+  which binds the exact reviewed graph, scanner, validators, prompts, and
+  test suite for this package; that release candidate's independent QA
+  verification record at
+  plans/27_langgraph_curriculum_factory_remediation/execution_package_v2/release_candidate/rc3/QA/verification.json
+  (SHA-256 202e2f214dd732ce24eb758c7cee5965cfcc113d71d03350d8bc5fefa7773217,
+  session 019ffcc7-a48f-7870-a933-5d80bb61dac3, chain_valid true, rounds 1, 0
+  problems); and the active execution graph bound into and executed from this
+  package, now at
+  plans/27_langgraph_curriculum_factory_remediation/execution_package_v2/implementation.graph.v5.yaml
+  (SHA-256 ce2362787a9760c9db3b2f667a0561ebd877ec89f24d690b2210ec9b6f3777b8)
+  -- a gate-lineage rename of the byte-identical-in-substance
+  implementation.graph.v4.yaml the user originally approved (0d5b5af8b0c60847e3b52ac93c4c10328f48a1404130a6b785485bcbbae3d571,
+  now preserved unchanged at deprecated/implementation.graph.v4.yaml), whose
+  only content changes are this correction itself: N00's prompt reference
+  (v4.md -> v5.md) and one added rules.frozen_before_entry entry for
+  spec_approval.schema.v2.json; no node, write set, edge, or verification
+  logic changed. All five digests were independently recomputed against live
+  repository bytes when this record was written and matched exactly. This
+  approval authorizes proceeding sequentially from N00 through N90 of
+  plans/27_langgraph_curriculum_factory_remediation/execution_package_v2/implementation.graph.v5.yaml,
+  preserving all prior attempts and evidence (the Run 27 v1 attempt blocked
+  at N20_PROVIDER_TRANSPORT, the first failed execution-package correction
+  implementation.graph.v2.yaml and its INTEGRITY_BREACH QA session, and
+  release candidates rc1, rc2, and rc3 with their FAIL/FAIL/QA_PASSED
+  verdicts), without redesigning the execution package. USER_DECISION_REQUIRED-01
+  remains resolved exactly as recorded in spec_approval.v1.yaml, now also
+  structured in model_assignments above: M01, M06, and M08 = claude-sonnet-5
+  at effort xhigh; M02, M03, and M04 = claude-sonnet-5 at effort high; M05
+  and M07 = gpt-5.6-sol at effort xhigh.

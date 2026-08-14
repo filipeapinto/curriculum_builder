@@ -1,0 +1,7 @@
+exit_code:0
+init.tools: ['StructuredOutput']
+init.mcp_servers: [{'name': 'claude.ai Google Drive', 'status': 'needs-auth'}, {'name': 'claude.ai Gmail', 'status': 'needs-auth'}, {'name': 'claude.ai Google Calendar', 'status': 'needs-auth'}]
+init.model: claude-sonnet-5
+assistant per-turn message.model values: ['claude-sonnet-5', 'claude-sonnet-5']
+result.structured_output: {'summary': 'A lever is a simple machine — just a straight bar that rests on a fixed point called a pivot — that lets you push down on one end to lift something heavy on the other end.'}
+result.modelUsage keys: ['claude-haiku-4-5-20251001', 'claude-sonnet-5']

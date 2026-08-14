@@ -25,10 +25,10 @@ import jsonschema
 
 SCHEMA_DIR = Path(__file__).resolve().parent / "schemas"
 
-PROVIDERS: tuple[str, ...] = ("openai", "google", "primary_source_hosts")
+PROVIDERS: tuple[str, ...] = ("anthropic", "openai", "primary_source_hosts")
 
 PROVIDER_DATA_CLASSES: Mapping[str, frozenset[str]] = MappingProxyType({
-    "openai": frozenset({
+    "anthropic": frozenset({
         "manifest_unit_projection",
         "bounded_questions",
         "admitted_source_excerpts",
@@ -39,7 +39,7 @@ PROVIDER_DATA_CLASSES: Mapping[str, frozenset[str]] = MappingProxyType({
         "named_repair_findings",
         "schemas_and_rubrics",
     }),
-    "google": frozenset({
+    "openai": frozenset({
         "frozen_unit_artifacts",
         "frozen_workbook_artifacts",
         "deterministic_evidence",
@@ -54,10 +54,6 @@ MODEL_API_HOSTS: frozenset[str] = frozenset({
     "api.openai.com",
     "chatgpt.com",
     "api.anthropic.com",
-    "generativelanguage.googleapis.com",
-    "cloudcode-pa.googleapis.com",
-    "aiplatform.googleapis.com",
-    "us-central1-aiplatform.googleapis.com",
 })
 
 

@@ -1,0 +1,37 @@
+--- git status --porcelain ---
+ M plans/27_langgraph_curriculum_factory_remediation/execution_package_v2/controller/scan_node.py
+RM plans/27_langgraph_curriculum_factory_remediation/execution_package_v2/implementation.graph.v4.yaml -> plans/27_langgraph_curriculum_factory_remediation/execution_package_v2/deprecated/implementation.graph.v4.yaml
+ M plans/27_langgraph_curriculum_factory_remediation/execution_package_v2/tests/test_execution_package_v2.py
+ M plans/27_langgraph_curriculum_factory_remediation/execution_package_v2/tools/validate_plan_v2.py
+ M plans/27_langgraph_curriculum_factory_remediation/execution_package_v2/tools/validate_result_v2.py
+?? plans/27_langgraph_curriculum_factory_remediation/execution_package_v2/contracts/
+?? plans/27_langgraph_curriculum_factory_remediation/execution_package_v2/implementation.graph.v5.yaml
+?? plans/27_langgraph_curriculum_factory_remediation/execution_package_v2/prompts/N00_spec_approval_gate.prompt.v4.md
+?? plans/27_langgraph_curriculum_factory_remediation/execution_package_v2/prompts/N00_spec_approval_gate.prompt.v5.md
+?? plans/27_langgraph_curriculum_factory_remediation/execution_package_v2/prompts/N20_provider_transport.prompt.v4.md
+?? plans/27_langgraph_curriculum_factory_remediation/execution_package_v2/prompts/N20_provider_transport.prompt.v5.md
+?? plans/27_langgraph_curriculum_factory_remediation/execution_package_v2/prompts/N30_preflight_egress.prompt.v4.md
+?? plans/27_langgraph_curriculum_factory_remediation/execution_package_v2/prompts/N30_preflight_egress.prompt.v5.md
+?? plans/27_langgraph_curriculum_factory_remediation/execution_package_v2/release_candidate/
+?? plans/27_langgraph_curriculum_factory_remediation/execution_package_v2/results/
+?? plans/27_langgraph_curriculum_factory_remediation/execution_package_v2/schemas/
+
+--- key historical hashes ---
+v1 package graph:
+ec414fa4f2464e3aaa6f51e142fe2b21b81c321e6d6f06834294a97360417244  plans/27_langgraph_curriculum_factory_remediation/implementation.graph.v1.yaml
+failed v2 package graph:
+f297d6528375eeeda5b97a54d654997a65f5d0c7100cf50b54d71c4ca4763b1a  plans/27_langgraph_curriculum_factory_remediation/implementation.graph.v2.yaml
+deprecated graph v4:
+0d5b5af8b0c60847e3b52ac93c4c10328f48a1404130a6b785485bcbbae3d571  plans/27_langgraph_curriculum_factory_remediation/execution_package_v2/deprecated/implementation.graph.v4.yaml
+parent schema v1:
+829943e745cf6eb550e6319f42df4086f187a08d373f7e08f9fddf822d9fde36  plans/27_langgraph_curriculum_factory_remediation/schemas/spec_approval.schema.v1.json
+contract v1:
+665d243bd080497e49053ddb9a2fc5a419fba3d0bbd9b03ae59def5098cc609e  plans/27_langgraph_curriculum_factory_remediation/execution_package_v2/contracts/spec_approval.v1.yaml
+prompt v4:
+06200109bbaca5513ba4738164d818a8cdc84caaf3527923495880b88165dea9  plans/27_langgraph_curriculum_factory_remediation/execution_package_v2/prompts/N00_spec_approval_gate.prompt.v4.md
+rc1 QA session terminal:
+QA_FAILED
+rc2 QA session terminal:
+QA_FAILED
+rc3 QA session terminal:
+QA_PASSED

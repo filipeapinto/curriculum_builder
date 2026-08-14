@@ -1,0 +1,92 @@
+schema_version: 3
+approved: true
+approved_spec: plans/26_langgraph_curriculum_factory/spec/v3/langgraph_curriculum_factory.spec.v4.md
+approved_spec_sha256: e14df5a36ce12d700fe9fc4aa4aea466771bc89f31bc6e9d49f812c147b1bb3c
+spec_qa_verdict: QA_PASSED
+spec_qa_verification_sha256: 899c9720be48f071d6caf26eceafa81be626cd3bda685afa05eb0cc1dfe9a631
+approved_rc_manifest: plans/27_langgraph_curriculum_factory_remediation/execution_package_v2/release_candidate/rc3/manifest.v1.json
+approved_rc_manifest_sha256: 0e4fbfe2c258ae6176931e5490f8a2b55bdf8708d3ef0f257b50a05c9e582a6d
+execution_package_qa_verdict: QA_PASSED
+execution_package_qa_verification_sha256: 202e2f214dd732ce24eb758c7cee5965cfcc113d71d03350d8bc5fefa7773217
+approved_graph: plans/27_langgraph_curriculum_factory_remediation/execution_package_v2/implementation.graph.v6.yaml
+approved_graph_sha256: b186b58828fd1f490a57dd3cfe7d26bcdff70a37f78d6d996f2f8234ef2b5c26
+approved_for: plan27_implementation_remediation
+model_assignments:
+  M01_RESEARCH_UNIT_SOURCES: {model: claude-sonnet-5, effort: xhigh}
+  M02_CREATE_UNIT_DOMAIN_DATA: {model: claude-sonnet-5, effort: high}
+  M03_WRITE_UNIT_CONTENT: {model: claude-sonnet-5, effort: high}
+  M04_CREATE_UNIT_VISUALS: {model: claude-sonnet-5, effort: high}
+  M05_REVIEW_ACTUAL_UNIT: {model: gpt-5.6-sol, effort: xhigh}
+  M06_REPAIR_NAMED_UNIT_ARTIFACT: {model: claude-sonnet-5, effort: xhigh}
+  M07_REVIEW_ACTUAL_WORKBOOK: {model: gpt-5.6-sol, effort: xhigh}
+  M08_REPAIR_NAMED_WORKBOOK_DEFECT: {model: claude-sonnet-5, effort: xhigh}
+approved_at: "2026-08-13T20:57:25Z"
+approval_statement: >
+  This record carries forward, unchanged and reinvented nowhere, the exact
+  approval already given in
+  plans/27_langgraph_curriculum_factory_remediation/execution_package_v2/contracts/spec_approval.v2.yaml
+  (approved_at 2026-08-13T20:57:25Z, preserved byte-for-byte, not edited by
+  this record), which itself carried forward spec_approval.v1.yaml's approval
+  unchanged. This record fixes a narrower, later-discovered defect: real
+  execution of N20_PROVIDER_TRANSPORT against
+  implementation.graph.v5.yaml (the graph spec_approval.v2.yaml's
+  approved_graph named) reached a genuine, well-evidenced BLOCKED --
+  finding N20V2-F01 -- because
+  rules.retired_provider_test_scan.scan_roots swept the entire tests/runtime
+  directory, including tests/runtime/test_gemini.py and
+  tests/runtime/test_capabilities.py, two files that test a wholly separate,
+  still-active Plan 11/19/20/21 Gemini pipeline this migration does not own
+  and cannot touch. This is not a specification defect, a provider decision,
+  or a change to the package's approved structure: it is a mechanical
+  write-set/scan-scope engineering correction to the graph's own rules,
+  captured in implementation.graph.v6.yaml (preserving
+  implementation.graph.v5.yaml unedited at
+  deprecated/implementation.graph.v5.yaml, sha256
+  ce2362787a9760c9db3b2f667a0561ebd877ec89f24d690b2210ec9b6f3777b8) and its
+  own package-scoped schema
+  (execution_package_v2/schemas/spec_approval.schema.v3.json, const-locking
+  approved_graph to v6 instead of v5). No new user approval is inferred
+  beyond what is already on record: the specification, its QA verification,
+  the rc3 manifest, and rc3's own QA verification are carried forward
+  byte-for-byte identical to spec_approval.v2.yaml -- user explicitly
+  approved, by exact digest, the following for execution package v2 of
+  plan27_implementation_remediation: specification v4 at
+  plans/26_langgraph_curriculum_factory/spec/v3/langgraph_curriculum_factory.spec.v4.md
+  (SHA-256 e14df5a36ce12d700fe9fc4aa4aea466771bc89f31bc6e9d49f812c147b1bb3c);
+  that specification's independent QA verification record at
+  plans/26_langgraph_curriculum_factory/spec/v3/QA/verification.json (SHA-256
+  899c9720be48f071d6caf26eceafa81be626cd3bda685afa05eb0cc1dfe9a631, session
+  019ffbeb-3f45-7440-a83e-aa560938dc98, chain_valid true); the
+  release-candidate-3 manifest at
+  plans/27_langgraph_curriculum_factory_remediation/execution_package_v2/release_candidate/rc3/manifest.v1.json
+  (SHA-256 0e4fbfe2c258ae6176931e5490f8a2b55bdf8708d3ef0f257b50a05c9e582a6d);
+  and that release candidate's independent QA verification record at
+  plans/27_langgraph_curriculum_factory_remediation/execution_package_v2/release_candidate/rc3/QA/verification.json
+  (SHA-256 202e2f214dd732ce24eb758c7cee5965cfcc113d71d03350d8bc5fefa7773217,
+  session 019ffcc7-a48f-7870-a933-5d80bb61dac3, chain_valid true). Only
+  approved_graph/approved_graph_sha256 move, from
+  implementation.graph.v5.yaml (SHA-256
+  ce2362787a9760c9db3b2f667a0561ebd877ec89f24d690b2210ec9b6f3777b8) to
+  implementation.graph.v6.yaml (SHA-256
+  b186b58828fd1f490a57dd3cfe7d26bcdff70a37f78d6d996f2f8234ef2b5c26), whose
+  only content changes from v5 are: N20_PROVIDER_TRANSPORT.writes drops
+  tests/runtime/test_gemini.py and tests/runtime/test_capabilities.py;
+  rules.retired_provider_test_scan.scan_roots becomes the explicit 17-file
+  union of every migration-owned active test across N20-N60, replacing
+  ['tests/runtime']; rules.frozen_before_entry names schema v3 in place of
+  schema v2; and every command's own --graph value renames to v6. No node,
+  write set beyond the two-file removal above, edge, or verification logic
+  otherwise changed. All digests were independently recomputed against live
+  repository bytes when this record was written and matched exactly. This
+  approval authorizes proceeding sequentially from N00 through N90 of
+  plans/27_langgraph_curriculum_factory_remediation/execution_package_v2/implementation.graph.v6.yaml,
+  preserving all prior attempts and evidence -- the Run 27 v1 attempt blocked
+  at N20_PROVIDER_TRANSPORT, the first failed execution-package correction
+  implementation.graph.v2.yaml, release candidates rc1 through rc5, the
+  admitted N00/N10 results, and N20_PROVIDER_TRANSPORT's own BLOCKED result
+  under implementation.graph.v5.yaml (finding N20V2-F01) -- without
+  redesigning the execution package or reopening USER_DECISION_REQUIRED-01,
+  which remains resolved exactly as recorded in spec_approval.v1.yaml, now
+  also structured in model_assignments above: M01, M06, and M08 =
+  claude-sonnet-5 at effort xhigh; M02, M03, and M04 = claude-sonnet-5 at
+  effort high; M05 and M07 = gpt-5.6-sol at effort xhigh.

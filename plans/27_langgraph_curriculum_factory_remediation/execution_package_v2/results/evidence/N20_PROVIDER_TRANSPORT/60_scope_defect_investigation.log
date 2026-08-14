@@ -1,0 +1,46 @@
+=== Confirming test_gemini.py / test_capabilities.py test an unrelated, still-active system ===
+--- what they import ---
+tests/runtime/test_gemini.py:1:from __future__ import annotations
+tests/runtime/test_gemini.py:3:import json
+tests/runtime/test_gemini.py:4:import os
+tests/runtime/test_gemini.py:5:from pathlib import Path
+tests/runtime/test_gemini.py:6:import shutil
+tests/runtime/test_gemini.py:7:import subprocess
+tests/runtime/test_gemini.py:8:import tempfile
+tests/runtime/test_gemini.py:9:import unittest
+tests/runtime/test_gemini.py:11:from runtime.gemini import (GeminiSettingsError, audit_stream_events, max_effort_settings,
+tests/runtime/test_capabilities.py:1:from __future__ import annotations
+tests/runtime/test_capabilities.py:3:from pathlib import Path
+tests/runtime/test_capabilities.py:4:import unittest
+tests/runtime/test_capabilities.py:6:import yaml
+tests/runtime/test_capabilities.py:8:from runtime.capabilities import (CapabilityError, remove_unavailable_route,
+tests/runtime/test_capabilities.py:10:from runtime.gemini import max_effort_settings, resolve_alias
+
+--- who else imports runtime.gemini / runtime.capabilities ---
+runtime/capability_cycle.py
+runtime/model_worker.py
+runtime/capabilities.py
+
+--- forbidden_production_scan.scan_roots does NOT cover these files (confirms they are out of this migration's production scope) ---
+['runtime/langgraph_factory', 'runtime/run_curriculum.py', 'policy/routes.v1.yaml', 'policy/routing/model_registry.v1.yaml', 'schemas/routes.schema.v1.json', 'schemas/model_registry.schema.v1.json']
+
+--- git history: runtime/gemini.py, runtime/capabilities.py, runtime/capability_cycle.py were added together, unrelated to runtime/langgraph_factory ---
+868337e runtime: add curriculum runtime implementation, tests, and simplification/skill-conversion plans
+
+--- the 16 violations from 50_scan_node_n20.log are 100% confined to these two files ---
+tests/runtime/test_capabilities.py 10 gemini
+tests/runtime/test_capabilities.py 32 gemini
+tests/runtime/test_capabilities.py 41 gemini
+tests/runtime/test_gemini.py 11 gemini
+tests/runtime/test_gemini.py 15 gemini
+tests/runtime/test_gemini.py 16 gemini
+tests/runtime/test_gemini.py 27 gemini
+tests/runtime/test_gemini.py 33 gemini
+tests/runtime/test_gemini.py 39 gemini
+tests/runtime/test_gemini.py 52 gemini
+tests/runtime/test_gemini.py 54 gemini
+tests/runtime/test_gemini.py 57 gemini
+tests/runtime/test_gemini.py 62 gemini
+tests/runtime/test_gemini.py 64 gemini
+tests/runtime/test_gemini.py 67 gemini
+tests/runtime/test_gemini.py 68 gemini

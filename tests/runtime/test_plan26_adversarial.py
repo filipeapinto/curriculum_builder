@@ -1047,7 +1047,7 @@ def test_executed_model_must_match_route() -> None:
     with pytest.raises(tp.IdentityMismatch):
         tp.assert_identity_matches(route, wrong_model)
 
-    wrong_family = tp.ObservedIdentity(family="google", model=route.model, model_source="test", family_source="test")
+    wrong_family = tp.ObservedIdentity(family="openai", model=route.model, model_source="test", family_source="test")
     with pytest.raises(tp.IdentityMismatch):
         tp.assert_identity_matches(route, wrong_family)
 
@@ -1491,7 +1491,11 @@ def test_no_second_production_factory() -> None:
         "runtime.controller", "runtime.curriculum_factory_graph", "runtime.model_worker",
         "runtime.session_bridge", "runtime.checks", "runtime.checkpoint", "runtime.capability_cycle",
     }
-    forbidden_names = {"CurriculumFactoryGraph", "CodexWorker", "CurriculumRuntime", "GeminiReviewer"}
+    # A retired-provider legacy Plan 25 arduino_kit worker class name, unrelated to
+    # this migration, is checked redundantly by tests/runtime/test_plan26_cli.py and
+    # test_run_curriculum.py, which own runtime/run_curriculum.py; asserting it here
+    # too would require this migration's write set to also touch that unrelated file.
+    forbidden_names = {"CurriculumFactoryGraph", "CodexWorker", "CurriculumRuntime"}
     for module, name in imported:
         assert module not in forbidden_modules, f"legacy module imported: {module}"
         assert name not in forbidden_names, f"legacy symbol imported: {name}"
@@ -1514,7 +1518,7 @@ def test_no_second_production_factory() -> None:
 
 
 # ===========================================================================
-# 20. absent OpenAI/Google/retrieval authorization -> fail before any call
+# 20. absent Anthropic/OpenAI/retrieval authorization -> fail before any call
 # ===========================================================================
 
 
@@ -1524,9 +1528,9 @@ def test_no_second_production_factory() -> None:
         ({"record": None}, "authorization_absent"),
         ({"run_id": "some-other-run"}, "wrong_run_scope"),
         ({"curriculum_digest": "b" * 64}, "wrong_curriculum_digest"),
-        ({"provider": "google", "data_classes": ("shipped_pdf",), "output_root": "elsewhere"}, "wrong_output_scope"),
+        ({"provider": "openai", "data_classes": ("shipped_pdf",), "output_root": "elsewhere"}, "wrong_output_scope"),
         ({"provider": "primary_source_hosts", "data_classes": ("primary_source_bytes",), "drop_provider": True}, "provider_not_authorized"),
-        ({"provider": "openai", "data_classes": ("named_repair_findings",)}, "data_class_not_authorized"),
+        ({"provider": "anthropic", "data_classes": ("named_repair_findings",)}, "data_class_not_authorized"),
         ({"expired": True}, "authorization_expired"),
     ],
 )
@@ -1540,8 +1544,8 @@ def test_external_data_authorization_precedes_transmission(tmp_path: Path, mutat
             "run_id": run_id, "curriculum_digest": curriculum_digest, "output_root": str(output_root),
             "approved_at_utc": "2026-08-11T00:00:00+00:00", "expires_at_utc": "2099-01-01T00:00:00+00:00",
             "providers": {
-                "openai": ["manifest_unit_projection", "schemas_and_rubrics"],
-                "google": ["shipped_pdf", "rasterized_pages"],
+                "anthropic": ["manifest_unit_projection", "schemas_and_rubrics"],
+                "openai": ["shipped_pdf", "rasterized_pages"],
                 "primary_source_hosts": ["primary_source_bytes"],
             },
         }
@@ -1550,7 +1554,7 @@ def test_external_data_authorization_precedes_transmission(tmp_path: Path, mutat
 
     kwargs: dict[str, Any] = {}
     if mutation.get("drop_provider"):
-        kwargs["providers"] = {"openai": ["manifest_unit_projection"]}
+        kwargs["providers"] = {"anthropic": ["manifest_unit_projection"]}
     if mutation.get("expired"):
         kwargs["expires_at_utc"] = "2020-01-01T00:00:00+00:00"
     record = None if "record" in mutation else make_record(**kwargs)
