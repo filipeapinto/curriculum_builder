@@ -1,0 +1,94 @@
+schema_version: 1
+kind: requirements_lineage
+contract_id: run27-n50-requirements-lineage-v1
+node_id: N50_EVIDENCE_AUDIT_CONTROLS
+
+# The requirements-lineage denominator (N50 prompt item 6): current user
+# approval, approved v2, Plans 20-22, retained product requirements, code,
+# tests, product evidence -- in that order, each layer a falsifiable
+# `requirement` claim checked against real repository bytes. N90's final
+# audit (spec §2.0.3, PM-20) must fail if any layer here is omitted; this
+# contract is that layer list's single source of truth.
+
+claims:
+  - type: requirement
+    id: LINEAGE-01-CURRENT-USER-APPROVAL
+    source: plans/27_langgraph_curriculum_factory_remediation/execution_package_v2/contracts/spec_approval.v4.yaml
+    source_anchor: "approved_for: plan27_implementation_remediation"
+    implemented_by:
+      - plans/27_langgraph_curriculum_factory_remediation/execution_package_v2/contracts/spec_approval.v4.yaml
+      - plans/27_langgraph_curriculum_factory_remediation/execution_package_v2/schemas/spec_approval.schema.v4.json
+    evidence:
+      - plans/27_langgraph_curriculum_factory_remediation/execution_package_v2/results/v7/N00_SPEC_APPROVAL_GATE.result.v1.json
+
+  - type: requirement
+    id: LINEAGE-02-APPROVED-V2-SPECIFICATION
+    source: plans/26_langgraph_curriculum_factory/spec/v3/langgraph_curriculum_factory.spec.v4.md
+    source_anchor: "independent requirements-lineage audit MUST run and pass before any spec-to-code traceability check is treated as meaningful"
+    implemented_by:
+      - plans/26_langgraph_curriculum_factory/spec/v3/langgraph_curriculum_factory.spec.v4.md
+    evidence:
+      - plans/26_langgraph_curriculum_factory/spec/v3/QA/verification.json
+
+  - type: requirement
+    id: LINEAGE-03-PLANS-20-22-RETAINED-EXECUTION-MODEL
+    source: plans/20_subscription_only_execution_model/subscription_only_execution_model.plan.v1.md
+    source_anchor: "Subscription-Only Model Execution Architecture"
+    implemented_by:
+      - runtime/langgraph_factory/transport.py
+    evidence:
+      - plans/21_graph_engineered_subscription_execution/graph_engineered_subscription_execution.plan.v3.yaml
+      - plans/22_graph_eng_evol_01/run.prompt.md
+
+  - type: requirement
+    id: LINEAGE-04-RETAINED-PRODUCT-REQUIREMENTS-PM-POSTMORTEM
+    source: plans/26_langgraph_curriculum_factory/spec/v3/langgraph_curriculum_factory.spec.v4.md
+    source_anchor: "PM-11/PM-12"
+    implemented_by:
+      - runtime/langgraph_factory/graph.py
+      - runtime/langgraph_factory/evidence.py
+      - runtime/langgraph_factory/persistence.py
+    evidence:
+      - tests/runtime/test_plan26_topology.py
+      - tests/runtime/test_plan26_evidence.py
+      - tests/runtime/test_plan26_persistence.py
+
+  - type: requirement
+    id: LINEAGE-05-CODE-EVIDENCE-PERSISTENCE-LAYER
+    source: runtime/langgraph_factory/evidence.py
+    source_anchor: "class EvidenceStore"
+    implemented_by:
+      - runtime/langgraph_factory/evidence.py
+      - runtime/langgraph_factory/artifacts.py
+      - runtime/langgraph_factory/persistence.py
+    evidence:
+      - plans/27_langgraph_curriculum_factory_remediation/execution_package_v2/results/v7/evidence/N50_EVIDENCE_AUDIT_CONTROLS
+
+  - type: requirement
+    id: LINEAGE-06-TESTS-EVIDENCE-PERSISTENCE-LAYER
+    source: tests/runtime/test_plan26_evidence.py
+    source_anchor: "test_audit_report_never_claims_a_log_event_that_was_never_appended"
+    implemented_by:
+      - tests/runtime/test_plan26_evidence.py
+      - tests/runtime/test_plan26_persistence.py
+    evidence:
+      - plans/27_langgraph_curriculum_factory_remediation/execution_package_v2/results/v7/evidence/N50_EVIDENCE_AUDIT_CONTROLS/01_pytest_n50_run1.log
+      - plans/27_langgraph_curriculum_factory_remediation/execution_package_v2/results/v7/evidence/N50_EVIDENCE_AUDIT_CONTROLS/02_pytest_n50_run2.log
+
+  - type: requirement
+    id: LINEAGE-07-PRODUCT-EVIDENCE-DETERMINISM
+    source: plans/27_langgraph_curriculum_factory_remediation/contracts/evidence_determinism.v1.yaml
+    source_anchor: "kind: evidence_determinism"
+    implemented_by:
+      - plans/27_langgraph_curriculum_factory_remediation/contracts/evidence_determinism.v1.yaml
+    evidence:
+      - plans/27_langgraph_curriculum_factory_remediation/execution_package_v2/results/v7/evidence/N50_EVIDENCE_AUDIT_CONTROLS/03_verify_evidence_determinism.log
+
+  # Self-consistency guard: every LINEAGE-NN id token that appears anywhere in
+  # this contract's own text (e.g. reused as a cross-reference in a future
+  # edit, or left behind by a partial layer removal) must also be declared as
+  # a real `requirement` claim above -- an id can never be named without a
+  # backing, falsifiable layer.
+  - type: requirement_ids_cover
+    source: plans/27_langgraph_curriculum_factory_remediation/contracts/requirements_lineage.v1.yaml
+    pattern: "LINEAGE-0[1-7]-[A-Z0-9-]+"

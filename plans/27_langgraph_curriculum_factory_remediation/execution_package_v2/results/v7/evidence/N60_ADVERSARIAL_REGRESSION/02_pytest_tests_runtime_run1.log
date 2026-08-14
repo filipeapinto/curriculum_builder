@@ -1,0 +1,50 @@
+........................................................s............................................... [  7%]
+.................................................................................................................. [ 16%]
+........................................................................ [ 22%]
+........................................................................ [ 27%]
+........................................................................ [ 33%]
+........................................................................ [ 38%]
+...................s......................................... [ 43%]
+........................................................................ [ 49%]
+........................................................................ [ 54%]
+..................................................................................F................ [ 62%]
+..................................................................................................... [ 69%]
+........................................................................ [ 75%]
+........................................................................ [ 81%]
+........................................................................ [ 86%]
+........................................................................ [ 92%]
+.......................................................................................................        [100%]
+=================================== FAILURES ===================================
+___ test_passed_nodes_remain_admissible_after_harness_or_predecessor_change ____
+
+    def test_passed_nodes_remain_admissible_after_harness_or_predecessor_change():
+        """Guards against a harness-only change, or a legitimate predecessor
+        rework (e.g. an ownership correction), collaterally invalidating
+        already-admitted nodes it did not touch. Deliberately does not hardcode
+        which node is the current frontier: unlike this suite's other fixtures,
+        this test runs against the live receipt store as it actually stands, and
+        the pipeline is expected to keep advancing (more nodes reaching PASSED
+        over time), so pinning an exact snapshot would make the test rot on
+        every real step of progress rather than guard anything.
+        """
+        graph = manifest()
+        scheduler = controller_module.Controller(graph)
+        state = scheduler.status()
+        for node_id in graph.topological_order():
+            receipt = scheduler.receipts.load(node_id)
+            if receipt is None or receipt.get("status") != "PASSED":
+                continue
+            if state["statuses"][node_id] == "PASSED":
+                continue
+>           assert _admissible_tolerating_evidence_drift(scheduler, node_id), (
+                f"{node_id} has a PASSED receipt but is inadmissible for a reason "
+                "other than known evidence-directory drift"
+            )
+E           AssertionError: N10_DEPENDENCY_API has a PASSED receipt but is inadmissible for a reason other than known evidence-directory drift
+E           assert False
+E            +  where False = _admissible_tolerating_evidence_drift(<plan26_prompt_graph_controller.Controller object at 0x10bbe4d50>, 'N10_DEPENDENCY_API')
+
+tests/runtime/test_plan26_prompt_graph_controller.py:228: AssertionError
+=========================== short test summary info ============================
+FAILED tests/runtime/test_plan26_prompt_graph_controller.py::test_passed_nodes_remain_admissible_after_harness_or_predecessor_change
+1 failed, 1299 passed, 2 skipped, 419 subtests passed in 163.89s (0:02:43)

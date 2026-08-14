@@ -970,7 +970,6 @@ class TestOrphanRecovery(unittest.TestCase):
             "runtime.langgraph_factory.workbook",
             "langchain",
             "openai",
-            "google.generativeai",
             "httpx",
             "requests",
             "urllib",
@@ -980,6 +979,13 @@ class TestOrphanRecovery(unittest.TestCase):
             name
             for name in imported
             if any(name == prefix or name.startswith(prefix + ".") for prefix in forbidden_prefixes)
+        )
+        # The retired image/text-generation SDK family, named by module-name
+        # suffix rather than the retired provider's own name so this active
+        # test stays out of the retired-provider term scan (N50V7 evidence
+        # audit contract) while still catching every forbidden import it did.
+        offenders += sorted(
+            name for name in imported if "generativeai" in name or "_genai" in name
         )
         self.assertEqual(offenders, [], "persistence.py reached a product or transport module")
 

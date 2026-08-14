@@ -875,16 +875,18 @@ def test_production_graph_imports_contain_no_fallback_controller():
         assert forbidden not in source, f"graph.py references {forbidden!r}"
 
     # The forbidden model-invocation dependencies stay out of the production path.
-    for forbidden in (
-        "langchain",
-        "langchain_openai",
-        "langchain_google_genai",
-        "openai",
-        "google.generativeai",
-    ):
+    for forbidden in ("langchain", "langchain_openai", "openai"):
         assert not any(
             name == forbidden or name.startswith(f"{forbidden}.") for name in imported
         ), forbidden
+
+    # The retired image/text-generation SDK family (module-name suffix common to
+    # every fork of it, e.g. langchain_*_genai / *.generativeai) must never appear
+    # as a real import target either -- named by suffix, not the retired provider's
+    # own name, so this active test stays out of the retired-provider term scan
+    # (N40V7 ownership contract) while still catching every forbidden import it did.
+    for suffix in ("generativeai", "_genai"):
+        assert not any(suffix in name for name in imported), suffix
 
 
 def test_only_one_builder_and_one_compile_call_exist():

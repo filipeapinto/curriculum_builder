@@ -1,0 +1,111 @@
+schema_version: 1
+kind: integration_ownership
+contract_id: run27-n40-integration-ownership-v1
+node_id: N40_INTEGRATION_OWNERSHIP
+
+# Machine-readable ownership matrix (N40 prompt item 2): every D-node body,
+# registration seam, routing decision, and integration test that this node's
+# six-file/four-test/one-contract write set is responsible for, checked
+# against real repository bytes -- never taken on this document's word.
+# Ownership claims (single_owner/owned_by_node) are checked against the
+# active Run 27 graph's own write sets, so a future node accidentally
+# claiming one of these six paths fails this contract, not just a review.
+
+claims:
+  # ---- file-level ownership: exactly one Run 27 node owns each module ----
+  - {type: single_owner, path: runtime/langgraph_factory/graph.py}
+  - {type: owned_by_node, path: runtime/langgraph_factory/graph.py, node: N40_INTEGRATION_OWNERSHIP}
+  - {type: single_owner, path: runtime/langgraph_factory/routing.py}
+  - {type: owned_by_node, path: runtime/langgraph_factory/routing.py, node: N40_INTEGRATION_OWNERSHIP}
+  - {type: single_owner, path: runtime/langgraph_factory/unit_graph.py}
+  - {type: owned_by_node, path: runtime/langgraph_factory/unit_graph.py, node: N40_INTEGRATION_OWNERSHIP}
+  - {type: single_owner, path: runtime/langgraph_factory/repair.py}
+  - {type: owned_by_node, path: runtime/langgraph_factory/repair.py, node: N40_INTEGRATION_OWNERSHIP}
+  - {type: single_owner, path: runtime/langgraph_factory/acceptance.py}
+  - {type: owned_by_node, path: runtime/langgraph_factory/acceptance.py, node: N40_INTEGRATION_OWNERSHIP}
+  - {type: single_owner, path: runtime/langgraph_factory/workbook.py}
+  - {type: owned_by_node, path: runtime/langgraph_factory/workbook.py, node: N40_INTEGRATION_OWNERSHIP}
+  - {type: single_owner, path: tests/runtime/test_plan26_topology.py}
+  - {type: owned_by_node, path: tests/runtime/test_plan26_topology.py, node: N40_INTEGRATION_OWNERSHIP}
+  - {type: single_owner, path: tests/runtime/test_plan26_unit_graph.py}
+  - {type: owned_by_node, path: tests/runtime/test_plan26_unit_graph.py, node: N40_INTEGRATION_OWNERSHIP}
+  - {type: single_owner, path: tests/runtime/test_plan26_repair_acceptance.py}
+  - {type: owned_by_node, path: tests/runtime/test_plan26_repair_acceptance.py, node: N40_INTEGRATION_OWNERSHIP}
+  - {type: single_owner, path: tests/runtime/test_plan26_workbook.py}
+  - {type: owned_by_node, path: tests/runtime/test_plan26_workbook.py, node: N40_INTEGRATION_OWNERSHIP}
+
+  # ---- graph.py: the one production compile point and its registration seams ----
+  - {type: symbol_defined, path: runtime/langgraph_factory/graph.py, symbol: build_curriculum_factory_graph}
+  - {type: symbol_defined, path: runtime/langgraph_factory/graph.py, symbol: register_skeleton}
+  - {type: symbol_defined, path: runtime/langgraph_factory/graph.py, symbol: register_unit_repair_topology}
+  - {type: symbol_defined, path: runtime/langgraph_factory/graph.py, symbol: register_workbook_topology}
+  - {type: symbol_defined, path: runtime/langgraph_factory/graph.py, symbol: binding_inventory}
+  - {type: symbol_defined, path: runtime/langgraph_factory/graph.py, symbol: unit_repair_binding_inventory}
+  - {type: symbol_defined, path: runtime/langgraph_factory/graph.py, symbol: full_binding_inventory}
+  - {type: symbol_defined, path: runtime/langgraph_factory/graph.py, symbol: validate_bindings}
+  - {type: symbol_defined, path: runtime/langgraph_factory/graph.py, symbol: _validate_topology}
+  - {type: imports_module, path: runtime/langgraph_factory/graph.py, module: nodes}
+  - {type: not_imports_module, path: runtime/langgraph_factory/graph.py, module: gemini}
+
+  # ---- routing.py: every D-node's routing/guard decision, one deterministic owner ----
+  - {type: symbol_defined, path: runtime/langgraph_factory/routing.py, symbol: decide}
+  - {type: symbol_defined, path: runtime/langgraph_factory/routing.py, symbol: assert_guard_table_total}
+  - {type: symbol_defined, path: runtime/langgraph_factory/routing.py, symbol: guard_destinations}
+  - {type: symbol_defined, path: runtime/langgraph_factory/routing.py, symbol: route_bootstrap}
+  - {type: symbol_defined, path: runtime/langgraph_factory/routing.py, symbol: route_resume_identity}
+  - {type: symbol_defined, path: runtime/langgraph_factory/routing.py, symbol: route_frozen_inputs}
+  - {type: symbol_defined, path: runtime/langgraph_factory/routing.py, symbol: route_effective_run}
+  - {type: symbol_defined, path: runtime/langgraph_factory/routing.py, symbol: route_capabilities}
+  - {type: symbol_defined, path: runtime/langgraph_factory/routing.py, symbol: route_initialize_or_resume}
+  - {type: symbol_defined, path: runtime/langgraph_factory/routing.py, symbol: route_interrupt_gate}
+  - {type: symbol_defined, path: runtime/langgraph_factory/routing.py, symbol: route_frontier_reentry}
+  - {type: symbol_defined, path: runtime/langgraph_factory/routing.py, symbol: route_unit_selection}
+  - {type: not_imports_module, path: runtime/langgraph_factory/routing.py, module: gemini}
+
+  # ---- unit_graph.py: the per-unit source/domain/content/visual loop registration ----
+  - {type: symbol_defined, path: runtime/langgraph_factory/unit_graph.py, symbol: register_unit_path}
+  - {type: symbol_defined, path: runtime/langgraph_factory/unit_graph.py, symbol: branch_destinations}
+  - {type: symbol_defined, path: runtime/langgraph_factory/unit_graph.py, symbol: deferred_destinations}
+  - {type: symbol_defined, path: runtime/langgraph_factory/unit_graph.py, symbol: unit_path_nodes}
+
+  # ---- repair.py: D17-D21, the unit repair/routing engine (D16-D23 cycle) ----
+  - {type: symbol_defined, path: runtime/langgraph_factory/repair.py, symbol: D17_CLASSIFY_UNIT_FINDINGS}
+  - {type: symbol_defined, path: runtime/langgraph_factory/repair.py, symbol: D18_PLAN_TARGETED_UNIT_REPAIR}
+  - {type: symbol_defined, path: runtime/langgraph_factory/repair.py, symbol: D19_ROUTE_UNIT_REPAIR}
+  - {type: symbol_defined, path: runtime/langgraph_factory/repair.py, symbol: D20_ADMIT_UNIT_REPAIR}
+  - {type: symbol_defined, path: runtime/langgraph_factory/repair.py, symbol: D21_RETEST_REQUIRED_DESCENDANTS}
+  - {type: symbol_defined, path: runtime/langgraph_factory/repair.py, symbol: owner_for_review_category}
+  - {type: symbol_defined, path: runtime/langgraph_factory/repair.py, symbol: route_owner}
+
+  # ---- acceptance.py: D16, D22, D23 -- unit evidence reduction and checkpointing ----
+  - {type: symbol_defined, path: runtime/langgraph_factory/acceptance.py, symbol: D16_REDUCE_UNIT_EVIDENCE}
+  - {type: symbol_defined, path: runtime/langgraph_factory/acceptance.py, symbol: D22_ACCEPT_UNIT}
+  - {type: symbol_defined, path: runtime/langgraph_factory/acceptance.py, symbol: D23_CHECKPOINT_ACCEPTED_UNIT}
+  - {type: symbol_defined, path: runtime/langgraph_factory/acceptance.py, symbol: register_unit_repair_path}
+  - {type: symbol_defined, path: runtime/langgraph_factory/acceptance.py, symbol: compute_unit_denominator}
+  - {type: symbol_defined, path: runtime/langgraph_factory/acceptance.py, symbol: prove_exact_manifest_coverage}
+
+  # ---- workbook.py: D24-D32, the workbook/release engine (M07/M08 destinations) ----
+  - {type: symbol_defined, path: runtime/langgraph_factory/workbook.py, symbol: D24_PROVE_EXACT_MANIFEST_COVERAGE}
+  - {type: symbol_defined, path: runtime/langgraph_factory/workbook.py, symbol: D25_ASSEMBLE_WORKBOOK}
+  - {type: symbol_defined, path: runtime/langgraph_factory/workbook.py, symbol: D26_RENDER_INVENTORY_INSPECT_WORKBOOK}
+  - {type: symbol_defined, path: runtime/langgraph_factory/workbook.py, symbol: D27_FREEZE_WORKBOOK_REVIEW_PACKET}
+  - {type: symbol_defined, path: runtime/langgraph_factory/workbook.py, symbol: D28_REDUCE_WORKBOOK_EVIDENCE}
+  - {type: symbol_defined, path: runtime/langgraph_factory/workbook.py, symbol: D29_CLASSIFY_AND_PLAN_WORKBOOK_REPAIR}
+  - {type: symbol_defined, path: runtime/langgraph_factory/workbook.py, symbol: D31_ADMIT_AND_RETEST_WORKBOOK_REPAIR}
+  - {type: symbol_defined, path: runtime/langgraph_factory/workbook.py, symbol: D32_RECOMPUTE_FINAL_RELEASE}
+  - {type: symbol_defined, path: runtime/langgraph_factory/workbook.py, symbol: register_workbook_path}
+  - {type: symbol_defined, path: runtime/langgraph_factory/workbook.py, symbol: compute_workbook_denominator}
+
+  # ---- retired-provider dispatch/credential terms, mirrored onto N40's own owned tests ----
+  # (Deliberately narrower than a blanket "google" string-absence: graph.py's
+  # own forbidden-import assertions in test_plan26_topology.py legitimately
+  # *name* "google.generativeai" as a forbidden import -- the defect this
+  # guards against is a live dispatch/credential reference, which scan_node.py
+  # --node N40_INTEGRATION_OWNERSHIP (this node's own required verification
+  # command, rules.retired_provider_test_scan) already checks with that exact
+  # distinction. This claim only reinforces the credential-name half.)
+  - {type: text_absent, path: tests/runtime/test_plan26_topology.py, pattern: "GEMINI_API_KEY|GOOGLE_API_KEY"}
+  - {type: text_absent, path: tests/runtime/test_plan26_unit_graph.py, pattern: "GEMINI_API_KEY|GOOGLE_API_KEY"}
+  - {type: text_absent, path: tests/runtime/test_plan26_repair_acceptance.py, pattern: "GEMINI_API_KEY|GOOGLE_API_KEY"}
+  - {type: text_absent, path: tests/runtime/test_plan26_workbook.py, pattern: "GEMINI_API_KEY|GOOGLE_API_KEY"}

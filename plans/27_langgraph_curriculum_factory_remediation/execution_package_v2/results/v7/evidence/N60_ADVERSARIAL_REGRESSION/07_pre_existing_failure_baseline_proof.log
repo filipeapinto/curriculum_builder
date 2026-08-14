@@ -1,0 +1,77 @@
+Frozen pre-change baseline proof for tests/runtime/test_plan26_prompt_graph_controller.py::test_passed_nodes_remain_admissible_after_harness_or_predecessor_change
+Method: git stash push of every file this Run 27 attempt has modified (transport.py, run_curriculum.py, test_plan26_transport.py/topology.py/persistence.py/evidence.py), reverting the working tree to HEAD (commit e04192e) for exactly those files, then rerunning the single failing test in isolation.
+
+Saved working directory and index state WIP on master: e04192e plans: plan 28 docs QA updates, plan 27 autonomous orchestrator prompt
+F                                                                        [100%]
+=================================== FAILURES ===================================
+___ test_passed_nodes_remain_admissible_after_harness_or_predecessor_change ____
+
+    def test_passed_nodes_remain_admissible_after_harness_or_predecessor_change():
+        """Guards against a harness-only change, or a legitimate predecessor
+        rework (e.g. an ownership correction), collaterally invalidating
+        already-admitted nodes it did not touch. Deliberately does not hardcode
+        which node is the current frontier: unlike this suite's other fixtures,
+        this test runs against the live receipt store as it actually stands, and
+        the pipeline is expected to keep advancing (more nodes reaching PASSED
+        over time), so pinning an exact snapshot would make the test rot on
+        every real step of progress rather than guard anything.
+        """
+        graph = manifest()
+        scheduler = controller_module.Controller(graph)
+        state = scheduler.status()
+        for node_id in graph.topological_order():
+            receipt = scheduler.receipts.load(node_id)
+            if receipt is None or receipt.get("status") != "PASSED":
+                continue
+            if state["statuses"][node_id] == "PASSED":
+                continue
+>           assert _admissible_tolerating_evidence_drift(scheduler, node_id), (
+                f"{node_id} has a PASSED receipt but is inadmissible for a reason "
+                "other than known evidence-directory drift"
+            )
+E           AssertionError: N10_DEPENDENCY_API has a PASSED receipt but is inadmissible for a reason other than known evidence-directory drift
+E           assert False
+E            +  where False = _admissible_tolerating_evidence_drift(<plan26_prompt_graph_controller.Controller object at 0x107ced160>, 'N10_DEPENDENCY_API')
+
+tests/runtime/test_plan26_prompt_graph_controller.py:228: AssertionError
+=========================== short test summary info ============================
+FAILED tests/runtime/test_plan26_prompt_graph_controller.py::test_passed_nodes_remain_admissible_after_harness_or_predecessor_change
+1 failed in 0.21s
+baseline_exit_code:1
+On branch master
+Your branch is up to date with 'origin/master'.
+
+Changes not staged for commit:
+  (use "git add <file>..." to update what will be committed)
+  (use "git restore <file>..." to discard changes in working directory)
+	modified:   plans/26_langgraph_curriculum_factory/results/evidence/N40_CLI_CUTOVER/plan25_resume_refusal.txt
+	modified:   plans/26_langgraph_curriculum_factory/results/evidence/N40_CLI_CUTOVER/preflight_read_only.txt
+	modified:   plans/27_langgraph_curriculum_factory_remediation/execution_package_v2/results/v7/N20_PROVIDER_TRANSPORT.result.v1.json
+	modified:   plans/27_langgraph_curriculum_factory_remediation/execution_package_v2/results/v7/N30_PREFLIGHT_EGRESS.result.v1.json
+	modified:   plans/27_langgraph_curriculum_factory_remediation/execution_package_v2/results/v7/evidence/N20_PROVIDER_TRANSPORT/01_pytest_n20.log
+	modified:   plans/27_langgraph_curriculum_factory_remediation/execution_package_v2/results/v7/evidence/N20_PROVIDER_TRANSPORT/04_git_status_production_scope.log
+	modified:   plans/27_langgraph_curriculum_factory_remediation/execution_package_v2/results/v7/evidence/N30_PREFLIGHT_EGRESS/01_pytest_n30_cli.log
+	modified:   plans/27_langgraph_curriculum_factory_remediation/execution_package_v2/results/v7/evidence/N30_PREFLIGHT_EGRESS/04_live_driver_capability_proof.log
+	modified:   runtime/langgraph_factory/transport.py
+	modified:   runtime/run_curriculum.py
+	modified:   tests/runtime/test_plan26_evidence.py
+	modified:   tests/runtime/test_plan26_persistence.py
+	modified:   tests/runtime/test_plan26_topology.py
+	modified:   tests/runtime/test_plan26_transport.py
+
+Untracked files:
+  (use "git add <file>..." to include in what will be committed)
+	plans/27_langgraph_curriculum_factory_remediation/contracts/evidence_determinism.v1.yaml
+	plans/27_langgraph_curriculum_factory_remediation/contracts/integration_ownership.v1.yaml
+	plans/27_langgraph_curriculum_factory_remediation/contracts/requirements_lineage.v1.yaml
+	plans/27_langgraph_curriculum_factory_remediation/execution_package_v2/results/v7/N40_INTEGRATION_OWNERSHIP.result.v1.json
+	plans/27_langgraph_curriculum_factory_remediation/execution_package_v2/results/v7/N50_EVIDENCE_AUDIT_CONTROLS.result.v1.json
+	plans/27_langgraph_curriculum_factory_remediation/execution_package_v2/results/v7/evidence/N20_PROVIDER_TRANSPORT/03_n20v7_f05_repair_regression_tests.log
+	plans/27_langgraph_curriculum_factory_remediation/execution_package_v2/results/v7/evidence/N40_INTEGRATION_OWNERSHIP/
+	plans/27_langgraph_curriculum_factory_remediation/execution_package_v2/results/v7/evidence/N50_EVIDENCE_AUDIT_CONTROLS/
+	plans/27_langgraph_curriculum_factory_remediation/execution_package_v2/results/v7/evidence/N60_ADVERSARIAL_REGRESSION/
+	plans/27_langgraph_curriculum_factory_remediation/tests/test_run27_adversarial.py
+	tests/runtime/test_plan27_adversarial.py
+
+no changes added to commit (use "git add" and/or "git commit -a")
+Dropped refs/stash@{0} (269637690ad467dd59f8325408ca1ce3b67dd0f9)

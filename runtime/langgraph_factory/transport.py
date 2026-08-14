@@ -298,13 +298,23 @@ def build_codex_argv(
     reasoning_effort: str,
     instruction: str,
 ) -> list[str]:
-    """The pinned Codex invocation (spec 7.2).
+    """The pinned Codex invocation (spec 7.3), corrected for observable identity (N30V7-F05).
 
-    `--json` is not decoration: the JSONL event stream is the only machine-readable
-    channel this CLI offers for the executed model identity that 7.2 requires.
+    `--json` is not decoration: the JSONL event stream is the transport-isolation
+    proof channel. But live evidence against the genuinely installed CLI (codex-cli
+    0.147.0, N30V7-F05) proved that stream's `thread.started`/`turn.started`/
+    `item.completed`/`turn.completed` events never carry a `model` field on any
+    variant -- `--ephemeral`'s own on-disk rollout file is the only machine-readable
+    Codex receipt that does (`turn_context.payload.model`, spec 7.3's "machine-readable
+    Codex event/receipt"). `--ephemeral` is therefore dropped: every caller already runs
+    this inside a disposable, per-activation `$CODEX_HOME` (`build_worker_environment`)
+    or, for the driver-capability preflight probe, the operator's own real,
+    already-authenticated `$CODEX_HOME` (`_probe_env`, by the same design that already
+    accepted the real environment for that probe) -- so the rollout file this write adds
+    is bounded to one of those two homes, never a shared, uncontrolled location.
     """
     return [
-        "codex", "exec", "--ephemeral", "--ignore-user-config", "--ignore-rules",
+        "codex", "exec", "--ignore-user-config", "--ignore-rules",
         "-s", "read-only", "--skip-git-repo-check", "-C", str(workspace),
         "-m", model, "-c", f'model_reasoning_effort="{reasoning_effort}"',
         "--output-schema", "output.schema.json", "-o", "result.json",
@@ -650,18 +660,21 @@ class ObservedIdentity:
     family_source: str
 
 
-_CODEX_IDENTITY_EVENTS = ("session_configured", "thread.started", "turn.started", "model_reroute")
+def resolve_codex_home(env: Mapping[str, str]) -> Path:
+    """The `$CODEX_HOME` a codex invocation under this exact `env` actually resolves to.
 
-
-def observe_codex_identity(event_stream: str) -> ObservedIdentity:
-    """Read the executed model out of the Codex JSONL event stream.
-
-    Copying the decision here would defeat the whole check, so an event stream that
-    never names a model is an unobservable identity, not a silent pass.
+    Mirrors the installed CLI's own precedence: an explicit `CODEX_HOME` wins; absent
+    that, it falls back to `$HOME/.codex`.
     """
-    model: str | None = None
-    model_source: str | None = None
-    provider: str | None = None
+    codex_home = env.get("CODEX_HOME")
+    if codex_home:
+        return Path(codex_home)
+    home = env.get("HOME") or str(Path.home())
+    return Path(home) / ".codex"
+
+
+def _codex_thread_id(event_stream: str) -> str | None:
+    """The `thread_id` this exact `--json` stdout named, or ``None`` if it never did."""
     for line in event_stream.splitlines():
         line = line.strip()
         if not line.startswith("{"):
@@ -670,33 +683,117 @@ def observe_codex_identity(event_stream: str) -> ObservedIdentity:
             event = json.loads(line)
         except json.JSONDecodeError:
             continue
-        if not isinstance(event, Mapping):
-            continue
-        payloads: list[tuple[str, Mapping[str, Any]]] = []
-        inner = event.get("msg")
-        if isinstance(inner, Mapping) and isinstance(inner.get("type"), str):
-            payloads.append((inner["type"], inner))
-        if isinstance(event.get("type"), str):
-            body = event.get("payload")
-            payloads.append((event["type"], body if isinstance(body, Mapping) else event))
-        for event_type, payload in payloads:
-            if event_type not in _CODEX_IDENTITY_EVENTS:
+        if isinstance(event, Mapping) and event.get("type") == "thread.started":
+            thread_id = event.get("thread_id")
+            if isinstance(thread_id, str) and thread_id:
+                return thread_id
+    return None
+
+
+def _rollout_session_id(path: Path) -> str | None:
+    """The rollout file's own declared session id, from its leading `session_meta` line."""
+    try:
+        with path.open("r", encoding="utf-8") as handle:
+            first = handle.readline().strip()
+    except OSError:
+        return None
+    if not first.startswith("{"):
+        return None
+    try:
+        event = json.loads(first)
+    except json.JSONDecodeError:
+        return None
+    if not isinstance(event, Mapping) or event.get("type") != "session_meta":
+        return None
+    payload = event.get("payload")
+    if not isinstance(payload, Mapping):
+        return None
+    session_id = payload.get("session_id")
+    return session_id if isinstance(session_id, str) and session_id else None
+
+
+def _rollout_files_for_thread(codex_home: Path, thread_id: str) -> list[Path]:
+    sessions_root = Path(codex_home) / "sessions"
+    if not sessions_root.is_dir():
+        return []
+    return sorted(
+        path for path in sessions_root.glob("**/rollout-*.jsonl")
+        if path.is_file() and _rollout_session_id(path) == thread_id)
+
+
+def _final_rollout_identity(path: Path) -> tuple[str | None, str | None]:
+    """The last `turn_context.model` in the file (reroute supersedes initial), plus provider."""
+    model: str | None = None
+    provider: str | None = None
+    with path.open("r", encoding="utf-8") as handle:
+        for line in handle:
+            line = line.strip()
+            if not line.startswith("{"):
                 continue
-            observed = payload.get("model")
-            if isinstance(observed, str) and observed:
-                model, model_source = observed, event_type
-            for key in ("model_provider_id", "provider", "model_provider"):
-                value = payload.get(key)
-                if isinstance(value, str) and value:
-                    provider = value
+            try:
+                event = json.loads(line)
+            except json.JSONDecodeError:
+                continue
+            if not isinstance(event, Mapping):
+                continue
+            payload = event.get("payload")
+            if not isinstance(payload, Mapping):
+                continue
+            event_type = event.get("type")
+            if event_type == "session_meta":
+                observed_provider = payload.get("model_provider")
+                if isinstance(observed_provider, str) and observed_provider:
+                    provider = observed_provider
+            elif event_type == "turn_context":
+                observed_model = payload.get("model")
+                if isinstance(observed_model, str) and observed_model:
+                    model = observed_model
+    return model, provider
+
+
+def observe_codex_identity(event_stream: str, *, codex_home: Path) -> ObservedIdentity:
+    """Read the executed model out of *this exact invocation's* on-disk rollout file.
+
+    Live evidence (N30V7-F05, codex-cli 0.147.0) proved the `--json` stdout stream
+    itself never carries a `model` field on any event it emits, so copying that stream
+    can never satisfy this check -- there is nothing in it to copy. The on-disk rollout
+    file `build_codex_argv` now leaves behind (having dropped `--ephemeral`) does carry
+    it, in `turn_context.payload.model`.
+
+    `codex_home` is not necessarily private to this one call: a real job's is a fresh,
+    disposable per-activation `$CODEX_HOME`, but the driver-capability preflight probe
+    deliberately runs against the operator's real, long-lived `~/.codex`, which can hold
+    rollout files from unrelated, concurrent, or historical invocations. Matching "the
+    newest rollout file" would silently attribute another process's model to this one.
+    The only trustworthy key is `thread.started.thread_id` from *this* stdout, matched
+    against each candidate file's own `session_meta.payload.session_id`; zero or more
+    than one match is refused as an unobservable identity, never guessed.
+    """
+    thread_id = _codex_thread_id(event_stream)
+    if thread_id is None:
+        raise IdentityUnobservable(
+            "codex event stream never emitted thread.started; no thread_id to bind a "
+            "rollout file to, so route conformance cannot be claimed")
+    matches = _rollout_files_for_thread(Path(codex_home), thread_id)
+    if not matches:
+        raise IdentityUnobservable(
+            f"no rollout file under {codex_home} matched thread_id {thread_id!r}; "
+            "route conformance cannot be claimed")
+    if len(matches) > 1:
+        raise IdentityUnobservable(
+            f"{len(matches)} rollout files under {codex_home} matched thread_id "
+            f"{thread_id!r}; refusing an ambiguous identity binding")
+    model, provider = _final_rollout_identity(matches[0])
     if not model:
         raise IdentityUnobservable(
-            "codex event stream names no executed model; route conformance cannot be claimed")
+            f"rollout file {matches[0]} for thread_id {thread_id!r} names no "
+            "turn_context.model; route conformance cannot be claimed")
     return ObservedIdentity(
         family=REVIEW_FAMILY,
         model=model,
-        model_source=f"codex_event:{model_source}",
-        family_source=(f"codex_event:{provider}" if provider else "executable_identity:codex-cli"),
+        model_source=f"codex_rollout:turn_context.model:{matches[0].name}",
+        family_source=(f"codex_rollout:model_provider={provider}" if provider
+                        else "executable_identity:codex-cli"),
     )
 
 
@@ -749,9 +846,12 @@ def observe_claude_identity(stream_text: str) -> ObservedIdentity:
     )
 
 
-def observe_identity(route: JobRoute, *, stdout: str) -> ObservedIdentity:
+def observe_identity(route: JobRoute, *, stdout: str, codex_home: Path | None = None) -> ObservedIdentity:
     if route.cli == "codex":
-        return observe_codex_identity(stdout)
+        if codex_home is None:
+            raise IdentityUnobservable(
+                f"{route.job_id}: codex identity observation requires codex_home")
+        return observe_codex_identity(stdout, codex_home=codex_home)
     return observe_claude_identity(stdout)
 
 
@@ -1709,7 +1809,8 @@ class CliTransport:
                 raise TransportRetryable("timeout", outcome.termination)
             if outcome.returncode != 0:
                 raise TransportRetryable("nonzero_exit", str(outcome.returncode))
-            observed = observe_identity(route, stdout=outcome.stdout)
+            observed = observe_identity(
+                route, stdout=outcome.stdout, codex_home=workspace.home / "codex")
             receipt["observed_family"] = observed.family
             receipt["observed_model"] = observed.model
             receipt["observed_identity_source"] = (

@@ -1,5 +1,5 @@
 {
-  "ready": false,
+  "ready": true,
   "drivers": {
     "claude": {
       "cli": "claude",
@@ -10,9 +10,9 @@
       "fields": {
         "executable_identity": {
           "status": "PASS",
-          "path": "/opt/homebrew/Caskroom/claude-code@latest/2.1.231/claude",
-          "sha256": "ba790279cab6ef77b713864d4bf5f764fcea87d3a3eb7591a41f741e45212b5c",
-          "version": "2.1.231 (Claude Code)"
+          "path": "/opt/homebrew/Caskroom/claude-code@latest/2.1.232/claude",
+          "sha256": "7b39c1588df919d001dea3ffd5651adb682f2451b5a0e18d42d4233296b53cc7",
+          "version": "2.1.232 (Claude Code)"
         },
         "permitted_auth_mode": {
           "status": "PASS",
@@ -85,10 +85,8 @@
       "cli": "codex",
       "model": "gpt-5.6-sol",
       "provider": "openai",
-      "ready": false,
-      "failed_fields": [
-        "observable_subscription_backed_usability"
-      ],
+      "ready": true,
+      "failed_fields": [],
       "fields": {
         "executable_identity": {
           "status": "PASS",
@@ -126,9 +124,8 @@
           "transmitted_authorized_input_projection": {}
         },
         "observable_subscription_backed_usability": {
-          "status": "FAIL",
-          "reason": "malformed_or_unobservable_output",
-          "detail": "codex event stream names no executed model; route conformance cannot be claimed"
+          "status": "PASS",
+          "observed_model": "gpt-5.6-sol"
         },
         "tool_mcp_closure": {
           "status": "not_applicable",

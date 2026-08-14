@@ -422,9 +422,10 @@ def _prove_one_driver(
         argv = tp.build_codex_argv(
             workspace=workspace, model=model, reasoning_effort="low", instruction=_PROBE_INSTRUCTION)
 
+    probe_env = _probe_env()
     try:
         outcome = runner(
-            argv, cwd=workspace, env=_probe_env(), timeout_seconds=_PROBE_TIMEOUT_SECONDS, stdin=probe_stdin,
+            argv, cwd=workspace, env=probe_env, timeout_seconds=_PROBE_TIMEOUT_SECONDS, stdin=probe_stdin,
         )
     except OSError as error:
         fields["observable_subscription_backed_usability"] = {
@@ -450,7 +451,8 @@ def _prove_one_driver(
         try:
             observed = (
                 tp.observe_claude_identity(outcome.stdout) if cli == "claude"
-                else tp.observe_codex_identity(outcome.stdout)
+                else tp.observe_codex_identity(
+                    outcome.stdout, codex_home=tp.resolve_codex_home(probe_env))
             )
         except tp.IdentityUnobservable as error:
             fields["observable_subscription_backed_usability"] = {

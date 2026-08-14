@@ -1,100 +1,35 @@
 {
-  "attempt_id": "N20_PROVIDER_TRANSPORT-execpkgv2-v7-attempt-1",
+  "attempt_id": "N20_PROVIDER_TRANSPORT-execpkgv2-v7-attempt-2",
   "changed_files": [
     {
       "change": "modified",
       "path": "runtime/langgraph_factory/transport.py",
-      "sha256": "84f3d9a61260f0ec52689566445d727ac3452f2e75bd495b2a2804f68bc7403c"
-    },
-    {
-      "change": "modified",
-      "path": "runtime/langgraph_factory/model_nodes.py",
-      "sha256": "89eda700be45f35961c3bcd40de9a336e09f713ebead0ed5e3e5fa06d09861e0"
-    },
-    {
-      "change": "modified",
-      "path": "runtime/langgraph_factory/egress.py",
-      "sha256": "90ada286e5f2c20f10b4ad7786c5a4963e2b5a8c009bba33952b98b9069629d8"
-    },
-    {
-      "change": "modified",
-      "path": "policy/routes.v1.yaml",
-      "sha256": "baa96fbe52bb8863f467ae16d02a2caeceed0ab49b00510a4dd185a683766b2a"
-    },
-    {
-      "change": "modified",
-      "path": "policy/routing/model_registry.v1.yaml",
-      "sha256": "adfa0672fd4c150e8c18b98d5b4687d4fc6334c3710823759ae282548c3348c5"
-    },
-    {
-      "change": "modified",
-      "path": "runtime/langgraph_factory/config/model_jobs.v1.yaml",
-      "sha256": "62c9c9c33a164bd5e02a0008ea289c83e5cae34ab1c951f32c9dec22c8236c3d"
-    },
-    {
-      "change": "modified",
-      "path": "runtime/langgraph_factory/schemas/internal_authorization_receipt.schema.json",
-      "sha256": "3983ede1b0ca25fdcd194e561cdc272d066d13c21434be94098a824a9f3a1e84"
-    },
-    {
-      "change": "modified",
-      "path": "runtime/langgraph_factory/schemas/internal_execution_receipt.schema.json",
-      "sha256": "dc94a205908b5f0eb6e7bef2c00ea7aac4b9cdd72efdf9c61b43845d404e79e1"
+      "sha256": "2dbde5648cff2b643913abc0c3f741dd30ae3cc546e9749ab114df5c5d399f00"
     },
     {
       "change": "modified",
       "path": "tests/runtime/test_plan26_transport.py",
-      "sha256": "6ff15b0d32aa7b9fd7f0a022f6e41917643b53cbd567778147d3154329ce4d15"
+      "sha256": "b27a55aa598ea252ac12c3e82b11e734062ef705504b06b80a98ba0c95266d68"
     },
     {
       "change": "modified",
-      "path": "tests/runtime/test_plan26_model_nodes.py",
-      "sha256": "2918842b72fcc8beb6e256c0992552fa386f803cb36f0bb6b2a1e70b479c9f3c"
-    },
-    {
-      "change": "modified",
-      "path": "tests/runtime/test_plan26_egress.py",
-      "sha256": "54db08c632d96078666e94d242ec7bc0918507ac24a416afa1fa06f75cee3474"
-    },
-    {
-      "change": "modified",
-      "path": "tests/runtime/test_curriculum_factory_graph.py",
-      "sha256": "337c1cd34122988f6b3a2c05c70ebd0d3a4a31bc9a5e8129ec2e91ad9a015790"
-    },
-    {
-      "change": "modified",
-      "path": "tests/runtime/test_plan26_adversarial.py",
-      "sha256": "e68bebbdabae1c3bad4831c3542a768a51dc5843ccaff1e3f7c9673c4486f521"
-    },
-    {
-      "change": "modified",
-      "path": "tests/runtime/test_plan26_api_contract.py",
-      "sha256": "8369203073fdcf1b553669774c52c780836f5e86f328ef428e899e0cdce873c5"
-    },
-    {
-      "change": "modified",
-      "path": "tests/runtime/test_plan26_lock_drift.py",
-      "sha256": "211a1e0e7627fcd6762540acde5fbb7f2dd7df665ea7e3c72cca3dda719f4761"
-    },
-    {
-      "change": "created",
       "path": "plans/27_langgraph_curriculum_factory_remediation/execution_package_v2/results/v7/evidence/N20_PROVIDER_TRANSPORT/01_pytest_n20.log",
-      "sha256": "624362f523931af247ece180c3b4034e03db9df81ae2b6dbb2962c3809f9a3ae"
+      "sha256": "823c0a5a2e5fa755c98e353e527c9c0a81058052345b2daab8b0f8c5a8ec420c"
     },
     {
-      "change": "created",
+      "change": "modified",
       "path": "plans/27_langgraph_curriculum_factory_remediation/execution_package_v2/results/v7/evidence/N20_PROVIDER_TRANSPORT/02_scan_node_n20.log",
       "sha256": "2d471cf440eeeead175a5f5eb2abd59afe0c56f62a78b8fd11d834c7a55d2b9a"
     },
     {
       "change": "created",
-      "path": "plans/27_langgraph_curriculum_factory_remediation/execution_package_v2/results/v7/evidence/N20_PROVIDER_TRANSPORT/03_prior_blocked_findings_carried_forward.log",
-      "sha256": "8a136d17a9bbcda6366485886a6c77d43fbb582366098f1c8d1923b19a6c8c0c"
+      "path": "plans/27_langgraph_curriculum_factory_remediation/execution_package_v2/results/v7/evidence/N20_PROVIDER_TRANSPORT/03_n20v7_f05_repair_regression_tests.log",
+      "sha256": "7033edf82314deea34f388ab0a634ade0ce30e479d9a893ff96cdae19c733a74"
     },
     {
-      "change": "created",
+      "change": "modified",
       "path": "plans/27_langgraph_curriculum_factory_remediation/execution_package_v2/results/v7/evidence/N20_PROVIDER_TRANSPORT/04_git_status_production_scope.log",
-      "sha256": "3a63863e73010e7a725d128d2ed17f16fb04bf247afbaba60a5f73379f17e7ab"
+      "sha256": "a65ddabf8dafc48e640e64644d392496f52c53306fc0f6e2cb9d0e364eaf345e"
     }
   ],
   "commands": [
@@ -102,7 +37,7 @@
       "argv": ["python3", "-m", "pytest", "-q", "tests/runtime/test_plan26_transport.py", "tests/runtime/test_plan26_model_nodes.py", "tests/runtime/test_plan26_egress.py", "tests/runtime/test_capabilities.py", "tests/runtime/test_curriculum_factory_graph.py", "tests/runtime/test_plan26_adversarial.py", "tests/runtime/test_plan26_api_contract.py", "tests/runtime/test_plan26_lock_drift.py"],
       "exit_code": 0,
       "log": "plans/27_langgraph_curriculum_factory_remediation/execution_package_v2/results/v7/evidence/N20_PROVIDER_TRANSPORT/01_pytest_n20.log",
-      "log_sha256": "624362f523931af247ece180c3b4034e03db9df81ae2b6dbb2962c3809f9a3ae"
+      "log_sha256": "823c0a5a2e5fa755c98e353e527c9c0a81058052345b2daab8b0f8c5a8ec420c"
     },
     {
       "argv": ["python3", "plans/27_langgraph_curriculum_factory_remediation/execution_package_v2/controller/scan_node.py", "--node", "N20_PROVIDER_TRANSPORT", "--graph", "plans/27_langgraph_curriculum_factory_remediation/execution_package_v2/implementation.graph.v7.yaml"],
@@ -111,52 +46,52 @@
       "log_sha256": "2d471cf440eeeead175a5f5eb2abd59afe0c56f62a78b8fd11d834c7a55d2b9a"
     },
     {
-      "argv": ["bash", "-c", "python3 -c \"import json; d=json.load(open('plans/27_langgraph_curriculum_factory_remediation/execution_package_v2/results/N20_PROVIDER_TRANSPORT.result.v1.json')); [print(f'[{f[\\\"severity\\\"]}] {f[\\\"id\\\"]} ({f[\\\"disposition\\\"]}): {f[\\\"summary\\\"][:200]}') for f in d['findings']]\""],
+      "argv": ["python3", "-m", "pytest", "-q", "tests/runtime/test_plan26_transport.py", "-k", "codex_identity or codex_reroute or codex_stream", "-v"],
       "exit_code": 0,
-      "log": "plans/27_langgraph_curriculum_factory_remediation/execution_package_v2/results/v7/evidence/N20_PROVIDER_TRANSPORT/03_prior_blocked_findings_carried_forward.log",
-      "log_sha256": "8a136d17a9bbcda6366485886a6c77d43fbb582366098f1c8d1923b19a6c8c0c"
+      "log": "plans/27_langgraph_curriculum_factory_remediation/execution_package_v2/results/v7/evidence/N20_PROVIDER_TRANSPORT/03_n20v7_f05_repair_regression_tests.log",
+      "log_sha256": "7033edf82314deea34f388ab0a634ade0ce30e479d9a893ff96cdae19c733a74"
     },
     {
       "argv": ["git", "status", "--porcelain", "--", "runtime/", "policy/", "schemas/"],
       "exit_code": 0,
       "log": "plans/27_langgraph_curriculum_factory_remediation/execution_package_v2/results/v7/evidence/N20_PROVIDER_TRANSPORT/04_git_status_production_scope.log",
-      "log_sha256": "3a63863e73010e7a725d128d2ed17f16fb04bf247afbaba60a5f73379f17e7ab"
+      "log_sha256": "a65ddabf8dafc48e640e64644d392496f52c53306fc0f6e2cb9d0e364eaf345e"
     }
   ],
   "evidence": [
     "plans/27_langgraph_curriculum_factory_remediation/execution_package_v2/results/v7/evidence/N20_PROVIDER_TRANSPORT/01_pytest_n20.log",
     "plans/27_langgraph_curriculum_factory_remediation/execution_package_v2/results/v7/evidence/N20_PROVIDER_TRANSPORT/02_scan_node_n20.log",
-    "plans/27_langgraph_curriculum_factory_remediation/execution_package_v2/results/v7/evidence/N20_PROVIDER_TRANSPORT/03_prior_blocked_findings_carried_forward.log",
+    "plans/27_langgraph_curriculum_factory_remediation/execution_package_v2/results/v7/evidence/N20_PROVIDER_TRANSPORT/03_n20v7_f05_repair_regression_tests.log",
     "plans/27_langgraph_curriculum_factory_remediation/execution_package_v2/results/v7/evidence/N20_PROVIDER_TRANSPORT/04_git_status_production_scope.log"
   ],
   "findings": [
     {
       "disposition": "resolved",
-      "id": "N20V7-F01",
+      "id": "N20V7-F04",
       "severity": "critical",
-      "summary": "N20V2-F01 (the write-set/scan-scope defect: tests/runtime/test_gemini.py and test_capabilities.py, testing an unrelated Plan 11/19/20/21 Gemini pipeline, were asymmetrically placed in N20's write set with no exemption mechanism in retired_provider_test_scan) is resolved by the graph v6/v7 recovery lineage (rc6-rc8, independently QA-passed, chain-valid, user-approved). scan_node.py --node N20_PROVIDER_TRANSPORT --graph implementation.graph.v7.yaml now returns ok: true, violations: [] -- reconfirmed directly in this attempt, not merely inherited by assertion."
+      "summary": "N30V7-F05 (routed here from N30_PREFLIGHT_EGRESS attempt-1, BLOCKED): transport.observe_codex_identity could not extract an executed model from the real, installed Codex CLI's actual --json exec event stream (codex-cli 0.147.0; thread.started/turn.started/item.completed/turn.completed never carry a model field on any variant, live-verified). Root cause: the pinned invocation's own --ephemeral flag suppresses the one machine-readable Codex receipt that does carry the executed model -- the on-disk rollout file's turn_context.payload.model. Fix, scoped entirely to N20's write set (runtime/langgraph_factory/transport.py, tests/runtime/test_plan26_transport.py): build_codex_argv drops --ephemeral; observe_codex_identity now binds this exact invocation's stdout thread.started.thread_id to exactly one rollout file under codex_home whose own session_meta.payload.session_id matches, and reads that file's final turn_context.payload.model (last one wins, mirroring the existing reroute-supersedes-initial rule already used for Claude identity). Zero or multiple rollout matches are refused as an unobservable identity, never guessed by mtime or path recency -- load-bearing because the driver-capability preflight probe (N30-owned runtime/run_curriculum.py, unchanged call contract, now passed an explicit codex_home) deliberately runs against the operator's real, shared ~/.codex, which can hold rollout files from unrelated, concurrent, or historical invocations. New observe_identity(..., codex_home=...) parameter added; the one production call site (CliTransport._attempt) passes workspace.home / 'codex', the same disposable per-activation CODEX_HOME build_worker_environment already establishes for every real job."
     },
     {
       "disposition": "resolved",
-      "id": "N20V7-F02",
+      "id": "N20V7-F04-REGRESSION",
       "severity": "major",
-      "summary": "N20V2-F02 through F11 (the eight-job conformance table; the four corrected Claude transport mechanics -- deterministic CLI-schema projection, stdin delivery, stream-json per-turn identity extraction, tool/MCP-closure D03 check; the egress.py provider-class migration; the self-caught observe_codex_identity family-constant bug; and the retired-provider test cleanup) were all genuinely implemented and independently verified in the prior attempt under graph v5 (production code untouched since, byte-identical, reconfirmed by hash before this attempt began). This attempt re-verifies the same, unmodified production implementation against graph v7's corrected scan scope rather than re-implementing anything."
+      "summary": "Deterministic positive and negative regression proof added (tests/runtime/test_plan26_transport.py): identity reads the rollout file bound by thread_id (positive); reroute's later turn_context supersedes the initial one and correctly raises IdentityMismatch against a stale decided model (positive); the real captured codex-cli 0.147.0 stdout shape alone (no thread_id or no matching rollout) still fails closed (negative, two variants); and -- the specific proof the routing instruction required -- an unrelated, concurrent rollout file for a different thread_id under the same codex_home is never mistaken for the invoked process, plus zero-match and multiple-match (ambiguous binding) are both explicitly refused rather than guessed. 7/7 new/updated identity tests pass in isolation; full N20 verification suite (464 passed, 1 skipped, 140 subtests) is unaffected."
     },
     {
       "disposition": "resolved",
-      "id": "N20V7-F03",
+      "id": "N20V7-F04-LIVE",
       "severity": "observation",
-      "summary": "460 tests passed, 1 skipped, 140 subtests passed across the full required pytest command, identical in substance to the count independently verified for the same, unmodified production code under graph v5."
+      "summary": "Live-verified against the genuinely installed codex-cli 0.147.0 (not simulated): runtime.run_curriculum._prove_driver_capabilities() now reports the codex driver's observable_subscription_backed_usability as PASS (observed_model: gpt-5.6-sol) and overall ready: true, where it previously reported FAIL/malformed_or_unobservable_output (N30V7-F05 evidence, 04_live_driver_capability_proof.log under N30's prior attempt-1). N20V7-F01 through F03 (write-set/scan-scope conformance, prior graph-v5 implementation, test-count parity) remain resolved and unaffected -- production code touched by this attempt is limited to the one function family this finding names."
     }
   ],
-  "invalidated_descendants": [],
+  "invalidated_descendants": ["N30_PREFLIGHT_EGRESS"],
   "node_id": "N20_PROVIDER_TRANSPORT",
   "outcome": "PASSED",
   "predecessor_receipts": {
     "N10_HARNESS_PROTOCOL": "0df33e169ed0e29ad5172e81a48e8dfe98beb73fcff051ff0e89ac6cb8e01f0d"
   },
   "prompt_sha256": "29ecc1d83bee06c8c929c71588fba51859bdd8e6ced4e9540a99b5cfc8873f87",
-  "run_id": "run27-execpkgv2-v7-2026-08-13",
+  "run_id": "run27-execpkgv2-v7-2026-08-14",
   "schema_version": 1,
   "source_spec_sha256": "e14df5a36ce12d700fe9fc4aa4aea466771bc89f31bc6e9d49f812c147b1bb3c"
 }

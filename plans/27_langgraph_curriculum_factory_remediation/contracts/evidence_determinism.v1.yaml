@@ -1,0 +1,37 @@
+schema_version: 1
+kind: evidence_determinism
+contract_id: run27-n50-evidence-determinism-v1
+node_id: N50_EVIDENCE_AUDIT_CONTROLS
+
+# N50 prompt items 1/2: evidence written by the production evidence/artifact/
+# persistence layer must not embed temporary paths, timestamps, random
+# identifiers, or ordering variance. This probe exercises the real,
+# unmocked EvidenceStore write path (append -> content-addressed audit
+# report) twice, inside this node's own evidence scope
+# (results/v7/evidence/N50_EVIDENCE_AUDIT_CONTROLS/determinism_probe), and
+# requires byte-identical stdout both times -- the payload carries only
+# fixed run_id/episode_id/activation_id/node_id/phase fields, never a
+# timestamp or tempfile path, so a deterministic content-addressed digest is
+# the only way this command can pass.
+
+claims:
+  - type: command_repeats_identically
+    argv:
+      - python3
+      - "-c"
+      - "from pathlib import Path; import shutil, json; from runtime.langgraph_factory.evidence import EvidenceStore; root = Path('plans/27_langgraph_curriculum_factory_remediation/execution_package_v2/results/v7/evidence/N50_EVIDENCE_AUDIT_CONTROLS/determinism_probe'); shutil.rmtree(root) if root.exists() else None; store = EvidenceStore(root); [store.log('activations').append({'run_id': 'run27-n50-determinism-probe', 'episode_id': 'ep-1', 'activation_id': f'ACT-{i:03d}', 'node_id': 'D08', 'phase': 'ACT'}) for i in range(1, 4)]; report_path = store.write_audit_report(); report = json.loads(report_path.read_text(encoding='utf-8')); print(json.dumps({'report_file_name': report_path.name, 'report_hash': report['report_hash'], 'activations_record_count': report['report']['logs']['activations']['record_count'], 'executions_record_count': report['report']['logs']['executions']['record_count']}, sort_keys=True))"
+    runs: 3
+    exit_code: 0
+
+  # The content-addressed report filename itself must never drift between
+  # two independently reseeded runs of identical inputs (paths_stable_under_
+  # command re-checks the same probe's own output tree after a third run,
+  # proving the filesystem artifact -- not just stdout -- is stable).
+  - type: paths_stable_under_command
+    argv:
+      - python3
+      - "-c"
+      - "from pathlib import Path; from runtime.langgraph_factory.evidence import EvidenceStore; root = Path('plans/27_langgraph_curriculum_factory_remediation/execution_package_v2/results/v7/evidence/N50_EVIDENCE_AUDIT_CONTROLS/determinism_probe'); store = EvidenceStore(root); store.write_audit_report()"
+    paths:
+      - plans/27_langgraph_curriculum_factory_remediation/execution_package_v2/results/v7/evidence/N50_EVIDENCE_AUDIT_CONTROLS/determinism_probe/evidence/log_audits
+    exit_code: 0

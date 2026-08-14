@@ -8,6 +8,7 @@ import sys
 from dataclasses import dataclass
 from datetime import datetime, timedelta, timezone
 from pathlib import Path
+from typing import Any, Sequence
 
 import jsonschema
 import pytest
@@ -452,41 +453,20 @@ def test_sandbox_profile_confines_reads_and_writes_to_the_workspace(tmp_path: Pa
 # -------------------------------------------- TEST 5: decided versus observed identity
 
 
-def test_codex_identity_is_read_from_the_event_stream():
-    observed = tp.observe_codex_identity(codex_events("gpt-5.6-sol"))
-    assert observed.model == "gpt-5.6-sol"
-    assert observed.family == "openai"
-    assert observed.model_source == "codex_event:session_configured"
-
-
-def test_codex_reroute_supersedes_the_initial_session_model():
-    observed = tp.observe_codex_identity(codex_events("gpt-5.6-sol", reroute="gpt-5-mini"))
-    assert observed.model == "gpt-5-mini"
-    with pytest.raises(tp.IdentityMismatch):
-        tp.assert_identity_matches(tp.resolve_route("M05_REVIEW_ACTUAL_UNIT"), observed)
-
-
-def test_codex_stream_without_a_model_is_unobservable():
-    stream = json.dumps({"id": "0", "msg": {"type": "agent_message", "message": "hi"}})
-    with pytest.raises(tp.IdentityUnobservable):
-        tp.observe_codex_identity(stream)
-
-
-def real_codex_cli_0_147_0_json_events() -> str:
+def real_codex_cli_0_147_0_json_events(thread_id: str) -> str:
     """Byte-for-byte the `--json` stdout of a live `codex exec` run (codex-cli 0.147.0).
 
-    Captured against the real, installed binary using the exact pinned invocation
-    (spec 7.2: `codex exec --ephemeral --ignore-user-config --ignore-rules -s read-only
-    --skip-git-repo-check ... --json`), across a bare JSON-echo probe and a probe that
-    forced a `command_execution` item. Neither the four `ThreadEvent` types
-    (thread.started/turn.started/item.completed/turn.completed) nor any `item.completed`
-    item variant (agent_message, command_execution) ever carries a `model` key in this
-    CLI version -- the model is only visible internally (RUST_LOG debug trace, not a
-    machine-readable contract) or in the on-disk rollout file, which `--ephemeral`
-    deliberately never writes. This fixture pins that live-verified gap (N30V7-F05).
+    Captured against the real, installed binary using the pinned invocation (spec 7.3),
+    across a bare JSON-echo probe and a probe that forced a `command_execution` item.
+    Neither the four `ThreadEvent` types (thread.started/turn.started/item.completed/
+    turn.completed) nor any `item.completed` item variant (agent_message,
+    command_execution) ever carries a `model` key in this CLI version -- the model is
+    only visible internally (RUST_LOG debug trace, not a machine-readable contract) or
+    in the on-disk rollout file. This fixture pins that live-verified gap (N30V7-F05);
+    `thread.started.thread_id` is the one field in it this module still trusts.
     """
     return "\n".join([
-        json.dumps({"type": "thread.started", "thread_id": "01a00096-3a44-7380-8a1a-9d0790afbe2c"}),
+        json.dumps({"type": "thread.started", "thread_id": thread_id}),
         json.dumps({"type": "turn.started"}),
         json.dumps({"id": "item_1", "type": "item.started", "item": {
             "id": "item_1", "type": "command_execution", "command": "/bin/zsh -lc 'echo probe'",
@@ -502,21 +482,106 @@ def real_codex_cli_0_147_0_json_events() -> str:
     ]) + "\n"
 
 
-def test_codex_identity_is_unobservable_against_the_real_installed_cli_protocol():
-    """codex-cli 0.147.0's real `--json` event stream never names the executed model.
+def write_codex_rollout(
+    codex_home: Path, *, thread_id: str, models: Sequence[str] = ("gpt-5.6-sol",),
+    provider: str | None = "openai", filename: str | None = None,
+) -> Path:
+    """A synthetic rollout file shaped like the real on-disk protocol (N30V7-F05 fix).
 
-    N30 found this live (N30V7-F05): the installed CLI emits the newer, minimal
-    `thread.started`/`turn.started`/`item.completed`/`turn.completed` protocol, and no
-    event or item type in that protocol carries a `model` field for the common
-    (non-rerouted) path -- unlike the older `session_configured`-wrapped protocol the
-    rest of this test file's `codex_events()` fixture models. `_CODEX_IDENTITY_EVENTS`
-    already lists `thread.started`/`turn.started` by name (it is not an event-type-name
-    bug); the field these events would need to carry is simply absent from the real
-    payload. The correct, honest behavior -- proven here against the live-captured
-    shape -- is to raise IdentityUnobservable, not to silently pass.
+    `models` in order of appearance: multiple entries simulate a mid-session
+    `model_reroute` writing a second `turn_context` (the last one is what a genuine
+    reroute would leave as the executed model, mirroring Codex's own
+    reroute-supersedes-initial rule already applied to the Claude side).
+    """
+    sessions_root = codex_home / "sessions" / "2026" / "08" / "14"
+    sessions_root.mkdir(parents=True, exist_ok=True)
+    session_meta: dict[str, Any] = {"session_id": thread_id, "id": thread_id}
+    if provider is not None:
+        session_meta["model_provider"] = provider
+    lines = [json.dumps({"type": "session_meta", "payload": session_meta})]
+    for model in models:
+        lines.append(json.dumps({"type": "turn_context", "payload": {"model": model}}))
+    lines.append(json.dumps({"type": "turn.completed", "usage": {}}))
+    path = sessions_root / (filename or f"rollout-2026-08-14T00-00-00-{thread_id}.jsonl")
+    path.write_text("\n".join(lines) + "\n", encoding="utf-8")
+    return path
+
+
+def test_codex_identity_is_read_from_the_rollout_file_bound_by_thread_id(tmp_path: Path):
+    thread_id = "01a00096-3a44-7380-8a1a-9d0790afbe2c"
+    write_codex_rollout(tmp_path, thread_id=thread_id, models=["gpt-5.6-sol"])
+    observed = tp.observe_codex_identity(
+        real_codex_cli_0_147_0_json_events(thread_id), codex_home=tmp_path)
+    assert observed.model == "gpt-5.6-sol"
+    assert observed.family == "openai"
+    assert "turn_context.model" in observed.model_source
+    assert observed.family_source == "codex_rollout:model_provider=openai"
+
+
+def test_codex_reroute_supersedes_the_initial_session_model(tmp_path: Path):
+    thread_id = "01a00096-reroute-thread"
+    write_codex_rollout(tmp_path, thread_id=thread_id, models=["gpt-5.6-sol", "gpt-5-mini"])
+    observed = tp.observe_codex_identity(
+        real_codex_cli_0_147_0_json_events(thread_id), codex_home=tmp_path)
+    assert observed.model == "gpt-5-mini"
+    with pytest.raises(tp.IdentityMismatch):
+        tp.assert_identity_matches(tp.resolve_route("M05_REVIEW_ACTUAL_UNIT"), observed)
+
+
+def test_codex_identity_is_unobservable_against_the_real_installed_cli_protocol(tmp_path: Path):
+    """codex-cli 0.147.0's real `--json` event stream, alone, never names the model.
+
+    N30 found this live (N30V7-F05): the installed CLI's `thread.started`/
+    `turn.started`/`item.completed`/`turn.completed` protocol never carries a `model`
+    field. Given only this stdout and no rollout file on disk to bind its
+    `thread_id` to (no `--ephemeral` job ever wrote one for this invocation, or none
+    survived), the correct, honest behavior is still to raise IdentityUnobservable,
+    not to silently pass.
     """
     with pytest.raises(tp.IdentityUnobservable):
-        tp.observe_codex_identity(real_codex_cli_0_147_0_json_events())
+        tp.observe_codex_identity(
+            real_codex_cli_0_147_0_json_events("01a00096-orphan-thread"), codex_home=tmp_path)
+
+
+def test_codex_stream_without_a_thread_id_is_unobservable(tmp_path: Path):
+    stream = json.dumps({"id": "0", "msg": {"type": "agent_message", "message": "hi"}})
+    with pytest.raises(tp.IdentityUnobservable):
+        tp.observe_codex_identity(stream, codex_home=tmp_path)
+
+
+def test_codex_identity_ignores_an_unrelated_concurrent_rollout(tmp_path: Path):
+    """A second, unrelated rollout under the same `codex_home` must never be mistaken
+
+    for the invoked process. This is the scenario the driver-capability preflight
+    probe's real, shared `~/.codex` makes routine: other sessions' rollout files sit
+    right next to this invocation's own.
+    """
+    invoked_thread = "01a00096-invoked-thread"
+    other_thread = "01a00096-unrelated-concurrent-thread"
+    write_codex_rollout(tmp_path, thread_id=other_thread, models=["gpt-5-mini"])
+    write_codex_rollout(tmp_path, thread_id=invoked_thread, models=["gpt-5.6-sol"])
+    observed = tp.observe_codex_identity(
+        real_codex_cli_0_147_0_json_events(invoked_thread), codex_home=tmp_path)
+    assert observed.model == "gpt-5.6-sol"
+
+
+def test_codex_identity_refuses_zero_rollout_matches(tmp_path: Path):
+    write_codex_rollout(tmp_path, thread_id="01a00096-some-other-thread", models=["gpt-5.6-sol"])
+    with pytest.raises(tp.IdentityUnobservable):
+        tp.observe_codex_identity(
+            real_codex_cli_0_147_0_json_events("01a00096-never-written-thread"),
+            codex_home=tmp_path)
+
+
+def test_codex_identity_refuses_multiple_rollout_matches_for_the_same_thread_id(tmp_path: Path):
+    thread_id = "01a00096-duplicate-thread"
+    write_codex_rollout(tmp_path, thread_id=thread_id, models=["gpt-5.6-sol"],
+                        filename=f"rollout-2026-08-14T00-00-00-{thread_id}.jsonl")
+    write_codex_rollout(tmp_path, thread_id=thread_id, models=["gpt-5.6-sol"],
+                        filename=f"rollout-2026-08-14T00-05-00-{thread_id}.jsonl")
+    with pytest.raises(tp.IdentityUnobservable):
+        tp.observe_codex_identity(
+            real_codex_cli_0_147_0_json_events(thread_id), codex_home=tmp_path)
 
 
 def test_claude_identity_is_read_from_the_per_turn_assistant_event():
@@ -936,7 +1001,7 @@ def test_codex_argv_is_pinned():
     assert tp.build_codex_argv(
         workspace="/tmp/ws", model="gpt-5.6-sol", reasoning_effort="high",
         instruction="do the job") == [
-        "codex", "exec", "--ephemeral", "--ignore-user-config", "--ignore-rules",
+        "codex", "exec", "--ignore-user-config", "--ignore-rules",
         "-s", "read-only", "--skip-git-repo-check", "-C", "/tmp/ws",
         "-m", "gpt-5.6-sol", "-c", 'model_reasoning_effort="high"',
         "--output-schema", "output.schema.json", "-o", "result.json",

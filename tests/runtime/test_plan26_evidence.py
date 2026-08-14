@@ -429,6 +429,35 @@ class EvidenceChainTests(Plan26StoreTestCase):
             )
         self.assertEqual(self.evidence.log("events").audit().record_count, 0)
 
+    def test_audit_report_never_claims_a_log_event_that_was_never_appended(self):
+        """Permanent regression guard for the historical false claim (PM-11/PM-12,
+        'unit/workbook topology implemented but not registered in
+        build_curriculum_factory_graph()'): a human-facing report must derive every
+        material claim from the exact receipted artifact, never from an assumption
+        that some code path fired. Seed only the 'activations' log (a real call
+        site that did execute); 'executions' is never appended to (the historical
+        defect's shape: a registration/execution path that was never actually
+        wired into the production call site). The audit report must show
+        executions.record_count == 0 and status PASS (an untouched log is
+        honestly empty, not silently reported as having recorded anything), and
+        must carry no field capable of asserting a claim beyond what
+        record_count/status/high_water_mark/file_digest already, mechanically,
+        say about the real bytes on disk.
+        """
+        self.seed(3)
+        report_path = self.evidence.write_audit_report()
+        report = json.loads(report_path.read_text(encoding="utf-8"))["report"]
+        self.assertEqual(report["logs"]["activations"]["record_count"], 3)
+        self.assertEqual(report["logs"]["activations"]["status"], "PASS")
+        self.assertEqual(report["logs"]["executions"]["record_count"], 0)
+        self.assertEqual(report["logs"]["executions"]["status"], "PASS")
+        self.assertIsNone(report["logs"]["executions"]["file_digest"])
+        self.assertEqual(
+            set(report["logs"]["executions"]),
+            {"log_name", "status", "record_count", "high_water_mark",
+             "broken_ordinal", "reason", "file_digest"},
+        )
+
 
 if __name__ == "__main__":
     unittest.main()
