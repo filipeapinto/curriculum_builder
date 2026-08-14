@@ -61,3 +61,9 @@ Once Plan 27 (plans/27_langgraph_curriculum_factory_remediation) reaches a termi
 - Paths touched: plans/28_runtime_operations_docs/qa/final_audit.v1.md
 - Evidence/decision: Verified log completeness, re-read plan step 0 directly to confirm QA round 1 finding remediated, confirmed TEST/execution-test-plan id agreement, confirmed scope agreement across plan/test plan/prompt, and re-confirmed live repo state (results/v7/ has no N90 result yet) makes the stated remaining blocker real, not invented.
 - Issues: 0 Critical, 0 High remaining. PASS.
+
+### 2026-08-14T14:37:20Z — plan_author
+- Action: Fixed two mechanical validation failures post-audit: plan_qa.v1.md verdict line reformatted to exact regex shape, and execution_test.plan.v1.md's pass-rule content moved from a '### ROD-T09' test heading into the required top-level '## Final audit and pass rule' section (test ids now ROD-T00-T08); updated prompt TEST/LOOP and final_audit.v1.md's prompt-alignment note to match. No change to plan content or scope.
+- Paths touched: plans/28_runtime_operations_docs/qa/plan_qa.v1.md,plans/28_runtime_operations_docs/qa/execution_test.plan.v1.md,plans/28_runtime_operations_docs/prompts/28_runtime_operations_docs.prompt.v1.md,plans/28_runtime_operations_docs/qa/final_audit.v1.md
+- Evidence/decision: python3 .claude/skills/plan-create/scripts/validate_plan_package.py plans/28_runtime_operations_docs now prints OK.
+- Issues: None. Package complete and structurally valid.

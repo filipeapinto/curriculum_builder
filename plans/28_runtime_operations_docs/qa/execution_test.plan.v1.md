@@ -115,7 +115,7 @@ BLOCKED/NOT_AVAILABLE recovery guidance cites a real code path rather than
 an invented one; if the document says no recovery procedure exists for a
 given failure mode, confirm that's true rather than an omission.
 
-### ROD-T09 — Final audit and pass rule
+## Final audit and pass rule
 
 The package passes only if: `ROD-T00`-`ROD-T03` pass against the current
 pre-terminal repository state, AND, after Plan 27 reaches a terminal state,

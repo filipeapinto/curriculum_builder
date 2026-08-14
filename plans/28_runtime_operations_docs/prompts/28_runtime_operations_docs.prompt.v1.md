@@ -29,7 +29,7 @@ placeholder documentation to write instead.
 
 Use the ordered tests in
 `plans/28_runtime_operations_docs/qa/execution_test.plan.v1.md`. Run
-ROD-T00 through ROD-T09, strictly in order:
+ROD-T00 through ROD-T08, strictly in order:
 
 1. ROD-T00: capture the before-picture (git status, current `docs/how_it_works.md`, whether an operations manual already exists).
 2. ROD-T01: confirm the step-0 path/field assumptions (graph v7 current, `result_pattern` matches) hold.
@@ -40,14 +40,18 @@ ROD-T00 through ROD-T09, strictly in order:
 7. ROD-T06: confirm `docs/how_it_works.md`'s content matches the terminal actually found (ACTIVATED framing vs. REMEDIATION_VERIFIED_NOT_ACTIVATED framing).
 8. ROD-T07: confirm the superseded content was preserved under `docs/deprecated/`, not deleted.
 9. ROD-T08: confirm the operations manual's CLI/config claims are grounded in `runtime/run_curriculum.py` as it actually behaves.
-10. ROD-T09: apply the final pass rule — an honest "gate tests pass; content tests not yet executable" report if Plan 27 is still unresolved, or a full pass only once every applicable test has actually run against real output.
+
+Then apply the execution test plan's "## Final audit and pass rule": an
+honest "gate tests pass; content tests not yet executable" report if Plan 27
+is still unresolved, or a full pass only once every applicable test above has
+actually run against real output.
 
 # LOOP
 
 On a test failure: fix only the in-scope artifact (a `docs/` file, `readme.md`,
 or a genuine step-0 logic error in how this prompt itself was followed — never
 runtime, policy, schema, or test code, which are out of scope by the plan).
-Rerun that test and everything downstream of it in the ROD-T00→T09 order, and
+Rerun that test and everything downstream of it in the ROD-T00→T08 order, and
 continue until every currently-applicable test passes.
 
 Stop conditions, restated from the plan: the step-0 prerequisite failing (Plan
