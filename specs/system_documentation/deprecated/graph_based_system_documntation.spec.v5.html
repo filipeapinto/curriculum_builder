@@ -1,0 +1,83 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1"><meta name="color-scheme" content="light dark">
+  <title>Model-Agnostic Specification: Documentation Skills for Graph-Based LLM Systems</title>
+  <style>
+    :root{--ink:#172033;--muted:#586278;--paper:#fbfcff;--line:#d8deea;--blue:#175cc2;--soft:#eaf2ff;--warn:#8d5b00;--code:#f1f4f9}@media(prefers-color-scheme:dark){:root{--ink:#edf2fb;--muted:#aeb9cc;--paper:#101622;--line:#2d384c;--blue:#8abbff;--soft:#172b4c;--warn:#f0bd62;--code:#1a2333}}*{box-sizing:border-box}body{margin:0;background:var(--paper);color:var(--ink);font:16px/1.55 ui-sans-serif,system-ui,-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif}main{max-width:1100px;margin:0 auto;padding:48px 28px 72px}header{border-bottom:3px solid var(--blue);padding-bottom:24px}h1{font-size:clamp(2rem,5vw,3.5rem);line-height:1.05;letter-spacing:-.045em;margin:0 0 14px;max-width:900px}h2{font-size:1.55rem;line-height:1.2;margin:44px 0 14px;letter-spacing:-.02em}p{max-width:84ch}a{color:var(--blue)}code{background:var(--code);border:1px solid var(--line);border-radius:4px;padding:.1em .3em;font-size:.9em}.lede{color:var(--muted);font-size:1.12rem;max-width:78ch}.meta{color:var(--muted);font-size:.9rem}nav{margin:25px 0 0;display:flex;gap:12px;flex-wrap:wrap}nav a{border:1px solid var(--line);border-radius:999px;padding:5px 10px;text-decoration:none}.callout{margin:22px 0;padding:18px 20px;background:var(--soft);border-left:5px solid var(--blue);max-width:940px}.callout strong{display:block;margin-bottom:4px}table{border-collapse:collapse;width:100%;margin:16px 0 24px;font-size:.94rem}th,td{text-align:left;vertical-align:top;border:1px solid var(--line);padding:12px}th{background:var(--code)}li{margin:.45rem 0;max-width:88ch}.warn{color:var(--warn);font-weight:700}footer{color:var(--muted);margin-top:50px;padding-top:16px;border-top:1px solid var(--line);font-size:.9rem}
+  </style>
+</head>
+<body><main>
+  <header>
+    <p class="meta">Requirements specification · 15 August 2026 · Version 5</p>
+    <h1>Model-agnostic documentation skills for graph-based LLM systems</h1>
+    <p class="lede">This specification defines model-agnostic skills that produce engaging, accurate documentation for graph-based LLM systems through a visualization-led approach. The documentation covers behavior and the contracts, configuration, assumptions, and operational conditions that make that behavior possible.</p>
+    <nav aria-label="Specification navigation"><a href="#purpose">Purpose</a><a href="#graph">Graph forms</a><a href="#contracts">System contracts</a><a href="#evidence">Evidence</a><a href="#visuals">Visualization approach</a><a href="#content">Content</a><a href="#quality">Quality</a></nav>
+  </header>
+
+  <section id="purpose"><h2>Purpose</h2>
+    <div class="callout"><strong>Make an LLM system understandable at a glance and operable in detail.</strong>Readers first see the verified flow; they can then inspect the contracts, configuration, assumptions, evidence, and failure behavior behind it.</div>
+    <p>A conforming skill may run in Codex, GPT/ChatGPT, Claude, Grok, or another platform. It defines the required documentation result, not a model, package, tool, runtime, or graph framework.</p>
+  </section>
+
+  <section id="graph"><h2>Graph forms</h2>
+    <table><thead><tr><th>Form</th><th>Example</th><th>Evidence to inspect</th></tr></thead><tbody>
+      <tr><td>Prompt-orchestrated</td><td>An orchestrator prompt selects or sequences prompts, tools, agents, or handoffs.</td><td>Orchestrator and component prompts, routing instructions, tool definitions, traces, and tests.</td></tr>
+      <tr><td>Framework-defined</td><td>A framework such as LangGraph declares and executes nodes, edges, and state.</td><td>Graph definition, runtime or compiled graph, node code, traces, and tests.</td></tr>
+    </tbody></table>
+    <p><span class="warn">Do not</span> infer formal nodes or edges solely from a prompt sequence, or treat a declared path as proof that it executed. If routing semantics are not evidenced, document a sequence or workflow rather than a graph.</p>
+  </section>
+
+  <section id="contracts"><h2>Required system-contract documentation</h2>
+    <p>Graph topology alone is not sufficient. The skill must extract and document the following contract families whenever they are in scope and evidence is available.</p>
+    <table><thead><tr><th>Contract family</th><th>What the documentation must show</th><th>Typical evidence</th></tr></thead><tbody>
+      <tr><td>System boundary</td><td>Actors, external systems, trust boundaries, entry/exit interfaces, owned and excluded responsibilities.</td><td>Architecture, API definitions, integration configuration, policy.</td></tr>
+      <tr><td>Node and tool contract</td><td>Purpose; inputs and outputs; prompt/model behavior; tool or side-effect boundary; failure, timeout, retry, repair, and terminal semantics.</td><td>Prompts, node code, tool definitions, tests, run records.</td></tr>
+      <tr><td>State and schema contract</td><td>Field name, type, requiredness, reader/writer, validation, default, lineage, persistence/checkpoint boundary, merge or mutation rule, version/migration, and redaction rule.</td><td>State models, JSON Schema, reducers, migrations, policy.</td></tr>
+      <tr><td>Route contract</td><td>Source, target, trigger or guard, route class (deterministic, model-selected, tool-result, or human/external), transferred payload/state, and outcome.</td><td>Routing prompts, graph definitions, code, tests, traces.</td></tr>
+      <tr><td>Configuration contract</td><td>Parameter name, type, allowed/default value, scope, source of configuration, effect, sensitivity, reload behavior, and change/release implications.</td><td>Environment schemas, configuration files, feature flags, deployment manifests.</td></tr>
+      <tr><td>Assumptions and invariants</td><td>Preconditions, guarantees, resource or model dependencies, safety/privacy constraints, idempotency, ordering, and conditions that invalidate an outcome.</td><td>Policy, design records, tests, SLOs, incident/runbook records.</td></tr>
+    </tbody></table>
+    <p>Do not expose secret values. Document a sensitive parameter’s purpose, source class, and handling rule instead.</p>
+  </section>
+
+  <section id="evidence"><h2>Evidence contract</h2>
+    <p>Inspect available sources before writing or drawing. Every operational claim, parameter, assumption, and visual label must resolve to an inspected source, or be visibly marked unknown, proposed, conflicting, stale, or unverified.</p>
+    <p>Each graph visual must state whether it represents <strong>declared</strong> topology, <strong>observed</strong> execution, <strong>inferred</strong> behavior, or <strong>unknown</strong> scope; it must not mix these without a legend. Observed views name their run IDs, time/version scope, sampling limits, covered paths, and unexercised declared paths.</p>
+  </section>
+
+  <section id="visuals"><h2>Visualization-led output contract</h2>
+    <ol>
+      <li><strong>Start with the graph.</strong> When topology is claimed, the first substantive element is a readable system map showing evidenced entries, nodes, directed edges, decisions, loops, joins, failures, terminals, and external boundaries. If topology cannot be evidenced, show the evidence gap instead.</li>
+      <li><strong>Visualize contracts where relationships matter.</strong> Use state/data-flow views for schema lineage and ownership, route views for decisions and payload transfer, and configuration-impact views for parameters that change behavior. Use a table when it is clearer than a diagram.</li>
+      <li><strong>Progressively disclose detail.</strong> Follow the overview with focused views for nodes, routes, state, configuration, execution, and recovery. Do not compress the entire system into one unreadable diagram.</li>
+      <li><strong>Make every visual inspectable.</strong> Show a title, takeaway, scope, evidence/freshness status, source references, and a legend where needed. Provide an adjacent prose or tabular equivalent; use semantic SVG <code>title</code> and <code>desc</code> where applicable. No meaning may depend on color alone.</li>
+      <li><strong>Keep visuals honest.</strong> A renderer arranges verified facts; it does not invent entities, links, parameter effects, execution outcomes, or confidence.</li>
+    </ol>
+    <p>HTML is preferred when it improves visual navigation or exploration. It must have a static, no-JavaScript baseline; external assets are not required for comprehension.</p>
+  </section>
+
+  <section id="content"><h2>Required reader journey and production behavior</h2>
+    <table><thead><tr><th>Capability</th><th>Requirement</th></tr></thead><tbody>
+      <tr><td>Inventory and extraction</td><td>Record inspected and unavailable sources; build a fact model with source identifiers and versions or digests when available.</td></tr>
+      <tr><td>Verification</td><td>Check claims and visuals against the fact model; reconcile declared topology with observed execution; flag unsupported, contradictory, or stale material.</td></tr>
+      <tr><td>Reader journey</td><td>Deliver a visual overview; graph walkthrough; node, route, schema/state, configuration, and assumptions reference; operations and recovery guidance; and a verification record.</td></tr>
+      <tr><td>Verification record</td><td>State scope, sources inspected, source versions/digests, verification time, excluded scope, unavailable checks, and unresolved conflicts.</td></tr>
+    </tbody></table>
+  </section>
+
+  <section id="quality"><h2>Quality gates</h2>
+    <ol>
+      <li><strong>Accurate:</strong> claims, contract entries, and visual labels are traceable to inspected evidence; declared and observed paths are distinct; partial coverage is never presented as complete.</li>
+      <li><strong>Complete within scope:</strong> document available schemas, contracts, parameters, assumptions, policies, and dependencies alongside graph behavior, and name excluded or unavailable material.</li>
+      <li><strong>Visualization-led:</strong> the visual overview precedes explanatory prose; each additional visual answers a clear reader question rather than decorating or repeating content.</li>
+      <li><strong>Accessible:</strong> use semantic structure, adequate contrast, keyboard-operable interaction, and text alternatives for visuals.</li>
+      <li><strong>Readable offline:</strong> basic comprehension requires no CDN, remote font, remote image, or JavaScript.</li>
+      <li><strong>Fresh:</strong> show verification time and source version/digest; clearly mark unavailable or stale checks.</li>
+      <li><strong>Rendered QA:</strong> inspect the output at desktop and narrow widths; verify readable, unclipped labels, non-overlapping edges and legends, working links, and visual-to-fact-model traceability.</li>
+      <li><strong>Safe:</strong> write versioned outputs only to an approved location and do not overwrite accepted artifacts without authorization.</li>
+    </ol>
+  </section>
+
+  <footer>Design guidance informed by <a href="../research/sota_systm_documentation/html_documentation_skills_assessment.v2.html">HTML documentation skills assessment</a>. A conforming skill documents the verified system and its operating contract, while clearly reporting every unavailable source or check.</footer>
+</main></body></html>

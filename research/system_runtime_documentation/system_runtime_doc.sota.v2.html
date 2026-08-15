@@ -1,0 +1,613 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" lang="en" xml:lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="generator" content="pandoc" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes" />
+  <title>State-of-the-art documentation for a complex runtime</title>
+  <style>
+    html {
+      color: #1a1a1a;
+      background-color: #fdfdfd;
+    }
+    body {
+      margin: 0 auto;
+      max-width: 36em;
+      padding-left: 50px;
+      padding-right: 50px;
+      padding-top: 50px;
+      padding-bottom: 50px;
+      hyphens: auto;
+      overflow-wrap: break-word;
+      text-rendering: optimizeLegibility;
+      font-kerning: normal;
+    }
+    @media (max-width: 600px) {
+      body {
+        font-size: 0.9em;
+        padding: 12px;
+      }
+      h1 {
+        font-size: 1.8em;
+      }
+    }
+    @media print {
+      html {
+        background-color: white;
+      }
+      body {
+        background-color: transparent;
+        color: black;
+        font-size: 12pt;
+      }
+      p, h2, h3 {
+        orphans: 3;
+        widows: 3;
+      }
+      h2, h3, h4 {
+        page-break-after: avoid;
+      }
+    }
+    p {
+      margin: 1em 0;
+    }
+    a {
+      color: #1a1a1a;
+    }
+    a:visited {
+      color: #1a1a1a;
+    }
+    img {
+      max-width: 100%;
+    }
+    svg {
+      height: auto;
+      max-width: 100%;
+    }
+    h1, h2, h3, h4, h5, h6 {
+      margin-top: 1.4em;
+    }
+    h5, h6 {
+      font-size: 1em;
+      font-style: italic;
+    }
+    h6 {
+      font-weight: normal;
+    }
+    ol, ul {
+      padding-left: 1.7em;
+      margin-top: 1em;
+    }
+    li > ol, li > ul {
+      margin-top: 0;
+    }
+    blockquote {
+      margin: 1em 0 1em 1.7em;
+      padding-left: 1em;
+      border-left: 2px solid #e6e6e6;
+      color: #606060;
+    }
+    code {
+      font-family: Menlo, Monaco, Consolas, 'Lucida Console', monospace;
+      font-size: 85%;
+      margin: 0;
+      hyphens: manual;
+    }
+    pre {
+      margin: 1em 0;
+      overflow: auto;
+    }
+    pre code {
+      padding: 0;
+      overflow: visible;
+      overflow-wrap: normal;
+    }
+    .sourceCode {
+     background-color: transparent;
+     overflow: visible;
+    }
+    hr {
+      background-color: #1a1a1a;
+      border: none;
+      height: 1px;
+      margin: 1em 0;
+    }
+    table {
+      margin: 1em 0;
+      border-collapse: collapse;
+      width: 100%;
+      overflow-x: auto;
+      display: block;
+      font-variant-numeric: lining-nums tabular-nums;
+    }
+    table caption {
+      margin-bottom: 0.75em;
+    }
+    tbody {
+      margin-top: 0.5em;
+      border-top: 1px solid #1a1a1a;
+      border-bottom: 1px solid #1a1a1a;
+    }
+    th {
+      border-top: 1px solid #1a1a1a;
+      padding: 0.25em 0.5em 0.25em 0.5em;
+    }
+    td {
+      padding: 0.125em 0.5em 0.25em 0.5em;
+    }
+    header {
+      margin-bottom: 4em;
+      text-align: center;
+    }
+    #TOC li {
+      list-style: none;
+    }
+    #TOC ul {
+      padding-left: 1.3em;
+    }
+    #TOC > ul {
+      padding-left: 0;
+    }
+    #TOC a:not(:hover) {
+      text-decoration: none;
+    }
+    code{white-space: pre-wrap;}
+    span.smallcaps{font-variant: small-caps;}
+    div.columns{display: flex; gap: min(4vw, 1.5em);}
+    div.column{flex: auto; overflow-x: auto;}
+    div.hanging-indent{margin-left: 1.5em; text-indent: -1.5em;}
+    /* The extra [class] is a hack that increases specificity enough to
+       override a similar rule in reveal.js */
+    ul.task-list[class]{list-style: none;}
+    ul.task-list li input[type="checkbox"] {
+      font-size: inherit;
+      width: 0.8em;
+      margin: 0 0.8em 0.2em -1.6em;
+      vertical-align: middle;
+    }
+    .display.math{display: block; text-align: center; margin: 0.5rem auto;}
+  </style>
+</head>
+<body>
+<header id="title-block-header">
+<h1 class="title">State-of-the-art documentation for a complex
+runtime</h1>
+</header>
+<nav id="TOC" role="doc-toc">
+<ul>
+<li><a href="#state-of-the-art-documentation-for-a-complex-runtime"
+id="toc-state-of-the-art-documentation-for-a-complex-runtime">State-of-the-art
+documentation for a complex runtime</a>
+<ul>
+<li><a href="#executive-conclusion"
+id="toc-executive-conclusion">Executive conclusion</a></li>
+<li><a href="#what-is-state-of-the-art-in-practice"
+id="toc-what-is-state-of-the-art-in-practice">What is state of the art
+in practice</a>
+<ul>
+<li><a href="#multiple-focused-views-not-a-mega-diagram"
+id="toc-multiple-focused-views-not-a-mega-diagram">1. Multiple focused
+views, not a mega-diagram</a></li>
+<li><a href="#architecture-as-code-and-documentation-as-code"
+id="toc-architecture-as-code-and-documentation-as-code">2.
+Architecture-as-code and documentation-as-code</a></li>
+<li><a href="#contracts-are-documentation-and-executable-checks"
+id="toc-contracts-are-documentation-and-executable-checks">3. Contracts
+are documentation and executable checks</a></li>
+<li><a href="#decision-records-preserve-the-reasoning-that-code-cannot"
+id="toc-decision-records-preserve-the-reasoning-that-code-cannot">4.
+Decision records preserve the reasoning that code cannot</a></li>
+<li><a href="#observability-is-live-runtime-documentation"
+id="toc-observability-is-live-runtime-documentation">5. Observability is
+live runtime documentation</a></li>
+<li><a
+href="#documentation-needs-operations-and-governance-not-just-design"
+id="toc-documentation-needs-operations-and-governance-not-just-design">6.
+Documentation needs operations and governance, not just design</a></li>
+</ul></li>
+<li><a href="#recommended-information-architecture-for-this-repository"
+id="toc-recommended-information-architecture-for-this-repository">Recommended
+information architecture for this repository</a></li>
+<li><a href="#a-pragmatic-adoption-sequence"
+id="toc-a-pragmatic-adoption-sequence">A pragmatic adoption
+sequence</a></li>
+<li><a href="#quality-bar" id="toc-quality-bar">Quality bar</a></li>
+<li><a href="#sources-consulted" id="toc-sources-consulted">Sources
+consulted</a></li>
+</ul></li>
+</ul>
+</nav>
+<h1
+id="state-of-the-art-documentation-for-a-complex-runtime">State-of-the-art
+documentation for a complex runtime</h1>
+<p><strong>Research date:</strong> 2026-08-15<br />
+<strong>Scope:</strong> techniques for documenting a contract-first,
+graph-oriented runtime with state transitions, model/tool calls,
+checkpoints, review gates, generated artifacts, and operational
+controls. This is research and an adoption recommendation, not a claim
+that every proposed capability already exists in this repository.</p>
+<h2 id="executive-conclusion">Executive conclusion</h2>
+<p>The modern answer is not one comprehensive design document. It is a
+<strong>versioned documentation system</strong> made of small, linked
+views, where each view has an owner, source evidence, and a freshness
+rule. The important split is:</p>
+<table>
+<colgroup>
+<col style="width: 33%" />
+<col style="width: 33%" />
+<col style="width: 33%" />
+</colgroup>
+<thead>
+<tr>
+<th>Layer</th>
+<th>Purpose</th>
+<th>Source of truth</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Executable facts</td>
+<td>State machine, schemas, policy, API/tool contracts, infrastructure,
+tests, telemetry</td>
+<td>Code and versioned structured artifacts</td>
+</tr>
+<tr>
+<td>Human explanation</td>
+<td>Reader-oriented architecture, journeys, decision rationale,
+runbooks, diagrams</td>
+<td>Documentation derived from and linked to executable facts</td>
+</tr>
+<tr>
+<td>Operational evidence</td>
+<td>What an actual version did, including errors and timing</td>
+<td>Immutable run receipts, traces, logs, dashboards, and test
+reports</td>
+</tr>
+</tbody>
+</table>
+<p>For this runtime, use a <strong>C4 + behavioral views + contracts +
+ADRs + observed execution</strong> approach. C4 gives readers
+progressive architectural zoom; behavioral views explain state
+transitions and failure/retry paths; typed contracts make claims
+testable; ADRs preserve why; and traces/run receipts distinguish
+declared behavior from behavior that actually executed.</p>
+<p>This fits the repository’s existing direction:
+<code>policy/controller.v1.yaml</code> already defines code-owned
+states, terminal states, checkpoint rules, and model boundaries;
+<code>schemas/</code> and <code>policy/</code> can be treated as the
+canonical fact model; and the current documentation specification
+correctly distinguishes declared, observed, inferred, and unknown graph
+behavior. The root <code>readme.md</code> says live-runtime capabilities
+are still deferred, so they should be documented as
+<strong>specified</strong> until verified run evidence exists.</p>
+<h2 id="what-is-state-of-the-art-in-practice">What is state of the art
+in practice</h2>
+<h3 id="multiple-focused-views-not-a-mega-diagram">1. Multiple focused
+views, not a mega-diagram</h3>
+<p>The <a href="https://c4model.com/">C4 model</a> uses hierarchical
+system-context, container, component, and code views, with dynamic and
+deployment diagrams as supporting views. Its guidance explicitly says
+not every level is necessary; context and container views are enough for
+many teams. Pair it with <a href="https://docs.arc42.org/">arc42</a>, a
+well-established structure for the accompanying narrative: goals,
+constraints, context, solution strategy, building blocks, runtime
+behavior, deployment, cross-cutting concepts, decisions, quality
+requirements, risks, and glossary.</p>
+<p>For a runtime, use these six views:</p>
+<ol type="1">
+<li><strong>System context (C4):</strong> users, operator,
+curriculum/domain inputs, model providers, source/retrieval services,
+renderers, output storage, and all trust boundaries.</li>
+<li><strong>Runtime topology (C4 container/deployment):</strong>
+controller, workers, schema validators, checkpoint store, queues if any,
+telemetry pipeline, policy/config sources, and environment
+boundaries.</li>
+<li><strong>State-machine view:</strong> all states, valid transitions,
+terminal states, guards, retry limits, resumability, and which actor
+owns each transition. Generate this from
+<code>policy/controller.v1.yaml</code> whenever feasible.</li>
+<li><strong>Critical-path sequence views:</strong> one successful run
+and one representative failure/recovery run. Show calls, durable writes,
+checks, human gates, and side effects in time order.</li>
+<li><strong>Data lineage and contract view:</strong> state fields,
+readers/writers, validation, classification, retention/redaction,
+checkpoint boundaries, and artifact hashes.</li>
+<li><strong>Trust and operations view:</strong> identity, permitted
+egress, secret classes, configuration sources, alert paths, recovery,
+and escalation ownership.</li>
+</ol>
+<p>Each visual should state its <strong>scope, source revision, evidence
+class, and date</strong>. For example: “Declared controller graph,
+derived from <code>policy/controller.v1.yaml</code> at commit
+<code>&lt;sha&gt;</code>” is different from “Observed path from run
+<code>&lt;id&gt;</code>.” This prevents a polished diagram from becoming
+unearned evidence.</p>
+<h3 id="architecture-as-code-and-documentation-as-code">2.
+Architecture-as-code and documentation-as-code</h3>
+<p>Keep diagrams, contracts, and prose in Git beside the runtime. Render
+diagrams in CI and make broken links, invalid diagrams, schema-reference
+errors, and stale generated views fail the documentation build.
+Backstage’s <a
+href="https://backstage.io/docs/features/techdocs/creating-and-publishing/">TechDocs
+guidance</a> illustrates the prevailing docs-as-code pattern: Markdown
+near the source, a deterministic site build, and CI/CD publication. Its
+recommended operational setup builds documentation in CI/CD rather than
+on demand.</p>
+<p>Prefer a simple source/render pattern:</p>
+<pre class="text"><code>policy + schemas + code + test metadata + IaC + telemetry conventions
+                         │
+                         ├── checked generators ──&gt; diagrams / contract tables
+                         └── human authors ───────&gt; explanations / runbooks / ADRs
+                                                     │
+                                                     └── CI validation + static site</code></pre>
+<p>Use Mermaid, PlantUML, D2, or a C4-oriented DSL only if their source
+stays in the repository and is rendered by CI. The tool is secondary;
+reviewable source and repeatable rendering are the key properties. Do
+not attempt to generate narrative claims directly from code without
+human review: code reveals structure well but not intent, operational
+trade-offs, or undocumented dependency assumptions.</p>
+<h3 id="contracts-are-documentation-and-executable-checks">3. Contracts
+are documentation and executable checks</h3>
+<p>For every boundary, publish a contract that a person can read and a
+machine can validate. This is the highest-value technique for runtimes
+that mix deterministic control with probabilistic model outputs.</p>
+<table>
+<colgroup>
+<col style="width: 33%" />
+<col style="width: 33%" />
+<col style="width: 33%" />
+</colgroup>
+<thead>
+<tr>
+<th>Boundary</th>
+<th>Documentation artifact</th>
+<th>Automated proof</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>State and checkpoints</td>
+<td>Versioned schema, ownership/lineage table, migration and redaction
+policy</td>
+<td>Schema validation, migration tests, resume tests</td>
+</tr>
+<tr>
+<td>State transition</td>
+<td>Transition table with trigger, guard, effects, retry and terminal
+outcome</td>
+<td>State-machine/transition tests; reachability checks</td>
+</tr>
+<tr>
+<td>Model or worker invocation</td>
+<td>Input/output schema, allowed tools, timeout, retry, idempotency,
+evaluation/repair policy</td>
+<td>Contract tests and captured invocation receipts</td>
+</tr>
+<tr>
+<td>HTTP APIs</td>
+<td>OpenAPI description plus examples and error semantics</td>
+<td>Spec linting and contract tests</td>
+</tr>
+<tr>
+<td>Events or queues</td>
+<td>Event schema and producer/consumer ownership</td>
+<td>Schema compatibility and integration tests</td>
+</tr>
+<tr>
+<td>Configuration</td>
+<td>Typed config reference: name, type, default, scope, source,
+sensitivity, reload effect</td>
+<td>Startup validation and configuration tests</td>
+</tr>
+<tr>
+<td>Policy/gate</td>
+<td>Rule, owner, severity, evidence required, bypass/exception
+process</td>
+<td>Gate result recorded per run</td>
+</tr>
+</tbody>
+</table>
+<p><a href="https://spec.openapis.org/oas/">OpenAPI</a> is a mature
+machine-readable contract for HTTP interfaces. Use its current 3.1.x
+specification for any exposed HTTP API; do not replace it with a prose
+endpoint table. For internal schemas, retain JSON Schema or the
+language’s typed model as the authoritative artifact, and generate a
+concise reader table from it.</p>
+<h3 id="decision-records-preserve-the-reasoning-that-code-cannot">4.
+Decision records preserve the reasoning that code cannot</h3>
+<p>Keep lightweight Markdown ADRs for decisions that are expensive to
+reverse: controller ownership, checkpoint semantics, routing authority,
+model/tool boundaries, data retention, evaluation gates, deployment
+patterns, and telemetry fields. The <a
+href="https://adr.github.io/madr/">MADR project</a> provides a
+maintained Markdown ADR template with status, context/problem,
+considered options, and decision outcome.</p>
+<p>An ADR should be short and immutable after acceptance; supersede it
+with a new ADR rather than silently rewriting history. Link each ADR to
+the affected policy/code, test, and operational consequence. Avoid ADRs
+for ordinary implementation detail.</p>
+<h3 id="observability-is-live-runtime-documentation">5. Observability is
+live runtime documentation</h3>
+<p>Static documents describe intent; traces and receipts describe
+behavior. Instrument the controller and worker boundaries so operators
+can reconstruct a run without reading source. Use one correlation/run ID
+from intake through terminal decision; record state entered/exited,
+attempt, selected worker/model, policy revision, input/output hashes
+(not raw sensitive content), duration, error class, retry, checkpoint
+reference, and terminal reason.</p>
+<p><a href="https://opentelemetry.io/docs/specs/semconv/">OpenTelemetry
+semantic conventions</a> standardize names, types, and meanings for
+traces, metrics, logs, and resources, which makes telemetry easier to
+correlate across components. Its trace model defines spans as operations
+in and between systems, including client/server and producer/consumer
+relationships. For model-enabled paths, the <a
+href="https://opentelemetry.io/docs/specs/semconv/registry/attributes/gen-ai/">GenAI
+conventions</a> cover concepts such as agent, conversation, model, and
+input/output messages; they also warn that message content may contain
+PII. Make content capture opt-in, redacted, access-controlled, and
+retention-limited.</p>
+<p>Build two documentation views from telemetry:</p>
+<ul>
+<li><strong>Declared vs. observed coverage:</strong> which specified
+transitions have been observed for which version and test/run cohort;
+explicitly list unobserved transitions.</li>
+<li><strong>Run dossier:</strong> a human-readable receipt for one run,
+linking input manifest digest, configuration/policy revisions,
+transition timeline, artifacts, gate results, and terminal outcome.</li>
+</ul>
+<p>These are much more useful during incident response than an
+architecture diagram alone.</p>
+<h3
+id="documentation-needs-operations-and-governance-not-just-design">6.
+Documentation needs operations and governance, not just design</h3>
+<p>Every document family should have an owner, review trigger, and
+service level for freshness. A compact docs register is enough:</p>
+<table>
+<colgroup>
+<col style="width: 25%" />
+<col style="width: 25%" />
+<col style="width: 25%" />
+<col style="width: 25%" />
+</colgroup>
+<thead>
+<tr>
+<th>Artifact</th>
+<th>Owner</th>
+<th>Update trigger</th>
+<th>Validation</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Architecture and topology</td>
+<td>Runtime maintainer</td>
+<td>Component, dependency, deployment, or trust-boundary change</td>
+<td>Diagram build + architecture review</td>
+</tr>
+<tr>
+<td>State and data contracts</td>
+<td>Controller/schema owner</td>
+<td>Schema, transition, checkpoint, or migration change</td>
+<td>Contract/transition tests</td>
+</tr>
+<tr>
+<td>ADRs</td>
+<td>Decision maker</td>
+<td>Reversible-cost or cross-team decision</td>
+<td>PR review and linked implementation</td>
+</tr>
+<tr>
+<td>Runbooks</td>
+<td>On-call/operations owner</td>
+<td>Alert, incident, recovery, or deployment change</td>
+<td>Exercised drill or incident review</td>
+</tr>
+<tr>
+<td>Observability dictionary</td>
+<td>Platform/runtime owner</td>
+<td>Span/metric/log attribute change</td>
+<td>Telemetry schema/lint review</td>
+</tr>
+<tr>
+<td>Security/data-flow view</td>
+<td>Security and runtime owners</td>
+<td>Egress, identity, data-classification, or retention change</td>
+<td>Threat-model review</td>
+</tr>
+</tbody>
+</table>
+<p>Make changes to a contract, state, external interface, deployment, or
+runbook require the related documentation update in the same pull
+request. This is more reliable than a periodic request to “keep docs
+current.”</p>
+<h2
+id="recommended-information-architecture-for-this-repository">Recommended
+information architecture for this repository</h2>
+<p>Create the following when the runtime is implemented; start the first
+four now using the declared contracts and clearly label them
+<strong>specified</strong>.</p>
+<pre class="text"><code>docs/runtime/
+  index.md                         # reader entry point and evidence/freshness policy
+  architecture/
+    context.md                     # C4 level 1
+    topology.md                    # C4 container + deployment/trust boundaries
+    state-machine.md               # generated declared transitions + interpretation
+    critical-journeys.md           # happy path, failure, retry, resume
+  contracts/
+    state-and-checkpoints.md
+    workers-models-tools.md
+    configuration.md
+    interfaces.md
+    data-lineage-and-retention.md
+  decisions/                       # ADRs; one immutable Markdown file per decision
+  operations/
+    runbook.md
+    incident-triage.md
+    recovery-and-resume.md
+    observability.md
+  evidence/
+    declared-vs-observed.md        # generated coverage summary; no raw secrets/PII
+    run-dossier-template.md</code></pre>
+<p>Use <code>docs/research/</code> for sources and evaluations such as
+this report; use <code>docs/runtime/</code> for the maintained
+reader-facing system documentation. Preserve the repository’s
+source-of-truth rule: policies, schemas, code, tests, and receipts are
+authoritative; narrative explains and links to them.</p>
+<h2 id="a-pragmatic-adoption-sequence">A pragmatic adoption
+sequence</h2>
+<ol type="1">
+<li><strong>Now — establish the declared architecture.</strong> Add a
+documentation index, context/topology diagram, state-machine
+table/diagram, contract index, and an evidence legend. Generate the
+state graph from the controller policy if possible.</li>
+<li><strong>Before the first live model call — close contracts.</strong>
+Define state/checkpoint compatibility, worker/tool interface schemas,
+typed configuration reference, egress/trust boundaries, redaction rules,
+and ADRs for irreversible decisions.</li>
+<li><strong>With the runtime — make behavior observable.</strong> Emit
+correlated transition and invocation telemetry; write append-only run
+receipts; generate declared-vs-observed transition coverage; keep
+sensitive payload content out by default.</li>
+<li><strong>In CI and operations — prevent drift.</strong> Validate
+schemas and diagrams, test documented transitions and recovery
+procedures, publish docs with the release, and update runbooks after
+every relevant incident.</li>
+</ol>
+<h2 id="quality-bar">Quality bar</h2>
+<p>A document set is good enough when a new engineer can explain the
+system boundary, state ownership, allowed transitions, data movement,
+failure/recovery behavior, and current evidence status; and when an
+authorized operator can identify a failed run, find its receipt/trace,
+decide whether retry is safe, and escalate appropriately.</p>
+<p>It is not good enough if it contains a single dense architecture
+diagram, only happy-path prose, screenshots without sources, generic
+security language, raw telemetry with no interpretation, or claims that
+specified behavior has executed without a test/run receipt.</p>
+<h2 id="sources-consulted">Sources consulted</h2>
+<ul>
+<li><a href="https://c4model.com/">C4 Model — overview</a> and <a
+href="https://c4model.com/diagrams">diagram guidance</a> — hierarchical
+static, dynamic, and deployment views; accessed 2026-08-15.</li>
+<li><a href="https://docs.arc42.org/">arc42 documentation</a> —
+architecture documentation structure and examples; accessed
+2026-08-15.</li>
+<li><a
+href="https://backstage.io/docs/features/techdocs/creating-and-publishing/">Backstage
+TechDocs: creating and publishing</a> and <a
+href="https://backstage.io/docs/features/techdocs/architecture/">architecture</a>
+— docs-as-code and CI/CD publishing practice; accessed 2026-08-15.</li>
+<li><a href="https://spec.openapis.org/oas/">OpenAPI Specification</a> —
+current 3.1.x machine-readable HTTP interface contract; accessed
+2026-08-15.</li>
+<li><a href="https://adr.github.io/madr/">MADR</a> — Markdown ADR
+templates and decision-record conventions; accessed 2026-08-15.</li>
+<li><a href="https://opentelemetry.io/docs/specs/semconv/">OpenTelemetry
+semantic conventions</a>, <a
+href="https://opentelemetry.io/docs/specs/semconv/general/trace/">trace
+conventions</a>, and <a
+href="https://opentelemetry.io/docs/specs/semconv/registry/attributes/gen-ai/">GenAI
+attributes</a> — standardized telemetry semantics and GenAI content
+sensitivity warnings; accessed 2026-08-15.</li>
+</ul>
+</body>
+</html>

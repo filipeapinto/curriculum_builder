@@ -1,0 +1,205 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://example.invalid/curriculum_builder/prompt.schema.v2.json",
+  "title": "Agentic task prompt v2 — GOAL/TESTS/LOOP, with execution binding and restart",
+  "description": "Additive successor to version 1 of this contract, which is retained byte-unchanged so already-accepted prompt records keep validating. Three changes. First, model and agent become required top-level fields: a prompt with a goal, tests and a loop but no stated executor is exactly as underspecified as a model_call ACT record with no decision_id, which execution_log.schema.v2.json already refuses. agent.execution_path is a closed enum of the only execution paths this user's setup actually has (see research/prompt_restart_strategies and the standing rule that content-generation prompts run as Claude Code itself and QA/gate prompts run through the Codex plugin) — there is no billed API key anywhere in this environment, so 'call an external model API directly' is deliberately not a value this schema accepts. Second, loop gains a required resume_check: research/prompt_restart_strategies/prompt_restart_strategies_state_of_the_art.v1.md found that every mature durable-execution runtime (Temporal, Restate, Inngest, LangGraph) treats resume detection as explicit and operator-supplied, never automatic — a loop that doesn't say how it tells a fresh start from a resume is the exact gap that research identified in this repo's own prompts. Third, loop gains an optional retry_policy field for stating which EXEC failure_type values (per execution_log.schema.v2.json) are safe to retry blindly versus require a real fix, per the idempotency-key requirement in the same research.",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "title",
+    "model",
+    "agent",
+    "goal",
+    "tests",
+    "loop"
+  ],
+  "properties": {
+    "title": {
+      "description": "The prompt's top-level heading, including its version, e.g. 'Rebrand Product Naming to \"Curriculum Factory\" — Prompt v1'.",
+      "type": "string",
+      "minLength": 10
+    },
+    "authorized_paths": {
+      "description": "Optional. The file(s)/glob(s) this prompt is allowed to modify. Mirrors execution_log.schema.v2.json's act.authorized_paths — when present, TESTS should include a check that no path outside this list changed; a prompt that edits everywhere it touches has no scope boundary to test against.",
+      "type": "array",
+      "items": {
+        "type": "string",
+        "minLength": 1
+      }
+    },
+    "model": {
+      "description": "The model family this prompt runs under. 'inherit' means no pin — whatever model is running the calling session executes this prompt too, same meaning as omitting model: on an Agent call. A concrete value pins it, the same way governance already requires for general-purpose/Explore subagent delegation (.claude/governance/subagent_cost.md). Never a raw API model id or a non-Claude family: this environment has Claude Code and ChatGPT Pro (Codex) subscriptions and no billed API key for anything else, including Gemini.",
+      "enum": [
+        "inherit",
+        "haiku",
+        "sonnet",
+        "opus",
+        "fable"
+      ]
+    },
+    "agent": {
+      "$ref": "#/$defs/agent"
+    },
+    "goal": {
+      "description": "The GOAL section's body. Must state a concrete end state, not merely a topic — loop engineering treats 'a clear goal with a testable termination condition' as the load-bearing requirement a loop cannot run without.",
+      "type": "string",
+      "minLength": 20
+    },
+    "tests": {
+      "description": "The TESTS section, decomposed into individual checks. Never empty: a GOAL with no TESTS has no verification step, which loop engineering and EARS both treat as the point that separates a task contract from a wish.",
+      "type": "array",
+      "minItems": 1,
+      "items": {
+        "$ref": "#/$defs/test"
+      }
+    },
+    "loop": {
+      "$ref": "#/$defs/loop"
+    }
+  },
+  "$defs": {
+    "agent": {
+      "description": "How this prompt is executed, not just by what model. execution_path is closed to the paths this environment actually supports; claude_code_subagent additionally requires naming which subagent_type, so 'runs as a subagent' can't be stated without saying which one — the same discipline model_registry.schema.v1.json applies to model selection.",
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "execution_path"
+      ],
+      "properties": {
+        "execution_path": {
+          "enum": [
+            "claude_code_direct",
+            "claude_code_subagent",
+            "codex_plugin"
+          ]
+        },
+        "subagent_type": {
+          "description": "Required when execution_path is claude_code_subagent, e.g. 'general-purpose', 'Explore', 'fork'. Governance in .claude/governance/subagent_cost.md still applies on top of this: general-purpose/Explore delegation must also pin model.",
+          "type": "string",
+          "minLength": 1
+        },
+        "reasoning": {
+          "description": "Optional. Why this execution path/subagent was chosen over the default, when it isn't obvious.",
+          "type": "string",
+          "minLength": 1
+        }
+      },
+      "allOf": [
+        {
+          "if": {
+            "properties": {
+              "execution_path": {
+                "const": "claude_code_subagent"
+              }
+            },
+            "required": [
+              "execution_path"
+            ]
+          },
+          "then": {
+            "required": [
+              "subagent_type"
+            ]
+          }
+        }
+      ]
+    },
+    "test": {
+      "description": "One executable check, in the EARS-derived shape: a condition to evaluate, and the expected/checkable result that makes the condition's outcome unambiguous — 'WHEN [condition], THE SYSTEM SHALL [expected behavior]', not narrative prose about intent.",
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "check",
+        "expected"
+      ],
+      "properties": {
+        "description": {
+          "description": "Optional human-readable label for the test, e.g. 'readme.md has zero orphan path references'.",
+          "type": "string",
+          "minLength": 1
+        },
+        "check": {
+          "description": "The exact executable condition: a command, a code-derived query, or an unambiguous inspection step. Must not be advice to the agent to go discover or invent a check itself — that defeats the point of a schema-checkable test, and was the concrete defect this schema's own authoring corrected in prompts/rebrand_system.",
+          "type": "string",
+          "minLength": 5
+        },
+        "expected": {
+          "description": "The concrete, checkable outcome that makes the check pass or fail. 'Looks right' is not an expected value; an exit code, a count (including '0'), a diff being empty, or a specific string being present or absent is.",
+          "type": "string",
+          "minLength": 1
+        }
+      }
+    },
+    "loop": {
+      "description": "The LOOP section: the iterate-until-done machinery loop engineering calls trigger + stopping rule + memory. v1 required steps and stopping_condition; v2 adds resume_check as required and retry_policy as optional.",
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "steps",
+        "stopping_condition",
+        "resume_check"
+      ],
+      "properties": {
+        "steps": {
+          "description": "Ordered actions the loop takes each iteration.",
+          "type": "array",
+          "minItems": 1,
+          "items": {
+            "type": "string",
+            "minLength": 3
+          }
+        },
+        "stopping_condition": {
+          "description": "The explicit success/failure exit. Loop engineering treats this as non-optional: 'explicit success and failure exits, plus a way to escalate to a human when the loop is stuck.' A loop with no stated stopping condition is exactly the open-ended prompting loop engineering exists to replace.",
+          "type": "string",
+          "minLength": 10
+        },
+        "resume_check": {
+          "description": "The first thing this loop does, before step 1: how it tells a fresh start from a resume after interruption. Per research/prompt_restart_strategies/prompt_restart_strategies_state_of_the_art.v1.md, no runtime detects this automatically — Temporal/Restate/Inngest/LangGraph all require an explicit check against a durable journal (here: this prompt's own execution_log.jsonl and its computed unclosed_starts). State what is read and what each outcome means: a closed ACT is done work whose result can be reused, an unclosed ACT is the interrupted step to resume (not restart the whole loop from), and no log at all means a genuine fresh start.",
+          "type": "string",
+          "minLength": 20
+        },
+        "escalation": {
+          "description": "Optional. What the agent does when stuck rather than looping forever or guessing — e.g. a stop condition or an error code to report.",
+          "type": "string",
+          "minLength": 3
+        },
+        "retry_policy": {
+          "description": "Optional. Which EXEC failure_type values (execution_log.schema.v2.json) may be retried automatically versus require a real fix before retrying. Per the idempotency-key finding in the restart research, only infrastructure-shaped failures on a provably idempotent step should be retried blindly.",
+          "type": "object",
+          "additionalProperties": false,
+          "properties": {
+            "auto_retry": {
+              "description": "failure_type values safe to retry without a new fix, because the step is idempotent and the failure is transient/infrastructure-shaped.",
+              "type": "array",
+              "items": {
+                "enum": [
+                  "missing-input",
+                  "bad-input",
+                  "tool-error",
+                  "wrong-output",
+                  "partial-run",
+                  "other"
+                ]
+              }
+            },
+            "requires_fix": {
+              "description": "failure_type values that must not be retried as-is; the LOOP must diagnose and change something first.",
+              "type": "array",
+              "items": {
+                "enum": [
+                  "missing-input",
+                  "bad-input",
+                  "tool-error",
+                  "wrong-output",
+                  "partial-run",
+                  "other"
+                ]
+              }
+            }
+          }
+        }
+      }
+    }
+  }
+}

@@ -1,0 +1,4 @@
+# generated 2026-08-15T16:40:18Z by find_old_name_references.sh — do not hand-edit
+# every file listed here gets its 'curriculum builder' / 'curriculum pipeline'
+# occurrences replaced with 'Curriculum Factory' by apply_rebrand.sh
+

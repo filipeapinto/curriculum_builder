@@ -1,0 +1,7 @@
+# generated 2026-08-15T16:40:18Z by find_old_name_references.sh — context only, do not edit
+
+## git grep -i -n 'curriculum-builder'
+runtime/langgraph_factory/egress.py:477:        headers={"User-Agent": "curriculum-builder/1.0"},
+tests/runtime/test_plan26_egress.py:505:    assert request.get_header("User-agent") == "curriculum-builder/1.0"
+
+## git grep -i -n 'curriculum-pipeline'

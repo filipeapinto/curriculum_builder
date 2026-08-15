@@ -1,0 +1,103 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://example.invalid/curriculum_builder/prompt.schema.v1.json",
+  "title": "Agentic task prompt v1 — GOAL/TESTS/LOOP",
+  "description": "Validates the structured form of a GOAL/TEST/LOOP execution prompt (prompts/**/*.prompt.v<N>.md), extracted from the markdown by a parser — this schema does not read markdown directly, the same way execution_log.schema.v2.json validates records the logger emits rather than free text. Shape is grounded in research/prompt_schemas/prompt_schema_state_of_the_art.v1.md (Aug 2026): no external body publishes a schema for this exact artifact, but the field converged independently on the same three parts under 'loop engineering' (goal, verification, stopping rule), and EARS notation is the precedent for making each test an executable condition paired with an expected, checkable result rather than free prose. A prompt with a goal, zero tests, or a loop with no stopping condition is not this contract's idea of complete — it is the exact failure mode this schema exists to catch before the hook lets the file be written.",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "title",
+    "goal",
+    "tests",
+    "loop"
+  ],
+  "properties": {
+    "title": {
+      "description": "The prompt's top-level heading, including its version, e.g. 'Rebrand Product Naming to \"Curriculum Factory\" — Prompt v1'.",
+      "type": "string",
+      "minLength": 10
+    },
+    "authorized_paths": {
+      "description": "Optional. The file(s)/glob(s) this prompt is allowed to modify. Mirrors execution_log.schema.v2.json's act.authorized_paths — when present, TESTS should include a check that no path outside this list changed; a prompt that edits everywhere it touches has no scope boundary to test against.",
+      "type": "array",
+      "items": {
+        "type": "string",
+        "minLength": 1
+      }
+    },
+    "goal": {
+      "description": "The GOAL section's body. Must state a concrete end state, not merely a topic — loop engineering treats 'a clear goal with a testable termination condition' as the load-bearing requirement a loop cannot run without.",
+      "type": "string",
+      "minLength": 20
+    },
+    "tests": {
+      "description": "The TESTS section, decomposed into individual checks. Never empty: a GOAL with no TESTS has no verification step, which loop engineering and EARS both treat as the point that separates a task contract from a wish.",
+      "type": "array",
+      "minItems": 1,
+      "items": {
+        "$ref": "#/$defs/test"
+      }
+    },
+    "loop": {
+      "$ref": "#/$defs/loop"
+    }
+  },
+  "$defs": {
+    "test": {
+      "description": "One executable check, in the EARS-derived shape: a condition to evaluate, and the expected/checkable result that makes the condition's outcome unambiguous — 'WHEN [condition], THE SYSTEM SHALL [expected behavior]', not narrative prose about intent.",
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "check",
+        "expected"
+      ],
+      "properties": {
+        "description": {
+          "description": "Optional human-readable label for the test, e.g. 'readme.md has zero orphan path references'.",
+          "type": "string",
+          "minLength": 1
+        },
+        "check": {
+          "description": "The exact executable condition: a command, a code-derived query, or an unambiguous inspection step. Must not be advice to the agent to go discover or invent a check itself — that defeats the point of a schema-checkable test, and was the concrete defect this schema's own authoring corrected in prompts/rebrand_system.",
+          "type": "string",
+          "minLength": 5
+        },
+        "expected": {
+          "description": "The concrete, checkable outcome that makes the check pass or fail. 'Looks right' is not an expected value; an exit code, a count (including '0'), a diff being empty, or a specific string being present or absent is.",
+          "type": "string",
+          "minLength": 1
+        }
+      }
+    },
+    "loop": {
+      "description": "The LOOP section: the iterate-until-done machinery loop engineering calls trigger + stopping rule + memory. This schema requires the stopping condition and at least one step; it cannot verify that the steps are correct, only that a stopping condition was stated at all.",
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "steps",
+        "stopping_condition"
+      ],
+      "properties": {
+        "steps": {
+          "description": "Ordered actions the loop takes each iteration.",
+          "type": "array",
+          "minItems": 1,
+          "items": {
+            "type": "string",
+            "minLength": 3
+          }
+        },
+        "stopping_condition": {
+          "description": "The explicit success/failure exit. Loop engineering treats this as non-optional: 'explicit success and failure exits, plus a way to escalate to a human when the loop is stuck.' A loop with no stated stopping condition is exactly the open-ended prompting loop engineering exists to replace.",
+          "type": "string",
+          "minLength": 10
+        },
+        "escalation": {
+          "description": "Optional. What the agent does when stuck rather than looping forever or guessing — e.g. a stop condition or an error code to report.",
+          "type": "string",
+          "minLength": 3
+        }
+      }
+    }
+  }
+}

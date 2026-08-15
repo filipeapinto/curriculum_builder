@@ -1,0 +1,395 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>curriculum_builder — Prompt Governance v2</title>
+<style>
+  :root {
+    --ink: #1b1e24;
+    --muted: #5b6270;
+    --line: #dde1e7;
+    --code-bg: #f4f5f7;
+    --accent: #2a5db0;
+    --ok: #1b7a3d;
+    --gap: #b0330a;
+    --warn: #8a5a00;
+  }
+  * { box-sizing: border-box; }
+  body {
+    font-family: -apple-system, "Segoe UI", Helvetica, Arial, sans-serif;
+    color: var(--ink);
+    max-width: 920px;
+    margin: 0 auto;
+    padding: 2.5rem 1.5rem 6rem;
+    line-height: 1.55;
+  }
+  h1 { font-size: 1.9rem; margin-bottom: 0.25rem; }
+  h2 {
+    font-size: 1.35rem;
+    margin-top: 3rem;
+    padding-top: 0.75rem;
+    border-top: 1px solid var(--line);
+  }
+  h3 { font-size: 1.05rem; margin-top: 1.75rem; }
+  .subtitle { color: var(--muted); margin-top: 0; }
+  code, pre {
+    font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
+    background: var(--code-bg);
+    border-radius: 4px;
+  }
+  code { padding: 0.1em 0.35em; font-size: 0.9em; }
+  pre {
+    padding: 0.9rem 1rem;
+    overflow-x: auto;
+    font-size: 0.85rem;
+    border: 1px solid var(--line);
+  }
+  pre code { background: none; padding: 0; }
+  table { border-collapse: collapse; width: 100%; margin: 1rem 0; font-size: 0.92rem; }
+  th, td { text-align: left; padding: 0.45rem 0.6rem; border-bottom: 1px solid var(--line); vertical-align: top; }
+  th { background: var(--code-bg); }
+  a { color: var(--accent); }
+  .status { font-weight: 600; padding: 0.05em 0.5em; border-radius: 3px; font-size: 0.78em; white-space: nowrap; }
+  .status-live { background: #e4f3e9; color: var(--ok); }
+  .status-gap { background: #fbe7e2; color: var(--gap); }
+  .status-partial { background: #fbf1d9; color: var(--warn); }
+  nav.toc {
+    background: var(--code-bg);
+    border: 1px solid var(--line);
+    border-radius: 6px;
+    padding: 1rem 1.5rem;
+    margin-top: 1.5rem;
+  }
+  nav.toc h2 { border: none; margin: 0 0 0.5rem; font-size: 1rem; text-transform: uppercase; letter-spacing: 0.04em; color: var(--muted); }
+  nav.toc ol { margin: 0; padding-left: 1.3rem; }
+  nav.toc li { margin: 0.2rem 0; }
+  .note {
+    border-left: 3px solid var(--accent);
+    background: var(--code-bg);
+    padding: 0.75rem 1rem;
+    margin: 1rem 0;
+    font-size: 0.93rem;
+  }
+  .flow {
+    font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
+    background: var(--code-bg);
+    border: 1px solid var(--line);
+    border-radius: 6px;
+    padding: 1rem 1.25rem;
+    font-size: 0.88rem;
+    white-space: pre;
+    overflow-x: auto;
+  }
+  footer { margin-top: 4rem; padding-top: 1rem; border-top: 1px solid var(--line); color: var(--muted); font-size: 0.85rem; }
+  .field-required::after { content: " (required)"; color: var(--gap); font-weight: 400; font-size: 0.85em; }
+</style>
+</head>
+<body>
+
+<h1>Prompt Governance</h1>
+<p class="subtitle">
+  How a "prompt" is authored, validated, executed and made restartable in
+  <code>curriculum_builder</code>. Document version 2 — additive successor
+  to v1 (<code>governance.v1.html</code>, retained byte-unchanged). v1
+  conflated "prompt" into only two categories and stated the meta-prompt as
+  simply out of scope; v2 corrects that with a full artifact taxonomy
+  (§1) — Plan, Meta-prompt and Prompt are three distinct artifacts, and the
+  first two are upstream sources that produce the third, not unrelated
+  siblings. Append-only growth is expected here; see the changelog at the
+  bottom instead of assuming this page is a finished picture.
+</p>
+
+<nav class="toc">
+<h2>Contents</h2>
+<ol>
+  <li><a href="#taxonomy">Artifact taxonomy: Plan, Meta-prompt, Prompt</a></li>
+  <li><a href="#shape">The GOAL/TEST/LOOP shape, and why</a></li>
+  <li><a href="#schema">The prompt schema: <code>schemas/prompt.schema.v1.json</code> / <code>v2.json</code></a></li>
+  <li><a href="#binding">Model and agent binding</a></li>
+  <li><a href="#restart">Restart and resumability</a></li>
+  <li><a href="#enforcement">Enforcement: the governance hook</a></li>
+  <li><a href="#example">Worked example: <code>prompts/rebrand_system</code></a></li>
+  <li><a href="#gaps">Known gaps</a></li>
+</ol>
+</nav>
+
+<h2 id="taxonomy">1. Artifact taxonomy: Plan, Meta-prompt, Prompt</h2>
+<p>
+  This repo has three distinct artifact kinds that get loosely called
+  "a prompt" in conversation. They are not interchangeable, and two of them
+  exist specifically to <strong>produce</strong> the third. Only the third —
+  <strong>Prompt</strong> — is what the rest of this document (the GOAL/TEST/LOOP
+  shape, <code>prompt.schema.v1/v2.json</code>, the governance hook, the
+  execution log) actually governs.
+</p>
+<div class="flow">Plan  ────┐
+          ├──▶  Prompt  (GOAL/TEST/LOOP, this document's scope)
+Meta-prompt┘</div>
+<table>
+  <tr><th>Artifact</th><th>What it is</th><th>Produces prompts?</th><th>Governed by this document?</th></tr>
+  <tr>
+    <td><strong>Plan</strong><br><code>plans/&lt;slug&gt;/*.plan.v&lt;N&gt;.md</code></td>
+    <td>A standalone description of a body of work — goal, QA'd design,
+      ordered test plan — authored directly or via the <code>plan-create</code>
+      skill's "plan-to-prompt pipeline." Not itself executed by an agent as
+      a task.</td>
+    <td><span class="status status-live">yes — by design</span>. The
+      <code>plan-create</code> skill's own description: it "writes an
+      implementation plan … writes an ordered execution test plan, writes a
+      Claude Code GOAL/TEST/LOOP implementation prompt." Concrete example:
+      <code>plans/19_curriculum_factory_production_loop_closure/curriculum_factory_production_loop_closure.plan.v1.yaml</code>
+      is the source plan; its <code>prompts/P0_baseline_contract_freeze.prompt.v1.md</code>
+      through <code>P6</code> are the Prompts it produced, one per phase.</td>
+    <td><span class="status status-gap">no</span> — the plan document
+      itself has no GOAL/TEST/LOOP shape and isn't executed as a task.</td>
+  </tr>
+  <tr>
+    <td><strong>Meta-prompt</strong><br><code>meta_prompt/curriculum.prompt.v1.md</code></td>
+    <td>The single, standing content-generation contract the curriculum
+      runtime executes to produce a curriculum unit from a manifest — a
+      prompt about how to run prompts, not a bounded one-off task. Checked
+      by <code>tests/check_meta_prompt.py</code>, not by this document's
+      schema.</td>
+    <td><span class="status status-live">yes — by design</span>. Its own
+      §Companions requires and dispatches further prompt assets at runtime
+      (e.g. <code>meta_prompt/assets/model_selector_prompt.v1.md</code>,
+      "the selector's own prompt, read by the selector call") and a body of
+      work implementing or repairing what it governs is itself turned into
+      bounded phase Prompts the same way a Plan is (see
+      <code>plans/19_curriculum_factory_production_loop_closure/</code>,
+      whose phases implement production behavior the meta-prompt's contract
+      requires).</td>
+    <td><span class="status status-gap">no</span> — it is a standing
+      contract read and re-executed indefinitely, not a bounded task with a
+      stopping condition.</td>
+  </tr>
+  <tr>
+    <td><strong>Prompt</strong><br><code>prompts/&lt;task&gt;/*.prompt.v&lt;N&gt;.md</code>,
+      <code>plans/&lt;slug&gt;/prompts/*.prompt.v&lt;N&gt;.md</code></td>
+    <td>A one-off, bounded, GOAL/TEST/LOOP execution task, produced by a
+      Plan or by work a meta-prompt's contract requires, run by Claude
+      Code, expected to be idempotent and restart-safe.</td>
+    <td>—</td>
+    <td><span class="status status-live">yes — this document, §2–§8</span></td>
+  </tr>
+</table>
+<div class="note">
+  The practical rule: if you're deciding whether something needs a GOAL, a
+  TESTS array and a LOOP with a stopping condition, ask whether it is the
+  thing being executed as a bounded task (a Prompt) or the thing that
+  decided a task was needed (a Plan or the meta-prompt). Only the former is
+  in scope below.
+</div>
+
+<h2 id="shape">2. The GOAL/TEST/LOOP shape, and why</h2>
+<p>
+  Every Prompt has three sections: <strong>GOAL</strong>
+  (a concrete end state, not a topic), <strong>TESTS</strong> (one or more
+  executable checks with a checkable expected result — never "looks right"),
+  and <strong>LOOP</strong> (the steps taken each iteration, plus how the
+  loop knows to stop).
+</p>
+<p>
+  This is not a house invention. Research conducted August 2026
+  (<code><a href="../research/prompt_schemas/prompt_schema_state_of_the_art.v1.md">research/prompt_schemas/prompt_schema_state_of_the_art.v1.md</a></code>)
+  found the field independently converged on the same three-part shape in
+  June 2026 under the name "loop engineering" — a loop specification is
+  "a trigger, a goal, a verification step, a stopping rule and a memory."
+  No external body publishes a machine-checkable schema for it, which is
+  why this repo authors its own (§3). Each individual TEST follows the
+  EARS pattern (<em>WHEN [condition], THE SYSTEM SHALL [expected
+  behavior]</em>), the closest published precedent for making a single
+  acceptance criterion unambiguous.
+</p>
+
+<h2 id="schema">3. The prompt schema</h2>
+<p>
+  <code>schemas/prompt.schema.v1.json</code> and
+  <code>schemas/prompt.schema.v2.json</code> validate the
+  <em>structured</em> form of a Prompt — a JSON object a parser would
+  extract from the markdown — the same relationship
+  <code>execution_log.schema.v2.json</code> has to the logger's JSONL
+  output rather than to free text. Versioning follows the same convention
+  as every other schema in <code>schemas/</code>, and this document
+  follows it too: additive only, older versions retained byte-unchanged so
+  anything already validated against them keeps validating.
+</p>
+
+<h3>v1 fields</h3>
+<table>
+  <tr><th>Field</th><th>Type</th><th>Rule</th></tr>
+  <tr><td><code class="field-required">title</code></td><td>string</td><td>≥ 10 chars, includes the version.</td></tr>
+  <tr><td><code class="field-required">goal</code></td><td>string</td><td>≥ 20 chars — a concrete, testable end state.</td></tr>
+  <tr><td><code class="field-required">tests</code></td><td>array of <code>{description?, check, expected}</code></td><td>≥ 1 item. <code>check</code> is an exact executable condition, never "go discover a check yourself."</td></tr>
+  <tr><td><code class="field-required">loop</code></td><td>object <code>{steps, stopping_condition, escalation?}</code></td><td><code>stopping_condition</code> is required — an explicit success/failure exit, not an open-ended loop.</td></tr>
+  <tr><td><code>authorized_paths</code></td><td>array of string</td><td>Optional scope boundary; mirrors <code>execution_log.schema.v2.json</code>'s <code>act.authorized_paths</code>.</td></tr>
+</table>
+
+<h3>v2 additions</h3>
+<p>
+  Research into restart behaviour
+  (<code><a href="../research/prompt_restart_strategies/prompt_restart_strategies_state_of_the_art.v1.md">research/prompt_restart_strategies/prompt_restart_strategies_state_of_the_art.v1.md</a></code>)
+  found this repo already has the right durable-journal primitive in
+  <code>execution_log.schema.v2.json</code>'s ACT/EXEC pairing and computed
+  <code>unclosed_starts</code> — structurally identical to what Temporal,
+  Restate, Inngest and LangGraph use for crash recovery — but nothing told
+  a Prompt to actually use it. v2 closes that, plus adds required execution
+  binding:
+</p>
+<table>
+  <tr><th>Field</th><th>Type</th><th>Rule</th></tr>
+  <tr><td><code class="field-required">model</code></td><td>enum</td><td><code>inherit</code> / <code>haiku</code> / <code>sonnet</code> / <code>opus</code> / <code>fable</code>. Never a non-Claude model id — see <a href="#binding">§4</a>.</td></tr>
+  <tr><td><code class="field-required">agent</code></td><td>object <code>{execution_path, subagent_type?, reasoning?}</code></td><td><code>execution_path</code> ∈ <code>claude_code_direct</code> / <code>claude_code_subagent</code> / <code>codex_plugin</code>. <code>subagent_type</code> required when <code>execution_path</code> is <code>claude_code_subagent</code>.</td></tr>
+  <tr><td><code class="field-required">loop.resume_check</code></td><td>string</td><td>≥ 20 chars. States how the loop distinguishes a closed ACT (reuse result), an unclosed ACT (resume that one step), and no log at all (genuine fresh start).</td></tr>
+  <tr><td><code>loop.retry_policy</code></td><td>object <code>{auto_retry?, requires_fix?}</code></td><td>Optional. Arrays of <code>execution_log.schema.v2.json</code> <code>failure_type</code> values, split into "safe to blindly retry" vs "needs a real fix first."</td></tr>
+</table>
+
+<h2 id="binding">4. Model and agent binding</h2>
+<p>
+  This environment has exactly two live subscriptions and no billed API key
+  for anything, anywhere — confirmed empty:
+  <code>GEMINI_API_KEY</code>, <code>GOOGLE_API_KEY</code>,
+  <code>ANTHROPIC_API_KEY</code>, <code>OPENAI_API_KEY</code>. That is a
+  standing constraint on this whole repo, not just Prompts, and
+  <code>agent.execution_path</code>'s enum is deliberately closed to match
+  it:
+</p>
+<ul>
+  <li><strong><code>claude_code_direct</code></strong> — content-generation
+    and task-execution Prompts run <em>as Claude Code itself</em>, in the
+    calling session, under the Claude subscription. This is the default for
+    everything this document governs.</li>
+  <li><strong><code>claude_code_subagent</code></strong> — delegated to a
+    subagent via the <code>Agent</code> tool. Requires naming
+    <code>subagent_type</code>, and if that's <code>general-purpose</code>
+    or <code>Explore</code>, <code>.claude/governance/subagent_cost.md</code>
+    additionally requires pinning a cheap <code>model</code> — general-purpose
+    subagent calls alone previously accounted for 34% of total usage on
+    work that was mechanical search, not reasoning.</li>
+  <li><strong><code>codex_plugin</code></strong> — QA gates, review and
+    judge steps only, invoked through the installed <code>codex</code>
+    plugin under the ChatGPT Pro subscription. Never used for
+    content-generation Prompts.</li>
+</ul>
+<div class="note">
+  There is no fourth option. A Prompt that wants to "call Gemini" or any
+  other API-billed model is not a configuration this schema can express —
+  that has caused real, repeated frustration in this repo's history and is
+  intentionally unrepresentable now, not just discouraged.
+</div>
+
+<h2 id="restart">5. Restart and resumability</h2>
+<p>
+  Every Prompt run through
+  <code>runtime.logger.ExecutionLogger</code> gets an append-only,
+  schema-validated <code>execution_log.jsonl</code>: one record per
+  <code>.start()</code> (status <code>started</code>, result
+  <code>pending</code>) and one per <code>.complete()</code> or
+  <code>.fail()</code> that <code>closes</code> it. <code>audit()</code>
+  computes <code>unclosed_starts</code> — every started id with no matching
+  close — which is exactly a crashed/interrupted step.
+</p>
+<p>A v2-conformant Prompt's <code>loop.resume_check</code> must say, concretely:</p>
+<ol>
+  <li>Does <code>execution/execution_log.jsonl</code> already exist for this
+    task instance? If not: fresh start, run <code>steps</code> from the top.</li>
+  <li>If it exists: read every record. For each id that is <em>closed</em>
+    (an ACT completion/skip, or an EXEC), treat that step as done — reuse
+    its recorded <code>result</code>/<code>what_failed</code> rather than
+    re-running it.</li>
+  <li>For any id in <code>unclosed_starts</code>: that is the interrupted
+    step. Resume <em>from that step</em>, not from step 1.</li>
+  <li>Only auto-retry a failed step if its <code>failure_type</code> is
+    infrastructure-shaped (<code>tool-error</code>) <em>and</em> the step is
+    provably idempotent — re-running <code>apply_rebrand.sh</code>'s
+    case-preserving substitution against already-rebranded text is a no-op,
+    which is what makes it safe to blindly re-run on resume. A
+    <code>wrong-output</code> or <code>bad-input</code> failure needs a
+    diagnosis and a fix, never a blind retry.</li>
+</ol>
+
+<h2 id="enforcement">6. Enforcement: the governance hook</h2>
+<p>
+  <code>.claude/hooks/check_prompt_governance.sh</code> is a
+  <code>PreToolUse</code> hook, wired in <code>.claude/settings.json</code>,
+  that runs on every <code>Write</code>/<code>Edit</code> to a file matching
+  <code>*.prompt(.v&lt;N&gt;)?.md</code> — which today means it also fires on
+  Plan-produced phase prompts and would fire on any meta-prompt-derived one,
+  since the hook matches on filename pattern, not on which artifact in §1
+  produced the file. It currently enforces exactly one rule and blocks the
+  write (exit 2) on violation:
+</p>
+<div class="note">
+  A <code>general-purpose</code> or <code>Explore</code> subagent
+  delegation inside a prompt file must have a <code>model:</code> override
+  within 5 lines, or the write is rejected. It is a text-window heuristic,
+  not a parser — false positives are possible, and it prints the offending
+  line.
+</div>
+<p>
+  <span class="status status-gap">It does not yet validate against
+  <code>prompt.schema.v1.json</code>/<code>v2.json</code> at all.</span>
+  A Prompt can currently be written with no GOAL, zero TESTS, no
+  <code>resume_check</code>, or an unrepresentable model, and nothing
+  blocks it except this document and human review. See <a href="#gaps">§8</a>.
+</p>
+
+<h2 id="example">7. Worked example: <code>prompts/rebrand_system</code></h2>
+<p>
+  The rebrand-to-"Curriculum Factory" task is the first Prompt built end to
+  end against this system, and is the concrete case every rule above was
+  derived from or tested against. It was authored directly rather than
+  produced by a Plan or the meta-prompt, which §1 also allows — the
+  taxonomy states what <em>can</em> produce a Prompt, not that every Prompt
+  must have one of those two upstream sources.
+</p>
+<table>
+  <tr><th>File</th><th>Role</th></tr>
+  <tr><td><code>rebrand_curriculum_factory.prompt.v1.md</code></td><td>The GOAL/TEST/LOOP prompt itself.</td></tr>
+  <tr><td><code>assets/find_old_name_references.sh</code></td><td>Code-derived discovery — every target file/path is found by <code>git grep</code>/<code>test -e</code>, never left to agent judgment.</td></tr>
+  <tr><td><code>assets/apply_rebrand.sh</code></td><td>Idempotent, case-preserving phrase substitution — the concrete example cited in §5 for why blind retry is safe here.</td></tr>
+  <tr><td><code>assets/run_rebrand_with_log.py</code></td><td>Entrypoint. Runs both scripts above, runs all five acceptance TESTS, and logs every step via <code>ExecutionLogger</code>.</td></tr>
+  <tr><td><code>execution/execution_log.jsonl</code></td><td>The schema-validated run log this document's §5 procedure would read on resume.</td></tr>
+</table>
+<p>
+  This prompt predates <code>prompt.schema.v2.json</code> and is not yet
+  updated to declare <code>model</code>, <code>agent</code>, or
+  <code>loop.resume_check</code> — see <a href="#gaps">§8</a>.
+</p>
+
+<h2 id="gaps">8. Known gaps</h2>
+<table>
+  <tr><th>Gap</th><th>Status</th></tr>
+  <tr>
+    <td>No markdown → JSON extractor exists to turn a Prompt file into the object <code>prompt.schema.v1/v2.json</code> actually validates.</td>
+    <td><span class="status status-gap">not built</span></td>
+  </tr>
+  <tr>
+    <td><code>check_prompt_governance.sh</code> does not call that extractor or the schema at all — only the subagent-cost rule is enforced today, and it fires on filename pattern alone rather than distinguishing which of §1's producing artifacts (or none) the file came from.</td>
+    <td><span class="status status-gap">not built</span></td>
+  </tr>
+  <tr>
+    <td><code>prompts/rebrand_system/rebrand_curriculum_factory.prompt.v1.md</code> is not yet updated to v2 shape (<code>model</code>, <code>agent</code>, <code>loop.resume_check</code>).</td>
+    <td><span class="status status-partial">v1-shaped only</span></td>
+  </tr>
+  <tr>
+    <td>Restart procedure (§5) is documented and grounded in research, but no Prompt in this repo has actually exercised a real mid-run crash and resume yet — it is a designed, untested contract.</td>
+    <td><span class="status status-partial">designed, unverified</span></td>
+  </tr>
+  <tr>
+    <td>§1's Plan → Prompt and Meta-prompt → Prompt relationships are described narratively; no schema or tooling actually records, on a Prompt file, which Plan or meta-prompt (if any) produced it.</td>
+    <td><span class="status status-gap">not built</span></td>
+  </tr>
+</table>
+
+<footer>
+  <p><strong>Document log</strong> — append new rows below rather than rewriting prior ones.</p>
+  <table>
+    <tr><th>Version</th><th>Date</th><th>Change</th></tr>
+    <tr><td>v1</td><td>2026-08-15</td><td>Initial document: two-kinds distinction, GOAL/TEST/LOOP shape, schema v1/v2 field reference, model/agent binding rule, restart procedure, hook status, worked example, known gaps.</td></tr>
+    <tr><td>v2</td><td>2026-08-15</td><td>Replaced the v1 "two kinds of prompt" framing with a corrected three-artifact taxonomy (§1): Plan and Meta-prompt are distinct upstream artifacts that produce Prompt, not an out-of-scope sibling of it. Added the plan-create → P0–P6 concrete example and the meta-prompt companion-dispatch example. Added a taxonomy gap to §8. v1 retained byte-unchanged.</td></tr>
+  </table>
+</footer>
+
+</body>
+</html>

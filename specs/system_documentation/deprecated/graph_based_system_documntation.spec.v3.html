@@ -1,0 +1,84 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1"><meta name="color-scheme" content="light dark">
+  <title>Model-Agnostic Specification: Documentation Skills for Graph-Based LLM Systems</title>
+  <style>
+    :root{--ink:#172033;--muted:#586278;--paper:#fbfcff;--line:#d8deea;--blue:#175cc2;--soft:#eaf2ff;--good:#12663c;--warn:#8d5b00;--code:#f1f4f9}@media(prefers-color-scheme:dark){:root{--ink:#edf2fb;--muted:#aeb9cc;--paper:#101622;--line:#2d384c;--blue:#8abbff;--soft:#172b4c;--good:#7addaa;--warn:#f0bd62;--code:#1a2333}}*{box-sizing:border-box}body{margin:0;background:var(--paper);color:var(--ink);font:16px/1.55 ui-sans-serif,system-ui,-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif}main{max-width:1100px;margin:0 auto;padding:48px 28px 72px}header{border-bottom:3px solid var(--blue);padding-bottom:24px}h1{font-size:clamp(2rem,5vw,3.5rem);line-height:1.05;letter-spacing:-.045em;margin:0 0 14px;max-width:900px}h2{font-size:1.55rem;line-height:1.2;margin:44px 0 14px;letter-spacing:-.02em}p{max-width:84ch}a{color:var(--blue)}code{background:var(--code);border:1px solid var(--line);border-radius:4px;padding:.1em .3em;font-size:.9em}.lede{color:var(--muted);font-size:1.12rem;max-width:78ch}.meta{color:var(--muted);font-size:.9rem}nav{margin:25px 0 0;display:flex;gap:12px;flex-wrap:wrap}nav a{border:1px solid var(--line);border-radius:999px;padding:5px 10px;text-decoration:none}.callout{margin:22px 0;padding:18px 20px;background:var(--soft);border-left:5px solid var(--blue);max-width:940px}.callout strong{display:block;margin-bottom:4px}table{border-collapse:collapse;width:100%;margin:16px 0 24px;font-size:.94rem}th,td{text-align:left;vertical-align:top;border:1px solid var(--line);padding:12px}th{background:var(--code)}li{margin:.45rem 0;max-width:88ch}.good{color:var(--good);font-weight:700}.caution{color:var(--warn);font-weight:700}footer{color:var(--muted);margin-top:50px;padding-top:16px;border-top:1px solid var(--line);font-size:.9rem}
+  </style>
+</head>
+<body><main>
+  <header>
+    <p class="meta">Requirements specification · 15 August 2026 · Version 3</p>
+    <h1>Model-agnostic documentation-skill specification for graph-based LLM systems</h1>
+    <p class="lede">This specification defines model-agnostic skills for documenting graph-based LLM systems. It specifies the required evidence, behavior, outputs, and quality checks—not a shared package, model, tool, host runtime, or graph framework.</p>
+    <nav aria-label="Specification navigation"><a href="#purpose">Purpose</a><a href="#implementations">Graph implementations</a><a href="#principles">Principles</a><a href="#evidence">Evidence</a><a href="#requirements">Requirements</a><a href="#outputs">Outputs</a><a href="#quality">Quality</a></nav>
+  </header>
+
+  <section id="purpose"><h2>Purpose</h2>
+    <div class="callout"><strong>Produce trustworthy documentation for an implemented graph-based LLM system.</strong>It must explain the graph, its data and evidence, its failure paths, and the sources that support its claims.</div>
+    <p>This specification can guide a Codex, GPT/ChatGPT, Claude, Grok, or other agent-platform skill. It concerns the documented system and result, not how either is packaged or run.</p>
+  </section>
+
+  <section id="implementations"><h2>Graph implementations</h2>
+    <p>A graph may be implemented informally or formally. The documentation skill must document the behavior it can verify, regardless of implementation style.</p>
+    <table><thead><tr><th>Implementation style</th><th>Example</th><th>Documentation evidence</th></tr></thead><tbody>
+      <tr><td>Prompt-orchestrated</td><td>An orchestrator prompt selects or sequences multiple prompts, tools, agents, or handoffs.</td><td>Orchestrator and component prompts, routing instructions, tool definitions, run traces, and tests.</td></tr>
+      <tr><td>Framework-defined</td><td>A graph is declared and executed by a framework such as LangGraph.</td><td>Graph definition, runtime configuration or compiled graph, node code, traces, and tests.</td></tr>
+    </tbody></table>
+    <p>Do not infer formal nodes or edges merely because prompts are sequenced. Conversely, do not treat a framework declaration as proof that every declared path executed. Record the level of evidence available for each claim.</p>
+  </section>
+
+  <section id="principles"><h2>Principles</h2>
+    <ol>
+      <li><strong>Evidence first:</strong> derive claims from inspected sources, not prompts, recollection, or plausible inference.</li>
+      <li><strong>State uncertainty:</strong> mark unavailable, conflicting, stale, or unverified information instead of filling gaps.</li>
+      <li><strong>Keep claims traceable:</strong> connect each operational claim and diagram label to its evidence.</li>
+      <li><strong>Declare limits:</strong> state which sources and validations were available and which were not.</li>
+    </ol>
+    <p>The specification does not require a particular model, source code, plugin format, context window, browser, connector, diagram renderer, or graph framework.</p>
+  </section>
+
+  <section id="evidence"><h2>Required evidence</h2>
+    <p>Inspect and record the sources available to the skill. Missing evidence is a documented gap, not a reason to invent a substitute.</p>
+    <table><thead><tr><th>Fact family</th><th>Required facts</th><th>Typical evidence</th></tr></thead><tbody>
+      <tr><td>Graph</td><td>Name/version, nodes or steps, edges or handoffs, entries, branches, loops, joins, and terminals.</td><td>Orchestration prompts, graph definitions, compiled graphs, routing configuration, traces, tests.</td></tr>
+      <tr><td>Node and state</td><td>Purpose, inputs, outputs, side effects, failure behavior, state fields, validation, and sensitive-data handling.</td><td>Prompts, code, schemas, configuration, policy.</td></tr>
+      <tr><td>Execution</td><td>Runs, calls, artifacts, checks, verdicts, retries, resume behavior, and terminals.</td><td>Logs, manifests, receipts, audits, test results.</td></tr>
+    </tbody></table>
+  </section>
+
+  <section id="requirements"><h2>Required behavior</h2>
+    <table><thead><tr><th>Capability</th><th>Behavioral requirement</th></tr></thead><tbody>
+      <tr><td>Inventory</td><td>Locate candidate sources; state what was inspected and what was unavailable.</td></tr>
+      <tr><td>Extract</td><td>Build a fact model with source identifiers, versions or digests when available, and explicit unknown or conflict states.</td></tr>
+      <tr><td>Verify</td><td>Bind prose and visuals to the fact model; flag unsupported, contradictory, or stale claims.</td></tr>
+      <tr><td>Explain</td><td>Organize the material for readers and use diagrams only for confirmed entities and relationships.</td></tr>
+      <tr><td>Publish</td><td>Produce semantic, navigable documentation and a verification record. HTML must remain understandable without JavaScript.</td></tr>
+    </tbody></table>
+  </section>
+
+  <section id="outputs"><h2>Required documentation contract</h2>
+    <ol>
+      <li><strong>Overview:</strong> purpose, boundary, constraints, and top-level graph.</li>
+      <li><strong>Graph walkthrough:</strong> entries, branches, loops, failures, and terminals—not only the happy path.</li>
+      <li><strong>Node and data reference:</strong> contracts, state, effects, checks, and source references.</li>
+      <li><strong>Operations guide:</strong> preconditions, observability, recovery, limitations, and evidence gaps.</li>
+      <li><strong>Verification record:</strong> sources inspected, versions/digests where available, verification time, excluded scope, unavailable checks, and unresolved conflicts.</li>
+    </ol>
+    <p>Every reader-facing document must show its scope and freshness. A visual must have a prose or tabular equivalent. A document that cannot verify a claim must label it unknown, proposed, or unverified.</p>
+  </section>
+
+  <section id="quality"><h2>Quality gates</h2>
+    <ol>
+      <li><strong>Traceability:</strong> every operational claim resolves to inspected evidence or is visibly marked unsupported.</li>
+      <li><strong>Truthful coverage:</strong> record what was included and excluded; never imply system-wide coverage from a partial scan.</li>
+      <li><strong>Accessible output:</strong> semantic structure, keyboard-operable interaction, adequate contrast, no color-only meaning, and text alternatives for diagrams.</li>
+      <li><strong>Offline baseline:</strong> no required CDN, remote image, remote font, or JavaScript dependency for basic comprehension.</li>
+      <li><strong>Freshness:</strong> show source version/digest and verification time; mark unavailable or stale checks clearly.</li>
+      <li><strong>Safe writes:</strong> create versioned outputs only in an approved location and do not overwrite accepted artifacts without authorization.</li>
+    </ol>
+  </section>
+
+  <footer>A conforming skill honors this evidence, traceability, accessibility, and verification contract, while clearly reporting any unavailable source or check.</footer>
+</main></body></html>
