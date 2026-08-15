@@ -1,0 +1,122 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="color-scheme" content="light dark">
+  <title>HTML Documentation Skill Requirements — v2</title>
+  <style>
+    :root { --ink:#172033; --muted:#586278; --paper:#fbfcff; --line:#d8deea; --blue:#175cc2; --blue-soft:#eaf2ff; --good:#12663c; --warn:#8d5b00; --code:#f1f4f9; }
+    @media (prefers-color-scheme: dark) { :root { --ink:#edf2fb; --muted:#aeb9cc; --paper:#101622; --line:#2d384c; --blue:#8abbff; --blue-soft:#172b4c; --good:#7addaa; --warn:#f0bd62; --code:#1a2333; } }
+    * { box-sizing:border-box; } body { margin:0; background:var(--paper); color:var(--ink); font:16px/1.55 ui-sans-serif,system-ui,-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif; }
+    main { max-width:1100px; margin:0 auto; padding:48px 28px 72px; } header { border-bottom:3px solid var(--blue); padding-bottom:24px; }
+    h1 { font-size:clamp(2rem,5vw,3.5rem); line-height:1.05; letter-spacing:-.045em; margin:0 0 14px; max-width:880px; } h2 { font-size:1.55rem; line-height:1.2; margin:44px 0 14px; letter-spacing:-.02em; } h3 { font-size:1.05rem; margin:0 0 8px; }
+    p { max-width:82ch; } a { color:var(--blue); } code { background:var(--code); border:1px solid var(--line); border-radius:4px; padding:.1em .3em; font-size:.9em; } .lede { color:var(--muted); font-size:1.12rem; max-width:74ch; } .meta { color:var(--muted); font-size:.9rem; }
+    nav { margin:25px 0 0; display:flex; gap:12px; flex-wrap:wrap; } nav a { border:1px solid var(--line); border-radius:999px; padding:5px 10px; text-decoration:none; }
+    .callout { margin:22px 0; padding:18px 20px; background:var(--blue-soft); border-left:5px solid var(--blue); max-width:920px; } .callout strong { display:block; margin-bottom:4px; }
+    .warning { border-left-color:var(--warn); } table { border-collapse:collapse; width:100%; margin:16px 0 24px; font-size:.94rem; } th,td { text-align:left; vertical-align:top; border:1px solid var(--line); padding:12px; } th { background:var(--code); } ul li,ol li { margin:.45rem 0; max-width:88ch; } .good { color:var(--good); font-weight:700; } .caution { color:var(--warn); font-weight:700; }
+    footer { color:var(--muted); margin-top:50px; padding-top:16px; border-top:1px solid var(--line); font-size:.9rem; }
+  </style>
+</head>
+<body>
+<main>
+  <header>
+    <p class="meta">Requirements assessment · 15 August 2026</p>
+    <h1>HTML documentation skill: requirements before implementation</h1>
+    <p class="lede">Define a portable HTML-documentation workflow that can later be packaged for both Claude Code and Codex without pretending that their host capabilities are identical.</p>
+    <nav aria-label="Report navigation"><a href="#decision">Current decision</a><a href="#baseline">Baseline</a><a href="#purpose">Purpose</a><a href="#portability">Claude and Codex</a><a href="#requirements">Requirements</a><a href="#decisions">Open decisions</a><a href="#sources">Sources</a></nav>
+  </header>
+
+  <section id="decision">
+    <h2>Current decision</h2>
+    <div class="callout warning"><strong>Current state: requirements only.</strong>No directory, plugin, command, or installer is in scope until the requirements and ownership model are approved.</div>
+    <p>HTML can improve human review of architecture explainers, reports, and diagrams. This document adds the necessary constraint: the project should not make “HTML everywhere” its policy. Structured graph/runtime data remains authoritative; HTML is a reader-facing derivative where visual organization improves review.</p>
+  </section>
+
+  <section id="baseline">
+    <h2>Assessment baseline</h2>
+    <p>The research conclusion remains: no external skill is a complete answer for this repository’s runtime documentation. A generic HTML-artifact skill can improve presentation, but cannot by itself stop documentation drift. The eventual workflow must derive or validate operational claims against graph definitions, schemas, route policy, and run evidence.</p>
+    <table>
+      <thead><tr><th>Candidate pattern</th><th>Useful contribution</th><th>Carried-forward assessment</th></tr></thead>
+      <tbody>
+        <tr><td><a href="https://github.com/dogum/html-artifacts">dogum/html-artifacts</a></td><td>Self-contained HTML artifacts for plans, reports, diagrams, explainers, prototypes, and custom editors; explicit recognition that Markdown remains suitable for short or code-only outputs.</td><td><span class="good">Primary design reference.</span> Borrow its format-selection and artifact patterns, not a runtime-truth model.</td></tr>
+        <tr><td><a href="https://github.com/openai/role-specific-plugins/tree/main/plugins/data-analytics/skills/build-report">OpenAI build-report</a></td><td>HTML delivery quality: readable fallbacks, color/focus checks, and provenance associated with claims.</td><td><span class="good">Quality reference.</span> Reuse its standards, not its analytics-specific information architecture.</td></tr>
+        <tr><td><a href="https://github.com/anthropics/claude-plugins-official/tree/main/plugins/session-report">Anthropic session-report</a></td><td>Separates collected data from a stable report template and renders an explorable HTML report.</td><td><span class="good">Architecture reference.</span> Borrow the template/data-contract separation; do not adopt its session-telemetry scope.</td></tr>
+        <tr><td><a href="https://github.com/cathrynlavery/diagram-design">cathrynlavery/diagram-design</a></td><td>Static, self-contained HTML/SVG diagrams with type-specific guidance and accessibility conventions.</td><td><span class="caution">Candidate renderer only.</span> Evaluate on one real repository diagram before any dependency decision.</td></tr>
+      </tbody>
+    </table>
+    <p>Practitioner evidence also identifies material token, portability, diff-review, layout, and asset-reliability costs. Use HTML where those costs buy a concrete review benefit; retain compact/diffable formats where they do not.</p>
+  </section>
+
+  <section id="purpose">
+    <h2>Proposed purpose</h2>
+    <p>Eventually provide a repeatable way to produce an accessible, self-contained HTML explanation of this repository’s curriculum runtime from checked repository facts. A request such as “explain the runtime,” “make a graph walkthrough,” or “prepare a release-status explainer” should result in a readable artifact whose claims point to the graph/config/schema/evidence inputs that support them.</p>
+    <table>
+      <thead><tr><th>In scope</th><th>Out of scope</th></tr></thead>
+      <tbody>
+        <tr><td>Architecture explainers, node catalogues, route/failure-path visuals, status or evidence reports, and limited interactive decision aids.</td><td>Replacing the runtime, deciding release acceptance, inventing graph facts, silently changing source data, or becoming a generic website designer.</td></tr>
+        <tr><td>Rendering diagrams from a checked brief and recording their sources/freshness.</td><td>Treating an attractive diagram as proof that a route, receipt, check, or terminal state exists.</td></tr>
+      </tbody>
+    </table>
+  </section>
+
+  <section id="portability">
+    <h2>Claude and Codex: what the eventual skill must mean</h2>
+    <p><strong>One shared skill source is feasible.</strong> Both products support an Agent Skills-style folder built around a <code>SKILL.md</code> instruction file and optional resources. The portable core must use only ordinary files, semantic HTML/SVG, and shell-independent instructions. It must not assume a specific browser, model, connected service, or plugin marketplace.</p>
+    <table>
+      <thead><tr><th>Capability</th><th>Claude Code</th><th>Codex</th><th>Requirement implication</th></tr></thead>
+      <tbody>
+        <tr><td>Local project skill</td><td>Supports a repository <code>.claude/skills/&lt;name&gt;/SKILL.md</code>; the folder can be invoked as a slash command or selected when relevant.</td><td>Supports reusable skills and plugins; the current Codex environment discovers skill folders with <code>SKILL.md</code>.</td><td>Keep the shared instructions and assets host-neutral. Add thin host-specific installation adapters only after the shared core works.</td></tr>
+        <tr><td>Tools and context</td><td>Can read/edit files, run commands, use configured MCP tools, hooks, and plugins; actual availability depends on local configuration and permissions.</td><td>Can read/edit workspace files, run permitted commands, and use the tools/connectors enabled in its environment; availability likewise varies by configuration.</td><td>Require capability probing and graceful degradation. Never state that Slack, browser, Git history, rendering, or a connector was consulted unless it actually was.</td></tr>
+        <tr><td>Distribution</td><td>Can share a repository-local <code>.claude/</code> setup or package skills through a Claude plugin/marketplace.</td><td>Can use an installed skill or Codex plugin/marketplace package.</td><td>Do not choose a distribution model yet. Start with source control of the shared core; package only after it has proved useful.</td></tr>
+        <tr><td>Visual delivery</td><td>Can create local HTML artifacts; its browser/preview experience is host-dependent.</td><td>Can create local HTML artifacts; this environment also exposes browser and image-generation capabilities, but these must not be assumed in a portable skill.</td><td>Require a static, no-JavaScript-readable HTML baseline. Treat host previews and enhanced tools as optional validation paths.</td></tr>
+      </tbody>
+    </table>
+    <p class="meta">This assessment concerns Claude <em>Code</em> and Codex, not a promise that a local-repository workflow will run unchanged in Claude’s web/chat product.</p>
+  </section>
+
+  <section id="requirements">
+    <h2>Draft requirements to debate</h2>
+    <ol>
+      <li><strong>Purpose-based trigger.</strong> Use the workflow only when a human needs to compare, navigate, inspect, or interact with complex information. Keep concise notes, contracts, and agent inputs in the format best suited to them.</li>
+      <li><strong>Checked factual input.</strong> Gather graph facts, schema names, route policy, run evidence, and cited paths through a deterministic extractor or an explicit validation step before presenting them.</li>
+      <li><strong>Traceable claims.</strong> Label each operational claim with a source path, version/hash where available, and a freshness or verification status.</li>
+      <li><strong>Static-first HTML.</strong> Deliver one self-contained HTML file using semantic structure. JavaScript, animation, external fonts, CDNs, and remote images are optional additions only when justified and accompanied by a readable fallback.</li>
+      <li><strong>Accessible visuals.</strong> Provide text equivalents for diagrams, do not encode meaning by color alone, preserve keyboard/focus behavior where interaction exists, and check contrast and rendered legibility.</li>
+      <li><strong>Failure paths are visible.</strong> Include retries, repair loops, blocked/unavailable outcomes, and evidence gaps whenever they are part of the documented flow; do not diagram only the happy path.</li>
+      <li><strong>Separation of roles.</strong> A diagram-design capability may be used to render a visual from an approved brief, but it must not infer authoritative runtime data or be responsible for documentation verification.</li>
+      <li><strong>Safe artifact handling.</strong> Write only to a declared documentation/output location, avoid silently overwriting accepted artifacts, and make temporary one-off editors explicitly disposable.</li>
+      <li><strong>Verification before publication.</strong> Check source links, source identifiers, missing/duplicate diagram labels, no-JavaScript readability, and the rendered artifact before calling the result current.</li>
+    </ol>
+  </section>
+
+  <section id="decisions">
+    <h2>Questions that must be answered before implementation</h2>
+    <table>
+      <thead><tr><th>Decision</th><th>Why it matters</th><th>Current state</th></tr></thead>
+      <tbody>
+        <tr><td>What exact runtime paths are authoritative?</td><td>Determines whether facts can be extracted and checked rather than narrated.</td><td><span class="caution">Open</span></td></tr>
+        <tr><td>Which first artifact proves value?</td><td>A single “How the factory works” page, a node catalogue, and a run report have different inputs and QA needs.</td><td><span class="caution">Open</span></td></tr>
+        <tr><td>Should diagrams use <code>diagram-design</code>?</td><td>It is a candidate renderer, not an integration decision. Evaluate one real diagram first.</td><td><span class="caution">Open</span></td></tr>
+        <tr><td>Where should generated HTML live?</td><td>Separates tracked, durable documentation from temporary exploration and avoids polluting Git history.</td><td><span class="caution">Open</span></td></tr>
+        <tr><td>Which hosts are required at launch?</td><td>Claude Code and Codex can share a core; host-specific packaging creates maintenance cost.</td><td><span class="caution">Open</span></td></tr>
+        <tr><td>What command/test proves freshness?</td><td>Without it, the future skill would make visually good but potentially stale documentation.</td><td><span class="caution">Open</span></td></tr>
+      </tbody>
+    </table>
+  </section>
+
+  <section id="sources">
+    <h2>Sources and related research</h2>
+    <ul>
+      <li><a href="https://support.claude.com/en/articles/14554922-claude-code-user-faq">Anthropic: Claude Code user FAQ</a> — repository-local skills, plugins, and sharing setup.</li>
+      <li><a href="https://support.claude.com/en/articles/12512176-what-are-skills">Anthropic: What are skills?</a> — skills as progressively loaded folders of instructions/resources and the Agent Skills standard.</li>
+      <li><a href="https://developers.openai.com/codex/use-cases">OpenAI: Codex use cases</a> — current Codex support for reusable skills and documentation-oriented workflows.</li>
+      <li><a href="https://github.com/cathrynlavery/diagram-design">cathrynlavery/diagram-design</a> — candidate static HTML/SVG diagram renderer; evaluation only.</li>
+      <li><a href="diy_smart_code_html_first_agent_artifacts_video_summary.v1.md">DIY Smart Code video summary</a> and <a href="theo_t3gg_html_first_agent_artifacts_critical_perspective.v1.md">Theo/t3.gg critical perspective</a> — practitioner context, not implementation authority.</li>
+    </ul>
+  </section>
+
+  <footer>Conclusion: do not create or install a skill until the authoritative inputs, first artifact, output location, host scope, and freshness check are decided.</footer>
+</main>
+</body>
+</html>

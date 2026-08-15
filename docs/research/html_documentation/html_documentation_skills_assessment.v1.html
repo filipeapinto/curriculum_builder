@@ -1,0 +1,132 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="color-scheme" content="light dark">
+  <title>HTML Documentation Skills Assessment</title>
+  <style>
+    :root { --ink:#172033; --muted:#586278; --paper:#fbfcff; --line:#d8deea; --blue:#175cc2; --blue-soft:#eaf2ff; --good:#12663c; --warn:#8d5b00; --bad:#9d2635; --code:#f1f4f9; }
+    @media (prefers-color-scheme: dark) { :root { --ink:#edf2fb; --muted:#aeb9cc; --paper:#101622; --line:#2d384c; --blue:#8abbff; --blue-soft:#172b4c; --good:#7addaa; --warn:#f0bd62; --bad:#ff9fa8; --code:#1a2333; } }
+    * { box-sizing:border-box; }
+    body { margin:0; background:var(--paper); color:var(--ink); font:16px/1.55 ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif; }
+    main { max-width:1100px; margin:0 auto; padding:48px 28px 72px; }
+    header { border-bottom:3px solid var(--blue); padding-bottom:24px; }
+    h1 { font-size:clamp(2rem,5vw,3.5rem); line-height:1.05; letter-spacing:-.045em; margin:0 0 14px; max-width:780px; }
+    h2 { font-size:1.55rem; line-height:1.2; margin:44px 0 14px; letter-spacing:-.02em; }
+    h3 { font-size:1.05rem; margin:0 0 8px; }
+    p { max-width:78ch; }
+    a { color:var(--blue); }
+    code { background:var(--code); border:1px solid var(--line); border-radius:4px; padding:.1em .3em; font-size:.9em; }
+    .lede { color:var(--muted); font-size:1.12rem; max-width:70ch; }
+    .meta { color:var(--muted); font-size:.9rem; }
+    nav { margin:25px 0 0; display:flex; gap:12px; flex-wrap:wrap; }
+    nav a { border:1px solid var(--line); border-radius:999px; padding:5px 10px; text-decoration:none; }
+    .callout { margin:22px 0; padding:18px 20px; background:var(--blue-soft); border-left:5px solid var(--blue); max-width:900px; }
+    .callout strong { display:block; margin-bottom:4px; }
+    table { border-collapse:collapse; width:100%; margin:16px 0 24px; font-size:.94rem; }
+    th, td { text-align:left; vertical-align:top; border:1px solid var(--line); padding:12px; }
+    th { background:var(--code); }
+    .score { font-weight:700; white-space:nowrap; }
+    .recommended { color:var(--good); font-weight:700; }
+    .caution { color:var(--warn); font-weight:700; }
+    .cards { display:grid; grid-template-columns:repeat(auto-fit,minmax(250px,1fr)); gap:16px; margin-top:16px; }
+    .card { border:1px solid var(--line); padding:18px; border-radius:9px; }
+    .card p { margin:.4rem 0 0; color:var(--muted); }
+    ol li, ul li { margin:.45rem 0; max-width:85ch; }
+    footer { color:var(--muted); margin-top:50px; padding-top:16px; border-top:1px solid var(--line); font-size:.9rem; }
+  </style>
+</head>
+<body>
+<main>
+  <header>
+    <p class="meta">Research assessment · 15 August 2026 · Scope: reusable agent skills for HTML-first technical documentation</p>
+    <h1>HTML documentation skills: what is worth adopting?</h1>
+    <p class="lede">There are credible skills for producing polished HTML artifacts, but no single off-the-shelf skill is a complete answer for an LLM graph runtime. The strongest approach is to use a proven HTML-artifact pattern, then create a small project-specific skill that treats the graph, state contracts, and run evidence as source-of-truth inputs.</p>
+    <nav aria-label="Report navigation"><a href="#answer">Answer</a><a href="#candidates">Candidates</a><a href="#recommendation">Recommendation</a><a href="#design">Design requirements</a><a href="#sources">Sources</a></nav>
+  </header>
+
+  <section id="answer">
+    <h2>Answer</h2>
+    <div class="callout">
+      <strong>Best immediate reference: Claude’s <em>html-artifacts</em> skill.</strong>
+      It is specifically designed to produce self-contained HTML instead of Markdown when an interactive or polished artifact is appropriate. Its focused references for research reports, diagrams, flowcharts, and matching an existing design system are directly useful for this project.
+    </div>
+    <p>For Codex, the strongest public pattern found is OpenAI’s <em>build-report</em> skill from the role-specific plugins repository. It is not a documentation-site skill, but its HTML delivery standards are unusually mature: a single primary HTML artifact, accessible fallbacks, dark-mode support, and explicit provenance. Codex also has a built-in <code>sites-building</code> capability in this environment, which is appropriate only when this becomes a hosted site rather than local repository documentation.</p>
+    <p>Neither candidate understands this repository’s LangGraph factory. Installing one wholesale would improve presentation but would not prevent documentation drift. The recommended durable solution is a project-owned <code>llm-graph-html-docs</code> skill, influenced by these patterns and paired with checks against the live graph/config/schema files.</p>
+  </section>
+
+  <section id="candidates">
+    <h2>Candidate assessment</h2>
+    <table>
+      <thead><tr><th>Candidate</th><th>What it demonstrably does</th><th>Fit for this project</th><th>Assessment</th></tr></thead>
+      <tbody>
+        <tr>
+          <td><a href="https://github.com/dogum/html-artifacts">dogum/html-artifacts</a><br><span class="meta">Claude skill · Apache-2.0</span></td>
+          <td>Produces self-contained HTML artifacts; ships focused guidance for reports/research, diagrams, flowcharts, prototypes, and style matching. Its examples include an annotated flowchart and a status report.</td>
+          <td>Excellent presentation pattern for <code>how_it_works.html</code>, node pages, architecture explainers, and an interactive graph. Needs a repository-specific source-of-truth and validation layer.</td>
+          <td><span class="recommended">Adopt as the primary design reference.</span><br><span class="score">8.5 / 10</span></td>
+        </tr>
+        <tr>
+          <td><a href="https://github.com/openai/role-specific-plugins/tree/main/plugins/data-analytics/skills/build-report">OpenAI build-report</a><br><span class="meta">Codex plugin skill</span></td>
+          <td>Defines rigorous HTML-report delivery rules: the HTML file is the primary artifact, dynamic content has a readable fallback, color modes and focus states are checked, and provenance is associated with claims.</td>
+          <td>Best source for quality gates and evidence/provenance behavior. It is analytics-oriented and should not be copied as a documentation information architecture.</td>
+          <td><span class="recommended">Reuse standards, not the entire workflow.</span><br><span class="score">8 / 10</span></td>
+        </tr>
+        <tr>
+          <td><a href="https://github.com/anthropics/claude-plugins-official/tree/main/plugins/session-report">Anthropic session-report</a><br><span class="meta">Official Claude plugin</span></td>
+          <td>Builds an explorable, self-contained HTML report from collected data and injects that data into a stable template whose JavaScript renders the page.</td>
+          <td>Useful model for separating collected graph metadata from a stable, reviewable HTML shell. It is narrowly tailored to Claude session telemetry.</td>
+          <td><span class="recommended">Borrow the template/data-contract pattern.</span><br><span class="score">7 / 10</span></td>
+        </tr>
+        <tr>
+          <td><a href="https://github.com/borghei/Claude-Skills">borghei/Claude-Skills</a><br><span class="meta">Community collection</span></td>
+          <td>Lists an <code>md-document</code> skill for converting Markdown to a self-contained HTML report with table of contents and cross-references, plus a design-system and a pre-publication review skill.</td>
+          <td>Potentially useful components, but the stated Markdown-to-HTML approach conflicts with the desired HTML-authored documentation. Its breadth also makes direct installation less appealing than a focused internal skill.</td>
+          <td><span class="caution">Use as inspiration only until independently evaluated.</span><br><span class="score">5.5 / 10</span></td>
+        </tr>
+      </tbody>
+    </table>
+    <p>OpenAI’s older <a href="https://github.com/openai/skills">openai/skills</a> repository explicitly says it is deprecated and directs users to the newer plugins repository. It should not be treated as the installation target.</p>
+  </section>
+
+  <section id="recommendation">
+    <h2>Recommended implementation path</h2>
+    <div class="cards">
+      <article class="card"><h3>1. Keep one HTML source of truth</h3><p>Author the reader-facing pages directly as HTML. Do not write Markdown then convert it; that recreates the format split the project wants to remove.</p></article>
+      <article class="card"><h3>2. Extract graph facts</h3><p>Use a deterministic extractor to build a checked JSON data contract from graph definitions, node configuration, schemas, and route policy.</p></article>
+      <article class="card"><h3>3. Render a stable site</h3><p>Render that data into semantic HTML pages with shared CSS. Keep prose and operational guidance as authored content; keep facts generated or validated.</p></article>
+      <article class="card"><h3>4. Verify before publish</h3><p>Fail a documentation check when a node, edge, schema, routing rule, terminal outcome, or cited path no longer matches the runtime.</p></article>
+    </div>
+    <p>Create a focused internal skill named <code>llm-graph-html-docs</code>. Its trigger should cover requests to document, visualize, update, or publish this curriculum runtime’s LLM/LangGraph flow as HTML. Bundle: an HTML shell, a graph-data extractor, a source-link checker, a node-catalog template, and an accessibility/visual QA checklist.</p>
+    <p>The external <em>html-artifacts</em> skill is a good visual/interaction reference; OpenAI’s <em>build-report</em> is a good quality and provenance reference. The internal skill should be the one actually invoked for this repository.</p>
+  </section>
+
+  <section id="design">
+    <h2>Non-negotiable design requirements for the LLM graph site</h2>
+    <ol>
+      <li><strong>Layered reader journeys.</strong> Start with a business-level overview, then graph flow, then node-level detail, then operational evidence. Do not expose a raw implementation DAG as the landing page.</li>
+      <li><strong>Executable facts stay traceable.</strong> Every node description identifies its implementation/configuration source; every evidence assertion identifies its receipt/schema source.</li>
+      <li><strong>Failure paths are first-class.</strong> Make retries, repair loops, <code>BLOCKED</code>, <code>NOT_AVAILABLE</code>, and terminal recommendations visible alongside the happy path.</li>
+      <li><strong>Accessible no-JavaScript baseline.</strong> A reader must still be able to read every node, edge, table, and diagram equivalent without JavaScript. SVG diagrams need text alternatives.</li>
+      <li><strong>No hidden network dependency.</strong> Use local assets and inline/static fallbacks. A cloned repository should render its documentation without a CDN.</li>
+      <li><strong>Explicit freshness.</strong> Surface graph/config versions and the exact generation or verification timestamp. Documentation that cannot prove freshness must say so.</li>
+    </ol>
+  </section>
+
+  <section id="sources">
+    <h2>Sources reviewed</h2>
+    <ul>
+      <li><a href="https://github.com/dogum/html-artifacts">dogum/html-artifacts</a> — repository structure, examples, installation, and license.</li>
+      <li><a href="https://github.com/openai/role-specific-plugins/tree/main/plugins/data-analytics/skills/build-report">OpenAI role-specific-plugins / build-report</a> — HTML artifact and QA standards.</li>
+      <li><a href="https://github.com/anthropics/claude-plugins-official/tree/main/plugins/session-report">Anthropic Claude plugins / session-report</a> — official HTML report template/data injection pattern.</li>
+      <li><a href="https://github.com/anthropics/skills">Anthropic skills</a> — official skill packaging model.</li>
+      <li><a href="https://github.com/openai/skills">OpenAI skills</a> — deprecation notice and current plugin direction.</li>
+      <li><a href="https://github.com/borghei/Claude-Skills">borghei/Claude-Skills</a> — community HTML/documentation skill inventory.</li>
+    </ul>
+  </section>
+
+  <footer>Assessment conclusion: adopt the HTML-artifact and provenance patterns; build a small repository-specific HTML documentation skill rather than installing a generic converter as the authoritative workflow.</footer>
+</main>
+</body>
+</html>

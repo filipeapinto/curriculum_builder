@@ -1,0 +1,130 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="color-scheme" content="light dark">
+  <title>Specification: Documentation Skills for Graph-Based LLM Systems</title>
+  <style>
+    :root { --ink:#172033; --muted:#586278; --paper:#fbfcff; --line:#d8deea; --blue:#175cc2; --blue-soft:#eaf2ff; --good:#12663c; --warn:#8d5b00; --code:#f1f4f9; }
+    @media (prefers-color-scheme: dark) { :root { --ink:#edf2fb; --muted:#aeb9cc; --paper:#101622; --line:#2d384c; --blue:#8abbff; --blue-soft:#172b4c; --good:#7addaa; --warn:#f0bd62; --code:#1a2333; } }
+    * { box-sizing:border-box; } body { margin:0; background:var(--paper); color:var(--ink); font:16px/1.55 ui-sans-serif,system-ui,-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif; }
+    main { max-width:1100px; margin:0 auto; padding:48px 28px 72px; } header { border-bottom:3px solid var(--blue); padding-bottom:24px; }
+    h1 { font-size:clamp(2rem,5vw,3.5rem); line-height:1.05; letter-spacing:-.045em; margin:0 0 14px; max-width:880px; } h2 { font-size:1.55rem; line-height:1.2; margin:44px 0 14px; letter-spacing:-.02em; } h3 { font-size:1.05rem; margin:0 0 8px; }
+    p { max-width:82ch; } a { color:var(--blue); } code { background:var(--code); border:1px solid var(--line); border-radius:4px; padding:.1em .3em; font-size:.9em; } .lede { color:var(--muted); font-size:1.12rem; max-width:76ch; } .meta { color:var(--muted); font-size:.9rem; }
+    nav { margin:25px 0 0; display:flex; gap:12px; flex-wrap:wrap; } nav a { border:1px solid var(--line); border-radius:999px; padding:5px 10px; text-decoration:none; } .callout { margin:22px 0; padding:18px 20px; background:var(--blue-soft); border-left:5px solid var(--blue); max-width:920px; } .callout strong { display:block; margin-bottom:4px; }
+    table { border-collapse:collapse; width:100%; margin:16px 0 24px; font-size:.94rem; } th,td { text-align:left; vertical-align:top; border:1px solid var(--line); padding:12px; } th { background:var(--code); } ul li,ol li { margin:.45rem 0; max-width:88ch; } .good { color:var(--good); font-weight:700; } .caution { color:var(--warn); font-weight:700; } footer { color:var(--muted); margin-top:50px; padding-top:16px; border-top:1px solid var(--line); font-size:.9rem; }
+  </style>
+</head>
+<body>
+<main>
+  <header>
+    <p class="meta">Requirements specification · 15 August 2026</p>
+    <h1>Documentation skill set for graph-based LLM-driven systems</h1>
+    <p class="lede">Specify an agent-agnostic skill set that turns an implemented graph-based LLM system into trustworthy, usable documentation. The skill set must run on both Claude Code and Codex through a shared core plus thin host adapters.</p>
+    <nav aria-label="Specification navigation"><a href="#goal">Goal</a><a href="#model">System model</a><a href="#skills">Skill set</a><a href="#outputs">Documentation</a><a href="#portability">Host adapters</a><a href="#quality">Quality gates</a><a href="#decisions">Open decisions</a></nav>
+  </header>
+
+  <section id="goal">
+    <h2>Goal</h2>
+    <div class="callout"><strong>Generate documentation that explains how a real graph-based LLM system works, what it can do, how it fails, and what evidence supports each claim.</strong>Documentation must be derived from inspected system artifacts—not inferred from a prompt, a diagram, or an agent’s recollection.</div>
+    <p>The deliverable is a documentation capability, not an HTML generator. HTML is the preferred reader-facing format when it makes graph topology, state, evidence, comparison, or interaction easier to understand. Markdown, JSON, YAML, source code, and receipts remain valid inputs and may remain the best format for contracts, configuration, and diffable operational records.</p>
+    <table>
+      <thead><tr><th>In scope</th><th>Out of scope</th></tr></thead>
+      <tbody>
+        <tr><td>Extracting graph facts; documenting nodes, edges, data contracts, state transitions, routes, failure handling, evidence, and operational status; rendering explainers and diagrams; checking freshness and visual accessibility.</td><td>Changing runtime behavior; accepting releases; inventing missing source data; hiding uncertainty; replacing the system’s schema, audit, test, or observability layers.</td></tr>
+      </tbody>
+    </table>
+  </section>
+
+  <section id="model">
+    <h2>Documentation source model</h2>
+    <p>Before prose or visuals are written, the skill set must build a checked documentation model from authoritative repository artifacts. The model supplies facts; prose and diagrams supply explanation.</p>
+    <table>
+      <thead><tr><th>Fact family</th><th>Required content</th><th>Evidence source</th></tr></thead>
+      <tbody>
+        <tr><td>Graph topology</td><td>Graph name/version, nodes, edges, entry points, terminal states, loops, joins, counters, and guards.</td><td>Graph definition, compiled graph/IR, route configuration, and tests.</td></tr>
+        <tr><td>Node contract</td><td>Purpose, owner, accepted inputs, produced outputs, side effects, allowed tools, failure outputs, and implementation/configuration path.</td><td>Node implementation, schemas, prompt/configuration files, and declared tool policy.</td></tr>
+        <tr><td>State and data contracts</td><td>State fields, read/write ownership, schema/version, lineage, validation rules, and sensitive-data handling.</td><td>State models, reducers, schemas, migrations, and policy.</td></tr>
+        <tr><td>Execution and evidence</td><td>Run identifiers, model/tool calls, source receipts, artifact hashes, checks, review verdicts, retries, resume behavior, and terminals.</td><td>Run logs, manifests, receipts, audit records, test results, and acceptance artifacts.</td></tr>
+        <tr><td>Human-facing claims</td><td>What the system does, limitations, prerequisites, recovery steps, and unresolved risks.</td><td>Only claims traceable to the four fact families above; otherwise label as an assumption, proposal, or unknown.</td></tr>
+      </tbody>
+    </table>
+  </section>
+
+  <section id="skills">
+    <h2>Required skill set</h2>
+    <p>Use small, composable skills rather than one opaque “make documentation” instruction. A coordinator may route among them, but no one skill may silently become the source of truth.</p>
+    <table>
+      <thead><tr><th>Capability</th><th>Responsibility</th><th>Must not do</th></tr></thead>
+      <tbody>
+        <tr><td><strong>System inventory</strong></td><td>Locate candidate graph, schema, policy, source, test, and evidence artifacts; report which were actually read.</td><td>Assume a conventional directory layout or claim access to absent systems.</td></tr>
+        <tr><td><strong>Fact extraction</strong></td><td>Produce a normalized, machine-checkable documentation model with source paths and identifiers.</td><td>Fill gaps with plausible topology, contracts, or outcomes.</td></tr>
+        <tr><td><strong>Claim verification</strong></td><td>Bind every operational statement and visual label to the documentation model; identify unsupported, stale, or contradictory claims.</td><td>Approve its own unsupported prose or treat existence of a source file as proof of execution.</td></tr>
+        <tr><td><strong>Information architecture</strong></td><td>Choose reader journey, audience level, document sections, and which facts deserve a table, diagram, or prose explanation.</td><td>Flatten a complex graph into a single unreadable diagram or expose raw implementation detail without orientation.</td></tr>
+        <tr><td><strong>Diagram rendering</strong></td><td>Render a visual from an approved diagram brief: exact entities, relationships, labels, audience, detail level, and source IDs.</td><td>Invent graph entities, conceal failure paths, or substitute visual appeal for factual validation.</td></tr>
+        <tr><td><strong>HTML document assembly</strong></td><td>Create semantic, navigable, self-contained HTML that incorporates validated prose, tables, diagrams, citations, and freshness status.</td><td>Require JavaScript, remote assets, or a specific host preview to make the document understandable.</td></tr>
+        <tr><td><strong>Publication QA</strong></td><td>Check source links/IDs, no-JavaScript readability, accessibility, rendered legibility, and explicit freshness before release.</td><td>Report documentation as current when verification did not run or sources cannot be resolved.</td></tr>
+      </tbody>
+    </table>
+  </section>
+
+  <section id="outputs">
+    <h2>Required documentation outputs</h2>
+    <ol>
+      <li><strong>Executive overview.</strong> Purpose, system boundary, primary outcomes, constraints, and a top-level diagram.</li>
+      <li><strong>Graph walkthrough.</strong> Entry points, node flow, decisions, joins, retry/repair loops, terminals, and failure paths.</li>
+      <li><strong>Node catalogue.</strong> One navigable record per node: contract, data in/out, allowed effects, implementation source, checks, and failure behavior.</li>
+      <li><strong>Data and evidence trace.</strong> How facts, sources, artifacts, hashes, checks, and verdicts move through the system.</li>
+      <li><strong>Operations guide.</strong> Preconditions, run modes, observability, recovery/resume behavior, known gaps, and how to determine whether a result is current.</li>
+      <li><strong>Reader-level variants.</strong> The same factual model expressed for an executive, operator, engineer, or reviewer without changing the underlying claims.</li>
+    </ol>
+    <p>Every document must display its covered system version or digest, inspected sources, verification time, and unresolved gaps. A diagram must have text alternatives and a tabular or prose equivalent for readers who cannot use the visual.</p>
+  </section>
+
+  <section id="portability">
+    <h2>Agent-agnostic core, Claude Code adapter, and Codex adapter</h2>
+    <table>
+      <thead><tr><th>Layer</th><th>Requirement</th><th>Claude Code</th><th>Codex</th></tr></thead>
+      <tbody>
+        <tr><td><strong>Shared core</strong></td><td>Use an Agent Skills-compatible folder: <code>SKILL.md</code>, optional references, templates, and deterministic helper scripts. Use only local files and explicit command contracts.</td><td>Load the same core through a repository skill or plugin package.</td><td>Load the same core through a local skill or plugin package.</td></tr>
+        <tr><td><strong>Host adapter</strong></td><td>Describe where the host exposes file access, command execution, browser/rendering, MCP/connectors, and permission constraints. Probe before relying on any optional capability.</td><td>May use repository-local skills, slash-command invocation, configured MCP tools, hooks, subagents, and plugins when available.</td><td>May use installed skills/plugins, workspace commands, available browser/computer/image tools, and enabled connectors when available.</td></tr>
+        <tr><td><strong>Portable fallback</strong></td><td>When a host lacks a browser, connector, renderer, or optional tool, still produce a static HTML document plus a verification report that names the unavailable check.</td><td>Do not assume Claude desktop/web capabilities are present in Claude Code.</td><td>Do not assume a particular Codex app, plugin, browser session, or connector is present.</td></tr>
+      </tbody>
+    </table>
+    <p>Claude Code supports repository-local skills and plugin packaging; Codex supports reusable skills and plugins. Both can host the same instruction/resource core, but their adapters must state what they actually observed rather than claim parity. <a href="https://support.claude.com/en/articles/14554922-claude-code-user-faq">Claude Code reference</a>; <a href="https://developers.openai.com/codex/use-cases">Codex reference</a>.</p>
+  </section>
+
+  <section id="quality">
+    <h2>Quality and acceptance requirements</h2>
+    <ol>
+      <li><strong>Traceability:</strong> every node, edge, state field, terminal, and operational claim resolves to an inspected source identifier or is visibly marked unknown.</li>
+      <li><strong>Truthful coverage:</strong> state which graph/evidence artifacts were included and excluded; never imply complete system coverage from a partial scan.</li>
+      <li><strong>Failure-first completeness:</strong> show non-happy paths whenever source artifacts declare them.</li>
+      <li><strong>Accessibility:</strong> semantic headings, keyboard-operable interaction, contrast sufficient for text, no color-only meaning, and text alternatives for SVG/visual content.</li>
+      <li><strong>Offline readability:</strong> no required CDN, remote font, remote image, or JavaScript dependency; the file remains understandable when opened locally.</li>
+      <li><strong>Rendered QA:</strong> inspect the emitted HTML in a browser or render path when available; otherwise record the unavailable validation rather than claiming visual review.</li>
+      <li><strong>Freshness:</strong> display when and against which source digest/version the document was checked; fail or visibly stale-mark a document when that check cannot run.</li>
+      <li><strong>Safe writes:</strong> produce versioned outputs in an approved documentation location; do not overwrite a prior accepted artifact without explicit authorization.</li>
+    </ol>
+  </section>
+
+  <section id="decisions">
+    <h2>Open decisions before implementation</h2>
+    <table>
+      <thead><tr><th>Decision</th><th>Why it blocks a reliable first implementation</th></tr></thead>
+      <tbody>
+        <tr><td>Authoritative system roots</td><td>The extractor needs an explicit inventory of graph, schema, policy, runtime, and evidence paths.</td></tr>
+        <tr><td>First proof artifact</td><td>Choose one: system overview, graph walkthrough, node catalogue, or run report. It determines the smallest useful fact model and QA suite.</td></tr>
+        <tr><td>Canonical documentation model</td><td>Decide its schema, source-ID format, freshness field, and how it records unknown or conflicting facts.</td></tr>
+        <tr><td>Diagram renderer</td><td>Evaluate <a href="https://github.com/cathrynlavery/diagram-design">diagram-design</a> or an alternative against one approved diagram brief; adopt only if it meets the quality gates.</td></tr>
+        <tr><td>Output locations and retention</td><td>Separate committed reference documentation from generated releases and disposable exploration artifacts.</td></tr>
+        <tr><td>Host launch scope</td><td>Decide whether Claude Code and Codex adapters ship together or after the shared core and first artifact prove value.</td></tr>
+      </tbody>
+    </table>
+  </section>
+
+  <footer>Specification boundary: build the shared core only after the first proof artifact, authoritative inputs, documentation-model schema, output policy, and acceptance checks are approved.</footer>
+</main>
+</body>
+</html>
