@@ -1,0 +1,147 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="color-scheme" content="light dark">
+  <title>Curriculum Factory Repository Refactor — Specification v3</title>
+  <style>
+    :root{--ink:#172033;--muted:#586278;--paper:#fbfcff;--line:#d8deea;--blue:#175cc2;--soft:#eaf2ff;--warn:#8d5b00;--code:#f1f4f9}
+    @media(prefers-color-scheme:dark){:root{--ink:#edf2fb;--muted:#aeb9cc;--paper:#101622;--line:#2d384c;--blue:#8abbff;--soft:#172b4c;--warn:#f0bd62;--code:#1a2333}}
+    *{box-sizing:border-box}body{margin:0;background:var(--paper);color:var(--ink);font:16px/1.55 ui-sans-serif,system-ui,-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif}
+    main{max-width:1100px;margin:0 auto;padding:48px 28px 72px}header{border-bottom:3px solid var(--blue);padding-bottom:24px}
+    h1{font-size:clamp(2rem,5vw,3.5rem);line-height:1.05;letter-spacing:-.045em;margin:0 0 14px;max-width:900px}h2{font-size:1.55rem;line-height:1.2;margin:44px 0 14px;letter-spacing:-.02em}h3{font-size:1.08rem;margin:25px 0 8px}
+    p{max-width:84ch}a{color:var(--blue)}code{background:var(--code);border:1px solid var(--line);border-radius:4px;padding:.1em .3em;font-size:.9em}pre{max-width:940px;overflow:auto;background:var(--code);border:1px solid var(--line);border-radius:8px;padding:18px}pre code{border:0;padding:0}
+    .lede{color:var(--muted);font-size:1.12rem;max-width:78ch}.meta{color:var(--muted);font-size:.9rem}nav{margin:25px 0 0;display:flex;gap:12px;flex-wrap:wrap}nav a{border:1px solid var(--line);border-radius:999px;padding:5px 10px;text-decoration:none}
+    .callout{margin:22px 0;padding:18px 20px;background:var(--soft);border-left:5px solid var(--blue);max-width:940px}.callout strong{display:block;margin-bottom:4px}li{margin:.45rem 0;max-width:88ch}
+    table{border-collapse:collapse;width:100%;max-width:940px;margin:18px 0}th,td{text-align:left;vertical-align:top;border-bottom:1px solid var(--line);padding:10px 12px}th{color:var(--muted);font-size:.86rem;text-transform:uppercase;letter-spacing:.04em}.warn{color:var(--warn);font-weight:700}footer{color:var(--muted);margin-top:50px;padding-top:16px;border-top:1px solid var(--line);font-size:.9rem}
+  </style>
+</head>
+<body><main>
+  <header>
+    <p class="meta">Normative specification v3 · 15 August 2026 · supersedes v2 without overwriting it</p>
+    <h1>Curriculum Factory repository refactor</h1>
+    <p class="lede">This document defines the intent, boundaries, required artifacts, acceptance criteria, and evidence for a coordinated repository-identity and layout refactor. It is the upstream source from which an execution prompt and executable tests must be written.</p>
+    <nav aria-label="Document navigation"><a href="#status">Status</a><a href="#identity">Identity</a><a href="#source">Source</a><a href="#outputs">Outputs</a><a href="#inventory">Inventory</a><a href="#deliverables">Deliverables</a><a href="#tests">Tests</a><a href="#conclusions">Conclusions</a></nav>
+  </header>
+
+  <section id="status"><h2>1. Status and authority</h2>
+    <div class="callout"><strong>This specification does not execute the refactor.</strong>It must remain independent of any prompt, plan, script, or test suite derived from it. Derived artifacts may cite this specification; this specification must not require or cite the prompt that implements it.</div>
+    <p>The words <strong>must</strong>, <strong>must not</strong>, <strong>required</strong>, and <strong>complete</strong> are normative. Observed repository facts are starting evidence and must be rechecked immediately before implementation.</p>
+  </section>
+
+  <section id="intent"><h2>2. Intent and scope</h2>
+    <p>The repository currently expresses several identities and lifecycle concepts inconsistently. The refactor must align the human product name, Git repository identity, local checkout name, Python packaging and import namespace, production-source placement, machine identifiers, documentation, and generated-artifact lifecycle.</p>
+    <p>The scope includes names and paths throughout production code, tests, policies, schemas, curricula, skills, research, governance, documentation, automation, and scripts. It also includes classification of every top-level directory. It does not authorize deletion based only on age, an unfamiliar name, or an assumption that generated data is reproducible.</p>
+  </section>
+
+  <section id="identity"><h2>3. Canonical identity map</h2>
+    <table>
+      <thead><tr><th>Identity</th><th>Target</th><th>Context</th></tr></thead>
+      <tbody>
+        <tr><td>Product/display name</td><td><code>Curriculum Factory</code></td><td>Human-facing prose, headings, reports, and UI text</td></tr>
+        <tr><td>Git repository slug</td><td><code>curriculum_factory</code></td><td>Remote repository and local checkout directory</td></tr>
+        <tr><td>Python distribution</td><td><code>curriculum-factory</code></td><td>Installable distribution metadata</td></tr>
+        <tr><td>Python import package</td><td><code>curriculum_factory</code></td><td>Imports and module execution</td></tr>
+        <tr><td>Production source root</td><td><code>src/curriculum_factory/</code></td><td>Installable Python application source</td></tr>
+      </tbody>
+    </table>
+    <p>The implementation must apply values by semantic role rather than global substitution. Schema <code>$id</code> values, serialized names, external URLs, and network identifiers such as User-Agent strings are compatibility-sensitive and require an explicit keep/change decision recorded in an exceptions inventory.</p>
+    <p>Renaming the remote repository or the local checkout is an external or parent-directory operation. The derived execution prompt must require explicit authorization immediately before those operations and place them after the in-repository migration is validated.</p>
+  </section>
+
+  <section id="source"><h2>4. Python source architecture</h2>
+    <div class="callout"><strong>Required foundation: <code>src/curriculum_factory/</code>.</strong><code>src/</code> identifies installable source. <code>curriculum_factory</code> is the stable Python namespace. Python modules must not be placed directly under <code>src/</code>.</div>
+    <p>The current <code>runtime/</code> package combines orchestration, routing, retrieval, rendering, validation, persistence, and command-line responsibilities. The target architecture should make those responsibilities visible below the product namespace:</p>
+    <pre><code>src/
+└── curriculum_factory/
+    ├── __init__.py
+    ├── cli.py
+    ├── orchestration/
+    ├── routing/
+    ├── retrieval/
+    ├── rendering/
+    ├── validation/
+    └── persistence/</code></pre>
+    <p>The migration must be staged. First establish packaging and move production code with behavioral equivalence; update imports, CLI entry points, module commands, mocks, fixtures, documentation, and every repository-root calculation based on <code>__file__</code>. Responsibility-based module splitting may follow only after the move passes equivalence tests. A compatibility layer is permitted only when a confirmed consumer requires it, and it must have a documented removal condition.</p>
+    <p><code>policy/</code>, <code>schemas/</code>, <code>curricula/</code>, <code>docs/</code>, and <code>outputs/</code> remain outside <code>src/</code>. They are contracts, domain inputs, human documentation, or generated artifacts rather than Python source. A second top-level package below <code>src/</code> is justified only by an independently reusable or deployable component.</p>
+  </section>
+
+  <section id="outputs"><h2>5. Generated output and durable evidence</h2>
+    <div class="callout"><strong>Retain <code>outputs/</code>; remove its role as permanent storage.</strong>The directory remains the ignored runtime write boundary and should be empty between runs. Durable fixtures, audits, and cited evidence must live in tracked, purpose-named locations.</div>
+    <p>The starting repository proves the boundary is active: output-path validation constrains writes beneath <code>ENGINE/outputs/</code>; controller and graph code call that validation; tests create run directories there; policy and meta-prompt contracts name <code>outputs/&lt;run&gt;/</code>; and <code>.gitignore</code> excludes the subtree.</p>
+    <table>
+      <thead><tr><th>Existing child</th><th>Initial finding</th><th>Required disposition</th></tr></thead>
+      <tbody>
+        <tr><td><code>arduino_kit_run_v2</code></td><td>20 MB and referenced by approximately 30 tracked files, including direct test and research consumers</td><td>Move only required immutable material to a tracked location such as <code>tests/fixtures/runs/arduino_kit_run_v2/</code>; update all consumers and preserve evidence cited by active findings</td></tr>
+        <tr><td><code>run27</code></td><td>38 MB with transport-test and research references</td><td>Prefer test-local generation; create a minimized tracked fixture only where exact bytes are part of the assertion</td></tr>
+        <tr><td><code>arduino_kit_run_v1</code></td><td>88 KB with weak historical/research references</td><td>Preserve only evidence supporting a retained citation</td></tr>
+        <tr><td><code>arduino_kit_plan25_l01_20260811</code></td><td>140 KB with no initial live non-plan reference</td><td>Removal candidate after a repeated dependency and reproducibility check</td></tr>
+        <tr><td><code>remove-time-limits-v2-acceptance</code></td><td>260 KB with no initial live non-plan reference</td><td>Removal candidate after a repeated dependency and reproducibility check</td></tr>
+        <tr><td><code>runtime_task_v6</code></td><td>11 MB with no initial live non-plan reference</td><td>Removal candidate after a repeated dependency and reproducibility check</td></tr>
+      </tbody>
+    </table>
+    <p>No deletion is authorized solely by this initial table. Before removal, the implementation must re-scan tracked and untracked consumers, prove that retained evidence has moved intact, and establish whether the material is reproducible. The final test suite must pass after generated children under <code>outputs/</code> are absent.</p>
+  </section>
+
+  <section id="inventory"><h2>6. Required discovery inventory</h2>
+    <p>Before producing a move plan, the implementing agent must record:</p>
+    <ul>
+      <li>current and target values for every identity in §3;</li>
+      <li>every top-level directory, its reader or owner, tracked/ignored state, lifecycle classification, and proposed disposition;</li>
+      <li>all production imports, module commands, and entry points rooted at <code>runtime</code>;</li>
+      <li>all <code>__file__</code>-based root traversal and every absolute checkout path;</li>
+      <li>all live forms of the old product, repository, source-path, package, and output-run names;</li>
+      <li>existing and missing packaging, build, test, and installation configuration;</li>
+      <li>producers and consumers of every output child and questionable directory; and</li>
+      <li>compatibility-sensitive identifiers and justified exceptions.</li>
+    </ul>
+    <p><code>UNKNOWN</code> is allowed only when the inventory identifies the evidence needed to resolve it. No directory with an unresolved lifecycle classification may be deleted or renamed.</p>
+  </section>
+
+  <section id="deliverables"><h2>7. Required derived artifacts</h2>
+    <p>An agent implementing this specification must create a reviewable package before changing production layout:</p>
+    <ol>
+      <li><strong>Migration inventory:</strong> evidence and dispositions required by §6.</li>
+      <li><strong>Execution plan:</strong> ordered, reversible phases with dependencies, compatibility decisions, rollback points, and explicit authorization boundaries.</li>
+      <li><strong>Execution prompt:</strong> a self-contained agent prompt derived from this specification. It must name exact phases, permitted mutations, stop conditions, test commands, and completion evidence. It must not weaken or replace this specification.</li>
+      <li><strong>Executable test suite:</strong> tests that fail against relevant parts of the pre-refactor state and prove the acceptance criteria after migration.</li>
+      <li><strong>Exceptions inventory:</strong> every intentional old identifier or path, its consumer, compatibility rationale, and removal condition where applicable.</li>
+      <li><strong>Final migration report:</strong> identity map, directory disposition, changes, test evidence, retained exceptions, removed generated material, and external operations still awaiting authorization.</li>
+    </ol>
+    <p>The execution prompt and tests are outputs derived from this specification; neither is an authority for changing its intent.</p>
+  </section>
+
+  <section id="tests"><h2>8. Minimum executable acceptance tests</h2>
+    <p>The derived tests must use stable assertions rather than merely searching for a preferred phrase. At minimum they must prove:</p>
+    <ol>
+      <li><strong>Installed import isolation:</strong> the application imports as <code>curriculum_factory</code> from an installed <code>src</code>-layout build without relying on the repository root or ad hoc <code>sys.path</code> insertion.</li>
+      <li><strong>CLI equivalence:</strong> documented entry points and module commands resolve and preserve expected argument behavior.</li>
+      <li><strong>Repository-root resolution:</strong> policies, schemas, curricula, and output boundaries resolve correctly after the deeper source path.</li>
+      <li><strong>Output containment:</strong> a run-named directory below <code>outputs/</code> is accepted; a path outside it is rejected before artifact creation.</li>
+      <li><strong>Fixture independence:</strong> tests and active research/skill fixtures do not read durable evidence from ignored <code>outputs/</code>.</li>
+      <li><strong>Empty-output resilience:</strong> the full test suite passes when generated children under <code>outputs/</code> are absent.</li>
+      <li><strong>Reference integrity:</strong> live code, automation, and documentation contain no stale source, checkout, or identity reference except reviewed exceptions.</li>
+      <li><strong>Documentation integrity:</strong> documented repository paths resolve and documented commands execute in their stated environment.</li>
+      <li><strong>Fresh-clone reproducibility:</strong> every required fixture is tracked or generated through a documented deterministic setup step.</li>
+      <li><strong>Scope integrity:</strong> the final working-tree delta contains only intended refactor changes plus recorded pre-existing user changes; tracked moves are reviewed with rename detection.</li>
+    </ol>
+    <p>The full pre-existing test suite and gate harness must also pass. A test may not be weakened merely to accommodate the new layout; changed assertions require a documented change in intended behavior.</p>
+  </section>
+
+  <section id="conclusions"><h2>9. Normative conclusions</h2>
+    <ol>
+      <li>This work is a coordinated identity, packaging, source-layout, lifecycle, and reference migration—not a rebrand search-and-replace.</li>
+      <li><code>src/curriculum_factory/</code> is the required Python foundation. Multiple responsibilities belong beneath that namespace unless they become independently reusable or deployable products.</li>
+      <li>The current broad <code>runtime</code> package is a migration source, not the permanent target architecture. Behavioral equivalence precedes subsystem decomposition.</li>
+      <li><code>outputs/</code> remains the generated-write boundary and is disposable between runs. Durable fixtures and evidence must move outside it.</li>
+      <li><code>arduino_kit_run_v2</code> cannot simply be deleted; required evidence must be minimized, tracked, and all consumers migrated first. Other runs remain candidates until rescanned and proven unnecessary.</li>
+      <li>A fresh clone must be sufficient to install, test, and understand the repository without hidden ignored-state dependencies.</li>
+      <li>The execution prompt and executable tests must be written from this specification and must trace their requirements back to its sections.</li>
+      <li>Remote and checkout-directory renames occur only after internal validation and explicit authorization.</li>
+    </ol>
+  </section>
+
+  <footer>Normative specification v3. This document is upstream of the migration plan, execution prompt, and test suite and intentionally contains no dependency on an implementing prompt.</footer>
+</main></body>
+</html>

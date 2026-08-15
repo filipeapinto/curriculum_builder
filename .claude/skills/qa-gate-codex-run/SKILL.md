@@ -106,6 +106,13 @@ python3 "$QA" start \
   --max-iterations 5
 ```
 
+By default `QA/` is created at `<artifact-dir>/QA` — beside the artifact, nested under
+wherever the caller happens to keep it. `--qa-dir <path>` overrides that when a caller's
+own output layout wants `QA/` somewhere else, e.g. as a flat sibling of other output
+folders instead of nested inside the one holding the artifact. `deprecated/` (for
+superseded artifact versions) is unaffected by this flag and always stays beside the
+artifact — only the QA session folder itself moves.
+
 `--focus` narrows where Codex spends attention. It does not lower the bar for what
 counts as a defect there — a blocker found outside the focus area is still a blocker,
 which is deliberate; a focus message should not be able to hide a real fault.

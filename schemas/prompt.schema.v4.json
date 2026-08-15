@@ -1,0 +1,454 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://example.invalid/curriculum_builder/prompt.schema.v4.json",
+  "title": "Agentic task prompt v4 — GOAL/TESTS/LOOP with durable operations and per-test verification binding",
+  "description": "Additive successor to prompt.schema.v3.json, which is retained byte-unchanged so already-accepted v3 prompt records keep validating unmodified: every field v4 adds is optional, and a v3 document with no per-test verifier is a valid v4 document that simply means 'every test is checked inline by the prompt-level agent.' Version 4 closes a gap v3 left open: v3's operations contract states how the run is journaled and gated, but nothing bound an individual TEST to a specific checker. Without that binding, a TEST whose check text says 'have Codex review this' is schema-indistinguishable from one that actually invokes .claude/skills/qa-gate-codex-run's bounded, session-audited protocol versus one that free-hands 'codex exec' inline — the exact self-grading gap qa-gate-codex-run's own SKILL.md states Claude cannot close by itself. v4 adds an optional per-test verifier, reusing one $defs/executor block for both the prompt-level agent and any test's verifier (single or fanned-out) so there is one closed vocabulary for 'who/what runs this,' not two. This only makes the obligation textually undeniable in the document (schema-checkable, auditable) — it cannot force the runtime agent to actually invoke what it declares; that guarantee still comes from the named skill/subagent itself.",
+  "$comment": "INSTANCE FORMAT: any agent asked to write a file compliant with this schema MUST author it as YAML, not JSON — filename <slug>.prompt.v<N>.yaml, first line `# yaml-language-server: $schema=<relative path to this file>`. This is an authoring instruction for the agent, not something the JSON Schema validator itself checks: $comment is never evaluated during validation, and a validator handed already-parsed data cannot see the source filename, the first line, or which serialization produced it. Mechanical enforcement of this policy is a separate, explicit step: schemas/validate_instance.py --schema <this file> --instance <path> checks the filename pattern, the yaml-language-server directive (resolved to a canonical path and compared against --schema), that the file parses as YAML, and only then validates the parsed data against this schema.",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "title",
+    "model",
+    "agent",
+    "operations",
+    "goal",
+    "tests",
+    "loop"
+  ],
+  "properties": {
+    "title": {
+      "type": "string",
+      "minLength": 10
+    },
+    "authorized_paths": {
+      "type": "array",
+      "items": {
+        "type": "string",
+        "minLength": 1
+      }
+    },
+    "model": {
+      "description": "Model family used by the prompt-level agent. inherit is an explicit unpinned choice, not silence.",
+      "enum": [
+        "inherit",
+        "haiku",
+        "sonnet",
+        "opus",
+        "fable"
+      ]
+    },
+    "agent": {
+      "description": "The prompt-level default executor. Still required (v2's own rationale holds: a prompt with no stated executor at all is underspecified) but execution_path may now be the explicit value 'inherit' — an auditable statement of 'not pinned' rather than the field being silently absent. subagent_type and agent_ref are mutually exclusive: a claude_code_subagent must be traceable to exactly one of a known built-in type or a specific external agent definition file, never ambiguous between the two.",
+      "$ref": "#/$defs/executor"
+    },
+    "operations": {
+      "$ref": "#/$defs/operations"
+    },
+    "goal": {
+      "type": "string",
+      "minLength": 20
+    },
+    "tests": {
+      "type": "array",
+      "minItems": 1,
+      "items": {
+        "$ref": "#/$defs/test"
+      }
+    },
+    "loop": {
+      "$ref": "#/$defs/loop"
+    }
+  },
+  "$defs": {
+    "executor": {
+      "description": "Who/what runs a check: the 'who' (execution_path/subagent_type/agent_ref/model) and the 'what' (invokes) as two independent axes on one reusable block, used for the prompt-level agent, a single test verifier, and each branch of a fan_out verifier alike.",
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "execution_path"
+      ],
+      "properties": {
+        "model": {
+          "description": "Optional. Overrides the prompt-level model for this executor only (meaningful on a test verifier or fan_out branch; on the prompt-level agent this is redundant with the sibling top-level model field and should be omitted).",
+          "enum": [
+            "inherit",
+            "haiku",
+            "sonnet",
+            "opus",
+            "fable"
+          ]
+        },
+        "execution_path": {
+          "enum": [
+            "inherit",
+            "claude_code_direct",
+            "claude_code_subagent",
+            "codex_plugin"
+          ]
+        },
+        "subagent_type": {
+          "description": "A known built-in subagent type name (e.g. 'general-purpose', 'Explore', 'fork'). Mutually exclusive with agent_ref.",
+          "type": "string",
+          "minLength": 1
+        },
+        "agent_ref": {
+          "description": "Path to an external custom agent definition (.claude/agents/<name>.md) instead of a built-in subagent_type. Mutually exclusive with subagent_type.",
+          "type": "string",
+          "pattern": "\\.claude/agents/.+\\.md$"
+        },
+        "invokes": {
+          "description": "Optional. What this executor actually runs, beyond inline reasoning. Absent means the executor performs the check itself inline (equivalent to invokes.type=inline_check).",
+          "$ref": "#/$defs/invocation"
+        },
+        "reasoning": {
+          "type": "string",
+          "minLength": 1
+        }
+      },
+      "allOf": [
+        {
+          "if": {
+            "properties": {
+              "execution_path": {
+                "const": "claude_code_subagent"
+              }
+            },
+            "required": [
+              "execution_path"
+            ]
+          },
+          "then": {
+            "oneOf": [
+              {
+                "required": ["subagent_type"],
+                "not": {"required": ["agent_ref"]}
+              },
+              {
+                "required": ["agent_ref"],
+                "not": {"required": ["subagent_type"]}
+              }
+            ]
+          }
+        }
+      ]
+    },
+    "invocation": {
+      "description": "What the executor runs: an inline check it performs itself, a named skill (e.g. qa-gate-codex-run), or another prompt (recursive composition — the same pattern implementation.graph.v<N>.yaml already uses when a plan-graph node names its own prompt file).",
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "type"
+      ],
+      "properties": {
+        "type": {
+          "enum": [
+            "inline_check",
+            "skill",
+            "prompt"
+          ]
+        },
+        "skill": {
+          "description": "Required when type is skill. The exact skill name (e.g. 'qa-gate-codex-run'), not a paraphrase — a check whose text merely describes similar behavior without naming this field is not schema-bound to actually invoking it.",
+          "type": "string",
+          "minLength": 1
+        },
+        "prompt_path": {
+          "description": "Required when type is prompt. Path to another GOAL/TEST/LOOP prompt file, canonical YAML only (*.prompt.v<N>.yaml or .yml) — markdown and JSON prompt instances are no longer accepted for new nested-prompt references, per this schema's own $comment. That file must itself validate against a prompt schema; this test's pass/fail is that nested prompt's own loop reaching its own stopping_condition.",
+          "type": "string",
+          "pattern": "\\.prompt\\.v\\d+\\.ya?ml$"
+        }
+      },
+      "allOf": [
+        {
+          "if": {
+            "properties": {"type": {"const": "skill"}},
+            "required": ["type"]
+          },
+          "then": {"required": ["skill"]}
+        },
+        {
+          "if": {
+            "properties": {"type": {"const": "prompt"}},
+            "required": ["type"]
+          },
+          "then": {"required": ["prompt_path"]}
+        }
+      ]
+    },
+    "verifier": {
+      "description": "Optional, per-test. Absent means this test is checked inline by the prompt-level agent (today's v3 behavior, unchanged). Present means either one executor overriding the default for this test alone, or a fan_out of several executors whose individual results are combined by aggregation.",
+      "oneOf": [
+        {"$ref": "#/$defs/executor"},
+        {
+          "type": "object",
+          "additionalProperties": false,
+          "required": ["fan_out", "aggregation"],
+          "properties": {
+            "fan_out": {
+              "type": "array",
+              "minItems": 2,
+              "items": {"$ref": "#/$defs/executor"}
+            },
+            "aggregation": {
+              "description": "How the fanned-out executors' individual results combine into this test's single pass/fail. any_of and majority let a lenient reviewer overrule a correct rejection, which defeats an adversarial gate's purpose — a fan_out whose branches include invokes.type=skill with skill=qa-gate-codex-run should use all_of.",
+              "enum": ["all_of", "any_of", "majority"]
+            }
+          }
+        }
+      ]
+    },
+    "operations": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "executor",
+        "journal",
+        "action_protocol",
+        "restart",
+        "completion_gate"
+      ],
+      "properties": {
+        "executor": {
+          "$ref": "#/$defs/operations_executor"
+        },
+        "journal": {
+          "$ref": "#/$defs/journal"
+        },
+        "action_protocol": {
+          "$ref": "#/$defs/action_protocol"
+        },
+        "restart": {
+          "$ref": "#/$defs/restart"
+        },
+        "completion_gate": {
+          "$ref": "#/$defs/completion_gate"
+        }
+      }
+    },
+    "operations_executor": {
+      "description": "Unchanged from prompt.schema.v3.json's $defs/executor, renamed operations_executor here only to free the name 'executor' for the broader who/what block v4 introduces above. This still describes the journal/gate implementation, not who verifies a test.",
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "kind",
+        "implementation"
+      ],
+      "properties": {
+        "kind": {
+          "enum": [
+            "agent_native",
+            "repository_script"
+          ]
+        },
+        "implementation": {
+          "type": "string",
+          "minLength": 3
+        },
+        "entrypoint": {
+          "type": "string",
+          "minLength": 1
+        }
+      },
+      "allOf": [
+        {
+          "if": {
+            "properties": {
+              "kind": {
+                "const": "repository_script"
+              }
+            },
+            "required": [
+              "kind"
+            ]
+          },
+          "then": {
+            "required": [
+              "entrypoint"
+            ]
+          }
+        }
+      ]
+    },
+    "journal": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "path",
+        "schema",
+        "format",
+        "write_mode"
+      ],
+      "properties": {
+        "path": {
+          "type": "string",
+          "minLength": 1
+        },
+        "schema": {
+          "type": "string",
+          "minLength": 1
+        },
+        "format": {
+          "const": "jsonl"
+        },
+        "write_mode": {
+          "const": "append_only"
+        }
+      }
+    },
+    "action_protocol": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "before_action",
+        "after_success",
+        "after_failure"
+      ],
+      "properties": {
+        "before_action": {
+          "const": "append_act_started"
+        },
+        "after_success": {
+          "const": "append_act_completed_closing_start"
+        },
+        "after_failure": {
+          "const": "append_exec_closing_start"
+        }
+      }
+    },
+    "restart": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "detection",
+        "no_journal",
+        "closed_action",
+        "unclosed_action"
+      ],
+      "properties": {
+        "detection": {
+          "const": "compute_unclosed_starts"
+        },
+        "no_journal": {
+          "const": "fresh_start"
+        },
+        "closed_action": {
+          "enum": [
+            "reuse_if_inputs_unchanged",
+            "always_reverify"
+          ]
+        },
+        "unclosed_action": {
+          "enum": [
+            "resume_or_idempotently_repeat",
+            "require_operator_review"
+          ]
+        }
+      }
+    },
+    "completion_gate": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "require_valid_journal",
+        "require_zero_unclosed_starts",
+        "require_all_tests_pass",
+        "require_authorized_paths_only"
+      ],
+      "properties": {
+        "require_valid_journal": {
+          "const": true
+        },
+        "require_zero_unclosed_starts": {
+          "const": true
+        },
+        "require_all_tests_pass": {
+          "const": true
+        },
+        "require_authorized_paths_only": {
+          "const": true
+        }
+      }
+    },
+    "test": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "check",
+        "expected"
+      ],
+      "properties": {
+        "description": {
+          "type": "string",
+          "minLength": 1
+        },
+        "check": {
+          "type": "string",
+          "minLength": 5
+        },
+        "expected": {
+          "type": "string",
+          "minLength": 1
+        },
+        "verifier": {
+          "$ref": "#/$defs/verifier"
+        }
+      }
+    },
+    "loop": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "steps",
+        "stopping_condition",
+        "resume_check"
+      ],
+      "properties": {
+        "steps": {
+          "type": "array",
+          "minItems": 1,
+          "items": {
+            "type": "string",
+            "minLength": 3
+          }
+        },
+        "stopping_condition": {
+          "type": "string",
+          "minLength": 10
+        },
+        "resume_check": {
+          "type": "string",
+          "minLength": 20
+        },
+        "escalation": {
+          "type": "string",
+          "minLength": 3
+        },
+        "retry_policy": {
+          "type": "object",
+          "additionalProperties": false,
+          "properties": {
+            "auto_retry": {
+              "$ref": "#/$defs/failure_types"
+            },
+            "requires_fix": {
+              "$ref": "#/$defs/failure_types"
+            }
+          }
+        }
+      }
+    },
+    "failure_types": {
+      "type": "array",
+      "items": {
+        "enum": [
+          "missing-input",
+          "bad-input",
+          "tool-error",
+          "wrong-output",
+          "partial-run",
+          "other"
+        ]
+      }
+    }
+  }
+}

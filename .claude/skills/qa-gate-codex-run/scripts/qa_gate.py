@@ -850,7 +850,7 @@ def cmd_start(args) -> int:
                 seen.add(str(f))
                 grounding_paths.append(str(f))
 
-    qa_dir = artifact.parent / "QA"
+    qa_dir = Path(args.qa_dir).resolve() if args.qa_dir else artifact.parent / "QA"
     sess = Session(qa_dir)
     if sess.state_path.exists() and not args.force:
         existing = read_json(sess.state_path)
@@ -1314,6 +1314,14 @@ def main() -> int:
 
     s = sub.add_parser("start", help="open a QA session and run round 1")
     s.add_argument("--artifact", required=True)
+    s.add_argument("--qa-dir", default=None,
+                   help="where to create the QA/ session folder; defaults to "
+                        "<artifact-dir>/QA. Override when the artifact's own directory "
+                        "isn't where the QA record should live (e.g. a caller that keeps "
+                        "QA/ as a flat sibling of other output folders instead of nested "
+                        "beside the artifact). deprecated/ for superseded artifact "
+                        "versions is unaffected by this and always stays beside the "
+                        "artifact.")
     s.add_argument("--criteria", help="what a correct artifact looks like, as text")
     s.add_argument("--criteria-file", help="same, read from a file")
     s.add_argument("--focus", help="where Codex should concentrate its attention")

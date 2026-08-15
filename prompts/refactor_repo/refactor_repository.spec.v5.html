@@ -1,0 +1,169 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="color-scheme" content="light dark">
+  <title>Curriculum Factory Repository Refactor — Specification v5</title>
+  <style>
+    :root{--ink:#172033;--muted:#586278;--paper:#fbfcff;--line:#d8deea;--blue:#175cc2;--soft:#eaf2ff;--code:#f1f4f9}
+    @media(prefers-color-scheme:dark){:root{--ink:#edf2fb;--muted:#aeb9cc;--paper:#101622;--line:#2d384c;--blue:#8abbff;--soft:#172b4c;--code:#1a2333}}
+    *{box-sizing:border-box}body{margin:0;background:var(--paper);color:var(--ink);font:16px/1.55 ui-sans-serif,system-ui,-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif}
+    main{max-width:1100px;margin:0 auto;padding:48px 28px 72px}header{border-bottom:3px solid var(--blue);padding-bottom:24px}
+    h1{font-size:clamp(2rem,5vw,3.5rem);line-height:1.05;letter-spacing:-.045em;margin:0 0 14px;max-width:900px}h2{font-size:1.55rem;line-height:1.2;margin:44px 0 14px;letter-spacing:-.02em}h3{font-size:1.08rem;margin:25px 0 8px}
+    p{max-width:84ch}code{background:var(--code);border:1px solid var(--line);border-radius:4px;padding:.1em .3em;font-size:.9em}pre{max-width:940px;overflow:auto;background:var(--code);border:1px solid var(--line);border-radius:8px;padding:18px}pre code{border:0;padding:0}
+    .lede{color:var(--muted);font-size:1.12rem;max-width:78ch}.meta{color:var(--muted);font-size:.9rem}nav{margin:25px 0 0;display:flex;gap:12px;flex-wrap:wrap}nav a{color:var(--blue);border:1px solid var(--line);border-radius:999px;padding:5px 10px;text-decoration:none}
+    .callout{margin:22px 0;padding:18px 20px;background:var(--soft);border-left:5px solid var(--blue);max-width:940px}.callout strong{display:block;margin-bottom:4px}li{margin:.45rem 0;max-width:88ch}
+    table{border-collapse:collapse;width:100%;max-width:940px;margin:18px 0}th,td{text-align:left;vertical-align:top;border-bottom:1px solid var(--line);padding:10px 12px}th{color:var(--muted);font-size:.86rem;text-transform:uppercase;letter-spacing:.04em}footer{color:var(--muted);margin-top:50px;padding-top:16px;border-top:1px solid var(--line);font-size:.9rem}
+  </style>
+</head>
+<body><main>
+  <header>
+    <p class="meta">Specification v5 · 15 August 2026</p>
+    <h1>Curriculum Factory repository refactor</h1>
+    <p class="lede">Align product and repository identity, adopt an installable Python source layout, classify directories by lifecycle, and separate disposable run output from durable fixtures and evidence.</p>
+    <nav aria-label="Document navigation"><a href="#goals">Goals</a><a href="#identity">Identity</a><a href="#schema-ids">Schema IDs</a><a href="#source">Source</a><a href="#outputs">Outputs</a><a href="#inventory">Inventory</a><a href="#deliverables">Deliverables</a><a href="#tests">Tests</a><a href="#external">External steps</a></nav>
+  </header>
+
+  <section id="goals"><h2>1. Goals</h2>
+    <ul>
+      <li>Use <strong>Curriculum Factory</strong> consistently as the human-facing product name.</li>
+      <li>Adopt consistent repository, distribution, and Python-package names.</li>
+      <li>Move production Python code into an installable <code>src</code> layout without combining that move with an unsupported subsystem redesign.</li>
+      <li>Classify every top-level directory by owner, reader, and lifecycle.</li>
+      <li>Keep generated run output separate from tracked fixtures and retained evidence.</li>
+      <li>Make installation, imports, tests, commands, and documentation work from a fresh clone.</li>
+    </ul>
+  </section>
+
+  <section id="identity"><h2>2. Identity map</h2>
+    <table>
+      <thead><tr><th>Identity</th><th>Target</th><th>Used for</th></tr></thead>
+      <tbody>
+        <tr><td>Product name</td><td><code>Curriculum Factory</code></td><td>Prose, headings, reports, and UI text</td></tr>
+        <tr><td>Repository slug</td><td><code>curriculum_factory</code></td><td>Git repository and checkout directory</td></tr>
+        <tr><td>Python distribution</td><td><code>curriculum-factory</code></td><td>Packaging metadata and installation</td></tr>
+        <tr><td>Python package</td><td><code>curriculum_factory</code></td><td>Imports and module execution</td></tr>
+        <tr><td>Source root</td><td><code>src/curriculum_factory/</code></td><td>Production Python code</td></tr>
+      </tbody>
+    </table>
+    <p>Use each value only in its stated context. Maintain an exceptions inventory for intentionally retained legacy names, with the exact location, consumer, rationale, and removal condition.</p>
+  </section>
+
+  <section id="schema-ids"><h2>3. Schema identifier rule</h2>
+    <p>Treat a schema <code>$id</code> as a versioned contract identifier, not branding text.</p>
+    <ol>
+      <li>Preserve the existing <code>$id</code> when the schema keeps the same filename version and semantic contract, even if the URI contains the old repository name.</li>
+      <li>Do not rewrite a published or referenced <code>$id</code> in place solely for naming consistency.</li>
+      <li>Use the new canonical namespace when creating a new schema version. Update all corresponding <code>$ref</code> values, registries, fixtures, and documentation in the same change.</li>
+      <li>An existing identifier may change only when repository-wide reference analysis proves it has no consumer and the migration records the old-to-new mapping. If consumer absence cannot be proven, preserve it.</li>
+      <li>Tests must validate both reference resolution and the recorded identifier decision for every live schema.</li>
+    </ol>
+  </section>
+
+  <section id="source"><h2>4. Python source migration</h2>
+    <div class="callout"><strong>Phase-one target</strong>Move the current production package beneath <code>src/curriculum_factory/</code> while preserving its module boundaries and behavior. Do not require a responsibility-based split in the same phase.</div>
+    <pre><code>src/
+└── curriculum_factory/
+    ├── __init__.py
+    ├── capabilities.py
+    ├── checkpoint.py
+    ├── controller.py
+    ├── io.py
+    ├── logger.py
+    ├── run_curriculum.py
+    ├── session_bridge.py
+    ├── langgraph_factory/
+    └── … remaining current runtime modules</code></pre>
+    <p>Phase one must add packaging configuration, update imports and entry points, correct module commands, mocks, fixtures, documentation, and every repository-root calculation based on <code>__file__</code>. Tests must run against the installed distribution rather than repository-root path injection.</p>
+
+    <h3>Later decomposition</h3>
+    <p>Subsystem decomposition is a separate decision. Propose a subpackage only when the inventory demonstrates all of the following:</p>
+    <ul>
+      <li>a cohesive responsibility shared by multiple modules;</li>
+      <li>a stable boundary with identifiable callers and dependencies;</li>
+      <li>lower coupling or clearer ownership than the current placement;</li>
+      <li>no import cycle introduced by the move; and</li>
+      <li>focused tests that can verify the boundary.</li>
+    </ul>
+    <p>Names such as orchestration, routing, retrieval, rendering, validation, and persistence are candidates to evaluate, not prescribed directories. Any decomposition requires its own target tree and evidence in the execution plan.</p>
+    <p>Keep <code>policy/</code>, <code>schemas/</code>, <code>curricula/</code>, <code>docs/</code>, and <code>outputs/</code> outside <code>src/</code>.</p>
+  </section>
+
+  <section id="outputs"><h2>5. Output lifecycle and fixture migration</h2>
+    <div class="callout"><strong>Keep <code>outputs/</code> as the ignored runtime write boundary.</strong>It should be empty between runs. Durable tests, fixtures, research evidence, and audit evidence must not depend on files stored there.</div>
+    <p>At execution time, enumerate every child of <code>outputs/</code> and record its size, producer, tracked and untracked consumers, reproducibility, evidence value, and proposed disposition. Do not copy point-in-time counts or sizes from this specification into the plan as current facts.</p>
+
+    <h3>Fixture inclusion rule</h3>
+    <p>A migrated run fixture must contain a machine-readable manifest. Every retained file must have:</p>
+    <ul>
+      <li>its fixture-relative path and SHA-256 digest;</li>
+      <li>at least one named active consumer;</li>
+      <li>the assertion, citation, or behavior that requires the file;</li>
+      <li>whether exact bytes are required or a generated equivalent is acceptable; and</li>
+      <li>the source run and migration date.</li>
+    </ul>
+    <p>No file may remain in the fixture without a manifest entry and active consumer. Every consumer must resolve to a retained file or a documented generator. Tests must enforce both directions of this relationship. This consumer-closure rule defines “minimal”; no arbitrary file-count or byte cap applies.</p>
+
+    <h3>Disposition rules</h3>
+    <ul>
+      <li>Move exact historical bytes only when a test assertion or active evidence citation depends on them.</li>
+      <li>Generate test-local data when the test checks behavior rather than historical content.</li>
+      <li>Move retained non-test evidence to a tracked evidence or archive location instead of disguising it as a test fixture.</li>
+      <li>Remove an output run only after all consumers are migrated, replaced by generators, retired, or shown to be historical-only.</li>
+      <li>After migration, deleting all generated children beneath <code>outputs/</code> must not break tests or active repository references.</li>
+    </ul>
+  </section>
+
+  <section id="inventory"><h2>6. Required inventory</h2>
+    <p>Create a read-only inventory tool for this refactor. It must emit both a human-readable report and timestamped machine-readable data, run without modifying the repository, and return a nonzero exit status when collection is incomplete. Run it immediately before planning and again before destructive cleanup. Record:</p>
+    <ul>
+      <li>the current value and target value for each identity in §2;</li>
+      <li>every top-level directory, its owner or reader, tracked and ignored state, lifecycle, and disposition;</li>
+      <li>all imports, module commands, and entry points rooted at <code>runtime</code>;</li>
+      <li>all <code>__file__</code>-based root traversal and absolute checkout paths;</li>
+      <li>all live references to old identity, package, source-path, and output-run names;</li>
+      <li>packaging, installation, build, and test configuration;</li>
+      <li>producers and consumers of every output child and questionable directory, including <code>PSIM/</code> and <code>specs/</code>; and</li>
+      <li>schema-ID and other compatibility-sensitive decisions.</li>
+    </ul>
+    <p>Classify each directory as production source, repository contract, domain input, generated runtime data, cache or scratch data, test fixture, retained evidence, active documentation, or deprecated history. Do not rename or delete an unresolved directory.</p>
+  </section>
+
+  <section id="deliverables"><h2>7. Deliverables</h2>
+    <ol>
+      <li><strong>Inventory tool and reports:</strong> reproducible read-only collection plus timestamped findings, classifications, consumers, and proposed dispositions in human- and machine-readable forms.</li>
+      <li><strong>Execution plan:</strong> ordered phases, target tree for each phase, dependencies, rollback points, authorization boundaries, and validation commands.</li>
+      <li><strong>Execution prompt:</strong> exact phase order, permitted mutations, stop conditions, test commands, and completion evidence.</li>
+      <li><strong>Executable tests:</strong> automated checks covering §8.</li>
+      <li><strong>Fixture manifests:</strong> bidirectional consumer closure for every retained run-derived file.</li>
+      <li><strong>Exceptions inventory:</strong> retained legacy identifiers or paths with rationale and removal conditions.</li>
+      <li><strong>Migration report:</strong> final identities, directory dispositions, changes, test results, removed outputs, retained evidence, exceptions, and pending external operations.</li>
+    </ol>
+  </section>
+
+  <section id="tests"><h2>8. Executable acceptance tests</h2>
+    <ol>
+      <li><strong>Installed imports:</strong> production code imports as <code>curriculum_factory</code> from the installed <code>src</code>-layout distribution without repository-root or ad hoc <code>sys.path</code> assistance.</li>
+      <li><strong>CLI behavior:</strong> documented entry points and module commands preserve expected arguments and exit behavior.</li>
+      <li><strong>Root resolution:</strong> production code finds policies, schemas, curricula, and the output boundary from the new package location.</li>
+      <li><strong>Output containment:</strong> a run directory beneath <code>outputs/</code> is accepted; an external path is rejected before artifact creation.</li>
+      <li><strong>Fixture closure:</strong> every retained fixture file has a valid manifest entry and active consumer; every declared fixture dependency resolves.</li>
+      <li><strong>Ignored-state independence:</strong> no test or active evidence reference requires durable files beneath ignored <code>outputs/</code>.</li>
+      <li><strong>Empty-output resilience:</strong> the full suite passes with no generated children beneath <code>outputs/</code>.</li>
+      <li><strong>Schema identity:</strong> live <code>$id</code> and <code>$ref</code> values resolve and match the recorded preserve-or-version decision.</li>
+      <li><strong>Reference integrity:</strong> live code, automation, and documentation contain no stale identities or paths except recorded exceptions.</li>
+      <li><strong>Documentation integrity:</strong> documented paths resolve and documented commands execute in their stated environment.</li>
+      <li><strong>Fresh-clone reproducibility:</strong> required fixtures are tracked or produced through documented deterministic setup.</li>
+      <li><strong>Regression and scope:</strong> the existing tests and gates pass, no test is weakened to accommodate the move, and the final delta contains only intended changes plus recorded pre-existing work.</li>
+      <li><strong>Inventory reproducibility:</strong> the inventory tool completes from a fresh clone, does not change the working tree, produces schema-valid machine-readable output, and reports unresolved collection failures as failures rather than empty results.</li>
+    </ol>
+  </section>
+
+  <section id="external"><h2>9. External completion steps</h2>
+    <p>After all executable acceptance tests pass, request authorization to rename the remote repository and local checkout to <code>curriculum_factory</code>. Then update the Git remote and clone documentation and record the observed results in the migration report. These are completion steps, not automated acceptance tests.</p>
+  </section>
+
+  <footer>Curriculum Factory repository refactor · specification v5</footer>
+</main></body>
+</html>

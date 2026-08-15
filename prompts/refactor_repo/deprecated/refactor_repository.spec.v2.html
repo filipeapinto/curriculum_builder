@@ -1,0 +1,100 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1"><meta name="color-scheme" content="light dark">
+  <title>Repository Refactor Prompt</title>
+  <style>
+    :root{--ink:#172033;--muted:#586278;--paper:#fbfcff;--line:#d8deea;--blue:#175cc2;--soft:#eaf2ff;--warn:#8d5b00;--code:#f1f4f9}@media(prefers-color-scheme:dark){:root{--ink:#edf2fb;--muted:#aeb9cc;--paper:#101622;--line:#2d384c;--blue:#8abbff;--soft:#172b4c;--warn:#f0bd62;--code:#1a2333}}*{box-sizing:border-box}body{margin:0;background:var(--paper);color:var(--ink);font:16px/1.55 ui-sans-serif,system-ui,-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif}main{max-width:1100px;margin:0 auto;padding:48px 28px 72px}header{border-bottom:3px solid var(--blue);padding-bottom:24px}h1{font-size:clamp(2rem,5vw,3.5rem);line-height:1.05;letter-spacing:-.045em;margin:0 0 14px;max-width:900px}h2{font-size:1.55rem;line-height:1.2;margin:44px 0 14px;letter-spacing:-.02em}h3{font-size:1.08rem;margin:25px 0 8px}p{max-width:84ch}a{color:var(--blue)}code{background:var(--code);border:1px solid var(--line);border-radius:4px;padding:.1em .3em;font-size:.9em}pre{max-width:940px;overflow:auto;background:var(--code);border:1px solid var(--line);border-radius:8px;padding:18px}pre code{border:0;padding:0}.lede{color:var(--muted);font-size:1.12rem;max-width:78ch}.meta{color:var(--muted);font-size:.9rem}nav{margin:25px 0 0;display:flex;gap:12px;flex-wrap:wrap}nav a{border:1px solid var(--line);border-radius:999px;padding:5px 10px;text-decoration:none}.callout{margin:22px 0;padding:18px 20px;background:var(--soft);border-left:5px solid var(--blue);max-width:940px}.callout strong{display:block;margin-bottom:4px}li{margin:.45rem 0;max-width:88ch}table{border-collapse:collapse;width:100%;max-width:940px;margin:18px 0}th,td{text-align:left;vertical-align:top;border-bottom:1px solid var(--line);padding:10px 12px}th{color:var(--muted);font-size:.86rem;text-transform:uppercase;letter-spacing:.04em}.warn{color:var(--warn);font-weight:700}footer{color:var(--muted);margin-top:50px;padding-top:16px;border-top:1px solid var(--line);font-size:.9rem}
+  </style>
+</head>
+<body><main>
+  <header>
+    <p class="meta">Repository workflow · 15 August 2026</p>
+    <h1>Repository refactor prompt</h1>
+    <p class="lede">This prompt replaces the narrower product-name rebrand workflow. It audits and refactors repository identities and layout conventions as one coordinated change.</p>
+    <nav aria-label="Document navigation"><a href="#scope">Scope</a><a href="#identity">Identity</a><a href="#source">Source layout</a><a href="#policy">Output policy</a><a href="#inventory">Evidence</a><a href="#conclusions">Conclusions</a><a href="#usage">Usage</a></nav>
+  </header>
+
+  <section id="scope"><h2>Refactor scope</h2>
+    <p>The workflow audits and refactors all repository identities and layout conventions together:</p>
+    <ul>
+      <li>product/display name;</li>
+      <li>Git repository slug and local checkout directory;</li>
+      <li>Python source layout under <code>src/</code>;</li>
+      <li>generated, cached, historical, and deprecated directories; and</li>
+      <li>other names that do not match their contents or common conventions.</li>
+    </ul>
+  </section>
+
+  <section id="identity"><h2>Recommended identity map</h2>
+    <p>The product, repository, Python distribution, and import package are related identities, but they serve different syntactic contexts. The refactor must not apply one spelling indiscriminately everywhere.</p>
+    <table>
+      <thead><tr><th>Identity</th><th>Recommended value</th><th>Purpose</th></tr></thead>
+      <tbody>
+        <tr><td>Product</td><td><code>Curriculum Factory</code></td><td>Human-facing prose, headings, and interface labels</td></tr>
+        <tr><td>Git repository and checkout</td><td><code>curriculum_factory</code></td><td>Filesystem- and Git-safe project slug</td></tr>
+        <tr><td>Python distribution</td><td><code>curriculum-factory</code></td><td>Installable package name in project metadata</td></tr>
+        <tr><td>Python import package</td><td><code>curriculum_factory</code></td><td>Stable application namespace used by Python imports</td></tr>
+        <tr><td>Source root</td><td><code>src/curriculum_factory/</code></td><td>Conventional Python <code>src</code> layout</td></tr>
+      </tbody>
+    </table>
+    <p>Schema identifiers and network identifiers such as User-Agent values are API-like. They require an explicit compatibility decision instead of an automatic text substitution.</p>
+  </section>
+
+  <section id="source"><h2>Python source-layout conclusion</h2>
+    <div class="callout"><strong>Use <code>src/curriculum_factory/</code>, not Python files directly under <code>src/</code>.</strong><code>src/</code> identifies installable source; <code>curriculum_factory</code> provides the import namespace; its children represent the system’s internal responsibilities.</div>
+    <p>The current <code>runtime/</code> package already mixes orchestration, model routing, retrieval, rendering, persistence, validation, and command-line execution. The recommended eventual organization is:</p>
+    <pre><code>src/
+└── curriculum_factory/
+    ├── __init__.py
+    ├── cli.py
+    ├── orchestration/
+    ├── routing/
+    ├── retrieval/
+    ├── rendering/
+    ├── validation/
+    └── persistence/</code></pre>
+    <p>The first migration should prioritize behavioral equivalence: move the production package, establish <code>pyproject.toml</code> and installed-package testing, update imports and entry points, and correct every <code>__file__</code>-based repository-root calculation. Responsibility-based splitting can then occur without mixing structural movement with behavioral redesign.</p>
+    <p>Keep <code>policy/</code>, <code>schemas/</code>, <code>curricula/</code>, and <code>outputs/</code> outside <code>src/</code>. They are repository data, contracts, domain inputs, or generated artifacts—not Python source. Add another top-level package below <code>src/</code> only if a genuinely independent reusable or deployable component emerges.</p>
+  </section>
+
+  <section id="policy"><h2>Output policy</h2>
+    <div class="callout"><strong>Keep the boundary; clean up its contents.</strong><code>outputs/</code> remains the ignored runtime destination. It should be empty between runs and must not be the permanent home of tests, fixtures, audits, or cited evidence.</div>
+    <p>This conclusion is supported by the current implementation: <code>runtime/io.py</code> constrains every accepted output root beneath <code>ENGINE/outputs/</code>; the controller, session bridge, and curriculum graph enforce that rule; tests create temporary runs there; the meta-prompt and policy document <code>outputs/&lt;run&gt;/</code>; and <code>.gitignore</code> excludes generated children.</p>
+    <table>
+      <thead><tr><th>Existing child</th><th>Observed evidence</th><th>Required disposition</th></tr></thead>
+      <tbody>
+        <tr><td><code>arduino_kit_run_v2</code></td><td>20 MB; referenced by 30 tracked files and read directly by tests, skill evaluations, issues, and research</td><td>Move the minimal immutable evidence to <code>tests/fixtures/runs/arduino_kit_run_v2/</code> or another purpose-named tracked evidence location; update every consumer</td></tr>
+        <tr><td><code>run27</code></td><td>38 MB; two tracked reference files, including transport tests</td><td>Prefer run-local test generation; retain a minimized fixture only when exact historical bytes are required</td></tr>
+        <tr><td><code>arduino_kit_run_v1</code></td><td>88 KB; two weak historical/research references</td><td>Retain only the cited evidence if it remains valuable</td></tr>
+        <tr><td><code>arduino_kit_plan25_l01_20260811</code></td><td>140 KB; no live non-plan references found</td><td>Removal candidate after a final dependency and reproducibility check</td></tr>
+        <tr><td><code>remove-time-limits-v2-acceptance</code></td><td>260 KB; no live non-plan references found</td><td>Removal candidate after a final dependency and reproducibility check</td></tr>
+        <tr><td><code>runtime_task_v6</code></td><td>11 MB; no live non-plan references found</td><td>Removal candidate after a final dependency and reproducibility check</td></tr>
+      </tbody>
+    </table>
+    <p>A fresh clone must either contain every durable fixture/evidence item in a tracked location or be able to generate it through a documented command. Deleting generated children beneath <code>outputs/</code> must not break the test suite.</p>
+  </section>
+
+  <section id="usage"><h2>Active prompt</h2>
+    <p>Use <a href="refactor_repository.prompt.v2.md"><code>refactor_repository.prompt.v2.md</code></a> as the active prompt.</p>
+    <p><span class="warn">Do not</span> run the previous phrase-only rebrand as the repository-refactor workflow. It is retained under <code>deprecated/</code> as historical evidence.</p>
+  </section>
+
+  <section id="inventory"><h2>Starting inventory</h2>
+    <p>Run <a href="assets/audit_repository_layout.sh"><code>assets/audit_repository_layout.sh</code></a> for a read-only starting inventory.</p>
+    <div class="callout"><strong>Treat the report as evidence.</strong>It reports repository identity, top-level tracked and ignored status, relevant references, imports rooted at <code>runtime</code>, fragile root traversal, packaging configuration, and output-run size/reference counts. Its findings establish the starting state; they are deliberately not an automatic move or deletion plan.</div>
+  </section>
+
+  <section id="conclusions"><h2>Conclusions</h2>
+    <ol>
+      <li>The task is a coordinated repository refactor, not a product-name replacement.</li>
+      <li><code>src/curriculum_factory/</code> is the appropriate Python foundation. The package can contain several responsibility-based subsystems without creating separate top-level packages.</li>
+      <li>The broad <code>runtime</code> name should not remain the permanent architecture. Preserve behavior during the initial move, then split by responsibility.</li>
+      <li><code>outputs/</code> is still necessary as the runtime write boundary; most existing children are not appropriate permanent residents.</li>
+      <li>Durable fixture and research evidence must move out of ignored local state before obsolete output runs are removed.</li>
+      <li>Remote-repository and parent-directory renames occur last and require explicit authorization. In-repository validation must not depend on those external operations.</li>
+    </ol>
+  </section>
+
+  <footer>Repository-refactor workflow guide. The active prompt governs the refactor; the inventory script provides read-only evidence for planning it.</footer>
+</main></body></html>
