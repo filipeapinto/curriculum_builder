@@ -1,0 +1,50 @@
+{
+  "at": "2026-08-15T02:28:40.261208Z",
+  "code": "VERIFICATION_FAILED",
+  "commands": [
+    {
+      "argv": [
+        "python3",
+        "-m",
+        "pytest",
+        "-q",
+        "tests/runtime/test_plan26_transport.py",
+        "tests/runtime/test_plan26_model_nodes.py",
+        "tests/runtime/test_plan26_egress.py",
+        "tests/runtime/test_capabilities.py",
+        "tests/runtime/test_curriculum_factory_graph.py",
+        "tests/runtime/test_plan26_adversarial.py",
+        "tests/runtime/test_plan26_api_contract.py",
+        "tests/runtime/test_plan26_lock_drift.py"
+      ],
+      "exit_code": 1,
+      "log": "attempts/N20_PROVIDER_TRANSPORT/N20_PROVIDER_TRANSPORT-2026-08-15T022810122960Z-8bb675f7/logs/verify_00.log",
+      "log_sha256": "c9b759ddbc0d9185c3f300168e97d7754d9560810a305d8183f0a0aa6a304745"
+    },
+    {
+      "argv": [
+        "python3",
+        "plans/27_langgraph_curriculum_factory_remediation/execution_package_v2/controller/scan_node.py",
+        "--node",
+        "N20_PROVIDER_TRANSPORT",
+        "--graph",
+        "plans/27_langgraph_curriculum_factory_remediation/execution_package_v2/implementation.graph.v8.yaml"
+      ],
+      "exit_code": 0,
+      "log": "attempts/N20_PROVIDER_TRANSPORT/N20_PROVIDER_TRANSPORT-2026-08-15T022810122960Z-8bb675f7/logs/verify_01.log",
+      "log_sha256": "2d471cf440eeeead175a5f5eb2abd59afe0c56f62a78b8fd11d834c7a55d2b9a"
+    },
+    {
+      "argv": [
+        "python3",
+        "plans/27_langgraph_curriculum_factory_remediation/execution_package_v2/tools/validate_result_v2.py",
+        "--node",
+        "N20_PROVIDER_TRANSPORT"
+      ],
+      "exit_code": 0,
+      "log": "attempts/N20_PROVIDER_TRANSPORT/N20_PROVIDER_TRANSPORT-2026-08-15T022810122960Z-8bb675f7/logs/verify_02.log",
+      "log_sha256": "c8b67a998e299697ece5cc4422c5d2f8d77918e3be4305ecdf19342cd5026419"
+    }
+  ],
+  "message": "['python3', '-m', 'pytest', '-q', 'tests/runtime/test_plan26_transport.py', 'tests/runtime/test_plan26_model_nodes.py', 'tests/runtime/test_plan26_egress.py', 'tests/runtime/test_capabilities.py', 'tests/runtime/test_curriculum_factory_graph.py', 'tests/runtime/test_plan26_adversarial.py', 'tests/runtime/test_plan26_api_contract.py', 'tests/runtime/test_plan26_lock_drift.py'] exited 1"
+}

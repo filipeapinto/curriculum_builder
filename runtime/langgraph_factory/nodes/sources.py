@@ -24,7 +24,7 @@ from . import (
     staged_dispatch,
     worker_packet,
 )
-from ..egress import AuthorizationRecord, authorize_transmission
+from ..egress import AuthorizationRecord, EgressDenied, authorize_transmission
 
 __all__ = [
     "SOURCE_REQUEST_FIELDS",
@@ -420,68 +420,84 @@ def D06B_RETRIEVE_SOURCE_CANDIDATES(
             if requests[request_key].get("required"):
                 unavailable.append({"request_key": request_key, "reason": "no locator discovered"})
             continue
-        locator = locators[0]
-        locator_url = candidate_field(locator, "url")
-        require(
-            isinstance(locator_url, str) and locator_url,
-            "schema_contract",
-            f"discovery for {request_key} declares a locator with no url",
-        )
-        try:
-            authorization_receipt = authorize_transmission(
-                authorization_record, provider="primary_source_hosts",
-                data_classes=["primary_source_bytes"],
-                curriculum_digest=authorization_record.curriculum_digest,
-                run_id=authorization_record.run_id,
-                output_root=authorization_record.output_root)
-            response = fetch(locator_url, authorization_receipt=authorization_receipt)
-        except FileNotFoundError as error:
-            unavailable.append({"request_key": request_key, "reason": str(error)})
-            continue
-        except Exception as error:  # noqa: BLE001 - classified below, never swallowed
-            # A transport, network, or integrity fault is a system failure. Only a
-            # named unavailable fact may pause; conflating the two is spec 2.4/6.
-            raise SystemFailure(
-                "tool",
-                f"deterministic retrieval failed for {request_key}: {error}",
-                {"request_key": request_key, "locator": locator},
-            ) from error
-
-        require(
-            isinstance(response, tuple) and len(response) == 2,
-            "schema_contract",
-            f"retrieval response for {request_key} must be a (body, receipt) tuple",
-        )
-        body, receipt = response
-        require(
-            isinstance(body, bytes),
-            "schema_contract",
-            f"retrieval response for {request_key} carries non-byte content",
-        )
-        response_record = _record(receipt, f"retrieval receipt for {request_key}")
-        for field in ("bytes_sha256", "http_status", "content_type"):
+        candidate_failures: list[dict[str, Any]] = []
+        for locator in locators:
+            locator_url = candidate_field(locator, "url")
             require(
-                field in response_record,
-                "integrity",
-                f"retrieval receipt for {request_key} has no {field!r}",
+                isinstance(locator_url, str) and locator_url,
+                "schema_contract",
+                f"discovery for {request_key} declares a locator with no url",
             )
-        source_path, staged_name = _persist_retrieved_bytes(
-            output_root=authorization_record.output_root,
-            body=body,
-            expected_sha256=response_record["bytes_sha256"],
-        )
-        retrievals[request_key] = {
-            "key": request_key,
-            "unit_id": unit_id,
-            "source_epoch": denominator["source_epoch"],
-            "locator": locator,
-            "sha256": response_record["bytes_sha256"],
-            "status": response_record["http_status"],
-            "content_type": response_record["content_type"],
-            "tls": response_record.get("tls"),
-            "bytes_path": staged_name,
-            "source_path": source_path,
-        }
+            try:
+                authorization_receipt = authorize_transmission(
+                    authorization_record, provider="primary_source_hosts",
+                    data_classes=["primary_source_bytes"],
+                    curriculum_digest=authorization_record.curriculum_digest,
+                    run_id=authorization_record.run_id,
+                    output_root=authorization_record.output_root)
+                response = fetch(locator_url, authorization_receipt=authorization_receipt)
+            except (FileNotFoundError, EgressDenied) as error:
+                # An untrusted candidate may be gone, forbidden, redirected out
+                # of policy, or return a non-OK status. Try the remaining
+                # bounded candidates in their model-produced order. If none is
+                # retrievable, the named fact is unavailable; no bytes are
+                # fabricated and no security denial is weakened.
+                candidate_failures.append({
+                    "locator": locator,
+                    "reason": getattr(error, "reason", str(error)),
+                })
+                continue
+            except Exception as error:  # noqa: BLE001 - classified below, never swallowed
+                # A transport, network, or integrity fault is a system failure.
+                # Only a named unavailable fact may pause.
+                raise SystemFailure(
+                    "tool",
+                    f"deterministic retrieval failed for {request_key}: {error}",
+                    {"request_key": request_key, "locator": locator},
+                ) from error
+
+            require(
+                isinstance(response, tuple) and len(response) == 2,
+                "schema_contract",
+                f"retrieval response for {request_key} must be a (body, receipt) tuple",
+            )
+            body, receipt = response
+            require(
+                isinstance(body, bytes),
+                "schema_contract",
+                f"retrieval response for {request_key} carries non-byte content",
+            )
+            response_record = _record(receipt, f"retrieval receipt for {request_key}")
+            for field in ("bytes_sha256", "http_status", "content_type"):
+                require(
+                    field in response_record,
+                    "integrity",
+                    f"retrieval receipt for {request_key} has no {field!r}",
+                )
+            source_path, staged_name = _persist_retrieved_bytes(
+                output_root=authorization_record.output_root,
+                body=body,
+                expected_sha256=response_record["bytes_sha256"],
+            )
+            retrievals[request_key] = {
+                "key": request_key,
+                "unit_id": unit_id,
+                "source_epoch": denominator["source_epoch"],
+                "locator": locator,
+                "sha256": response_record["bytes_sha256"],
+                "status": response_record["http_status"],
+                "content_type": response_record["content_type"],
+                "tls": response_record.get("tls"),
+                "bytes_path": staged_name,
+                "source_path": source_path,
+            }
+            break
+        if request_key not in retrievals and requests[request_key].get("required"):
+            unavailable.append({
+                "request_key": request_key,
+                "reason": "all locator candidates unavailable",
+                "candidates": candidate_failures,
+            })
 
     missing_required = [
         {"request_key": key, "reason": "not retrieved"}

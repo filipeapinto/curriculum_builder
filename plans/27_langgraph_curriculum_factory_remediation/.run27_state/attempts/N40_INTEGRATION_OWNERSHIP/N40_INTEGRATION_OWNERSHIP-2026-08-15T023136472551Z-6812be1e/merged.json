@@ -1,0 +1,9 @@
+{
+  "admission": "normal",
+  "at": "2026-08-15T02:31:56.913485Z",
+  "attempt_id": "N40_INTEGRATION_OWNERSHIP-2026-08-15T023136472551Z-6812be1e",
+  "node_id": "N40_INTEGRATION_OWNERSHIP",
+  "receipt": "receipts/N40_INTEGRATION_OWNERSHIP.receipt.v1.json",
+  "receipt_sha256": "c1711eb6ea247a70119749a033384f174dfe5933315046886598624f0a1acd0b",
+  "status": "PASSED"
+}

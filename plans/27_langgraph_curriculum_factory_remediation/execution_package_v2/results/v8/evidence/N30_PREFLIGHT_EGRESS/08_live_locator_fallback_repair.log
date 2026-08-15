@@ -1,0 +1,4 @@
+Live checkpoint proved D06B selected only locators[0], so one source-side 403 ended the episode despite two remaining bounded candidates.
+Repair: D06B tries candidates deterministically in declared order, treats FileNotFoundError or SourceRetriever EgressDenied as candidate unavailability, and succeeds only with actual body bytes plus a valid receipt.
+If all bounded candidates fail for a required fact, D06B emits required_external_fact_unavailable; transport, schema, and integrity faults remain system failures.
+Production-composed regression: first candidate status 403, second candidate status 200, exact second body persisted and staged; passed.

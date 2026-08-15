@@ -1,0 +1,64 @@
+{
+  "schema_version": 1,
+  "run_id": "run27-execution-package-v2-graph-v8",
+  "node_id": "N50_EVIDENCE_AUDIT_CONTROLS",
+  "attempt_id": "N50_EVIDENCE_AUDIT_CONTROLS-execpkgv2-v8-attempt-1",
+  "outcome": "PASSED",
+  "source_spec_sha256": "e14df5a36ce12d700fe9fc4aa4aea466771bc89f31bc6e9d49f812c147b1bb3c",
+  "prompt_sha256": "4fe5cd2f076409e9e1616f36f26c35adf16701cb34664e8e5c0991422eed0f82",
+  "predecessor_receipts": {
+    "N40_INTEGRATION_OWNERSHIP": "d5bb248832a7950e399a084e87495b7b3995464c0128066513199cef310b4d06"
+  },
+  "changed_files": [
+    {"path": "plans/27_langgraph_curriculum_factory_remediation/execution_package_v2/results/v8/evidence/N50_EVIDENCE_AUDIT_CONTROLS/01_pytest_n50_run1.log", "change": "created", "sha256": "04347c4050be203c837c01d755c3c761bb5d5489b5853fdbe34988e891bcf42c"},
+    {"path": "plans/27_langgraph_curriculum_factory_remediation/execution_package_v2/results/v8/evidence/N50_EVIDENCE_AUDIT_CONTROLS/02_pytest_n50_run2.log", "change": "created", "sha256": "0d1cef472d9fff5e3df371a11438430b507545b69fb996b2a497c0e5762f806c"},
+    {"path": "plans/27_langgraph_curriculum_factory_remediation/execution_package_v2/results/v8/evidence/N50_EVIDENCE_AUDIT_CONTROLS/03_verify_evidence_determinism.log", "change": "created", "sha256": "d9a95ac5b529df336f40f5c0ec22e815d0114ad6fef545daf4354d1786c08aa6"},
+    {"path": "plans/27_langgraph_curriculum_factory_remediation/execution_package_v2/results/v8/evidence/N50_EVIDENCE_AUDIT_CONTROLS/04_verify_requirements_lineage.log", "change": "created", "sha256": "316b4ce56959192bda152b35e5b7ffefa46eb72c355f9bce1ebe7471223bb872"},
+    {"path": "plans/27_langgraph_curriculum_factory_remediation/execution_package_v2/results/v8/evidence/N50_EVIDENCE_AUDIT_CONTROLS/05_scan_node_n50.log", "change": "created", "sha256": "7609d3a3b034cddb2eeae333dce50fbd725dcee51ef2f787d9249a450e963c65"}
+  ],
+  "commands": [
+    {
+      "argv": ["python3", "-m", "pytest", "-q", "tests/runtime/test_plan26_evidence.py", "tests/runtime/test_plan26_persistence.py"],
+      "exit_code": 0,
+      "log": "plans/27_langgraph_curriculum_factory_remediation/execution_package_v2/results/v8/evidence/N50_EVIDENCE_AUDIT_CONTROLS/01_pytest_n50_run1.log",
+      "log_sha256": "04347c4050be203c837c01d755c3c761bb5d5489b5853fdbe34988e891bcf42c"
+    },
+    {
+      "argv": ["python3", "-m", "pytest", "-q", "tests/runtime/test_plan26_evidence.py", "tests/runtime/test_plan26_persistence.py"],
+      "exit_code": 0,
+      "log": "plans/27_langgraph_curriculum_factory_remediation/execution_package_v2/results/v8/evidence/N50_EVIDENCE_AUDIT_CONTROLS/02_pytest_n50_run2.log",
+      "log_sha256": "0d1cef472d9fff5e3df371a11438430b507545b69fb996b2a497c0e5762f806c"
+    },
+    {
+      "argv": ["python3", "plans/27_langgraph_curriculum_factory_remediation/controller/verify_evidence_determinism.py", "--contract", "plans/27_langgraph_curriculum_factory_remediation/contracts/evidence_determinism.v1.yaml", "--graph", "plans/27_langgraph_curriculum_factory_remediation/execution_package_v2/implementation.graph.v8.yaml"],
+      "exit_code": 0,
+      "log": "plans/27_langgraph_curriculum_factory_remediation/execution_package_v2/results/v8/evidence/N50_EVIDENCE_AUDIT_CONTROLS/03_verify_evidence_determinism.log",
+      "log_sha256": "d9a95ac5b529df336f40f5c0ec22e815d0114ad6fef545daf4354d1786c08aa6"
+    },
+    {
+      "argv": ["python3", "plans/27_langgraph_curriculum_factory_remediation/controller/verify_requirements_lineage.py", "--contract", "plans/27_langgraph_curriculum_factory_remediation/contracts/requirements_lineage.v1.yaml", "--graph", "plans/27_langgraph_curriculum_factory_remediation/execution_package_v2/implementation.graph.v8.yaml"],
+      "exit_code": 0,
+      "log": "plans/27_langgraph_curriculum_factory_remediation/execution_package_v2/results/v8/evidence/N50_EVIDENCE_AUDIT_CONTROLS/04_verify_requirements_lineage.log",
+      "log_sha256": "316b4ce56959192bda152b35e5b7ffefa46eb72c355f9bce1ebe7471223bb872"
+    },
+    {
+      "argv": ["python3", "plans/27_langgraph_curriculum_factory_remediation/execution_package_v2/controller/scan_node.py", "--node", "N50_EVIDENCE_AUDIT_CONTROLS", "--graph", "plans/27_langgraph_curriculum_factory_remediation/execution_package_v2/implementation.graph.v8.yaml"],
+      "exit_code": 0,
+      "log": "plans/27_langgraph_curriculum_factory_remediation/execution_package_v2/results/v8/evidence/N50_EVIDENCE_AUDIT_CONTROLS/05_scan_node_n50.log",
+      "log_sha256": "7609d3a3b034cddb2eeae333dce50fbd725dcee51ef2f787d9249a450e963c65"
+    }
+  ],
+  "evidence": [
+    "plans/27_langgraph_curriculum_factory_remediation/execution_package_v2/results/v8/evidence/N50_EVIDENCE_AUDIT_CONTROLS/01_pytest_n50_run1.log",
+    "plans/27_langgraph_curriculum_factory_remediation/execution_package_v2/results/v8/evidence/N50_EVIDENCE_AUDIT_CONTROLS/02_pytest_n50_run2.log",
+    "plans/27_langgraph_curriculum_factory_remediation/execution_package_v2/results/v8/evidence/N50_EVIDENCE_AUDIT_CONTROLS/03_verify_evidence_determinism.log",
+    "plans/27_langgraph_curriculum_factory_remediation/execution_package_v2/results/v8/evidence/N50_EVIDENCE_AUDIT_CONTROLS/04_verify_requirements_lineage.log",
+    "plans/27_langgraph_curriculum_factory_remediation/execution_package_v2/results/v8/evidence/N50_EVIDENCE_AUDIT_CONTROLS/05_scan_node_n50.log"
+  ],
+  "findings": [
+    {"id": "N50V8-F01", "severity": "major", "summary": "Evidence and persistence behavior passed 64 tests and 58 subtests twice with stable outcomes.", "disposition": "resolved"},
+    {"id": "N50V8-F02", "severity": "major", "summary": "Evidence determinism passed both executable claims with one distinct output and no path drift.", "disposition": "resolved"},
+    {"id": "N50V8-F03", "severity": "major", "summary": "All eight requirements-lineage claims are covered with no failures, and the scoped scan found zero violations.", "disposition": "resolved"}
+  ],
+  "invalidated_descendants": []
+}

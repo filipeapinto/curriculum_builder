@@ -1,0 +1,9 @@
+{
+  "admission": "normal",
+  "at": "2026-08-15T02:50:21.225740Z",
+  "attempt_id": "N60_ADVERSARIAL_REGRESSION-2026-08-15T024732590034Z-f365c500",
+  "node_id": "N60_ADVERSARIAL_REGRESSION",
+  "receipt": "receipts/N60_ADVERSARIAL_REGRESSION.receipt.v1.json",
+  "receipt_sha256": "67e12abf3fbfa013d39e3445982b76302981ba157048d7a64fcbf167a380aeae",
+  "status": "PASSED"
+}

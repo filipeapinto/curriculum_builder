@@ -1,0 +1,5 @@
+Full denominator: tests/runtime
+Result: 1 failed, 1333 passed, 2 skipped, 419 subtests passed in 154.62s (0:02:34)
+Sole failure: tests/runtime/test_plan26_prompt_graph_controller.py::test_passed_nodes_remain_admissible_after_harness_or_predecessor_change
+Assertion: N10_DEPENDENCY_API has a PASSED receipt but is inadmissible for a reason other than known evidence-directory drift.
+Classification: pre-existing unrelated live-receipt-store failure, frozen before Run 27 changes and reproduced against byte-identical HEAD test source.

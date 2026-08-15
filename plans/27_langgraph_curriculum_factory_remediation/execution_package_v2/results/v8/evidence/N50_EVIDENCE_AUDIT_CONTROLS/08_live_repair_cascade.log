@@ -1,0 +1,6 @@
+N50 downstream re-admission after the genuine N70 attempt exposed and N20/N30 repaired HTTP status handling and bounded locator fallback.
+The N50 evidence/persistence suite passed twice from equivalent inputs: 64 passed and 58 subtests passed on each run.
+The evidence-determinism verifier passed: valid=true, ok=true, claims_checked=2, failures=[].
+The requirements-lineage verifier passed: valid=true, ok=true, claims_checked=8, failures=[].
+The N50 exact write-set scan passed: 5 files scanned, zero violations.
+The prior attempt-1 result is preserved under evidence/N50_EVIDENCE_AUDIT_CONTROLS/attempts/.

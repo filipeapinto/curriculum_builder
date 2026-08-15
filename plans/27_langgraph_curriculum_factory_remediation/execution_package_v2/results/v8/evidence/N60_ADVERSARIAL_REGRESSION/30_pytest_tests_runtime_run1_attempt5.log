@@ -1,0 +1,3 @@
+command: python3 -m pytest -q tests/runtime
+exit_code: 0
+result: 1337 passed, 2 skipped, 419 subtests passed in 154.53s

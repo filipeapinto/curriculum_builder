@@ -1,0 +1,5 @@
+command: python3 -m pytest -q tests/runtime
+exit_code: 1
+result: 1 failed, 1336 passed, 2 skipped, 419 subtests passed in 157.57s
+sole_failure: tests/runtime/test_plan26_prompt_graph_controller.py::test_passed_nodes_remain_admissible_after_harness_or_predecessor_change
+classification: pre-existing unrelated live-receipt-store failure; test file bytes identical to HEAD at SHA-256 6c15d950...f999bc5.

@@ -1,0 +1,44 @@
+{
+  "changed_files": [],
+  "commands": [
+    {
+      "argv": [
+        "/tmp/plan26_n30_verify/bin/python",
+        "-m",
+        "pytest",
+        "-q",
+        "tests/runtime/test_plan26_transport.py",
+        "tests/runtime/test_plan26_egress.py"
+      ],
+      "exit_code": 0,
+      "finished_at": "2026-08-11T21:00:04.143060+00:00",
+      "log": "plans/26_langgraph_curriculum_factory/results/v3/logs/N13_TRANSPORT_AUTH/adopt-v2.test1.log",
+      "log_sha256": "0138ce0075a17b996b708efed9f46070504398702a7d378e597cb48bf2db0a51",
+      "started_at": "2026-08-11T20:59:53.908676+00:00",
+      "tail": "........................................................................ [ 55%]\n..........................................................               [100%]\n130 passed in 9.60s\n",
+      "timed_out": false
+    }
+  ],
+  "created_at": "2026-08-11T21:00:04.153950+00:00",
+  "findings": [],
+  "graph_digest": "ac8587de809ce6dbc0a75b476e79fc8d0474a980c0cfbabcb97979a0b490a82a",
+  "graph_id": "plan26_langgraph_curriculum_factory_implementation",
+  "input_fingerprint": "cd812f2100efb087227366b8c818b9fd7323f05369926aed5494087f4c313296",
+  "node_definition_sha256": "c380d8b84397582898ad9a02373aedeb55d72783b7d67934e422bfa260d91c11",
+  "node_id": "N13_TRANSPORT_AUTH",
+  "outputs": {
+    "plans/26_langgraph_curriculum_factory/results/N13_TRANSPORT_AUTH.result.v1.md": "ae681c609bbc2e8dc4815a3fd9d15136ca57e9a1587f8dd5ca0a4a038b2e842a",
+    "plans/26_langgraph_curriculum_factory/results/evidence/N13_TRANSPORT_AUTH": "71215b610e153a8ae16ec61c466090ccfd0fff37224ea13c705b4e3c88cd13a3",
+    "runtime/langgraph_factory/config": "0e814a0660e13a6896fd303ff3adeb1b030372c3a3f509edaab8c5f755b587e4",
+    "runtime/langgraph_factory/egress.py": "837410dad45a7deb8ef761e3636700a7fbde9f45ff6d97d8b4ba7b5c96383f52",
+    "runtime/langgraph_factory/prompts": "79009f2e9fa9170d9e759b461b1161b181cd383c3b3c3fe00b9f9e31b6d78a1b",
+    "runtime/langgraph_factory/schemas": "a3af6417ab97ae946dd08369b843cc6671da4c45596f713a12ead043c403aadb",
+    "runtime/langgraph_factory/transport.py": "338bf915823ad2ba23ae3fdf95e8030e249a5ee794f14a565ea397b30f5475b3",
+    "tests/runtime/test_plan26_egress.py": "e31bab0c2084a41928a0c5c9a96db9f87db18fc87a865e38723334658ac9bf1a",
+    "tests/runtime/test_plan26_transport.py": "8c67461bc0bc25134e61f1f237c23cd00283141ff9c6c53c0da8f493b316ff59"
+  },
+  "prompt_sha256": "123d987b166da423f31d03b77f61b2be37ec175d3b90d6d3b091d0c9ac4e0f04",
+  "schema_version": 1,
+  "source": "adopted_v2_after_focused_verification",
+  "status": "PASSED"
+}

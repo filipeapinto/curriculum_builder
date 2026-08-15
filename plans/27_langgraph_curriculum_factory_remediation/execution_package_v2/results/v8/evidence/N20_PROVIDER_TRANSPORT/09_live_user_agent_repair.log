@@ -1,0 +1,5 @@
+Genuine N70 attempt 2 exhausted one locator set because public Adafruit pages returned HTTP 403 to urllib's default token.
+A read-only diagnostic proved the same allowlisted URL returned HTTP 200 to the transparent non-browser identity curriculum-builder/1.0.
+The default production opener now sends a fixed GET Request with User-Agent curriculum-builder/1.0; host, scheme, port, DNS/IP, redirect, authorization, content-type, status, and byte-bound checks are unchanged.
+Direct production-opener identity, HTTPError classification, and composed D06B fallback tests passed.
+The complete N20 suite passed: 495 passed, 1 skipped, 140 subtests; the 35-file scan found zero violations.

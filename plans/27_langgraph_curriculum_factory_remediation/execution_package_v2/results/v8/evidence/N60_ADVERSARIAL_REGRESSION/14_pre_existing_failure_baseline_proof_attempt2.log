@@ -1,0 +1,7 @@
+The only failure in both complete runtime passes remains unrelated to Run 27 and byte-for-byte pre-existing:
+tests/runtime/test_plan26_prompt_graph_controller.py
+working-tree SHA-256: 6c15d950cbf5c502f92eb7ec2746eb0382057a2bffb9806c9a22ffee1f999bc5
+HEAD SHA-256:         6c15d950cbf5c502f92eb7ec2746eb0382057a2bffb9806c9a22ffee1f999bc5
+The same failure and exact file digest were frozen in immutable N60 attempt-1 evidence before the live N70 repair.
+Attempt-2 census is stable across both complete runs: 1 failed, 1334 passed, 2 skipped, 419 subtests passed.
+The increase from attempt 1 is the newly added direct production HTTPError policy test; no test was deleted, skipped, xfailed, or filtered to obtain admission.

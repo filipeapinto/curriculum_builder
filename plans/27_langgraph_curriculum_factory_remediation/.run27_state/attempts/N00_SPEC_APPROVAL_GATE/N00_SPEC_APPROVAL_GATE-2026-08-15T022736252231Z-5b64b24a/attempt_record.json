@@ -1,0 +1,18 @@
+{
+  "approved_spec_sha256": "e14df5a36ce12d700fe9fc4aa4aea466771bc89f31bc6e9d49f812c147b1bb3c",
+  "attempt_id": "N00_SPEC_APPROVAL_GATE-2026-08-15T022736252231Z-5b64b24a",
+  "baseline": {
+    "plans/27_langgraph_curriculum_factory_remediation/execution_package_v2/results/v8/N00_SPEC_APPROVAL_GATE.result.v1.json": "ba178d930440d9d11133dbe4a2aade64b6d4c18d926f4e7c2ebabf4e0863e1dd",
+    "plans/27_langgraph_curriculum_factory_remediation/execution_package_v2/results/v8/evidence/N00_SPEC_APPROVAL_GATE": "295bec38bbb5f41d7bca6f330361ef334da38697027640f1726e2a4232f3bacf"
+  },
+  "created_at": "2026-08-15T02:27:36.252853Z",
+  "evidence_dir": "attempts/N00_SPEC_APPROVAL_GATE/N00_SPEC_APPROVAL_GATE-2026-08-15T022736252231Z-5b64b24a/logs",
+  "graph_sha256": "c2d79ac0387c935977385138d2d891cf1539041f1a4532acf94fc8dc687bf6b1",
+  "node_definition_sha256": "f87518d2a922f1e8efe5e1575575eed61df3a3c65c273c85950bb9630f79381c",
+  "node_id": "N00_SPEC_APPROVAL_GATE",
+  "parent_attempt_id": null,
+  "predecessor_receipt_digests": {},
+  "prompt_sha256": "04893339f0482440b242e789be276d89bb38e9753fa0c70ec7600ece04d21bb1",
+  "run_id": "run27",
+  "schema_version": 1
+}

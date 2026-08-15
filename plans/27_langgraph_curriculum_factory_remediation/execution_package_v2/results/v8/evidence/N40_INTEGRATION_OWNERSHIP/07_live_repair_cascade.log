@@ -1,0 +1,5 @@
+N40 downstream re-admission after the genuine N70 attempt exposed and N20/N30 repaired HTTP status handling and bounded locator fallback.
+The N40 production-reachability suite passed: 210 passed in 11.47s.
+The N40 exact write-set scan passed: 11 files scanned, zero violations.
+The integration-ownership verifier passed: valid=true, ok=true, claims_checked=75, failures=[].
+The prior attempt-1 result is preserved under evidence/N40_INTEGRATION_OWNERSHIP/attempts/.

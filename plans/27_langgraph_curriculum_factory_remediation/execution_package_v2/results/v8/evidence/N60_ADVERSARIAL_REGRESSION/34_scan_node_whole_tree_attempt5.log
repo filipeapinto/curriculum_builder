@@ -1,0 +1,4 @@
+command: python3 plans/27_langgraph_curriculum_factory_remediation/execution_package_v2/controller/scan_node.py --graph plans/27_langgraph_curriculum_factory_remediation/execution_package_v2/implementation.graph.v8.yaml
+exit_code: 0
+scanned_files: 67
+violations: []

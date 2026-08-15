@@ -1,0 +1,62 @@
+{
+  "schema_version": 1,
+  "run_id": "run27-execution-package-v2-graph-v8",
+  "node_id": "N60_ADVERSARIAL_REGRESSION",
+  "attempt_id": "N60_ADVERSARIAL_REGRESSION-execpkgv2-v8-attempt-1",
+  "outcome": "PASSED",
+  "source_spec_sha256": "e14df5a36ce12d700fe9fc4aa4aea466771bc89f31bc6e9d49f812c147b1bb3c",
+  "prompt_sha256": "2f4e8155eeefc5ee9ea4c9a3a4f95c8cc48425463e47a78bb824db7e6016b4e3",
+  "predecessor_receipts": {
+    "N50_EVIDENCE_AUDIT_CONTROLS": "46e3200e91713b74965451a6eb044f44966f83ec0f7053a558986d0a908e6d2f"
+  },
+  "changed_files": [
+    {"path": "plans/27_langgraph_curriculum_factory_remediation/execution_package_v2/results/v8/evidence/N60_ADVERSARIAL_REGRESSION/01_pytest_n60_own.log", "change": "created", "sha256": "1997c803566c9ea96ab164bee3c2f662c3c0ed368416a49a4483ec63a25ee54e"},
+    {"path": "plans/27_langgraph_curriculum_factory_remediation/execution_package_v2/results/v8/evidence/N60_ADVERSARIAL_REGRESSION/02_pytest_tests_runtime_run1.log", "change": "created", "sha256": "a38f35768151422ad6d2a3cb38d002b89b2687faa5c34c97d181f5828bc1af77"},
+    {"path": "plans/27_langgraph_curriculum_factory_remediation/execution_package_v2/results/v8/evidence/N60_ADVERSARIAL_REGRESSION/03_pytest_tests_runtime_run2.log", "change": "created", "sha256": "5d79959c4fdf82efbee0bfd4da870c755c5113404a2321da078220eac145c393"},
+    {"path": "plans/27_langgraph_curriculum_factory_remediation/execution_package_v2/results/v8/evidence/N60_ADVERSARIAL_REGRESSION/04_pytest_plan27_run1.log", "change": "created", "sha256": "07481bcbce74418fcf1981e2c5c4f37c31f43dbeea81a4cfd89ec0eeeaf6ed92"},
+    {"path": "plans/27_langgraph_curriculum_factory_remediation/execution_package_v2/results/v8/evidence/N60_ADVERSARIAL_REGRESSION/05_pytest_plan27_run2.log", "change": "created", "sha256": "974da6fad6028dec67368e623fb4aff399a45536333c9c2862ad1fe840a9a127"},
+    {"path": "plans/27_langgraph_curriculum_factory_remediation/execution_package_v2/results/v8/evidence/N60_ADVERSARIAL_REGRESSION/06_scan_node_whole_tree.log", "change": "created", "sha256": "05a0225b85a3b3f4f1e3691b68c2d4e9eeb037b7eafa86e28e27ec8ee4e08e18"},
+    {"path": "plans/27_langgraph_curriculum_factory_remediation/execution_package_v2/results/v8/evidence/N60_ADVERSARIAL_REGRESSION/07_pre_existing_failure_baseline_proof.log", "change": "created", "sha256": "00fee50d9be565c2eeafb765d5289de08886c84b8a58c945391afcb8db082504"}
+  ],
+  "commands": [
+    {
+      "argv": ["python3", "-m", "pytest", "-q", "tests/runtime/test_plan27_adversarial.py", "plans/27_langgraph_curriculum_factory_remediation/tests/test_run27_adversarial.py"],
+      "exit_code": 0,
+      "log": "plans/27_langgraph_curriculum_factory_remediation/execution_package_v2/results/v8/evidence/N60_ADVERSARIAL_REGRESSION/01_pytest_n60_own.log",
+      "log_sha256": "1997c803566c9ea96ab164bee3c2f662c3c0ed368416a49a4483ec63a25ee54e"
+    },
+    {
+      "argv": ["python3", "-m", "pytest", "-q", "plans/27_langgraph_curriculum_factory_remediation/tests"],
+      "exit_code": 0,
+      "log": "plans/27_langgraph_curriculum_factory_remediation/execution_package_v2/results/v8/evidence/N60_ADVERSARIAL_REGRESSION/04_pytest_plan27_run1.log",
+      "log_sha256": "07481bcbce74418fcf1981e2c5c4f37c31f43dbeea81a4cfd89ec0eeeaf6ed92"
+    },
+    {
+      "argv": ["python3", "-m", "pytest", "-q", "plans/27_langgraph_curriculum_factory_remediation/tests"],
+      "exit_code": 0,
+      "log": "plans/27_langgraph_curriculum_factory_remediation/execution_package_v2/results/v8/evidence/N60_ADVERSARIAL_REGRESSION/05_pytest_plan27_run2.log",
+      "log_sha256": "974da6fad6028dec67368e623fb4aff399a45536333c9c2862ad1fe840a9a127"
+    },
+    {
+      "argv": ["python3", "plans/27_langgraph_curriculum_factory_remediation/execution_package_v2/controller/scan_node.py", "--graph", "plans/27_langgraph_curriculum_factory_remediation/execution_package_v2/implementation.graph.v8.yaml"],
+      "exit_code": 0,
+      "log": "plans/27_langgraph_curriculum_factory_remediation/execution_package_v2/results/v8/evidence/N60_ADVERSARIAL_REGRESSION/06_scan_node_whole_tree.log",
+      "log_sha256": "05a0225b85a3b3f4f1e3691b68c2d4e9eeb037b7eafa86e28e27ec8ee4e08e18"
+    }
+  ],
+  "evidence": [
+    "plans/27_langgraph_curriculum_factory_remediation/execution_package_v2/results/v8/evidence/N60_ADVERSARIAL_REGRESSION/01_pytest_n60_own.log",
+    "plans/27_langgraph_curriculum_factory_remediation/execution_package_v2/results/v8/evidence/N60_ADVERSARIAL_REGRESSION/02_pytest_tests_runtime_run1.log",
+    "plans/27_langgraph_curriculum_factory_remediation/execution_package_v2/results/v8/evidence/N60_ADVERSARIAL_REGRESSION/03_pytest_tests_runtime_run2.log",
+    "plans/27_langgraph_curriculum_factory_remediation/execution_package_v2/results/v8/evidence/N60_ADVERSARIAL_REGRESSION/04_pytest_plan27_run1.log",
+    "plans/27_langgraph_curriculum_factory_remediation/execution_package_v2/results/v8/evidence/N60_ADVERSARIAL_REGRESSION/05_pytest_plan27_run2.log",
+    "plans/27_langgraph_curriculum_factory_remediation/execution_package_v2/results/v8/evidence/N60_ADVERSARIAL_REGRESSION/06_scan_node_whole_tree.log",
+    "plans/27_langgraph_curriculum_factory_remediation/execution_package_v2/results/v8/evidence/N60_ADVERSARIAL_REGRESSION/07_pre_existing_failure_baseline_proof.log"
+  ],
+  "findings": [
+    {"id": "N60V8-F01", "severity": "major", "summary": "All five Run 27 adversarial tests and both 83-test Plan 27 denominator passes succeeded; the 67-file complete-tree scan found zero violations.", "disposition": "resolved"},
+    {"id": "N60V8-F02", "severity": "observation", "summary": "Both complete runtime passes produced an identical census: 1333 passed, 2 skipped, 419 subtests passed, with the same sole pre-existing unrelated live-receipt-store failure.", "disposition": "resolved"},
+    {"id": "N60V8-F03", "severity": "observation", "summary": "The sole runtime failure is proven against unmodified HEAD and immutable pre-change evidence; its test bytes are identical at SHA-256 6c15d950...f999bc5.", "disposition": "resolved"}
+  ],
+  "invalidated_descendants": []
+}

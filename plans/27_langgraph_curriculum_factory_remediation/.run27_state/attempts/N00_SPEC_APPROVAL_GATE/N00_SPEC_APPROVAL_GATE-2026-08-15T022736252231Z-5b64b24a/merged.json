@@ -1,0 +1,9 @@
+{
+  "admission": "normal",
+  "at": "2026-08-15T02:27:44.496854Z",
+  "attempt_id": "N00_SPEC_APPROVAL_GATE-2026-08-15T022736252231Z-5b64b24a",
+  "node_id": "N00_SPEC_APPROVAL_GATE",
+  "receipt": "receipts/N00_SPEC_APPROVAL_GATE.receipt.v1.json",
+  "receipt_sha256": "e9615e73c759b716c1f5e6bd4e2a4363e79622cd0dc91d095f4e844a39595e58",
+  "status": "PASSED"
+}

@@ -3,8 +3,10 @@ from __future__ import annotations
 
 import hashlib
 import http.client
+import io
 import socket
 import threading
+import urllib.error
 import urllib.request
 from datetime import datetime, timedelta, timezone
 from pathlib import Path
@@ -424,6 +426,85 @@ def test_default_opener_validates_before_urllib_constructs_the_redirect(
 
     assert denied.value.reason == "redirect_scheme_not_allowed"
     assert events == ["validated_redirect"]
+
+
+def test_default_opener_surfaces_http_error_as_a_policy_checkable_response(
+    monkeypatch: pytest.MonkeyPatch,
+) -> None:
+    """urllib's HTTPError is a status-bearing response, not a tool crash."""
+
+    error = urllib.error.HTTPError(
+        "https://standards.example.org/forbidden",
+        403,
+        "Forbidden",
+        {"Content-Type": "text/html"},
+        io.BytesIO(b"denied"),
+    )
+
+    class DenyingOpener:
+        def open(self, url, *, timeout):
+            raise error
+
+    monkeypatch.setattr(
+        urllib.request, "build_opener", lambda handler_type: DenyingOpener())
+    response = _default_opener(
+        "https://standards.example.org/forbidden",
+        timeout=1.0,
+        redirect_validator=lambda target, ordinal: None,
+        max_bytes=1024,
+    )
+
+    assert response.status == 403
+    assert response.final_url == "https://standards.example.org/forbidden"
+    assert response.headers == {"content-type": "text/html"}
+    assert response.body == b"denied"
+
+
+def test_default_opener_identifies_the_retriever_with_a_stable_user_agent(
+    monkeypatch: pytest.MonkeyPatch,
+) -> None:
+    """Public sources must not see urllib's commonly blocked default token."""
+
+    observed: dict[str, object] = {}
+
+    class Response:
+        status = 200
+        headers = {"Content-Type": "text/html"}
+
+        def __enter__(self):
+            return self
+
+        def __exit__(self, *args):
+            return None
+
+        def read(self, bound):
+            return b"ok"
+
+        def geturl(self):
+            return "https://standards.example.org/source"
+
+    class CapturingOpener:
+        def open(self, request, *, timeout):
+            observed["request"] = request
+            observed["timeout"] = timeout
+            return Response()
+
+    monkeypatch.setattr(
+        urllib.request, "build_opener", lambda handler_type: CapturingOpener())
+    response = _default_opener(
+        "https://standards.example.org/source",
+        timeout=1.0,
+        redirect_validator=lambda target, ordinal: None,
+        max_bytes=1024,
+    )
+
+    request = observed["request"]
+    assert isinstance(request, urllib.request.Request)
+    assert request.full_url == "https://standards.example.org/source"
+    assert request.get_method() == "GET"
+    assert request.get_header("User-agent") == "curriculum-builder/1.0"
+    assert observed["timeout"] == 1.0
+    assert response.body == b"ok"
 
 
 def test_load_retrieval_host_profile_returns_the_declared_electronics_profile(tmp_path: Path):

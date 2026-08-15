@@ -458,7 +458,8 @@ def test_D06B_consumes_the_real_source_retriever_return_contract(tmp_path: Path)
         policy=RetrievalPolicy(allowed_hosts=frozenset({"example.invalid"})),
         resolver=lambda host: ("93.184.216.34",),
         opener=lambda url, *, timeout, redirect_validator, max_bytes: RetrievalResponse(
-            final_url=url, status=200, headers={"content-type": "text/html"},
+            final_url=url, status=(403 if url.endswith("/blocked") else 200),
+            headers={"content-type": "text/html"},
             body=body, redirect_chain=(), tls={"protocol": "TLSv1.3"}),
     )
 
@@ -475,6 +476,9 @@ def test_D06B_consumes_the_real_source_retriever_return_contract(tmp_path: Path)
             "U001/1": {"unit_id": "U001", "source_epoch": 1, "request_keys": ["U001/1/f"], "size": 1}
         },
         "source_discoveries": {"U001/1/f": {"locators": [
+            {"request_id": "U001/1/f", "url": "https://example.invalid/blocked",
+             "title": "blocked", "publisher": "p", "locator_kind": "primary",
+             "rationale": "first bounded candidate is unavailable"},
             {"request_id": "U001/1/f", "url": "https://example.invalid/a", "title": "t",
              "publisher": "p", "locator_kind": "primary", "rationale": "why"}]}},
         "external_authorizations": [{"providers": {"primary_source_hosts": ["primary_source_bytes"]}, "approved_at_utc": "2026-01-01T00:00:00Z", "expires_at_utc": "2099-01-01T00:00:00Z", "curriculum_digest": "c" * 64, "output_root": str(tmp_path)}],
@@ -485,6 +489,9 @@ def test_D06B_consumes_the_real_source_retriever_return_contract(tmp_path: Path)
     assert "pending_failure" not in update
     digest = hashlib.sha256(body).hexdigest()
     assert update["retrievals"]["U001/1/f"]["sha256"] == digest
+    assert update["retrievals"]["U001/1/f"]["locator"]["url"] == (
+        "https://example.invalid/a"
+    )
     packet = update["pending_packet"]["packets"][0]
     assert packet["retrieval_group"]["retrieved_records"][0]["bytes_path"] == (
         f"retrieved-{digest}.bin"

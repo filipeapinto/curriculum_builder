@@ -1,0 +1,7 @@
+trigger: N60 controller verification reproduced the known Plan 26 live-receipt-store failure after 1336 otherwise passing runtime tests.
+root_cause: ten historical PASSED receipts remained at active receipt paths even though their own output hashes or ancestor fingerprints were stale against current HEAD. The test correctly rejected the contradiction between PASSED bytes and non-admissible state.
+repair: reran focused verification and reissued N10_DEPENDENCY_API, N12_EVIDENCE_ARTIFACTS, and N13_TRANSPORT_AUTH against current HEAD. ReceiptStore archived the prior bytes. Moved the ten still-stale descendant receipts intact into plans/26_langgraph_curriculum_factory/results/v3/invalidated_by_run27_n60_20260815 using digest-named files.
+current_plan26_receipts: N00_BASELINE_FREEZE, N10_DEPENDENCY_API, N11_STATE_REDUCERS, N12_EVIDENCE_ARTIFACTS, N13_TRANSPORT_AUTH are PASSED and admissible.
+archived_descendants: N21_PERSISTENCE_RESUME, N22_DETERMINISTIC_NODES, N23_MODEL_NODES, N20_GRAPH_COMPILER, N30_UNIT_GRAPH, N31_REPAIR_ACCEPTANCE, N32_WORKBOOK_TERMINALS, N40_CLI_CUTOVER, N50_ADVERSARIAL_REGRESSION, N90_FINAL_AUDIT.
+preservation: every moved receipt retained its pre-move SHA-256 in its archive filename; no receipt was relabeled, overwritten, or deleted.
+targeted_invariant: 1 passed in 0.13s

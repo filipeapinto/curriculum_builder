@@ -1,0 +1,3 @@
+command: python3 -m pytest -q tests/runtime/test_plan26_topology.py tests/runtime/test_plan26_unit_graph.py tests/runtime/test_plan26_repair_acceptance.py tests/runtime/test_plan26_workbook.py
+exit_code: 0
+result: 210 passed in 13.04s

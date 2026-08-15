@@ -1,0 +1,4 @@
+command: python3 -m pytest -q tests/runtime/test_plan26_transport.py tests/runtime/test_plan26_model_nodes.py tests/runtime/test_plan26_egress.py tests/runtime/test_capabilities.py tests/runtime/test_curriculum_factory_graph.py tests/runtime/test_plan26_adversarial.py tests/runtime/test_plan26_api_contract.py tests/runtime/test_plan26_lock_drift.py
+exit_code: 0
+result: 496 passed, 1 skipped, 140 subtests passed in 27.19s
+execution_note: rerun outside the nested macOS sandbox after sandbox-exec itself was denied; no test assertion failed in the admitted run.

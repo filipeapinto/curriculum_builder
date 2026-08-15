@@ -22,6 +22,7 @@ import tempfile
 import time
 from dataclasses import dataclass, field
 from datetime import datetime, timezone
+from html.parser import HTMLParser
 from pathlib import Path
 from typing import Any, Callable, Mapping, Sequence
 
@@ -425,7 +426,12 @@ def build_cli_schema_projection(schema: Mapping[str, Any]) -> dict[str, Any]:
     return _walk(dict(schema), path="$")
 
 
-def build_claude_stdin_payload(*, instruction: str, projection: Mapping[str, Any]) -> str:
+def build_claude_stdin_payload(
+    *,
+    instruction: str,
+    projection: Mapping[str, Any],
+    verified_staged_inputs: Sequence[Mapping[str, Any]] = (),
+) -> str:
     """The JSON-encoded `{instruction, authorized_input_projection}` document (spec 7.2).
 
     The same canonical projection also staged to `authorized_input.json` for durable
@@ -433,10 +439,13 @@ def build_claude_stdin_payload(*, instruction: str, projection: Mapping[str, Any
     Claude worker no file-reading tool to open that staged file with.
     """
 
-    return canonical_json({
+    payload: dict[str, Any] = {
         "instruction": instruction,
         "authorized_input_projection": dict(projection),
-    })
+    }
+    if verified_staged_inputs:
+        payload["verified_staged_inputs"] = [dict(item) for item in verified_staged_inputs]
+    return canonical_json(payload)
 
 
 def redact_command(argv: Sequence[str]) -> list[str]:
@@ -1325,6 +1334,118 @@ def stage_workspace(
     return workspace
 
 
+MAX_VERIFIED_STAGED_TEXT_CHARS = 240_000
+
+
+class _VisibleHTMLText(HTMLParser):
+    """Small deterministic visible-text projection for verified HTML bytes."""
+
+    _BLOCKS = frozenset({
+        "article", "aside", "blockquote", "br", "dd", "div", "dl", "dt",
+        "figcaption", "figure", "footer", "h1", "h2", "h3", "h4", "h5",
+        "h6", "header", "li", "main", "nav", "ol", "p", "pre", "section",
+        "table", "tbody", "td", "th", "thead", "tr", "ul",
+    })
+    _HIDDEN = frozenset({"script", "style", "noscript", "svg", "template"})
+
+    def __init__(self) -> None:
+        super().__init__(convert_charrefs=True)
+        self.parts: list[str] = []
+        self.hidden_depth = 0
+
+    def handle_starttag(self, tag: str, attrs: list[tuple[str, str | None]]) -> None:
+        normalized = tag.lower()
+        if normalized in self._HIDDEN:
+            self.hidden_depth += 1
+        elif self.hidden_depth == 0 and normalized in self._BLOCKS:
+            self.parts.append("\n")
+
+    def handle_endtag(self, tag: str) -> None:
+        normalized = tag.lower()
+        if normalized in self._HIDDEN:
+            self.hidden_depth = max(0, self.hidden_depth - 1)
+        elif self.hidden_depth == 0 and normalized in self._BLOCKS:
+            self.parts.append("\n")
+
+    def handle_data(self, data: str) -> None:
+        if self.hidden_depth == 0:
+            self.parts.append(data)
+
+
+def _normalize_staged_text(text: str) -> str:
+    lines = [re.sub(r"[ \t]+", " ", line).strip() for line in text.splitlines()]
+    compact: list[str] = []
+    for line in lines:
+        if line or (compact and compact[-1]):
+            compact.append(line)
+    return "\n".join(compact).strip()
+
+
+def _extract_verified_staged_text(path: Path) -> tuple[str, str]:
+    """Project already hash-verified staged bytes into bounded, model-readable text."""
+
+    raw = path.read_bytes()
+    if raw.startswith(b"%PDF-"):
+        executable = shutil.which("pdftotext")
+        if executable is None:
+            raise WorkspaceViolation(
+                f"cannot project verified PDF staged input {path.name!r}: pdftotext unavailable")
+        completed = subprocess.run(
+            [executable, "-layout", str(path), "-"],
+            capture_output=True, text=True, timeout=120)
+        if completed.returncode != 0:
+            raise WorkspaceViolation(
+                f"cannot project verified PDF staged input {path.name!r}: "
+                f"pdftotext exited {completed.returncode}: {completed.stderr.strip()[:500]}")
+        pages = completed.stdout.split("\f")
+        text = "\n".join(
+            f"--- PAGE {number} ---\n{page}" for number, page in enumerate(pages, start=1)
+            if page.strip())
+        return _normalize_staged_text(text), "pdf_text"
+
+    try:
+        decoded = raw.decode("utf-8")
+    except UnicodeDecodeError as error:
+        raise WorkspaceViolation(
+            f"verified staged input {path.name!r} is neither PDF nor UTF-8 text") from error
+    if re.search(r"<\s*(?:!doctype\s+html|html|body|article)\b", decoded[:16_384], re.I):
+        parser = _VisibleHTMLText()
+        parser.feed(decoded)
+        parser.close()
+        return _normalize_staged_text("".join(parser.parts)), "html_visible_text"
+    return _normalize_staged_text(decoded), "utf8_text"
+
+
+def build_verified_staged_inputs(
+    *, workspace: Workspace, staged_inputs: Sequence[StagedInput]
+) -> tuple[dict[str, Any], ...]:
+    """Make verified staged files readable to a tool-closed Claude invocation.
+
+    The workspace copy has already passed the source SHA-256 check.  The extracted
+    text is separately hashed and bounded before it enters the authorized stdin
+    document; no host, path, or sibling workspace becomes readable to the worker.
+    """
+
+    projected: list[dict[str, Any]] = []
+    for item in staged_inputs:
+        path = workspace.path / item.name
+        if workspace.staged_sha256.get(item.name) != item.sha256:
+            raise WorkspaceViolation(
+                f"staged input {item.name!r} lacks the verified workspace digest")
+        text, text_format = _extract_verified_staged_text(path)
+        truncated = len(text) > MAX_VERIFIED_STAGED_TEXT_CHARS
+        bounded = text[:MAX_VERIFIED_STAGED_TEXT_CHARS]
+        projected.append({
+            "name": item.name,
+            "source_sha256": item.sha256,
+            "text_format": text_format,
+            "text_sha256": sha256_bytes(bounded.encode("utf-8")),
+            "truncated": truncated,
+            "text": bounded,
+        })
+    return tuple(projected)
+
+
 def build_worker_environment(*, home: Path, passthrough: Sequence[str] = ()) -> dict[str, str]:
     """Allowlisted environment over a dedicated temporary home; secrets pass by name only.
 
@@ -1917,7 +2038,13 @@ class CliTransport:
             argv = build_job_argv(route, workspace=workspace.path,
                                   cli_schema_projection=cli_schema_projection,
                                   tools=("WebSearch" if web_search else ""))
-            stdin_text = build_claude_stdin_payload(instruction=instruction, projection=projection)
+            verified_staged_inputs = build_verified_staged_inputs(
+                workspace=workspace, staged_inputs=staged_inputs)
+            stdin_text = build_claude_stdin_payload(
+                instruction=instruction,
+                projection=projection,
+                verified_staged_inputs=verified_staged_inputs,
+            )
         else:
             argv = build_job_argv(route, workspace=workspace.path, instruction=instruction)
         profile_path = workspace.home / "profile.sb"

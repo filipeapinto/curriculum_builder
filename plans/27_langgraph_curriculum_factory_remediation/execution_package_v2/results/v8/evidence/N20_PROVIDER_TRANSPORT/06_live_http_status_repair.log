@@ -1,0 +1,5 @@
+Live N70 attempt terminal: SYSTEM_FAILURE at D06B_RETRIEVE_SOURCE_CANDIDATES.
+Checkpoint cause: deterministic retrieval failed for L01/1/required_explanation:000 with HTTP Error 403: Forbidden.
+The 403 was a normal response from the first of three untrusted locator candidates, but urllib raised it before SourceRetriever could create its http_status_not_ok denial receipt.
+Repair: production _default_opener now preserves HTTPError as a bounded status-bearing RetrievalResponse, after which SourceRetriever fails closed with a schema-valid denial.
+Regression: test_default_opener_surfaces_http_error_as_a_policy_checkable_response passed.

@@ -1,0 +1,6 @@
+{"at":"2026-08-15T02:28:00.490457Z","event":"attempt_created","parent_attempt_id":null}
+{"argv":["python3","-m","pytest","-q","plans/27_langgraph_curriculum_factory_remediation/tests/test_run27_controller.py","plans/27_langgraph_curriculum_factory_remediation/tests/test_node_result_protocol.py","plans/27_langgraph_curriculum_factory_remediation/tests/test_forbidden_production_scan.py"],"at":"2026-08-15T02:28:09.402431Z","event":"verification_command","exit_code":0}
+{"argv":["python3","plans/27_langgraph_curriculum_factory_remediation/execution_package_v2/tools/validate_plan_v2.py"],"at":"2026-08-15T02:28:09.639948Z","event":"verification_command","exit_code":0}
+{"argv":["python3","plans/27_langgraph_curriculum_factory_remediation/execution_package_v2/tools/validate_result_v2.py","--node","N10_HARNESS_PROTOCOL"],"at":"2026-08-15T02:28:09.752783Z","event":"verification_command","exit_code":0}
+{"at":"2026-08-15T02:28:09.757704Z","event":"merge_journaled","receipt_sha256":"78c2d3f9e249ea3506e08b791800dc4b34f1af88c1df5d43995eaea5d9b2a369"}
+{"at":"2026-08-15T02:28:09.758669Z","event":"merge_completed","receipt_sha256":"78c2d3f9e249ea3506e08b791800dc4b34f1af88c1df5d43995eaea5d9b2a369"}

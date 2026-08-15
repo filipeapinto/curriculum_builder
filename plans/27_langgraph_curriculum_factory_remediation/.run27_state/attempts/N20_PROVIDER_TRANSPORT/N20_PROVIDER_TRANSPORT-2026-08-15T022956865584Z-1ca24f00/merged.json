@@ -1,0 +1,9 @@
+{
+  "admission": "normal",
+  "at": "2026-08-15T02:30:34.789632Z",
+  "attempt_id": "N20_PROVIDER_TRANSPORT-2026-08-15T022956865584Z-1ca24f00",
+  "node_id": "N20_PROVIDER_TRANSPORT",
+  "receipt": "receipts/N20_PROVIDER_TRANSPORT.receipt.v1.json",
+  "receipt_sha256": "7ab7a8fc087eff4f616b965e2513a599e75dd1b27da0dd5b3f4ae92789ad990c",
+  "status": "PASSED"
+}

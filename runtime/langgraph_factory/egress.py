@@ -451,6 +451,7 @@ def _default_opener(
     redirect_validator: Callable[[str, int], None],
     max_bytes: int,
 ) -> RetrievalResponse:
+    import urllib.error
     import urllib.request
 
     chain: list[str] = []
@@ -464,13 +465,34 @@ def _default_opener(
             return super().redirect_request(req, fp, code, msg, headers, newurl)
 
     opener = urllib.request.build_opener(_Tracker)
-    with opener.open(url, timeout=timeout) as response:
+    # A transparent, stable agent identity is part of a well-formed HTTP
+    # retrieval request.  urllib's default Python-urllib token is rejected by
+    # otherwise public primary-source hosts (observed in the genuine N70 run),
+    # which incorrectly converts available source material into a typed
+    # availability failure.  This header neither expands authority nor changes
+    # redirect/host enforcement; every hop still passes through _Tracker and
+    # the socket grant remains pinned to the admitted endpoint.
+    request = urllib.request.Request(
+        url,
+        headers={"User-Agent": "curriculum-builder/1.0"},
+        method="GET",
+    )
+    try:
+        response = opener.open(request, timeout=timeout)
+    except urllib.error.HTTPError as error:
+        # HTTPError is also the complete HTTP response. Preserve its status,
+        # headers, bounded body, final URL, and redirect history so
+        # SourceRetriever can issue the same schema-valid `http_status_not_ok`
+        # denial as it does for an injected/non-urllib response. A normal 4xx
+        # source response is not a transport crash.
+        response = error
+    with response:
         # Read at most one byte beyond the bound so an oversized body is denied
         # without buffering the complete attacker-controlled response.
         body = response.read(max_bytes + 1)
         return RetrievalResponse(
             final_url=response.geturl(),
-            status=response.status,
+            status=int(response.status),
             headers={k.lower(): v for k, v in response.headers.items()},
             body=body,
             redirect_chain=tuple(chain),

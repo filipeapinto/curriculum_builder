@@ -1,0 +1,5 @@
+test: tests/runtime/test_plan26_prompt_graph_controller.py::test_passed_nodes_remain_admissible_after_harness_or_predecessor_change
+working_tree_sha256: 6c15d950...f999bc5
+HEAD_sha256: 6c15d950...f999bc5
+classification: pre-existing unrelated failure caused by intentionally invalidated live receipts during forward re-admission, not by staged-input production changes.
+repeatability: same sole failure in both complete runtime runs.

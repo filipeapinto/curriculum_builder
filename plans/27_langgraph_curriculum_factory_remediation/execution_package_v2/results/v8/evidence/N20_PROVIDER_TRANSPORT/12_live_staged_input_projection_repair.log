@@ -1,0 +1,5 @@
+trigger: N70 live attempt 3 reached M01 INTERPRET with successfully retrieved, digest-bound sources, but the subscription CLI received only staged-file metadata and therefore correctly refused to invent source quotations.
+repair: Claude stdin now includes bounded visible text extracted from each workspace-reverified staged artifact, together with source_sha256, text_sha256, text_format, and truncation state. HTML active content is excluded; PDF text is extracted with pdftotext and page markers. CLI tools remain closed.
+direct_html_proof: transport test passed; staged source digest matched, text digest matched, visible text was present, script content was absent, and the model candidate was accepted.
+direct_live_pdf_proof: format=pdf_text; chars=45218; mentions_disconnect_power=true
+security_posture: no network, filesystem, shell, or tool authority was granted to the model process.

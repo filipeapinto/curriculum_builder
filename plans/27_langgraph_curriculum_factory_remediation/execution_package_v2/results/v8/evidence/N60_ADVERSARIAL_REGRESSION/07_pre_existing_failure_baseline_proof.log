@@ -1,0 +1,7 @@
+Frozen pre-change baseline proof carried forward from immutable v7 evidence:
+tests/runtime/test_plan26_prompt_graph_controller.py::test_passed_nodes_remain_admissible_after_harness_or_predecessor_change fails at unmodified HEAD for N10_DEPENDENCY_API with the identical assertion.
+Historical baseline evidence: plans/27_langgraph_curriculum_factory_remediation/execution_package_v2/results/v7/evidence/N60_ADVERSARIAL_REGRESSION/07_pre_existing_failure_baseline_proof.log
+Historical proof reset only Run 27-modified files to commit e04192e and reran the isolated test: 1 failed in 0.21s, baseline_exit_code:1.
+Current live test SHA-256: 6c15d950cbf5c502f92eb7ec2746eb0382057a2bffb9806c9a22ffee1f999bc5
+Current HEAD test SHA-256: 6c15d950cbf5c502f92eb7ec2746eb0382057a2bffb9806c9a22ffee1f999bc5
+No N60-owned or upstream Run 27 change caused this failure.

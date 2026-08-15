@@ -1,0 +1,38 @@
+{
+  "changed_files": [],
+  "commands": [
+    {
+      "argv": [
+        "/tmp/plan26_n30_verify/bin/python",
+        "-m",
+        "pytest",
+        "-q",
+        "tests/runtime/test_plan26_evidence.py"
+      ],
+      "exit_code": 0,
+      "finished_at": "2026-08-11T20:59:53.903435+00:00",
+      "log": "plans/26_langgraph_curriculum_factory/results/v3/logs/N12_EVIDENCE_ARTIFACTS/adopt-v2.test1.log",
+      "log_sha256": "d09e9fe3e283f36bb969e74e02a6859acdb14123e0dab2b75bc3a1f0099042ff",
+      "started_at": "2026-08-11T20:59:53.135507+00:00",
+      "tail": "..........                                                  [100%]\n10 passed, 13 subtests passed in 0.25s\n",
+      "timed_out": false
+    }
+  ],
+  "created_at": "2026-08-11T20:59:53.906185+00:00",
+  "findings": [],
+  "graph_digest": "ac8587de809ce6dbc0a75b476e79fc8d0474a980c0cfbabcb97979a0b490a82a",
+  "graph_id": "plan26_langgraph_curriculum_factory_implementation",
+  "input_fingerprint": "ce6d56c63dfb0c39ca12e67a424a8590f6e4036b00e1d1ab5f16a98343b3e48c",
+  "node_definition_sha256": "4a6bd857f1f56c73a94ad912e4bda97b29dffd7d708f61ae9a4f45ff2690912f",
+  "node_id": "N12_EVIDENCE_ARTIFACTS",
+  "outputs": {
+    "plans/26_langgraph_curriculum_factory/results/N12_EVIDENCE_ARTIFACTS.result.v1.md": "6c4a2bbbacb325e4f4b28c36a8811415f5e7d96b24a8e95ce2c10cb70f18c06f",
+    "runtime/langgraph_factory/artifacts.py": "dfb1efa93c0c267b0ae282c9687d769ef043b31c363526871e7212e2890b86cf",
+    "runtime/langgraph_factory/evidence.py": "95ddef6f9e1e5e7031f223d88b285b2b0ffbdd604c70181ae87ad8a21220c199",
+    "tests/runtime/test_plan26_evidence.py": "391dc9c9a40889974951b59e2fdcc342121bd2eae7e8474ed63390f19813db7c"
+  },
+  "prompt_sha256": "c08f571402a5e601038a41dbb27cde3b443b45fafaa1558f29f3ff33c8512210",
+  "schema_version": 1,
+  "source": "adopted_v2_after_focused_verification",
+  "status": "PASSED"
+}

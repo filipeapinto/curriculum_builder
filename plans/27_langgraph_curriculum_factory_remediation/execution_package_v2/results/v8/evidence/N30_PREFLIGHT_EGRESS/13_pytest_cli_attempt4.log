@@ -1,0 +1,3 @@
+command: python3 -m pytest -q tests/runtime/test_plan26_cli.py tests/runtime/test_run_curriculum.py
+exit_code: 0
+result: 62 passed, 27 subtests passed in 29.09s

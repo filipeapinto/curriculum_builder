@@ -1,0 +1,8 @@
+{"at":"2026-08-15T02:47:32.593232Z","event":"attempt_created","parent_attempt_id":null}
+{"argv":["python3","-m","pytest","-q","tests/runtime/test_plan27_adversarial.py","plans/27_langgraph_curriculum_factory_remediation/tests/test_run27_adversarial.py"],"at":"2026-08-15T02:47:43.301284Z","event":"verification_command","exit_code":0}
+{"argv":["python3","-m","pytest","-q","tests/runtime"],"at":"2026-08-15T02:50:13.169336Z","event":"verification_command","exit_code":0}
+{"argv":["python3","-m","pytest","-q","plans/27_langgraph_curriculum_factory_remediation/tests"],"at":"2026-08-15T02:50:20.934506Z","event":"verification_command","exit_code":0}
+{"argv":["python3","plans/27_langgraph_curriculum_factory_remediation/execution_package_v2/controller/scan_node.py","--graph","plans/27_langgraph_curriculum_factory_remediation/execution_package_v2/implementation.graph.v8.yaml"],"at":"2026-08-15T02:50:21.094871Z","event":"verification_command","exit_code":0}
+{"argv":["python3","plans/27_langgraph_curriculum_factory_remediation/execution_package_v2/tools/validate_result_v2.py","--node","N60_ADVERSARIAL_REGRESSION"],"at":"2026-08-15T02:50:21.216542Z","event":"verification_command","exit_code":0}
+{"at":"2026-08-15T02:50:21.225022Z","event":"merge_journaled","receipt_sha256":"67e12abf3fbfa013d39e3445982b76302981ba157048d7a64fcbf167a380aeae"}
+{"at":"2026-08-15T02:50:21.225881Z","event":"merge_completed","receipt_sha256":"67e12abf3fbfa013d39e3445982b76302981ba157048d7a64fcbf167a380aeae"}

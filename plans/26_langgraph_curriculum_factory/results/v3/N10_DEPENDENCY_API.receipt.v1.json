@@ -11,19 +11,19 @@
         "tests/runtime/test_plan26_lock_drift.py"
       ],
       "exit_code": 0,
-      "finished_at": "2026-08-11T20:59:52.042414+00:00",
-      "log": "plans/26_langgraph_curriculum_factory/results/v3/logs/N10_DEPENDENCY_API/adopt-v2.test1.log",
+      "finished_at": "2026-08-15T02:37:49.449585+00:00",
+      "log": "plans/26_langgraph_curriculum_factory/results/v3/logs/N10_DEPENDENCY_API/adopt-v2-run27-n60-1.test1.log",
       "log_sha256": "865aa1aa648696504e0b08769dd8b820260001239d92ed73d6abb252609b0437",
-      "started_at": "2026-08-11T20:59:50.785769+00:00",
+      "started_at": "2026-08-15T02:37:48.240554+00:00",
       "tail": "...............................s.......      [100%]\n38 passed, 1 skipped, 100 subtests passed in 0.35s\n",
       "timed_out": false
     }
   ],
-  "created_at": "2026-08-11T20:59:52.048003+00:00",
+  "created_at": "2026-08-15T02:37:49.451042+00:00",
   "findings": [],
-  "graph_digest": "ac8587de809ce6dbc0a75b476e79fc8d0474a980c0cfbabcb97979a0b490a82a",
+  "graph_digest": "18d619bb4eb509d1c6c590699ce2072660f36781c33cbc18a4ad1f9f8501cac7",
   "graph_id": "plan26_langgraph_curriculum_factory_implementation",
-  "input_fingerprint": "5a1ce41bf1f0f21fd0401be3ec8f678ac2d3f6f18763b43ecc4c754c69b28c0e",
+  "input_fingerprint": "de400f7f5d40057986d5d5b03acd1ddffbb21461b8d6f6da5f42800bd043095c",
   "node_definition_sha256": "643e708900da67de777af429f466db5f6bd2a15ae66efb722140d7a4dd057479",
   "node_id": "N10_DEPENDENCY_API",
   "outputs": {
@@ -31,11 +31,25 @@
     "plans/26_langgraph_curriculum_factory/results/N10_DEPENDENCY_API.result.v1.md": "1788ebb199b74744233107585a22a361ccb3019e529635324a4bd5bb62611658",
     "requirements/plan26.in": "155bf4bb188b3a5ff38bf1284b32b0ed38c8540d2c5235795341731588dd4d94",
     "requirements/plan26.lock": "df971a783b9d027db96eae800e33e7bc65471b94f7a3b0a151eec075e0824835",
-    "tests/runtime/test_plan26_api_contract.py": "773834e14b01a17e50f89535ab4a5967d55832512568741d3eaf4ff2156eae28",
-    "tests/runtime/test_plan26_lock_drift.py": "3f134dcaf6efca2a754eb6746777b2ab26971a40298ffe6b242c85e1d4b04510"
+    "tests/runtime/test_plan26_api_contract.py": "8369203073fdcf1b553669774c52c780836f5e86f328ef428e899e0cdce873c5",
+    "tests/runtime/test_plan26_lock_drift.py": "211a1e0e7627fcd6762540acde5fbb7f2dd7df665ea7e3c72cca3dda719f4761"
   },
   "prompt_sha256": "f0488a7a2bf9f161041db7a9a672f67c1ad8fe309f5242e941062d346c2d288b",
+  "provenance": {
+    "active_patch_ids": [],
+    "attempt_id": null,
+    "base_graph_digest": "18d619bb4eb509d1c6c590699ce2072660f36781c33cbc18a4ad1f9f8501cac7",
+    "base_prompt_sha256": "f0488a7a2bf9f161041db7a9a672f67c1ad8fe309f5242e941062d346c2d288b",
+    "branch_id": null,
+    "checkpoint": {
+      "N00_BASELINE_FREEZE": "7b7a1d830e239f6bcce471ee02f378022e1f386a5784e7fcb6c0d3d6014f311b"
+    },
+    "effective_prompt_sha256": "f0488a7a2bf9f161041db7a9a672f67c1ad8fe309f5242e941062d346c2d288b",
+    "harness_digest": "a2e5cd37735b3e953f8388e90253daca8add352e8596899473473643f5ecad32",
+    "patch_chain_sha256": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945",
+    "patch_ids": []
+  },
   "schema_version": 1,
-  "source": "adopted_v2_after_focused_verification",
+  "source": "adopted_v2_after_focused_verification_run27_n60_baseline_repair",
   "status": "PASSED"
 }

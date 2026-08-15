@@ -1,0 +1,7 @@
+=================================== FAILURES ===================================
+___ test_passed_nodes_remain_admissible_after_harness_or_predecessor_change ____
+E   AssertionError: N10_DEPENDENCY_API has a PASSED receipt but is inadmissible for a reason other than known evidence-directory drift
+tests/runtime/test_plan26_prompt_graph_controller.py:228: AssertionError
+=========================== short test summary info ============================
+FAILED tests/runtime/test_plan26_prompt_graph_controller.py::test_passed_nodes_remain_admissible_after_harness_or_predecessor_change
+1 failed, 1334 passed, 2 skipped, 419 subtests passed in 152.21s (0:02:32)

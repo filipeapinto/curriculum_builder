@@ -1,0 +1,3 @@
+command: python3 -m pytest -q plans/27_langgraph_curriculum_factory_remediation/tests
+exit_code: 0
+result: 83 passed in 6.96s

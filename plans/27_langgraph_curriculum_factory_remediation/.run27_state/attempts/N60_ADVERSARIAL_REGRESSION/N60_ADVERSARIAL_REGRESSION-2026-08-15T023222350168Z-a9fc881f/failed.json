@@ -1,0 +1,66 @@
+{
+  "at": "2026-08-15T02:35:10.608371Z",
+  "code": "VERIFICATION_FAILED",
+  "commands": [
+    {
+      "argv": [
+        "python3",
+        "-m",
+        "pytest",
+        "-q",
+        "tests/runtime/test_plan27_adversarial.py",
+        "plans/27_langgraph_curriculum_factory_remediation/tests/test_run27_adversarial.py"
+      ],
+      "exit_code": 0,
+      "log": "attempts/N60_ADVERSARIAL_REGRESSION/N60_ADVERSARIAL_REGRESSION-2026-08-15T023222350168Z-a9fc881f/logs/verify_00.log",
+      "log_sha256": "0b16045a038d5ce1c57b747261955cb9bcd10da37496542a2a29394d18426c6b"
+    },
+    {
+      "argv": [
+        "python3",
+        "-m",
+        "pytest",
+        "-q",
+        "tests/runtime"
+      ],
+      "exit_code": 1,
+      "log": "attempts/N60_ADVERSARIAL_REGRESSION/N60_ADVERSARIAL_REGRESSION-2026-08-15T023222350168Z-a9fc881f/logs/verify_01.log",
+      "log_sha256": "4140a4ad5261439b8f438a41ad59ed48d1eb2af0f9622ac49e03432856813f13"
+    },
+    {
+      "argv": [
+        "python3",
+        "-m",
+        "pytest",
+        "-q",
+        "plans/27_langgraph_curriculum_factory_remediation/tests"
+      ],
+      "exit_code": 0,
+      "log": "attempts/N60_ADVERSARIAL_REGRESSION/N60_ADVERSARIAL_REGRESSION-2026-08-15T023222350168Z-a9fc881f/logs/verify_02.log",
+      "log_sha256": "35a2ff102b9bf8fa42443eca838b563f49ad845b5bb6b16d0307e37f981aa75c"
+    },
+    {
+      "argv": [
+        "python3",
+        "plans/27_langgraph_curriculum_factory_remediation/execution_package_v2/controller/scan_node.py",
+        "--graph",
+        "plans/27_langgraph_curriculum_factory_remediation/execution_package_v2/implementation.graph.v8.yaml"
+      ],
+      "exit_code": 0,
+      "log": "attempts/N60_ADVERSARIAL_REGRESSION/N60_ADVERSARIAL_REGRESSION-2026-08-15T023222350168Z-a9fc881f/logs/verify_03.log",
+      "log_sha256": "05a0225b85a3b3f4f1e3691b68c2d4e9eeb037b7eafa86e28e27ec8ee4e08e18"
+    },
+    {
+      "argv": [
+        "python3",
+        "plans/27_langgraph_curriculum_factory_remediation/execution_package_v2/tools/validate_result_v2.py",
+        "--node",
+        "N60_ADVERSARIAL_REGRESSION"
+      ],
+      "exit_code": 0,
+      "log": "attempts/N60_ADVERSARIAL_REGRESSION/N60_ADVERSARIAL_REGRESSION-2026-08-15T023222350168Z-a9fc881f/logs/verify_04.log",
+      "log_sha256": "419f4fd8b252811d36614ce22681acee2d5e0d25284443e6cd39ace4c91ffab2"
+    }
+  ],
+  "message": "['python3', '-m', 'pytest', '-q', 'tests/runtime'] exited 1"
+}

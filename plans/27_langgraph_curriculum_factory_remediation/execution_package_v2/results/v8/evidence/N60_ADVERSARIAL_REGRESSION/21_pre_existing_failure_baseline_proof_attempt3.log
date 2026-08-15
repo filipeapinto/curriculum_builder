@@ -1,0 +1,7 @@
+The only failure in both complete runtime passes remains unrelated to Run 27 and byte-for-byte pre-existing:
+tests/runtime/test_plan26_prompt_graph_controller.py
+working-tree SHA-256: 6c15d950cbf5c502f92eb7ec2746eb0382057a2bffb9806c9a22ffee1f999bc5
+HEAD SHA-256:         6c15d950cbf5c502f92eb7ec2746eb0382057a2bffb9806c9a22ffee1f999bc5
+Attempt-3 census is stable across both complete runs: 1 failed, 1335 passed, 2 skipped, 419 subtests passed.
+The increase from attempt 2 is the new transparent User-Agent production-opener regression test; no test was deleted, skipped, xfailed, or filtered to obtain admission.
+Attempts 1 and 2 remain immutable under evidence/N60_ADVERSARIAL_REGRESSION/attempts/.

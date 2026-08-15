@@ -1,0 +1,2 @@
+reason: evidence controls are re-admitted after the N20/N30/N40 predecessor chain changed for the live staged-input repair.
+result: identical exact suite outcomes in two runs; evidence determinism valid for 2 claims; requirements lineage valid for 8 claims; scoped scan found zero violations.

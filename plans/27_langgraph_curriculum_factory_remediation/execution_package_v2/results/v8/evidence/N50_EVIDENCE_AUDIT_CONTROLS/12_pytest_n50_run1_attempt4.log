@@ -1,0 +1,3 @@
+command: python3 -m pytest -q tests/runtime/test_plan26_evidence.py tests/runtime/test_plan26_persistence.py
+exit_code: 0
+result: 64 passed, 58 subtests passed in 4.94s

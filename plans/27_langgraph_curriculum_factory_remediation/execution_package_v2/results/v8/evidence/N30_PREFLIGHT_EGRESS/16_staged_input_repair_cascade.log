@@ -1,0 +1,2 @@
+reason: N20 changed the authenticated model stdin envelope after N70 live attempt 3 exposed that M01 INTERPRET could not see retrieved bytes. N30 is re-admitted against the repaired N20 predecessor because D06B owns the staged-source handoff.
+result: CLI/preflight and D03/D06B exact suites passed; scoped scan found zero violations.

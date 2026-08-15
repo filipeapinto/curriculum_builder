@@ -1,0 +1,184 @@
+.......................FFFF............................................. [ 14%]
+........................................................................ [ 28%]
+........................................................................ [ 43%]
+........................................................................ [ 57%]
+........................................................................ [ 72%]
+.....................F.......... [ 78%]
+............................................................F....................................s.......            [100%]
+=================================== FAILURES ===================================
+________ test_sandboxed_worker_cannot_read_repository_output_or_secrets ________
+
+tmp_path = PosixPath('/private/var/folders/kj/z_75gwxx2ls7p55rnx4t5kg00000gn/T/pytest-of-filipepinto/pytest-96/test_sandboxed_worker_cannot_r0')
+
+    @requires_sandbox
+    def test_sandboxed_worker_cannot_read_repository_output_or_secrets(tmp_path: Path):
+        workspace = tmp_path / "ws"
+        home = tmp_path / "home"
+        workspace.mkdir()
+        home.mkdir()
+    
+        output_root = tmp_path / "output"
+        (output_root / "other_unit").mkdir(parents=True)
+        sibling = output_root / "other_unit" / "accepted.json"
+        sibling.write_text("sibling unit bytes\n", encoding="utf-8")
+        parent = tmp_path / "author_history.md"
+        parent.write_text("previous attempts\n", encoding="utf-8")
+        secret = home.parent / "credentials.env"
+        secret.write_text("OPENAI_API_KEY=sk-not-a-real-key\n", encoding="utf-8")
+        repo_file = tp.REPO_ROOT / "runtime" / "langgraph_factory" / "transport.py"
+    
+        proof = tp.prove_workspace_isolation(
+            workspace=workspace, home=home,
+            forbidden_paths=[repo_file, sibling, parent, secret])
+    
+        assert proof["mechanism"] == "sandbox-exec"
+        assert proof["readable_forbidden_paths"] == []
+>       assert proof["enforced"] is True
+E       assert False is True
+
+tests/runtime/test_plan26_transport.py:413: AssertionError
+_______________ test_capability_proof_is_satisfied_on_this_host ________________
+
+tmp_path = PosixPath('/private/var/folders/kj/z_75gwxx2ls7p55rnx4t5kg00000gn/T/pytest-of-filipepinto/pytest-96/test_capability_proof_is_satis0')
+
+    @requires_sandbox
+    def test_capability_proof_is_satisfied_on_this_host(tmp_path: Path):
+        guard = EgressGuard(ReceiptLog())
+        guard.install()
+        try:
+            proof = tp.prove_transport_capabilities(
+                guard=guard, probe_root=tmp_path / "probe",
+                forbidden_paths=[tp.REPO_ROOT / "pyproject.toml", tp.REPO_ROOT / "runtime"],
+                identity_help={"codex": "--json", "claude": "--json-schema"})
+        finally:
+            guard.uninstall()
+>       assert proof["satisfied"] is True
+E       assert False is True
+
+tests/runtime/test_plan26_transport.py:427: AssertionError
+_ test_the_real_cli_starts_sandboxed_yet_cannot_read_outside_the_workspace[codex] _
+
+tmp_path = PosixPath('/private/var/folders/kj/z_75gwxx2ls7p55rnx4t5kg00000gn/T/pytest-of-filipepinto/pytest-96/test_the_real_cli_starts_sandb0')
+cli = 'codex'
+
+    @requires_sandbox
+    @pytest.mark.parametrize("cli", ["codex", "claude"])
+    def test_the_real_cli_starts_sandboxed_yet_cannot_read_outside_the_workspace(
+        tmp_path: Path, cli: str
+    ):
+        """The strongest available isolation evidence: the actual pinned binary, sandboxed."""
+        import shutil as _shutil
+    
+        if _shutil.which(cli) is None:
+            pytest.skip(f"{cli} is not installed on this host")
+    
+        workspace = tmp_path / "ws"
+        home = tmp_path / "home"
+        workspace.mkdir()
+        home.mkdir()
+        secret = tmp_path / "credentials.env"
+        secret.write_text("OPENAI_API_KEY=sk-not-a-real-key\n", encoding="utf-8")
+    
+        identity = tp.probe_executable(cli)
+        profile = home / "profile.sb"
+        profile.write_text(
+            tp.render_sandbox_profile(workspace=workspace, home=home,
+                                      readable=tp.executable_read_roots(identity.path)),
+            encoding="utf-8")
+        environment = tp.build_worker_environment(home=home)
+    
+        started = tp.run_process(
+            tp.build_sandboxed_argv([identity.path, "--version"], profile_path=profile),
+            cwd=workspace, env=environment, timeout_seconds=120)
+>       assert started.returncode == 0, started.stderr
+E       AssertionError: sandbox-exec: sandbox_apply: Operation not permitted
+E         
+E       assert 71 == 0
+E        +  where 71 = ProcessOutcome(returncode=71, stdout='', stderr='sandbox-exec: sandbox_apply: Operation not permitted\n', pid=36086, termination='exited').returncode
+
+tests/runtime/test_plan26_transport.py:462: AssertionError
+_ test_the_real_cli_starts_sandboxed_yet_cannot_read_outside_the_workspace[claude] _
+
+tmp_path = PosixPath('/private/var/folders/kj/z_75gwxx2ls7p55rnx4t5kg00000gn/T/pytest-of-filipepinto/pytest-96/test_the_real_cli_starts_sandb1')
+cli = 'claude'
+
+    @requires_sandbox
+    @pytest.mark.parametrize("cli", ["codex", "claude"])
+    def test_the_real_cli_starts_sandboxed_yet_cannot_read_outside_the_workspace(
+        tmp_path: Path, cli: str
+    ):
+        """The strongest available isolation evidence: the actual pinned binary, sandboxed."""
+        import shutil as _shutil
+    
+        if _shutil.which(cli) is None:
+            pytest.skip(f"{cli} is not installed on this host")
+    
+        workspace = tmp_path / "ws"
+        home = tmp_path / "home"
+        workspace.mkdir()
+        home.mkdir()
+        secret = tmp_path / "credentials.env"
+        secret.write_text("OPENAI_API_KEY=sk-not-a-real-key\n", encoding="utf-8")
+    
+        identity = tp.probe_executable(cli)
+        profile = home / "profile.sb"
+        profile.write_text(
+            tp.render_sandbox_profile(workspace=workspace, home=home,
+                                      readable=tp.executable_read_roots(identity.path)),
+            encoding="utf-8")
+        environment = tp.build_worker_environment(home=home)
+    
+        started = tp.run_process(
+            tp.build_sandboxed_argv([identity.path, "--version"], profile_path=profile),
+            cwd=workspace, env=environment, timeout_seconds=120)
+>       assert started.returncode == 0, started.stderr
+E       AssertionError: sandbox-exec: sandbox_apply: Operation not permitted
+E         
+E       assert 71 == 0
+E        +  where 71 = ProcessOutcome(returncode=71, stdout='', stderr='sandbox-exec: sandbox_apply: Operation not permitted\n', pid=36088, termination='exited').returncode
+
+tests/runtime/test_plan26_transport.py:462: AssertionError
+__________ test_only_the_retriever_may_egress_to_an_allowlisted_host ___________
+
+guard = <runtime.langgraph_factory.egress.EgressGuard object at 0x108f517f0>
+receipts = <runtime.langgraph_factory.egress.ReceiptLog object at 0x108f506e0>
+output_root = PosixPath('/private/var/folders/kj/z_75gwxx2ls7p55rnx4t5kg00000gn/T/pytest-of-filipepinto/pytest-96/test_only_the_retriever_may_eg0/output')
+
+    def test_only_the_retriever_may_egress_to_an_allowlisted_host(
+        guard: EgressGuard, receipts: ReceiptLog, output_root: Path
+    ):
+        """The same host the retriever may reach is still denied to any other caller."""
+        listener = socket.socket()
+>       listener.bind(("127.0.0.1", 0))
+E       PermissionError: [Errno 1] Operation not permitted
+
+tests/runtime/test_plan26_egress.py:618: PermissionError
+_________________ test_worker_context_is_structurally_bounded __________________
+
+tmp_path = PosixPath('/private/var/folders/kj/z_75gwxx2ls7p55rnx4t5kg00000gn/T/pytest-of-filipepinto/pytest-96/test_worker_context_is_structu0')
+
+    @requires_sandbox
+    def test_worker_context_is_structurally_bounded(tmp_path: Path) -> None:
+        workspace = tmp_path / "ws"
+        home = tmp_path / "home"
+        workspace.mkdir()
+        home.mkdir()
+        output_root = tmp_path / "output"
+        sibling = output_root / "other_unit" / "accepted.json"
+        sibling.parent.mkdir(parents=True)
+        sibling.write_text("sibling unit bytes\n", encoding="utf-8")
+    
+        proof = tp.prove_workspace_isolation(workspace=workspace, home=home, forbidden_paths=[sibling])
+        assert proof["readable_forbidden_paths"] == []
+>       assert proof["enforced"] is True
+E       assert False is True
+
+tests/runtime/test_plan26_adversarial.py:1612: AssertionError
+=========================== short test summary info ============================
+FAILED tests/runtime/test_plan26_transport.py::test_sandboxed_worker_cannot_read_repository_output_or_secrets
+FAILED tests/runtime/test_plan26_transport.py::test_capability_proof_is_satisfied_on_this_host
+FAILED tests/runtime/test_plan26_transport.py::test_the_real_cli_starts_sandboxed_yet_cannot_read_outside_the_workspace[codex]
+FAILED tests/runtime/test_plan26_transport.py::test_the_real_cli_starts_sandboxed_yet_cannot_read_outside_the_workspace[claude]
+FAILED tests/runtime/test_plan26_egress.py::test_only_the_retriever_may_egress_to_an_allowlisted_host
+FAILED tests/runtime/test_plan26_adversarial.py::test_worker_context_is_structurally_bounded
+6 failed, 490 passed, 1 skipped, 140 subtests passed in 28.12s

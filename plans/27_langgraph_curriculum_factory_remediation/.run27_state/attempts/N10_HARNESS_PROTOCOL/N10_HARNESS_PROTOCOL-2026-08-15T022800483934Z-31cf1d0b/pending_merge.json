@@ -1,0 +1,150 @@
+{
+  "at": "2026-08-15T02:28:09.757287Z",
+  "attempt_id": "N10_HARNESS_PROTOCOL-2026-08-15T022800483934Z-31cf1d0b",
+  "node_id": "N10_HARNESS_PROTOCOL",
+  "previous_receipt": null,
+  "previous_receipt_sha256": null,
+  "receipt": {
+    "admission": "normal",
+    "admitted_at": "2026-08-15T02:28:09.754296Z",
+    "approved_spec_sha256": "e14df5a36ce12d700fe9fc4aa4aea466771bc89f31bc6e9d49f812c147b1bb3c",
+    "attempt_id": "N10_HARNESS_PROTOCOL-2026-08-15T022800483934Z-31cf1d0b",
+    "baseline": {
+      "plans/27_langgraph_curriculum_factory_remediation/controller": "623396cce3decab31530e37c3215846fc8510bcde525934fdac1f3f7f5e6339c",
+      "plans/27_langgraph_curriculum_factory_remediation/execution_package_v2/results/v8/N10_HARNESS_PROTOCOL.result.v1.json": "dff3e3180e1f27cecc4a156a5de5ef9d8f36aed3311aaab9d0fe1e008ae635da",
+      "plans/27_langgraph_curriculum_factory_remediation/execution_package_v2/results/v8/evidence/N10_HARNESS_PROTOCOL": "e8e8b9fb40e61a8ff1eae24fb587b89d46e3efc1f11dd7536162cba1fb22c787",
+      "plans/27_langgraph_curriculum_factory_remediation/schemas/attempt_record.schema.v1.json": "3de14ae1835f5d435c98a5ea51381b1ccfa066bb73d7e2d6e9d33abbd87d1112",
+      "plans/27_langgraph_curriculum_factory_remediation/schemas/scheduler_receipt.schema.v1.json": "c27d6cd1a6f31323d0344486019cf7c628e9a071e651ebeda81b192a29a60b64",
+      "plans/27_langgraph_curriculum_factory_remediation/tests/test_forbidden_production_scan.py": "9ce7fe5b187620968ce289f73bbfc48a38ed1262386c25dc15116d0d8b3b2436",
+      "plans/27_langgraph_curriculum_factory_remediation/tests/test_node_result_protocol.py": "b435f7b296a7742b288fb449c4e63fe916330310748428fd1f68904a65af7adf",
+      "plans/27_langgraph_curriculum_factory_remediation/tests/test_run27_controller.py": "6415996b3719baa7118a75f0a1e666dfcf01ef3c12d6db25d45c4eb618c0a479"
+    },
+    "baseline_sha256": "ec710a5365b7dc1709ce9dd90e149abadf1f0f886f4d8c7e5fa4b76ce07f74b5",
+    "changed_files": [
+      {
+        "change": "created",
+        "path": "plans/27_langgraph_curriculum_factory_remediation/execution_package_v2/results/v8/evidence/N10_HARNESS_PROTOCOL/01_pytest_run1.log",
+        "sha256": "cd3ff4f41b651105e3f7cfecf30ebd02bd84a6e5b842e920c1f0ee969e062363"
+      },
+      {
+        "change": "created",
+        "path": "plans/27_langgraph_curriculum_factory_remediation/execution_package_v2/results/v8/evidence/N10_HARNESS_PROTOCOL/02_pytest_run2.log",
+        "sha256": "8b1a3d7c25e8f25bd94393a695ab81651edb119ba809768dbbe07612fe3b10e5"
+      },
+      {
+        "change": "created",
+        "path": "plans/27_langgraph_curriculum_factory_remediation/execution_package_v2/results/v8/evidence/N10_HARNESS_PROTOCOL/03_validate_plan_v2.log",
+        "sha256": "176e9ba38236264d063a17ac51d86f88018b960bd7c73c01c03e102a06cb6b07"
+      }
+    ],
+    "commands": [
+      {
+        "argv": [
+          "python3",
+          "-m",
+          "pytest",
+          "-q",
+          "plans/27_langgraph_curriculum_factory_remediation/tests/test_run27_controller.py",
+          "plans/27_langgraph_curriculum_factory_remediation/tests/test_node_result_protocol.py",
+          "plans/27_langgraph_curriculum_factory_remediation/tests/test_forbidden_production_scan.py"
+        ],
+        "exit_code": 0,
+        "log": "plans/27_langgraph_curriculum_factory_remediation/execution_package_v2/results/v8/evidence/N10_HARNESS_PROTOCOL/01_pytest_run1.log",
+        "log_sha256": "cd3ff4f41b651105e3f7cfecf30ebd02bd84a6e5b842e920c1f0ee969e062363"
+      },
+      {
+        "argv": [
+          "python3",
+          "-m",
+          "pytest",
+          "-q",
+          "plans/27_langgraph_curriculum_factory_remediation/tests/test_run27_controller.py",
+          "plans/27_langgraph_curriculum_factory_remediation/tests/test_node_result_protocol.py",
+          "plans/27_langgraph_curriculum_factory_remediation/tests/test_forbidden_production_scan.py"
+        ],
+        "exit_code": 0,
+        "log": "plans/27_langgraph_curriculum_factory_remediation/execution_package_v2/results/v8/evidence/N10_HARNESS_PROTOCOL/02_pytest_run2.log",
+        "log_sha256": "8b1a3d7c25e8f25bd94393a695ab81651edb119ba809768dbbe07612fe3b10e5"
+      },
+      {
+        "argv": [
+          "python3",
+          "plans/27_langgraph_curriculum_factory_remediation/execution_package_v2/tools/validate_plan_v2.py"
+        ],
+        "exit_code": 0,
+        "log": "plans/27_langgraph_curriculum_factory_remediation/execution_package_v2/results/v8/evidence/N10_HARNESS_PROTOCOL/03_validate_plan_v2.log",
+        "log_sha256": "176e9ba38236264d063a17ac51d86f88018b960bd7c73c01c03e102a06cb6b07"
+      }
+    ],
+    "evidence": [
+      "plans/27_langgraph_curriculum_factory_remediation/execution_package_v2/results/v8/evidence/N10_HARNESS_PROTOCOL/01_pytest_run1.log",
+      "plans/27_langgraph_curriculum_factory_remediation/execution_package_v2/results/v8/evidence/N10_HARNESS_PROTOCOL/02_pytest_run2.log",
+      "plans/27_langgraph_curriculum_factory_remediation/execution_package_v2/results/v8/evidence/N10_HARNESS_PROTOCOL/03_validate_plan_v2.log"
+    ],
+    "final_outputs": {
+      "plans/27_langgraph_curriculum_factory_remediation/controller": "623396cce3decab31530e37c3215846fc8510bcde525934fdac1f3f7f5e6339c",
+      "plans/27_langgraph_curriculum_factory_remediation/execution_package_v2/results/v8/N10_HARNESS_PROTOCOL.result.v1.json": "dff3e3180e1f27cecc4a156a5de5ef9d8f36aed3311aaab9d0fe1e008ae635da",
+      "plans/27_langgraph_curriculum_factory_remediation/execution_package_v2/results/v8/evidence/N10_HARNESS_PROTOCOL": "e8e8b9fb40e61a8ff1eae24fb587b89d46e3efc1f11dd7536162cba1fb22c787",
+      "plans/27_langgraph_curriculum_factory_remediation/schemas/attempt_record.schema.v1.json": "3de14ae1835f5d435c98a5ea51381b1ccfa066bb73d7e2d6e9d33abbd87d1112",
+      "plans/27_langgraph_curriculum_factory_remediation/schemas/scheduler_receipt.schema.v1.json": "c27d6cd1a6f31323d0344486019cf7c628e9a071e651ebeda81b192a29a60b64",
+      "plans/27_langgraph_curriculum_factory_remediation/tests/test_forbidden_production_scan.py": "9ce7fe5b187620968ce289f73bbfc48a38ed1262386c25dc15116d0d8b3b2436",
+      "plans/27_langgraph_curriculum_factory_remediation/tests/test_node_result_protocol.py": "b435f7b296a7742b288fb449c4e63fe916330310748428fd1f68904a65af7adf",
+      "plans/27_langgraph_curriculum_factory_remediation/tests/test_run27_controller.py": "6415996b3719baa7118a75f0a1e666dfcf01ef3c12d6db25d45c4eb618c0a479"
+    },
+    "graph_sha256": "c2d79ac0387c935977385138d2d891cf1539041f1a4532acf94fc8dc687bf6b1",
+    "lineage_fingerprint": "da2f4f74b3fa24c7d8f2412f2543fbe5276848719e44494198b9ed2c3cebfdf6",
+    "node_definition_sha256": "7b7e555f47226b9f062ee1e8d9c3399ca49ddda08d06b3ea1791e228a894cae3",
+    "node_id": "N10_HARNESS_PROTOCOL",
+    "parent_attempt_id": null,
+    "predecessor_receipts": {
+      "N00_SPEC_APPROVAL_GATE": "e9615e73c759b716c1f5e6bd4e2a4363e79622cd0dc91d095f4e844a39595e58"
+    },
+    "predecessor_results": {
+      "N00_SPEC_APPROVAL_GATE": "ba178d930440d9d11133dbe4a2aade64b6d4c18d926f4e7c2ebabf4e0863e1dd"
+    },
+    "prompt_sha256": "2114b50ba59fa1657b51179a7550bbd3bbb7e0770900b2d808f528263d20ae25",
+    "receipt_id": "N10_HARNESS_PROTOCOL-7de2de7782ca435ea5a74097a0b6875d",
+    "result_path": "plans/27_langgraph_curriculum_factory_remediation/execution_package_v2/results/v8/N10_HARNESS_PROTOCOL.result.v1.json",
+    "result_sha256": "dff3e3180e1f27cecc4a156a5de5ef9d8f36aed3311aaab9d0fe1e008ae635da",
+    "run_id": "run27",
+    "schema_version": 1,
+    "status": "PASSED",
+    "verification": [
+      {
+        "argv": [
+          "python3",
+          "-m",
+          "pytest",
+          "-q",
+          "plans/27_langgraph_curriculum_factory_remediation/tests/test_run27_controller.py",
+          "plans/27_langgraph_curriculum_factory_remediation/tests/test_node_result_protocol.py",
+          "plans/27_langgraph_curriculum_factory_remediation/tests/test_forbidden_production_scan.py"
+        ],
+        "exit_code": 0,
+        "log": "attempts/N10_HARNESS_PROTOCOL/N10_HARNESS_PROTOCOL-2026-08-15T022800483934Z-31cf1d0b/logs/verify_00.log",
+        "log_sha256": "5c65dd4934f5564f475ca080df1211df088aaf265e53b4e3ef8e8437642026d0"
+      },
+      {
+        "argv": [
+          "python3",
+          "plans/27_langgraph_curriculum_factory_remediation/execution_package_v2/tools/validate_plan_v2.py"
+        ],
+        "exit_code": 0,
+        "log": "attempts/N10_HARNESS_PROTOCOL/N10_HARNESS_PROTOCOL-2026-08-15T022800483934Z-31cf1d0b/logs/verify_01.log",
+        "log_sha256": "176e9ba38236264d063a17ac51d86f88018b960bd7c73c01c03e102a06cb6b07"
+      },
+      {
+        "argv": [
+          "python3",
+          "plans/27_langgraph_curriculum_factory_remediation/execution_package_v2/tools/validate_result_v2.py",
+          "--node",
+          "N10_HARNESS_PROTOCOL"
+        ],
+        "exit_code": 0,
+        "log": "attempts/N10_HARNESS_PROTOCOL/N10_HARNESS_PROTOCOL-2026-08-15T022800483934Z-31cf1d0b/logs/verify_02.log",
+        "log_sha256": "46d56eac91f19befe5ef83444c83873900919b48e8c53e04b61a628ee4c8b321"
+      }
+    ]
+  },
+  "receipt_sha256": "78c2d3f9e249ea3506e08b791800dc4b34f1af88c1df5d43995eaea5d9b2a369"
+}

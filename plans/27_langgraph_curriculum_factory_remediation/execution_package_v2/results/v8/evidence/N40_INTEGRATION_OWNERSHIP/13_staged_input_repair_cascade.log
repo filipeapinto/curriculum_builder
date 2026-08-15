@@ -1,0 +1,2 @@
+reason: graph integration is re-admitted after N20/N30 staged-input transmission changed the real M01 execution path.
+result: integration/ownership suite passed, ownership verification covered 75 claims, and scoped scan found zero violations.

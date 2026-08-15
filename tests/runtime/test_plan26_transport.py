@@ -927,6 +927,66 @@ def test_claude_stdin_payload_is_deterministic():
 
 
 @requires_sandbox
+def test_claude_stdin_payload_carries_hash_verified_visible_staged_text(tmp_path: Path):
+    """N70 live regression: copied files are unusable when Read is tool-closed.
+
+    The production transport must therefore project the already hash-verified
+    staged bytes into the same bounded stdin document Claude can actually see.
+    """
+
+    source = tmp_path / "retrieved-source.bin"
+    source.write_text(
+        "<html><head><style>.hidden{display:none}</style></head>"
+        "<body><h1>Safe setup</h1><p>Disconnect battery power before rewiring.</p>"
+        "<script>do_not_transmit_script_text()</script></body></html>",
+        encoding="utf-8",
+    )
+    candidate = {"interpretations": [{
+        "request_id": "L01/1/safety_focus:000",
+        "retrieval_id": "L01/1/safety_focus:000",
+        "claims": [{
+            "claim_text": "Power is removed before wiring changes.",
+            "source_quote": "Disconnect battery power before rewiring.",
+            "source_location": "Safe setup",
+        }],
+        "limitations": [],
+    }]}
+    runner = FakeRunner(Step(stdout=claude_stream_events(structured_output=candidate)))
+    transport = make_transport(tmp_path, runner)
+    digest = tp.sha256_file(source)
+
+    result = transport.execute(
+        job_id="M01_RESEARCH_UNIT_SOURCES",
+        activation_id="act-interpret",
+        episode_id="ep-000001",
+        projection={
+            "phase": "INTERPRET",
+            "request": {"request_id": "L01/1/safety_focus:000"},
+            "retrieval_group": {"retrieved_records": [{
+                "retrieval_id": "L01/1/safety_focus:000",
+                "sha256": digest,
+                "staged_name": "retrieved-source.bin",
+            }]},
+        },
+        staged_inputs=[tp.StagedInput("retrieved-source.bin", source, digest)],
+    )
+
+    assert result.candidate == candidate
+    payload = json.loads(runner.calls[0]["stdin"])
+    staged = payload["verified_staged_inputs"]
+    assert len(staged) == 1
+    assert staged[0]["name"] == "retrieved-source.bin"
+    assert staged[0]["source_sha256"] == digest
+    assert staged[0]["text_format"] == "html_visible_text"
+    assert staged[0]["truncated"] is False
+    assert "Safe setup" in staged[0]["text"]
+    assert "Disconnect battery power before rewiring." in staged[0]["text"]
+    assert "do_not_transmit_script_text" not in staged[0]["text"]
+    assert staged[0]["text_sha256"] == tp.sha256_bytes(
+        staged[0]["text"].encode("utf-8"))
+
+
+@requires_sandbox
 def test_claude_job_delivers_instruction_and_projection_on_stdin_not_argv(tmp_path: Path):
     runner = FakeRunner(Step(stdout=claude_stream_events(structured_output=M03_CANDIDATE)))
     transport = make_transport(tmp_path, runner)
