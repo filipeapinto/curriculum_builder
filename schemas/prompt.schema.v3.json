@@ -1,0 +1,357 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://example.invalid/curriculum_builder/prompt.schema.v3.json",
+  "title": "Agentic task prompt v3 — GOAL/TESTS/LOOP with durable operations",
+  "description": "Additive successor to prompt.schema.v2.json. Version 3 retains the model and agent execution binding and adds a required, typed operations contract. The operations contract identifies the execution mechanism, append-only journal, ACT/EXEC write protocol, restart behavior, and non-negotiable completion gates. The schema makes these obligations machine-readable; the named executor remains responsible for enforcing them at runtime.",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "title",
+    "model",
+    "agent",
+    "operations",
+    "goal",
+    "tests",
+    "loop"
+  ],
+  "properties": {
+    "title": {
+      "type": "string",
+      "minLength": 10
+    },
+    "authorized_paths": {
+      "type": "array",
+      "items": {
+        "type": "string",
+        "minLength": 1
+      }
+    },
+    "model": {
+      "description": "Model family used by the executing agent. inherit is an explicit unpinned choice.",
+      "enum": [
+        "inherit",
+        "haiku",
+        "sonnet",
+        "opus",
+        "fable"
+      ]
+    },
+    "agent": {
+      "$ref": "#/$defs/agent"
+    },
+    "operations": {
+      "$ref": "#/$defs/operations"
+    },
+    "goal": {
+      "type": "string",
+      "minLength": 20
+    },
+    "tests": {
+      "type": "array",
+      "minItems": 1,
+      "items": {
+        "$ref": "#/$defs/test"
+      }
+    },
+    "loop": {
+      "$ref": "#/$defs/loop"
+    }
+  },
+  "$defs": {
+    "agent": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "execution_path"
+      ],
+      "properties": {
+        "execution_path": {
+          "enum": [
+            "claude_code_direct",
+            "claude_code_subagent",
+            "codex_plugin"
+          ]
+        },
+        "subagent_type": {
+          "type": "string",
+          "minLength": 1
+        },
+        "reasoning": {
+          "type": "string",
+          "minLength": 1
+        }
+      },
+      "allOf": [
+        {
+          "if": {
+            "properties": {
+              "execution_path": {
+                "const": "claude_code_subagent"
+              }
+            },
+            "required": [
+              "execution_path"
+            ]
+          },
+          "then": {
+            "required": [
+              "subagent_type"
+            ]
+          }
+        }
+      ]
+    },
+    "operations": {
+      "description": "Machine-readable execution protocol. This closes the gap between instructions to log/restart and a named operational approach that can enforce them.",
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "executor",
+        "journal",
+        "action_protocol",
+        "restart",
+        "completion_gate"
+      ],
+      "properties": {
+        "executor": {
+          "$ref": "#/$defs/executor"
+        },
+        "journal": {
+          "$ref": "#/$defs/journal"
+        },
+        "action_protocol": {
+          "$ref": "#/$defs/action_protocol"
+        },
+        "restart": {
+          "$ref": "#/$defs/restart"
+        },
+        "completion_gate": {
+          "$ref": "#/$defs/completion_gate"
+        }
+      }
+    },
+    "executor": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "kind",
+        "implementation"
+      ],
+      "properties": {
+        "kind": {
+          "enum": [
+            "agent_native",
+            "repository_script"
+          ]
+        },
+        "implementation": {
+          "description": "Import path, command, or named runtime component responsible for the journal and gates.",
+          "type": "string",
+          "minLength": 3
+        },
+        "entrypoint": {
+          "description": "Required executable path when kind is repository_script.",
+          "type": "string",
+          "minLength": 1
+        }
+      },
+      "allOf": [
+        {
+          "if": {
+            "properties": {
+              "kind": {
+                "const": "repository_script"
+              }
+            },
+            "required": [
+              "kind"
+            ]
+          },
+          "then": {
+            "required": [
+              "entrypoint"
+            ]
+          }
+        }
+      ]
+    },
+    "journal": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "path",
+        "schema",
+        "format",
+        "write_mode"
+      ],
+      "properties": {
+        "path": {
+          "type": "string",
+          "minLength": 1
+        },
+        "schema": {
+          "type": "string",
+          "minLength": 1
+        },
+        "format": {
+          "const": "jsonl"
+        },
+        "write_mode": {
+          "const": "append_only"
+        }
+      }
+    },
+    "action_protocol": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "before_action",
+        "after_success",
+        "after_failure"
+      ],
+      "properties": {
+        "before_action": {
+          "const": "append_act_started"
+        },
+        "after_success": {
+          "const": "append_act_completed_closing_start"
+        },
+        "after_failure": {
+          "const": "append_exec_closing_start"
+        }
+      }
+    },
+    "restart": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "detection",
+        "no_journal",
+        "closed_action",
+        "unclosed_action"
+      ],
+      "properties": {
+        "detection": {
+          "const": "compute_unclosed_starts"
+        },
+        "no_journal": {
+          "const": "fresh_start"
+        },
+        "closed_action": {
+          "enum": [
+            "reuse_if_inputs_unchanged",
+            "always_reverify"
+          ]
+        },
+        "unclosed_action": {
+          "enum": [
+            "resume_or_idempotently_repeat",
+            "require_operator_review"
+          ]
+        }
+      }
+    },
+    "completion_gate": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "require_valid_journal",
+        "require_zero_unclosed_starts",
+        "require_all_tests_pass",
+        "require_authorized_paths_only"
+      ],
+      "properties": {
+        "require_valid_journal": {
+          "const": true
+        },
+        "require_zero_unclosed_starts": {
+          "const": true
+        },
+        "require_all_tests_pass": {
+          "const": true
+        },
+        "require_authorized_paths_only": {
+          "const": true
+        }
+      }
+    },
+    "test": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "check",
+        "expected"
+      ],
+      "properties": {
+        "description": {
+          "type": "string",
+          "minLength": 1
+        },
+        "check": {
+          "type": "string",
+          "minLength": 5
+        },
+        "expected": {
+          "type": "string",
+          "minLength": 1
+        }
+      }
+    },
+    "loop": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "steps",
+        "stopping_condition",
+        "resume_check"
+      ],
+      "properties": {
+        "steps": {
+          "type": "array",
+          "minItems": 1,
+          "items": {
+            "type": "string",
+            "minLength": 3
+          }
+        },
+        "stopping_condition": {
+          "type": "string",
+          "minLength": 10
+        },
+        "resume_check": {
+          "type": "string",
+          "minLength": 20
+        },
+        "escalation": {
+          "type": "string",
+          "minLength": 3
+        },
+        "retry_policy": {
+          "type": "object",
+          "additionalProperties": false,
+          "properties": {
+            "auto_retry": {
+              "$ref": "#/$defs/failure_types"
+            },
+            "requires_fix": {
+              "$ref": "#/$defs/failure_types"
+            }
+          }
+        }
+      }
+    },
+    "failure_types": {
+      "type": "array",
+      "items": {
+        "enum": [
+          "missing-input",
+          "bad-input",
+          "tool-error",
+          "wrong-output",
+          "partial-run",
+          "other"
+        ]
+      }
+    }
+  }
+}

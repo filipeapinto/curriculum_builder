@@ -1,0 +1,227 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://example.invalid/curriculum_builder/spec.schema.v1.json",
+  "title": "Spec package v1 — pre-implementation requirements/architecture gate",
+  "description": "Validates the structured form of a spec document (plans/<slug>/spec/<slug>.spec.v<N>.md), extracted from the markdown by a parser — the same relationship plan.schema.v1.json has to a <slug>.plan.v<N>.md file. Shape is grounded in research/spec_schemas/spec_schema_state_of_the_art.v1.md (Aug 2026): this repo has exactly one real spec lineage (plans/26_langgraph_curriculum_factory/spec/, v1 through v4), whose section skeleton stayed stable across all four revisions, plus the generic qa-gate-codex-run skill that actually QAs it. This is narrower grounding than plan.schema.v1.json had (three separately-proven shapes), so this schema deliberately does not hardcode the LangGraph-specific technical sections (dependency contract, typed state, node catalogue, transport, edges, checkpointing) found in that one example — those are domain content, captured here as free-form design_sections, not named fields. Scope note: top-level specs/ (e.g. specs/graph_based_system_documentation/) is a different, unrelated genre — an HTML documentation-page design spec, not this artifact — and is out of scope for this schema.",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "plan_slug",
+    "title",
+    "version",
+    "governing_decision",
+    "scope",
+    "baseline_assessment",
+    "authorizes_implementation",
+    "design_sections",
+    "traceability_matrix",
+    "resolved_decisions",
+    "quality_gate_checklist",
+    "qa"
+  ],
+  "properties": {
+    "plan_slug": {
+      "description": "The plans/<slug>/ this spec belongs to and gates — this repo's only real example lives at plans/26_langgraph_curriculum_factory/spec/, i.e. plan_slug '26_langgraph_curriculum_factory'.",
+      "type": "string",
+      "minLength": 2
+    },
+    "title": {
+      "description": "The spec's top-level heading, e.g. 'Plan 26 — LangGraph Curriculum Factory (Corrected Specification, v3)'.",
+      "type": "string",
+      "minLength": 5
+    },
+    "version": {
+      "description": "The spec's own version number, matching its filename's <slug>.spec.v<N>.md. Not the same counter as the plan's version — this repo's real example shows the two drifting (a 'v3'-titled document filed as v4.md after a correction round), so this schema tracks the filename's N, not prose inside the title.",
+      "type": "integer",
+      "minimum": 1
+    },
+    "supersedes": {
+      "description": "Required once version > 1 (see the allOf rule below). Path to the immediately prior version file, e.g. plans/26_langgraph_curriculum_factory/spec/langgraph_curriculum_factory.spec.v2.md. Per SPEC3-T00's historical-immutability rule (research/spec_schemas/spec_schema_state_of_the_art.v1.md), that file must never be edited, moved, or deleted after this version supersedes it — a spec corrects forward, never in place, unlike a plan.",
+      "type": "string",
+      "pattern": "\\.spec\\.v\\d+\\.md$"
+    },
+    "supersession_statement": {
+      "description": "Required once version > 1. What changed from the superseded version and why, naming the specific defect or finding that forced the correction (e.g. an N20-recovery finding id) — not a changelog of prose edits.",
+      "type": "string",
+      "minLength": 20
+    },
+    "governing_decision": {
+      "description": "The spec's §0-equivalent: the one core commitment being specified, stated as a decision, not a topic. This repo's real example states it as 'The compiled LangGraph graph is the curriculum factory' and then defines what does and does not count as product success under it. Must be falsifiable, not aspirational.",
+      "type": "string",
+      "minLength": 40
+    },
+    "scope": {
+      "description": "§1-equivalent: what this spec covers and explicitly does not.",
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["in_scope", "non_goals"],
+      "properties": {
+        "in_scope": {
+          "type": "array",
+          "minItems": 1,
+          "items": {"type": "string", "minLength": 5}
+        },
+        "non_goals": {
+          "description": "Explicit rejected designs and out-of-scope items, per §1.2's 'Explicit non-goals and rejected designs' — a spec that only states what it does, never what it deliberately does not do, invites silent scope creep during implementation.",
+          "type": "array",
+          "minItems": 1,
+          "items": {"type": "string", "minLength": 5}
+        }
+      }
+    },
+    "baseline_assessment": {
+      "description": "§2-equivalent: the evidence-based current state, what is wrong with it, and what this spec must correct — not 'we want to improve X'. Must name concrete baseline mismatches, the same discipline agent_card.md's 'defect it exists to catch' requires of a reviewer agent, applied here to a spec's reason for existing.",
+      "type": "string",
+      "minLength": 40
+    },
+    "authorizes_implementation": {
+      "description": "Must be false. §21 of this repo's real spec states, as a checked quality-gate item, 'The implementation phase is not performed by this specification,' and §0 requires implementation conformance, product activation, and specification correctness to be reported as three distinct claims, never merged into one verdict. A spec package that sets this true claims authority no spec in this repo has ever had.",
+      "const": false
+    },
+    "design_sections": {
+      "description": "The domain-specific technical body (this repo's real example's §3-§18: dependency contract, typed state, node catalogue, transport, edges, checkpointing, terminals, filesystem layout, CLI contract, test matrix, migration boundary) as an ordered, free-form list rather than named fields — those section names are specific to a LangGraph-shaped spec and would overfit a schema meant to cover any spec's technical design.",
+      "type": "array",
+      "minItems": 1,
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": ["heading", "body"],
+        "properties": {
+          "heading": {"type": "string", "minLength": 3},
+          "body": {"type": "string", "minLength": 10}
+        }
+      }
+    },
+    "traceability_matrix": {
+      "description": "§19-equivalent: each row maps one requirement to where this spec addresses it, what implements it, and how it is verified — the same EARS-derived condition/checkable-result discipline prompt.schema.v1.json's test $def requires, applied per requirement rather than per test.",
+      "type": "array",
+      "minItems": 1,
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": ["requirement", "spec_section", "verification"],
+        "properties": {
+          "requirement": {"type": "string", "minLength": 5},
+          "spec_section": {
+            "description": "Which design_sections heading (or governing_decision/scope) this requirement is addressed in.",
+            "type": "string",
+            "minLength": 1
+          },
+          "implementation": {
+            "description": "Optional. The concrete file/module expected to implement this requirement, once known.",
+            "type": "string",
+            "minLength": 1
+          },
+          "verification": {
+            "description": "The checkable test or audit that proves this requirement is met — an exit code, a named test id, a specific grep result, not 'looks right'.",
+            "type": "string",
+            "minLength": 5
+          }
+        }
+      }
+    },
+    "resolved_decisions": {
+      "description": "§20.1-equivalent: closed architectural decisions, stated as settled facts.",
+      "type": "array",
+      "minItems": 1,
+      "items": {"type": "string", "minLength": 10}
+    },
+    "open_decisions": {
+      "description": "§20.2-equivalent: prerequisites or decisions genuinely not yet resolved, each named with a stable id rather than silently invented. This repo's real example tracks exactly one, USER_DECISION_REQUIRED-01, and its own quality-gate checklist calls out by name that it was 'named precisely rather than silently resolved by inventing a mapping' — the failure mode this field exists to catch. Optional: a spec with every decision resolved omits this field rather than padding it.",
+      "type": "array",
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": ["id", "description"],
+        "properties": {
+          "id": {
+            "type": "string",
+            "pattern": "^USER_DECISION_REQUIRED-\\d+$"
+          },
+          "description": {"type": "string", "minLength": 10}
+        }
+      }
+    },
+    "quality_gate_checklist": {
+      "description": "§21-equivalent: the spec's own self-verification checklist, each item checked before the spec can go to QA. Distinct from the qa block below: this is the author's own pre-check, qa is the independent Codex-verified gate.",
+      "type": "array",
+      "minItems": 1,
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": ["item", "checked"],
+        "properties": {
+          "item": {"type": "string", "minLength": 10},
+          "checked": {"type": "boolean"}
+        }
+      }
+    },
+    "qa": {
+      "$ref": "#/$defs/qa"
+    },
+    "graph_gate": {
+      "description": "Optional. How a plan's execution graph actually consumes this spec as a precondition — e.g. plan 27's implementation.graph.v1.yaml/v2.yaml sets entry: N00_SPEC_APPROVAL_GATE with allowed_results including BLOCKED_SPEC_NOT_APPROVED. Only present when a prompt_graph or langgraph_graph plan (plan.schema.v1.json) actually gates on this spec; a single_prompt plan or a spec with no graph consumer yet omits this.",
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["graph_path", "gate_node"],
+      "properties": {
+        "graph_path": {
+          "type": "string",
+          "pattern": "implementation\\.graph\\.v\\d+\\.(ya?ml|json)$"
+        },
+        "gate_node": {
+          "description": "The node id in graph_path whose depends_on/entry position makes spec approval a precondition for every downstream node, e.g. 'N00_SPEC_APPROVAL_GATE'.",
+          "type": "string",
+          "minLength": 1
+        }
+      }
+    }
+  },
+  "$defs": {
+    "qa": {
+      "description": "The independent QA gate this repo's real spec example actually uses: the generic qa-gate-codex-run skill, not plan-create's self-authored plan_qa/final_audit. verdict_state is bound to qa_gate.py's own closed state set (QA_PASSED, QA_FAILED, QA_ERROR — 'Codex unreachable or unusable, inconclusive, NOT a failure'), and the numeric fields mirror verdict.json's actual shape rather than a paraphrase of it.",
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "criteria_path",
+        "verdict_path",
+        "verdict_state",
+        "rounds_completed",
+        "max_iterations"
+      ],
+      "properties": {
+        "criteria_path": {
+          "description": "Path to the falsification-style criteria doc, e.g. plans/26_langgraph_curriculum_factory/spec/spec_correction_criteria.v1.md, whose individual criteria are ID'd like SPEC3-T00, each a mechanically checkable claim.",
+          "type": "string",
+          "pattern": "criteria\\.v\\d+\\.md$"
+        },
+        "verdict_path": {
+          "type": "string",
+          "pattern": "/QA/verdict\\.json$"
+        },
+        "verdict_state": {
+          "enum": ["QA_PASSED", "QA_FAILED", "QA_ERROR"]
+        },
+        "rounds_completed": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "max_iterations": {
+          "type": "integer",
+          "minimum": 1
+        }
+      }
+    }
+  },
+  "allOf": [
+    {
+      "if": {
+        "properties": {"version": {"not": {"const": 1}}},
+        "required": ["version"]
+      },
+      "then": {
+        "required": ["supersedes", "supersession_statement"]
+      }
+    }
+  ]
+}

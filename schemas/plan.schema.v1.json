@@ -1,0 +1,214 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://example.invalid/curriculum_builder/plan.schema.v1.json",
+  "title": "Plan package v1 — plan/QA/implementation, three execution shapes",
+  "description": "Validates the structured form of a plan document (plans/<slug>/<slug>.plan.v<N>.md), extracted from the markdown by a parser — the same relationship prompt.schema.v2.json has to a *.prompt.v<N>.md file: this schema does not read markdown directly. Shape is grounded in research/plan_schemas/plan_schema_state_of_the_art.v1.md (Aug 2026): no external body schemas 'plan' as a multi-shaped artifact, but this repo has already built and run three different, both-proven shapes for how a plan is implemented (plans/11_provider_correction: one prompt; plans/26_langgraph_curriculum_factory and plans/27_langgraph_curriculum_factory_remediation: a DAG of named nodes each bound to its own prompt, executed by a controller; runtime/langgraph_factory/graph.py: an actual compiled LangGraph StateGraph). A plan with steps and a QA pipeline but no stated execution_model is exactly as underspecified as a prompt with a goal but no stated agent.execution_path, which prompt.schema.v2.json already refuses.",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "slug",
+    "title",
+    "objective",
+    "rationale",
+    "authorizes_implementation",
+    "steps",
+    "verification",
+    "acceptance_criteria",
+    "stop_conditions",
+    "implementation",
+    "qa",
+    "log_path"
+  ],
+  "properties": {
+    "slug": {
+      "description": "Short kebab-case identifier for plans/<slug>/, per the plan-create skill's Step 0 (e.g. 'provider_correction', 'retry-loop-fix').",
+      "type": "string",
+      "pattern": "^[a-z0-9]+(?:[_-][a-z0-9]+)*$"
+    },
+    "title": {
+      "description": "Human-readable title for the plan document's headers.",
+      "type": "string",
+      "minLength": 5
+    },
+    "objective": {
+      "description": "The one-paragraph objective, per the plan-create skill's init_plan_workspace.py --objective. States what end state this plan produces, not just a topic.",
+      "type": "string",
+      "minLength": 20
+    },
+    "rationale": {
+      "description": "Why this plan exists, in the context -> decision -> consequence shape ADR (Architecture Decision Record) supplies as precedent (research/plan_schemas/plan_schema_state_of_the_art.v1.md) and this repo's own agent_card.md convention already applies to reviewer agents ('the defect it exists to catch'). Must name the concrete problem, incident, or defect that made this plan necessary and what stays broken without it — not 'we want to improve X'.",
+      "type": "string",
+      "minLength": 40
+    },
+    "authorizes_implementation": {
+      "description": "Must be false. The plan-create skill states explicitly: 'This skill produces planning artifacts only... does not authorize implementation.' A plan package that sets this true is claiming an authority no plan document in this repo has ever had — implementation happens only when the resulting prompt (or prompt graph, or langgraph graph) is separately run.",
+      "const": false
+    },
+    "steps": {
+      "description": "Exact work as an ordered, numbered list of concrete steps, per the plan-create skill's Step 2 — not prose paragraphs. Present regardless of execution_model: even a prompt_graph or langgraph_graph plan states its work at this granularity in the plan document; the graph/node definitions are the more granular execution detail, referenced under implementation, not a substitute for this list.",
+      "type": "array",
+      "minItems": 1,
+      "items": {
+        "type": "string",
+        "minLength": 5
+      }
+    },
+    "prerequisites": {
+      "description": "Optional. External blockers this plan depends on (a disabled dependency, a missing credential, an unreleased API), each paired with the fail-fast check that detects it — per the plan-create skill's rule against a plan that quietly assumes the blocker is already resolved.",
+      "type": "array",
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": ["blocker", "fail_fast_check"],
+        "properties": {
+          "blocker": {"type": "string", "minLength": 5},
+          "fail_fast_check": {"type": "string", "minLength": 5}
+        }
+      }
+    },
+    "verification": {
+      "description": "The verification sequence: checkable steps against the repository, not aspirational claims. 'tests pass' is checkable; 'the code is cleaner' is not (plan-create skill, Step 2).",
+      "type": "array",
+      "minItems": 1,
+      "items": {
+        "type": "string",
+        "minLength": 5
+      }
+    },
+    "acceptance_criteria": {
+      "description": "Checkable acceptance criteria, in the EARS-derived condition/expected-result shape prompt.schema.v1.json's test $def already requires for prompts (research/prompt_schemas/prompt_schema_state_of_the_art.v1.md) — applied here to the plan as a whole rather than one test.",
+      "type": "array",
+      "minItems": 1,
+      "items": {
+        "type": "string",
+        "minLength": 5
+      }
+    },
+    "stop_conditions": {
+      "description": "Stop conditions and result: the exact result file the implementation must write and the log it must append to, per the plan-create skill's Step 2. Same load-bearing role stopping_condition has in loop.$defs.loop of prompt.schema.v1.json — a plan with no stated stop condition cannot terminate its own implementation loop.",
+      "type": "string",
+      "minLength": 10
+    },
+    "implementation": {
+      "$ref": "#/$defs/implementation"
+    },
+    "qa": {
+      "$ref": "#/$defs/qa"
+    },
+    "log_path": {
+      "description": "Path to the append-only plans/<slug>/plans.log.md this plan's every stage is recorded in. Never edited or reconstructed after the fact, per the plan-create skill's Logging section.",
+      "type": "string",
+      "pattern": "plans/.+/plans\\.log\\.md$"
+    }
+  },
+  "$defs": {
+    "implementation": {
+      "description": "How this plan is actually carried out, not just what it asks for. execution_model is closed to the three shapes this repo has already built and run (research/plan_schemas/plan_schema_state_of_the_art.v1.md): single_prompt (plans/11_provider_correction), prompt_graph (plans/26_langgraph_curriculum_factory, plans/27_langgraph_curriculum_factory_remediation), or langgraph_graph (runtime/langgraph_factory/graph.py's compiled StateGraph). Each branch requires only the pointer fields to that shape's own contract — this schema does not re-specify node/edge shape inline, to avoid drifting from implementation.graph.schema.v3.json or LangGraph's own StateGraph API.",
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["execution_model"],
+      "properties": {
+        "execution_model": {
+          "enum": ["single_prompt", "prompt_graph", "langgraph_graph"]
+        },
+        "reasoning": {
+          "description": "Optional. Why this execution model was chosen over the other two when it isn't obvious — e.g. why a plan needed a prompt_graph's fan-out/rework edges rather than one linear prompt.",
+          "type": "string",
+          "minLength": 1
+        },
+        "prompt_path": {
+          "description": "Required when execution_model is single_prompt. Path to the one plans/<slug>/prompts/<slug>.prompt.v<N>.md that implements this plan end to end; must itself validate against prompt.schema.v2.json.",
+          "type": "string",
+          "pattern": "\\.prompt\\.v\\d+\\.md$"
+        },
+        "graph_path": {
+          "description": "Required when execution_model is prompt_graph. Path to the implementation.graph.v<N>.yaml declaring named nodes, each bound to its own prompt file, with depends_on/writes/verification/allowed_results — the shape plans/26 and plans/27 already use.",
+          "type": "string",
+          "pattern": "implementation\\.graph\\.v\\d+\\.(ya?ml|json)$"
+        },
+        "graph_schema_path": {
+          "description": "Required when execution_model is prompt_graph. Path to the JSON Schema graph_path validates against (e.g. implementation.graph.schema.v3.json) — a prompt_graph with no schema binding its own node/edge shape is exactly the drift this field exists to prevent.",
+          "type": "string",
+          "pattern": "\\.schema\\.v\\d+\\.json$"
+        },
+        "controller_path": {
+          "description": "Required when execution_model is prompt_graph. Path to the controller (e.g. plans/27_langgraph_curriculum_factory_remediation/controller/) that executes the graph mechanically — a declared prompt_graph with no controller is a diagram, not an execution shape.",
+          "type": "string",
+          "minLength": 1
+        },
+        "entry": {
+          "description": "Required when execution_model is prompt_graph or langgraph_graph. The entry node id the graph starts from.",
+          "type": "string",
+          "minLength": 1
+        },
+        "terminals": {
+          "description": "Required when execution_model is prompt_graph. The named terminal states the graph can end in (plans 26/27 use ACTIVATED / IMPLEMENTED_NOT_ACTIVATED / BLOCKED); each must be reachable and guarded in graph_path.",
+          "type": "array",
+          "minItems": 1,
+          "items": {"type": "string", "minLength": 1}
+        },
+        "graph_module": {
+          "description": "Required when execution_model is langgraph_graph. The importable Python path to the module building the StateGraph (e.g. 'runtime.langgraph_factory.graph'), which must call langgraph.graph.StateGraph, add_node, add_edge or add_conditional_edges, and compile() — not a module that merely describes a graph in comments.",
+          "type": "string",
+          "pattern": "^[a-zA-Z_][a-zA-Z0-9_]*(\\.[a-zA-Z_][a-zA-Z0-9_]*)*$"
+        },
+        "terminal_nodes": {
+          "description": "Required when execution_model is langgraph_graph. The node id(s) that reach LangGraph's END rather than a mid-graph state.",
+          "type": "array",
+          "minItems": 1,
+          "items": {"type": "string", "minLength": 1}
+        }
+      },
+      "allOf": [
+        {
+          "if": {"properties": {"execution_model": {"const": "single_prompt"}}, "required": ["execution_model"]},
+          "then": {"required": ["prompt_path"]}
+        },
+        {
+          "if": {"properties": {"execution_model": {"const": "prompt_graph"}}, "required": ["execution_model"]},
+          "then": {"required": ["graph_path", "graph_schema_path", "controller_path", "entry", "terminals"]}
+        },
+        {
+          "if": {"properties": {"execution_model": {"const": "langgraph_graph"}}, "required": ["execution_model"]},
+          "then": {"required": ["graph_module", "entry", "terminal_nodes"]}
+        }
+      ]
+    },
+    "qa": {
+      "description": "The independent QA pipeline the plan-create skill mandates: focused Critical/High plan QA, an execution test plan, and a final audit — each a separate document, the QA and audit each produced by a fresh reviewer that has not seen the plan author's reasoning (SKILL.md 'Why the shape matters': a self-graded plan on the reference run missed four High-severity defects a fresh reviewer caught). verdict fields are constrained to the exact lines the skill requires so a package cannot claim a pass with a differently-worded or miscounted verdict.",
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "plan_qa_path",
+        "plan_qa_verdict",
+        "execution_test_plan_path",
+        "final_audit_path",
+        "final_audit_verdict"
+      ],
+      "properties": {
+        "plan_qa_path": {
+          "type": "string",
+          "pattern": "qa/plan_qa\\.v\\d+\\.md$"
+        },
+        "plan_qa_verdict": {
+          "description": "Verbatim verdict line from plan_qa_path, per the plan-create skill's Step 3.",
+          "type": "string",
+          "pattern": "^(APPROVED|CHANGES REQUIRED) — \\d+ Critical, \\d+ High\\.$"
+        },
+        "execution_test_plan_path": {
+          "type": "string",
+          "pattern": "qa/execution_test\\.plan\\.v\\d+\\.md$"
+        },
+        "final_audit_path": {
+          "type": "string",
+          "pattern": "qa/final_audit\\.v\\d+\\.md$"
+        },
+        "final_audit_verdict": {
+          "description": "Verbatim verdict line from final_audit_path, per the plan-create skill's Step 7.",
+          "type": "string",
+          "pattern": "^(PASS|CHANGES REQUIRED) — \\d+ Critical, \\d+ High remaining\\.$"
+        }
+      }
+    }
+  }
+}

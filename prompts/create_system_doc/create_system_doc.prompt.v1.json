@@ -1,0 +1,81 @@
+{
+  "title": "Create Verified System Documentation — Prompt v1",
+  "authorized_paths": [
+    "docs/system/system_documentation.v1.html",
+    "docs/system/system_documentation.sources.v1.json",
+    "prompts/create_system_doc/execution/execution_log.jsonl"
+  ],
+  "model": "inherit",
+  "agent": {
+    "execution_path": "claude_code_direct",
+    "reasoning": "The documentation task requires repository-wide evidence inspection, artifact creation, rendering, and iterative QA in one durable execution context."
+  },
+  "goal": "Create docs/system/system_documentation.v1.html and its source manifest as a self-contained, accurate, visualization-led operating guide to the repository's graph-based LLM system. Every factual claim must be traceable to inspected evidence, uncertainty and unavailable evidence must be explicit, sensitive values must not be disclosed, and the finished HTML must satisfy prompts/create_system_doc/create_system_doc.spec.v1.html.",
+  "tests": [
+    {
+      "description": "Required deliverables exist and are non-empty",
+      "check": "Run: test -s docs/system/system_documentation.v1.html && test -s docs/system/system_documentation.sources.v1.json && test -s prompts/create_system_doc/execution/execution_log.jsonl",
+      "expected": "The command exits 0."
+    },
+    {
+      "description": "HTML has the required reader-facing sections and architecture-first order",
+      "check": "Parse docs/system/system_documentation.v1.html with Python's html.parser; collect heading text in document order and verify that Architecture is the first substantive section and that Deployment, Security, Runtime contracts, Operations, Verification record, and Known gaps sections each occur exactly once.",
+      "expected": "The parser reports zero missing or duplicate required sections, and Architecture precedes every other substantive section."
+    },
+    {
+      "description": "Every documentation claim is backed by the source manifest",
+      "check": "Parse every data-claim-id attribute in docs/system/system_documentation.v1.html and every claim_id in docs/system/system_documentation.sources.v1.json; compare the two sets and verify each manifest entry has evidence_class, source_path, source_version_or_digest, verified_at, scope, and status fields.",
+      "expected": "The HTML and manifest claim-id sets are identical, every required manifest field is non-empty, and every source_path exists unless status is explicitly unavailable."
+    },
+    {
+      "description": "Graph visuals disclose evidence class and do not overstate execution",
+      "check": "Inspect each graph figure and its manifest entries; verify it is labeled declared, observed, inferred, or unknown. For each observed figure verify run identifiers, version/time scope, covered paths, sampling limits, and unexercised declared paths are stated.",
+      "expected": "Every graph figure has one permitted evidence label; every observed figure contains all five observation-scope disclosures; no declared or inferred path is described as executed without observed evidence."
+    },
+    {
+      "description": "The HTML is semantic, accessible, and offline-readable",
+      "check": "Parse the HTML and inspect rendered desktop and narrow-width views; verify one h1, ordered heading levels, landmarks, table headers, figure captions, text alternatives or SVG title and desc elements, keyboard-operable controls, no meaning conveyed by color alone, no horizontal clipping, and no required script, CDN, remote stylesheet, font, image, or other network asset.",
+      "expected": "Every listed accessibility and offline check passes in both rendered views with zero clipped or overlapping labels, edges, legends, tables, or controls."
+    },
+    {
+      "description": "Security-sensitive values are absent",
+      "check": "Review the generated files for credentials, tokens, secret values, private keys, private endpoints, personal data, and other restricted implementation details; compare any security claims with their cited policy or configuration evidence.",
+      "expected": "Zero sensitive values or unjustified security claims are present; allowed references describe only purpose, owner, source class, boundary, or handling rule."
+    },
+    {
+      "description": "Execution evidence is complete and schema-conformant",
+      "check": "Load prompts/create_system_doc/execution/execution_log.jsonl, construct the execution-log v2 records envelope, validate it against schemas/execution_log.schema.v2.json, and compute started ACT ids minus closed ACT ids.",
+      "expected": "Schema validation succeeds, every documented test has a completed passing ACT record, and unclosed_starts is an empty array."
+    },
+    {
+      "description": "Only authorized files changed",
+      "check": "Compare git status at completion with the baseline recorded before the first write and list paths newly changed by this prompt.",
+      "expected": "Every newly changed path is one of the three authorized_paths; pre-existing changes remain untouched."
+    }
+  ],
+  "loop": {
+    "steps": [
+      "Record the initial git status and inspect prompts/create_system_doc/create_system_doc.spec.v1.html before any write.",
+      "Build an evidence inventory from repository architecture, graph and routing definitions, prompts, schemas, deployment and configuration files, policies, tests, traces, run records, and runbooks; record missing or conflicting evidence instead of guessing.",
+      "Create or update docs/system/system_documentation.sources.v1.json so each prospective claim has a stable claim_id, evidence class, source path, source version or digest, verification time, scope, and status.",
+      "Create or update docs/system/system_documentation.v1.html with an architecture-first reader journey and the architecture, graph behavior, interfaces, deployment, configuration, security, runtime contracts, operations, recovery, verification scope, and known gaps required by the source specification.",
+      "Run every TEST, render the HTML at desktop and narrow widths, and append paired ACT/completion or ACT/EXEC records to the execution log without rewriting prior records.",
+      "For each failure, diagnose it from the failing check and cited evidence, revise only authorized outputs, and rerun the failed test plus all tests whose evidence or rendering may have been affected."
+    ],
+    "stopping_condition": "Stop successfully only when all eight tests pass, the execution log validates with zero unclosed starts, and the final git-status delta contains only authorized paths. Stop unsuccessfully and report the exact unresolved evidence gap or blocked check if a truthful correction cannot be made from available authorized evidence.",
+    "resume_check": "Before step 1, read prompts/create_system_doc/execution/execution_log.jsonl if it exists and compute unclosed starts. No log means a fresh run. A closed ACT is completed work whose recorded result may be reused after confirming its cited input digests are unchanged. An unclosed ACT is the interrupted action to resume or safely repeat without restarting completed work; append its closing record and never rewrite the journal.",
+    "escalation": "After two failures with the same cause, stop repeating the check. Record the blocker, affected requirement, evidence inspected, and the smallest user decision or missing input needed to continue.",
+    "retry_policy": {
+      "auto_retry": [
+        "tool-error",
+        "partial-run"
+      ],
+      "requires_fix": [
+        "missing-input",
+        "bad-input",
+        "wrong-output",
+        "other"
+      ]
+    }
+  }
+}
