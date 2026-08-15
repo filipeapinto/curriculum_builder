@@ -1,0 +1,29 @@
+# External-data retrieval host allowlist (N30V7-F07, N20V7-F13's WebSearch decision).
+#
+# `SourceRetriever` (runtime/langgraph_factory/egress.py) is the only path that ever
+# fetches source bytes, and it denies any host not named here -- exact match only,
+# never a wildcard or suffix match, and never a host a model proposed for itself.
+# A curriculum selects exactly one named profile by name (`retrieval_host_profile` in
+# its manifest); it does not supply hosts directly. Adding a host to a profile is a
+# deliberate, reviewed change to this file, never a runtime decision.
+#
+# Every host must be HTTPS-reachable and is still subject to `SourceRetriever`'s own
+# DNS-resolution/private-address rejection and allowlisted-redirect-at-every-hop
+# checks (egress.py `_check_host`/`fetch`) -- this file only names which hosts may be
+# addressed at all; it does not relax any other control.
+
+retrieval_hosts_version: '1.0'
+
+profiles:
+  electronics:
+    description: >-
+      Manufacturer, standards-body, and established reference documentation for
+      beginner electronics/maker curricula (e.g. arduino_kit).
+    hosts:
+      - learn.sparkfun.com
+      - docs.arduino.cc
+      - www.arduino.cc
+      - learn.adafruit.com
+      - support.microbit.org
+      - www.cpsc.gov
+      - www.allaboutcircuits.com

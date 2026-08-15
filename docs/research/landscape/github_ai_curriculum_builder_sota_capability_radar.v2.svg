@@ -1,0 +1,121 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1280" height="980" viewBox="0 0 1280 980" role="img" aria-labelledby="title desc">
+<title id="title">SOTA AI curriculum-builder capability radar</title>
+<desc id="desc">Nine education AI projects compared across ten recognizable curriculum-builder product capabilities on a zero-to-five maturity scale. Curriculum Builder scores 2.4, strongest in curriculum design and AI-assisted creation, and weakest in personalization and learning analytics.</desc>
+<style>
+    .title { font: 700 32px -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif; fill: #0F172A; }
+    .subtitle { font: 400 17px -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif; fill: #475569; }
+    .axis-label { font: 600 16px -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif; fill: #0F172A; }
+    .level-label { font: 500 14px -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif; fill: #64748B; }
+    .legend-label { font: 500 15px -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif; fill: #0F172A; }
+    .legend-mean { font: 400 14px -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif; fill: #64748B; }
+    .note { font: 400 14px -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif; fill: #475569; }
+    .grid { fill: none; stroke: #CBD5E1; stroke-width: 1; }
+    .axis { stroke: #CBD5E1; stroke-width: 1; }
+    </style>
+<rect width="1280" height="980" fill="#FFFFFF"/>
+<text class="title" x="52" y="54">SOTA AI curriculum-builder capability radar</text>
+<text class="subtitle" x="52" y="84">Product capability maturity · 0–5 · 14 Aug 2026</text>
+<polygon class="grid" points="640.0,425.0 675.3,436.5 697.1,466.5 697.1,503.5 675.3,533.5 640.0,545.0 604.7,533.5 582.9,503.5 582.9,466.5 604.7,436.5"/>
+<text class="level-label" x="648.0" y="442.0">1</text>
+<polygon class="grid" points="640.0,365.0 710.5,387.9 754.1,447.9 754.1,522.1 710.5,582.1 640.0,605.0 569.5,582.1 525.9,522.1 525.9,447.9 569.5,387.9"/>
+<text class="level-label" x="648.0" y="382.0">2</text>
+<polygon class="grid" points="640.0,305.0 745.8,339.4 811.2,429.4 811.2,540.6 745.8,630.6 640.0,665.0 534.2,630.6 468.8,540.6 468.8,429.4 534.2,339.4"/>
+<text class="level-label" x="648.0" y="322.0">3</text>
+<polygon class="grid" points="640.0,245.0 781.1,290.8 868.3,410.8 868.3,559.2 781.1,679.2 640.0,725.0 498.9,679.2 411.7,559.2 411.7,410.8 498.9,290.8"/>
+<text class="level-label" x="648.0" y="262.0">4</text>
+<polygon class="grid" points="640.0,185.0 816.3,242.3 925.3,392.3 925.3,577.7 816.3,727.7 640.0,785.0 463.7,727.7 354.7,577.7 354.7,392.3 463.7,242.3"/>
+<text class="level-label" x="648.0" y="202.0">5</text>
+<line class="axis" x1="640" y1="485" x2="640.0" y2="185.0"/>
+<text class="axis-label" text-anchor="middle" x="640.0" y="128.0">
+<tspan x="640.0" dy="0">Standards</tspan>
+<tspan x="640.0" dy="20">mapping</tspan>
+</text>
+<line class="axis" x1="640" y1="485" x2="816.3" y2="242.3"/>
+<text class="axis-label" text-anchor="start" x="844.5" y="194.5">
+<tspan x="844.5" dy="0">Curriculum</tspan>
+<tspan x="844.5" dy="20">design</tspan>
+</text>
+<line class="axis" x1="640" y1="485" x2="925.3" y2="392.3"/>
+<text class="axis-label" text-anchor="start" x="971.0" y="368.5">
+<tspan x="971.0" dy="0">Content</tspan>
+<tspan x="971.0" dy="20">authoring</tspan>
+</text>
+<line class="axis" x1="640" y1="485" x2="925.3" y2="577.7"/>
+<text class="axis-label" text-anchor="start" x="971.0" y="583.5">
+<tspan x="971.0" dy="0">Assessment &amp;</tspan>
+<tspan x="971.0" dy="20">mastery</tspan>
+</text>
+<line class="axis" x1="640" y1="485" x2="816.3" y2="727.7"/>
+<text class="axis-label" text-anchor="start" x="844.5" y="766.5">
+<tspan x="844.5" dy="0">Personalization</tspan>
+</text>
+<line class="axis" x1="640" y1="485" x2="640.0" y2="785.0"/>
+<text class="axis-label" text-anchor="middle" x="640.0" y="833.0">
+<tspan x="640.0" dy="0">Accessibility</tspan>
+</text>
+<line class="axis" x1="640" y1="485" x2="463.7" y2="727.7"/>
+<text class="axis-label" text-anchor="end" x="435.5" y="757.5">
+<tspan x="435.5" dy="0">Lifecycle &amp;</tspan>
+<tspan x="435.5" dy="20">reuse</tspan>
+</text>
+<line class="axis" x1="640" y1="485" x2="354.7" y2="577.7"/>
+<text class="axis-label" text-anchor="end" x="309.0" y="592.5">
+<tspan x="309.0" dy="0">Interoperability</tspan>
+</text>
+<line class="axis" x1="640" y1="485" x2="354.7" y2="392.3"/>
+<text class="axis-label" text-anchor="end" x="309.0" y="377.5">
+<tspan x="309.0" dy="0">Analytics</tspan>
+</text>
+<line class="axis" x1="640" y1="485" x2="463.7" y2="242.3"/>
+<text class="axis-label" text-anchor="end" x="435.5" y="194.5">
+<tspan x="435.5" dy="0">AI creation</tspan>
+<tspan x="435.5" dy="20">&amp; quality</tspan>
+</text>
+<polygon points="640.0,425.0 745.8,339.4 811.2,429.4 868.3,559.2 745.8,630.6 640.0,545.0 569.5,582.1 582.9,503.5 582.9,466.5 498.9,290.8" fill="none" stroke="#2563EB" stroke-width="2.2" stroke-opacity="0.78" stroke-dasharray="12 5"/>
+<polygon points="640.0,365.0 675.3,436.5 697.1,466.5 697.1,503.5 640.0,485.0 640.0,545.0 534.2,630.6 582.9,503.5 411.7,410.8 498.9,290.8" fill="none" stroke="#059669" stroke-width="2.2" stroke-opacity="0.78" stroke-dasharray="4 4"/>
+<polygon points="640.0,425.0 745.8,339.4 868.3,410.8 868.3,559.2 710.5,582.1 640.0,545.0 569.5,582.1 468.8,540.6 640.0,485.0 498.9,290.8" fill="none" stroke="#7C3AED" stroke-width="2.0" stroke-opacity="0.78" stroke-dasharray="14 4 3 4"/>
+<polygon points="640.0,365.0 745.8,339.4 754.1,447.9 811.2,540.6 710.5,582.1 640.0,545.0 534.2,630.6 525.9,522.1 582.9,466.5 534.2,339.4" fill="none" stroke="#DC2626" stroke-width="2.0" stroke-opacity="0.78" stroke-dasharray="3 5"/>
+<polygon points="640.0,425.0 745.8,339.4 868.3,410.8 868.3,559.2 781.1,679.2 640.0,545.0 569.5,582.1 525.9,522.1 525.9,447.9 498.9,290.8" fill="none" stroke="#0891B2" stroke-width="2.0" stroke-opacity="0.78" stroke-dasharray="10 4 2 4"/>
+<polygon points="640.0,425.0 745.8,339.4 868.3,410.8 868.3,559.2 781.1,679.2 640.0,545.0 534.2,630.6 468.8,540.6 525.9,447.9 498.9,290.8" fill="none" stroke="#9333EA" stroke-width="2.0" stroke-opacity="0.78" stroke-dasharray="8 3"/>
+<polygon points="640.0,425.0 781.1,290.8 925.3,392.3 868.3,559.2 675.3,533.5 640.0,605.0 569.5,582.1 525.9,522.1 640.0,485.0 498.9,290.8" fill="none" stroke="#DB2777" stroke-width="2.0" stroke-opacity="0.78" stroke-dasharray="2 4"/>
+<polygon points="640.0,425.0 781.1,290.8 925.3,392.3 868.3,559.2 710.5,582.1 640.0,605.0 498.9,679.2 525.9,522.1 525.9,447.9 534.2,339.4" fill="none" stroke="#475569" stroke-width="2.0" stroke-opacity="0.78" stroke-dasharray="16 4"/>
+<polygon points="640.0,365.0 781.1,290.8 811.2,429.4 754.1,522.1 675.3,533.5 640.0,605.0 534.2,630.6 525.9,522.1 582.9,466.5 498.9,290.8" fill="#D97706" fill-opacity="0.13" stroke="#D97706" stroke-width="4.5"/>
+<circle cx="640.0" cy="365.0" r="5.5" fill="#D97706" stroke="#FFFFFF" stroke-width="2"/>
+<circle cx="781.1" cy="290.8" r="5.5" fill="#D97706" stroke="#FFFFFF" stroke-width="2"/>
+<circle cx="811.2" cy="429.4" r="5.5" fill="#D97706" stroke="#FFFFFF" stroke-width="2"/>
+<circle cx="754.1" cy="522.1" r="5.5" fill="#D97706" stroke="#FFFFFF" stroke-width="2"/>
+<circle cx="675.3" cy="533.5" r="5.5" fill="#D97706" stroke="#FFFFFF" stroke-width="2"/>
+<circle cx="640.0" cy="605.0" r="5.5" fill="#D97706" stroke="#FFFFFF" stroke-width="2"/>
+<circle cx="534.2" cy="630.6" r="5.5" fill="#D97706" stroke="#FFFFFF" stroke-width="2"/>
+<circle cx="525.9" cy="522.1" r="5.5" fill="#D97706" stroke="#FFFFFF" stroke-width="2"/>
+<circle cx="582.9" cy="466.5" r="5.5" fill="#D97706" stroke="#FFFFFF" stroke-width="2"/>
+<circle cx="498.9" cy="290.8" r="5.5" fill="#D97706" stroke="#FFFFFF" stroke-width="2"/>
+<line x1="78" y1="849" x2="116" y2="849" stroke="#D97706" stroke-width="4.5"/>
+<text class="legend-label" x="128" y="854" font-weight="700">Curriculum Builder</text>
+<text class="legend-mean" x="398" y="854" text-anchor="end">mean 2.4</text>
+<line x1="468" y1="849" x2="506" y2="849" stroke="#2563EB" stroke-width="2.4" stroke-dasharray="12 5"/>
+<text class="legend-label" x="518" y="854">ai-lesson-agent</text>
+<text class="legend-mean" x="788" y="854" text-anchor="end">mean 2.3</text>
+<line x1="858" y1="849" x2="896" y2="849" stroke="#059669" stroke-width="2.4" stroke-dasharray="4 4"/>
+<text class="legend-label" x="908" y="854">Oak AutoEval</text>
+<text class="legend-mean" x="1178" y="854" text-anchor="end">mean 1.8</text>
+<line x1="78" y1="887" x2="116" y2="887" stroke="#7C3AED" stroke-width="2.4" stroke-dasharray="14 4 3 4"/>
+<text class="legend-label" x="128" y="892">Educhain</text>
+<text class="legend-mean" x="398" y="892" text-anchor="end">mean 2.4</text>
+<line x1="468" y1="887" x2="506" y2="887" stroke="#DC2626" stroke-width="2.4" stroke-dasharray="3 5"/>
+<text class="legend-label" x="518" y="892">education-agent-skills</text>
+<text class="legend-mean" x="788" y="892" text-anchor="end">mean 2.2</text>
+<line x1="858" y1="887" x2="896" y2="887" stroke="#0891B2" stroke-width="2.4" stroke-dasharray="10 4 2 4"/>
+<text class="legend-label" x="908" y="892">EduAgent</text>
+<text class="legend-mean" x="1178" y="892" text-anchor="end">mean 2.7</text>
+<line x1="78" y1="925" x2="116" y2="925" stroke="#9333EA" stroke-width="2.4" stroke-dasharray="8 3"/>
+<text class="legend-label" x="128" y="930">DeepTutor</text>
+<text class="legend-mean" x="398" y="930" text-anchor="end">mean 2.9</text>
+<line x1="468" y1="925" x2="506" y2="925" stroke="#DB2777" stroke-width="2.4" stroke-dasharray="2 4"/>
+<text class="legend-label" x="518" y="930">CodeSera</text>
+<text class="legend-mean" x="788" y="930" text-anchor="end">mean 2.5</text>
+<line x1="858" y1="925" x2="896" y2="925" stroke="#475569" stroke-width="2.4" stroke-dasharray="16 4"/>
+<text class="legend-label" x="908" y="930">ClassroomIO</text>
+<text class="legend-mean" x="1178" y="930" text-anchor="end">mean 2.9</text>
+<text class="note" x="52" y="955">Assurance controls such as provenance, deterministic gates, and terminal states belong in a separate trust scorecard.</text>
+</svg>

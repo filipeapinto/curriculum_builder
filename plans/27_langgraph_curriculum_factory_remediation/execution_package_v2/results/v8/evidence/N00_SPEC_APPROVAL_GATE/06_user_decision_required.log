@@ -1,0 +1,3 @@
+Specification occurrences enumerate one decision identifier only: USER_DECISION_REQUIRED-01.
+The decision is resolved by the user-authorized spec_approval.v5 model_assignments for all eight jobs.
+No additional USER_DECISION_REQUIRED identifier exists.

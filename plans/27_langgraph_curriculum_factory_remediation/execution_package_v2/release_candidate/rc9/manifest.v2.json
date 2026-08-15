@@ -1,0 +1,79 @@
+{
+  "manifest_version": 2,
+  "snapshot": "rc9-correction-round-2",
+  "purpose": "Immutable correction successor to failed rc9 review bundle v1, closing RC9-QA-001 through RC9-QA-003 while preserving graph v7 and all historical artifacts.",
+  "authorization": "plans/26_langgraph_curriculum_factory/prompts/RUN27_GPT56_SOL_AUTONOMOUS_V8_RECOVERY_TO_N90.prompt.v1.md",
+  "approved_v7_sha256": "b7e52ae7f2c8d1eb3984fcea014063a3be29eb88cf7cc5980bdb9ef503728c22",
+  "modified_v7_recovery_sha256": "b6c17e81c6e32f32b86183d4577fe9a18894c0657504eca832e36d7daa17865e",
+  "active_graph_sha256": "c2d79ac0387c935977385138d2d891cf1539041f1a4532acf94fc8dc687bf6b1",
+  "base_manifest": {
+    "path": "manifest.v1.json",
+    "sha256": "db3e2f0e5bc92e2ac7417a596791f6ef6fb6524ec1103835260fb382302f613f",
+    "bytes": 6418
+  },
+  "failed_artifact_preserved": {
+    "path": "rc9_review_bundle.v1.md",
+    "sha256": "e907c1c568e05ff315cde8f8a5d4a8832fc7ec93a4b1c0e35195c1b558f3a16c",
+    "bytes": 627449
+  },
+  "reviewed_artifact": {
+    "path": "rc9_review_bundle.v2.md",
+    "sha256": "6e1d7d73be1104b6dd67a076eebc76ef12116f869ee6692f1d54f74dead3d9f8",
+    "bytes": 634737
+  },
+  "correction_bindings": [
+    {
+      "path": "QA_criteria.rc9.v2.md",
+      "sha256": "9bd7a6be133b45c231786b9d7b58b4cbb7372b9ca934b637a22ab64c866da92f",
+      "bytes": 6190
+    },
+    {
+      "path": "validation.v2.md",
+      "sha256": "fcc61b8481a2d0a58b0a79844de40092d0dc9f0dfb35a0b99f931d3c317411fe",
+      "bytes": 3223
+    },
+    {
+      "path": "runtime/langgraph_factory/egress.py",
+      "sha256": "f4ffa798bf0d8251815ac63441907bfd546d0a5dbc47389b824b5e7c55cbb753",
+      "bytes": 28739,
+      "closes": ["RC9-QA-002", "RC9-QA-003"]
+    },
+    {
+      "path": "runtime/langgraph_factory/nodes/sources.py",
+      "sha256": "a29723525577fe895eb1ed25ee7b87e165b7f14e357a562cbd946539e1229645",
+      "bytes": 30911,
+      "closes": ["RC9-QA-001"]
+    },
+    {
+      "path": "tests/runtime/test_plan26_egress.py",
+      "sha256": "bea0db60c1d07d40132138de6a539f65c47c1f02db6eaf85796ef0d1bea4f47b",
+      "bytes": 21950
+    },
+    {
+      "path": "tests/runtime/test_plan26_deterministic_nodes.py",
+      "sha256": "58af297507ad9a571d2ca3390da9d6846042ca2d58a7e95ea44cc1ee3968d29b",
+      "bytes": 142189
+    },
+    {
+      "path": "tests/runtime/test_plan26_adversarial.py",
+      "sha256": "e781840121cb9f2a899f335ff7752447e8083a29dc5e3d8a4e594fd3d6b71bfb",
+      "bytes": 87081
+    },
+    {
+      "path": "plans/27_langgraph_curriculum_factory_remediation/execution_package_v2/tests/test_execution_package_v2.py",
+      "sha256": "4469132ef5ecc5e0088621da5e8120e5c8c91da09e3dd6287b31a0a291eee744",
+      "bytes": 88783
+    }
+  ],
+  "deterministic_validation": {
+    "retrieval_boundary": "294 passed",
+    "n20": "492 passed, 1 skipped, 140 subtests passed",
+    "n30_cli": "62 passed, 27 subtests passed",
+    "n30_d03_d06b": "18 passed, 234 deselected",
+    "package": "175 passed",
+    "plan_valid": true,
+    "n20_scan_violations": 0,
+    "n30_scan_violations": 0
+  },
+  "created_at": "2026-08-15T01:00:00Z"
+}

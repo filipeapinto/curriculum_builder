@@ -8,6 +8,8 @@ correlation cannot be reproduced.
 
 from __future__ import annotations
 
+import hashlib
+from pathlib import Path
 from typing import Any
 
 from . import (
@@ -103,6 +105,35 @@ def _request_projection(request: dict[str, Any]) -> dict[str, Any]:
         "required": request["required"],
         "scope": request["scope"],
     }
+
+
+def _persist_retrieved_bytes(
+    *, output_root: str, body: bytes, expected_sha256: str,
+) -> tuple[str, str]:
+    """Persist controller-retrieved bytes for one hash-bound staged input."""
+
+    actual = hashlib.sha256(body).hexdigest()
+    require(actual == expected_sha256, "integrity",
+            "retrieval body does not match its egress receipt hash",
+            expected_sha256=expected_sha256, actual_sha256=actual)
+    directory = Path(output_root).resolve() / ".retrieved_sources"
+    directory.mkdir(parents=True, exist_ok=True)
+    source_path = directory / f"{actual}.bin"
+    if source_path.exists():
+        require(source_path.is_file() and not source_path.is_symlink(), "integrity",
+                "retrieval staging target is not a regular file", path=str(source_path))
+        require(hashlib.sha256(source_path.read_bytes()).hexdigest() == actual, "integrity",
+                "retrieval staging target collides with different bytes", path=str(source_path))
+    else:
+        try:
+            with source_path.open("xb") as handle:
+                handle.write(body)
+        except FileExistsError:
+            require(source_path.is_file() and not source_path.is_symlink(), "integrity",
+                    "retrieval staging target raced with a non-file", path=str(source_path))
+            require(hashlib.sha256(source_path.read_bytes()).hexdigest() == actual, "integrity",
+                    "retrieval staging race produced different bytes", path=str(source_path))
+    return str(source_path), f"retrieved-{actual}.bin"
 
 
 def _unit_record(effective_run: dict[str, Any], unit_id: str) -> dict[str, Any]:
@@ -416,23 +447,40 @@ def D06B_RETRIEVE_SOURCE_CANDIDATES(
                 {"request_key": request_key, "locator": locator},
             ) from error
 
-        response_record = _record(response, f"retrieval response for {request_key}")
-        for field in ("sha256", "status", "content_type"):
+        require(
+            isinstance(response, tuple) and len(response) == 2,
+            "schema_contract",
+            f"retrieval response for {request_key} must be a (body, receipt) tuple",
+        )
+        body, receipt = response
+        require(
+            isinstance(body, bytes),
+            "schema_contract",
+            f"retrieval response for {request_key} carries non-byte content",
+        )
+        response_record = _record(receipt, f"retrieval receipt for {request_key}")
+        for field in ("bytes_sha256", "http_status", "content_type"):
             require(
                 field in response_record,
                 "integrity",
-                f"retrieval response for {request_key} has no {field!r}",
+                f"retrieval receipt for {request_key} has no {field!r}",
             )
+        source_path, staged_name = _persist_retrieved_bytes(
+            output_root=authorization_record.output_root,
+            body=body,
+            expected_sha256=response_record["bytes_sha256"],
+        )
         retrievals[request_key] = {
             "key": request_key,
             "unit_id": unit_id,
             "source_epoch": denominator["source_epoch"],
             "locator": locator,
-            "sha256": response_record["sha256"],
-            "status": response_record["status"],
+            "sha256": response_record["bytes_sha256"],
+            "status": response_record["http_status"],
             "content_type": response_record["content_type"],
             "tls": response_record.get("tls"),
-            "bytes_path": response_record.get("bytes_path"),
+            "bytes_path": staged_name,
+            "source_path": source_path,
         }
 
     missing_required = [
@@ -485,6 +533,11 @@ def D06B_RETRIEVE_SOURCE_CANDIDATES(
                     "source_rules": dict(SOURCE_RULES),
                     "retrieval_group": group,
                 },
+                staged_inputs=[{
+                    "name": retrieval["bytes_path"],
+                    "source_path": retrieval["source_path"],
+                    "sha256": retrieval["sha256"],
+                }],
             )
         )
 

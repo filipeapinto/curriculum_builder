@@ -1,0 +1,168 @@
+{
+  "manifest_version": 1,
+  "snapshot": "rc9",
+  "purpose": "Versioned graph-v8 recovery after graph v7 was improperly modified in place. Restores approved v7 bytes, preserves the modified bytes as recovery input, carries the live-proven retrieval/source and deterministic-boundary ownership corrections into v8, binds schema v5/contract v5/v8 prompts and validators to collision-free results/v8, and submits the exact-host SourceRetriever/WebSearch design to independent QA without changing topology or model assignments.",
+  "authorization": "plans/26_langgraph_curriculum_factory/prompts/RUN27_GPT56_SOL_AUTONOMOUS_V8_RECOVERY_TO_N90.prompt.v1.md",
+  "approved_v7_sha256": "b7e52ae7f2c8d1eb3984fcea014063a3be29eb88cf7cc5980bdb9ef503728c22",
+  "modified_v7_recovery_sha256": "b6c17e81c6e32f32b86183d4577fe9a18894c0657504eca832e36d7daa17865e",
+  "active_graph_sha256": "c2d79ac0387c935977385138d2d891cf1539041f1a4532acf94fc8dc687bf6b1",
+  "reviewed_artifact": "rc9_review_bundle.v1.md",
+  "qa_criteria": "QA_criteria.rc9.v1.md",
+  "validation": "validation.v1.md",
+  "baseline_exception": "Legacy parent-package N10 changed-file hash mismatch is reproduced against unmodified HEAD; no v8 admission inherits it.",
+  "created_at": "2026-08-15T00:45:00Z",
+  "files": [
+    {
+      "path": "implementation.graph.v8.yaml",
+      "sha256": "c2d79ac0387c935977385138d2d891cf1539041f1a4532acf94fc8dc687bf6b1",
+      "bytes": 22909
+    },
+    {
+      "path": "approved/implementation.graph.v7.yaml",
+      "sha256": "b7e52ae7f2c8d1eb3984fcea014063a3be29eb88cf7cc5980bdb9ef503728c22",
+      "bytes": 26856
+    },
+    {
+      "path": "recovery/implementation.graph.v7.modified.b6c17e81.yaml",
+      "sha256": "b6c17e81c6e32f32b86183d4577fe9a18894c0657504eca832e36d7daa17865e",
+      "bytes": 28518
+    },
+    {
+      "path": "controller/scan_node.py",
+      "sha256": "e3c9bd8c10ff8b7c19a115a13e82a04607db664858cfd908bee0d698fc57d376",
+      "bytes": 6700
+    },
+    {
+      "path": "tools/validate_plan_v2.py",
+      "sha256": "4c75464ba5277934a3f48a455df99455d3d3cb7f32f0b1b8cec2fb5ad566b4dc",
+      "bytes": 38064
+    },
+    {
+      "path": "tools/validate_result_v2.py",
+      "sha256": "867f4d7fece58fe4781cac6f4f69db0ec20a26cd693f770d66476d5ae5891460",
+      "bytes": 7445
+    },
+    {
+      "path": "tests/test_execution_package_v2.py",
+      "sha256": "0750ed9169a1cfe92d0a7202066ab9f8bae26819e3e813ef83ef634e1360d0ba",
+      "bytes": 89488
+    },
+    {
+      "path": "prompts/N00_spec_approval_gate.prompt.v8.md",
+      "sha256": "04893339f0482440b242e789be276d89bb38e9753fa0c70ec7600ece04d21bb1",
+      "bytes": 10452
+    },
+    {
+      "path": "prompts/N20_provider_transport.prompt.v8.md",
+      "sha256": "1dc683636fa45a32004776e889da8cbfe656958575f7d4ea7c26a5782a6c0e26",
+      "bytes": 10028
+    },
+    {
+      "path": "prompts/N30_preflight_egress.prompt.v8.md",
+      "sha256": "93ed1d4cc9766d4f1280fe84fc7f39d138e4aeb435586cd68e13ed65feb87874",
+      "bytes": 6316
+    },
+    {
+      "path": "schemas/spec_approval.schema.v5.json",
+      "sha256": "e95e6d862b7f7cb2980e194b21b5b1093a2846a4ea97bfeddfb1c27d3a3fde4d",
+      "bytes": 5405
+    },
+    {
+      "path": "contracts/spec_approval.v5.yaml",
+      "sha256": "0aefb83bc337e7625eb823774647edd80bd1fbcd9701b69599ee018509c8dd6f",
+      "bytes": 2935
+    },
+    {
+      "path": "policy/retrieval_hosts.v1.yaml",
+      "sha256": "ee56cf4988691647ebd1f28bd90724208112bcae6a4b7324543b42bbc21c32be",
+      "bytes": 1305
+    },
+    {
+      "path": "schemas/curriculum.schema.v5.json",
+      "sha256": "7ee2b15e22f14eeb5e297b55dac626df03de072e7d9ee4be86ec3f26498acd89",
+      "bytes": 13111
+    },
+    {
+      "path": "curricula/arduino_kit_curriculum.v5.yaml",
+      "sha256": "0dd0e0d441c3881e136c2be56143a10e49b4bc0a631e2ae9d935b853a1a37280",
+      "bytes": 51554
+    },
+    {
+      "path": "QA_criteria.rc9.v1.md",
+      "sha256": "f2b8151e42a44160147f3b7fccd8a9a875042c643868349e88fb1bc94f80856d",
+      "bytes": 5640
+    },
+    {
+      "path": "validation.v1.md",
+      "sha256": "3e5f3842ad6db6a7306cb1fbc3d20e14d3f673b86a2d850c00ceb279ecb154ee",
+      "bytes": 2413
+    },
+    {
+      "path": "rc9_review_bundle.v1.md",
+      "sha256": "e907c1c568e05ff315cde8f8a5d4a8832fc7ec93a4b1c0e35195c1b558f3a16c",
+      "bytes": 627449
+    }
+  ],
+  "live_runtime_and_test_bindings": [
+    {
+      "path": "runtime/langgraph_factory/egress.py",
+      "sha256": "63c1be5851a9b79b0a74de7b5ba3b2a0c4f9ee5cbe4ab88193ea56ab43d5ea3a",
+      "bytes": 24616
+    },
+    {
+      "path": "runtime/langgraph_factory/transport.py",
+      "sha256": "852813cbcd294a86bdbedff539816990321eb991b8037a33913324ee2233483a",
+      "bytes": 87456
+    },
+    {
+      "path": "runtime/langgraph_factory/model_nodes.py",
+      "sha256": "47483f1892f51c33a4986b264966d539c63106909f14b3e5dad817863ff972f4",
+      "bytes": 80067
+    },
+    {
+      "path": "runtime/langgraph_factory/nodes/sources.py",
+      "sha256": "b96bab07e807b4e1aa93d6d68697c48ea96a2f69f5bb7c78fa760dd9b8f304cf",
+      "bytes": 28439
+    },
+    {
+      "path": "runtime/run_curriculum.py",
+      "sha256": "10236810e66ff4afb064635b77082a840c4f7bf8ba107970ba80d6e80a8d1e8b",
+      "bytes": 41181
+    },
+    {
+      "path": "runtime/langgraph_factory/graph.py",
+      "sha256": "d74e86e3b954591f052a961a08d492de0559a0b79c16d6215541e26c56ff160f",
+      "bytes": 30359
+    },
+    {
+      "path": "tests/runtime/test_plan26_egress.py",
+      "sha256": "84d0826b90c778682d2ad5e31fcb8daf2d29525167597a8e6db07172dec4250e",
+      "bytes": 20320
+    },
+    {
+      "path": "tests/runtime/test_plan26_transport.py",
+      "sha256": "78cd3288bb2c40255efbdd221c071181df18de0459c550bda44b4ac8428a4d11",
+      "bytes": 75784
+    },
+    {
+      "path": "tests/runtime/test_plan26_model_nodes.py",
+      "sha256": "de48142a705edb4c8aa5680e5799a0990835fdca4586903cdbaca3cf9a2e4473",
+      "bytes": 82224
+    },
+    {
+      "path": "tests/runtime/test_plan26_deterministic_nodes.py",
+      "sha256": "e640259e58e221a3ab45f7c9e77f5920c2cdbef21bc7b5d146c4cfa563670ca0",
+      "bytes": 140965
+    },
+    {
+      "path": "tests/runtime/test_run_curriculum.py",
+      "sha256": "914bb9e61b7d52de563ef814e5c4e106f2cbe96c32926c26b54ab8a9c2d744a7",
+      "bytes": 27301
+    },
+    {
+      "path": "tests/runtime/test_plan26_cli.py",
+      "sha256": "ef5ef6f817cf16c542d1abb1da0a4b5acc2b1df8c79c5563cee22179310bcbe2",
+      "bytes": 41171
+    }
+  ]
+}

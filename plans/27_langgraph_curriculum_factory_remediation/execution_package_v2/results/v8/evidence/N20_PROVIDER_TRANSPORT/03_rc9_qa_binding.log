@@ -1,0 +1,7 @@
+RC9 independent QA state: QA_PASSED
+Reason: CONVERGED
+Rounds witnessed: 3
+Chain valid: true
+Problems: []
+Artifact SHA-256: 8bc85ae840b9314109fa17dba9be6cab6500ae8d3662be3124ab2bfbb2c7a593
+Finding closure: D06B tuple/byte staging fixed; redirects validated before production urllib follows; missing Content-Type denied; direct production-hook regression accepted.

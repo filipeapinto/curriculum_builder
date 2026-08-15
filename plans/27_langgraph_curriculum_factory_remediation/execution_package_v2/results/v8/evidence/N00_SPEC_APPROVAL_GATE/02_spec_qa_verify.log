@@ -1,0 +1,10 @@
+{
+  "state": "QA_PASSED",
+  "reason": "CONVERGED",
+  "chain_valid": true,
+  "rounds_claimed": 2,
+  "rounds_witnessed_by_codex": 2,
+  "session_id": "019ffbeb-3f45-7440-a83e-aa560938dc98",
+  "problems": [],
+  "artifact": "plans/26_langgraph_curriculum_factory/spec/v3/langgraph_curriculum_factory.spec.v4.md"
+}

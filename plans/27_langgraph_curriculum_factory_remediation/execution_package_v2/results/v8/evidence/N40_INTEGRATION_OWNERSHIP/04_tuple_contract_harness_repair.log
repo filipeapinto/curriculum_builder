@@ -1,0 +1,4 @@
+Initial full N40 run: 68 passed, then test_a_fresh_episode_executes_the_bootstrap_spine_once_through_langgraph failed because the N40-owned _StubRetriever returned the retired metadata-only mapping.
+Repair: the stub now returns (body: bytes, receipt: mapping) with bytes_sha256, http_status, content_type, and tls, matching the production SourceRetriever boundary admitted by N20/N30.
+Focused real compiled-graph episode after repair: 1 passed in 0.47s.
+Complete N40 rerun after repair: 210 passed in 11.50s; scan zero violations; all 75 ownership claims valid.

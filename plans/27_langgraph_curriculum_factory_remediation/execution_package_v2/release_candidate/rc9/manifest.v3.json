@@ -1,0 +1,56 @@
+{
+  "manifest_version": 3,
+  "snapshot": "rc9-correction-round-3",
+  "purpose": "Final immutable correction successor adding direct executable proof over the production urllib redirect hook.",
+  "authorization": "plans/26_langgraph_curriculum_factory/prompts/RUN27_GPT56_SOL_AUTONOMOUS_V8_RECOVERY_TO_N90.prompt.v1.md",
+  "approved_v7_sha256": "b7e52ae7f2c8d1eb3984fcea014063a3be29eb88cf7cc5980bdb9ef503728c22",
+  "modified_v7_recovery_sha256": "b6c17e81c6e32f32b86183d4577fe9a18894c0657504eca832e36d7daa17865e",
+  "active_graph_sha256": "c2d79ac0387c935977385138d2d891cf1539041f1a4532acf94fc8dc687bf6b1",
+  "base_manifest": {
+    "path": "manifest.v2.json",
+    "sha256": "0115dd8cd017b44ee5472ea8d5e3517109c6201ee2c194438ecf9f4d986c8835",
+    "bytes": 3083
+  },
+  "prior_artifacts_preserved": [
+    {
+      "path_at_creation": "rc9_review_bundle.v1.md",
+      "sha256": "e907c1c568e05ff315cde8f8a5d4a8832fc7ec93a4b1c0e35195c1b558f3a16c",
+      "bytes": 627449
+    },
+    {
+      "path_at_creation": "rc9_review_bundle.v2.md",
+      "sha256": "6e1d7d73be1104b6dd67a076eebc76ef12116f869ee6692f1d54f74dead3d9f8",
+      "bytes": 634737
+    }
+  ],
+  "reviewed_artifact": {
+    "path": "rc9_review_bundle.v3.md",
+    "sha256": "8bc85ae840b9314109fa17dba9be6cab6500ae8d3662be3124ab2bfbb2c7a593",
+    "bytes": 635719
+  },
+  "correction_bindings": [
+    {
+      "path": "QA_criteria.rc9.v3.md",
+      "sha256": "9d74b84140be824be44f96b717d519e26cdbe72e10f64f62ee27107324ecfff5",
+      "bytes": 1996
+    },
+    {
+      "path": "validation.v3.md",
+      "sha256": "0c2c5b912a824c645a1bba6d76a7e7db64afea222fee305aec754bba052cd8c3",
+      "bytes": 1952
+    },
+    {
+      "path": "tests/runtime/test_plan26_egress.py",
+      "sha256": "764470fa06d66b700805cf1ce4108e677c00d33e16af54a9933aaaa20c34526c",
+      "bytes": 24006,
+      "closes": ["RC9-QA-002 automated-proof remainder"]
+    }
+  ],
+  "deterministic_validation": {
+    "retrieval_boundary": "295 passed",
+    "n20": "493 passed, 1 skipped, 140 subtests passed",
+    "package": "175 passed",
+    "unaffected_round_2_results_preserved": true
+  },
+  "created_at": "2026-08-15T01:15:00Z"
+}

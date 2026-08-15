@@ -36,6 +36,13 @@ from runtime.langgraph_factory.nodes import (
     visuals,
 )
 from runtime.langgraph_factory.state import FIELD_REDUCER_CLASSES
+from runtime.langgraph_factory.egress import (
+    EgressGuard,
+    ReceiptLog,
+    RetrievalPolicy,
+    RetrievalResponse,
+    SourceRetriever,
+)
 
 PACKAGE_ROOT = Path(node_pkg.__file__).resolve().parent
 FACTORY_ROOT = PACKAGE_ROOT.parent
@@ -430,7 +437,7 @@ def test_a_retrieval_tool_fault_is_a_system_failure_not_a_pause() -> None:
     assert update["pending_failure"]["cause"] == "tool"
 
 
-def test_D06B_calls_the_real_source_retriever_fetch_signature() -> None:
+def test_D06B_consumes_the_real_source_retriever_return_contract(tmp_path: Path) -> None:
     """N30V7-F03 regression: D06B's own call into SourceRetriever.fetch (egress.py)
     passed a third positional argument -- `requests[request_key].get("scope")`, a
     fact-category tag like "applications", never a legitimate `data_class` -- against
@@ -439,15 +446,21 @@ def test_D06B_calls_the_real_source_retriever_fetch_signature() -> None:
     moment a real discovery ever produced a locator to retrieve. Every prior test
     here stubbed `fetch` with `lambda *args: ...`, which accepts any positional
     call shape and so never caught the mismatch -- live-verified against a real
-    N70 production run reaching this exact call for the first time. This stub
-    mirrors the real method's keyword-only contract exactly.
+    N70 production run reaching this exact call for the first time. This test
+    composes the actual SourceRetriever and D06B implementations, including
+    the real `(body, receipt)` return shape and hash-bound staged-byte packet.
     """
 
-    def real_shaped_fetch(locator: str, *, authorization_receipt: Any,
-                          data_class: str = "primary_source_bytes") -> dict[str, Any]:
-        assert authorization_receipt is not None
-        assert data_class == "primary_source_bytes"
-        return {"sha256": "a" * 64, "status": 200, "content_type": "text/html"}
+    body = b"<html>verified source</html>"
+    receipts = ReceiptLog()
+    source_retriever = SourceRetriever(
+        guard=EgressGuard(receipts),
+        policy=RetrievalPolicy(allowed_hosts=frozenset({"example.invalid"})),
+        resolver=lambda host: ("93.184.216.34",),
+        opener=lambda url, *, timeout, redirect_validator, max_bytes: RetrievalResponse(
+            final_url=url, status=200, headers={"content-type": "text/html"},
+            body=body, redirect_chain=(), tls={"protocol": "TLSv1.3"}),
+    )
 
     state = {
         "selected_unit_id": "U001",
@@ -464,16 +477,28 @@ def test_D06B_calls_the_real_source_retriever_fetch_signature() -> None:
         "source_discoveries": {"U001/1/f": {"locators": [
             {"request_id": "U001/1/f", "url": "https://example.invalid/a", "title": "t",
              "publisher": "p", "locator_kind": "primary", "rationale": "why"}]}},
-        "external_authorizations": [{"providers": {"primary_source_hosts": ["primary_source_bytes"]}, "approved_at_utc": "2026-01-01T00:00:00Z", "expires_at_utc": "2099-01-01T00:00:00Z", "curriculum_digest": "c" * 64, "output_root": "/tmp/out"}],
+        "external_authorizations": [{"providers": {"primary_source_hosts": ["primary_source_bytes"]}, "approved_at_utc": "2026-01-01T00:00:00Z", "expires_at_utc": "2099-01-01T00:00:00Z", "curriculum_digest": "c" * 64, "output_root": str(tmp_path)}],
     }
-    context = _Context(source_retriever=_Registry(fetch=real_shaped_fetch))
+    context = _Context(source_retriever=source_retriever)
     update = sources.D06B_RETRIEVE_SOURCE_CANDIDATES(state, context)
 
     assert "pending_failure" not in update
-    assert update["retrievals"]["U001/1/f"]["sha256"] == "a" * 64
+    digest = hashlib.sha256(body).hexdigest()
+    assert update["retrievals"]["U001/1/f"]["sha256"] == digest
+    packet = update["pending_packet"]["packets"][0]
+    assert packet["retrieval_group"]["retrieved_records"][0]["bytes_path"] == (
+        f"retrieved-{digest}.bin"
+    )
+    assert packet["staged_inputs"] == [{
+        "name": f"retrieved-{digest}.bin",
+        "source_path": str(tmp_path / ".retrieved_sources" / f"{digest}.bin"),
+        "sha256": digest,
+    }]
 
 
-def test_D06B_mints_a_real_provider_scoped_receipt_not_the_raw_declaration() -> None:
+def test_D06B_mints_a_real_provider_scoped_receipt_not_the_raw_declaration(
+    tmp_path: Path,
+) -> None:
     """N30V7-F06 regression: D06B passed the raw, multi-provider authorization
     DECLARATION straight through as if it were already a per-provider RECEIPT.
     `SourceRetriever.fetch` requires `authorization_receipt["provider"] ==
@@ -486,11 +511,17 @@ def test_D06B_mints_a_real_provider_scoped_receipt_not_the_raw_declaration() -> 
     """
 
     seen: dict[str, Any] = {}
+    body = b"provider-scoped receipt"
+    digest = hashlib.sha256(body).hexdigest()
 
     def recording_fetch(locator: str, *, authorization_receipt: Any,
-                        data_class: str = "primary_source_bytes") -> dict[str, Any]:
+                        data_class: str = "primary_source_bytes") -> tuple[bytes, dict[str, Any]]:
         seen["receipt"] = authorization_receipt
-        return {"sha256": "b" * 64, "status": 200, "content_type": "text/html"}
+        return body, {
+            "bytes_sha256": digest,
+            "http_status": 200,
+            "content_type": "text/html",
+        }
 
     state = {
         "selected_unit_id": "U001",
@@ -510,7 +541,8 @@ def test_D06B_mints_a_real_provider_scoped_receipt_not_the_raw_declaration() -> 
         "external_authorizations": [{"providers": {"primary_source_hosts": ["primary_source_bytes"]},
                                      "approved_at_utc": "2026-01-01T00:00:00Z",
                                      "expires_at_utc": "2099-01-01T00:00:00Z",
-                                     "curriculum_digest": "c" * 64, "output_root": "/tmp/out"}],
+                                     "curriculum_digest": "c" * 64,
+                                     "output_root": str(tmp_path)}],
     }
     context = _Context(source_retriever=_Registry(fetch=recording_fetch))
     update = sources.D06B_RETRIEVE_SOURCE_CANDIDATES(state, context)
@@ -2741,10 +2773,13 @@ def test_a_staged_discovery_packet_is_an_admissible_m01_discovery_projection() -
         assert set(projection) == {"request", "unit", "source_rules", "discovery_authority"}
 
 
-def test_a_staged_interpretation_packet_carries_only_its_own_retrieval_group() -> None:
+def test_a_staged_interpretation_packet_carries_only_its_own_retrieval_group(
+    tmp_path: Path,
+) -> None:
     from runtime.langgraph_factory import model_nodes as mn
 
-    digest = "a" * 64
+    body = b"a"
+    digest = hashlib.sha256(body).hexdigest()
     update = sources.D06B_RETRIEVE_SOURCE_CANDIDATES(
         {
             "selected_unit_id": "U001",
@@ -2776,18 +2811,22 @@ def test_a_staged_interpretation_packet_carries_only_its_own_retrieval_group() -
             "external_authorizations": [{"providers": {"primary_source_hosts": ["primary_source_bytes"]},
                                          "approved_at_utc": "2026-01-01T00:00:00Z",
                                          "expires_at_utc": "2099-01-01T00:00:00Z",
-                                         "curriculum_digest": "c" * 64, "output_root": "/tmp/out"}],
+                                         "curriculum_digest": "c" * 64,
+                                         "output_root": str(tmp_path)}],
             "effective_run": {"unit_records": [{"id": "U001", "title": "t"}]},
             **_CORRELATION,
         },
         _Context(
             source_retriever=_Registry(
-                fetch=lambda locator, *, authorization_receipt, data_class="primary_source_bytes": {
-                    "sha256": digest,
-                    "status": 200,
-                    "content_type": "text/html",
-                    "bytes_path": "/tmp/a.html",
-                }
+                fetch=lambda locator, *, authorization_receipt,
+                data_class="primary_source_bytes": (
+                    body,
+                    {
+                        "bytes_sha256": digest,
+                        "http_status": 200,
+                        "content_type": "text/html",
+                    },
+                )
             )
         ),
     )

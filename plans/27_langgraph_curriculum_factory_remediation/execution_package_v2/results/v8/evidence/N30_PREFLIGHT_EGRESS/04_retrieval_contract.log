@@ -1,0 +1,4 @@
+Production D06B consumes SourceRetriever.fetch(locator, authorization_receipt=receipt) as (body, receipt).
+Receipt fields bytes_sha256, http_status, and content_type are mandatory.
+Retrieved bytes are digest-verified, persisted content-addressably under the authorized output root, and supplied to M01 INTERPRET as a hash-bound staged input.
+Missing required sources remain typed prerequisite failures; transport, contract, and integrity defects remain typed system failures.

@@ -444,19 +444,30 @@ def _default_resolver(host: str) -> tuple[str, ...]:
     return tuple(sorted({info[4][0] for info in infos}))
 
 
-def _default_opener(url: str, *, timeout: float) -> RetrievalResponse:
+def _default_opener(
+    url: str,
+    *,
+    timeout: float,
+    redirect_validator: Callable[[str, int], None],
+    max_bytes: int,
+) -> RetrievalResponse:
     import urllib.request
 
     chain: list[str] = []
 
     class _Tracker(urllib.request.HTTPRedirectHandler):
         def redirect_request(self, req, fp, code, msg, headers, newurl):  # type: ignore[no-untyped-def]
+            # Validate before urllib constructs or sends the redirected request.
+            # Post-response inspection is too late for an egress boundary.
+            redirect_validator(newurl, len(chain) + 1)
             chain.append(newurl)
             return super().redirect_request(req, fp, code, msg, headers, newurl)
 
     opener = urllib.request.build_opener(_Tracker)
     with opener.open(url, timeout=timeout) as response:
-        body = response.read()
+        # Read at most one byte beyond the bound so an oversized body is denied
+        # without buffering the complete attacker-controlled response.
+        body = response.read(max_bytes + 1)
         return RetrievalResponse(
             final_url=response.geturl(),
             status=response.status,
@@ -510,6 +521,70 @@ class SourceRetriever:
             self._deny(locator, "host_not_allowlisted", resolved_host=host)
         return host
 
+    def _validate_redirect_target(
+        self,
+        *,
+        locator: str,
+        target: str,
+        redirect_ordinal: int | None,
+        pinned_host: str,
+        pinned_port: int,
+        pinned_addresses: Sequence[str],
+    ) -> None:
+        """Fail closed before each redirect request and again after the response.
+
+        The active socket grant is deliberately pinned to the original resolved
+        endpoint. Redirects may remain on that exact HTTPS host/port only; a
+        cross-host redirect requires a fresh top-level locator and authorization.
+        """
+
+        if redirect_ordinal is not None and redirect_ordinal > self.policy.max_redirects:
+            self._deny(locator, "too_many_redirects", final_url=target,
+                       redirect_chain=[target])
+        parsed = urlparse(target)
+        allowed_schemes = ("https",) if self.policy.require_tls else ("https", "http")
+        if parsed.scheme not in allowed_schemes:
+            self._deny(locator, "redirect_scheme_not_allowed", final_url=target,
+                       redirect_chain=[target])
+        raw_host = (parsed.hostname or "").lower()
+        if raw_host in MODEL_API_HOSTS:
+            self._deny(locator, "redirect_to_model_endpoint", final_url=target,
+                       redirect_chain=[target],
+                       resolved_host=raw_host)
+        if raw_host not in self.policy.allowed_hosts:
+            self._deny(locator, "redirect_to_unapproved_host", final_url=target,
+                       redirect_chain=[target],
+                       resolved_host=raw_host)
+        host = self._check_host(locator, raw_host)
+        try:
+            port = parsed.port or (443 if parsed.scheme == "https" else 80)
+        except ValueError:
+            self._deny(locator, "redirect_port_invalid", final_url=target,
+                       redirect_chain=[target])
+        if host != pinned_host:
+            self._deny(locator, "redirect_host_not_pinned", final_url=target,
+                       redirect_chain=[target],
+                       resolved_host=host)
+        if port != pinned_port:
+            self._deny(locator, "redirect_port_not_pinned", final_url=target,
+                       redirect_chain=[target],
+                       resolved_host=host)
+        addresses = tuple(self._resolver(host))
+        if not addresses:
+            self._deny(locator, "unresolvable_redirect_host", final_url=target,
+                       redirect_chain=[target],
+                       resolved_host=host)
+        if not self.policy.allow_private_addresses:
+            for address in addresses:
+                if not ipaddress.ip_address(address).is_global:
+                    self._deny(locator, "non_global_redirect_address",
+                               final_url=target, redirect_chain=[target], resolved_host=host,
+                               resolved_addresses=list(addresses))
+        if not set(addresses).issubset(set(pinned_addresses)):
+            self._deny(locator, "dns_rebinding", final_url=target,
+                       redirect_chain=[target], resolved_host=host,
+                       resolved_addresses=list(addresses))
+
     def fetch(
         self,
         locator: str,
@@ -531,7 +606,10 @@ class SourceRetriever:
         if parsed.scheme not in allowed_schemes:
             self._deny(locator, "scheme_not_allowed")
         host = self._check_host(locator, parsed.hostname)
-        port = parsed.port or (443 if parsed.scheme == "https" else 80)
+        try:
+            port = parsed.port or (443 if parsed.scheme == "https" else 80)
+        except ValueError:
+            self._deny(locator, "port_invalid")
 
         addresses = tuple(self._resolver(host))
         if not addresses:
@@ -550,27 +628,39 @@ class SourceRetriever:
             authorization_receipt_id=str(authorization_receipt["receipt_id"]),
             data_class=data_class,
         )
+
+        def validate_redirect(target: str, ordinal: int) -> None:
+            self._validate_redirect_target(
+                locator=locator, target=target, redirect_ordinal=ordinal,
+                pinned_host=host, pinned_port=port, pinned_addresses=addresses)
+
         with self.guard.granted(grant):
-            response = self._opener(locator, timeout=self.timeout_seconds)
+            response = self._opener(
+                locator,
+                timeout=self.timeout_seconds,
+                redirect_validator=validate_redirect,
+                max_bytes=self.policy.max_bytes,
+            )
 
         if len(response.redirect_chain) > self.policy.max_redirects:
             self._deny(locator, "too_many_redirects",
                        redirect_chain=list(response.redirect_chain))
-        for hop in (*response.redirect_chain, response.final_url):
-            hop_host = (urlparse(hop).hostname or "").lower()
-            if hop_host in MODEL_API_HOSTS:
-                self._deny(locator, "redirect_to_model_endpoint",
-                           redirect_chain=list(response.redirect_chain), final_url=hop)
-            if hop_host not in self.policy.allowed_hosts:
-                self._deny(locator, "redirect_to_unapproved_host",
-                           redirect_chain=list(response.redirect_chain), final_url=hop)
+        for ordinal, hop in enumerate(response.redirect_chain, start=1):
+            self._validate_redirect_target(
+                locator=locator, target=hop, redirect_ordinal=ordinal,
+                pinned_host=host, pinned_port=port, pinned_addresses=addresses)
+        self._validate_redirect_target(
+            locator=locator, target=response.final_url, redirect_ordinal=None,
+            pinned_host=host, pinned_port=port, pinned_addresses=addresses)
         if response.status != 200:
             self._deny(locator, "http_status_not_ok", http_status=response.status)
         if len(response.body) > self.policy.max_bytes:
             self._deny(locator, "response_too_large", byte_count=len(response.body))
 
         content_type = str(response.headers.get("content-type", "")).split(";")[0].strip().lower()
-        if content_type and content_type not in self.policy.allowed_content_types:
+        if not content_type:
+            self._deny(locator, "content_type_missing")
+        if content_type not in self.policy.allowed_content_types:
             self._deny(locator, "content_type_not_allowed", content_type=content_type)
 
         receipt = self.guard.receipts.append({
@@ -586,7 +676,7 @@ class SourceRetriever:
             "redirect_chain": list(response.redirect_chain),
             "http_status": response.status,
             "tls": dict(response.tls) if response.tls else None,
-            "content_type": content_type or None,
+            "content_type": content_type,
             "byte_count": len(response.body),
             "bytes_sha256": hashlib.sha256(response.body).hexdigest(),
             "data_class": data_class,

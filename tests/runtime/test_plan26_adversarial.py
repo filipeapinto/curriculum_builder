@@ -235,16 +235,15 @@ class _StubRetriever:
         self.fetched: list[str] = []
 
     def fetch(self, locator: Any, *, authorization_receipt: Any,
-              data_class: str = "primary_source_bytes") -> dict[str, Any]:
+              data_class: str = "primary_source_bytes") -> tuple[bytes, dict[str, Any]]:
         self.fetched.append(str(locator))
         body = json.dumps({"locator": locator}, sort_keys=True).encode()
-        return {
+        return body, {
             "locator": locator,
-            "sha256": hashlib.sha256(body).hexdigest(),
-            "status": 200,
+            "bytes_sha256": hashlib.sha256(body).hexdigest(),
+            "http_status": 200,
             "content_type": "text/html",
             "tls": {"verified": True},
-            "bytes_path": None,
         }
 
 

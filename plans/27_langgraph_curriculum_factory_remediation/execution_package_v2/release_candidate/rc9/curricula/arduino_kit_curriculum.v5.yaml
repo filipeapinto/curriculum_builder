@@ -1,0 +1,1591 @@
+# Single source of truth for the whole workbook. It defines scope, not unverified wiring.
+# v5 = v4 with the two engine-contract concepts that were one subject's words moved into
+# this curriculum's own `domain` block, and the domain verifier declared.
+#
+# `kit_power_profile` and `visual_system` were top-level concepts of the predecessor
+# engine curriculum contract, superseded by v5 and now retired. "kit" and "power" are
+# electronics words in an engine contract, and a curriculum in an unrelated subject
+# could satisfy neither — that is G5 in
+# plans/simplification/plan/simplification.plan.v3.md section 2. They are unchanged
+# below; only their owner is.
+#
+# `domain.verifier` is the declaration that makes the engine's genericity safe rather
+# than merely broad: this curriculum states what checks its own domain, and the engine
+# refuses to start without it. The human-authored sequence below is untouched.
+#
+# The v4 manifest is retained at curricula/deprecated/ as history. Nothing may read it.
+manifest_version: '5.0'
+# Selects a named profile from policy/retrieval_hosts.v1.yaml (N30V7-F07); this
+# curriculum never supplies hosts directly, only the profile name.
+retrieval_host_profile: electronics
+curriculum:
+  title: Electronics Discoveries — Component-Oriented Workbook
+  learner: Supervised beginners aged 9+, with no assumed electronics knowledge
+  delivery: One lab is generated, technically checked, pedagogically checked, and accepted before the
+    next lab begins.
+  design_rule: Component first; a problem is an application, never the organising principle.
+domain:
+  schema: curricula/arduino_kit/domain.schema.v1.json
+  manifest_schema: curricula/arduino_kit/manifest.domain.schema.v1.json
+  verifier:
+    entry_point: curricula/arduino_kit/verify_domain.py
+    invocation: python3 curricula/arduino_kit/verify_domain.py --domain <domain>
+    must_reject:
+    - fixture: curricula/arduino_kit/fixtures/domain_polarity_asserted.reject.json
+      expected_code: polarity-unevidenced
+    - fixture: curricula/arduino_kit/fixtures/domain_no_current_limit.reject.json
+      expected_code: current-limit-absent
+    - fixture: curricula/arduino_kit/fixtures/domain_supply_not_permitted.reject.json
+      expected_code: supply-not-permitted
+    must_accept:
+    - curricula/arduino_kit/fixtures/domain_unpowered_path.accept.json
+    proven:
+      executed_utc: '2026-08-01T00:00:00Z'
+      result: all_fixtures_behaved
+      note: FR-P5-VERIFIER-REQUIRED re-executes every fixture named above rather than reading this record.
+        What this record adds is the curriculum's own claim, so a curriculum that never ran its fixtures
+        is refused before the engine spends anything on it.
+  config:
+    circuit_policy: composed
+    circuit_library: curricula/arduino_kit/circuit_library.v1.yaml
+    kit_power_profile:
+      id: elegoo-uno-r3-super-starter-kit-power-system
+      reference_verification: verified_official
+      local_inspection: not_available
+      input:
+        description: Included 9 V battery with DC connector feeding the kit power-supply module. This
+          is the supplied source identified by the official Super Starter Kit listing and product photograph;
+          it is not a 9 V/1 A wall adapter.
+        evidence: 'Official listing: https://www.elegoo.com/en-gb/products/elegoo-uno-r3-super-starter-kit
+          ; cached photograph: curricula/arduino_kit/official_kit_photo.jpg'
+      rail_choices:
+      - 'OFF'
+      - 3.3 V
+      - 5 V
+      release_rule: Reference evidence authorises curriculum drafting. Every powered technical map must
+        cite the verified kit photo, the selected physical jumper position, the module orientation, the
+        circuit current calculation, and component/load ratings. Generated imagery never supplies those
+        facts.
+    visual_system:
+      photorealistic_roles:
+      - component identification
+      - safe working context
+      - expected observation or before-after comparison
+      technical_map_rule: Technical build maps are deterministically rendered from verified circuit data;
+        generative images are never the connection authority.
+labs:
+- id: L01
+  slug: safe-power
+  kind: foundation
+  title: Power Source and Safe Start
+  subject_set:
+    primary: Breadboard power module
+    supporting:
+    - breadboard
+    - 9V battery with DC connector
+  sequence:
+    prerequisites: []
+    prepares_for:
+    - L02
+    - L03
+    - L04
+    - L05
+  subject_job: The power module provides a chosen low-voltage rail to a breadboard when it is correctly
+    oriented and switched on.
+  learner_outcome: Identify the 9 V battery and DC lead, power module, and chosen breadboard rail from
+    the official kit photograph; explain why we move wires only while power is disconnected.
+  required_explanation:
+  - The battery and DC lead, module, and breadboard rail have different jobs.
+  - 'A circuit is a closed loop: electricity goes out from one power terminal through parts and back to
+    the other terminal.'
+  - A rail colour is only a label; the verified selector position and physical map decide what the rail
+    does.
+  core_activity:
+    mode: unpowered
+    question: With the battery lead disconnected, can I trace battery to module to chosen rail and complete
+      the adult-check card?
+    domain_state: not_designed
+  applications:
+  - Preparing a safe power-off workspace before every later build
+  - Checking a power path before it can damage a component
+  visual_roles:
+  - verified photorealistic kit-identification photograph
+  - safe disconnected setup photograph
+  - deterministic verified power-path and orientation map
+  - child tick-box evidence card
+  safety_focus:
+  - Child never connects the battery lead or changes module selectors alone
+  - Power source disconnected before rewiring
+  - Adult verifies module orientation and selector
+  qa_focus:
+  - Battery input versus rail output distinction
+  - Official kit reference used
+  - Foundation activity is entirely disconnected
+  - Deterministic map gate
+- id: L02
+  slug: breadboard
+  kind: foundation
+  title: 'Breadboard: The Hidden Metal Paths'
+  subject_set:
+    primary: Breadboard
+    supporting:
+    - jumper wires
+  sequence:
+    prerequisites:
+    - L01
+    prepares_for:
+    - L03
+    - L05
+    - L06
+  subject_job: A breadboard joins selected holes with hidden metal clips so circuits can be built without
+    soldering.
+  learner_outcome: Predict which holes are joined, identify the centre trench and rail breaks, and verify
+    a prediction unpowered.
+  required_explanation:
+  - Five-hole groups form electrical meeting points.
+  - The centre trench separates the two sides for parts with legs on both sides.
+  - Power rails may be split and must be checked rather than assumed.
+  core_activity:
+    mode: unpowered
+    question: Which holes share the same hidden metal clip?
+    domain_state: not_designed
+  applications:
+  - Placing a resistor without shorting its two legs
+  - Building repeatable circuits
+  visual_roles:
+  - photorealistic breadboard
+  - cutaway clip illustration
+  - deterministic connectivity map
+  - rail-break warning
+  safety_focus:
+  - Power remains off
+  - Do not assume rail continuity
+  qa_focus:
+  - Correct board-specific topology
+  - Trench and rail-break accuracy
+- id: L03
+  slug: jumper-wires-and-expansion
+  kind: foundation
+  title: Jumper Wires and Expansion Board
+  subject_set:
+    primary: Jumper wires
+    supporting:
+    - breadboard expansion board
+  sequence:
+    prerequisites:
+    - L01
+    - L02
+    prepares_for:
+    - L05
+    - L30
+  subject_job: Jumper wires deliberately connect two different electrical points; an expansion board makes
+    grouped connections easier to reach.
+  learner_outcome: Make a labelled connection plan and distinguish a wire route from a component connection.
+  required_explanation:
+  - A wire joins two points but does not decide what the circuit does.
+  - Wire colour is a convention
+  - not an electrical property.
+  - A connection is defined by its endpoints.
+  core_activity:
+    mode: unpowered
+    question: Can I name the two endpoints of every wire before I insert it?
+    domain_state: not_designed
+  applications:
+  - Extending a rail
+  - Connecting sensors and outputs
+  visual_roles:
+  - photorealistic wire types
+  - connection endpoint diagram
+  - deterministic route overlay
+  - loose-wire hazard
+  safety_focus:
+  - Power off while moving wires
+  - No ambiguous endpoints
+  qa_focus:
+  - Endpoint traceability
+  - Colour never used as sole instruction
+- id: L04
+  slug: multimeter
+  kind: foundation
+  title: 'Multimeter: Looking for Evidence'
+  subject_set:
+    primary: Digital multimeter
+    supporting:
+    - breadboard
+  sequence:
+    prerequisites:
+    - L01
+    - L02
+    prepares_for:
+    - L05
+    - L06
+    - L35
+  subject_job: A multimeter measures or tests selected electrical properties when its probes, sockets,
+    and mode are used correctly.
+  learner_outcome: Distinguish voltage, continuity, and current modes and hand an adult a safe measurement
+    plan.
+  required_explanation:
+  - Voltage compares two points; it is not measured at one point alone.
+  - Continuity is a low-energy check of a possible connection.
+  - Current mode is never placed directly across a supply.
+  core_activity:
+    mode: unpowered
+    question: Which meter mode answers a connection question without powering the circuit?
+    domain_state: not_designed
+  applications:
+  - Checking breadboard paths
+  - Checking a battery or rail with adult support
+  visual_roles:
+  - photorealistic meter
+  - deterministic jack-and-dial map
+  - probe placement diagram
+  - current-mode red-X
+  safety_focus:
+  - Correct meter socket
+  - Adult-led voltage/current measurements
+  qa_focus:
+  - Socket and mode accuracy
+  - Direct-across-supply prohibition
+- id: L05
+  slug: resistor
+  kind: component
+  title: 'Resistor: The Current-Controlling Part'
+  subject_set:
+    primary: Resistor
+    supporting:
+    - breadboard
+    - LED
+  sequence:
+    prerequisites:
+    - L01
+    - L02
+    - L03
+    - L04
+    prepares_for:
+    - L06
+    - L07
+    - L15
+  subject_job: A resistor limits current so other components can operate safely.
+  learner_outcome: Explain why an LED needs a series resistor and recognise that resistor value changes
+    the current.
+  required_explanation:
+  - Voltage and current are different ideas.
+  - A resistor makes it harder for charge to move through a path.
+  - A series resistor protects an LED by limiting current.
+  core_activity:
+    mode: powered_pending_physical_check
+    question: How does changing a verified series resistor change LED brightness?
+    domain_state: requires_verified_circuit_data
+    domain_activity:
+      power_input: kit_battery_9v
+  applications:
+  - LED current limiting
+  - Pull-up and pull-down circuits
+  visual_roles:
+  - photorealistic resistor markings
+  - resistance path illustration
+  - deterministic series circuit
+  - brightness comparison
+  safety_focus:
+  - Correct verified resistor value
+  - No direct LED-to-rail connection
+  qa_focus:
+  - Current-limiting calculation
+  - Power rating
+  - Selected rail stated
+- id: L06
+  slug: diode
+  kind: component
+  title: 'Diode: A One-Way Protection Part'
+  subject_set:
+    primary: Diode
+    supporting:
+    - resistor
+    - LED
+  sequence:
+    prerequisites:
+    - L05
+    prepares_for:
+    - L07
+    - L16
+    - L33
+  subject_job: A diode strongly resists current in one direction and allows it in the other direction
+    when correctly connected.
+  learner_outcome: Identify the band, predict forward versus reverse connection, and state two useful
+    diode jobs.
+  required_explanation:
+  - A diode has two semiconductor regions meeting at a junction barrier.
+  - Forward bias helps charges cross; reverse bias strongly resists them.
+  - A diode can protect against reverse connection and give a coil's stored energy a safe path.
+  core_activity:
+    mode: powered_pending_physical_check
+    question: What changes when a verified diode is turned around in the same protected test circuit?
+    domain_state: requires_verified_circuit_data
+    domain_activity:
+      power_input: kit_battery_9v
+  applications:
+  - Reverse-polarity protection
+  - Flyback path for a relay or motor coil
+  - AC-to-DC rectification
+  visual_roles:
+  - photorealistic band identification
+  - semiconductor junction illustration
+  - deterministic forward-reverse comparison
+  - coil protection context
+  safety_focus:
+  - Band orientation
+  - Never connect coil circuits without verified flyback design
+  qa_focus:
+  - Anode/cathode and forward/reverse claims are supported by a primary source and a bounded prediction.
+  - The adult execution card records observed forward/reverse evidence; document acceptance does not claim
+    an unperformed physical test.
+- id: L07
+  slug: led
+  kind: component
+  title: 'LED: A Diode That Makes Light'
+  subject_set:
+    primary: LED
+    supporting:
+    - resistor
+  sequence:
+    prerequisites:
+    - L05
+    - L06
+    prepares_for:
+    - L08
+    - L19
+    - L30
+  subject_job: An LED is a diode that releases some electrical energy as visible light when current is
+    correctly limited and directed.
+  learner_outcome: Identify LED polarity, build a protected light circuit, and explain why the resistor
+    is not optional.
+  required_explanation:
+  - An LED has a direction; its long and short legs or flat edge are physical clues.
+  - Light appears when charge changes energy inside the LED.
+  - The series resistor controls current and prevents damage.
+  core_activity:
+    mode: powered_pending_physical_check
+    question: Can I make the LED light only when its polarity and resistor are both correct?
+    domain_state: requires_verified_circuit_data
+    domain_activity:
+      power_input: kit_battery_9v
+  applications:
+  - Status indicator
+  - Light-up signal
+  - Seven-segment display element
+  visual_roles:
+  - photorealistic LED polarity
+  - energy-to-light illustration
+  - deterministic LED circuit
+  - lit-versus-unlit comparison
+  safety_focus:
+  - Mandatory series resistor
+  - Polarity check
+  qa_focus:
+  - LED forward voltage allowance
+  - Resistor calculation
+  - Brightness claim bounded
+- id: L08
+  slug: rgb-led
+  kind: component
+  title: 'RGB LED: Three Tiny Light Sources'
+  subject_set:
+    primary: RGB LED
+    supporting:
+    - resistors
+  sequence:
+    prerequisites:
+    - L07
+    prepares_for:
+    - L21
+    - L30
+  subject_job: An RGB LED contains red, green, and blue LED sections that can be controlled separately
+    to make many colours.
+  learner_outcome: Identify the common lead after verification and predict colour mixing from selected
+    light sections.
+  required_explanation:
+  - Red, green, and blue light can combine to make other colours.
+  - Each LED section needs its own current control.
+  - Common-anode and common-cathode versions need different wiring and must never be guessed.
+  core_activity:
+    mode: powered_pending_physical_check
+    question: Which light sections must be on to make a chosen mixed colour?
+    domain_state: requires_verified_circuit_data
+    domain_activity:
+      power_input: kit_battery_9v
+  applications:
+  - Colour status signal
+  - Mood or alarm indicator
+  visual_roles:
+  - photorealistic RGB LED
+  - additive-colour illustration
+  - deterministic verified-common circuit
+  - colour-state comparison
+  safety_focus:
+  - Verify common lead type
+  - One resistor per colour section
+  qa_focus:
+  - Kit-specific pinout
+  - Per-channel current limiting
+- id: L09
+  slug: potentiometer
+  kind: component
+  title: 'Potentiometer: A Turning Voltage Chooser'
+  subject_set:
+    primary: Potentiometer
+    supporting:
+    - multimeter
+    - LED
+  sequence:
+    prerequisites:
+    - L04
+    - L05
+    - L07
+    prepares_for:
+    - L10
+    - L11
+    - L22
+  subject_job: A potentiometer is an adjustable resistor with a moving contact that can choose part of
+    a voltage.
+  learner_outcome: Identify the three terminals and explain why the centre wiper voltage changes as the
+    knob turns.
+  required_explanation:
+  - The two outer terminals sit at the ends of a resistive track.
+  - The wiper touches a position along that track.
+  - A voltage divider creates an adjustable fraction of a supply voltage.
+  core_activity:
+    mode: powered_pending_physical_check
+    question: How does the verified wiper voltage change as I turn the knob?
+    domain_state: requires_verified_circuit_data
+    domain_activity:
+      power_input: kit_battery_9v
+  applications:
+  - Volume or brightness control signal
+  - Adjustable sensor threshold
+  visual_roles:
+  - photorealistic potentiometer
+  - track-and-wiper cutaway
+  - deterministic divider map
+  - knob-position comparison
+  safety_focus:
+  - Adult-led measurement
+  - Do not use an unknown wiper pinout
+  qa_focus:
+  - Three-terminal topology
+  - Meter mode and probes
+- id: L10
+  slug: photoresistor
+  kind: component
+  title: 'Photoresistor: A Part That Notices Light'
+  subject_set:
+    primary: Photoresistor
+    supporting:
+    - resistor
+    - multimeter
+  sequence:
+    prerequisites:
+    - L05
+    - L09
+    prepares_for:
+    - L31
+  subject_job: A photoresistor changes resistance as the light falling on it changes.
+  learner_outcome: Compare bright and shaded conditions and explain how a voltage divider turns that change
+    into a readable signal.
+  required_explanation:
+  - Light changes the material's resistance.
+  - A divider converts a resistance change into a voltage change.
+  - More or less light may raise or lower the chosen signal depending on circuit position.
+  core_activity:
+    mode: powered_pending_physical_check
+    question: What evidence changes when I shade the photoresistor?
+    domain_state: requires_verified_circuit_data
+    domain_activity:
+      power_input: kit_battery_9v
+  applications:
+  - Night light trigger
+  - Light level sensor
+  visual_roles:
+  - photorealistic sensor
+  - light-and-resistance illustration
+  - deterministic divider
+  - bright-shaded comparison
+  safety_focus:
+  - Avoid staring into bright sources
+  - Verify resistor value
+  qa_focus:
+  - Divider direction explained
+  - Measurement conditions stated
+- id: L11
+  slug: thermistor
+  kind: component
+  title: 'Thermistor: A Part That Notices Temperature'
+  subject_set:
+    primary: Thermistor
+    supporting:
+    - resistor
+    - multimeter
+  sequence:
+    prerequisites:
+    - L05
+    - L09
+    prepares_for:
+    - L32
+  subject_job: A thermistor changes resistance when its temperature changes.
+  learner_outcome: Compare safe warm and room-temperature conditions and explain why the signal direction
+    depends on the divider arrangement.
+  required_explanation:
+  - 'Most kit thermistors are NTC: their resistance decreases as temperature rises.'
+  - Temperature should be changed gently and safely.
+  - A divider turns resistance change into a voltage signal.
+  core_activity:
+    mode: powered_pending_physical_check
+    question: What changes when the thermistor is gently warmed by a hand?
+    domain_state: requires_verified_circuit_data
+    domain_activity:
+      power_input: kit_battery_9v
+  applications:
+  - Overheat warning
+  - Temperature threshold
+  visual_roles:
+  - photorealistic thermistor
+  - temperature-resistance graph
+  - deterministic divider
+  - safe hand-warm comparison
+  safety_focus:
+  - No flame or hot water
+  - Verify thermistor type
+  qa_focus:
+  - NTC/PTC verification
+  - Safe stimulus
+- id: L12
+  slug: pushbutton
+  kind: component
+  title: 'Pushbutton: A Momentary Connection'
+  subject_set:
+    primary: Pushbutton
+    supporting:
+    - resistor
+    - LED
+  sequence:
+    prerequisites:
+    - L02
+    - L05
+    - L07
+    prepares_for:
+    - L30
+    - L35
+  subject_job: A pushbutton changes from open to connected only while it is pressed.
+  learner_outcome: Identify paired internal legs and explain why a pull resistor prevents a floating signal.
+  required_explanation:
+  - A button does not always connect the legs beside each other.
+  - An open input needs a defined resting state.
+  - A pull-up or pull-down resistor gives that resting state.
+  core_activity:
+    mode: powered_pending_physical_check
+    question: Which button legs connect only while the button is pressed?
+    domain_state: requires_verified_circuit_data
+    domain_activity:
+      power_input: kit_battery_9v
+  applications:
+  - Doorbell input
+  - User control
+  visual_roles:
+  - photorealistic button orientation
+  - internal contacts cutaway
+  - deterministic pull circuit
+  - pressed-released comparison
+  safety_focus:
+  - Verify button leg pairs unpowered
+  - No short across rail
+  qa_focus:
+  - Button rotation
+  - Pull resistor topology
+- id: L13
+  slug: tilt-switch
+  kind: component
+  title: 'Tilt Switch: A Moving Contact Sensor'
+  subject_set:
+    primary: Tilt switch
+    supporting:
+    - resistor
+    - LED
+  sequence:
+    prerequisites:
+    - L12
+    prepares_for:
+    - L35
+  subject_job: A tilt switch uses a moving internal contact to open or close a circuit in particular orientations.
+  learner_outcome: Predict and observe the orientations in which the contact changes state.
+  required_explanation:
+  - A small conductor moves inside the switch.
+  - The switch is not a precise angle meter.
+  - A pull resistor provides a known state when the contact is open.
+  core_activity:
+    mode: powered_pending_physical_check
+    question: Which tilt direction closes this verified switch?
+    domain_state: requires_verified_circuit_data
+    domain_activity:
+      power_input: kit_battery_9v
+  applications:
+  - Tip-over alarm
+  - Orientation detector
+  visual_roles:
+  - photorealistic tilt switch
+  - moving-contact cutaway
+  - deterministic input map
+  - orientation sequence
+  safety_focus:
+  - Secure components before tilting
+  - Verify actual switch orientation
+  qa_focus:
+  - State direction verified
+  - Pull resistor present
+- id: L14
+  slug: joystick
+  kind: component
+  title: 'Joystick: Two Turning Sensors and a Button'
+  subject_set:
+    primary: Joystick module
+    supporting:
+    - multimeter
+  sequence:
+    prerequisites:
+    - L09
+    - L12
+    prepares_for:
+    - L23
+    - L35
+  subject_job: A joystick uses two potentiometers and often a pushbutton to report horizontal, vertical,
+    and press actions.
+  learner_outcome: Explain the three kinds of joystick signal and test one verified axis with adult support.
+  required_explanation:
+  - Each axis is an adjustable voltage divider.
+  - Centre position is a range
+  - not necessarily an exact number.
+  - Module labels and pins are kit-specific.
+  core_activity:
+    mode: powered_pending_physical_check
+    question: How does one verified joystick axis change as the stick moves, and how does the push-button
+      state change when pressed?
+    domain_state: requires_verified_circuit_data
+    domain_activity:
+      power_input: kit_battery_9v
+  applications:
+  - Game control
+  - Robot direction input
+  visual_roles:
+  - photorealistic joystick
+  - axis signal illustration
+  - verified pin map
+  - movement-result comparison
+  safety_focus:
+  - No universal module pinout
+  - Adult-led controller connection
+  qa_focus:
+  - Module variant confirmed
+  - Signal ranges measured
+- id: L15
+  slug: transistor
+  kind: component
+  title: 'Transistor: A Small Signal Controls a Bigger Path'
+  subject_set:
+    primary: NPN transistor
+    supporting:
+    - resistors
+    - LED
+  sequence:
+    prerequisites:
+    - L05
+    - L07
+    - L12
+    prepares_for:
+    - L16
+    - L31
+    - L33
+  subject_job: A transistor can use a small control signal to control a larger current path through a
+    load.
+  learner_outcome: Identify that base, collector, and emitter have different jobs and explain switching
+    without calling it a magic amplifier.
+  required_explanation:
+  - A small base current controls a collector-emitter path in an NPN switch.
+  - A base resistor limits the control current.
+  - Pin order varies by package and must be verified.
+  core_activity:
+    mode: powered_pending_physical_check
+    question: Can a protected small control path switch a separate LED load path?
+    domain_state: requires_verified_circuit_data
+    domain_activity:
+      power_input: kit_battery_9v
+  applications:
+  - Sensor-controlled lamp
+  - Relay driver
+  visual_roles:
+  - photorealistic transistor package
+  - switch-path illustration
+  - deterministic verified pinout map
+  - control-on-off comparison
+  safety_focus:
+  - Verify transistor pinout
+  - Base resistor required
+  qa_focus:
+  - Load current calculation
+  - Saturation assumption bounded
+- id: L16
+  slug: relay
+  kind: component
+  title: 'Relay: An Electrically Moved Switch'
+  subject_set:
+    primary: Relay
+    supporting:
+    - transistor
+    - diode
+  sequence:
+    prerequisites:
+    - L06
+    - L15
+    prepares_for:
+    - L33
+  subject_job: A relay uses a coil to move switch contacts, allowing one circuit to control a separate
+    low-voltage path.
+  learner_outcome: Distinguish coil pins from COM, NO, and NC contacts and explain why a flyback diode
+    is needed.
+  required_explanation:
+  - The coil is an electromagnet
+  - not a normal switch contact.
+  - COM connects to NO or NC depending on coil state.
+  - A flyback diode gives stored coil energy a safe path when power turns off.
+  core_activity:
+    mode: adult_led_controller_station
+    question: Which verified contact path changes when the relay coil is energised?
+    domain_state: requires_verified_circuit_data
+    domain_activity:
+      power_input: kit_battery_9v
+  applications:
+  - Low-voltage controlled switch
+  - Alarm or doorbell controller
+  visual_roles:
+  - photorealistic relay labels
+  - coil-contact cutaway
+  - deterministic low-voltage map
+  - NO-NC state comparison
+  safety_focus:
+  - Never connect mains to relay contacts
+  - Verified flyback diode and coil rating
+  qa_focus:
+  - Coil/contact separation
+  - Contact labels verified
+- id: L17
+  slug: active-buzzer
+  kind: component
+  title: 'Active Buzzer: A Sound Part With Its Own Oscillator'
+  subject_set:
+    primary: Active buzzer
+    supporting:
+    - transistor optional
+  sequence:
+    prerequisites:
+    - L01
+    - L15
+    prepares_for:
+    - L35
+  subject_job: An active buzzer makes a preset sound when it receives suitable power.
+  learner_outcome: Explain why an active buzzer can make sound from a steady supply while a passive buzzer
+    cannot.
+  required_explanation:
+  - An active buzzer contains an oscillator.
+  - Polarity and rated voltage matter.
+  - Sound is evidence that the buzzer's internal circuit is running.
+  core_activity:
+    mode: powered_pending_physical_check
+    question: Does the verified active buzzer sound when its correct supply and polarity are applied?
+    domain_state: requires_verified_circuit_data
+    domain_activity:
+      power_input: kit_battery_9v
+  applications:
+  - Alarm
+  - Timer signal
+  visual_roles:
+  - photorealistic buzzer markings
+  - internal oscillator illustration
+  - deterministic test circuit
+  - sound-state scene
+  safety_focus:
+  - Check polarity and rating
+  - Keep sound level brief
+  qa_focus:
+  - Active/passive identification
+  - Rated supply verified
+- id: L18
+  slug: passive-buzzer
+  kind: component
+  title: 'Passive Buzzer: A Sound Part That Needs a Changing Signal'
+  subject_set:
+    primary: Passive buzzer
+    supporting:
+    - controller output
+  sequence:
+    prerequisites:
+    - L17
+    prepares_for:
+    - L23
+    - L35
+  subject_job: A passive buzzer makes sound only when a changing electrical signal moves it repeatedly.
+  learner_outcome: Contrast a steady signal with a changing signal and predict which will make a tone.
+  required_explanation:
+  - Sound comes from repeated movement.
+  - Signal frequency changes perceived pitch.
+  - A static supply is not a complete test for a passive buzzer.
+  core_activity:
+    mode: adult_led_controller_station
+    question: What changes when the adult-controlled signal changes frequency?
+    domain_state: requires_verified_circuit_data
+    domain_activity:
+      power_input: kit_battery_9v
+  applications:
+  - Different alert tones
+  - Musical notes
+  visual_roles:
+  - photorealistic passive buzzer
+  - vibration-wave illustration
+  - controller station map
+  - low-high pitch comparison
+  safety_focus:
+  - Adult-controlled signal source
+  - Sound duration limited
+  qa_focus:
+  - No static-supply claim
+  - Frequency explanation
+- id: L19
+  slug: one-digit-seven-segment
+  kind: component
+  title: 'One-Digit Seven-Segment Display: Making Numbers With LEDs'
+  subject_set:
+    primary: One-digit seven-segment display
+    supporting:
+    - resistors
+  sequence:
+    prerequisites:
+    - L07
+    prepares_for:
+    - L20
+    - L21
+  subject_job: A seven-segment display combines separate LED bars to show digits.
+  learner_outcome: Map a digit to segments and explain why the display type and pinout must be verified.
+  required_explanation:
+  - Each segment is an LED.
+  - Common-anode and common-cathode displays work differently.
+  - Each lit segment requires suitable current control.
+  core_activity:
+    mode: powered_pending_physical_check
+    question: Which verified segments must light to show a chosen digit?
+    domain_state: requires_verified_circuit_data
+    domain_activity:
+      power_input: kit_battery_9v
+  applications:
+  - Counter
+  - Timer display
+  visual_roles:
+  - photorealistic display
+  - digit-segment map
+  - deterministic verified pin map
+  - digit comparison
+  safety_focus:
+  - Verify display type and pinout
+  - Segment current limiting
+  qa_focus:
+  - Common connection verified
+  - Segment resistor strategy
+- id: L20
+  slug: four-digit-seven-segment
+  kind: component
+  title: 'Four-Digit Display: Sharing Segments Over Time'
+  subject_set:
+    primary: Four-digit seven-segment display
+    supporting:
+    - controller outputs
+    - per-segment current-limiting components
+  sequence:
+    prerequisites:
+    - L19
+    prepares_for:
+    - L21
+    - L22
+  subject_job: A four-digit display reuses segment connections and quickly selects one digit at a time.
+  learner_outcome: Explain multiplexing as fast turn-taking rather than four independent static displays.
+  required_explanation:
+  - Digits take turns quickly enough to look continuously lit.
+  - Segment lines are shared.
+  - A controller and verified module pinout are required for an honest demonstration.
+  core_activity:
+    mode: adult_led_controller_station
+    question: Why can several digits look lit when they take turns?
+    domain_state: requires_verified_circuit_data
+    domain_activity:
+      power_input: kit_battery_9v
+  applications:
+  - Clock
+  - Scoreboard
+  visual_roles:
+  - photorealistic display
+  - turn-taking timeline
+  - verified connection map
+  - slow-motion concept comparison
+  safety_focus:
+  - Verify display common type and pinout.
+  - Use verified per-segment current limiting and total-current budget.
+  qa_focus:
+  - Multiplexing accurately explained
+  - Controller dependencies disclosed
+- id: L21
+  slug: shift-register
+  kind: component
+  title: '74HC595: More Outputs From a Small Number of Signals'
+  subject_set:
+    primary: 74HC595 shift register
+    supporting:
+    - LEDs
+    - per-LED current-limiting resistors
+    - controller outputs
+  sequence:
+    prerequisites:
+    - L08
+    - L19
+    prepares_for:
+    - L22
+  subject_job: A shift register receives bits in sequence and presents them on more output pins after
+    a latch command.
+  learner_outcome: Use a physical bit-token model to explain serial input, storage, and parallel outputs.
+  required_explanation:
+  - A bit is an on/off piece of information.
+  - Serial means one after another; parallel means side by side.
+  - Exact chip orientation
+  - voltage limits
+  - and timing come from the verified datasheet.
+  core_activity:
+    mode: adult_led_controller_station
+    question: How can three controller signals update several LED outputs?
+    domain_state: requires_verified_circuit_data
+    domain_activity:
+      power_input: kit_battery_9v
+  applications:
+  - More indicator LEDs
+  - Display driver
+  visual_roles:
+  - photorealistic IC notch
+  - bit-token sequence illustration
+  - verified chip map
+  - input-output comparison
+  safety_focus:
+  - Verify supply and logic levels.
+  - Use current limiting on every LED output and keep total package current within the primary-source
+    rating.
+  qa_focus:
+  - Datasheet pins checked
+  - Timing claim observed
+- id: L22
+  slug: lcd1602
+  kind: component
+  title: 'LCD1602: A Screen That Needs Instructions'
+  subject_set:
+    primary: LCD1602 display
+    supporting:
+    - potentiometer
+    - controller output
+  sequence:
+    prerequisites:
+    - L09
+    - L21
+    prepares_for:
+    - L23
+    - L35
+  subject_job: An LCD1602 shows letters and numbers when a controller sends instructions and data; a potentiometer
+    usually sets contrast.
+  learner_outcome: Distinguish contrast from text data and identify why a screen needs a verified interface
+    and code.
+  required_explanation:
+  - Contrast changes how visible the pixels are
+  - not what they say.
+  - A controller sends commands and character information.
+  - LCD variants and backpacks require pin verification.
+  core_activity:
+    mode: adult_led_controller_station
+    question: What is the difference between turning contrast and changing the text command?
+    domain_state: requires_verified_circuit_data
+    domain_activity:
+      power_input: kit_battery_9v
+  applications:
+  - Sensor readout
+  - Message display
+  visual_roles:
+  - photorealistic LCD
+  - pixels-and-contrast illustration
+  - verified interface map
+  - blank-visible-text comparison
+  safety_focus:
+  - Verify module/backpack type
+  - Adult-led controller connection
+  qa_focus:
+  - Contrast circuit verified
+  - Interface variant identified
+- id: L23
+  slug: infrared-remote
+  kind: component
+  title: 'Infrared Remote: Sending Invisible Light Messages'
+  subject_set:
+    primary: IR remote
+    supporting:
+    - IR receiver module
+    - controller output
+  sequence:
+    prerequisites:
+    - L18
+    - L22
+    prepares_for:
+    - L24
+    - L35
+  subject_job: An infrared remote sends coded pulses of invisible light; a compatible receiver module
+    detects and demodulates the pulses, and controller software interprets the button code.
+  learner_outcome: Explain that buttons send patterns, not simply “electricity through the air.”
+  required_explanation:
+  - Infrared is light beyond what our eyes see.
+  - A code is a timed pattern that represents a button.
+  - In this lab the accepted receiver station is a black box that shows different button results; L24
+    explains how the receiver works.
+  core_activity:
+    mode: adult_led_controller_station
+    question: Can a receiver show that different buttons send different codes?
+    domain_state: requires_verified_circuit_data
+    domain_activity:
+      power_input: kit_battery_9v
+  applications:
+  - Remote control
+  - Contactless input
+  visual_roles:
+  - photorealistic remote and receiver
+  - invisible-light concept illustration
+  - verified station map
+  - button-code result
+  safety_focus:
+  - No eye-safety claims beyond ordinary remote use
+  - Adult-led code display
+  qa_focus:
+  - Receiver module pinout
+  - Code observation evidence
+- id: L24
+  slug: infrared-receiver
+  kind: component
+  title: 'Infrared Receiver: Turning Light Pulses Into Signals'
+  subject_set:
+    primary: IR receiver module
+    supporting:
+    - IR remote
+    - controller output
+  sequence:
+    prerequisites:
+    - L23
+    prepares_for:
+    - L35
+  subject_job: An IR receiver module detects suitable infrared pulse patterns and produces an electrical
+    output a controller can read.
+  learner_outcome: Identify that the receiver senses patterned light and requires a shared reference connection.
+  required_explanation:
+  - The receiver responds to a pattern
+  - helping reject ordinary room light.
+  - A common ground gives two connected parts the same reference.
+  - Module pin labels are not universal.
+  core_activity:
+    mode: adult_led_controller_station
+    question: What changes in the verified output when a remote button is pressed?
+    domain_state: requires_verified_circuit_data
+    domain_activity:
+      power_input: kit_battery_9v
+  applications:
+  - Remote-controlled output
+  - Hidden-button game
+  visual_roles:
+  - photorealistic receiver
+  - pattern-filter illustration
+  - verified pin map
+  - signal result comparison
+  safety_focus:
+  - Verify module pins
+  - Adult-led controller use
+  qa_focus:
+  - Shared-ground requirement
+  - Ambient-light limitation
+- id: L25
+  slug: ultrasonic-sensor
+  kind: component
+  title: 'Ultrasonic Sensor: Measuring With Echoes'
+  subject_set:
+    primary: Ultrasonic sensor
+    supporting:
+    - controller trigger output
+    - controller echo input
+  sequence:
+    prerequisites:
+    - L18
+    - L24
+    prepares_for:
+    - L35
+  subject_job: An ultrasonic sensor sends a sound pulse and estimates distance from the time an echo takes
+    to return.
+  learner_outcome: Explain distance as a measured travel time and identify why soft or angled surfaces
+    can give unreliable results.
+  required_explanation:
+  - Ultrasound is sound above human hearing.
+  - The pulse travels out and returns as an echo.
+  - Distance calculations need the return trip to be divided by two.
+  core_activity:
+    mode: adult_led_controller_station
+    question: How does echo time change as a flat target moves farther away?
+    domain_state: requires_verified_circuit_data
+    domain_activity:
+      power_input: kit_battery_9v
+  applications:
+  - Parking distance helper
+  - Robot obstacle sensing
+  visual_roles:
+  - photorealistic sensor
+  - echo travel diagram
+  - verified controller map
+  - near-far result comparison
+  safety_focus:
+  - Keep target clear of face
+  - No universal module voltage assumption
+  qa_focus:
+  - Round-trip reasoning
+  - Surface limitation explained
+- id: L26
+  slug: dht11
+  kind: component
+  title: 'DHT11: Reporting Air Conditions'
+  subject_set:
+    primary: DHT11 sensor
+    supporting:
+    - controller output
+  sequence:
+    prerequisites:
+    - L22
+    - L25
+    prepares_for:
+    - L35
+  subject_job: A DHT11 module senses temperature and humidity and sends a digital report to a controller.
+  learner_outcome: Distinguish a sensor measurement from a screen reading and explain that digital reports
+    use a timed protocol.
+  required_explanation:
+  - Humidity describes water vapour in air.
+  - The sensor measures and then sends a coded report.
+  - Readings update slowly and have limited accuracy.
+  core_activity:
+    mode: adult_led_controller_station
+    question: What can the controller display from this verified sensor, and what are its limits?
+    domain_state: requires_verified_circuit_data
+    domain_activity:
+      power_input: kit_battery_9v
+  applications:
+  - Room comfort display
+  - Simple weather station
+  visual_roles:
+  - photorealistic sensor
+  - humidity concept illustration
+  - verified module map
+  - display reading context
+  safety_focus:
+  - Verify module variant
+  - Avoid water contact
+  qa_focus:
+  - Accuracy limits stated
+  - Timed protocol not simplified into analogue voltage
+- id: L27
+  slug: servo
+  kind: component
+  title: 'Servo Motor: Moving to a Chosen Position'
+  subject_set:
+    primary: Servo motor
+    supporting:
+    - controller output
+    - external power consideration
+  sequence:
+    prerequisites:
+    - L15
+    - L18
+    prepares_for:
+    - L35
+  subject_job: A hobby servo uses a feedback system to move its shaft toward a commanded position.
+  learner_outcome: Explain position command versus continuous spinning and identify why power capacity
+    matters for motors.
+  required_explanation:
+  - A servo contains a motor, gears, and a position sensor.
+  - Control pulses ask for a position.
+  - Motor current can exceed what a controller pin or weak rail can safely supply.
+  core_activity:
+    mode: adult_led_controller_station
+    question: How does a verified pulse command choose a servo position?
+    domain_state: requires_verified_circuit_data
+    domain_activity:
+      power_input: kit_battery_9v
+  applications:
+  - Pointer
+  - Small robot arm
+  visual_roles:
+  - photorealistic servo horn
+  - feedback-loop illustration
+  - verified adult station map
+  - position sequence
+  safety_focus:
+  - Adult-approved power budget
+  - Keep fingers clear of moving horn
+  qa_focus:
+  - Power current verified
+  - Shared reference and pulse range confirmed
+- id: L28
+  slug: stepper-motor
+  kind: component
+  title: 'Stepper Motor: Moving in Small Steps'
+  subject_set:
+    primary: Stepper motor
+    supporting:
+    - ULN2003 driver
+    - controller outputs
+    - verified motor power source
+  sequence:
+    prerequisites:
+    - L16
+    - L27
+    prepares_for:
+    - L29
+    - L35
+  subject_job: A stepper motor moves in controlled increments when its coils are energised in the correct
+    sequence.
+  learner_outcome: Explain that the motor needs a coil sequence and a driver rather than a direct controller
+    connection.
+  required_explanation:
+  - Several coils pull the rotor in a planned order.
+  - A step is a small controlled movement.
+  - Motors need more current than a controller output can provide directly.
+  core_activity:
+    mode: adult_led_controller_station
+    question: What happens when a verified coil sequence is changed or reversed?
+    domain_state: requires_verified_circuit_data
+    domain_activity:
+      power_input: kit_battery_9v
+  applications:
+  - Precise dial
+  - Small positioning mechanism
+  visual_roles:
+  - photorealistic motor
+  - coil-step illustration
+  - verified driver station map
+  - direction sequence
+  safety_focus:
+  - Do not power motor directly from controller pin
+  - Adult-led power check
+  qa_focus:
+  - Coil order verified
+  - Driver current limits verified
+- id: L29
+  slug: uln2003-driver
+  kind: component
+  title: 'ULN2003: A Driver Between a Controller and a Motor'
+  subject_set:
+    primary: ULN2003 driver board
+    supporting:
+    - stepper motor
+    - controller output
+  sequence:
+    prerequisites:
+    - L15
+    - L28
+    prepares_for:
+    - L35
+  subject_job: A ULN2003 driver board lets small controller signals control higher-current coil paths
+    and includes protection suited to inductive loads.
+  learner_outcome: Explain why a driver separates control signals from motor current paths.
+  required_explanation:
+  - Input pins are control signals
+  - not motor power.
+  - Driver outputs switch coil current.
+  - Inductive loads need managed turn-off energy.
+  core_activity:
+    mode: adult_led_controller_station
+    question: Which path carries the controller signal and which path carries motor current?
+    domain_state: requires_verified_circuit_data
+    domain_activity:
+      power_input: kit_battery_9v
+  applications:
+  - Stepper motor driver
+  - Relay or solenoid driver concept
+  visual_roles:
+  - photorealistic driver board
+  - control-versus-power path diagram
+  - verified terminal map
+  - coil sequence context
+  safety_focus:
+  - Verify board labels
+  - Adult-led motor supply
+  qa_focus:
+  - Signal/power separation
+  - Motor connector mapping
+- id: L30
+  slug: led-and-switch-integration
+  kind: integration
+  title: 'LED and Switch: Making a Clear User Signal'
+  subject_set:
+    primary: LED
+    supporting:
+    - pushbutton
+    - resistor
+  sequence:
+    prerequisites:
+    - L07
+    - L12
+    prepares_for:
+    - L35
+  subject_job: The LED shows an electrical state while the pushbutton creates a controlled user input.
+  learner_outcome: Combine known components without introducing a new unexplained electrical principle.
+  required_explanation:
+  - The LED needs current limiting
+  - The button needs a defined resting state
+  - One component can communicate the state made by another.
+  core_activity:
+    mode: powered_pending_physical_check
+    question: Can a button make a protected LED show a clear on/off state?
+    domain_state: requires_verified_circuit_data
+    domain_activity:
+      power_input: kit_battery_9v
+  applications:
+  - Push-to-light signal
+  - Simple user interface
+  visual_roles:
+  - photorealistic interaction scene
+  - component-role diagram
+  - deterministic integration map
+  - state comparison
+  safety_focus:
+  - Apply all previous LED/button checks
+  qa_focus:
+  - No new hidden component behaviour
+  - Deterministic map matches steps
+- id: L31
+  slug: light-controlled-transistor-switch
+  kind: application
+  title: 'Photoresistor and Transistor: Light Controls a Load'
+  subject_set:
+    primary: Photoresistor
+    supporting:
+    - transistor
+    - resistors
+    - LED
+  sequence:
+    prerequisites:
+    - L10
+    - L15
+    prepares_for:
+    - L35
+  subject_job: A photoresistor produces a changing control signal and a transistor uses that signal to
+    control a separate load path.
+  learner_outcome: Trace sensor, control, and load paths as three different jobs in one circuit.
+  required_explanation:
+  - The divider turns light into a control voltage
+  - The transistor controls the load path
+  - Circuit position determines whether darkness or brightness turns the load on.
+  core_activity:
+    mode: powered_pending_physical_check
+    question: Does shading the sensor change the protected load state as the verified design predicts?
+    domain_state: requires_verified_circuit_data
+    domain_activity:
+      power_input: kit_battery_9v
+  applications:
+  - Night light
+  - Light alarm
+  visual_roles:
+  - photorealistic sensor-use scene
+  - three-path explanation
+  - deterministic circuit map
+  - light-dark comparison
+  safety_focus:
+  - Verified transistor pinout and resistor values
+  - No direct high-current load
+  qa_focus:
+  - Threshold behaviour not overstated
+  - Sensor/control/load trace
+- id: L32
+  slug: temperature-threshold
+  kind: application
+  title: 'Thermistor Threshold: A Temperature Warning Idea'
+  subject_set:
+    primary: Thermistor
+    supporting:
+    - fixed resistor
+    - adult-led controller station
+  sequence:
+    prerequisites:
+    - L11
+    - L15
+    prepares_for:
+    - L35
+  subject_job: A thermistor signal can be compared or read to decide when a temperature-related warning
+    should occur.
+  learner_outcome: Explain that a threshold is a chosen decision point, not a perfect temperature measurement.
+  required_explanation:
+  - The thermistor changes gradually
+  - A threshold is the point where we choose an action
+  - Real temperature alarms need calibration and safety margins.
+  core_activity:
+    mode: adult_led_controller_station
+    question: At what gently warmed condition does the verified demonstration change state?
+    domain_state: requires_verified_circuit_data
+    domain_activity:
+      power_input: kit_battery_9v
+  applications:
+  - Overheat warning concept
+  - Plant or room monitor
+  visual_roles:
+  - photorealistic thermistor context
+  - threshold graph
+  - verified adult station map
+  - below-above comparison
+  safety_focus:
+  - No unsafe heating
+  - Adult-led threshold setup
+  qa_focus:
+  - Temperature not falsely precise
+  - Thermistor type and calibration disclosed
+- id: L33
+  slug: relay-driver
+  kind: application
+  title: 'Relay Driver: Letting a Small Signal Control a Separate Low-Voltage Circuit'
+  subject_set:
+    primary: Relay
+    supporting:
+    - transistor
+    - diode
+    - resistors
+    - controller output
+  sequence:
+    prerequisites:
+    - L06
+    - L15
+    - L16
+    prepares_for:
+    - L35
+  subject_job: A transistor driver switches relay coil current while a diode safely handles the coil's
+    turn-off energy.
+  learner_outcome: Identify the control path, coil path, and isolated contact path without touching mains
+    electricity.
+  required_explanation:
+  - The controller signal does not power the coil directly
+  - The diode protects the transistor when the coil is switched off
+  - Relay contacts remain a separate low-voltage demonstration only.
+  core_activity:
+    mode: adult_led_controller_station
+    question: Can a protected driver change a verified low-voltage contact circuit?
+    domain_state: requires_verified_circuit_data
+    domain_activity:
+      power_input: kit_battery_9v
+  applications:
+  - Low-voltage alarm circuit
+  - Separate low-voltage load switch
+  visual_roles:
+  - photorealistic relay driver
+  - three-path diagram
+  - deterministic low-voltage map
+  - contact-state comparison
+  safety_focus:
+  - Mains forbidden
+  - Flyback diode orientation verified
+  - Adult-led build
+  qa_focus:
+  - Coil/contact separation
+  - Transistor and diode protection verified
+- id: L34
+  slug: signals
+  kind: integration
+  title: 'Signals: One Circuit Can Carry Information'
+  subject_set:
+    primary: LED and active buzzer
+    supporting:
+    - pushbutton
+    - current-limiting resistors
+  sequence:
+    prerequisites:
+    - L17
+    - L18
+    - L30
+    prepares_for:
+    - L35
+  subject_job: Outputs such as lights and sounds communicate information about a circuit state.
+  learner_outcome: Design a simple, explained signal meaning using components already understood.
+  required_explanation:
+  - A signal has a meaning chosen by people
+  - Light and sound can communicate different states
+  - A clear signal needs a consistent rule.
+  core_activity:
+    mode: powered_pending_physical_check
+    question: How can an accepted pushbutton circuit make a protected LED and active buzzer communicate
+      two verified states?
+    domain_state: requires_verified_circuit_data
+    domain_activity:
+      power_input: kit_battery_9v
+  applications:
+  - Ready/warning indicator
+  - Simple accessibility cue
+  visual_roles:
+  - photorealistic signal context
+  - state-meaning chart
+  - deterministic verified map
+  - two-state comparison
+  safety_focus:
+  - Keep sound brief
+  - Reuse only accepted circuit blocks
+  qa_focus:
+  - Meaning not confused with mechanism
+  - Reused blocks traceable
+- id: L35
+  slug: repair-shop
+  kind: diagnostic
+  title: 'Repair Shop: Trace, Test, and Explain'
+  subject_set:
+    primary: Power-off-first diagnostic method
+    supporting:
+    - multimeter
+    - accepted L30 LED-and-switch circuit
+    - known fault fixtures
+  sequence:
+    prerequisites:
+    - L01
+    - L04
+    - L30
+    - L34
+    prepares_for: []
+  subject_job: A power-off-first diagnostic method uses previously accepted component circuits, observation,
+    and one safe check at a time to locate a known connection or orientation fault.
+  learner_outcome: Follow a power-off-first troubleshooting tree and explain the evidence for a likely
+    fault.
+  required_explanation:
+  - Start with a clear expected behaviour
+  - Check physical orientation and connections with power off
+  - Change one thing at a time and record evidence.
+  core_activity:
+    mode: diagnostic
+    question: Which safe power-off check identifies whether the accepted L30 fixture has a loose jumper
+      or a reversed LED?
+    domain_state: requires_verified_circuit_data
+    domain_activity:
+      power_input: kit_battery_9v
+  applications:
+  - Finding a loose wire
+  - Checking LED polarity or a button orientation
+  visual_roles:
+  - photorealistic tidy repair bench
+  - diagnostic decision tree
+  - deterministic fault-map examples
+  - power-off warning
+  safety_focus:
+  - Power off first
+  - No random rewiring
+  - Adult checks any powered measurement
+  qa_focus:
+  - Fault evidence is real
+  - No powered release without verified circuit data

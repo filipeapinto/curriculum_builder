@@ -1,0 +1,2 @@
+{"claims_checked":2,"command":"verify-evidence_determinism","contract":"evidence_determinism.v1.yaml","contract_id":"run27-n50-evidence-determinism-v1","failures":[],"kind":"evidence_determinism","node_id":"N50_EVIDENCE_AUDIT_CONTROLS","ok":true,"valid":true}
+Claims: command repeats identically with distinct_outputs=1; audit paths remain stable with drifted=[].

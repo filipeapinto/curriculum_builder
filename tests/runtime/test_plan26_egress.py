@@ -24,6 +24,7 @@ from runtime.langgraph_factory.egress import (
     RetrievalPolicy,
     RetrievalResponse,
     SourceRetriever,
+    _default_opener,
     authorize_subprocess_transmission,
     authorize_transmission,
     load_retrieval_host_profile,
@@ -279,7 +280,11 @@ def canned(body=b"<html>ok</html>", **overrides):
                 "peer_subject": "CN=standards.example.org"},
     }
     payload.update(overrides)
-    return lambda url, *, timeout: RetrievalResponse(**payload)
+    def open_canned(url, *, timeout, redirect_validator, max_bytes):
+        for ordinal, target in enumerate(payload["redirect_chain"], start=1):
+            redirect_validator(target, ordinal)
+        return RetrievalResponse(**payload)
+    return open_canned
 
 
 def test_authorized_retrieval_records_full_metadata(
@@ -322,6 +327,12 @@ def test_authorized_retrieval_records_full_metadata(
         ("https://standards.example.org/x",
          {"headers": {"content-type": "application/x-msdownload"}},
          "content_type_not_allowed"),
+        ("https://standards.example.org/x", {"headers": {}},
+         "content_type_missing"),
+        ("https://standards.example.org/x",
+         {"redirect_chain": ("http://standards.example.org:443/downgrade",),
+          "final_url": "http://standards.example.org:443/downgrade"},
+         "redirect_scheme_not_allowed"),
     ],
 )
 def test_retrieval_denials_are_receipted(
@@ -334,6 +345,85 @@ def test_retrieval_denials_are_receipted(
         fetcher.fetch(locator, authorization_receipt=receipt_grant)
     assert denied.value.reason == expected_reason
     assert receipts.denials[-1]["denial_reason"] == expected_reason
+
+
+def test_redirect_bound_is_enforced_before_the_excess_request(
+    guard: EgressGuard, output_root: Path,
+):
+    receipt_grant = grant(make_record(output_root), output_root)
+    attempted = ["https://standards.example.org/start"]
+    targets = [
+        f"https://standards.example.org/hop-{index}" for index in range(1, 5)
+    ]
+
+    def redirecting_opener(url, *, timeout, redirect_validator, max_bytes):
+        for ordinal, target in enumerate(targets, start=1):
+            redirect_validator(target, ordinal)
+            attempted.append(target)  # models the request only after validation
+        raise AssertionError("the fourth redirect must be denied before this point")
+
+    fetcher = retriever(guard, opener=redirecting_opener, max_redirects=3)
+    with pytest.raises(EgressDenied) as denied:
+        fetcher.fetch(attempted[0], authorization_receipt=receipt_grant)
+    assert denied.value.reason == "too_many_redirects"
+    assert attempted == [targets[0].replace("hop-1", "start"), *targets[:3]]
+
+
+def test_default_opener_validates_before_urllib_constructs_the_redirect(
+    monkeypatch: pytest.MonkeyPatch,
+) -> None:
+    """Exercise the production urllib hook, not a SourceRetriever opener stub.
+
+    This catches either removing the callback from `_Tracker.redirect_request`
+    or moving it below `super().redirect_request`: in both regressions urllib
+    would construct a follow-up request before the policy denial.
+    """
+
+    events: list[str] = []
+
+    def base_redirect_request(self, req, fp, code, msg, headers, newurl):
+        events.append("urllib_constructed_redirect")
+        return object()
+
+    monkeypatch.setattr(
+        urllib.request.HTTPRedirectHandler,
+        "redirect_request",
+        base_redirect_request,
+    )
+
+    class RedirectingOpener:
+        def __init__(self, handler) -> None:
+            self.handler = handler
+
+        def open(self, url, *, timeout):
+            request = self.handler.redirect_request(
+                object(), object(), 302, "Found", {},
+                "http://standards.example.org:443/downgrade",
+            )
+            events.append("urllib_would_follow_redirect")
+            raise AssertionError(f"redirect unexpectedly survived validation: {request!r}")
+
+    def build_redirecting_opener(handler_type):
+        return RedirectingOpener(handler_type())
+
+    monkeypatch.setattr(urllib.request, "build_opener", build_redirecting_opener)
+
+    def deny_before_follow(target: str, ordinal: int) -> None:
+        events.append("validated_redirect")
+        assert target == "http://standards.example.org:443/downgrade"
+        assert ordinal == 1
+        raise EgressDenied("redirect_scheme_not_allowed", target)
+
+    with pytest.raises(EgressDenied) as denied:
+        _default_opener(
+            "https://standards.example.org/start",
+            timeout=1.0,
+            redirect_validator=deny_before_follow,
+            max_bytes=1024,
+        )
+
+    assert denied.value.reason == "redirect_scheme_not_allowed"
+    assert events == ["validated_redirect"]
 
 
 def test_load_retrieval_host_profile_returns_the_declared_electronics_profile(tmp_path: Path):
@@ -406,7 +496,7 @@ def test_dns_rebinding_to_an_unpinned_address_is_denied(
 ):
     receipt_grant = grant(make_record(output_root), output_root)
 
-    def rebinding_opener(url, *, timeout):
+    def rebinding_opener(url, *, timeout, redirect_validator, max_bytes):
         socket.create_connection(("203.0.113.9", 443), timeout=1)
         raise AssertionError("rebinding connect should never be permitted")
 
@@ -421,7 +511,7 @@ def test_dns_rebinding_to_an_unpinned_address_is_denied(
 def test_unauthorized_retrieval_makes_no_connection(guard: EgressGuard, output_root: Path):
     calls: list[str] = []
 
-    def counting_opener(url, *, timeout):
+    def counting_opener(url, *, timeout, redirect_validator, max_bytes):
         calls.append(url)
         return canned()(url, timeout=timeout)
 
@@ -453,7 +543,7 @@ def test_only_the_retriever_may_egress_to_an_allowlisted_host(
 
     receipt_grant = grant(make_record(output_root), output_root)
 
-    def connecting_opener(url, *, timeout):
+    def connecting_opener(url, *, timeout, redirect_validator, max_bytes):
         connection = socket.create_connection(("127.0.0.1", port), timeout=2)
         connection.close()
         return RetrievalResponse(

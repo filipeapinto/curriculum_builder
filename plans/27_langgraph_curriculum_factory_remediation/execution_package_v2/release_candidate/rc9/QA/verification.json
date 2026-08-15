@@ -1,0 +1,12 @@
+{
+  "state": "QA_PASSED",
+  "reason": "CONVERGED",
+  "chain_valid": true,
+  "rounds_claimed": 3,
+  "rounds_witnessed_by_codex": 3,
+  "session_id": "01a002c8-7a3f-7fb1-94d7-91c0bb03a266",
+  "rollout_file": "/Users/filipepinto/.codex/sessions/2026/08/14/rollout-2026-08-14T20-18-08-01a002c8-7a3f-7fb1-94d7-91c0bb03a266.jsonl",
+  "problems": [],
+  "artifact": "/Users/filipepinto/Projects/curriculum_builder/plans/27_langgraph_curriculum_factory_remediation/execution_package_v2/release_candidate/rc9/rc9_review_bundle.v3.md",
+  "qa_dir": "/Users/filipepinto/Projects/curriculum_builder/plans/27_langgraph_curriculum_factory_remediation/execution_package_v2/release_candidate/rc9/QA"
+}

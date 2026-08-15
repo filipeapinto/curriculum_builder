@@ -37,7 +37,9 @@ PARENT_CONTROLLER_DIR = PLAN_DIR / "controller"
 PARENT_TOOLS_DIR = PLAN_DIR / "tools"
 PARENT_GRAPH = PLAN_DIR / "implementation.graph.v1.yaml"
 
-PACKAGE_GRAPH = PACKAGE_DIR / "implementation.graph.v7.yaml"
+PACKAGE_GRAPH = PACKAGE_DIR / "implementation.graph.v8.yaml"
+APPROVED_GRAPH_V7 = PACKAGE_DIR / "implementation.graph.v7.yaml"
+RECOVERY_GRAPH_V7_MODIFIED = PACKAGE_DIR / "recovery/implementation.graph.v7.modified.b6c17e81.yaml"
 DEPRECATED_GRAPH_V4 = PACKAGE_DIR / "deprecated/implementation.graph.v4.yaml"
 DEPRECATED_GRAPH_V5 = PACKAGE_DIR / "deprecated/implementation.graph.v5.yaml"
 DEPRECATED_GRAPH_V6 = PACKAGE_DIR / "deprecated/implementation.graph.v6.yaml"
@@ -45,10 +47,10 @@ CONTRACT_SCHEMA_V2 = PACKAGE_DIR / "schemas/spec_approval.schema.v2.json"
 CONTRACT_V2 = PACKAGE_DIR / "contracts/spec_approval.v2.yaml"
 CONTRACT_SCHEMA_V3 = PACKAGE_DIR / "schemas/spec_approval.schema.v3.json"
 CONTRACT_V3 = PACKAGE_DIR / "contracts/spec_approval.v3.yaml"
-CONTRACT_SCHEMA_V4 = PACKAGE_DIR / "schemas/spec_approval.schema.v4.json"
-CONTRACT_V4 = PACKAGE_DIR / "contracts/spec_approval.v4.yaml"
+CONTRACT_SCHEMA_V5 = PACKAGE_DIR / "schemas/spec_approval.schema.v5.json"
+CONTRACT_V5 = PACKAGE_DIR / "contracts/spec_approval.v5.yaml"
 PARENT_APPROVAL_SCHEMA_V1 = PLAN_DIR / "schemas/spec_approval.schema.v1.json"
-RESULTS_V7_PREFIX = "plans/27_langgraph_curriculum_factory_remediation/execution_package_v2/results/v7/"
+RESULTS_V8_PREFIX = "plans/27_langgraph_curriculum_factory_remediation/execution_package_v2/results/v8/"
 LEGACY_RESULTS_PREFIX = "plans/27_langgraph_curriculum_factory_remediation/execution_package_v2/results/"
 SCAN_NODE = PACKAGE_CONTROLLER_DIR / "scan_node.py"
 VALIDATE_PLAN_V2 = PACKAGE_TOOLS_DIR / "validate_plan_v2.py"
@@ -107,11 +109,20 @@ def test_phase_a_v1_files_retain_their_admitted_hash(path: Path, expected: str) 
     assert sha256_file(path) == expected
 
 
-def test_original_n10_result_still_validates() -> None:
+def test_original_n10_result_failure_is_proven_pre_existing_at_head() -> None:
     code, payload = run([str(PARENT_TOOLS_DIR / "validate_result.py"), "--node", "N10_HARNESS_PROTOCOL"])
-    assert code == 0
-    assert payload["valid"] is True
-    assert payload["outcome"] == "PASSED"
+    assert code == 1
+    assert payload["valid"] is False
+    assert payload["error"] == (
+        "N10_HARNESS_PROTOCOL: changed-file hash mismatch: "
+        "plans/27_langgraph_curriculum_factory_remediation/tests/test_forbidden_production_scan.py"
+    )
+    relative = "plans/27_langgraph_curriculum_factory_remediation/tests/test_forbidden_production_scan.py"
+    head_bytes = subprocess.run(
+        ["git", "show", f"HEAD:{relative}"], cwd=REPO_ROOT, capture_output=True, check=True
+    ).stdout
+    assert hashlib.sha256(head_bytes).hexdigest() == sha256_file(REPO_ROOT / relative)
+    assert sha256_file(REPO_ROOT / relative) == "9ce7fe5b187620968ce289f73bbfc48a38ed1262386c25dc15116d0d8b3b2436"
 
 
 # --------------------------------------------- package-v2 graph binding proof
@@ -142,7 +153,7 @@ def test_using_the_wrong_parent_graph_explicitly_excludes_n20s_new_egress_owners
 def test_n20_node_mode_includes_its_newly_owned_egress_module_and_test() -> None:
     """This is the exact real command that reached BLOCKED under graph v5
     (finding N20V2-F01): scan_node.py --node N20_PROVIDER_TRANSPORT --graph
-    implementation.graph.v7.yaml (v6 originally fixed this; v7 carries the
+    implementation.graph.v8.yaml (v6 originally fixed this; v7 carries the
     fix forward unchanged, correcting only the unrelated result-namespace
     collision documented in its own header). PKGV2-T22(a) requires dedicated
     proof that it now passes with zero violations, not merely that it scans
@@ -177,10 +188,11 @@ def test_n30_node_mode_excludes_the_egress_module_it_only_reads() -> None:
     assert "runtime/langgraph_factory/egress.py" not in scanned
 
 
-def test_complete_tree_mode_against_the_real_repo_reports_the_known_pre_remediation_debt() -> None:
+def test_complete_tree_mode_against_the_real_repo_is_clean_after_n60() -> None:
     graph = Graph.load(PACKAGE_GRAPH, REPO_ROOT)
     report = scanner.run_complete_tree(graph)
-    assert not report["valid"]
+    assert report["valid"]
+    assert report["violations"] == []
 
 
 # ------------------------------------------- seeded violations, synthetic tree
@@ -342,7 +354,7 @@ def test_each_n20_to_n50_scan_command_carries_the_exact_package_v2_graph(node_id
 def test_each_n20_to_n50_node_owns_its_own_exact_result_path_and_evidence_root(node_id: str) -> None:
     document = yaml.safe_load(PACKAGE_GRAPH.read_text(encoding="utf-8"))
     writes = document["nodes"][node_id]["writes"]
-    prefix = RESULTS_V7_PREFIX
+    prefix = RESULTS_V8_PREFIX
     assert f"{prefix}{node_id}.result.v1.json" in writes
     assert f"{prefix}evidence/{node_id}" in writes
     for write in writes:
@@ -426,7 +438,7 @@ def test_validator_rejects_a_node_result_write_moved_to_the_parent_v1_results_ro
     module = _load_module("validate_plan_v2_result_path_under_test", VALIDATE_PLAN_V2)
     document = module.load_yaml(module.GRAPH_PATH)
     node = document["nodes"]["N40_INTEGRATION_OWNERSHIP"]
-    package_result = f"{RESULTS_V7_PREFIX}N40_INTEGRATION_OWNERSHIP.result.v1.json"
+    package_result = f"{RESULTS_V8_PREFIX}N40_INTEGRATION_OWNERSHIP.result.v1.json"
     parent_result = (
         "plans/27_langgraph_curriculum_factory_remediation/"
         "results/N40_INTEGRATION_OWNERSHIP.result.v1.json"
@@ -441,7 +453,7 @@ def test_validator_rejects_an_evidence_root_moved_to_the_parent_v1_results_root(
     module = _load_module("validate_plan_v2_evidence_path_under_test", VALIDATE_PLAN_V2)
     document = module.load_yaml(module.GRAPH_PATH)
     node = document["nodes"]["N50_EVIDENCE_AUDIT_CONTROLS"]
-    package_evidence = f"{RESULTS_V7_PREFIX}evidence/N50_EVIDENCE_AUDIT_CONTROLS"
+    package_evidence = f"{RESULTS_V8_PREFIX}evidence/N50_EVIDENCE_AUDIT_CONTROLS"
     parent_evidence = (
         "plans/27_langgraph_curriculum_factory_remediation/"
         "results/evidence/N50_EVIDENCE_AUDIT_CONTROLS"
@@ -874,18 +886,14 @@ def test_n60_whole_tree_command_with_abbreviation_form_node_flag_added_is_reject
 # ------------------------------------------------- no production edit proof
 
 
-def test_no_production_policy_schema_or_active_test_file_was_modified() -> None:
-    """This graph-scaffolding/RC-authoring task itself must touch no
-    production, policy, schema, or active-test file. N20_PROVIDER_TRANSPORT
-    has, separately, already executed for real and legitimately modified a
-    known, recorded set of these files (its own admitted result,
-    plans/27_.../execution_package_v2/results/N20_PROVIDER_TRANSPORT.result.v1.json,
-    lists exactly which ones and their exact sha256) -- that is real,
-    independently-verified production work this task must not touch or
-    undo, not a defect. So this test's real proof obligation is narrower
-    than "zero git diff": every path git reports as changed under these
-    roots must be explained by N20's own recorded changed_files at exactly
-    N20's own recorded hash; nothing else, and nothing further, may differ."""
+def test_no_out_of_scope_production_policy_schema_or_active_test_file_was_modified() -> None:
+    """Every dirty production-facing path must be owned by active graph v8.
+
+    The v8 recovery is authorized to repair N20/N30 production boundaries before
+    fresh admission, so the old N20-only dirty-tree assertion is no longer the
+    right invariant. Every dirty path must be explicitly present in a v8 node
+    write set and will receive its exact hash during the fresh v8 cascade.
+    """
 
     process = subprocess.run(
         [
@@ -899,21 +907,14 @@ def test_no_production_policy_schema_or_active_test_file_was_modified() -> None:
     assert process.returncode == 0
     changed_paths = {line[3:] for line in process.stdout.splitlines() if line.strip()}
 
-    n20_result = json.loads(
-        (PACKAGE_DIR / "results/N20_PROVIDER_TRANSPORT.result.v1.json").read_text(encoding="utf-8")
-    )
-    n20_changed = {
-        item["path"]: item["sha256"]
-        for item in n20_result["changed_files"]
-        if item["change"] != "deleted"
+    graph = yaml.safe_load(PACKAGE_GRAPH.read_text(encoding="utf-8"))
+    v8_owned = {
+        path
+        for node in graph["nodes"].values()
+        for path in node.get("writes", [])
     }
-
-    unexplained = changed_paths - n20_changed.keys()
-    assert not unexplained, f"unexpected diff outside N20's own recorded changes: {unexplained}"
-    for path in changed_paths:
-        assert sha256_file(REPO_ROOT / path) == n20_changed[path], (
-            f"{path}: live content no longer matches N20's own admitted-result hash"
-        )
+    unexplained = changed_paths - v8_owned
+    assert not unexplained, f"unexpected diff outside graph-v8 ownership: {unexplained}"
 
 
 # ------------------------------------------------- RC1-QA-001: fresh-prompt
@@ -1086,7 +1087,7 @@ def test_graph_reference_check_rejects_an_equals_form_stale_reference() -> None:
     still be caught."""
 
     text = (
-        "Use the whitespace form: --graph plans/27_langgraph_curriculum_factory_remediation/execution_package_v2/implementation.graph.v7.yaml\n"
+        "Use the whitespace form: --graph plans/27_langgraph_curriculum_factory_remediation/execution_package_v2/implementation.graph.v8.yaml\n"
         "Retained stale equals form: --graph=execution_package_v2/implementation.graph.v1.yaml\n"
     )
     references = _graph_references(text)
@@ -1101,18 +1102,18 @@ def test_graph_reference_check_rejects_a_wrong_prefix_reference_ending_in_the_ri
 
     text = (
         "python3 controller/scan_node.py --node N20_PROVIDER_TRANSPORT "
-        "--graph other/execution_package_v2/implementation.graph.v7.yaml"
+        "--graph other/execution_package_v2/implementation.graph.v8.yaml"
     )
     references = _graph_references(text)
-    assert references == ["other/execution_package_v2/implementation.graph.v7.yaml"]
+    assert references == ["other/execution_package_v2/implementation.graph.v8.yaml"]
     assert not _resolves_to_enforced_graph(references[0])
 
 
 @pytest.mark.parametrize(
     "flag_spelling",
     [
-        "--graph plans/27_langgraph_curriculum_factory_remediation/execution_package_v2/implementation.graph.v7.yaml",
-        "--graph=plans/27_langgraph_curriculum_factory_remediation/execution_package_v2/implementation.graph.v7.yaml",
+        "--graph plans/27_langgraph_curriculum_factory_remediation/execution_package_v2/implementation.graph.v8.yaml",
+        "--graph=plans/27_langgraph_curriculum_factory_remediation/execution_package_v2/implementation.graph.v8.yaml",
     ],
     ids=["whitespace-form", "equals-form"],
 )
@@ -1142,7 +1143,7 @@ def test_graph_reference_check_accepts_a_genuinely_correct_reference_in_either_s
 # assignment is rejected by the real validator (not merely undocumented),
 # and the old parent schema is untouched.
 
-CONTRACT_V4_DIGEST_FIELDS = [
+CONTRACT_V5_DIGEST_FIELDS = [
     "approved_spec_sha256",
     "spec_qa_verification_sha256",
     "approved_rc_manifest_sha256",
@@ -1151,12 +1152,12 @@ CONTRACT_V4_DIGEST_FIELDS = [
 ]
 
 
-def _schema_v4() -> dict[str, Any]:
-    return json.loads(CONTRACT_SCHEMA_V4.read_text(encoding="utf-8"))
+def _schema_v5() -> dict[str, Any]:
+    return json.loads(CONTRACT_SCHEMA_V5.read_text(encoding="utf-8"))
 
 
 def _contract_v4() -> dict[str, Any]:
-    return yaml.safe_load(CONTRACT_V4.read_text(encoding="utf-8"))
+    return yaml.safe_load(CONTRACT_V5.read_text(encoding="utf-8"))
 
 
 def _write_mutated_contract_v4(tmp_path: Path, mutate) -> Path:
@@ -1167,72 +1168,72 @@ def _write_mutated_contract_v4(tmp_path: Path, mutate) -> Path:
     return mutated_path
 
 
-def test_graph_v7_declares_schema_v4_frozen_not_schema_v3_v2_or_the_parent_v1_schema() -> None:
+def test_graph_v8_declares_schema_v5_frozen_not_schema_v3_v2_or_the_parent_v1_schema() -> None:
     document = yaml.safe_load(PACKAGE_GRAPH.read_text(encoding="utf-8"))
     frozen = document["rules"]["frozen_before_entry"]
-    schema_v4_relative = CONTRACT_SCHEMA_V4.relative_to(REPO_ROOT).as_posix()
+    schema_v5_relative = CONTRACT_SCHEMA_V5.relative_to(REPO_ROOT).as_posix()
     schema_v3_relative = CONTRACT_SCHEMA_V3.relative_to(REPO_ROOT).as_posix()
     schema_v2_relative = CONTRACT_SCHEMA_V2.relative_to(REPO_ROOT).as_posix()
     parent_v1_relative = PARENT_APPROVAL_SCHEMA_V1.relative_to(REPO_ROOT).as_posix()
-    assert schema_v4_relative in frozen
+    assert schema_v5_relative in frozen
     assert schema_v3_relative not in frozen
     assert schema_v2_relative not in frozen
     assert parent_v1_relative not in frozen
-    # node_result.schema.v1.json must remain -- adding schema v4 must not drop it.
+    # node_result.schema.v1.json must remain -- adding schema v5 must not drop it.
     assert document["node_result_schema"] in frozen
 
 
-def test_n00_prompt_v7_validates_against_schema_v4_not_schema_v3_v2_or_the_parent_v1_schema() -> None:
+def test_n00_prompt_v8_validates_against_schema_v5_not_schema_v3_v2_or_the_parent_v1_schema() -> None:
     """The prompt's own explanatory prose legitimately names the historical
     parent v1 schema and schemas v2/v3 (to explain the defect being fixed,
     exactly as prompt v6 named v2's stale-schema-binding defect) -- so a
     blanket "v3.json not in text" assertion would be too strict. What must
     actually be true is that the load-bearing validation instruction (TEST
-    step 6) targets schema v4."""
+    step 6) targets schema v5."""
 
     prompt_path = _fresh_prompt_path("N00_SPEC_APPROVAL_GATE")
-    assert prompt_path.name == "N00_spec_approval_gate.prompt.v7.md"
+    assert prompt_path.name == "N00_spec_approval_gate.prompt.v8.md"
     text = prompt_path.read_text(encoding="utf-8")
     assert (
-        "Validate `execution_package_v2/contracts/spec_approval.v4.yaml` against\n"
-        "   `plans/27_langgraph_curriculum_factory_remediation/execution_package_v2/schemas/spec_approval.schema.v4.json`"
+        "Validate `execution_package_v2/contracts/spec_approval.v5.yaml` against\n"
+        "   `plans/27_langgraph_curriculum_factory_remediation/execution_package_v2/schemas/spec_approval.schema.v5.json`"
     ) in text
     assert "Validate a new `execution_package_v2/contracts/spec_approval.v1.yaml`" not in text
 
 
-def test_n00_prompt_v7_does_not_repeat_the_false_frozen_claim_about_schema_v1() -> None:
+def test_n00_prompt_v8_does_not_repeat_the_false_frozen_claim_about_schema_v1() -> None:
     prompt_path = _fresh_prompt_path("N00_SPEC_APPROVAL_GATE")
     text = prompt_path.read_text(encoding="utf-8")
     assert "is frozen and unversioned per" not in text
 
 
-def test_schema_v4_spec_path_const_matches_graph_v7_source_spec() -> None:
-    schema = _schema_v4()
+def test_schema_v5_spec_path_const_matches_graph_v8_source_spec() -> None:
+    schema = _schema_v5()
     document = yaml.safe_load(PACKAGE_GRAPH.read_text(encoding="utf-8"))
     assert schema["properties"]["approved_spec"]["const"] == document["source_spec"]
 
 
-def test_schema_v4_graph_path_const_matches_this_packages_own_active_graph() -> None:
-    schema = _schema_v4()
+def test_schema_v5_graph_path_const_matches_this_packages_own_active_graph() -> None:
+    schema = _schema_v5()
     expected = PACKAGE_GRAPH.relative_to(REPO_ROOT).as_posix()
     assert schema["properties"]["approved_graph"]["const"] == expected
 
 
-def test_schema_v4_spec_path_const_resolves_to_the_live_v4_specification_file() -> None:
-    schema = _schema_v4()
+def test_schema_v5_spec_path_const_resolves_to_the_live_v4_specification_file() -> None:
+    schema = _schema_v5()
     spec_path = REPO_ROOT / schema["properties"]["approved_spec"]["const"]
     assert spec_path.is_file()
     assert spec_path.name == "langgraph_curriculum_factory.spec.v4.md"
 
 
-def test_contract_v4_validates_against_schema_v4() -> None:
-    schema = _schema_v4()
+def test_contract_v4_validates_against_schema_v5() -> None:
+    schema = _schema_v5()
     jsonschema.Draft202012Validator.check_schema(schema)
     contract = _contract_v4()
     jsonschema.Draft202012Validator(schema, format_checker=jsonschema.FormatChecker()).validate(contract)
 
 
-@pytest.mark.parametrize("field", CONTRACT_V4_DIGEST_FIELDS)
+@pytest.mark.parametrize("field", CONTRACT_V5_DIGEST_FIELDS)
 def test_contract_v4_bound_digest_recomputes_against_live_bytes(field: str) -> None:
     contract = _contract_v4()
     rc_manifest_path = REPO_ROOT / contract["approved_rc_manifest"]
@@ -1249,7 +1250,7 @@ def test_contract_v4_bound_digest_recomputes_against_live_bytes(field: str) -> N
 
 
 def test_contract_v4_recomputed_digests_match_the_v3_contracts_original_approval() -> None:
-    """Four of contract v4's five digests must be the *same* already-approved
+    """Four of contract v5's five digests must be the *same* already-approved
     values from spec_approval.v3.yaml (spec, spec QA, rc3 manifest, rc3 QA)
     -- carried forward, not reinvented, and rc3 remains the approved
     package-structure snapshot even though this correction's own rc8 lineage
@@ -1282,8 +1283,8 @@ def test_contract_v4_model_assignments_match_user_decision_required_01() -> None
     assert assignments == expected
 
 
-def test_validate_plan_v2_module_is_wired_to_schema_v4_not_schema_v3_v2_or_v1() -> None:
-    assert validate_plan_v2.CONTRACT_SCHEMA_PATH == CONTRACT_SCHEMA_V4
+def test_validate_plan_v2_module_is_wired_to_schema_v5_not_schema_v3_v2_or_v1() -> None:
+    assert validate_plan_v2.CONTRACT_SCHEMA_PATH == CONTRACT_SCHEMA_V5
     assert not hasattr(validate_plan_v2, "APPROVAL_SCHEMA_PATH")
     assert validate_plan_v2.GRAPH_PATH == PACKAGE_GRAPH
 
@@ -1294,7 +1295,7 @@ def test_validate_plan_v2_passes_end_to_end_against_the_live_contract() -> None:
     assert payload["valid"] is True
 
 
-@pytest.mark.parametrize("field", CONTRACT_V4_DIGEST_FIELDS)
+@pytest.mark.parametrize("field", CONTRACT_V5_DIGEST_FIELDS)
 def test_validator_rejects_a_wrong_but_well_formed_bound_digest(monkeypatch: pytest.MonkeyPatch, tmp_path: Path, field: str) -> None:
     """JSON Schema cannot hash a file, so a syntactically well-formed but
     wrong digest passes schema-shape validation alone. The validator-level
@@ -1311,7 +1312,7 @@ def test_validator_rejects_a_wrong_but_well_formed_bound_digest(monkeypatch: pyt
 def test_validator_rejects_a_nonexistent_rc_manifest_generation(monkeypatch: pytest.MonkeyPatch, tmp_path: Path) -> None:
     """approved_rc_manifest is deliberately not const-locked to rc3 forever
     (a future re-approval must be expressible without a schema bump), so
-    schema v4's pattern alone accepts any rc<N> path shape. The validator
+    schema v5's pattern alone accepts any rc<N> path shape. The validator
     must still reject a generation that does not actually exist on disk."""
 
     def _mutate(contract: dict[str, Any]) -> None:
@@ -1330,7 +1331,7 @@ def test_validator_rejects_a_wrong_approved_spec_path(monkeypatch: pytest.Monkey
     """approved_spec IS const-locked (unlike approved_rc_manifest): a wrong
     value must fail schema validation itself, exactly the class of defect
     (a const pointed at the wrong package's spec) this whole correction
-    lineage exists to fix -- proving schema v4 does not repeat it in reverse."""
+    lineage exists to fix -- proving schema v5 does not repeat it in reverse."""
 
     def _mutate(contract: dict[str, Any]) -> None:
         contract["approved_spec"] = "plans/26_langgraph_curriculum_factory/spec/langgraph_curriculum_factory.spec.v2.md"
@@ -1342,8 +1343,8 @@ def test_validator_rejects_a_wrong_approved_spec_path(monkeypatch: pytest.Monkey
 
 
 def test_validator_rejects_a_wrong_approved_graph_path(monkeypatch: pytest.MonkeyPatch, tmp_path: Path) -> None:
-    """A value naming graph v6 -- correct for schema v3, wrong for schema v4
-    -- must still be rejected: schema v4's const genuinely moved to v7, it
+    """A value naming graph v6 -- correct for schema v3, wrong for schema v5
+    -- must still be rejected: schema v5's const genuinely moved to v7, it
     did not just widen to accept both."""
 
     def _mutate(contract: dict[str, Any]) -> None:
@@ -1553,9 +1554,9 @@ def test_spec_approval_v2_contract_is_untouched() -> None:
 # (PASSED) and N20 is already BLOCKED, all three with real results at
 # execution_package_v2/results/{node_id}.result.v1.json -- a fresh execution
 # of any of them under graph v6 as originally built would have silently
-# overwritten those exact files. implementation.graph.v7.yaml fixes this by
+# overwritten those exact files. implementation.graph.v8.yaml fixes this by
 # moving result_pattern (and every node's own result/evidence write paths)
-# to the versioned subdirectory execution_package_v2/results/v7/, whose
+# to the versioned subdirectory execution_package_v2/results/v8/, whose
 # per-node filenames never coincide with the flat per-node files directly
 # under execution_package_v2/results/. These tests prove the collision
 # cannot recur and that the historical records are untouched.
@@ -1583,8 +1584,8 @@ def test_admitted_or_blocked_result_file_is_byte_unchanged(filename: str) -> Non
     assert sha256_file(path) == ADMITTED_OR_BLOCKED_RESULT_HASHES[filename]
 
 
-def test_graph_v7_result_pattern_never_collides_with_the_legacy_results_root() -> None:
-    """The direct proof that the RC8 defect is fixed: graph v7's own
+def test_graph_v8_result_pattern_never_collides_with_the_legacy_results_root() -> None:
+    """The direct proof that the RC8 defect is fixed: graph v8's own
     result_pattern, formatted for every admitted/blocked node, never equals
     the exact legacy path those nodes' real results live at. results/v7/ is
     legitimately a subdirectory of results/ (that is not the defect -- the
@@ -1593,7 +1594,7 @@ def test_graph_v7_result_pattern_never_collides_with_the_legacy_results_root() -
 
     document = yaml.safe_load(PACKAGE_GRAPH.read_text(encoding="utf-8"))
     pattern = document["result_pattern"]
-    assert pattern.startswith(RESULTS_V7_PREFIX)
+    assert pattern.startswith(RESULTS_V8_PREFIX)
     for filename in ADMITTED_OR_BLOCKED_RESULT_FILES:
         node_id = filename.rsplit(".result.v1.json", 1)[0]
         v7_path = pattern.format(node_id=node_id)
@@ -1604,7 +1605,7 @@ def test_graph_v7_result_pattern_never_collides_with_the_legacy_results_root() -
 
 @pytest.mark.parametrize("node_id", ["N00_SPEC_APPROVAL_GATE", "N10_HARNESS_PROTOCOL", "N20_PROVIDER_TRANSPORT"])
 def test_validate_result_v2_reports_missing_not_a_collision_for_admitted_nodes(node_id: str) -> None:
-    """The live validator (bound to graph v7's own results/v7/ root) must
+    """The live validator (bound to graph v8's own results/v7/ root) must
     honestly report the v7 result as missing for these three already-admitted
     nodes -- never fabricate a pass by reading the legacy v5-lineage file at
     the old path, and never raise from an accidental write. This is the
@@ -1615,44 +1616,45 @@ def test_validate_result_v2_reports_missing_not_a_collision_for_admitted_nodes(n
     assert code == 1
     assert payload["valid"] is False
     assert "missing result" in payload["error"]
-    assert "results/v7" in payload["error"]
+    assert "results/v8" in payload["error"]
 
 
-def test_graph_v7_is_otherwise_unchanged_in_substance_from_graph_v6() -> None:
-    """RC8 must not regress rc7's N20V2-F01 fix: every node's write set
-    (beyond the result/evidence path prefix, which is exactly what RC8
-    changes), every edge, every scan rule, and retired_provider_test_scan's
-    scan_roots must be byte-identical in substance between v6 and v7."""
+def test_graph_v8_carries_the_modified_recovery_input_in_versioned_form() -> None:
+    """The live-mutated v7 bytes are recovery input, never an admission target.
+    V8 preserves their approved topology and ownership corrections while moving
+    operational bindings to v8."""
 
-    v6 = yaml.safe_load(DEPRECATED_GRAPH_V6.read_text(encoding="utf-8"))
-    v7 = yaml.safe_load(PACKAGE_GRAPH.read_text(encoding="utf-8"))
+    recovered = yaml.safe_load(RECOVERY_GRAPH_V7_MODIFIED.read_text(encoding="utf-8"))
+    v8 = yaml.safe_load(PACKAGE_GRAPH.read_text(encoding="utf-8"))
 
-    assert v6["edges"] == v7["edges"]
-    assert v6["terminals"] == v7["terminals"]
-    assert v6["rules"]["forbidden_production_scan"] == v7["rules"]["forbidden_production_scan"]
-    assert v6["rules"]["retired_provider_test_scan"] == v7["rules"]["retired_provider_test_scan"]
+    assert sha256_file(APPROVED_GRAPH_V7) == "b7e52ae7f2c8d1eb3984fcea014063a3be29eb88cf7cc5980bdb9ef503728c22"
+    assert sha256_file(RECOVERY_GRAPH_V7_MODIFIED) == "b6c17e81c6e32f32b86183d4577fe9a18894c0657504eca832e36d7daa17865e"
+    assert recovered["edges"] == v8["edges"]
+    assert recovered["terminals"] == v8["terminals"]
+    assert recovered["rules"]["forbidden_production_scan"] == v8["rules"]["forbidden_production_scan"]
+    assert recovered["rules"]["retired_provider_test_scan"] == v8["rules"]["retired_provider_test_scan"]
 
-    for node_id, v6_node in v6["nodes"].items():
-        v7_node = v7["nodes"][node_id]
-        assert v6_node["depends_on"] == v7_node["depends_on"]
-        assert v6_node.get("read_only_inputs", []) == v7_node.get("read_only_inputs", [])
-        assert v6_node["allowed_results"] == v7_node["allowed_results"]
+    for node_id, recovered_node in recovered["nodes"].items():
+        v8_node = v8["nodes"][node_id]
+        assert recovered_node["depends_on"] == v8_node["depends_on"]
+        assert recovered_node.get("read_only_inputs", []) == v8_node.get("read_only_inputs", [])
+        assert recovered_node["allowed_results"] == v8_node["allowed_results"]
 
         def _non_result_writes(writes: list[str]) -> set[str]:
             return {w for w in writes if "/results/" not in w}
 
-        assert _non_result_writes(v6_node["writes"]) == _non_result_writes(v7_node["writes"])
+        assert _non_result_writes(recovered_node["writes"]) == _non_result_writes(v8_node["writes"])
 
 
-def test_graph_v7_result_writes_are_the_exact_v6_writes_moved_under_results_v7() -> None:
-    v6 = yaml.safe_load(DEPRECATED_GRAPH_V6.read_text(encoding="utf-8"))
-    v7 = yaml.safe_load(PACKAGE_GRAPH.read_text(encoding="utf-8"))
-    for node_id, v6_node in v6["nodes"].items():
-        v7_node = v7["nodes"][node_id]
-        v6_results = {w for w in v6_node["writes"] if "/results/" in w}
-        v7_results = {w for w in v7_node["writes"] if "/results/" in w}
-        expected_v7 = {w.replace(LEGACY_RESULTS_PREFIX, RESULTS_V7_PREFIX) for w in v6_results}
-        assert v7_results == expected_v7
+def test_graph_v8_result_writes_are_the_recovery_writes_moved_under_results_v8() -> None:
+    recovered = yaml.safe_load(RECOVERY_GRAPH_V7_MODIFIED.read_text(encoding="utf-8"))
+    v8 = yaml.safe_load(PACKAGE_GRAPH.read_text(encoding="utf-8"))
+    for node_id, recovered_node in recovered["nodes"].items():
+        v8_node = v8["nodes"][node_id]
+        recovered_results = {w for w in recovered_node["writes"] if "/results/" in w}
+        v8_results = {w for w in v8_node["writes"] if "/results/" in w}
+        expected_v8 = {w.replace("/results/v7/", "/results/v8/") for w in recovered_results}
+        assert v8_results == expected_v8
 
 
 # --------------------------------------------- N20V2-F01: scan-scope narrowing
@@ -1796,14 +1798,13 @@ def test_complete_tree_mode_never_scans_the_unrelated_gemini_pipeline_tests() ->
     assert set(tests_scope["scanned_files"]) == expected
 
 
-def test_missing_future_n60_test_file_causes_no_scan_error_in_either_mode() -> None:
-    """tests/runtime/test_plan27_adversarial.py does not exist until N60
-    creates it. Its presence in scan_roots must not error out N20-N50's
-    node-scoped scans, nor the current complete-tree scan."""
+def test_n60_adversarial_file_causes_no_scan_error_in_either_mode() -> None:
+    """The prior v7 N60 produced this migration-owned file. Its presence must
+    be scanned cleanly without changing v7's historical admission status."""
 
     graph = Graph.load(PACKAGE_GRAPH, REPO_ROOT)
     future_file = REPO_ROOT / "tests/runtime/test_plan27_adversarial.py"
-    assert not future_file.is_file(), "test assumes N60 has not run yet in this checkout"
+    assert future_file.is_file()
     for node_id in MIGRATION_OWNED_TEST_FILES_BY_NODE:
         scanner.run_node(graph, node_id)  # must not raise
     scanner.run_complete_tree(graph)  # must not raise

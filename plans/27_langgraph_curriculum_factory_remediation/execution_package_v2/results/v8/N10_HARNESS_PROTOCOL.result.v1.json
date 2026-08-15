@@ -1,0 +1,47 @@
+{
+  "schema_version": 1,
+  "run_id": "run27-execution-package-v2-graph-v8",
+  "node_id": "N10_HARNESS_PROTOCOL",
+  "attempt_id": "N10_HARNESS_PROTOCOL-execpkgv2-v8-attempt-1",
+  "outcome": "PASSED",
+  "source_spec_sha256": "e14df5a36ce12d700fe9fc4aa4aea466771bc89f31bc6e9d49f812c147b1bb3c",
+  "prompt_sha256": "2114b50ba59fa1657b51179a7550bbd3bbb7e0770900b2d808f528263d20ae25",
+  "predecessor_receipts": {
+    "N00_SPEC_APPROVAL_GATE": "ba178d930440d9d11133dbe4a2aade64b6d4c18d926f4e7c2ebabf4e0863e1dd"
+  },
+  "changed_files": [
+    {"path": "plans/27_langgraph_curriculum_factory_remediation/execution_package_v2/results/v8/evidence/N10_HARNESS_PROTOCOL/01_pytest_run1.log", "change": "created", "sha256": "cd3ff4f41b651105e3f7cfecf30ebd02bd84a6e5b842e920c1f0ee969e062363"},
+    {"path": "plans/27_langgraph_curriculum_factory_remediation/execution_package_v2/results/v8/evidence/N10_HARNESS_PROTOCOL/02_pytest_run2.log", "change": "created", "sha256": "8b1a3d7c25e8f25bd94393a695ab81651edb119ba809768dbbe07612fe3b10e5"},
+    {"path": "plans/27_langgraph_curriculum_factory_remediation/execution_package_v2/results/v8/evidence/N10_HARNESS_PROTOCOL/03_validate_plan_v2.log", "change": "created", "sha256": "176e9ba38236264d063a17ac51d86f88018b960bd7c73c01c03e102a06cb6b07"}
+  ],
+  "commands": [
+    {
+      "argv": ["python3", "-m", "pytest", "-q", "plans/27_langgraph_curriculum_factory_remediation/tests/test_run27_controller.py", "plans/27_langgraph_curriculum_factory_remediation/tests/test_node_result_protocol.py", "plans/27_langgraph_curriculum_factory_remediation/tests/test_forbidden_production_scan.py"],
+      "exit_code": 0,
+      "log": "plans/27_langgraph_curriculum_factory_remediation/execution_package_v2/results/v8/evidence/N10_HARNESS_PROTOCOL/01_pytest_run1.log",
+      "log_sha256": "cd3ff4f41b651105e3f7cfecf30ebd02bd84a6e5b842e920c1f0ee969e062363"
+    },
+    {
+      "argv": ["python3", "-m", "pytest", "-q", "plans/27_langgraph_curriculum_factory_remediation/tests/test_run27_controller.py", "plans/27_langgraph_curriculum_factory_remediation/tests/test_node_result_protocol.py", "plans/27_langgraph_curriculum_factory_remediation/tests/test_forbidden_production_scan.py"],
+      "exit_code": 0,
+      "log": "plans/27_langgraph_curriculum_factory_remediation/execution_package_v2/results/v8/evidence/N10_HARNESS_PROTOCOL/02_pytest_run2.log",
+      "log_sha256": "8b1a3d7c25e8f25bd94393a695ab81651edb119ba809768dbbe07612fe3b10e5"
+    },
+    {
+      "argv": ["python3", "plans/27_langgraph_curriculum_factory_remediation/execution_package_v2/tools/validate_plan_v2.py"],
+      "exit_code": 0,
+      "log": "plans/27_langgraph_curriculum_factory_remediation/execution_package_v2/results/v8/evidence/N10_HARNESS_PROTOCOL/03_validate_plan_v2.log",
+      "log_sha256": "176e9ba38236264d063a17ac51d86f88018b960bd7c73c01c03e102a06cb6b07"
+    }
+  ],
+  "evidence": [
+    "plans/27_langgraph_curriculum_factory_remediation/execution_package_v2/results/v8/evidence/N10_HARNESS_PROTOCOL/01_pytest_run1.log",
+    "plans/27_langgraph_curriculum_factory_remediation/execution_package_v2/results/v8/evidence/N10_HARNESS_PROTOCOL/02_pytest_run2.log",
+    "plans/27_langgraph_curriculum_factory_remediation/execution_package_v2/results/v8/evidence/N10_HARNESS_PROTOCOL/03_validate_plan_v2.log"
+  ],
+  "findings": [
+    {"id": "N10V8-F01", "severity": "major", "summary": "The deterministic controller, receipt protocol, write-set checks, invalidation cascade, atomic recovery, and frozen result schema passed all 81 tests twice.", "disposition": "resolved"},
+    {"id": "N10V8-F02", "severity": "observation", "summary": "The legacy N10 changed-file hash mismatch is not inherited: this fresh result records only new v8 evidence and binds the current N00 v8 receipt.", "disposition": "resolved"}
+  ],
+  "invalidated_descendants": []
+}

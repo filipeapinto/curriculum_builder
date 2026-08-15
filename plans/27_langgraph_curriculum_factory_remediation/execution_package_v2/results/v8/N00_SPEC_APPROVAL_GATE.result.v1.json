@@ -1,0 +1,71 @@
+{
+  "schema_version": 1,
+  "run_id": "run27-execution-package-v2-graph-v8",
+  "node_id": "N00_SPEC_APPROVAL_GATE",
+  "attempt_id": "N00_SPEC_APPROVAL_GATE-execpkgv2-v8-attempt-1",
+  "outcome": "PASSED",
+  "source_spec_sha256": "e14df5a36ce12d700fe9fc4aa4aea466771bc89f31bc6e9d49f812c147b1bb3c",
+  "prompt_sha256": "04893339f0482440b242e789be276d89bb38e9753fa0c70ec7600ece04d21bb1",
+  "predecessor_receipts": {},
+  "changed_files": [
+    {"path": "plans/27_langgraph_curriculum_factory_remediation/execution_package_v2/results/v8/evidence/N00_SPEC_APPROVAL_GATE/01_authority_hashes.log", "change": "created", "sha256": "6ebcf45845f45f8dae273dbbe0866044e2db3b65de27de2378eae40582ba3f65"},
+    {"path": "plans/27_langgraph_curriculum_factory_remediation/execution_package_v2/results/v8/evidence/N00_SPEC_APPROVAL_GATE/02_spec_qa_verify.log", "change": "created", "sha256": "1aa88dab8994576b04e509bf824c9a42f0d64590c3d0021ad888784ce21952bd"},
+    {"path": "plans/27_langgraph_curriculum_factory_remediation/execution_package_v2/results/v8/evidence/N00_SPEC_APPROVAL_GATE/03_rc3_qa_verify.log", "change": "created", "sha256": "4dfb6bee4b045318f4100b1803a18ce0933711ce228805cef22fb1b47422080e"},
+    {"path": "plans/27_langgraph_curriculum_factory_remediation/execution_package_v2/results/v8/evidence/N00_SPEC_APPROVAL_GATE/04_contract_digest_assignments.log", "change": "created", "sha256": "6bd68818b07020ae104661dc70df2c0f5a16eab9d53e195722010bea6537aa47"},
+    {"path": "plans/27_langgraph_curriculum_factory_remediation/execution_package_v2/results/v8/evidence/N00_SPEC_APPROVAL_GATE/05_plan_and_rc9_qa.log", "change": "created", "sha256": "68b9a529b18e552b97776dc7eee0a108cd49c1becfc131d5ddf3b94239743b10"},
+    {"path": "plans/27_langgraph_curriculum_factory_remediation/execution_package_v2/results/v8/evidence/N00_SPEC_APPROVAL_GATE/06_user_decision_required.log", "change": "created", "sha256": "4e796f5110bfc782b32b09ffac14731588f769a56ca0bdaf20379a7f4ef2bbcf"}
+  ],
+  "commands": [
+    {
+      "argv": ["shasum", "-a", "256", "plans/26_langgraph_curriculum_factory/spec/langgraph_curriculum_factory.spec.v1.md", "plans/26_langgraph_curriculum_factory/spec/langgraph_curriculum_factory.spec.v2.md", "plans/26_langgraph_curriculum_factory/spec/v3/langgraph_curriculum_factory.spec.v4.md", "plans/27_langgraph_curriculum_factory_remediation/execution_package_v2/implementation.graph.v7.yaml", "plans/27_langgraph_curriculum_factory_remediation/execution_package_v2/recovery/implementation.graph.v7.modified.b6c17e81.yaml", "plans/27_langgraph_curriculum_factory_remediation/execution_package_v2/implementation.graph.v8.yaml"],
+      "exit_code": 0,
+      "log": "plans/27_langgraph_curriculum_factory_remediation/execution_package_v2/results/v8/evidence/N00_SPEC_APPROVAL_GATE/01_authority_hashes.log",
+      "log_sha256": "6ebcf45845f45f8dae273dbbe0866044e2db3b65de27de2378eae40582ba3f65"
+    },
+    {
+      "argv": ["python3", ".claude/skills/qa-gate-codex-run/scripts/qa_gate.py", "verify", "--qa-dir", "plans/26_langgraph_curriculum_factory/spec/v3/QA"],
+      "exit_code": 0,
+      "log": "plans/27_langgraph_curriculum_factory_remediation/execution_package_v2/results/v8/evidence/N00_SPEC_APPROVAL_GATE/02_spec_qa_verify.log",
+      "log_sha256": "1aa88dab8994576b04e509bf824c9a42f0d64590c3d0021ad888784ce21952bd"
+    },
+    {
+      "argv": ["python3", ".claude/skills/qa-gate-codex-run/scripts/qa_gate.py", "verify", "--qa-dir", "plans/27_langgraph_curriculum_factory_remediation/execution_package_v2/release_candidate/rc3/QA"],
+      "exit_code": 0,
+      "log": "plans/27_langgraph_curriculum_factory_remediation/execution_package_v2/results/v8/evidence/N00_SPEC_APPROVAL_GATE/03_rc3_qa_verify.log",
+      "log_sha256": "4dfb6bee4b045318f4100b1803a18ce0933711ce228805cef22fb1b47422080e"
+    },
+    {
+      "argv": ["python3", "-c", "validate spec_approval.v5 against schema v5 with format checking; recompute all five bound digests; assert approved_for, result namespace, frozen schema, and all eight assignments"],
+      "exit_code": 0,
+      "log": "plans/27_langgraph_curriculum_factory_remediation/execution_package_v2/results/v8/evidence/N00_SPEC_APPROVAL_GATE/04_contract_digest_assignments.log",
+      "log_sha256": "6bd68818b07020ae104661dc70df2c0f5a16eab9d53e195722010bea6537aa47"
+    },
+    {
+      "argv": ["bash", "-c", "python3 plans/27_langgraph_curriculum_factory_remediation/execution_package_v2/tools/validate_plan_v2.py && python3 .claude/skills/qa-gate-codex-run/scripts/qa_gate.py verify --qa-dir plans/27_langgraph_curriculum_factory_remediation/execution_package_v2/release_candidate/rc9/QA"],
+      "exit_code": 0,
+      "log": "plans/27_langgraph_curriculum_factory_remediation/execution_package_v2/results/v8/evidence/N00_SPEC_APPROVAL_GATE/05_plan_and_rc9_qa.log",
+      "log_sha256": "68b9a529b18e552b97776dc7eee0a108cd49c1becfc131d5ddf3b94239743b10"
+    },
+    {
+      "argv": ["rg", "-n", "USER_DECISION_REQUIRED", "plans/26_langgraph_curriculum_factory/spec/v3/langgraph_curriculum_factory.spec.v4.md"],
+      "exit_code": 0,
+      "log": "plans/27_langgraph_curriculum_factory_remediation/execution_package_v2/results/v8/evidence/N00_SPEC_APPROVAL_GATE/06_user_decision_required.log",
+      "log_sha256": "4e796f5110bfc782b32b09ffac14731588f769a56ca0bdaf20379a7f4ef2bbcf"
+    }
+  ],
+  "evidence": [
+    "plans/27_langgraph_curriculum_factory_remediation/execution_package_v2/results/v8/evidence/N00_SPEC_APPROVAL_GATE/01_authority_hashes.log",
+    "plans/27_langgraph_curriculum_factory_remediation/execution_package_v2/results/v8/evidence/N00_SPEC_APPROVAL_GATE/02_spec_qa_verify.log",
+    "plans/27_langgraph_curriculum_factory_remediation/execution_package_v2/results/v8/evidence/N00_SPEC_APPROVAL_GATE/03_rc3_qa_verify.log",
+    "plans/27_langgraph_curriculum_factory_remediation/execution_package_v2/results/v8/evidence/N00_SPEC_APPROVAL_GATE/04_contract_digest_assignments.log",
+    "plans/27_langgraph_curriculum_factory_remediation/execution_package_v2/results/v8/evidence/N00_SPEC_APPROVAL_GATE/05_plan_and_rc9_qa.log",
+    "plans/27_langgraph_curriculum_factory_remediation/execution_package_v2/results/v8/evidence/N00_SPEC_APPROVAL_GATE/06_user_decision_required.log"
+  ],
+  "findings": [
+    {"id": "N00V8-F01", "severity": "critical", "summary": "The exact user-approved specification, graph-v8 contract, frozen schema, and all structured digests match live bytes.", "disposition": "resolved"},
+    {"id": "N00V8-F02", "severity": "major", "summary": "Specification QA, rc3 package QA, and rc9 recovery QA are witnessed QA_PASSED with valid chains and zero problems.", "disposition": "resolved"},
+    {"id": "N00V8-F03", "severity": "major", "summary": "All eight model and effort assignments exactly match the resolved USER_DECISION_REQUIRED-01 authority and execution remains subscription-CLI-only.", "disposition": "resolved"},
+    {"id": "N00V8-F04", "severity": "observation", "summary": "Approved v7, modified-v7 recovery input, and historical results/RC artifacts remain preserved; fresh admissions use results/v8.", "disposition": "resolved"}
+  ],
+  "invalidated_descendants": []
+}

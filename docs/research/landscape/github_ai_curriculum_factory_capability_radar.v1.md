@@ -2,7 +2,12 @@
 
 Version: **v1**  
 Date: **2026-08-14**  
-Status: **Directional comparison based on documented repository evidence**
+Status: **SUPERSEDED — incorrect product-capability taxonomy**
+
+This comparison mixed assurance controls with curriculum-builder product
+capabilities. Use the corrected, standards-grounded
+[`github_ai_curriculum_builder_sota_capability_radar.v2.md`](github_ai_curriculum_builder_sota_capability_radar.v2.md)
+instead.
 
 ## Question answered
 
@@ -46,6 +51,8 @@ the local Curriculum Builder, the score also considers current runtime code,
 Run 27 results, and the reproduced failures from `arduino_kit_run_v2`.
 
 ## Radar data
+
+![Auditable curriculum-factory capability radar comparing Curriculum Builder with eight reviewed projects](github_ai_curriculum_factory_capability_radar.v1.svg)
 
 | Project | Scope | Grounding | Orchestration | Deterministic QA | Model review | Judge independence | Rendered QA | Provenance | Release semantics | Provider governance | Mean |
 |---|---:|---:|---:|---:|---:|---:|---:|---:|---:|---:|---:|

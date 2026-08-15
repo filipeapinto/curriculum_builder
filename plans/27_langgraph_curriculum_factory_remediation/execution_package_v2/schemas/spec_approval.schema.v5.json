@@ -1,0 +1,114 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "Run 27 execution package v2 specification approval v5",
+  "$comment": "Package-scoped successor to schema v4 for the explicitly authorized graph-v8 recovery. The approved graph-v7 artifact is restored byte-for-byte at its approved digest and remains historical; the in-place modified v7 bytes are preserved separately as recovery input. Fresh results use results/v8/. This schema changes only the schema version and active-graph const while carrying the approved specification, QA lineage, and eight model assignments forward unchanged.",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "schema_version",
+    "approved",
+    "approved_spec",
+    "approved_spec_sha256",
+    "spec_qa_verdict",
+    "spec_qa_verification_sha256",
+    "approved_rc_manifest",
+    "approved_rc_manifest_sha256",
+    "execution_package_qa_verdict",
+    "execution_package_qa_verification_sha256",
+    "approved_graph",
+    "approved_graph_sha256",
+    "approved_for",
+    "model_assignments",
+    "approved_at",
+    "approval_statement"
+  ],
+  "properties": {
+    "schema_version": {"const": 5},
+    "approved": {"const": true},
+    "approved_spec": {
+      "const": "plans/26_langgraph_curriculum_factory/spec/v3/langgraph_curriculum_factory.spec.v4.md",
+      "$comment": "Unchanged from schema v3: this package's own single governing specification did not change in this correction."
+    },
+    "approved_spec_sha256": {"type": "string", "pattern": "^[a-f0-9]{64}$"},
+    "spec_qa_verdict": {"const": "QA_PASSED"},
+    "spec_qa_verification_sha256": {
+      "type": "string",
+      "pattern": "^[a-f0-9]{64}$",
+      "$comment": "SHA-256 of plans/26_langgraph_curriculum_factory/spec/v3/QA/verification.json, the specification's own independent QA verification record. Unchanged from schema v3."
+    },
+    "approved_rc_manifest": {
+      "type": "string",
+      "pattern": "^plans/27_langgraph_curriculum_factory_remediation/execution_package_v2/release_candidate/rc[1-9][0-9]*/manifest\\.v1\\.json$",
+      "$comment": "Still a versioned review-lineage pointer, not this package's governing identity. rc3 remains the approved package-structure snapshot; graph-v8 recovery QA is supporting engineering QA. The validator recomputes the manifest digest."
+    },
+    "approved_rc_manifest_sha256": {"type": "string", "pattern": "^[a-f0-9]{64}$"},
+    "execution_package_qa_verdict": {"const": "QA_PASSED"},
+    "execution_package_qa_verification_sha256": {
+      "type": "string",
+      "pattern": "^[a-f0-9]{64}$",
+      "$comment": "SHA-256 of the approved RC's own QA/verification.json. Unchanged from schema v3."
+    },
+    "approved_graph": {
+      "const": "plans/27_langgraph_curriculum_factory_remediation/execution_package_v2/implementation.graph.v8.yaml",
+      "$comment": "Const-locked to the active graph-v8 recovery artifact. A future graph v9+ gets its own schema generation; historical schemas and graphs remain unedited for records that cite them."
+    },
+    "approved_graph_sha256": {"type": "string", "pattern": "^[a-f0-9]{64}$"},
+    "approved_for": {"const": "plan27_implementation_remediation"},
+    "model_assignments": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "M01_RESEARCH_UNIT_SOURCES",
+        "M02_CREATE_UNIT_DOMAIN_DATA",
+        "M03_WRITE_UNIT_CONTENT",
+        "M04_CREATE_UNIT_VISUALS",
+        "M05_REVIEW_ACTUAL_UNIT",
+        "M06_REPAIR_NAMED_UNIT_ARTIFACT",
+        "M07_REVIEW_ACTUAL_WORKBOOK",
+        "M08_REPAIR_NAMED_WORKBOOK_DEFECT"
+      ],
+      "$comment": "Unchanged from schema v3: USER_DECISION_REQUIRED-01 is not reopened by this correction.",
+      "properties": {
+        "M01_RESEARCH_UNIT_SOURCES": {"$ref": "#/$defs/model_assignment_sonnet5_xhigh"},
+        "M02_CREATE_UNIT_DOMAIN_DATA": {"$ref": "#/$defs/model_assignment_sonnet5_high"},
+        "M03_WRITE_UNIT_CONTENT": {"$ref": "#/$defs/model_assignment_sonnet5_high"},
+        "M04_CREATE_UNIT_VISUALS": {"$ref": "#/$defs/model_assignment_sonnet5_high"},
+        "M05_REVIEW_ACTUAL_UNIT": {"$ref": "#/$defs/model_assignment_gpt56sol_xhigh"},
+        "M06_REPAIR_NAMED_UNIT_ARTIFACT": {"$ref": "#/$defs/model_assignment_sonnet5_xhigh"},
+        "M07_REVIEW_ACTUAL_WORKBOOK": {"$ref": "#/$defs/model_assignment_gpt56sol_xhigh"},
+        "M08_REPAIR_NAMED_WORKBOOK_DEFECT": {"$ref": "#/$defs/model_assignment_sonnet5_xhigh"}
+      }
+    },
+    "approved_at": {"type": "string", "format": "date-time"},
+    "approval_statement": {"type": "string", "minLength": 20}
+  },
+  "$defs": {
+    "model_assignment_sonnet5_xhigh": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["model", "effort"],
+      "properties": {
+        "model": {"const": "claude-sonnet-5"},
+        "effort": {"const": "xhigh"}
+      }
+    },
+    "model_assignment_sonnet5_high": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["model", "effort"],
+      "properties": {
+        "model": {"const": "claude-sonnet-5"},
+        "effort": {"const": "high"}
+      }
+    },
+    "model_assignment_gpt56sol_xhigh": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["model", "effort"],
+      "properties": {
+        "model": {"const": "gpt-5.6-sol"},
+        "effort": {"const": "xhigh"}
+      }
+    }
+  }
+}
