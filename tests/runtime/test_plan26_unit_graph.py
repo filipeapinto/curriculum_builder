@@ -62,6 +62,7 @@ from runtime.langgraph_factory import routing as R
 from runtime.langgraph_factory import unit_graph as U
 from runtime.langgraph_factory.nodes import (
     NODE_CATALOGUE,
+    canonical_digest,
     domain,
     inputs,
     render,
@@ -151,8 +152,34 @@ def _synthetic_manifest(
         random.Random(shuffle_seed).shuffle(units)
     curriculum_root = tmp_path / "curricula" / "synthetic"
     curriculum_root.mkdir(parents=True, exist_ok=True)
+    fixtures = curriculum_root / "fixtures"
+    fixtures.mkdir(exist_ok=True)
+    (curriculum_root / "domain.schema.v1.json").write_text('{"type":"object"}', encoding="utf-8")
+    (curriculum_root / "manifest.domain.schema.v1.json").write_text(
+        '{"$defs":{"config":{"type":"object"},"core_activity":{}}}', encoding="utf-8"
+    )
+    (curriculum_root / "calibration.v1.yaml").write_text("profile: test\n", encoding="utf-8")
+    (curriculum_root / "verify_domain.py").write_text("# frozen verifier\n", encoding="utf-8")
+    (fixtures / "reject.json").write_text("{}", encoding="utf-8")
+    (fixtures / "accept.json").write_text("{}", encoding="utf-8")
     path = curriculum_root / "synthetic_curriculum.v1.yaml"
-    path.write_text(yaml.safe_dump({"labs": units}, sort_keys=False), encoding="utf-8")
+    path.write_text(yaml.safe_dump({
+        "domain": {
+            "schema": "curricula/synthetic/domain.schema.v1.json",
+            "manifest_schema": "curricula/synthetic/manifest.domain.schema.v1.json",
+            "calibration": "curricula/synthetic/calibration.v1.yaml",
+            "config": {"profile": "test"},
+            "verifier": {
+                "entry_point": "curricula/synthetic/verify_domain.py",
+                "invocation": "python3 curricula/synthetic/verify_domain.py --domain <domain>",
+                "dependencies": [],
+                "must_reject": [{"fixture": "curricula/synthetic/fixtures/reject.json", "expected_code": "synthetic-reject"}],
+                "must_accept": ["curricula/synthetic/fixtures/accept.json"],
+                "proven": {"executed_utc": "2026-01-01T00:00:00Z", "result": "all_fixtures_behaved"},
+            },
+        },
+        "labs": units,
+    }, sort_keys=False), encoding="utf-8")
     return path, [unit["id"] for unit in units]
 
 
@@ -164,11 +191,8 @@ def _d02_state(manifest_path: Path, mode: str, requested: str | None) -> dict[st
         "mode": mode,
         "requested_unit_id": requested,
         "frozen_inputs": [
-            {
-                "path": str(manifest_path),
-                "sha256": _sha256_file(manifest_path),
-                "role": "active_manifest",
-            }
+            {"path": str(path), "sha256": _sha256_file(path), "role": "curriculum"}
+            for path in sorted(manifest_path.parent.rglob("*")) if path.is_file()
         ],
     }
 
@@ -295,6 +319,15 @@ class _StubRegistry:
 
     def observe_executable(self, name: str) -> dict[str, Any]:
         return {"name": name, "path": f"/usr/bin/{name}", "sha256": "0" * 64}
+
+    def verify_domain(self, *, body: Any, contract: Any) -> dict[str, Any]:
+        return {
+            "result": "PASS",
+            "candidate_sha256": canonical_digest(body),
+            "fixtures_result": "PASS",
+            "fixtures": [{"expected": "accept", "returncode": 0}],
+            "candidate": {"returncode": 0, "codes": []},
+        }
 
     def render_deterministic_visual(self, brief: Any, permitted_facts: Any) -> dict[str, Any]:
         path = self.sandbox / "visuals" / (str(brief["key"]).replace("/", "_") + ".svg")
@@ -587,7 +620,10 @@ ENGINE_CONTRACTS: tuple[str, ...] = (
 # The synthetic curriculum's own declared domain contract. A run that declares one
 # is the path D02/D08 are built for; the engine metaschema constrains the shape of
 # *this* file, not the domain instance a unit asserts.
-SYNTHETIC_DOMAIN_SCHEMA_RELATIVE = "schemas/synthetic_domain.v1.json"
+SYNTHETIC_DOMAIN_SCHEMA_RELATIVE = "curricula/synthetic/domain.schema.v1.json"
+SYNTHETIC_MANIFEST_SCHEMA_RELATIVE = "curricula/synthetic/manifest.domain.schema.v1.json"
+SYNTHETIC_CALIBRATION_RELATIVE = "curricula/synthetic/calibration.v1.yaml"
+SYNTHETIC_VERIFIER_RELATIVE = "curricula/synthetic/verify_domain.py"
 SYNTHETIC_DOMAIN_SCHEMA: dict[str, Any] = {
     "$schema": "https://json-schema.org/draft/2020-12/schema",
     "$id": "plan26/test/synthetic_domain.v1.json",
@@ -635,6 +671,26 @@ def _build_episode_fixture(tmp_path: Path, units: int = 1) -> dict[str, Any]:
     (engine / SYNTHETIC_DOMAIN_SCHEMA_RELATIVE).write_text(
         json.dumps(SYNTHETIC_DOMAIN_SCHEMA, indent=2), encoding="utf-8"
     )
+    (engine / SYNTHETIC_MANIFEST_SCHEMA_RELATIVE).write_text(
+        json.dumps({
+            "$defs": {
+                "config": {"type": "object", "required": ["profile"]},
+                "core_activity": {},
+            }
+        }),
+        encoding="utf-8",
+    )
+    (engine / SYNTHETIC_CALIBRATION_RELATIVE).write_text("profile: test\n", encoding="utf-8")
+    (engine / SYNTHETIC_VERIFIER_RELATIVE).write_text("# frozen test verifier\n", encoding="utf-8")
+    fixtures = curriculum / "fixtures"
+    fixtures.mkdir()
+    fixture_body = {
+        "unit_id": "U001",
+        "facts": [{"fact_id": "f1", "statement": "frozen fixture"}],
+        "verifier_result": {"result": "all_fixtures_behaved"},
+    }
+    (fixtures / "reject.json").write_text(json.dumps(fixture_body), encoding="utf-8")
+    (fixtures / "accept.json").write_text(json.dumps(fixture_body), encoding="utf-8")
     labs = [
         {
             "id": f"U{index:03d}",
@@ -652,7 +708,26 @@ def _build_episode_fixture(tmp_path: Path, units: int = 1) -> dict[str, Any]:
     manifest.write_text(
         yaml.safe_dump(
             {
-                "domain": {"manifest_schema": SYNTHETIC_DOMAIN_SCHEMA_RELATIVE},
+                "domain": {
+                    "schema": SYNTHETIC_DOMAIN_SCHEMA_RELATIVE,
+                    "manifest_schema": SYNTHETIC_MANIFEST_SCHEMA_RELATIVE,
+                    "calibration": SYNTHETIC_CALIBRATION_RELATIVE,
+                    "config": {"profile": "test"},
+                    "verifier": {
+                        "entry_point": SYNTHETIC_VERIFIER_RELATIVE,
+                        "invocation": f"python3 {SYNTHETIC_VERIFIER_RELATIVE} --domain <domain>",
+                        "dependencies": [],
+                        "must_reject": [{
+                            "fixture": "curricula/synthetic/fixtures/reject.json",
+                            "expected_code": "synthetic-reject",
+                        }],
+                        "must_accept": ["curricula/synthetic/fixtures/accept.json"],
+                        "proven": {
+                            "executed_utc": "2026-01-01T00:00:00Z",
+                            "result": "all_fixtures_behaved",
+                        },
+                    },
+                },
                 "labs": labs,
             },
             sort_keys=False,
@@ -1110,6 +1185,46 @@ def test_the_visual_join_refuses_a_denominator_that_is_not_exact(mutation: str) 
     assert "artifact_heads" not in update
 
 
+def test_visual_revalidation_preserves_the_repaired_current_head() -> None:
+    """D21/D10/D12 validates repaired bytes, never stale visual_results."""
+
+    unit_id = "U001"
+    key = f"{unit_id}/visual/det-a"
+    briefs = [_brief(unit_id, "det-a", "deterministic")]
+    stale = _visual_result(key, unit_id, "deterministic")
+    stale["sha256"] = ""
+    state = _visual_state(unit_id, briefs, {key: stale})
+    repaired_result = {
+        field: value for field, value in _visual_result(key, unit_id, "deterministic").items()
+        if field not in {"asset_path", "content_hash", "domain_hash"}
+    }
+    repaired_result["accessibility_text"] = "Corrected accessible description"
+    body = {"unit_id": unit_id, "visuals": {key: repaired_result}}
+    visual_stream = f"units/{unit_id}/visuals"
+    repaired = {
+        "key": "repaired-visual",
+        "stream": visual_stream,
+        "version": 1,
+        "parent_hash": None,
+        "hash": canonical_digest(body),
+        "body": body,
+        "unit_id": unit_id,
+        "channel": "visuals",
+        "minted_by": "targeted_repair_admission",
+        "parents": {"content": "content-hash-1", "domain": "domain-hash-1"},
+    }
+    state["artifact_versions"] = [repaired]
+    state["artifact_heads"][visual_stream] = {
+        "version": 1, "parent_hash": None, "hash": repaired["hash"]
+    }
+
+    update = visuals.D12_VISUAL_BARRIER_AND_JOIN(state, _Context())
+
+    assert update["pending_guard"]["value"] == "visuals_admitted"
+    assert update["artifact_heads"][visual_stream]["hash"] == repaired["hash"]
+    assert "artifact_versions" not in update
+
+
 @pytest.mark.parametrize(
     "mutation",
     ["missing", "extra", "stale", "cross_unit"],
@@ -1400,6 +1515,20 @@ def test_the_source_map_reduce_supersteps_execute_as_real_send_fanouts(
     assert sorted(record["key"] for record in admission["source_admissions"]) == sorted(
         denominator["request_keys"]
     )
+    packet = admission["pending_packet"]["packets"][0]
+    assert {item["name"] for item in packet["staged_inputs"]} == {
+        "domain_schema.json",
+        "domain_calibration.yaml",
+        "verifier_reject_001.json",
+        "verifier_accept_001.json",
+    }
+    for item in packet["staged_inputs"]:
+        assert hashlib.sha256(Path(item["source_path"]).read_bytes()).hexdigest() == item["sha256"]
+    projection = packet
+    assert projection["domain_schema"]["path"] == SYNTHETIC_DOMAIN_SCHEMA_RELATIVE
+    assert projection["domain_schema"]["staged_name"] == "domain_schema.json"
+    assert projection["verifier_interface"]["argv_template"].count("<domain>") == 1
+    assert all(source["claims"] for source in projection["admitted_sources"])
 
 
 def test_the_domain_head_advances_only_after_code_owned_admission(
@@ -2658,50 +2787,50 @@ def test_the_production_transport_exposes_the_capability_surface_the_nodes_call(
     assert missing == []
 
 
-def test_this_nodes_renderers_are_a_test_double_and_not_exposed_to_n13s_store_gap(
+def test_graph_admission_persists_every_head_body_before_downstream_rendering(
     tmp_path: Path, monkeypatch
 ) -> None:
-    """N13 generation 2 raised two gaps this node must state a position on.
+    """The common graph boundary closes N13's state/store split.
 
-    `plan26/n13/artifact-bodies-never-reach-the-store`: no deterministic node
-    calls `ArtifactStore.admit_version`, so D08/D09/D12 advance heads in graph
-    state only and nothing writes the admitted *bytes*. A production
-    `CliTransport.render_unit`, which is handed head hashes and must resolve the
-    bodies out of the content store, therefore raises `RenderFault`.
-    `plan26/n13/visual-assets-are-unreachable-from-d13`: D13 passes no asset map,
-    so a production unit PDF is prose-only.
-
-    Neither is inherited by this node's proof, and that is checked rather than
-    assumed: the harness `transport_registry` is a test double that composes its
-    own bytes from the arguments it is handed and never reads the store, so the
-    graph-orchestration claims here hold with or without the store gap. Both
-    findings are real and both are N22/N31/N32/N40's to close before a live run.
+    D08, D09, and D12 remain pure state-producing nodes. The boundary commits
+    each admitted immutable body to ArtifactStore before the next node can
+    resolve its head, and the stored canonical bytes hash to the state head.
     """
 
-    # The gap N13 named is real and still open: nothing in `nodes/` persists bodies.
-    from runtime.langgraph_factory import artifacts as A
+    from runtime.langgraph_factory.artifacts import ArtifactStore, ArtifactStream, UNIT_SCOPE
 
-    assert hasattr(A.ArtifactStore, "admit_version")
-    nodes_dir = REPO_ROOT / "runtime" / "langgraph_factory" / "nodes"
-    callers = [
-        path.name
-        for path in sorted(nodes_dir.glob("*.py"))
-        if "admit_version" in path.read_text(encoding="utf-8")
-    ]
-    assert callers == [], f"{callers} now persists artifact bodies; revisit this note"
-
-    # This node's renderers do not depend on it: no method of the harness registry
-    # names the store, the path guard, or the output root.
-    source = inspect.getsource(_StubRegistry)
-    for forbidden in ("ArtifactStore", "admit_version", "path_guard", "output_root"):
-        assert forbidden not in source
-
-    # And the episode really renders, inspects and admits without a single blob.
     fixture = _build_episode_fixture(tmp_path)
     result = _run_episode(monkeypatch, fixture)
-    store_root = fixture["output_root"]
-    blobs = [path for path in store_root.rglob("*") if path.is_file() and "artifact" in str(path)]
-    assert blobs == [], blobs
+    store = ArtifactStore(fixture["output_root"])
+    admission_node = {
+        "domain": "D08_VALIDATE_DOMAIN",
+        "content": "D09_VALIDATE_CONTENT",
+        "visuals": "D12_VISUAL_BARRIER_AND_JOIN",
+    }
+    for channel in ("domain", "content", "visuals"):
+        stream = ArtifactStream(scope=UNIT_SCOPE, unit_id="U001", channel=channel)
+        physical = store.current_head(stream)
+        logical = result["state"]["artifact_heads"][stream.stream_id]
+        assert physical is not None
+        assert physical.version == logical["version"]
+        assert physical.parent_hash == logical["parent_hash"]
+        assert physical.content_hash == logical["hash"]
+        body = store.resolve(stream.blob_path(physical.content_hash)).read_bytes()
+        assert hashlib.sha256(body).hexdigest() == physical.content_hash
+        # A checkpoint replay may present the same version in both prior state
+        # and the node update. It is an idempotent success, not an ambiguous
+        # body or a second version/head advance.
+        G._persist_admitted_head_updates(
+            # A different admission node may prove the same logical head on a
+            # required repair retest. Identity is artifact-scoped, not
+            # node-scoped, so this cross-node replay must stay idempotent.
+            "D20_ADMIT_UNIT_REPAIR",
+            result["state"],
+            {"artifact_heads": {stream.stream_id: logical}},
+            result["context"],
+        )
+        assert store.current_head(stream).record_hash == physical.record_hash
+
     _assert_frontier_is_a_declared_row_or_a_real_completion(
         result["deferred_frontier"], result["state"].get("terminal")
     )

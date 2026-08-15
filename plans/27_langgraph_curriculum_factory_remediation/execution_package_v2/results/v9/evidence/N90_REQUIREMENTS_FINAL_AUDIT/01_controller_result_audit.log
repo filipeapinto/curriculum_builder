@@ -1,0 +1,8 @@
+N90 V9 controller and result audit
+
+- validate_plan_v2: valid=true; order N00,N10,N20,N30,N40,N50,N60,N70,N80,N90.
+- Frozen node-result schema validation: N00-N60 PASSED valid; N70-N80 NOT_AVAILABLE valid; all result hashes match the final-audit table.
+- Controller validate: N00-N80 each valid=true, problems=[], exact result SHA match.
+- Currency: every admitted N00-N80 receipt current=true with reasons=[].
+- Append-only audit: preserves failed N00 attempt ...4c1dd3ef (NONZERO_COMMAND_IN_PASSED), failed N10 attempt ...7f1cdea9 (PREDECESSOR_DIGEST_MISMATCH), and failed N20 attempt ...0c6137e6 (VERIFICATION_FAILED in outer sandbox), followed by distinct admitted attempts. No original attempt/reason was erased.
+- N90 attempt N90_REQUIREMENTS_FINAL_AUDIT-2026-08-15T105202174407Z-0f9be038 is the sole open frontier at the time of this log.

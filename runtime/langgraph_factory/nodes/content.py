@@ -22,8 +22,8 @@ from . import (
     deterministic_node,
     guard,
     head_update,
+    is_model_candidate,
     latest_candidate,
-    latest_model_candidate,
     mint_version,
     require,
     require_current_parent,
@@ -56,8 +56,22 @@ def _mint_content_version(
     has one, and otherwise the head this node is about to validate it against.
     """
 
-    record = latest_model_candidate(artifact_versions, channel="content", unit_id=unit_id)
+    records = [
+        record for record in artifact_versions
+        if is_model_candidate(record)
+        and record.get("job_id") == "M03_WRITE_UNIT_CONTENT"
+        and record.get("channel") == "content"
+        and record.get("unit_id") == unit_id
+    ]
+    record = records[-1] if records else None
     if record is None:
+        return None
+    if any(
+        isinstance(existing, dict)
+        and existing.get("stream") == stream
+        and existing.get("candidate_key") == record.get("key")
+        for existing in artifact_versions
+    ):
         return None
     payload = candidate_payload(record, f"content candidate on {stream}")
     body = payload.get("unit_content")
@@ -99,9 +113,31 @@ def D09_VALIDATE_CONTENT(projection: dict[str, Any], runtime_context: Any) -> di
     minted = _mint_content_version(
         projection["artifact_versions"], heads, content_stream, unit_id, domain_head
     )
-    candidate = minted or latest_candidate(projection["artifact_versions"], content_stream)
+    content_head = heads.get(content_stream)
+    admitted_current = next(
+        (
+            record for record in projection["artifact_versions"]
+            if isinstance(record, dict)
+            and record.get("stream") == content_stream
+            and isinstance(content_head, dict)
+            and record.get("hash") == content_head.get("hash")
+        ),
+        None,
+    )
+    candidate = minted or admitted_current or latest_candidate(
+        projection["artifact_versions"], content_stream
+    )
     require(candidate is not None, "invalid_input", f"no candidate content on {content_stream}")
-    require_current_parent(candidate, heads, content_stream)
+    if candidate is admitted_current:
+        require(
+            candidate.get("version") == content_head.get("version")
+            and candidate.get("hash") == content_head.get("hash"),
+            "integrity",
+            "the revalidated content record is not the exact current head",
+            stream=content_stream,
+        )
+    else:
+        require_current_parent(candidate, heads, content_stream)
 
     body = candidate.get("body")
     require(isinstance(body, dict), "schema_contract", "candidate content body must be an object")
@@ -243,13 +279,19 @@ def D09_VALIDATE_CONTENT(projection: dict[str, Any], runtime_context: Any) -> di
             }
         )
 
+    for finding in findings:
+        finding.setdefault("parent_hash", head_hash)
+
     if findings:
-        return {
+        update: dict[str, Any] = {
             "deterministic_checks": checks,
             "pending_guard": guard(
                 "D09_VALIDATE_CONTENT", "content_repairable", unit_id=unit_id, findings=findings
             ),
         }
+        if minted is not None:
+            update["artifact_versions"] = [minted]
+        return update
 
     update = {
         "artifact_heads": head_update(candidate, content_stream),

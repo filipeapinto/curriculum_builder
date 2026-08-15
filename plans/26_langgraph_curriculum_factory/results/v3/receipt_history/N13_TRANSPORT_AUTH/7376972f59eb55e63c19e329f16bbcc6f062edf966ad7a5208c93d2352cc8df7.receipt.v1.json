@@ -1,0 +1,58 @@
+{
+  "changed_files": [],
+  "commands": [
+    {
+      "argv": [
+        "/tmp/plan26_n30_verify/bin/python",
+        "-m",
+        "pytest",
+        "-q",
+        "tests/runtime/test_plan26_transport.py",
+        "tests/runtime/test_plan26_egress.py"
+      ],
+      "exit_code": 0,
+      "finished_at": "2026-08-15T09:26:38.119058+00:00",
+      "log": "plans/26_langgraph_curriculum_factory/results/v3/logs/N13_TRANSPORT_AUTH/adopt-v2.test1.log",
+      "log_sha256": "6d4ce52b476b8254ea7a8bf0849839b167981cd9baa9f4806a2c1046a0722e13",
+      "started_at": "2026-08-15T09:26:29.917818+00:00",
+      "tail": "........................................................................ [ 37%]\n........................................................................ [ 75%]\n..............................................                           [100%]\n190 passed in 7.49s\n",
+      "timed_out": false
+    }
+  ],
+  "created_at": "2026-08-15T09:26:38.123240+00:00",
+  "findings": [],
+  "graph_digest": "18d619bb4eb509d1c6c590699ce2072660f36781c33cbc18a4ad1f9f8501cac7",
+  "graph_id": "plan26_langgraph_curriculum_factory_implementation",
+  "input_fingerprint": "1b37c9c2eca84b02dfb8df6b5b89df57cd04f2c0f8f28ad7183786205dfa948a",
+  "node_definition_sha256": "c380d8b84397582898ad9a02373aedeb55d72783b7d67934e422bfa260d91c11",
+  "node_id": "N13_TRANSPORT_AUTH",
+  "outputs": {
+    "plans/26_langgraph_curriculum_factory/results/N13_TRANSPORT_AUTH.result.v1.md": "ae681c609bbc2e8dc4815a3fd9d15136ca57e9a1587f8dd5ca0a4a038b2e842a",
+    "plans/26_langgraph_curriculum_factory/results/evidence/N13_TRANSPORT_AUTH": "71215b610e153a8ae16ec61c466090ccfd0fff37224ea13c705b4e3c88cd13a3",
+    "runtime/langgraph_factory/config": "43e342f1e5eee516cf92ee820092a21a09cb5cdc74a7d4240936e96756d38f1f",
+    "runtime/langgraph_factory/egress.py": "d48869dc37df95bc4f861f7ac1c4ae5043ecb417e4b9df6c0e29929c3f7bba4d",
+    "runtime/langgraph_factory/prompts": "65a58c70befa555b9c606bf800107f36b8e88d3005d7540d4d243868282384c8",
+    "runtime/langgraph_factory/schemas": "cebb08a46ddd425655e4f472909648ac6bf80805b9bfa5100b692944b601656a",
+    "runtime/langgraph_factory/transport.py": "4e33658f9d1feb19feae7fd987e0b41e30f8116b333cc9d540c51683f5c06d40",
+    "tests/runtime/test_plan26_egress.py": "687c557531b1ba528413bd8d36f2e26a94018b07a681f6f1e12263bfa1655816",
+    "tests/runtime/test_plan26_transport.py": "9641a1cc94a111b2c5cc0fd6f4293458af6d1fd78541bc849080a4c78d5b500e"
+  },
+  "prompt_sha256": "123d987b166da423f31d03b77f61b2be37ec175d3b90d6d3b091d0c9ac4e0f04",
+  "provenance": {
+    "active_patch_ids": [],
+    "attempt_id": null,
+    "base_graph_digest": "18d619bb4eb509d1c6c590699ce2072660f36781c33cbc18a4ad1f9f8501cac7",
+    "base_prompt_sha256": "123d987b166da423f31d03b77f61b2be37ec175d3b90d6d3b091d0c9ac4e0f04",
+    "branch_id": null,
+    "checkpoint": {
+      "N00_BASELINE_FREEZE": "7b7a1d830e239f6bcce471ee02f378022e1f386a5784e7fcb6c0d3d6014f311b"
+    },
+    "effective_prompt_sha256": "123d987b166da423f31d03b77f61b2be37ec175d3b90d6d3b091d0c9ac4e0f04",
+    "harness_digest": "a2e5cd37735b3e953f8388e90253daca8add352e8596899473473643f5ecad32",
+    "patch_chain_sha256": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945",
+    "patch_ids": []
+  },
+  "schema_version": 1,
+  "source": "adopted_v2_after_focused_verification",
+  "status": "PASSED"
+}

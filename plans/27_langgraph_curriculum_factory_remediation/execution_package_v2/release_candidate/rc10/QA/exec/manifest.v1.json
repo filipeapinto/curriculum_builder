@@ -1,0 +1,33 @@
+{
+  "manifest_version": 1,
+  "snapshot": "rc10",
+  "purpose": "Versioned graph-v9 recovery for genuine graph-v8 N70 attempt-5 defects in complete domain-contract freezing, executable verifier authority, invalid-first-version repair lineage, and physical artifact-store admission. Preserves v8 and all historical evidence; changes no topology, model assignment, retrieval authority, or subscription-only architecture.",
+  "authorization": "plans/26_langgraph_curriculum_factory/prompts/RUN27_GPT56_SOL_AUTONOMOUS_V8_RECOVERY_TO_N90.prompt.v1.md",
+  "approved_v8_sha256": "c2d79ac0387c935977385138d2d891cf1539041f1a4532acf94fc8dc687bf6b1",
+  "active_graph_sha256": "77e71cbf88d3436608e4c0928f0c6a501d1c054df150aae35deb6bb5f9911933",
+  "reviewed_artifact": "rc10_review_bundle.v1.md",
+  "qa_criteria": "QA_criteria.rc10.v1.md",
+  "validation": "validation.v1.md",
+  "created_at": "2026-08-15T04:15:53Z",
+  "files": [
+    {"path": "../../implementation.graph.v9.yaml", "sha256": "77e71cbf88d3436608e4c0928f0c6a501d1c054df150aae35deb6bb5f9911933", "bytes": 23463},
+    {"path": "../../contracts/spec_approval.v6.yaml", "sha256": "4381bc6ecc411ad48e43766391813728d8fcd1117f65240fb9c6388465142cdd", "bytes": 3353},
+    {"path": "../../schemas/spec_approval.schema.v6.json", "sha256": "5ecc63dd64377b9bac39facb30f147cad1ab07f3d1ad137bbc9254b39dd58bf0", "bytes": 5281},
+    {"path": "rc10_review_bundle.v1.md", "sha256": "a0f12f5d6462cd4c72f10759debe45c413836df7a6adf9c67b885b5d5df1a958", "bytes": 4777},
+    {"path": "QA_criteria.rc10.v1.md", "sha256": "dd9477cbf11a5ef4d5b9835de88e282003c1011116b806ba38f646a7ef8b491a", "bytes": 2916},
+    {"path": "validation.v1.md", "sha256": "56ae5a0fab5e5571e562dcf228ba38f3d70a44e666019dff1b67011c79ebc39e", "bytes": 642}
+  ],
+  "live_runtime_bindings": [
+    {"path": "runtime/langgraph_factory/transport.py", "sha256": "f369334de9f4e67c2c752f42ec5c0bed7627e2db952b09b0d820317165736a72"},
+    {"path": "runtime/langgraph_factory/model_nodes.py", "sha256": "0a8479b3b2650980d88b596277a3ed0ee2eca85ac4e64e57f4bbdc9eb51055ce"},
+    {"path": "runtime/langgraph_factory/nodes/inputs.py", "sha256": "ec11ef6708c4e01334152972acaa6cad141504db48f26ff5f740f5d1684dc2ab"},
+    {"path": "runtime/langgraph_factory/nodes/sources.py", "sha256": "7b177e918916e9792f9dabfe1272cd753f98237fc7d86a8b4b0f88872a6a89b0"},
+    {"path": "runtime/langgraph_factory/nodes/domain.py", "sha256": "723b9b60bd8fc215cbe25108aba5a29a6c57167772f9168fc5273cd6be6c10c7"},
+    {"path": "runtime/langgraph_factory/nodes/content.py", "sha256": "4ac6388afe6ef96d1025fecb98fe1c84b0b9db82e7bf358a843c2ea51eb95759"},
+    {"path": "runtime/langgraph_factory/nodes/visuals.py", "sha256": "8f35163ebbe6a2bf7f95c929cafc1b8f81a6d08b7ec10974982aaaceb1c2dda9"},
+    {"path": "runtime/langgraph_factory/graph.py", "sha256": "b42a19154610cd3d33ba016ab9e567dc118e7950800a70eb31e0576a6c35557b"},
+    {"path": "runtime/langgraph_factory/repair.py", "sha256": "7f6f02c6dbb6a90e7cb5ab032ebc29673215de0fb793cac50de7fc1344054983"},
+    {"path": "schemas/curriculum.schema.v5.json", "sha256": "e49349758e478a2edbf74382443e7b9858800b9d6fdf173945342483016569ea"},
+    {"path": "curricula/arduino_kit/arduino_kit_curriculum.v5.yaml", "sha256": "54165346a1c1ce9d6b34b63f912774cc209e11333a4bc7cd417fbad004d4b9a8"}
+  ]
+}

@@ -1,0 +1,50 @@
+{
+  "opened_at": "2026-08-15T09-00-32.194745+00-00",
+  "artifact_original": "/Users/filipepinto/Projects/curriculum_builder/plans/27_langgraph_curriculum_factory_remediation/execution_package_v2/release_candidate/rc26/rc26_review_bundle.v1.md",
+  "artifact_current": "/Users/filipepinto/Projects/curriculum_builder/plans/27_langgraph_curriculum_factory_remediation/execution_package_v2/release_candidate/rc26/rc26_review_bundle.v1.md",
+  "session_id": null,
+  "chain": "GENESIS",
+  "rounds_completed": 0,
+  "rounds": [],
+  "stall_count": 0,
+  "last_fingerprint": null,
+  "exec_copied": [
+    "rc26_review_bundle.v1.md",
+    "validation.v1.md"
+  ],
+  "terminal": {
+    "state": "QA_ERROR",
+    "reason": "CODEX_EXIT_1",
+    "detail": "Reading additional input from stdin...",
+    "artifact": "/Users/filipepinto/Projects/curriculum_builder/plans/27_langgraph_curriculum_factory_remediation/execution_package_v2/release_candidate/rc26/rc26_review_bundle.v1.md",
+    "rounds_completed": 0,
+    "max_iterations": 5,
+    "session_id": null,
+    "thread_id": null,
+    "transport": "exec",
+    "rollout_file": "",
+    "chain": "GENESIS",
+    "qa_dir": "/Users/filipepinto/Projects/curriculum_builder/plans/27_langgraph_curriculum_factory_remediation/execution_package_v2/release_candidate/rc26/QA",
+    "finalized_at": "2026-08-15T09:02:13.208098+00:00"
+  },
+  "config": {
+    "criteria": "# RC24 independent QA criteria\n\nComplete all probes before verdict. Report only blockers with exact criterion,\ntrigger, consequence, and executed or directly inspectable evidence.\n\n1. Recompute graph/spec/schema/contract hashes; preserve graph-v8 history and distinct\n   graph-v9 result/state lineage; pass real plan, ownership, and complete-tree scans.\n2. D02 binds entry plus every Python dependency and rejects direct, indirect, aliased,\n   re-exported, reflected, or dynamically imported code/native/process/OS/network\n   surfaces before entry, while admitting only the active `re.compile` use intended.\n3. Reproduce all six named D02 attacks from RC22 rounds 1/2. Probe adjacent safe-module\n   re-exports and aliases; none may cross D02 or execute during D08.\n4. D08 stages race-checked bytes outside engine/output and runs only the staged closed\n   snapshot under read-only, no-network, no-fork, no-model-auth authority.\n5. All ordinary Python path operations are either unreachable after D02 or normalized\n   by the trusted guard. Reproduce chdir, utime, mkfifo, lchmod, candidate overwrite,\n   and existing-to-renamed path invariance with identical bound bytes/verdict evidence.\n6. Declared drift and staged conflicts fail; undeclared repository byte/metadata/name\n   changes cannot alter a same-candidate/frozen-contract verdict.\n7. Candidate/fixture pre/post bytes and receipt bindings exactly identify execution.\n8. Immutable repair lineage, bounded M02 authority, physical ArtifactStore replay,\n   and D08/D09/D12/D20 exact-head idempotence remain correct.\n9. Package/focused/full suites pass; exact-host/SSRF/redirect, subscription-only CLIs,\n   model assignments, topology, terminals, and no-billed-API/provider-SDK remain intact.\n10. A real fresh graph-v9 N00→N90 cascade through N70/N80 is honest and executable.\n",
+    "focus": "Re-run the named D02 and path-operation regression subsets, inspect the minimal allowlist and trusted guard for adjacent aliases, then verify lineage, plan/ownership, carried-forward tests, and fresh graph-v9 entry. Complete all criteria before verdict. Prior FAIL, QA_ERROR, and integrity-breach records are never approval.",
+    "threshold": "blocker",
+    "max_iterations": 5,
+    "timeout_seconds": 2400,
+    "retries": 0,
+    "model": null,
+    "effort": null,
+    "transport": "exec",
+    "allow_execution": true,
+    "grounding": [
+      "/Users/filipepinto/Projects/curriculum_builder/plans/27_langgraph_curriculum_factory_remediation/execution_package_v2/implementation.graph.v9.yaml",
+      "/Users/filipepinto/Projects/curriculum_builder/runtime/langgraph_factory/nodes/inputs.py",
+      "/Users/filipepinto/Projects/curriculum_builder/runtime/langgraph_factory/transport.py",
+      "/Users/filipepinto/Projects/curriculum_builder/tests/runtime/test_plan26_deterministic_nodes.py",
+      "/Users/filipepinto/Projects/curriculum_builder/tests/runtime/test_plan26_transport.py",
+      "/Users/filipepinto/Projects/curriculum_builder/plans/27_langgraph_curriculum_factory_remediation/execution_package_v2/release_candidate/rc26/validation.v1.md"
+    ]
+  }
+}

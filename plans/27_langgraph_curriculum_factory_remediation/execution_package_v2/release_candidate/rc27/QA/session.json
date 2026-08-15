@@ -1,0 +1,77 @@
+{
+  "opened_at": "2026-08-15T09-03-23.814729+00-00",
+  "artifact_original": "/Users/filipepinto/Projects/curriculum_builder/plans/27_langgraph_curriculum_factory_remediation/execution_package_v2/release_candidate/rc27/rc27_review_bundle.v1.md",
+  "artifact_current": "/Users/filipepinto/Projects/curriculum_builder/plans/27_langgraph_curriculum_factory_remediation/execution_package_v2/release_candidate/rc27/rc27_review_bundle.v2.md",
+  "session_id": "01a004a9-5f01-78d0-a70a-59f77cb44dc2",
+  "chain": "54f687c7c9843e67077802891951618b6403c5ddc39c065f8a1c3df86a073e93",
+  "rounds_completed": 1,
+  "rounds": [
+    {
+      "round": 1,
+      "timestamp": "2026-08-15T09:16:52.055212+00:00",
+      "verdict": "FAIL",
+      "artifact_path": "/Users/filipepinto/Projects/curriculum_builder/plans/27_langgraph_curriculum_factory_remediation/execution_package_v2/release_candidate/rc27/rc27_review_bundle.v1.md",
+      "artifact_sha256": "31e73c65ae68628b9733f727f07ea4aafb0c0c3a3f4ea168b7a1931beb8f8c1d",
+      "findings_at_threshold": [
+        {
+          "id": "RC27-B01",
+          "title": "PyYAML exports cross D02 and execute dynamic code",
+          "severity": "blocker",
+          "criterion_ref": "Criteria 2 and 3: every invalid source must stop before verifier execution, and allowed modules must not grant code-execution authority beyond documented verifier behavior."
+        },
+        {
+          "id": "RC27-B02",
+          "title": "D08 evaluates mutable, unreceipted site-package bytes",
+          "severity": "blocker",
+          "criterion_ref": "Criterion 5: D08 must execute only frozen staged bytes, and its receipt must identify every evaluated byte source."
+        }
+      ],
+      "observations_count": 5,
+      "chain": "54f687c7c9843e67077802891951618b6403c5ddc39c065f8a1c3df86a073e93"
+    }
+  ],
+  "stall_count": 0,
+  "last_fingerprint": "2adb83f19a71d372dec7c40c1566833fb7d9674a25329acb0586b5f511a613d3",
+  "exec_copied": [
+    "QA_criteria.rc27.v1.md",
+    "rc27_review_bundle.v2.md",
+    "validation.v1.md",
+    "validation.v2.md"
+  ],
+  "terminal": {
+    "state": "QA_ERROR",
+    "reason": "CODEX_MALFORMED_VERDICT",
+    "detail": "Expecting value: line 1 column 1 (char 0); first 400 chars: ",
+    "artifact": "/Users/filipepinto/Projects/curriculum_builder/plans/27_langgraph_curriculum_factory_remediation/execution_package_v2/release_candidate/rc27/rc27_review_bundle.v2.md",
+    "rounds_completed": 1,
+    "max_iterations": 5,
+    "session_id": "01a004a9-5f01-78d0-a70a-59f77cb44dc2",
+    "thread_id": "01a004a9-5f01-78d0-a70a-59f77cb44dc2",
+    "transport": "app-server",
+    "rollout_file": "/Users/filipepinto/.codex/sessions/2026/08/15/rollout-2026-08-15T05-03-23-01a004a9-5f01-78d0-a70a-59f77cb44dc2.jsonl",
+    "chain": "54f687c7c9843e67077802891951618b6403c5ddc39c065f8a1c3df86a073e93",
+    "qa_dir": "/Users/filipepinto/Projects/curriculum_builder/plans/27_langgraph_curriculum_factory_remediation/execution_package_v2/release_candidate/rc27/QA",
+    "finalized_at": "2026-08-15T09:33:08.876654+00:00"
+  },
+  "config": {
+    "criteria": "# RC27 independent correctness criteria\n\nComplete all checks before verdict. Report only release-blocking correctness findings\nwith criterion, reproducible input, consequence, and observed evidence.\n\n1. Recompute all five authority hashes; preserve V8 history and distinct V9 state and\n   result lineage; validate the real plan, ownership contract, and complete-tree scan.\n2. Run the active Arduino D01→D02 case and every named invalid-source regression. The\n   active case must compile; every invalid case must stop before verifier execution.\n3. Inspect entry/dependency validation for equivalent aliases and module exports. The\n   minimal allowed module set must not grant code, native, process, network, or OS\n   authority beyond the documented active verifier behavior.\n4. Run the direct chdir, utime, mkfifo, and lchmod invariance cases plus candidate\n   immutability, declared-drift, external-staging, and staged-conflict tests.\n5. Confirm D08 executes only frozen staged bytes under the stated read-only and\n   isolation properties, and its receipt identifies every evaluated byte source.\n6. Confirm unchanged repository files and metadata cannot alter a result for the same\n   candidate and frozen contract; changed declared bytes must stop execution.\n7. Run repair/replay tests for immutable initial failures, bounded repairs, exact\n   lineage, ArtifactStore bytes, and D08/D09/D12/D20 idempotence.\n8. Confirm exact-host retrieval and redirect rules, subscription CLI routes, model\n   assignments, graph topology, and terminal outcomes match the governing spec.\n9. Confirm the package and full runtime suites and the current Plan 26 N13 receipt.\n10. Confirm a fresh isolated graph-v9 state can begin N00 and supports the prescribed\n    genuine N00→N90 execution through the N70 and N80 product proofs.\n",
+    "focus": "Validate the final-byte contract. Run the named existing regression subsets, inspect their implementation boundaries and equivalent aliases statically, verify lineage/plan/ownership, and complete every criterion before verdict. Do not return PASS if any check or reasoning is incomplete.",
+    "threshold": "blocker",
+    "max_iterations": 5,
+    "timeout_seconds": 2400,
+    "retries": 0,
+    "model": null,
+    "effort": null,
+    "transport": "app-server",
+    "allow_execution": true,
+    "grounding": [
+      "/Users/filipepinto/Projects/curriculum_builder/plans/27_langgraph_curriculum_factory_remediation/execution_package_v2/implementation.graph.v9.yaml",
+      "/Users/filipepinto/Projects/curriculum_builder/runtime/langgraph_factory/nodes/inputs.py",
+      "/Users/filipepinto/Projects/curriculum_builder/runtime/langgraph_factory/transport.py",
+      "/Users/filipepinto/Projects/curriculum_builder/tests/runtime/test_plan26_deterministic_nodes.py",
+      "/Users/filipepinto/Projects/curriculum_builder/tests/runtime/test_plan26_transport.py",
+      "/Users/filipepinto/Projects/curriculum_builder/plans/27_langgraph_curriculum_factory_remediation/execution_package_v2/release_candidate/rc27/validation.v1.md"
+    ]
+  },
+  "thread_id": "01a004a9-5f01-78d0-a70a-59f77cb44dc2"
+}

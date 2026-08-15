@@ -1,0 +1,29 @@
+{
+  "approved_spec_sha256": "e14df5a36ce12d700fe9fc4aa4aea466771bc89f31bc6e9d49f812c147b1bb3c",
+  "attempt_id": "N30_PREFLIGHT_EGRESS-2026-08-15T102305809197Z-9b0aa969",
+  "baseline": {
+    "curricula/arduino_kit/arduino_kit_curriculum.v5.yaml": "7c8efffb6ff6256bac215b7a541fa728ebe8768f95e65de338efd56b8143d2c6",
+    "plans/27_langgraph_curriculum_factory_remediation/execution_package_v2/results/v9/N30_PREFLIGHT_EGRESS.result.v1.json": null,
+    "plans/27_langgraph_curriculum_factory_remediation/execution_package_v2/results/v9/evidence/N30_PREFLIGHT_EGRESS": null,
+    "policy/retrieval_hosts.v1.yaml": "ee56cf4988691647ebd1f28bd90724208112bcae6a4b7324543b42bbc21c32be",
+    "runtime/langgraph_factory/nodes/inputs.py": "23b932bfbf66c3fd2d0f35fa369fe45707a1a164484dc7e56a1835c34f533b7a",
+    "runtime/langgraph_factory/nodes/sources.py": "7b177e918916e9792f9dabfe1272cd753f98237fc7d86a8b4b0f88872a6a89b0",
+    "runtime/run_curriculum.py": "10236810e66ff4afb064635b77082a840c4f7bf8ba107970ba80d6e80a8d1e8b",
+    "schemas/curriculum.schema.v5.json": "de29914c52a1ffece0a10a1d42670f961121e5ea1a9f00d7d7b57400b75a8aa2",
+    "tests/runtime/test_plan26_cli.py": "ef5ef6f817cf16c542d1abb1da0a4b5acc2b1df8c79c5563cee22179310bcbe2",
+    "tests/runtime/test_plan26_deterministic_nodes.py": "602070adeba0921f6cf5b5ac313f10fe9328c8f78500db1e7a4f7889ed9da0b4",
+    "tests/runtime/test_run_curriculum.py": "914bb9e61b7d52de563ef814e5c4e106f2cbe96c32926c26b54ab8a9c2d744a7"
+  },
+  "created_at": "2026-08-15T10:23:05.809561Z",
+  "evidence_dir": "attempts/N30_PREFLIGHT_EGRESS/N30_PREFLIGHT_EGRESS-2026-08-15T102305809197Z-9b0aa969/logs",
+  "graph_sha256": "5236bf6b13a2c5171ad11ab80f1147e20b6b59f46708090d25ec16c5a7574379",
+  "node_definition_sha256": "f66c221af3580544204f22725bb865e741b0ed8bc7a5b60960610dccacd6d8ee",
+  "node_id": "N30_PREFLIGHT_EGRESS",
+  "parent_attempt_id": null,
+  "predecessor_receipt_digests": {
+    "N20_PROVIDER_TRANSPORT": "b91f490a78c55a2989e1caf9aa9819f9f7c3cd49a1d8f6ed25a3df6096eaed98"
+  },
+  "prompt_sha256": "d74a45bc72efa3e898347946f36bf7db0e12f4622af54a639091ba6fe56b551f",
+  "run_id": "run27-execution-package-v2-graph-v9",
+  "schema_version": 1
+}

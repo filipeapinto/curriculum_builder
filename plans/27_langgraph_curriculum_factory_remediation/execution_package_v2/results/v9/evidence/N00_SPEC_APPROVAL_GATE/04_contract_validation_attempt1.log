@@ -1,0 +1,2 @@
+exit_code=1
+orchestrator helper defect: attempted to read a nonexistent model_assignments key from spec_approval.v1.yaml; the historical v1 record carries the same resolved assignments in approval_statement prose. No repository input changed. Corrected helper compares schema-v6 structured assignments to the exact eight approved values and reruns in 05_contract_validation.log.

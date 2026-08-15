@@ -1,0 +1,171 @@
+{
+  "admission": "normal",
+  "admitted_at": "2026-08-15T10:22:38.727672Z",
+  "approved_spec_sha256": "e14df5a36ce12d700fe9fc4aa4aea466771bc89f31bc6e9d49f812c147b1bb3c",
+  "attempt_id": "N20_PROVIDER_TRANSPORT-2026-08-15T102004834223Z-4230e27d",
+  "baseline": {
+    "plans/27_langgraph_curriculum_factory_remediation/execution_package_v2/results/v9/N20_PROVIDER_TRANSPORT.result.v1.json": "10ff93b51b46892fba96f2e29de75613d62e0e38d1cecc49de15af6d581700bf",
+    "plans/27_langgraph_curriculum_factory_remediation/execution_package_v2/results/v9/evidence/N20_PROVIDER_TRANSPORT": "6e812c69554f5cf6d340f63b50daa00bc439bdcca5e953eb83b2e7779685ce21",
+    "policy/routes.v1.yaml": "baa96fbe52bb8863f467ae16d02a2caeceed0ab49b00510a4dd185a683766b2a",
+    "policy/routing/model_registry.v1.yaml": "adfa0672fd4c150e8c18b98d5b4687d4fc6334c3710823759ae282548c3348c5",
+    "runtime/langgraph_factory/config": "e3ea6ce8c2ac43048ea29599d91af9412e316d2c071e26492678b54f5a8e7d8c",
+    "runtime/langgraph_factory/egress.py": "d48869dc37df95bc4f861f7ac1c4ae5043ecb417e4b9df6c0e29929c3f7bba4d",
+    "runtime/langgraph_factory/model_nodes.py": "0a8479b3b2650980d88b596277a3ed0ee2eca85ac4e64e57f4bbdc9eb51055ce",
+    "runtime/langgraph_factory/prompts": "412d99f7d84ef29eac78ab0216ba2c84353554f7e88c958b7a209714ca895114",
+    "runtime/langgraph_factory/prompts/M02_create_unit_domain_data.prompt.md": "7e586f599f864db8012612c68bbdc8f3b20ef16f9e198c5382b111dbc8944ae4",
+    "runtime/langgraph_factory/schemas": "9cb04bdc058b09fa2e4fb4bfe3c6ca67ad986dbca575ab708e53975447cca9fd",
+    "runtime/langgraph_factory/transport.py": "1512dba21864af7884e60dd5150aabeb1bddffeb9627f56a751631c01e2e1c9f",
+    "schemas/model_registry.schema.v1.json": "5a13c98cd841259f9c0b7b7c65b5f3c49421ad89e7bf08a0febb6ec863dab717",
+    "schemas/routes.schema.v1.json": "53f1032a3239086637d00e2d6b906953476f80bc8b8d68ed0b8f3a9c6c40189f",
+    "tests/runtime/test_curriculum_factory_graph.py": "337c1cd34122988f6b3a2c05c70ebd0d3a4a31bc9a5e8129ec2e91ad9a015790",
+    "tests/runtime/test_plan26_adversarial.py": "498e95f6012cbea37b40c35e45161c1ba6270e9401c4ef3b92aba32265fea256",
+    "tests/runtime/test_plan26_api_contract.py": "8369203073fdcf1b553669774c52c780836f5e86f328ef428e899e0cdce873c5",
+    "tests/runtime/test_plan26_egress.py": "687c557531b1ba528413bd8d36f2e26a94018b07a681f6f1e12263bfa1655816",
+    "tests/runtime/test_plan26_lock_drift.py": "211a1e0e7627fcd6762540acde5fbb7f2dd7df665ea7e3c72cca3dda719f4761",
+    "tests/runtime/test_plan26_model_nodes.py": "8a05e9273adc38103b608f6a565cd9e9b3ab815219edfa2b340f849193df8e28",
+    "tests/runtime/test_plan26_transport.py": "9641a1cc94a111b2c5cc0fd6f4293458af6d1fd78541bc849080a4c78d5b500e"
+  },
+  "baseline_sha256": "524bd6d14a90836b84a94e0b23216316cb21ab2b29bff1fb5b39cb9d552dfeb6",
+  "changed_files": [
+    {
+      "change": "created",
+      "path": "plans/27_langgraph_curriculum_factory_remediation/execution_package_v2/results/v9/evidence/N20_PROVIDER_TRANSPORT/04_attempt2_pytest_n20.log",
+      "sha256": "fd85afb5fe0eaf6e64b9b627563ae6d0fc3dc840c8a568d45635476fb6cc7cec"
+    },
+    {
+      "change": "created",
+      "path": "plans/27_langgraph_curriculum_factory_remediation/execution_package_v2/results/v9/evidence/N20_PROVIDER_TRANSPORT/05_attempt2_scan_node_n20.log",
+      "sha256": "666f89738e6b8d68bd33ff34b054fdcbe19c13098821ee5d50e9a6ac320afc28"
+    },
+    {
+      "change": "created",
+      "path": "plans/27_langgraph_curriculum_factory_remediation/execution_package_v2/results/v9/evidence/N20_PROVIDER_TRANSPORT/06_attempt2_environment_disposition.log",
+      "sha256": "3ccdd0b39b0a95c22c1c7f578be39a11041ccb9f74f2976fb0a35394b889620d"
+    }
+  ],
+  "commands": [
+    {
+      "argv": [
+        "python3",
+        "-m",
+        "pytest",
+        "-q",
+        "tests/runtime/test_plan26_transport.py",
+        "tests/runtime/test_plan26_model_nodes.py",
+        "tests/runtime/test_plan26_egress.py",
+        "tests/runtime/test_capabilities.py",
+        "tests/runtime/test_curriculum_factory_graph.py",
+        "tests/runtime/test_plan26_adversarial.py",
+        "tests/runtime/test_plan26_api_contract.py",
+        "tests/runtime/test_plan26_lock_drift.py"
+      ],
+      "exit_code": 0,
+      "log": "plans/27_langgraph_curriculum_factory_remediation/execution_package_v2/results/v9/evidence/N20_PROVIDER_TRANSPORT/04_attempt2_pytest_n20.log",
+      "log_sha256": "fd85afb5fe0eaf6e64b9b627563ae6d0fc3dc840c8a568d45635476fb6cc7cec"
+    },
+    {
+      "argv": [
+        "python3",
+        "plans/27_langgraph_curriculum_factory_remediation/execution_package_v2/controller/scan_node.py",
+        "--node",
+        "N20_PROVIDER_TRANSPORT",
+        "--graph",
+        "plans/27_langgraph_curriculum_factory_remediation/execution_package_v2/implementation.graph.v9.yaml"
+      ],
+      "exit_code": 0,
+      "log": "plans/27_langgraph_curriculum_factory_remediation/execution_package_v2/results/v9/evidence/N20_PROVIDER_TRANSPORT/05_attempt2_scan_node_n20.log",
+      "log_sha256": "666f89738e6b8d68bd33ff34b054fdcbe19c13098821ee5d50e9a6ac320afc28"
+    }
+  ],
+  "evidence": [
+    "plans/27_langgraph_curriculum_factory_remediation/execution_package_v2/results/v9/evidence/N20_PROVIDER_TRANSPORT/03_eight_job_conformance.log",
+    "plans/27_langgraph_curriculum_factory_remediation/execution_package_v2/results/v9/evidence/N20_PROVIDER_TRANSPORT/04_attempt2_pytest_n20.log",
+    "plans/27_langgraph_curriculum_factory_remediation/execution_package_v2/results/v9/evidence/N20_PROVIDER_TRANSPORT/05_attempt2_scan_node_n20.log",
+    "plans/27_langgraph_curriculum_factory_remediation/execution_package_v2/results/v9/evidence/N20_PROVIDER_TRANSPORT/06_attempt2_environment_disposition.log"
+  ],
+  "final_outputs": {
+    "plans/27_langgraph_curriculum_factory_remediation/execution_package_v2/results/v9/N20_PROVIDER_TRANSPORT.result.v1.json": "fd0928c444ae4667cfafb6e960c1623df11b5725d30b1ae79c25ec5a9320f300",
+    "plans/27_langgraph_curriculum_factory_remediation/execution_package_v2/results/v9/evidence/N20_PROVIDER_TRANSPORT": "6e84db0cbe77c22e454d2ff238b417c5dd4b5c6c0804fddf00d11bc96f90c303",
+    "policy/routes.v1.yaml": "baa96fbe52bb8863f467ae16d02a2caeceed0ab49b00510a4dd185a683766b2a",
+    "policy/routing/model_registry.v1.yaml": "adfa0672fd4c150e8c18b98d5b4687d4fc6334c3710823759ae282548c3348c5",
+    "runtime/langgraph_factory/config": "e3ea6ce8c2ac43048ea29599d91af9412e316d2c071e26492678b54f5a8e7d8c",
+    "runtime/langgraph_factory/egress.py": "d48869dc37df95bc4f861f7ac1c4ae5043ecb417e4b9df6c0e29929c3f7bba4d",
+    "runtime/langgraph_factory/model_nodes.py": "0a8479b3b2650980d88b596277a3ed0ee2eca85ac4e64e57f4bbdc9eb51055ce",
+    "runtime/langgraph_factory/prompts": "412d99f7d84ef29eac78ab0216ba2c84353554f7e88c958b7a209714ca895114",
+    "runtime/langgraph_factory/prompts/M02_create_unit_domain_data.prompt.md": "7e586f599f864db8012612c68bbdc8f3b20ef16f9e198c5382b111dbc8944ae4",
+    "runtime/langgraph_factory/schemas": "9cb04bdc058b09fa2e4fb4bfe3c6ca67ad986dbca575ab708e53975447cca9fd",
+    "runtime/langgraph_factory/transport.py": "1512dba21864af7884e60dd5150aabeb1bddffeb9627f56a751631c01e2e1c9f",
+    "schemas/model_registry.schema.v1.json": "5a13c98cd841259f9c0b7b7c65b5f3c49421ad89e7bf08a0febb6ec863dab717",
+    "schemas/routes.schema.v1.json": "53f1032a3239086637d00e2d6b906953476f80bc8b8d68ed0b8f3a9c6c40189f",
+    "tests/runtime/test_curriculum_factory_graph.py": "337c1cd34122988f6b3a2c05c70ebd0d3a4a31bc9a5e8129ec2e91ad9a015790",
+    "tests/runtime/test_plan26_adversarial.py": "498e95f6012cbea37b40c35e45161c1ba6270e9401c4ef3b92aba32265fea256",
+    "tests/runtime/test_plan26_api_contract.py": "8369203073fdcf1b553669774c52c780836f5e86f328ef428e899e0cdce873c5",
+    "tests/runtime/test_plan26_egress.py": "687c557531b1ba528413bd8d36f2e26a94018b07a681f6f1e12263bfa1655816",
+    "tests/runtime/test_plan26_lock_drift.py": "211a1e0e7627fcd6762540acde5fbb7f2dd7df665ea7e3c72cca3dda719f4761",
+    "tests/runtime/test_plan26_model_nodes.py": "8a05e9273adc38103b608f6a565cd9e9b3ab815219edfa2b340f849193df8e28",
+    "tests/runtime/test_plan26_transport.py": "9641a1cc94a111b2c5cc0fd6f4293458af6d1fd78541bc849080a4c78d5b500e"
+  },
+  "graph_sha256": "5236bf6b13a2c5171ad11ab80f1147e20b6b59f46708090d25ec16c5a7574379",
+  "lineage_fingerprint": "b571e6b38c34a585045fdb6461fc45c1d34288a67c7e10e04be4bc35723ef1f0",
+  "node_definition_sha256": "6c6b9746afa9b6343a6246c54f2167ea2492d214e688388f0289e41efa66b950",
+  "node_id": "N20_PROVIDER_TRANSPORT",
+  "parent_attempt_id": null,
+  "predecessor_receipts": {
+    "N10_HARNESS_PROTOCOL": "0c86bcafae0bea3f5c7a8cde16564dcf514cc334255ad0eb461162db15ec25f5"
+  },
+  "predecessor_results": {
+    "N10_HARNESS_PROTOCOL": "b093502759fe6c79665158343410e0283c05ab19dd4e83879c628f140355d25e"
+  },
+  "prompt_sha256": "3055b8b5d0ee568d5dc21ca42ed5cd6add5a41450407d6f05ae27d800dd2ef3a",
+  "receipt_id": "N20_PROVIDER_TRANSPORT-9c302758c99049b8b2cadc980b9ddbb3",
+  "result_path": "plans/27_langgraph_curriculum_factory_remediation/execution_package_v2/results/v9/N20_PROVIDER_TRANSPORT.result.v1.json",
+  "result_sha256": "fd0928c444ae4667cfafb6e960c1623df11b5725d30b1ae79c25ec5a9320f300",
+  "run_id": "run27-execution-package-v2-graph-v9",
+  "schema_version": 1,
+  "status": "PASSED",
+  "verification": [
+    {
+      "argv": [
+        "python3",
+        "-m",
+        "pytest",
+        "-q",
+        "tests/runtime/test_plan26_transport.py",
+        "tests/runtime/test_plan26_model_nodes.py",
+        "tests/runtime/test_plan26_egress.py",
+        "tests/runtime/test_capabilities.py",
+        "tests/runtime/test_curriculum_factory_graph.py",
+        "tests/runtime/test_plan26_adversarial.py",
+        "tests/runtime/test_plan26_api_contract.py",
+        "tests/runtime/test_plan26_lock_drift.py"
+      ],
+      "exit_code": 0,
+      "log": "attempts/N20_PROVIDER_TRANSPORT/N20_PROVIDER_TRANSPORT-2026-08-15T102004834223Z-4230e27d/logs/verify_00.log",
+      "log_sha256": "fd85afb5fe0eaf6e64b9b627563ae6d0fc3dc840c8a568d45635476fb6cc7cec"
+    },
+    {
+      "argv": [
+        "python3",
+        "plans/27_langgraph_curriculum_factory_remediation/execution_package_v2/controller/scan_node.py",
+        "--node",
+        "N20_PROVIDER_TRANSPORT",
+        "--graph",
+        "plans/27_langgraph_curriculum_factory_remediation/execution_package_v2/implementation.graph.v9.yaml"
+      ],
+      "exit_code": 0,
+      "log": "attempts/N20_PROVIDER_TRANSPORT/N20_PROVIDER_TRANSPORT-2026-08-15T102004834223Z-4230e27d/logs/verify_01.log",
+      "log_sha256": "2d471cf440eeeead175a5f5eb2abd59afe0c56f62a78b8fd11d834c7a55d2b9a"
+    },
+    {
+      "argv": [
+        "python3",
+        "plans/27_langgraph_curriculum_factory_remediation/execution_package_v2/tools/validate_result_v2.py",
+        "--node",
+        "N20_PROVIDER_TRANSPORT"
+      ],
+      "exit_code": 0,
+      "log": "attempts/N20_PROVIDER_TRANSPORT/N20_PROVIDER_TRANSPORT-2026-08-15T102004834223Z-4230e27d/logs/verify_02.log",
+      "log_sha256": "6f01ea22ad2cd35e2eefcdb0ca01d726198aea7c873b58e15112e1d3033d91a9"
+    }
+  ]
+}

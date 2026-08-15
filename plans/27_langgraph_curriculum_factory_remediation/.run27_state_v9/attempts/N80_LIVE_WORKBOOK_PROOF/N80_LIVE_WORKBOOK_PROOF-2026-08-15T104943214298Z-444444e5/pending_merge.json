@@ -1,0 +1,113 @@
+{
+  "at": "2026-08-15T10:51:23.984587Z",
+  "attempt_id": "N80_LIVE_WORKBOOK_PROOF-2026-08-15T104943214298Z-444444e5",
+  "node_id": "N80_LIVE_WORKBOOK_PROOF",
+  "previous_receipt": null,
+  "previous_receipt_sha256": null,
+  "receipt": {
+    "admission": "normal",
+    "admitted_at": "2026-08-15T10:51:23.983107Z",
+    "approved_spec_sha256": "e14df5a36ce12d700fe9fc4aa4aea466771bc89f31bc6e9d49f812c147b1bb3c",
+    "attempt_id": "N80_LIVE_WORKBOOK_PROOF-2026-08-15T104943214298Z-444444e5",
+    "baseline": {
+      "outputs/run27/live_workbook": null,
+      "plans/27_langgraph_curriculum_factory_remediation/execution_package_v2/results/v9/N80_LIVE_WORKBOOK_PROOF.result.v1.json": null,
+      "plans/27_langgraph_curriculum_factory_remediation/execution_package_v2/results/v9/evidence/N80_LIVE_WORKBOOK_PROOF": null
+    },
+    "baseline_sha256": "2df4c8d62bed0931cd3746a2002445f91f7d56ec41539e26694baecc18a3ceaf",
+    "changed_files": [
+      {
+        "change": "created",
+        "path": "plans/27_langgraph_curriculum_factory_remediation/execution_package_v2/results/v9/evidence/N80_LIVE_WORKBOOK_PROOF/01_n70_precondition.log",
+        "sha256": "db33c7933b4efc0f69d87d3877947ea059a30e9e06038b0598f7f32cd6d2c9c2"
+      },
+      {
+        "change": "created",
+        "path": "plans/27_langgraph_curriculum_factory_remediation/execution_package_v2/results/v9/evidence/N80_LIVE_WORKBOOK_PROOF/02_workbook_preflight.log",
+        "sha256": "2450710c4b433b86fe0a9c15bfe2d95e189455e214d71497bc45c0f72ea04b93"
+      },
+      {
+        "change": "created",
+        "path": "plans/27_langgraph_curriculum_factory_remediation/execution_package_v2/results/v9/evidence/N80_LIVE_WORKBOOK_PROOF/03_no_workbook_or_copy_proof.log",
+        "sha256": "86300d639d6839d000064ffb473133d1eb8b39a222465e1c31f2f814aa7b5a6a"
+      }
+    ],
+    "commands": [
+      {
+        "argv": [
+          "python3",
+          "-m",
+          "runtime.run_curriculum",
+          "--engine-root",
+          ".",
+          "--curriculum",
+          "curricula/arduino_kit/arduino_kit_curriculum.v5.yaml",
+          "--output-root",
+          "outputs/run27/live_workbook",
+          "--preflight"
+        ],
+        "exit_code": 3,
+        "log": "plans/27_langgraph_curriculum_factory_remediation/execution_package_v2/results/v9/evidence/N80_LIVE_WORKBOOK_PROOF/02_workbook_preflight.log",
+        "log_sha256": "2450710c4b433b86fe0a9c15bfe2d95e189455e214d71497bc45c0f72ea04b93"
+      }
+    ],
+    "evidence": [
+      "plans/27_langgraph_curriculum_factory_remediation/execution_package_v2/results/v9/evidence/N80_LIVE_WORKBOOK_PROOF/01_n70_precondition.log",
+      "plans/27_langgraph_curriculum_factory_remediation/execution_package_v2/results/v9/evidence/N80_LIVE_WORKBOOK_PROOF/02_workbook_preflight.log",
+      "plans/27_langgraph_curriculum_factory_remediation/execution_package_v2/results/v9/evidence/N80_LIVE_WORKBOOK_PROOF/03_no_workbook_or_copy_proof.log"
+    ],
+    "final_outputs": {
+      "outputs/run27/live_workbook": null,
+      "plans/27_langgraph_curriculum_factory_remediation/execution_package_v2/results/v9/N80_LIVE_WORKBOOK_PROOF.result.v1.json": "d27bfca2c6144203b50ca6f66d219b3689b98dc953e7ce5b7d3c6ccddf02627f",
+      "plans/27_langgraph_curriculum_factory_remediation/execution_package_v2/results/v9/evidence/N80_LIVE_WORKBOOK_PROOF": "a8bdaecdace3eb1282b87877abc7125f9fb95462cabe68e58210253c0fb0e7f3"
+    },
+    "graph_sha256": "5236bf6b13a2c5171ad11ab80f1147e20b6b59f46708090d25ec16c5a7574379",
+    "lineage_fingerprint": "b85c22dc2fe8b597eb1a0041f2e39938c8ef6cb0ef4cf1711dc91c34ac65106b",
+    "node_definition_sha256": "5229bf5996595066cfd58403fe40879084ac3c213c152b0fefbf376e284cfe40",
+    "node_id": "N80_LIVE_WORKBOOK_PROOF",
+    "parent_attempt_id": null,
+    "predecessor_receipts": {
+      "N70_LIVE_UNIT_PROOF": "63f547d377fec1281eb7edfba446070165fc9587578fbe6af067c2a5d0f0eaea"
+    },
+    "predecessor_results": {
+      "N70_LIVE_UNIT_PROOF": "cebc693ee9a1f5f911132cc787b39adbdb36255e0e6f60d5fefa4c24f7fcb055"
+    },
+    "prompt_sha256": "c177ae0925a6eaf40e398fa0829030e8ba1f012c044be74a972aad6c7e56a0e1",
+    "receipt_id": "N80_LIVE_WORKBOOK_PROOF-84ea349cbca1436fab2e796e954628f8",
+    "result_path": "plans/27_langgraph_curriculum_factory_remediation/execution_package_v2/results/v9/N80_LIVE_WORKBOOK_PROOF.result.v1.json",
+    "result_sha256": "d27bfca2c6144203b50ca6f66d219b3689b98dc953e7ce5b7d3c6ccddf02627f",
+    "run_id": "run27-execution-package-v2-graph-v9",
+    "schema_version": 1,
+    "status": "NOT_AVAILABLE",
+    "verification": [
+      {
+        "argv": [
+          "python3",
+          "plans/27_langgraph_curriculum_factory_remediation/controller/run27_controller.py",
+          "--graph",
+          "plans/27_langgraph_curriculum_factory_remediation/execution_package_v2/implementation.graph.v9.yaml",
+          "--state-dir",
+          "plans/27_langgraph_curriculum_factory_remediation/.run27_state_v9",
+          "verify-live-proof",
+          "--node",
+          "N80_LIVE_WORKBOOK_PROOF"
+        ],
+        "exit_code": 0,
+        "log": "attempts/N80_LIVE_WORKBOOK_PROOF/N80_LIVE_WORKBOOK_PROOF-2026-08-15T104943214298Z-444444e5/logs/verify_00.log",
+        "log_sha256": "1de0506be65e8efc32bb12dd492eda0b84c68349ed7f1521e103f0cf09bac82b"
+      },
+      {
+        "argv": [
+          "python3",
+          "plans/27_langgraph_curriculum_factory_remediation/execution_package_v2/tools/validate_result_v2.py",
+          "--node",
+          "N80_LIVE_WORKBOOK_PROOF"
+        ],
+        "exit_code": 0,
+        "log": "attempts/N80_LIVE_WORKBOOK_PROOF/N80_LIVE_WORKBOOK_PROOF-2026-08-15T104943214298Z-444444e5/logs/verify_01.log",
+        "log_sha256": "da1ea699462a81e5160f014b32a869e410bdcdaafa13e73d75a6b461669fe2ae"
+      }
+    ]
+  },
+  "receipt_sha256": "7ddc3bf2004cc56df9d9660d1652033f3a13b6a407f4a2aa274c6ef19885f31f"
+}

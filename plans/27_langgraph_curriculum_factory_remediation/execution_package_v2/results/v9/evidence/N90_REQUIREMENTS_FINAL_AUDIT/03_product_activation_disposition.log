@@ -1,0 +1,10 @@
+N90 V9 raw product-evidence disposition
+
+- outputs/run27/live_unit: absent.
+- outputs/run27/live_workbook: absent.
+- combined product file count: 0.
+- N70 preflight attempts: 2; N80 preflight attempts: 1; all content-free, authorized_input_projection={}, ready=false, exit 3 at driver_capability_proof.
+- Codex subscription driver: ready, observed gpt-5.6-sol.
+- Approved Claude subscription driver: not ready; claude-sonnet-5 bounded probe exit 1 on all three checks; closed observed tools/MCP surface.
+- No curriculum bytes, sources, PDFs, pages, reviews, or evidence bundles were transmitted. No fallback, reassignment, API-key, direct model HTTP, simulation, manual product edit, UNIT_ACCEPTED, COMPLETE, or ACTIVATED claim exists.
+- Product activation is NOT AVAILABLE. This is compatible only with terminal REMEDIATION_VERIFIED_NOT_ACTIVATED when implementation and final audit pass.

@@ -1,0 +1,9 @@
+N90 V9 conformance verifier summary
+
+- whole-tree forbidden provider/credential scan: valid; 67 files; zero violations.
+- integration ownership: valid; 75 claims checked; zero failures.
+- evidence determinism: valid; 2 claims checked; repeated output distinct_outputs=1; stable drifted=[]; zero failures.
+- requirements lineage: valid; 8 claims checked; uncovered=[]; zero failures.
+- N70 verify-live-proof: valid; outcome NOT_AVAILABLE; problems=[].
+- N80 verify-live-proof: valid; outcome NOT_AVAILABLE; problems=[].
+- N60 controller admission independently replayed focused adversarial, complete runtime, complete Run 27 package, and whole-tree scan before issuing its current receipt.

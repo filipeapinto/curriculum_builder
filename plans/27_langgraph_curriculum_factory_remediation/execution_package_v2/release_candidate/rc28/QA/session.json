@@ -1,0 +1,61 @@
+{
+  "opened_at": "2026-08-15T09-44-53.283517+00-00",
+  "artifact_original": "/Users/filipepinto/Projects/curriculum_builder/plans/27_langgraph_curriculum_factory_remediation/execution_package_v2/release_candidate/rc28/rc28_review_bundle.v1.md",
+  "artifact_current": "/Users/filipepinto/Projects/curriculum_builder/plans/27_langgraph_curriculum_factory_remediation/execution_package_v2/release_candidate/rc28/rc28_review_bundle.v1.md",
+  "session_id": "01a004cf-5bdb-7440-a09a-cf7496bc192b",
+  "chain": "ecdbc2fbadb6fa5d4af3a191e6ef8727890d22abc0740a1681f8b124f388da51",
+  "rounds_completed": 1,
+  "rounds": [
+    {
+      "round": 1,
+      "timestamp": "2026-08-15T09:51:45.902524+00:00",
+      "verdict": "PASS",
+      "artifact_path": "/Users/filipepinto/Projects/curriculum_builder/plans/27_langgraph_curriculum_factory_remediation/execution_package_v2/release_candidate/rc28/rc28_review_bundle.v1.md",
+      "artifact_sha256": "93c1c0828e1b5aa4b806fa5f83d9bacf524789447636d5c66af98ef308588301",
+      "findings_at_threshold": [],
+      "observations_count": 1,
+      "chain": "ecdbc2fbadb6fa5d4af3a191e6ef8727890d22abc0740a1681f8b124f388da51"
+    }
+  ],
+  "stall_count": 0,
+  "last_fingerprint": null,
+  "exec_copied": [
+    "QA_criteria.rc28.v1.md",
+    "rc28_review_bundle.v1.md",
+    "validation.v1.md"
+  ],
+  "terminal": {
+    "state": "QA_PASSED",
+    "reason": "CONVERGED",
+    "detail": "Codex passed the artifact at round 1",
+    "artifact": "/Users/filipepinto/Projects/curriculum_builder/plans/27_langgraph_curriculum_factory_remediation/execution_package_v2/release_candidate/rc28/rc28_review_bundle.v1.md",
+    "rounds_completed": 1,
+    "max_iterations": 5,
+    "session_id": "01a004cf-5bdb-7440-a09a-cf7496bc192b",
+    "thread_id": "01a004cf-5bdb-7440-a09a-cf7496bc192b",
+    "transport": "app-server",
+    "rollout_file": "/Users/filipepinto/.codex/sessions/2026/08/15/rollout-2026-08-15T05-44-53-01a004cf-5bdb-7440-a09a-cf7496bc192b.jsonl",
+    "chain": "ecdbc2fbadb6fa5d4af3a191e6ef8727890d22abc0740a1681f8b124f388da51",
+    "qa_dir": "/Users/filipepinto/Projects/curriculum_builder/plans/27_langgraph_curriculum_factory_remediation/execution_package_v2/release_candidate/rc28/QA",
+    "finalized_at": "2026-08-15T09:51:45.910801+00:00"
+  },
+  "config": {
+    "criteria": "# RC28 independent correctness criteria\n\nComplete every check before verdict. Report only release-blocking correctness findings\nwith a defeated criterion, reproducible trigger, consequence, and observed evidence.\n\n1. Recompute all five authority hashes; preserve V8 history and distinct V9 state and\n   result lineage; validate the plan, ownership contract, and complete-tree scan.\n2. Run the active Arduino D01→D02 case and every named invalid-source regression. The\n   active case must compile; every invalid case must stop before verifier execution.\n3. Inspect equivalent aliases and module exports. The closed allowed module set must\n   not grant code, native, process, network, OS, or mutable package authority.\n4. Confirm every verifier fixture is re-hashed and schema-valid at D02, the candidate\n   is validated from the same frozen schema bytes at D08, and declared-byte drift or\n   staging races fail closed.\n5. Run chdir/utime/mkfifo/lchmod invariance, candidate immutability, declared drift,\n   external staging, staged conflict, and mutable parent-site-package tests.\n6. Confirm the child uses `-I -S` without `PYTHONPATH` or package-directory grants;\n   its receipt must bind the interpreter and every file-backed runtime module and\n   refuse package, unstaged-engine, missing, changed, or malformed module records.\n7. Confirm unchanged repository bytes/metadata cannot change the same candidate and\n   frozen contract result, while changed declared or evaluated bytes stop execution.\n8. Run immutable-failure, bounded-repair, exact-lineage, ArtifactStore, and\n   D08/D09/D12/D20 replay/idempotence regressions.\n9. Confirm exact-host retrieval/redirect rules, subscription CLI routes, model\n   assignments, topology, and terminal outcomes match the governing specification.\n10. Confirm package/focused and full-runtime suites plus the current Plan 26 N13\n    receipt; then prove fresh isolated graph-v9 state supports genuine N00→N90 through\n    the N70 and N80 product gates.\n",
+    "focus": "Validate the final-byte D02/D08 contract and the two RC27 attack classes. Execute the exact adversarial regressions, inspect equivalent bypasses and evaluated-byte receipts, verify lineage/plan/ownership, and complete every criterion before verdict.",
+    "threshold": "blocker",
+    "max_iterations": 5,
+    "timeout_seconds": 900,
+    "retries": 2,
+    "model": null,
+    "effort": null,
+    "transport": "app-server",
+    "allow_execution": true,
+    "grounding": [
+      "/Users/filipepinto/Projects/curriculum_builder/plans/27_langgraph_curriculum_factory_remediation/execution_package_v2/implementation.graph.v9.yaml",
+      "/Users/filipepinto/Projects/curriculum_builder/plans/27_langgraph_curriculum_factory_remediation/execution_package_v2/schemas/spec_approval.schema.v6.json",
+      "/Users/filipepinto/Projects/curriculum_builder/plans/27_langgraph_curriculum_factory_remediation/execution_package_v2/contracts/spec_approval.v6.yaml",
+      "/Users/filipepinto/Projects/curriculum_builder/plans/26_langgraph_curriculum_factory/spec/v3/langgraph_curriculum_factory.spec.v4.md"
+    ]
+  },
+  "thread_id": "01a004cf-5bdb-7440-a09a-cf7496bc192b"
+}

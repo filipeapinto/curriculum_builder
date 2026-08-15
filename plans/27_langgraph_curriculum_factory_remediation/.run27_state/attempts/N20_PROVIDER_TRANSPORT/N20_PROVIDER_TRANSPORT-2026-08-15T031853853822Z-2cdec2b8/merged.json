@@ -1,0 +1,9 @@
+{
+  "admission": "recovery_readmission",
+  "at": "2026-08-15T03:19:34.056096Z",
+  "attempt_id": "N20_PROVIDER_TRANSPORT-2026-08-15T031853853822Z-2cdec2b8",
+  "node_id": "N20_PROVIDER_TRANSPORT",
+  "receipt": "receipts/N20_PROVIDER_TRANSPORT.receipt.v1.json",
+  "receipt_sha256": "5e23c55841fba1a681b95c9581ba032670bb39e5c51b26c660eff1157382fe1d",
+  "status": "PASSED"
+}

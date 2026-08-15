@@ -1,0 +1,70 @@
+{
+  "opened_at": "2026-08-15T10-56-08.133790+00-00",
+  "artifact_original": "/Users/filipepinto/Projects/curriculum_builder/plans/27_langgraph_curriculum_factory_remediation/execution_package_v2/results/v9/evidence/N90_REQUIREMENTS_FINAL_AUDIT/N90_final_audit.v1.md",
+  "artifact_current": "/Users/filipepinto/Projects/curriculum_builder/plans/27_langgraph_curriculum_factory_remediation/execution_package_v2/results/v9/evidence/N90_REQUIREMENTS_FINAL_AUDIT/N90_final_audit.v1.md",
+  "session_id": "01a00510-96e3-7433-96d5-e0ce86cdf9cb",
+  "chain": "5396f16b4d7adf19cc9ae3b262b33f56518a4cc99302aedde983f2cbabb740cd",
+  "rounds_completed": 1,
+  "rounds": [
+    {
+      "round": 1,
+      "timestamp": "2026-08-15T11:01:29.238362+00:00",
+      "verdict": "PASS",
+      "artifact_path": "/Users/filipepinto/Projects/curriculum_builder/plans/27_langgraph_curriculum_factory_remediation/execution_package_v2/results/v9/evidence/N90_REQUIREMENTS_FINAL_AUDIT/N90_final_audit.v1.md",
+      "artifact_sha256": "3f6633d0e3f853029ba3e586e5acfbd7fac950660c26c51b6a7222e22c3721d2",
+      "findings_at_threshold": [],
+      "observations_count": 1,
+      "chain": "5396f16b4d7adf19cc9ae3b262b33f56518a4cc99302aedde983f2cbabb740cd"
+    }
+  ],
+  "stall_count": 0,
+  "last_fingerprint": null,
+  "exec_copied": [
+    "N90_QA_criteria.v1.md",
+    "N90_final_audit.v1.md"
+  ],
+  "terminal": {
+    "state": "QA_PASSED",
+    "reason": "CONVERGED",
+    "detail": "Codex passed the artifact at round 1",
+    "artifact": "/Users/filipepinto/Projects/curriculum_builder/plans/27_langgraph_curriculum_factory_remediation/execution_package_v2/results/v9/evidence/N90_REQUIREMENTS_FINAL_AUDIT/N90_final_audit.v1.md",
+    "rounds_completed": 1,
+    "max_iterations": 3,
+    "session_id": "01a00510-96e3-7433-96d5-e0ce86cdf9cb",
+    "thread_id": "01a00510-96e3-7433-96d5-e0ce86cdf9cb",
+    "transport": "app-server",
+    "rollout_file": "/Users/filipepinto/.codex/sessions/2026/08/15/rollout-2026-08-15T06-56-08-01a00510-96e3-7433-96d5-e0ce86cdf9cb.jsonl",
+    "chain": "5396f16b4d7adf19cc9ae3b262b33f56518a4cc99302aedde983f2cbabb740cd",
+    "qa_dir": "/Users/filipepinto/Projects/curriculum_builder/plans/27_langgraph_curriculum_factory_remediation/execution_package_v2/results/v9/evidence/N90_REQUIREMENTS_FINAL_AUDIT/QA",
+    "finalized_at": "2026-08-15T11:01:29.245847+00:00"
+  },
+  "config": {
+    "criteria": "# Run 27 N90 independent final-audit criteria\n\nThe artifact passes only if all observable conditions below hold. A preference or possible future enhancement is not a blocker.\n\n1. It starts authority at the current user-approved corrected specification SHA-256 `e14df5a36ce12d700fe9fc4aa4aea466771bc89f31bc6e9d49f812c147b1bb3c`, then covers retained Plans 20–22/product requirements, implementation, tests, and product evidence without treating historical files as current authority.\n2. It accounts for every PM-01 through PM-24 identifier, including identifiers consolidated by postmortem v2, and every CA-01 through CA-12; no item disappears and activation-only unavailability remains open rather than misreported resolved.\n3. Its N00–N80 outcomes and result SHA-256 values equal the grounded V9 results. N00–N60 must be PASSED; N70 and N80 must be NOT_AVAILABLE. It must not claim UNIT_ACCEPTED, COMPLETE, or live product bytes.\n4. It identifies the implemented provider map as Claude/Anthropic for M01–M04/M06/M08 and Codex/OpenAI for M05/M07, subscription CLI only, with no fallback/API-key/direct-model-HTTP activation.\n5. It reports the witnessed independent RC29 qa-gate result only if state is QA_PASSED, reason CONVERGED, chain_valid true, problems empty, and the stated session/chain identifiers match grounded verification/session files.\n6. It reports the final regression denominator accurately: runtime 1370 passed, 2 explicitly classified unrelated skips, 419 subtests; Run 27 package 83 passed; whole-tree scan 67 files and zero violations; ownership 75/75; evidence determinism 2/2; requirements lineage 8/8.\n7. It separates exactly three conclusions: specification authority, implementation conformance, and product activation. Implementation may pass while activation remains unavailable.\n8. It recommends exactly `REMEDIATION_VERIFIED_NOT_ACTIVATED`. `ACTIVATED` would be false because N70/N80 are not PASSED; `BLOCKED` would be false absent an implementation/integrity/evidence/convergence defect.\n9. It does not waive the Claude availability blocker, recommend credentials/provider substitution, or use Plan 26/v8 history as provider-correctness or activation proof.\n",
+    "focus": "Independent blocker-level verification of the N90 authority, receipt, PM/CA, live-unavailability, and sole-terminal claims. Execute grounded validators where useful; do not request product activation when the grounded live results are NOT_AVAILABLE.",
+    "threshold": "blocker",
+    "max_iterations": 3,
+    "timeout_seconds": 900,
+    "retries": 2,
+    "model": null,
+    "effort": null,
+    "transport": "app-server",
+    "allow_execution": true,
+    "grounding": [
+      "/Users/filipepinto/Projects/curriculum_builder/plans/26_langgraph_curriculum_factory/spec/v3/langgraph_curriculum_factory.spec.v4.md",
+      "/Users/filipepinto/Projects/curriculum_builder/plans/27_langgraph_curriculum_factory_remediation/execution_package_v2/implementation.graph.v9.yaml",
+      "/Users/filipepinto/Projects/curriculum_builder/plans/27_langgraph_curriculum_factory_remediation/contracts/requirements_lineage.v1.yaml",
+      "/Users/filipepinto/Projects/curriculum_builder/plans/27_langgraph_curriculum_factory_remediation/execution_package_v2/release_candidate/rc29/QA/verification.json",
+      "/Users/filipepinto/Projects/curriculum_builder/plans/27_langgraph_curriculum_factory_remediation/execution_package_v2/release_candidate/rc29/QA/session.json",
+      "/Users/filipepinto/Projects/curriculum_builder/plans/27_langgraph_curriculum_factory_remediation/execution_package_v2/results/v9/N00_SPEC_APPROVAL_GATE.result.v1.json",
+      "/Users/filipepinto/Projects/curriculum_builder/plans/27_langgraph_curriculum_factory_remediation/execution_package_v2/results/v9/N10_HARNESS_PROTOCOL.result.v1.json",
+      "/Users/filipepinto/Projects/curriculum_builder/plans/27_langgraph_curriculum_factory_remediation/execution_package_v2/results/v9/N20_PROVIDER_TRANSPORT.result.v1.json",
+      "/Users/filipepinto/Projects/curriculum_builder/plans/27_langgraph_curriculum_factory_remediation/execution_package_v2/results/v9/N30_PREFLIGHT_EGRESS.result.v1.json",
+      "/Users/filipepinto/Projects/curriculum_builder/plans/27_langgraph_curriculum_factory_remediation/execution_package_v2/results/v9/N40_INTEGRATION_OWNERSHIP.result.v1.json",
+      "/Users/filipepinto/Projects/curriculum_builder/plans/27_langgraph_curriculum_factory_remediation/execution_package_v2/results/v9/N50_EVIDENCE_AUDIT_CONTROLS.result.v1.json",
+      "/Users/filipepinto/Projects/curriculum_builder/plans/27_langgraph_curriculum_factory_remediation/execution_package_v2/results/v9/N60_ADVERSARIAL_REGRESSION.result.v1.json",
+      "/Users/filipepinto/Projects/curriculum_builder/plans/27_langgraph_curriculum_factory_remediation/execution_package_v2/results/v9/N70_LIVE_UNIT_PROOF.result.v1.json",
+      "/Users/filipepinto/Projects/curriculum_builder/plans/27_langgraph_curriculum_factory_remediation/execution_package_v2/results/v9/N80_LIVE_WORKBOOK_PROOF.result.v1.json"
+    ]
+  },
+  "thread_id": "01a00510-96e3-7433-96d5-e0ce86cdf9cb"
+}

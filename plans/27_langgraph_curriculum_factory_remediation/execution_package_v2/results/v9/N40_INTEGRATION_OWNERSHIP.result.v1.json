@@ -1,0 +1,52 @@
+{
+  "schema_version": 1,
+  "run_id": "run27-execution-package-v2-graph-v9",
+  "node_id": "N40_INTEGRATION_OWNERSHIP",
+  "attempt_id": "N40_INTEGRATION_OWNERSHIP-2026-08-15T102538472167Z-8d0a32f1",
+  "outcome": "PASSED",
+  "source_spec_sha256": "e14df5a36ce12d700fe9fc4aa4aea466771bc89f31bc6e9d49f812c147b1bb3c",
+  "prompt_sha256": "4de40c5d3c8218224fbfeff09a15fe24cb736560f1b1e4c100dffd6ac449da9f",
+  "predecessor_receipts": {
+    "N30_PREFLIGHT_EGRESS": "5c39030a97c4e8e2f0986a6eb7514f7d1aab739742f6560672d1d8bc3532e310"
+  },
+  "changed_files": [
+    {"path": "plans/27_langgraph_curriculum_factory_remediation/execution_package_v2/results/v9/evidence/N40_INTEGRATION_OWNERSHIP/01_pytest_n40.log", "change": "created", "sha256": "076f29cc42f72ecd6c0cade805fe7ed6e91597ade40cb13df59a6d28e884ddd8"},
+    {"path": "plans/27_langgraph_curriculum_factory_remediation/execution_package_v2/results/v9/evidence/N40_INTEGRATION_OWNERSHIP/02_scan_node_n40.log", "change": "created", "sha256": "2951cc7551e5e242135e74b5b0a40b2ee75e782b04cbd900883d710a7c700647"},
+    {"path": "plans/27_langgraph_curriculum_factory_remediation/execution_package_v2/results/v9/evidence/N40_INTEGRATION_OWNERSHIP/03_verify_ownership.log", "change": "created", "sha256": "ccf9998e5aa58f7944bc16de30af264df08d5f3b22d15c416405fb9cacba6821"},
+    {"path": "plans/27_langgraph_curriculum_factory_remediation/execution_package_v2/results/v9/evidence/N40_INTEGRATION_OWNERSHIP/04_compiled_topology_evidence.log", "change": "created", "sha256": "4c3e9f8efbc506b34fbcf6ac033346b6c11d8fdd234f930415b745142b77d147"}
+  ],
+  "commands": [
+    {
+      "argv": ["python3", "-m", "pytest", "-q", "tests/runtime/test_plan26_topology.py", "tests/runtime/test_plan26_unit_graph.py", "tests/runtime/test_plan26_repair_acceptance.py", "tests/runtime/test_plan26_workbook.py"],
+      "exit_code": 0,
+      "log": "plans/27_langgraph_curriculum_factory_remediation/execution_package_v2/results/v9/evidence/N40_INTEGRATION_OWNERSHIP/01_pytest_n40.log",
+      "log_sha256": "076f29cc42f72ecd6c0cade805fe7ed6e91597ade40cb13df59a6d28e884ddd8"
+    },
+    {
+      "argv": ["python3", "plans/27_langgraph_curriculum_factory_remediation/execution_package_v2/controller/scan_node.py", "--node", "N40_INTEGRATION_OWNERSHIP", "--graph", "plans/27_langgraph_curriculum_factory_remediation/execution_package_v2/implementation.graph.v9.yaml"],
+      "exit_code": 0,
+      "log": "plans/27_langgraph_curriculum_factory_remediation/execution_package_v2/results/v9/evidence/N40_INTEGRATION_OWNERSHIP/02_scan_node_n40.log",
+      "log_sha256": "2951cc7551e5e242135e74b5b0a40b2ee75e782b04cbd900883d710a7c700647"
+    },
+    {
+      "argv": ["python3", "plans/27_langgraph_curriculum_factory_remediation/controller/verify_ownership.py", "--contract", "plans/27_langgraph_curriculum_factory_remediation/contracts/integration_ownership.v1.yaml", "--graph", "plans/27_langgraph_curriculum_factory_remediation/execution_package_v2/implementation.graph.v9.yaml"],
+      "exit_code": 0,
+      "log": "plans/27_langgraph_curriculum_factory_remediation/execution_package_v2/results/v9/evidence/N40_INTEGRATION_OWNERSHIP/03_verify_ownership.log",
+      "log_sha256": "ccf9998e5aa58f7944bc16de30af264df08d5f3b22d15c416405fb9cacba6821"
+    }
+  ],
+  "evidence": [
+    "plans/27_langgraph_curriculum_factory_remediation/contracts/integration_ownership.v1.yaml",
+    "plans/27_langgraph_curriculum_factory_remediation/execution_package_v2/results/v9/evidence/N40_INTEGRATION_OWNERSHIP/01_pytest_n40.log",
+    "plans/27_langgraph_curriculum_factory_remediation/execution_package_v2/results/v9/evidence/N40_INTEGRATION_OWNERSHIP/02_scan_node_n40.log",
+    "plans/27_langgraph_curriculum_factory_remediation/execution_package_v2/results/v9/evidence/N40_INTEGRATION_OWNERSHIP/03_verify_ownership.log",
+    "plans/27_langgraph_curriculum_factory_remediation/execution_package_v2/results/v9/evidence/N40_INTEGRATION_OWNERSHIP/04_compiled_topology_evidence.log"
+  ],
+  "findings": [
+    {"id": "N40V9-F01", "severity": "critical", "summary": "The production compile point reaches every retained deterministic and model node, the unit repair/acceptance cycle, workbook/release path, and each legal terminal without a bypass or undeclared registration.", "disposition": "resolved"},
+    {"id": "N40V9-F02", "severity": "critical", "summary": "Initial and repaired domain/content/visual admission preserves immutable physical candidate bytes, exact parent lineage, owning-validator re-entry, and head advancement only after acceptance.", "disposition": "resolved"},
+    {"id": "N40V9-F03", "severity": "major", "summary": "All 213 integration tests passed, all 75 ownership claims were valid, and the 14-file scoped scan reported zero violations.", "disposition": "resolved"},
+    {"id": "N40V9-F04", "severity": "observation", "summary": "Fresh V9 re-verification used unchanged integration-owned bytes and created only node-specific evidence plus this result.", "disposition": "resolved"}
+  ],
+  "invalidated_descendants": []
+}

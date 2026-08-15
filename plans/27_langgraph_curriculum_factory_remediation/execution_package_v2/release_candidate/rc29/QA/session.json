@@ -1,0 +1,61 @@
+{
+  "opened_at": "2026-08-15T09-53-36.656135+00-00",
+  "artifact_original": "/Users/filipepinto/Projects/curriculum_builder/plans/27_langgraph_curriculum_factory_remediation/execution_package_v2/release_candidate/rc29/rc29_review_bundle.v1.md",
+  "artifact_current": "/Users/filipepinto/Projects/curriculum_builder/plans/27_langgraph_curriculum_factory_remediation/execution_package_v2/release_candidate/rc29/rc29_review_bundle.v1.md",
+  "session_id": "01a004d7-57fd-7080-853e-9e3a3f1afabc",
+  "chain": "cfd2295d138e59724fa460a6e3c1d5a5d67c5bd747bd77f9f7615300e813843c",
+  "rounds_completed": 1,
+  "rounds": [
+    {
+      "round": 1,
+      "timestamp": "2026-08-15T10:03:04.006412+00:00",
+      "verdict": "PASS",
+      "artifact_path": "/Users/filipepinto/Projects/curriculum_builder/plans/27_langgraph_curriculum_factory_remediation/execution_package_v2/release_candidate/rc29/rc29_review_bundle.v1.md",
+      "artifact_sha256": "ccd3480fcebf7060cab56170117d20cb6717e472ea16c8fa95e4e134e30196af",
+      "findings_at_threshold": [],
+      "observations_count": 3,
+      "chain": "cfd2295d138e59724fa460a6e3c1d5a5d67c5bd747bd77f9f7615300e813843c"
+    }
+  ],
+  "stall_count": 0,
+  "last_fingerprint": null,
+  "exec_copied": [
+    "QA_criteria.rc29.v1.md",
+    "rc29_review_bundle.v1.md",
+    "validation.v1.md"
+  ],
+  "terminal": {
+    "state": "QA_PASSED",
+    "reason": "CONVERGED",
+    "detail": "Codex passed the artifact at round 1",
+    "artifact": "/Users/filipepinto/Projects/curriculum_builder/plans/27_langgraph_curriculum_factory_remediation/execution_package_v2/release_candidate/rc29/rc29_review_bundle.v1.md",
+    "rounds_completed": 1,
+    "max_iterations": 5,
+    "session_id": "01a004d7-57fd-7080-853e-9e3a3f1afabc",
+    "thread_id": "01a004d7-57fd-7080-853e-9e3a3f1afabc",
+    "transport": "app-server",
+    "rollout_file": "/Users/filipepinto/.codex/sessions/2026/08/15/rollout-2026-08-15T05-53-36-01a004d7-57fd-7080-853e-9e3a3f1afabc.jsonl",
+    "chain": "cfd2295d138e59724fa460a6e3c1d5a5d67c5bd747bd77f9f7615300e813843c",
+    "qa_dir": "/Users/filipepinto/Projects/curriculum_builder/plans/27_langgraph_curriculum_factory_remediation/execution_package_v2/release_candidate/rc29/QA",
+    "finalized_at": "2026-08-15T10:03:04.014050+00:00"
+  },
+  "config": {
+    "criteria": "# RC29 independent software-correctness criteria\n\nUse source inspection and the repository's committed tests. Do not create new payloads,\nprobe external systems, or perform security research. Report only blocker-severity\nsoftware defects with a criterion, reproducible committed test/input, consequence,\nand observed evidence.\n\n1. Recompute the five authority hashes and validate preserved V8/V9 lineage, plan,\n   ownership, and complete-tree scan.\n2. Run the committed active D01→D02 and invalid-source tests. The active Arduino case\n   compiles and all invalid committed cases stop at D02.\n3. Confirm from source that the allowed verifier imports match active documented needs\n   and exclude package, process, network, native, and OS surfaces.\n4. Run the committed fixture-schema, candidate-schema drift, staging, and immutability\n   regressions; confirm D02/D08 use hash-checked frozen bytes.\n5. Run the committed filesystem-normalization and mutable-parent-package isolation\n   regressions and confirm identical inputs retain identical outcomes.\n6. Confirm child argv contains `-I -S`, environment has no `PYTHONPATH`, the verifier\n   profile grants no package root, and receipts identify the interpreter plus every\n   file-backed child module with independent post-execution hashes.\n7. Run committed repair, lineage, ArtifactStore, and D08/D09/D12/D20 replay and\n   idempotence tests.\n8. Confirm exact-host retrieval, redirects, subscription CLI routes, model assignments,\n   topology, and terminal outcomes against the governing specification.\n9. Confirm the claimed focused/full test censuses and current Plan 26 N13 receipt.\n10. Confirm a fresh isolated V9 state can begin N00 and structurally supports the\n    prescribed genuine N00→N90 cascade through N70 and N80.\n",
+    "focus": "Ordinary deterministic software correctness only. Run committed repository tests and inspect their implementation. Do not construct new payloads, probe external systems, or perform security research. Complete all ten criteria before emitting one internally consistent final verdict.",
+    "threshold": "blocker",
+    "max_iterations": 5,
+    "timeout_seconds": 900,
+    "retries": 2,
+    "model": null,
+    "effort": null,
+    "transport": "app-server",
+    "allow_execution": true,
+    "grounding": [
+      "/Users/filipepinto/Projects/curriculum_builder/plans/27_langgraph_curriculum_factory_remediation/execution_package_v2/implementation.graph.v9.yaml",
+      "/Users/filipepinto/Projects/curriculum_builder/plans/27_langgraph_curriculum_factory_remediation/execution_package_v2/schemas/spec_approval.schema.v6.json",
+      "/Users/filipepinto/Projects/curriculum_builder/plans/27_langgraph_curriculum_factory_remediation/execution_package_v2/contracts/spec_approval.v6.yaml",
+      "/Users/filipepinto/Projects/curriculum_builder/plans/26_langgraph_curriculum_factory/spec/v3/langgraph_curriculum_factory.spec.v4.md"
+    ]
+  },
+  "thread_id": "01a004d7-57fd-7080-853e-9e3a3f1afabc"
+}

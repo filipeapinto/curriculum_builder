@@ -1,0 +1,66 @@
+{
+  "opened_at": "2026-08-15T05-21-24.899716+00-00",
+  "artifact_original": "/Users/filipepinto/Projects/curriculum_builder/plans/27_langgraph_curriculum_factory_remediation/execution_package_v2/release_candidate/rc15/rc15_review_bundle.v1.md",
+  "artifact_current": "/Users/filipepinto/Projects/curriculum_builder/plans/27_langgraph_curriculum_factory_remediation/execution_package_v2/release_candidate/rc15/rc15_review_bundle.v1.md",
+  "session_id": "01a003eb-e274-76c0-95fa-10431716a6e5",
+  "chain": "87c09ba6d2fc5bba7f36673be4de05613e956a6b36f48d34f7e1ec208ffcc136",
+  "rounds_completed": 1,
+  "rounds": [
+    {
+      "round": 1,
+      "timestamp": "2026-08-15T05:50:26.835001+00:00",
+      "verdict": "FAIL",
+      "artifact_path": "/Users/filipepinto/Projects/curriculum_builder/plans/27_langgraph_curriculum_factory_remediation/execution_package_v2/release_candidate/rc15/rc15_review_bundle.v1.md",
+      "artifact_sha256": "98777d275a2ade142be752d5fa65580523f41ac19b6976527431ef30baf9b41f",
+      "findings_at_threshold": [
+        {
+          "id": "RC15-QA-001",
+          "title": "Verifier sandbox exposes undeclared engine-file metadata, breaking replay invariance",
+          "severity": "blocker",
+          "criterion_ref": "Criterion 4 requires missing dependency declarations to fail before entry; Criterion 5 requires a sandbox that cannot read undeclared engine files; Criterion 6 requires undeclared post-D02 byte changes never to alter the same candidate's verdict."
+        }
+      ],
+      "observations_count": 4,
+      "chain": "87c09ba6d2fc5bba7f36673be4de05613e956a6b36f48d34f7e1ec208ffcc136"
+    }
+  ],
+  "stall_count": 0,
+  "last_fingerprint": "3f07b2a3baa907207649a1f638244e6eaf81b897e1fbb2605f2af188e2b14d38",
+  "exec_copied": [
+    "QA_criteria.rc15.v1.md",
+    "rc15_review_bundle.v1.md",
+    "validation.v1.md"
+  ],
+  "terminal": null,
+  "config": {
+    "criteria": "# RC15 independent QA criteria\n\nReport only blocker findings: each finding must name the criterion it defeats,\na reproducible trigger, and the consequence. Style and optional hardening are\nobservations.\n\n1. Historical integrity: graph v8 must still hash to\n   `c2d79ac0387c935977385138d2d891cf1539041f1a4532acf94fc8dc687bf6b1`, and\n   v9 must use distinct graph/contract/schema/prompt/result/state lineage without\n   overwriting v8 evidence.\n2. Package coherence: graph v9, approval schema v6, contract v6, prompts,\n   scanner, validators, and package tests must bind to v9/results-v9 consistently;\n   all digest claims must recompute and the real plan validator must pass.\n3. Ownership: every changed production/runtime/test path must be in the exact\n   sequential owner write set that implements it, without ambiguous ownership.\n4. Complete freeze: D02 must bind every curriculum-owned domain input used by\n   M02 or D08, including verifier code, fixtures, schemas, calibration, and\n   sidecar dependencies. Missing declarations, path escape, duplicates, and\n   post-D01 drift must fail before entry, and the complete domain-contract digest\n   must participate in effective-run identity.\n5. Closed verifier execution: D08 must re-hash the complete D02-frozen verifier\n   input set and execute the exact frozen invocation and fixtures under a\n   no-network sandbox that cannot read undeclared curriculum or engine files.\n   Its candidate-bound receipt must identify the dependency digest set.\n6. Replay invariance: changing undeclared or declared post-D02 repository bytes\n   must never produce a different verdict for the same candidate and frozen\n   contract. Declared drift must fail closed before verifier execution.\n7. Bounded authoring: D07/M02 may see only admitted source claims and verified\n   staged domain inputs. M02 must not claim admission or verifier authority.\n8. First-version recovery: invalid initial domain/content/visual candidates must\n   remain immutable and non-head; D19/M06 must target exact bytes; D20 must reject\n   stale/out-of-bound/no-op repair; repaired children must retain validator\n   lineage, admit as genesis where appropriate, and revalidate as exact heads.\n9. Replay and physical admission: D08/D09/D12/D20 heads must have canonical bytes\n   in ArtifactStore before downstream reads. Cross-node replay must be idempotent,\n   conflicts must fail closed, and revalidation must preserve repaired bytes.\n10. Regression proof: the focused, package, and full-runtime suites must execute\n    successfully, including all six RC13 reproductions and RC14's unfrozen\n    circuit-library reproduction.\n11. Security/architecture preservation: exact-host retrieval, SSRF/redirect\n    checks, tool-closed subscription CLIs, model assignments, topology, terminals,\n    and no-billed-API/no-provider-SDK constraints must remain intact.\n12. Entry safety: no blocker may make a fresh graph-v9 N00→N90 cascade dishonest,\n    unverifiable, or unable to run the real N70/N80 path.\n",
+    "focus": "Independently reproduce RC14-QA-001 against the repaired frozen verifier dependency closure, verify the sandbox no longer exposes undeclared engine files, and check that the unchanged graph-v9 package remains safe for a fresh N00-to-N90 cascade. Report only genuine blockers with reproducible triggers.",
+    "threshold": "blocker",
+    "max_iterations": 5,
+    "timeout_seconds": 900,
+    "retries": 2,
+    "model": null,
+    "effort": null,
+    "transport": "app-server",
+    "allow_execution": true,
+    "grounding": [
+      "/Users/filipepinto/Projects/curriculum_builder/plans/26_langgraph_curriculum_factory/spec/v3/langgraph_curriculum_factory.spec.v4.md",
+      "/Users/filipepinto/Projects/curriculum_builder/plans/27_langgraph_curriculum_factory_remediation/execution_package_v2/implementation.graph.v8.yaml",
+      "/Users/filipepinto/Projects/curriculum_builder/plans/27_langgraph_curriculum_factory_remediation/execution_package_v2/implementation.graph.v9.yaml",
+      "/Users/filipepinto/Projects/curriculum_builder/plans/27_langgraph_curriculum_factory_remediation/execution_package_v2/schemas/spec_approval.schema.v6.json",
+      "/Users/filipepinto/Projects/curriculum_builder/plans/27_langgraph_curriculum_factory_remediation/execution_package_v2/contracts/spec_approval.v6.yaml",
+      "/Users/filipepinto/Projects/curriculum_builder/schemas/curriculum.schema.v5.json",
+      "/Users/filipepinto/Projects/curriculum_builder/curricula/arduino_kit/arduino_kit_curriculum.v5.yaml",
+      "/Users/filipepinto/Projects/curriculum_builder/curricula/arduino_kit/verify_domain.py",
+      "/Users/filipepinto/Projects/curriculum_builder/curricula/arduino_kit/domain.schema.v1.json",
+      "/Users/filipepinto/Projects/curriculum_builder/curricula/arduino_kit/kit_calibration.v1.yaml",
+      "/Users/filipepinto/Projects/curriculum_builder/curricula/arduino_kit/circuit_library.v1.yaml",
+      "/Users/filipepinto/Projects/curriculum_builder/runtime/langgraph_factory/nodes/inputs.py",
+      "/Users/filipepinto/Projects/curriculum_builder/runtime/langgraph_factory/transport.py",
+      "/Users/filipepinto/Projects/curriculum_builder/tests/runtime/test_plan26_deterministic_nodes.py",
+      "/Users/filipepinto/Projects/curriculum_builder/tests/runtime/test_plan26_transport.py",
+      "/Users/filipepinto/Projects/curriculum_builder/plans/27_langgraph_curriculum_factory_remediation/execution_package_v2/release_candidate/rc14/QA/rounds/round-01.response.json"
+    ]
+  },
+  "thread_id": "01a003eb-e274-76c0-95fa-10431716a6e5"
+}

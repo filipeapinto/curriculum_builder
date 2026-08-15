@@ -1,0 +1,9 @@
+{
+  "admission": "recovery_readmission",
+  "at": "2026-08-15T03:21:08.758160Z",
+  "attempt_id": "N50_EVIDENCE_AUDIT_CONTROLS-2026-08-15T032054456196Z-d2ce3f53",
+  "node_id": "N50_EVIDENCE_AUDIT_CONTROLS",
+  "receipt": "receipts/N50_EVIDENCE_AUDIT_CONTROLS.receipt.v1.json",
+  "receipt_sha256": "52eba96d12065982dfacb7a87fd2cfbdb8bf2edfd1233ae96174e16c78dc3ab2",
+  "status": "PASSED"
+}

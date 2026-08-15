@@ -1,0 +1,936 @@
+.......................FFFF...F......................................... [ 14%]
+..................................................F..FFFFF.............. [ 28%]
+........................................................................ [ 42%]
+........................................................................ [ 56%]
+........................................................................ [ 70%]
+.................................F...................................................................... [ 91%]
+F....................................s...... [ 99%]
+.                                                                        [100%]
+=================================== FAILURES ===================================
+________ test_sandboxed_worker_cannot_read_repository_output_or_secrets ________
+
+tmp_path = PosixPath('/private/var/folders/kj/z_75gwxx2ls7p55rnx4t5kg00000gn/T/pytest-of-filipepinto/pytest-353/test_sandboxed_worker_cannot_r0')
+
+    @requires_sandbox
+    def test_sandboxed_worker_cannot_read_repository_output_or_secrets(tmp_path: Path):
+        workspace = tmp_path / "ws"
+        home = tmp_path / "home"
+        workspace.mkdir()
+        home.mkdir()
+    
+        output_root = tmp_path / "output"
+        (output_root / "other_unit").mkdir(parents=True)
+        sibling = output_root / "other_unit" / "accepted.json"
+        sibling.write_text("sibling unit bytes\n", encoding="utf-8")
+        parent = tmp_path / "author_history.md"
+        parent.write_text("previous attempts\n", encoding="utf-8")
+        secret = home.parent / "credentials.env"
+        secret.write_text("OPENAI_API_KEY=sk-not-a-real-key\n", encoding="utf-8")
+        repo_file = tp.REPO_ROOT / "runtime" / "langgraph_factory" / "transport.py"
+    
+        proof = tp.prove_workspace_isolation(
+            workspace=workspace, home=home,
+            forbidden_paths=[repo_file, sibling, parent, secret])
+    
+        assert proof["mechanism"] == "sandbox-exec"
+        assert proof["readable_forbidden_paths"] == []
+>       assert proof["enforced"] is True
+E       assert False is True
+
+tests/runtime/test_plan26_transport.py:413: AssertionError
+_______________ test_capability_proof_is_satisfied_on_this_host ________________
+
+tmp_path = PosixPath('/private/var/folders/kj/z_75gwxx2ls7p55rnx4t5kg00000gn/T/pytest-of-filipepinto/pytest-353/test_capability_proof_is_satis0')
+
+    @requires_sandbox
+    def test_capability_proof_is_satisfied_on_this_host(tmp_path: Path):
+        guard = EgressGuard(ReceiptLog())
+        guard.install()
+        try:
+            proof = tp.prove_transport_capabilities(
+                guard=guard, probe_root=tmp_path / "probe",
+                forbidden_paths=[tp.REPO_ROOT / "pyproject.toml", tp.REPO_ROOT / "runtime"],
+                identity_help={"codex": "--json", "claude": "--json-schema"})
+        finally:
+            guard.uninstall()
+>       assert proof["satisfied"] is True
+E       assert False is True
+
+tests/runtime/test_plan26_transport.py:427: AssertionError
+_ test_the_real_cli_starts_sandboxed_yet_cannot_read_outside_the_workspace[codex] _
+
+tmp_path = PosixPath('/private/var/folders/kj/z_75gwxx2ls7p55rnx4t5kg00000gn/T/pytest-of-filipepinto/pytest-353/test_the_real_cli_starts_sandb0')
+cli = 'codex'
+
+    @requires_sandbox
+    @pytest.mark.parametrize("cli", ["codex", "claude"])
+    def test_the_real_cli_starts_sandboxed_yet_cannot_read_outside_the_workspace(
+        tmp_path: Path, cli: str
+    ):
+        """The strongest available isolation evidence: the actual pinned binary, sandboxed."""
+        import shutil as _shutil
+    
+        if _shutil.which(cli) is None:
+            pytest.skip(f"{cli} is not installed on this host")
+    
+        workspace = tmp_path / "ws"
+        home = tmp_path / "home"
+        workspace.mkdir()
+        home.mkdir()
+        secret = tmp_path / "credentials.env"
+        secret.write_text("OPENAI_API_KEY=sk-not-a-real-key\n", encoding="utf-8")
+    
+        identity = tp.probe_executable(cli)
+        profile = home / "profile.sb"
+        profile.write_text(
+            tp.render_sandbox_profile(workspace=workspace, home=home,
+                                      readable=tp.executable_read_roots(identity.path)),
+            encoding="utf-8")
+        environment = tp.build_worker_environment(home=home)
+    
+        started = tp.run_process(
+            tp.build_sandboxed_argv([identity.path, "--version"], profile_path=profile),
+            cwd=workspace, env=environment, timeout_seconds=120)
+>       assert started.returncode == 0, started.stderr
+E       AssertionError: sandbox-exec: sandbox_apply: Operation not permitted
+E         
+E       assert 71 == 0
+E        +  where 71 = ProcessOutcome(returncode=71, stdout='', stderr='sandbox-exec: sandbox_apply: Operation not permitted\n', pid=19091, termination='exited').returncode
+
+tests/runtime/test_plan26_transport.py:462: AssertionError
+_ test_the_real_cli_starts_sandboxed_yet_cannot_read_outside_the_workspace[claude] _
+
+tmp_path = PosixPath('/private/var/folders/kj/z_75gwxx2ls7p55rnx4t5kg00000gn/T/pytest-of-filipepinto/pytest-353/test_the_real_cli_starts_sandb1')
+cli = 'claude'
+
+    @requires_sandbox
+    @pytest.mark.parametrize("cli", ["codex", "claude"])
+    def test_the_real_cli_starts_sandboxed_yet_cannot_read_outside_the_workspace(
+        tmp_path: Path, cli: str
+    ):
+        """The strongest available isolation evidence: the actual pinned binary, sandboxed."""
+        import shutil as _shutil
+    
+        if _shutil.which(cli) is None:
+            pytest.skip(f"{cli} is not installed on this host")
+    
+        workspace = tmp_path / "ws"
+        home = tmp_path / "home"
+        workspace.mkdir()
+        home.mkdir()
+        secret = tmp_path / "credentials.env"
+        secret.write_text("OPENAI_API_KEY=sk-not-a-real-key\n", encoding="utf-8")
+    
+        identity = tp.probe_executable(cli)
+        profile = home / "profile.sb"
+        profile.write_text(
+            tp.render_sandbox_profile(workspace=workspace, home=home,
+                                      readable=tp.executable_read_roots(identity.path)),
+            encoding="utf-8")
+        environment = tp.build_worker_environment(home=home)
+    
+        started = tp.run_process(
+            tp.build_sandboxed_argv([identity.path, "--version"], profile_path=profile),
+            cwd=workspace, env=environment, timeout_seconds=120)
+>       assert started.returncode == 0, started.stderr
+E       AssertionError: sandbox-exec: sandbox_apply: Operation not permitted
+E         
+E       assert 71 == 0
+E        +  where 71 = ProcessOutcome(returncode=71, stdout='', stderr='sandbox-exec: sandbox_apply: Operation not permitted\n', pid=19093, termination='exited').returncode
+
+tests/runtime/test_plan26_transport.py:462: AssertionError
+____________ test_verifier_sandbox_blocks_undeclared_file_metadata _____________
+
+tmp_path = PosixPath('/private/var/folders/kj/z_75gwxx2ls7p55rnx4t5kg00000gn/T/pytest-of-filipepinto/pytest-353/test_verifier_sandbox_blocks_u0')
+
+    @requires_sandbox
+    def test_verifier_sandbox_blocks_undeclared_file_metadata(tmp_path: Path):
+        """Neither an undeclared file nor its engine directory may become input."""
+    
+        workspace = tmp_path / "workspace"
+        home = workspace / "home"
+        engine = tmp_path / "engine"
+        workspace.mkdir()
+        home.mkdir()
+        engine.mkdir()
+        declared = workspace / "declared.txt"
+        undeclared = engine / "undeclared.txt"
+        declared.write_text("declared", encoding="utf-8")
+        undeclared.write_text("hidden", encoding="utf-8")
+        profile = home / "verifier.sb"
+        profile.write_text(
+            tp.render_sandbox_profile(
+                workspace=workspace,
+                home=home,
+                readable=(Path("/usr"), declared),
+                allow_network=False,
+                metadata_denied=(engine,),
+                model_cli_support=False,
+                workspace_writable=False,
+                allow_process_fork=False,
+            ),
+            encoding="utf-8",
+        )
+        profile_text = profile.read_text(encoding="utf-8")
+        assert "(deny file-read-metadata" in profile_text
+        assert str(Path.home() / "Library" / "Keychains") not in profile_text
+        assert str(Path.home() / ".codex" / "auth.json") not in profile_text
+        assert "(allow process-fork)" not in profile_text
+    
+        allowed = subprocess.run(
+            tp.build_sandboxed_argv(
+                ["/usr/bin/stat", "-f", "%z", str(declared)], profile_path=profile),
+            cwd=workspace,
+            capture_output=True,
+            text=True,
+            timeout=60,
+        )
+        blocked = subprocess.run(
+            tp.build_sandboxed_argv(
+                ["/usr/bin/stat", "-f", "%z", str(undeclared)], profile_path=profile),
+            cwd=workspace,
+            capture_output=True,
+            text=True,
+            timeout=60,
+        )
+        blocked_directory = subprocess.run(
+            tp.build_sandboxed_argv(
+                ["/usr/bin/stat", "-f", "%m", str(engine)], profile_path=profile),
+            cwd=workspace,
+            capture_output=True,
+            text=True,
+            timeout=60,
+        )
+        original_declared = declared.read_bytes()
+        blocked_write = subprocess.run(
+            tp.build_sandboxed_argv(
+                ["/usr/bin/touch", str(declared)], profile_path=profile),
+            cwd=workspace,
+            capture_output=True,
+            text=True,
+            timeout=60,
+        )
+>       assert allowed.returncode == 0, allowed.stderr
+E       AssertionError: sandbox-exec: sandbox_apply: Operation not permitted
+E         
+E       assert 71 == 0
+E        +  where 71 = CompletedProcess(args=['/usr/bin/sandbox-exec', '-f', '/private/var/folders/kj/z_75gwxx2ls7p55rnx4t5kg00000gn/T/pytest...u0/workspace/declared.txt'], returncode=71, stdout='', stderr='sandbox-exec: sandbox_apply: Operation not permitted\n').returncode
+
+tests/runtime/test_plan26_transport.py:565: AssertionError
+____ test_domain_verifier_executes_frozen_fixtures_and_the_exact_candidate _____
+
+tmp_path = PosixPath('/private/var/folders/kj/z_75gwxx2ls7p55rnx4t5kg00000gn/T/pytest-of-filipepinto/pytest-353/test_domain_verifier_executes_0')
+
+    @requires_sandbox
+    def test_domain_verifier_executes_frozen_fixtures_and_the_exact_candidate(
+        tmp_path: Path,
+    ) -> None:
+        """The runtime, never M02, produces the fixture-bound verifier result."""
+    
+        engine_root = Path(__file__).resolve().parents[2]
+        manifest = yaml.safe_load(
+            (engine_root / "curricula/arduino_kit/arduino_kit_curriculum.v5.yaml").read_text(
+                encoding="utf-8"
+            )
+        )
+        declared = manifest["domain"]
+    
+        def frozen(relative: str) -> dict[str, str]:
+            path = engine_root / relative
+            return {"path": relative, "sha256": tp.sha256_file(path)}
+    
+        contract = {
+            "schema": frozen(declared["schema"]),
+            "manifest_schema": frozen(declared["manifest_schema"]),
+            "calibration": frozen(declared["calibration"]),
+            "config": declared["config"],
+            "verifier": {
+                "entry_point": frozen(declared["verifier"]["entry_point"]),
+                "invocation": declared["verifier"]["invocation"],
+                "dependencies": [
+                    frozen(relative) for relative in declared["verifier"]["dependencies"]
+                ],
+                "must_reject": [
+                    {"fixture": frozen(item["fixture"]), "expected_code": item["expected_code"]}
+                    for item in declared["verifier"]["must_reject"]
+                ],
+                "must_accept": [frozen(relative) for relative in declared["verifier"]["must_accept"]],
+                "proven": declared["verifier"]["proven"],
+            },
+        }
+    
+        transport = object.__new__(tp.CliTransport)
+        transport.engine_root = engine_root
+        transport.output_root = tmp_path
+        transport.render_root = tmp_path / "render"
+        transport._artifacts = ArtifactStore(tmp_path)
+    
+        accepted = json.loads(
+            (engine_root / declared["verifier"]["must_accept"][0]).read_text(encoding="utf-8")
+        )
+>       accepted_receipt = transport.verify_domain(body=accepted, contract=contract)
+                           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+tests/runtime/test_plan26_transport.py:1713: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+runtime/langgraph_factory/transport.py:2412: in verify_domain
+    result = run_one(fixture)
+             ^^^^^^^^^^^^^^^^
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+
+domain_path = PosixPath('/private/var/folders/kj/z_75gwxx2ls7p55rnx4t5kg00000gn/T/curriculum_factory_domain_verifier/dcc56a34241df8b...bab2e65840aa77a13fb8876121f990180b3a18cf46/frozen/curricula/arduino_kit/fixtures/domain_polarity_asserted.reject.json')
+
+    def run_one(domain_path: Path) -> dict[str, Any]:
+        argv = list(template)
+        verifier_args = argv[1:]
+        verifier_entry_index = entry_positions[0] - 1
+        verifier_args.pop(verifier_entry_index)
+        verifier_args[verifier_args.index("<domain>")] = str(domain_path)
+        argv = [
+            str(executable),
+            "-I",
+            "-S",
+            str(guard_path),
+            str(self.engine_root),
+            str(staged_entry),
+            *verifier_args,
+        ]
+        expected_domain_sha256 = sha256_file(domain_path)
+        completed = subprocess.run(
+            build_sandboxed_argv(argv, profile_path=profile),
+            cwd=str(work),
+            env=environment,
+            capture_output=True,
+            text=True,
+            timeout=120,
+        )
+        if not domain_path.is_file() or sha256_file(domain_path) != expected_domain_sha256:
+            raise VerifierFault(
+                f"verifier changed the exact input bytes at {domain_path}")
+        raw_output = (completed.stdout or "") + (completed.stderr or "")
+        marker_lines = [
+            line[len(VERIFIER_RUNTIME_MARKER):]
+            for line in raw_output.splitlines()
+            if line.startswith(VERIFIER_RUNTIME_MARKER)
+        ]
+        if len(marker_lines) != 1:
+>           raise VerifierFault(
+                "verifier emitted no unique authenticated runtime-module manifest: "
+                f"{raw_output[:1_000]}")
+E           runtime.langgraph_factory.transport.VerifierFault: verifier emitted no unique authenticated runtime-module manifest: sandbox-exec: sandbox_apply: Operation not permitted
+
+runtime/langgraph_factory/transport.py:2351: VerifierFault
+______ test_domain_verifier_normalizes_undeclared_engine_existence[chdir] ______
+
+tmp_path = PosixPath('/private/var/folders/kj/z_75gwxx2ls7p55rnx4t5kg00000gn/T/pytest-of-filipepinto/pytest-353/test_domain_verifier_normalize0')
+operation = 'chdir'
+
+    @requires_sandbox
+    @pytest.mark.parametrize("operation", ["chdir", "utime", "mkfifo", "lchmod"])
+    def test_domain_verifier_normalizes_undeclared_engine_existence(
+        tmp_path: Path, operation: str
+    ) -> None:
+        engine = tmp_path / "engine"
+        curriculum = engine / "curricula" / "synthetic"
+        fixtures = curriculum / "fixtures"
+        fixtures.mkdir(parents=True)
+        output = engine / "outputs" / "run27" / "live_unit"
+        output.mkdir(parents=True)
+        undeclared = engine / "undeclared_directory"
+        undeclared.mkdir()
+        entry = curriculum / "verify.py"
+        reject = fixtures / "reject.json"
+        accept = fixtures / "accept.json"
+        reject.write_text('{"kind":"reject"}\n', encoding="utf-8")
+        accept.write_text('{"kind":"accept"}\n', encoding="utf-8")
+        operation_source = {
+            "chdir": f"os.chdir({str(undeclared)!r})",
+            "utime": f"os.utime({str(undeclared)!r}, None)",
+            "mkfifo": f"os.mkfifo({str(undeclared)!r})",
+            "lchmod": f"os.lchmod({str(undeclared)!r}, 0o700)",
+        }[operation]
+        entry.write_text(
+            "from pathlib import Path\n"
+            "import argparse, json, os\n"
+            "p=argparse.ArgumentParser(); p.add_argument('--domain', type=Path, required=True)\n"
+            "a=p.parse_args(); body=json.loads(a.domain.read_text())\n"
+            "if body.get('kind') == 'reject': print('synthetic-reject: expected'); raise SystemExit(1)\n"
+            "if body.get('kind') == 'accept': raise SystemExit(0)\n"
+            f"\ntry: {operation_source}\n"
+            "except PermissionError: raise SystemExit(0)\n"
+            "except FileNotFoundError: raise SystemExit(1)\n"
+            "except FileExistsError: raise SystemExit(2)\n"
+            "raise SystemExit(2)\n",
+            encoding="utf-8",
+        )
+    
+        def ref(path: Path) -> dict[str, str]:
+            return {"path": path.relative_to(engine).as_posix(), "sha256": tp.sha256_file(path)}
+    
+        contract = {
+            "verifier": {
+                "entry_point": ref(entry),
+                "invocation": "python3 curricula/synthetic/verify.py --domain <domain>",
+                "dependencies": [],
+                "must_reject": [{"fixture": ref(reject), "expected_code": "synthetic-reject"}],
+                "must_accept": [ref(accept)],
+                "proven": {"result": "all_fixtures_behaved"},
+            }
+        }
+        transport = object.__new__(tp.CliTransport)
+        transport.engine_root = engine.resolve()
+        transport.output_root = output.resolve()
+        body = {"probe": "same"}
+    
+>       first = transport.verify_domain(body=body, contract=contract)
+                ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+tests/runtime/test_plan26_transport.py:1887: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+runtime/langgraph_factory/transport.py:2412: in verify_domain
+    result = run_one(fixture)
+             ^^^^^^^^^^^^^^^^
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+
+domain_path = PosixPath('/private/var/folders/kj/z_75gwxx2ls7p55rnx4t5kg00000gn/T/curriculum_factory_domain_verifier/f62e8f7d600c114...558a/fbb8a03eb287b711641e8379e3e55e2da883cf4b345478fae7e251adbe572885/frozen/curricula/synthetic/fixtures/reject.json')
+
+    def run_one(domain_path: Path) -> dict[str, Any]:
+        argv = list(template)
+        verifier_args = argv[1:]
+        verifier_entry_index = entry_positions[0] - 1
+        verifier_args.pop(verifier_entry_index)
+        verifier_args[verifier_args.index("<domain>")] = str(domain_path)
+        argv = [
+            str(executable),
+            "-I",
+            "-S",
+            str(guard_path),
+            str(self.engine_root),
+            str(staged_entry),
+            *verifier_args,
+        ]
+        expected_domain_sha256 = sha256_file(domain_path)
+        completed = subprocess.run(
+            build_sandboxed_argv(argv, profile_path=profile),
+            cwd=str(work),
+            env=environment,
+            capture_output=True,
+            text=True,
+            timeout=120,
+        )
+        if not domain_path.is_file() or sha256_file(domain_path) != expected_domain_sha256:
+            raise VerifierFault(
+                f"verifier changed the exact input bytes at {domain_path}")
+        raw_output = (completed.stdout or "") + (completed.stderr or "")
+        marker_lines = [
+            line[len(VERIFIER_RUNTIME_MARKER):]
+            for line in raw_output.splitlines()
+            if line.startswith(VERIFIER_RUNTIME_MARKER)
+        ]
+        if len(marker_lines) != 1:
+>           raise VerifierFault(
+                "verifier emitted no unique authenticated runtime-module manifest: "
+                f"{raw_output[:1_000]}")
+E           runtime.langgraph_factory.transport.VerifierFault: verifier emitted no unique authenticated runtime-module manifest: sandbox-exec: sandbox_apply: Operation not permitted
+
+runtime/langgraph_factory/transport.py:2351: VerifierFault
+______ test_domain_verifier_normalizes_undeclared_engine_existence[utime] ______
+
+tmp_path = PosixPath('/private/var/folders/kj/z_75gwxx2ls7p55rnx4t5kg00000gn/T/pytest-of-filipepinto/pytest-353/test_domain_verifier_normalize1')
+operation = 'utime'
+
+    @requires_sandbox
+    @pytest.mark.parametrize("operation", ["chdir", "utime", "mkfifo", "lchmod"])
+    def test_domain_verifier_normalizes_undeclared_engine_existence(
+        tmp_path: Path, operation: str
+    ) -> None:
+        engine = tmp_path / "engine"
+        curriculum = engine / "curricula" / "synthetic"
+        fixtures = curriculum / "fixtures"
+        fixtures.mkdir(parents=True)
+        output = engine / "outputs" / "run27" / "live_unit"
+        output.mkdir(parents=True)
+        undeclared = engine / "undeclared_directory"
+        undeclared.mkdir()
+        entry = curriculum / "verify.py"
+        reject = fixtures / "reject.json"
+        accept = fixtures / "accept.json"
+        reject.write_text('{"kind":"reject"}\n', encoding="utf-8")
+        accept.write_text('{"kind":"accept"}\n', encoding="utf-8")
+        operation_source = {
+            "chdir": f"os.chdir({str(undeclared)!r})",
+            "utime": f"os.utime({str(undeclared)!r}, None)",
+            "mkfifo": f"os.mkfifo({str(undeclared)!r})",
+            "lchmod": f"os.lchmod({str(undeclared)!r}, 0o700)",
+        }[operation]
+        entry.write_text(
+            "from pathlib import Path\n"
+            "import argparse, json, os\n"
+            "p=argparse.ArgumentParser(); p.add_argument('--domain', type=Path, required=True)\n"
+            "a=p.parse_args(); body=json.loads(a.domain.read_text())\n"
+            "if body.get('kind') == 'reject': print('synthetic-reject: expected'); raise SystemExit(1)\n"
+            "if body.get('kind') == 'accept': raise SystemExit(0)\n"
+            f"\ntry: {operation_source}\n"
+            "except PermissionError: raise SystemExit(0)\n"
+            "except FileNotFoundError: raise SystemExit(1)\n"
+            "except FileExistsError: raise SystemExit(2)\n"
+            "raise SystemExit(2)\n",
+            encoding="utf-8",
+        )
+    
+        def ref(path: Path) -> dict[str, str]:
+            return {"path": path.relative_to(engine).as_posix(), "sha256": tp.sha256_file(path)}
+    
+        contract = {
+            "verifier": {
+                "entry_point": ref(entry),
+                "invocation": "python3 curricula/synthetic/verify.py --domain <domain>",
+                "dependencies": [],
+                "must_reject": [{"fixture": ref(reject), "expected_code": "synthetic-reject"}],
+                "must_accept": [ref(accept)],
+                "proven": {"result": "all_fixtures_behaved"},
+            }
+        }
+        transport = object.__new__(tp.CliTransport)
+        transport.engine_root = engine.resolve()
+        transport.output_root = output.resolve()
+        body = {"probe": "same"}
+    
+>       first = transport.verify_domain(body=body, contract=contract)
+                ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+tests/runtime/test_plan26_transport.py:1887: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+runtime/langgraph_factory/transport.py:2412: in verify_domain
+    result = run_one(fixture)
+             ^^^^^^^^^^^^^^^^
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+
+domain_path = PosixPath('/private/var/folders/kj/z_75gwxx2ls7p55rnx4t5kg00000gn/T/curriculum_factory_domain_verifier/a94f9ac33806b8e...0a2e/fbb8a03eb287b711641e8379e3e55e2da883cf4b345478fae7e251adbe572885/frozen/curricula/synthetic/fixtures/reject.json')
+
+    def run_one(domain_path: Path) -> dict[str, Any]:
+        argv = list(template)
+        verifier_args = argv[1:]
+        verifier_entry_index = entry_positions[0] - 1
+        verifier_args.pop(verifier_entry_index)
+        verifier_args[verifier_args.index("<domain>")] = str(domain_path)
+        argv = [
+            str(executable),
+            "-I",
+            "-S",
+            str(guard_path),
+            str(self.engine_root),
+            str(staged_entry),
+            *verifier_args,
+        ]
+        expected_domain_sha256 = sha256_file(domain_path)
+        completed = subprocess.run(
+            build_sandboxed_argv(argv, profile_path=profile),
+            cwd=str(work),
+            env=environment,
+            capture_output=True,
+            text=True,
+            timeout=120,
+        )
+        if not domain_path.is_file() or sha256_file(domain_path) != expected_domain_sha256:
+            raise VerifierFault(
+                f"verifier changed the exact input bytes at {domain_path}")
+        raw_output = (completed.stdout or "") + (completed.stderr or "")
+        marker_lines = [
+            line[len(VERIFIER_RUNTIME_MARKER):]
+            for line in raw_output.splitlines()
+            if line.startswith(VERIFIER_RUNTIME_MARKER)
+        ]
+        if len(marker_lines) != 1:
+>           raise VerifierFault(
+                "verifier emitted no unique authenticated runtime-module manifest: "
+                f"{raw_output[:1_000]}")
+E           runtime.langgraph_factory.transport.VerifierFault: verifier emitted no unique authenticated runtime-module manifest: sandbox-exec: sandbox_apply: Operation not permitted
+
+runtime/langgraph_factory/transport.py:2351: VerifierFault
+_____ test_domain_verifier_normalizes_undeclared_engine_existence[mkfifo] ______
+
+tmp_path = PosixPath('/private/var/folders/kj/z_75gwxx2ls7p55rnx4t5kg00000gn/T/pytest-of-filipepinto/pytest-353/test_domain_verifier_normalize2')
+operation = 'mkfifo'
+
+    @requires_sandbox
+    @pytest.mark.parametrize("operation", ["chdir", "utime", "mkfifo", "lchmod"])
+    def test_domain_verifier_normalizes_undeclared_engine_existence(
+        tmp_path: Path, operation: str
+    ) -> None:
+        engine = tmp_path / "engine"
+        curriculum = engine / "curricula" / "synthetic"
+        fixtures = curriculum / "fixtures"
+        fixtures.mkdir(parents=True)
+        output = engine / "outputs" / "run27" / "live_unit"
+        output.mkdir(parents=True)
+        undeclared = engine / "undeclared_directory"
+        undeclared.mkdir()
+        entry = curriculum / "verify.py"
+        reject = fixtures / "reject.json"
+        accept = fixtures / "accept.json"
+        reject.write_text('{"kind":"reject"}\n', encoding="utf-8")
+        accept.write_text('{"kind":"accept"}\n', encoding="utf-8")
+        operation_source = {
+            "chdir": f"os.chdir({str(undeclared)!r})",
+            "utime": f"os.utime({str(undeclared)!r}, None)",
+            "mkfifo": f"os.mkfifo({str(undeclared)!r})",
+            "lchmod": f"os.lchmod({str(undeclared)!r}, 0o700)",
+        }[operation]
+        entry.write_text(
+            "from pathlib import Path\n"
+            "import argparse, json, os\n"
+            "p=argparse.ArgumentParser(); p.add_argument('--domain', type=Path, required=True)\n"
+            "a=p.parse_args(); body=json.loads(a.domain.read_text())\n"
+            "if body.get('kind') == 'reject': print('synthetic-reject: expected'); raise SystemExit(1)\n"
+            "if body.get('kind') == 'accept': raise SystemExit(0)\n"
+            f"\ntry: {operation_source}\n"
+            "except PermissionError: raise SystemExit(0)\n"
+            "except FileNotFoundError: raise SystemExit(1)\n"
+            "except FileExistsError: raise SystemExit(2)\n"
+            "raise SystemExit(2)\n",
+            encoding="utf-8",
+        )
+    
+        def ref(path: Path) -> dict[str, str]:
+            return {"path": path.relative_to(engine).as_posix(), "sha256": tp.sha256_file(path)}
+    
+        contract = {
+            "verifier": {
+                "entry_point": ref(entry),
+                "invocation": "python3 curricula/synthetic/verify.py --domain <domain>",
+                "dependencies": [],
+                "must_reject": [{"fixture": ref(reject), "expected_code": "synthetic-reject"}],
+                "must_accept": [ref(accept)],
+                "proven": {"result": "all_fixtures_behaved"},
+            }
+        }
+        transport = object.__new__(tp.CliTransport)
+        transport.engine_root = engine.resolve()
+        transport.output_root = output.resolve()
+        body = {"probe": "same"}
+    
+>       first = transport.verify_domain(body=body, contract=contract)
+                ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+tests/runtime/test_plan26_transport.py:1887: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+runtime/langgraph_factory/transport.py:2412: in verify_domain
+    result = run_one(fixture)
+             ^^^^^^^^^^^^^^^^
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+
+domain_path = PosixPath('/private/var/folders/kj/z_75gwxx2ls7p55rnx4t5kg00000gn/T/curriculum_factory_domain_verifier/bd2fce20e25ff91...aba9/fbb8a03eb287b711641e8379e3e55e2da883cf4b345478fae7e251adbe572885/frozen/curricula/synthetic/fixtures/reject.json')
+
+    def run_one(domain_path: Path) -> dict[str, Any]:
+        argv = list(template)
+        verifier_args = argv[1:]
+        verifier_entry_index = entry_positions[0] - 1
+        verifier_args.pop(verifier_entry_index)
+        verifier_args[verifier_args.index("<domain>")] = str(domain_path)
+        argv = [
+            str(executable),
+            "-I",
+            "-S",
+            str(guard_path),
+            str(self.engine_root),
+            str(staged_entry),
+            *verifier_args,
+        ]
+        expected_domain_sha256 = sha256_file(domain_path)
+        completed = subprocess.run(
+            build_sandboxed_argv(argv, profile_path=profile),
+            cwd=str(work),
+            env=environment,
+            capture_output=True,
+            text=True,
+            timeout=120,
+        )
+        if not domain_path.is_file() or sha256_file(domain_path) != expected_domain_sha256:
+            raise VerifierFault(
+                f"verifier changed the exact input bytes at {domain_path}")
+        raw_output = (completed.stdout or "") + (completed.stderr or "")
+        marker_lines = [
+            line[len(VERIFIER_RUNTIME_MARKER):]
+            for line in raw_output.splitlines()
+            if line.startswith(VERIFIER_RUNTIME_MARKER)
+        ]
+        if len(marker_lines) != 1:
+>           raise VerifierFault(
+                "verifier emitted no unique authenticated runtime-module manifest: "
+                f"{raw_output[:1_000]}")
+E           runtime.langgraph_factory.transport.VerifierFault: verifier emitted no unique authenticated runtime-module manifest: sandbox-exec: sandbox_apply: Operation not permitted
+
+runtime/langgraph_factory/transport.py:2351: VerifierFault
+_____ test_domain_verifier_normalizes_undeclared_engine_existence[lchmod] ______
+
+tmp_path = PosixPath('/private/var/folders/kj/z_75gwxx2ls7p55rnx4t5kg00000gn/T/pytest-of-filipepinto/pytest-353/test_domain_verifier_normalize3')
+operation = 'lchmod'
+
+    @requires_sandbox
+    @pytest.mark.parametrize("operation", ["chdir", "utime", "mkfifo", "lchmod"])
+    def test_domain_verifier_normalizes_undeclared_engine_existence(
+        tmp_path: Path, operation: str
+    ) -> None:
+        engine = tmp_path / "engine"
+        curriculum = engine / "curricula" / "synthetic"
+        fixtures = curriculum / "fixtures"
+        fixtures.mkdir(parents=True)
+        output = engine / "outputs" / "run27" / "live_unit"
+        output.mkdir(parents=True)
+        undeclared = engine / "undeclared_directory"
+        undeclared.mkdir()
+        entry = curriculum / "verify.py"
+        reject = fixtures / "reject.json"
+        accept = fixtures / "accept.json"
+        reject.write_text('{"kind":"reject"}\n', encoding="utf-8")
+        accept.write_text('{"kind":"accept"}\n', encoding="utf-8")
+        operation_source = {
+            "chdir": f"os.chdir({str(undeclared)!r})",
+            "utime": f"os.utime({str(undeclared)!r}, None)",
+            "mkfifo": f"os.mkfifo({str(undeclared)!r})",
+            "lchmod": f"os.lchmod({str(undeclared)!r}, 0o700)",
+        }[operation]
+        entry.write_text(
+            "from pathlib import Path\n"
+            "import argparse, json, os\n"
+            "p=argparse.ArgumentParser(); p.add_argument('--domain', type=Path, required=True)\n"
+            "a=p.parse_args(); body=json.loads(a.domain.read_text())\n"
+            "if body.get('kind') == 'reject': print('synthetic-reject: expected'); raise SystemExit(1)\n"
+            "if body.get('kind') == 'accept': raise SystemExit(0)\n"
+            f"\ntry: {operation_source}\n"
+            "except PermissionError: raise SystemExit(0)\n"
+            "except FileNotFoundError: raise SystemExit(1)\n"
+            "except FileExistsError: raise SystemExit(2)\n"
+            "raise SystemExit(2)\n",
+            encoding="utf-8",
+        )
+    
+        def ref(path: Path) -> dict[str, str]:
+            return {"path": path.relative_to(engine).as_posix(), "sha256": tp.sha256_file(path)}
+    
+        contract = {
+            "verifier": {
+                "entry_point": ref(entry),
+                "invocation": "python3 curricula/synthetic/verify.py --domain <domain>",
+                "dependencies": [],
+                "must_reject": [{"fixture": ref(reject), "expected_code": "synthetic-reject"}],
+                "must_accept": [ref(accept)],
+                "proven": {"result": "all_fixtures_behaved"},
+            }
+        }
+        transport = object.__new__(tp.CliTransport)
+        transport.engine_root = engine.resolve()
+        transport.output_root = output.resolve()
+        body = {"probe": "same"}
+    
+>       first = transport.verify_domain(body=body, contract=contract)
+                ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+tests/runtime/test_plan26_transport.py:1887: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+runtime/langgraph_factory/transport.py:2412: in verify_domain
+    result = run_one(fixture)
+             ^^^^^^^^^^^^^^^^
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+
+domain_path = PosixPath('/private/var/folders/kj/z_75gwxx2ls7p55rnx4t5kg00000gn/T/curriculum_factory_domain_verifier/eee785007efff2b...361e/fbb8a03eb287b711641e8379e3e55e2da883cf4b345478fae7e251adbe572885/frozen/curricula/synthetic/fixtures/reject.json')
+
+    def run_one(domain_path: Path) -> dict[str, Any]:
+        argv = list(template)
+        verifier_args = argv[1:]
+        verifier_entry_index = entry_positions[0] - 1
+        verifier_args.pop(verifier_entry_index)
+        verifier_args[verifier_args.index("<domain>")] = str(domain_path)
+        argv = [
+            str(executable),
+            "-I",
+            "-S",
+            str(guard_path),
+            str(self.engine_root),
+            str(staged_entry),
+            *verifier_args,
+        ]
+        expected_domain_sha256 = sha256_file(domain_path)
+        completed = subprocess.run(
+            build_sandboxed_argv(argv, profile_path=profile),
+            cwd=str(work),
+            env=environment,
+            capture_output=True,
+            text=True,
+            timeout=120,
+        )
+        if not domain_path.is_file() or sha256_file(domain_path) != expected_domain_sha256:
+            raise VerifierFault(
+                f"verifier changed the exact input bytes at {domain_path}")
+        raw_output = (completed.stdout or "") + (completed.stderr or "")
+        marker_lines = [
+            line[len(VERIFIER_RUNTIME_MARKER):]
+            for line in raw_output.splitlines()
+            if line.startswith(VERIFIER_RUNTIME_MARKER)
+        ]
+        if len(marker_lines) != 1:
+>           raise VerifierFault(
+                "verifier emitted no unique authenticated runtime-module manifest: "
+                f"{raw_output[:1_000]}")
+E           runtime.langgraph_factory.transport.VerifierFault: verifier emitted no unique authenticated runtime-module manifest: sandbox-exec: sandbox_apply: Operation not permitted
+
+runtime/langgraph_factory/transport.py:2351: VerifierFault
+__ test_domain_verifier_isolated_python_ignores_mutable_parent_site_packages ___
+
+tmp_path = PosixPath('/private/var/folders/kj/z_75gwxx2ls7p55rnx4t5kg00000gn/T/pytest-of-filipepinto/pytest-353/test_domain_verifier_isolated_0')
+monkeypatch = <_pytest.monkeypatch.MonkeyPatch object at 0x109c15590>
+
+    @requires_sandbox
+    def test_domain_verifier_isolated_python_ignores_mutable_parent_site_packages(
+        tmp_path: Path, monkeypatch: pytest.MonkeyPatch
+    ) -> None:
+        engine = tmp_path / "engine"
+        curriculum = engine / "curricula" / "synthetic"
+        fixtures = curriculum / "fixtures"
+        injected = tmp_path / "injected" / "site-packages"
+        fixtures.mkdir(parents=True)
+        injected.mkdir(parents=True)
+        output = engine / "outputs" / "run27" / "live_unit"
+        output.mkdir(parents=True)
+        entry = curriculum / "verify.py"
+        reject = fixtures / "reject.json"
+        accept = fixtures / "accept.json"
+        package = injected / "yaml.py"
+        reject.write_text('{"kind":"reject"}\n', encoding="utf-8")
+        accept.write_text('{"kind":"accept"}\n', encoding="utf-8")
+        package.write_text("def decision(): return 'allow'\n", encoding="utf-8")
+        entry.write_text(
+            "import argparse, json\n"
+            "from pathlib import Path\n"
+            "p=argparse.ArgumentParser(); p.add_argument('--domain', type=Path, required=True)\n"
+            "body=json.loads(p.parse_args().domain.read_text())\n"
+            "if body.get('kind') == 'reject': print('synthetic-reject: expected'); raise SystemExit(1)\n"
+            "if body.get('kind') == 'accept': raise SystemExit(0)\n"
+            "try:\n import yaml\n"
+            "except ModuleNotFoundError:\n print('dependency-unavailable: isolated'); raise SystemExit(1)\n"
+            "raise SystemExit(0 if yaml.decision() == 'allow' else 1)\n",
+            encoding="utf-8",
+        )
+    
+        def ref(path: Path) -> dict[str, str]:
+            return {"path": path.relative_to(engine).as_posix(), "sha256": tp.sha256_file(path)}
+    
+        contract = {
+            "verifier": {
+                "entry_point": ref(entry),
+                "invocation": "python3 curricula/synthetic/verify.py --domain <domain>",
+                "dependencies": [],
+                "must_reject": [{"fixture": ref(reject), "expected_code": "synthetic-reject"}],
+                "must_accept": [ref(accept)],
+                "proven": {"result": "all_fixtures_behaved"},
+            }
+        }
+        transport = object.__new__(tp.CliTransport)
+        transport.engine_root = engine.resolve()
+        transport.output_root = output.resolve()
+        monkeypatch.setattr(sys, "path", [str(injected), *sys.path])
+    
+>       first = transport.verify_domain(body={"probe": "same"}, contract=contract)
+                ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+tests/runtime/test_plan26_transport.py:1948: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+runtime/langgraph_factory/transport.py:2412: in verify_domain
+    result = run_one(fixture)
+             ^^^^^^^^^^^^^^^^
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+
+domain_path = PosixPath('/private/var/folders/kj/z_75gwxx2ls7p55rnx4t5kg00000gn/T/curriculum_factory_domain_verifier/d3acd0ebbf83dfd...7b68/fbb8a03eb287b711641e8379e3e55e2da883cf4b345478fae7e251adbe572885/frozen/curricula/synthetic/fixtures/reject.json')
+
+    def run_one(domain_path: Path) -> dict[str, Any]:
+        argv = list(template)
+        verifier_args = argv[1:]
+        verifier_entry_index = entry_positions[0] - 1
+        verifier_args.pop(verifier_entry_index)
+        verifier_args[verifier_args.index("<domain>")] = str(domain_path)
+        argv = [
+            str(executable),
+            "-I",
+            "-S",
+            str(guard_path),
+            str(self.engine_root),
+            str(staged_entry),
+            *verifier_args,
+        ]
+        expected_domain_sha256 = sha256_file(domain_path)
+        completed = subprocess.run(
+            build_sandboxed_argv(argv, profile_path=profile),
+            cwd=str(work),
+            env=environment,
+            capture_output=True,
+            text=True,
+            timeout=120,
+        )
+        if not domain_path.is_file() or sha256_file(domain_path) != expected_domain_sha256:
+            raise VerifierFault(
+                f"verifier changed the exact input bytes at {domain_path}")
+        raw_output = (completed.stdout or "") + (completed.stderr or "")
+        marker_lines = [
+            line[len(VERIFIER_RUNTIME_MARKER):]
+            for line in raw_output.splitlines()
+            if line.startswith(VERIFIER_RUNTIME_MARKER)
+        ]
+        if len(marker_lines) != 1:
+>           raise VerifierFault(
+                "verifier emitted no unique authenticated runtime-module manifest: "
+                f"{raw_output[:1_000]}")
+E           runtime.langgraph_factory.transport.VerifierFault: verifier emitted no unique authenticated runtime-module manifest: sandbox-exec: sandbox_apply: Operation not permitted
+
+runtime/langgraph_factory/transport.py:2351: VerifierFault
+__________ test_only_the_retriever_may_egress_to_an_allowlisted_host ___________
+
+guard = <runtime.langgraph_factory.egress.EgressGuard object at 0x109f9c830>
+receipts = <runtime.langgraph_factory.egress.ReceiptLog object at 0x109f9c7c0>
+output_root = PosixPath('/private/var/folders/kj/z_75gwxx2ls7p55rnx4t5kg00000gn/T/pytest-of-filipepinto/pytest-353/test_only_the_retriever_may_eg0/output')
+
+    def test_only_the_retriever_may_egress_to_an_allowlisted_host(
+        guard: EgressGuard, receipts: ReceiptLog, output_root: Path
+    ):
+        """The same host the retriever may reach is still denied to any other caller."""
+        listener = socket.socket()
+>       listener.bind(("127.0.0.1", 0))
+E       PermissionError: [Errno 1] Operation not permitted
+
+tests/runtime/test_plan26_egress.py:618: PermissionError
+_________________ test_worker_context_is_structurally_bounded __________________
+
+tmp_path = PosixPath('/private/var/folders/kj/z_75gwxx2ls7p55rnx4t5kg00000gn/T/pytest-of-filipepinto/pytest-353/test_worker_context_is_structu0')
+
+    @requires_sandbox
+    def test_worker_context_is_structurally_bounded(tmp_path: Path) -> None:
+        workspace = tmp_path / "ws"
+        home = tmp_path / "home"
+        workspace.mkdir()
+        home.mkdir()
+        output_root = tmp_path / "output"
+        sibling = output_root / "other_unit" / "accepted.json"
+        sibling.parent.mkdir(parents=True)
+        sibling.write_text("sibling unit bytes\n", encoding="utf-8")
+    
+        proof = tp.prove_workspace_isolation(workspace=workspace, home=home, forbidden_paths=[sibling])
+        assert proof["readable_forbidden_paths"] == []
+>       assert proof["enforced"] is True
+E       assert False is True
+
+tests/runtime/test_plan26_adversarial.py:1696: AssertionError
+=========================== short test summary info ============================
+FAILED tests/runtime/test_plan26_transport.py::test_sandboxed_worker_cannot_read_repository_output_or_secrets
+FAILED tests/runtime/test_plan26_transport.py::test_capability_proof_is_satisfied_on_this_host
+FAILED tests/runtime/test_plan26_transport.py::test_the_real_cli_starts_sandboxed_yet_cannot_read_outside_the_workspace[codex]
+FAILED tests/runtime/test_plan26_transport.py::test_the_real_cli_starts_sandboxed_yet_cannot_read_outside_the_workspace[claude]
+FAILED tests/runtime/test_plan26_transport.py::test_verifier_sandbox_blocks_undeclared_file_metadata
+FAILED tests/runtime/test_plan26_transport.py::test_domain_verifier_executes_frozen_fixtures_and_the_exact_candidate
+FAILED tests/runtime/test_plan26_transport.py::test_domain_verifier_normalizes_undeclared_engine_existence[chdir]
+FAILED tests/runtime/test_plan26_transport.py::test_domain_verifier_normalizes_undeclared_engine_existence[utime]
+FAILED tests/runtime/test_plan26_transport.py::test_domain_verifier_normalizes_undeclared_engine_existence[mkfifo]
+FAILED tests/runtime/test_plan26_transport.py::test_domain_verifier_normalizes_undeclared_engine_existence[lchmod]
+FAILED tests/runtime/test_plan26_transport.py::test_domain_verifier_isolated_python_ignores_mutable_parent_site_packages
+FAILED tests/runtime/test_plan26_egress.py::test_only_the_retriever_may_egress_to_an_allowlisted_host
+FAILED tests/runtime/test_plan26_adversarial.py::test_worker_context_is_structurally_bounded
+13 failed, 495 passed, 1 skipped, 140 subtests passed in 26.05s

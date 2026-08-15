@@ -1,0 +1,9 @@
+{
+  "admission": "recovery_readmission",
+  "at": "2026-08-15T03:20:23.289735Z",
+  "attempt_id": "N30_PREFLIGHT_EGRESS-2026-08-15T031938524426Z-4720b776",
+  "node_id": "N30_PREFLIGHT_EGRESS",
+  "receipt": "receipts/N30_PREFLIGHT_EGRESS.receipt.v1.json",
+  "receipt_sha256": "d7d21da3b0831b00c6d55293b38cb70187c1b66a5afe52ab503a340d9f16e8d1",
+  "status": "PASSED"
+}

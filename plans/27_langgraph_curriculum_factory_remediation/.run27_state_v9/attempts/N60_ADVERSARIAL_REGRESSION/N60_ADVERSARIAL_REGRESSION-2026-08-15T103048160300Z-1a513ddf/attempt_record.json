@@ -1,0 +1,22 @@
+{
+  "approved_spec_sha256": "e14df5a36ce12d700fe9fc4aa4aea466771bc89f31bc6e9d49f812c147b1bb3c",
+  "attempt_id": "N60_ADVERSARIAL_REGRESSION-2026-08-15T103048160300Z-1a513ddf",
+  "baseline": {
+    "plans/27_langgraph_curriculum_factory_remediation/execution_package_v2/results/v9/N60_ADVERSARIAL_REGRESSION.result.v1.json": null,
+    "plans/27_langgraph_curriculum_factory_remediation/execution_package_v2/results/v9/evidence/N60_ADVERSARIAL_REGRESSION": null,
+    "plans/27_langgraph_curriculum_factory_remediation/tests/test_run27_adversarial.py": "eae3ef5735f84ec83b97ea9ace98ff33994c74b3d808c075be7d1ec1df0f54fb",
+    "tests/runtime/test_plan27_adversarial.py": "52fe193f23b8e5b0cbb6dfa5efcdc30195dddcc1772684e82a9382b6ded43d43"
+  },
+  "created_at": "2026-08-15T10:30:48.160644Z",
+  "evidence_dir": "attempts/N60_ADVERSARIAL_REGRESSION/N60_ADVERSARIAL_REGRESSION-2026-08-15T103048160300Z-1a513ddf/logs",
+  "graph_sha256": "5236bf6b13a2c5171ad11ab80f1147e20b6b59f46708090d25ec16c5a7574379",
+  "node_definition_sha256": "450336f3d74aba09b5eca2c06691b1de87fe2aa88a86bddf4581e67f895798bb",
+  "node_id": "N60_ADVERSARIAL_REGRESSION",
+  "parent_attempt_id": null,
+  "predecessor_receipt_digests": {
+    "N50_EVIDENCE_AUDIT_CONTROLS": "4eb7d7efff9d6950de75cb176fabb277d447f038e0ebfa80840972042cfd0600"
+  },
+  "prompt_sha256": "2f4e8155eeefc5ee9ea4c9a3a4f95c8cc48425463e47a78bb824db7e6016b4e3",
+  "run_id": "run27-execution-package-v2-graph-v9",
+  "schema_version": 1
+}

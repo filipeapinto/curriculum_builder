@@ -1,0 +1,9 @@
+{
+  "admission": "normal",
+  "at": "2026-08-15T10:15:00.257210Z",
+  "attempt_id": "N10_HARNESS_PROTOCOL-2026-08-15T101324927286Z-da421773",
+  "node_id": "N10_HARNESS_PROTOCOL",
+  "receipt": "receipts/N10_HARNESS_PROTOCOL.receipt.v1.json",
+  "receipt_sha256": "0c86bcafae0bea3f5c7a8cde16564dcf514cc334255ad0eb461162db15ec25f5",
+  "status": "PASSED"
+}

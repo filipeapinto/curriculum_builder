@@ -483,6 +483,92 @@ def test_sandbox_profile_confines_reads_and_writes_to_the_workspace(tmp_path: Pa
     assert str(tp.REPO_ROOT) not in profile
 
 
+def test_domain_verifier_workspace_is_outside_an_engine_nested_output(tmp_path: Path):
+    engine = tmp_path / "engine"
+    output = engine / "outputs" / "run27" / "live_unit"
+    output.mkdir(parents=True)
+
+    root = tp.domain_verifier_work_root(engine_root=engine, output_root=output)
+
+    assert root != engine and engine not in root.parents
+    assert root != output and output not in root.parents
+    assert root.parent.name == "curriculum_factory_domain_verifier"
+
+
+@requires_sandbox
+def test_verifier_sandbox_blocks_undeclared_file_metadata(tmp_path: Path):
+    """Neither an undeclared file nor its engine directory may become input."""
+
+    workspace = tmp_path / "workspace"
+    home = workspace / "home"
+    engine = tmp_path / "engine"
+    workspace.mkdir()
+    home.mkdir()
+    engine.mkdir()
+    declared = workspace / "declared.txt"
+    undeclared = engine / "undeclared.txt"
+    declared.write_text("declared", encoding="utf-8")
+    undeclared.write_text("hidden", encoding="utf-8")
+    profile = home / "verifier.sb"
+    profile.write_text(
+        tp.render_sandbox_profile(
+            workspace=workspace,
+            home=home,
+            readable=(Path("/usr"), declared),
+            allow_network=False,
+            metadata_denied=(engine,),
+            model_cli_support=False,
+            workspace_writable=False,
+            allow_process_fork=False,
+        ),
+        encoding="utf-8",
+    )
+    profile_text = profile.read_text(encoding="utf-8")
+    assert "(deny file-read-metadata" in profile_text
+    assert str(Path.home() / "Library" / "Keychains") not in profile_text
+    assert str(Path.home() / ".codex" / "auth.json") not in profile_text
+    assert "(allow process-fork)" not in profile_text
+
+    allowed = subprocess.run(
+        tp.build_sandboxed_argv(
+            ["/usr/bin/stat", "-f", "%z", str(declared)], profile_path=profile),
+        cwd=workspace,
+        capture_output=True,
+        text=True,
+        timeout=60,
+    )
+    blocked = subprocess.run(
+        tp.build_sandboxed_argv(
+            ["/usr/bin/stat", "-f", "%z", str(undeclared)], profile_path=profile),
+        cwd=workspace,
+        capture_output=True,
+        text=True,
+        timeout=60,
+    )
+    blocked_directory = subprocess.run(
+        tp.build_sandboxed_argv(
+            ["/usr/bin/stat", "-f", "%m", str(engine)], profile_path=profile),
+        cwd=workspace,
+        capture_output=True,
+        text=True,
+        timeout=60,
+    )
+    original_declared = declared.read_bytes()
+    blocked_write = subprocess.run(
+        tp.build_sandboxed_argv(
+            ["/usr/bin/touch", str(declared)], profile_path=profile),
+        cwd=workspace,
+        capture_output=True,
+        text=True,
+        timeout=60,
+    )
+    assert allowed.returncode == 0, allowed.stderr
+    assert blocked.returncode != 0, blocked.stdout
+    assert blocked_directory.returncode != 0, blocked_directory.stdout
+    assert blocked_write.returncode != 0, blocked_write.stdout
+    assert declared.read_bytes() == original_declared
+
+
 def test_sandbox_profile_allows_the_claude_cli_its_own_runtime_scratch_dir():
     """N70 live-verified defect: the installed `claude` binary always touches
     `/tmp/claude-<uid>` on startup regardless of the sandboxed `$HOME`/`$TMPDIR`,
@@ -1575,6 +1661,302 @@ def test_a_probe_may_report_an_unavailable_external_fact(tmp_path: Path, monkeyp
     proof = capability_transport(tmp_path).prove_capability("retrieval")
     assert proof["result"] == "UNAVAILABLE_EXTERNAL_FACT"
     assert proof["fact"] == "kit_calibration_measurement"
+
+
+@requires_sandbox
+def test_domain_verifier_executes_frozen_fixtures_and_the_exact_candidate(
+    tmp_path: Path,
+) -> None:
+    """The runtime, never M02, produces the fixture-bound verifier result."""
+
+    engine_root = Path(__file__).resolve().parents[2]
+    manifest = yaml.safe_load(
+        (engine_root / "curricula/arduino_kit/arduino_kit_curriculum.v5.yaml").read_text(
+            encoding="utf-8"
+        )
+    )
+    declared = manifest["domain"]
+
+    def frozen(relative: str) -> dict[str, str]:
+        path = engine_root / relative
+        return {"path": relative, "sha256": tp.sha256_file(path)}
+
+    contract = {
+        "schema": frozen(declared["schema"]),
+        "manifest_schema": frozen(declared["manifest_schema"]),
+        "calibration": frozen(declared["calibration"]),
+        "config": declared["config"],
+        "verifier": {
+            "entry_point": frozen(declared["verifier"]["entry_point"]),
+            "invocation": declared["verifier"]["invocation"],
+            "dependencies": [
+                frozen(relative) for relative in declared["verifier"]["dependencies"]
+            ],
+            "must_reject": [
+                {"fixture": frozen(item["fixture"]), "expected_code": item["expected_code"]}
+                for item in declared["verifier"]["must_reject"]
+            ],
+            "must_accept": [frozen(relative) for relative in declared["verifier"]["must_accept"]],
+            "proven": declared["verifier"]["proven"],
+        },
+    }
+
+    transport = object.__new__(tp.CliTransport)
+    transport.engine_root = engine_root
+    transport.output_root = tmp_path
+    transport.render_root = tmp_path / "render"
+    transport._artifacts = ArtifactStore(tmp_path)
+
+    accepted = json.loads(
+        (engine_root / declared["verifier"]["must_accept"][0]).read_text(encoding="utf-8")
+    )
+    accepted_receipt = transport.verify_domain(body=accepted, contract=contract)
+    assert accepted_receipt["result"] == "PASS"
+    assert accepted_receipt["fixtures_result"] == "PASS"
+    assert accepted_receipt["candidate_sha256"] == tp.canonical_digest(accepted)
+    assert accepted_receipt["schema_sha256"] == frozen(declared["schema"])["sha256"]
+    assert accepted_receipt["interpreter"]["sha256"] == tp.sha256_file(
+        Path(accepted_receipt["interpreter"]["path"])
+    )
+    assert accepted_receipt["interpreter"]["flags"] == ["-I", "-S"]
+    assert accepted_receipt["candidate"]["runtime_modules"]
+    assert all(
+        "site-packages" not in Path(record["path"]).parts
+        and "dist-packages" not in Path(record["path"]).parts
+        for record in accepted_receipt["candidate"]["runtime_modules"]
+    )
+
+    rejected_path = declared["verifier"]["must_reject"][0]["fixture"]
+    rejected = json.loads((engine_root / rejected_path).read_text(encoding="utf-8"))
+    rejected_receipt = transport.verify_domain(body=rejected, contract=contract)
+    assert rejected_receipt["result"] == "FAIL"
+    assert declared["verifier"]["must_reject"][0]["expected_code"] in (
+        rejected_receipt["candidate"]["codes"]
+    )
+
+
+def test_domain_verifier_refuses_a_dependency_changed_after_d02(tmp_path: Path) -> None:
+    """A stable candidate cannot receive a new verdict from drifted verifier data."""
+
+    engine_root = tmp_path / "engine"
+    curriculum = engine_root / "curricula" / "synthetic"
+    fixtures = curriculum / "fixtures"
+    fixtures.mkdir(parents=True)
+    entry = curriculum / "verify_domain.py"
+    dependency = curriculum / "verifier_data.json"
+    reject = fixtures / "reject.json"
+    accept = fixtures / "accept.json"
+    entry.write_text("# verifier execution is unreachable in this regression\n", encoding="utf-8")
+    dependency.write_text('{"policy":"frozen"}\n', encoding="utf-8")
+    reject.write_text("{}\n", encoding="utf-8")
+    accept.write_text("{}\n", encoding="utf-8")
+
+    def frozen(path: Path) -> dict[str, str]:
+        return {
+            "path": path.relative_to(engine_root).as_posix(),
+            "sha256": tp.sha256_file(path),
+        }
+
+    contract = {
+        "verifier": {
+            "entry_point": frozen(entry),
+            "invocation": "python3 curricula/synthetic/verify_domain.py --domain <domain>",
+            "dependencies": [frozen(dependency)],
+            "must_reject": [{"fixture": frozen(reject), "expected_code": "synthetic-reject"}],
+            "must_accept": [frozen(accept)],
+            "proven": {"result": "all_fixtures_behaved"},
+        }
+    }
+    dependency.write_text('{"policy":"drifted"}\n', encoding="utf-8")
+
+    transport = object.__new__(tp.CliTransport)
+    transport.engine_root = engine_root.resolve()
+    transport.output_root = tmp_path / "output"
+    transport.render_root = tmp_path / "render"
+    transport._artifacts = ArtifactStore(transport.output_root)
+
+    with pytest.raises(tp.VerifierFault, match="verifier dependency 1 changed after D02"):
+        transport.verify_domain(body={}, contract=contract)
+
+
+@requires_sandbox
+def test_domain_verifier_cannot_replace_the_candidate_it_receipts(tmp_path: Path) -> None:
+    engine = tmp_path / "engine"
+    curriculum = engine / "curricula" / "synthetic"
+    fixtures = curriculum / "fixtures"
+    fixtures.mkdir(parents=True)
+    output = engine / "outputs" / "run27" / "live_unit"
+    output.mkdir(parents=True)
+    entry = curriculum / "verify.py"
+    reject = fixtures / "reject.json"
+    accept = fixtures / "accept.json"
+    reject.write_text("{}\n", encoding="utf-8")
+    accept.write_text("{}\n", encoding="utf-8")
+    entry.write_text(
+        "from pathlib import Path\n"
+        "Path.cwd().joinpath('candidate.json').write_text('{\\\"accept\\\":true}')\n",
+        encoding="utf-8",
+    )
+
+    def ref(path: Path) -> dict[str, str]:
+        return {"path": path.relative_to(engine).as_posix(), "sha256": tp.sha256_file(path)}
+
+    contract = {
+        "verifier": {
+            "entry_point": ref(entry),
+            "invocation": "python3 curricula/synthetic/verify.py --domain <domain>",
+            "dependencies": [],
+            "must_reject": [{"fixture": ref(reject), "expected_code": "synthetic-reject"}],
+            "must_accept": [ref(accept)],
+            "proven": {"result": "all_fixtures_behaved"},
+        }
+    }
+    body = {"accept": False}
+    transport = object.__new__(tp.CliTransport)
+    transport.engine_root = engine.resolve()
+    transport.output_root = output.resolve()
+
+    with pytest.raises(tp.VerifierFault):
+        transport.verify_domain(body=body, contract=contract)
+
+    work = (
+        tp.domain_verifier_work_root(engine_root=engine, output_root=output)
+        / tp.canonical_digest(contract)
+        / tp.canonical_digest(body)
+    )
+    assert json.loads((work / "candidate.json").read_text(encoding="utf-8")) == body
+
+
+@requires_sandbox
+@pytest.mark.parametrize("operation", ["chdir", "utime", "mkfifo", "lchmod"])
+def test_domain_verifier_normalizes_undeclared_engine_existence(
+    tmp_path: Path, operation: str
+) -> None:
+    engine = tmp_path / "engine"
+    curriculum = engine / "curricula" / "synthetic"
+    fixtures = curriculum / "fixtures"
+    fixtures.mkdir(parents=True)
+    output = engine / "outputs" / "run27" / "live_unit"
+    output.mkdir(parents=True)
+    undeclared = engine / "undeclared_directory"
+    undeclared.mkdir()
+    entry = curriculum / "verify.py"
+    reject = fixtures / "reject.json"
+    accept = fixtures / "accept.json"
+    reject.write_text('{"kind":"reject"}\n', encoding="utf-8")
+    accept.write_text('{"kind":"accept"}\n', encoding="utf-8")
+    operation_source = {
+        "chdir": f"os.chdir({str(undeclared)!r})",
+        "utime": f"os.utime({str(undeclared)!r}, None)",
+        "mkfifo": f"os.mkfifo({str(undeclared)!r})",
+        "lchmod": f"os.lchmod({str(undeclared)!r}, 0o700)",
+    }[operation]
+    entry.write_text(
+        "from pathlib import Path\n"
+        "import argparse, json, os\n"
+        "p=argparse.ArgumentParser(); p.add_argument('--domain', type=Path, required=True)\n"
+        "a=p.parse_args(); body=json.loads(a.domain.read_text())\n"
+        "if body.get('kind') == 'reject': print('synthetic-reject: expected'); raise SystemExit(1)\n"
+        "if body.get('kind') == 'accept': raise SystemExit(0)\n"
+        f"\ntry: {operation_source}\n"
+        "except PermissionError: raise SystemExit(0)\n"
+        "except FileNotFoundError: raise SystemExit(1)\n"
+        "except FileExistsError: raise SystemExit(2)\n"
+        "raise SystemExit(2)\n",
+        encoding="utf-8",
+    )
+
+    def ref(path: Path) -> dict[str, str]:
+        return {"path": path.relative_to(engine).as_posix(), "sha256": tp.sha256_file(path)}
+
+    contract = {
+        "verifier": {
+            "entry_point": ref(entry),
+            "invocation": "python3 curricula/synthetic/verify.py --domain <domain>",
+            "dependencies": [],
+            "must_reject": [{"fixture": ref(reject), "expected_code": "synthetic-reject"}],
+            "must_accept": [ref(accept)],
+            "proven": {"result": "all_fixtures_behaved"},
+        }
+    }
+    transport = object.__new__(tp.CliTransport)
+    transport.engine_root = engine.resolve()
+    transport.output_root = output.resolve()
+    body = {"probe": "same"}
+
+    first = transport.verify_domain(body=body, contract=contract)
+    undeclared.rename(engine / "renamed_directory")
+    second = transport.verify_domain(body=body, contract=contract)
+
+    assert first["candidate_sha256"] == second["candidate_sha256"]
+    assert first["contract_sha256"] == second["contract_sha256"]
+    assert first["result"] == second["result"] == "FAIL"
+    assert first["candidate"]["returncode"] == second["candidate"]["returncode"] == 1
+    assert first["candidate"]["output_sha256"] == second["candidate"]["output_sha256"]
+
+
+@requires_sandbox
+def test_domain_verifier_isolated_python_ignores_mutable_parent_site_packages(
+    tmp_path: Path, monkeypatch: pytest.MonkeyPatch
+) -> None:
+    engine = tmp_path / "engine"
+    curriculum = engine / "curricula" / "synthetic"
+    fixtures = curriculum / "fixtures"
+    injected = tmp_path / "injected" / "site-packages"
+    fixtures.mkdir(parents=True)
+    injected.mkdir(parents=True)
+    output = engine / "outputs" / "run27" / "live_unit"
+    output.mkdir(parents=True)
+    entry = curriculum / "verify.py"
+    reject = fixtures / "reject.json"
+    accept = fixtures / "accept.json"
+    package = injected / "yaml.py"
+    reject.write_text('{"kind":"reject"}\n', encoding="utf-8")
+    accept.write_text('{"kind":"accept"}\n', encoding="utf-8")
+    package.write_text("def decision(): return 'allow'\n", encoding="utf-8")
+    entry.write_text(
+        "import argparse, json\n"
+        "from pathlib import Path\n"
+        "p=argparse.ArgumentParser(); p.add_argument('--domain', type=Path, required=True)\n"
+        "body=json.loads(p.parse_args().domain.read_text())\n"
+        "if body.get('kind') == 'reject': print('synthetic-reject: expected'); raise SystemExit(1)\n"
+        "if body.get('kind') == 'accept': raise SystemExit(0)\n"
+        "try:\n import yaml\n"
+        "except ModuleNotFoundError:\n print('dependency-unavailable: isolated'); raise SystemExit(1)\n"
+        "raise SystemExit(0 if yaml.decision() == 'allow' else 1)\n",
+        encoding="utf-8",
+    )
+
+    def ref(path: Path) -> dict[str, str]:
+        return {"path": path.relative_to(engine).as_posix(), "sha256": tp.sha256_file(path)}
+
+    contract = {
+        "verifier": {
+            "entry_point": ref(entry),
+            "invocation": "python3 curricula/synthetic/verify.py --domain <domain>",
+            "dependencies": [],
+            "must_reject": [{"fixture": ref(reject), "expected_code": "synthetic-reject"}],
+            "must_accept": [ref(accept)],
+            "proven": {"result": "all_fixtures_behaved"},
+        }
+    }
+    transport = object.__new__(tp.CliTransport)
+    transport.engine_root = engine.resolve()
+    transport.output_root = output.resolve()
+    monkeypatch.setattr(sys, "path", [str(injected), *sys.path])
+
+    first = transport.verify_domain(body={"probe": "same"}, contract=contract)
+    package.write_text("def decision(): return 'deny'\n", encoding="utf-8")
+    second = transport.verify_domain(body={"probe": "same"}, contract=contract)
+
+    assert first["result"] == second["result"] == "FAIL"
+    assert first["candidate"]["returncode"] == second["candidate"]["returncode"] == 1
+    assert first["candidate"]["output_sha256"] == second["candidate"]["output_sha256"]
+    assert first["candidate"]["runtime_digest"] == second["candidate"]["runtime_digest"]
+    assert all(
+        str(injected) not in record["path"]
+        for record in first["candidate"]["runtime_modules"]
+    )
 
 
 def test_observe_executable_reports_the_installed_binarys_own_identity(tmp_path: Path):

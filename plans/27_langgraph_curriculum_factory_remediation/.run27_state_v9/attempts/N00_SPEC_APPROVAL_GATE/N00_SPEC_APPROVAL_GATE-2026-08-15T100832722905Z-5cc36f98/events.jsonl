@@ -1,0 +1,5 @@
+{"at":"2026-08-15T10:08:32.727729Z","event":"attempt_created","parent_attempt_id":null}
+{"argv":["python3","plans/27_langgraph_curriculum_factory_remediation/execution_package_v2/tools/validate_plan_v2.py"],"at":"2026-08-15T10:11:09.386120Z","event":"verification_command","exit_code":0}
+{"argv":["python3","plans/27_langgraph_curriculum_factory_remediation/execution_package_v2/tools/validate_result_v2.py","--node","N00_SPEC_APPROVAL_GATE"],"at":"2026-08-15T10:11:09.492056Z","event":"verification_command","exit_code":0}
+{"at":"2026-08-15T10:11:09.498639Z","event":"merge_journaled","receipt_sha256":"9bdfb2847fa25f327d9451a7ec4a4cae04ea1f9f2ef7d585fe2a3bdb5351e5b0"}
+{"at":"2026-08-15T10:11:09.499610Z","event":"merge_completed","receipt_sha256":"9bdfb2847fa25f327d9451a7ec4a4cae04ea1f9f2ef7d585fe2a3bdb5351e5b0"}

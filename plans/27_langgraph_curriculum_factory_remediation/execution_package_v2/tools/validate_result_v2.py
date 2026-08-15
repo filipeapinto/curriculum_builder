@@ -2,7 +2,7 @@
 """Validate one Run 27 node result against the package-v2 graph, paths, and hashes.
 
 This is execution package v2's own versioned entry point. It is bound to
-this package's own ``implementation.graph.v8.yaml``, never to the parent v1
+this package's own ``implementation.graph.v9.yaml``, never to the parent v1
 package's graph -- there is no ``--graph`` flag to omit here, because this
 script has exactly one graph binding and it is this package's own file. This
 is deliberate, not an oversight RC8 should "fix" by adding a mutable flag:
@@ -13,7 +13,7 @@ having *no* flag is that its one binding can never be omitted or pointed
 wrong by a caller. Each graph generation bumps this constant in place
 (v1->v2->...->v7), the same discipline ``validate_plan_v2.py``'s own
 ``GRAPH_PATH`` already uses; neither validator has ever taken its own
-``--graph`` argument. RC8 (which introduced ``implementation.graph.v8.yaml``
+``--graph`` argument. RC10 (which introduced ``implementation.graph.v9.yaml``
 to fix a result-namespace collision with graph v5's already-admitted
 records) does not change this design: the collision was a *path*
 defect in the graph file itself, not a defect in this validator's
@@ -39,7 +39,7 @@ import yaml
 PACKAGE_DIR = Path(__file__).resolve().parents[1]
 PLAN_DIR = PACKAGE_DIR.parent
 REPO_ROOT = PLAN_DIR.parents[1]
-GRAPH_PATH = PACKAGE_DIR / "implementation.graph.v8.yaml"
+GRAPH_PATH = PACKAGE_DIR / "implementation.graph.v9.yaml"
 
 
 class ResultValidationError(RuntimeError):

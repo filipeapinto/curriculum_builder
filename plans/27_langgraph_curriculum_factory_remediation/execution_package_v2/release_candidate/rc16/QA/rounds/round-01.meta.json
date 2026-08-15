@@ -1,0 +1,100 @@
+{
+  "attempt": 1,
+  "exit_code": 0,
+  "duration_seconds": 583.22,
+  "transport": "app-server",
+  "session_id": "01a00402-6ec5-7332-b871-1a53dfca7d78",
+  "thread_id": "01a00402-6ec5-7332-b871-1a53dfca7d78",
+  "turn_id": "01a00402-75a8-73f2-94ba-25245daba39e",
+  "usage": {},
+  "model": null,
+  "effort": null,
+  "plugin_version": "1.0.4",
+  "plugin_lib_path": "/Users/filipepinto/.claude/plugins/cache/openai-codex/codex/1.0.4/scripts/lib/codex.mjs",
+  "argv": [
+    "node",
+    "/Users/filipepinto/Projects/curriculum_builder/.claude/skills/qa-gate-codex-run/scripts/codex_bridge.mjs",
+    "<request on stdin>"
+  ],
+  "started_at": "2026-08-15T06:01:03.332514+00:00",
+  "response_sha256": "973406b5f3951e7e085a1a21fc6bea6611df7f95d8bc1e4d1f08ad40254f687b",
+  "request_sha256": "9802cd8a5f526e67c43d367a80bab6bdccff19e42fdbcca3b5b168a57c8c2300",
+  "round": 1,
+  "cwd": "/Users/filipepinto/Projects/curriculum_builder/plans/27_langgraph_curriculum_factory_remediation/execution_package_v2/release_candidate/rc16/QA/exec",
+  "artifact_path": "/Users/filipepinto/Projects/curriculum_builder/plans/27_langgraph_curriculum_factory_remediation/execution_package_v2/release_candidate/rc16/rc16_review_bundle.v1.md",
+  "artifact_sha256": "ce7181e4b069072fdeef1aa5a782c297e66011114de057d3221de91046e61f3b",
+  "grounding": [
+    {
+      "path": "/Users/filipepinto/Projects/curriculum_builder/plans/26_langgraph_curriculum_factory/spec/v3/langgraph_curriculum_factory.spec.v4.md",
+      "sha256": "e14df5a36ce12d700fe9fc4aa4aea466771bc89f31bc6e9d49f812c147b1bb3c"
+    },
+    {
+      "path": "/Users/filipepinto/Projects/curriculum_builder/plans/27_langgraph_curriculum_factory_remediation/execution_package_v2/implementation.graph.v8.yaml",
+      "sha256": "c2d79ac0387c935977385138d2d891cf1539041f1a4532acf94fc8dc687bf6b1"
+    },
+    {
+      "path": "/Users/filipepinto/Projects/curriculum_builder/plans/27_langgraph_curriculum_factory_remediation/execution_package_v2/implementation.graph.v9.yaml",
+      "sha256": "5236bf6b13a2c5171ad11ab80f1147e20b6b59f46708090d25ec16c5a7574379"
+    },
+    {
+      "path": "/Users/filipepinto/Projects/curriculum_builder/plans/27_langgraph_curriculum_factory_remediation/execution_package_v2/schemas/spec_approval.schema.v6.json",
+      "sha256": "5ecc63dd64377b9bac39facb30f147cad1ab07f3d1ad137bbc9254b39dd58bf0"
+    },
+    {
+      "path": "/Users/filipepinto/Projects/curriculum_builder/plans/27_langgraph_curriculum_factory_remediation/execution_package_v2/contracts/spec_approval.v6.yaml",
+      "sha256": "f4e609d1d93f1303c651e6cbe58233ec35b7bb7eab86a9ef393fc002b5229b70"
+    },
+    {
+      "path": "/Users/filipepinto/Projects/curriculum_builder/schemas/curriculum.schema.v5.json",
+      "sha256": "de29914c52a1ffece0a10a1d42670f961121e5ea1a9f00d7d7b57400b75a8aa2"
+    },
+    {
+      "path": "/Users/filipepinto/Projects/curriculum_builder/curricula/arduino_kit/arduino_kit_curriculum.v5.yaml",
+      "sha256": "7c8efffb6ff6256bac215b7a541fa728ebe8768f95e65de338efd56b8143d2c6"
+    },
+    {
+      "path": "/Users/filipepinto/Projects/curriculum_builder/curricula/arduino_kit/verify_domain.py",
+      "sha256": "14bdf1c81fc41c93405528cf907712d03ff4b66c87ab0acc50d2fed715ea5c4a"
+    },
+    {
+      "path": "/Users/filipepinto/Projects/curriculum_builder/curricula/arduino_kit/domain.schema.v1.json",
+      "sha256": "321ce51fa43fb4b6878e2e8b62e2dbe1353fbe9721cf6c6311056ede19169e53"
+    },
+    {
+      "path": "/Users/filipepinto/Projects/curriculum_builder/curricula/arduino_kit/kit_calibration.v1.yaml",
+      "sha256": "4a62e7efbbf828dbecc9ff8db5865cf657f31b55159e498257a7c8de1f7a1d9e"
+    },
+    {
+      "path": "/Users/filipepinto/Projects/curriculum_builder/curricula/arduino_kit/circuit_library.v1.yaml",
+      "sha256": "53deaf4254232266cdb9334aa3567235c20b4f0053f672f9528ec866feaa8785"
+    },
+    {
+      "path": "/Users/filipepinto/Projects/curriculum_builder/runtime/langgraph_factory/nodes/inputs.py",
+      "sha256": "e45aef7b7cf5a727050a6256f9a722e2de880d30b7f62701ad64bd8113f36727"
+    },
+    {
+      "path": "/Users/filipepinto/Projects/curriculum_builder/runtime/langgraph_factory/transport.py",
+      "sha256": "1a93c9f179a5285bf9a9cd710aa69ba99c0bb0dc16f8410ceab58bf57ef176bb"
+    },
+    {
+      "path": "/Users/filipepinto/Projects/curriculum_builder/tests/runtime/test_plan26_deterministic_nodes.py",
+      "sha256": "b517d560094d758579de8b22697cf898c48436563533cc21dde1237ef5ea2dba"
+    },
+    {
+      "path": "/Users/filipepinto/Projects/curriculum_builder/tests/runtime/test_plan26_transport.py",
+      "sha256": "76edbf04b371f5426a11c3368bee1b9be27923bd7e36822709da0a048dc95bbf"
+    },
+    {
+      "path": "/Users/filipepinto/Projects/curriculum_builder/plans/27_langgraph_curriculum_factory_remediation/execution_package_v2/release_candidate/rc14/QA/rounds/round-01.response.json",
+      "sha256": "6c322ace831ebf9984bf851b12059adee0a1f1308ae3d1730fbd56657957cd3e"
+    },
+    {
+      "path": "/Users/filipepinto/Projects/curriculum_builder/plans/27_langgraph_curriculum_factory_remediation/execution_package_v2/release_candidate/rc15/QA/rounds/round-01.response.json",
+      "sha256": "cbfdaa9a13ab9d38f9b0e04bf43d8de6e81c404c590d8a73250fb5afec545091"
+    }
+  ],
+  "chain_prev": "GENESIS",
+  "chain": "692e4bcb9ef81270c782e85af1a71d66d98052477ea56c56b8878e972f0c9b4a",
+  "rollout_file": "/Users/filipepinto/.codex/sessions/2026/08/15/rollout-2026-08-15T02-01-03-01a00402-6ec5-7332-b871-1a53dfca7d78.jsonl",
+  "timestamp": "2026-08-15T06:10:46.609826+00:00"
+}

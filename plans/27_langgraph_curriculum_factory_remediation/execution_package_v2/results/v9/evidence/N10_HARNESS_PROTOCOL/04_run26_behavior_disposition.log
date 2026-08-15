@@ -1,0 +1,24 @@
+Run 26 controller behavior disposition
+
+RETAINED
+- deterministic graph-order scheduling and explicit dependency readiness
+- schema-bound JSON node results as the only admission authority
+- per-node verification commands, findings, evidence, and changed-file hashes
+- blocked/passed outcome vocabulary and read-only status/audit inspection
+
+REPLACED
+- prose/Markdown status interpretation -> schema-valid JSON plus receipt validation
+- mutable shared attempt state -> immutable attempt records with parent bindings
+- local-only predecessor checks -> transitive receipt invalidation and join refusal
+- non-atomic merge -> baseline-bound journaled merge and explicit recovery
+- reusable evidence paths -> attempt-scoped write-once evidence/log paths
+- implicit resume -> child attempt bound to parent and current predecessors
+- informal recovery -> named readmit/recover operations with machine-readable audit
+- loose final status -> N90 exactly-one legal terminal recommendation enforcement
+
+REJECTED
+- treating the old 537-event stream as clean evidence for the new controller
+- accepting Markdown/rich prose as state authority
+- post-N00 mutation of the frozen node-result schema
+- overlapping node write sets, partial implicit merges, or stale descendant joins
+- late-node execution without a current admitted N00 approved-spec receipt

@@ -135,8 +135,34 @@ def _synthetic_manifest(
         random.Random(shuffle_seed).shuffle(units)
     curriculum_root = tmp_path / "curricula" / "synthetic"
     curriculum_root.mkdir(parents=True, exist_ok=True)
+    fixtures = curriculum_root / "fixtures"
+    fixtures.mkdir(exist_ok=True)
+    (curriculum_root / "domain.schema.v1.json").write_text('{"type":"object"}', encoding="utf-8")
+    (curriculum_root / "manifest.domain.schema.v1.json").write_text(
+        '{"$defs":{"config":{"type":"object"},"core_activity":{}}}', encoding="utf-8"
+    )
+    (curriculum_root / "calibration.v1.yaml").write_text("profile: test\n", encoding="utf-8")
+    (curriculum_root / "verify_domain.py").write_text("# frozen verifier\n", encoding="utf-8")
+    (fixtures / "reject.json").write_text("{}", encoding="utf-8")
+    (fixtures / "accept.json").write_text("{}", encoding="utf-8")
     path = curriculum_root / "synthetic_curriculum.v1.yaml"
-    path.write_text(yaml.safe_dump({"labs": units}, sort_keys=False), encoding="utf-8")
+    path.write_text(yaml.safe_dump({
+        "domain": {
+            "schema": "curricula/synthetic/domain.schema.v1.json",
+            "manifest_schema": "curricula/synthetic/manifest.domain.schema.v1.json",
+            "calibration": "curricula/synthetic/calibration.v1.yaml",
+            "config": {"profile": "test"},
+            "verifier": {
+                "entry_point": "curricula/synthetic/verify_domain.py",
+                "invocation": "python3 curricula/synthetic/verify_domain.py --domain <domain>",
+                "dependencies": [],
+                "must_reject": [{"fixture": "curricula/synthetic/fixtures/reject.json", "expected_code": "synthetic-reject"}],
+                "must_accept": ["curricula/synthetic/fixtures/accept.json"],
+                "proven": {"executed_utc": "2026-01-01T00:00:00Z", "result": "all_fixtures_behaved"},
+            },
+        },
+        "labs": units,
+    }, sort_keys=False), encoding="utf-8")
     return path, [unit["id"] for unit in units]
 
 
@@ -148,7 +174,8 @@ def _d02_state(manifest_path: Path, mode: str, requested: str | None) -> dict[st
         "mode": mode,
         "requested_unit_id": requested,
         "frozen_inputs": [
-            {"path": str(manifest_path), "sha256": _sha256_file(manifest_path), "role": "active_manifest"}
+            {"path": str(path), "sha256": _sha256_file(path), "role": "curriculum"}
+            for path in sorted(manifest_path.parent.rglob("*")) if path.is_file()
         ],
     }
 
@@ -503,6 +530,112 @@ def test_D06B_consumes_the_real_source_retriever_return_contract(tmp_path: Path)
     }]
 
 
+def test_D06B_skips_http_success_with_empty_visible_text_and_uses_fallback(
+    tmp_path: Path,
+) -> None:
+    """An HTTP-200 script shell is not a source the tool-closed model can read."""
+
+    empty_body = b"<html><body><script>renderLater()</script></body></html>"
+    usable_body = b"<html><body><h1>Safe wiring</h1><p>Disconnect power before rewiring.</p></body></html>"
+    fetched: list[str] = []
+
+    def fetch(locator: str, *, authorization_receipt: Any,
+              data_class: str = "primary_source_bytes") -> tuple[bytes, dict[str, Any]]:
+        fetched.append(locator)
+        body = empty_body if locator.endswith("/script-shell") else usable_body
+        return body, {
+            "bytes_sha256": hashlib.sha256(body).hexdigest(),
+            "http_status": 200,
+            "content_type": "text/html",
+        }
+
+    request_key = "U001/1/safety_focus:000"
+    state = {
+        "selected_unit_id": "U001",
+        "run_id": "run-x",
+        "episode_id": "ep-x",
+        "effective_run": {"unit_records": [{"id": "U001", "title": "Unit One"}]},
+        "source_requests": [{
+            "key": request_key, "unit_id": "U001", "required": True,
+            "scope": "safety_focus", "source_epoch": 1, "fact_id": "f",
+            "question": "How should power be handled while rewiring?",
+        }],
+        "source_denominators": {"U001/1": {
+            "unit_id": "U001", "source_epoch": 1,
+            "request_keys": [request_key], "size": 1,
+        }},
+        "source_discoveries": {request_key: {"locators": [
+            {"request_id": request_key, "url": "https://example.invalid/script-shell",
+             "title": "Script shell", "publisher": "p", "locator_kind": "primary",
+             "rationale": "first bounded candidate"},
+            {"request_id": request_key, "url": "https://example.invalid/usable",
+             "title": "Usable source", "publisher": "p", "locator_kind": "primary",
+             "rationale": "fallback candidate"},
+        ]}},
+        "external_authorizations": [{
+            "providers": {"primary_source_hosts": ["primary_source_bytes"]},
+            "approved_at_utc": "2026-01-01T00:00:00Z",
+            "expires_at_utc": "2099-01-01T00:00:00Z",
+            "curriculum_digest": "c" * 64,
+            "output_root": str(tmp_path),
+        }],
+    }
+
+    update = sources.D06B_RETRIEVE_SOURCE_CANDIDATES(
+        state, _Context(source_retriever=_Registry(fetch=fetch)))
+
+    assert "pending_failure" not in update
+    assert fetched == [
+        "https://example.invalid/script-shell", "https://example.invalid/usable"]
+    assert update["retrievals"][request_key]["locator"]["url"].endswith("/usable")
+    staged = update["pending_packet"]["packets"][0]["staged_inputs"][0]
+    assert staged["sha256"] == hashlib.sha256(usable_body).hexdigest()
+
+
+def test_D06B_pauses_when_every_http_success_has_no_verified_visible_text(
+    tmp_path: Path,
+) -> None:
+    body = b"<html><body><script>renderLater()</script></body></html>"
+    digest = hashlib.sha256(body).hexdigest()
+    request_key = "U001/1/safety_focus:000"
+
+    def fetch(locator: str, *, authorization_receipt: Any,
+              data_class: str = "primary_source_bytes") -> tuple[bytes, dict[str, Any]]:
+        return body, {"bytes_sha256": digest, "http_status": 200,
+                      "content_type": "text/html"}
+
+    state = {
+        "selected_unit_id": "U001", "run_id": "run-x", "episode_id": "ep-x",
+        "effective_run": {"unit_records": [{"id": "U001", "title": "Unit One"}]},
+        "source_requests": [{"key": request_key, "unit_id": "U001", "required": True,
+                             "scope": "safety_focus", "source_epoch": 1,
+                             "fact_id": "f", "question": "q?"}],
+        "source_denominators": {"U001/1": {"unit_id": "U001", "source_epoch": 1,
+                                             "request_keys": [request_key], "size": 1}},
+        "source_discoveries": {request_key: {"locators": [{
+            "request_id": request_key, "url": "https://example.invalid/script-shell",
+            "title": "Script shell", "publisher": "p", "locator_kind": "primary",
+            "rationale": "bounded candidate",
+        }]}},
+        "external_authorizations": [{
+            "providers": {"primary_source_hosts": ["primary_source_bytes"]},
+            "approved_at_utc": "2026-01-01T00:00:00Z",
+            "expires_at_utc": "2099-01-01T00:00:00Z",
+            "curriculum_digest": "c" * 64, "output_root": str(tmp_path),
+        }],
+    }
+
+    update = sources.D06B_RETRIEVE_SOURCE_CANDIDATES(
+        state, _Context(source_retriever=_Registry(fetch=fetch)))
+
+    failure = update["pending_failure"]
+    assert failure["class"] == "pause"
+    assert failure["cause"] == "required_external_fact_unavailable"
+    assert "retrievals" not in update
+    facts = failure["evidence"]["facts"]
+    assert "no model-readable verified text" in facts[0]["candidates"][0]["reason"]
+
+
 def test_D06B_mints_a_real_provider_scoped_receipt_not_the_raw_declaration(
     tmp_path: Path,
 ) -> None:
@@ -738,6 +871,301 @@ def test_a_manifest_altered_after_freezing_is_rejected(tmp_path: Path) -> None:
 
     update = inputs.D02_COMPILE_EFFECTIVE_RUN(state, _Context())
     assert update["pending_failure"]["cause"] == "integrity"
+
+
+def _declared_domain_run(tmp_path: Path) -> tuple[dict[str, Any], dict[str, Path]]:
+    """One complete curriculum-owned domain contract and its D01-style freeze."""
+
+    engine = tmp_path
+    curriculum = engine / "curricula" / "synthetic"
+    fixtures = curriculum / "fixtures"
+    fixtures.mkdir(parents=True)
+    paths = {
+        "schema": curriculum / "domain.schema.v1.json",
+        "manifest_schema": curriculum / "manifest.domain.schema.v1.json",
+        "calibration": curriculum / "calibration.v1.yaml",
+        "verifier": curriculum / "verify_domain.py",
+        "dependency": curriculum / "verifier_data.json",
+        "reject": fixtures / "reject.json",
+        "accept": fixtures / "accept.json",
+    }
+    paths["schema"].write_text('{"type":"object"}', encoding="utf-8")
+    paths["manifest_schema"].write_text(
+        json.dumps({"$defs": {"config": {"type": "object"}, "core_activity": {}}}),
+        encoding="utf-8",
+    )
+    paths["calibration"].write_text("profile: test\n", encoding="utf-8")
+    paths["verifier"].write_text("# frozen verifier\n", encoding="utf-8")
+    paths["dependency"].write_text('{"profile":"test"}', encoding="utf-8")
+    paths["reject"].write_text("{}", encoding="utf-8")
+    paths["accept"].write_text("{}", encoding="utf-8")
+
+    def relative(path: Path) -> str:
+        return path.relative_to(engine).as_posix()
+
+    manifest = curriculum / "synthetic_curriculum.v1.yaml"
+    manifest.write_text(
+        yaml.safe_dump({
+            "domain": {
+                "schema": relative(paths["schema"]),
+                "manifest_schema": relative(paths["manifest_schema"]),
+                "calibration": relative(paths["calibration"]),
+                "config": {"profile": "test"},
+                "verifier": {
+                    "entry_point": relative(paths["verifier"]),
+                    "invocation": f"python3 {relative(paths['verifier'])} --domain <domain>",
+                    "dependencies": [relative(paths["dependency"])],
+                    "must_reject": [{
+                        "fixture": relative(paths["reject"]),
+                        "expected_code": "synthetic-reject",
+                    }],
+                    "must_accept": [relative(paths["accept"])],
+                    "proven": {
+                        "executed_utc": "2026-01-01T00:00:00Z",
+                        "result": "all_fixtures_behaved",
+                    },
+                },
+            },
+            "labs": [{
+                "id": "U001",
+                "title": "synthetic",
+                "sequence": {"prerequisites": [], "prepares_for": []},
+                "required_explanation": ["fact"],
+            }],
+        }, sort_keys=False),
+        encoding="utf-8",
+    )
+    frozen_paths = [manifest, *paths.values()]
+    state = {
+        "engine_root": str(engine),
+        "curriculum_root": str(curriculum),
+        "active_manifest_path": str(manifest),
+        "mode": "one",
+        "requested_unit_id": "U001",
+        "frozen_inputs": [
+            {"path": str(path), "sha256": _sha256_file(path), "role": "curriculum"}
+            for path in frozen_paths
+        ],
+    }
+    return state, paths
+
+
+def test_d02_freezes_the_complete_curriculum_domain_contract(tmp_path: Path) -> None:
+    state, paths = _declared_domain_run(tmp_path)
+    update = inputs.D02_COMPILE_EFFECTIVE_RUN(state, _Context())
+    contract = update["effective_run"]["domain_contract"]
+    assert contract["schema"]["sha256"] == _sha256_file(paths["schema"])
+    assert contract["calibration"]["sha256"] == _sha256_file(paths["calibration"])
+    assert contract["verifier"]["entry_point"]["sha256"] == _sha256_file(paths["verifier"])
+    assert contract["verifier"]["dependencies"][0]["sha256"] == _sha256_file(
+        paths["dependency"]
+    )
+    assert contract["verifier"]["must_reject"][0]["fixture"]["sha256"] == _sha256_file(
+        paths["reject"]
+    )
+    assert contract["digest"] == canonical_digest({k: v for k, v in contract.items() if k != "digest"})
+
+
+def test_d02_refuses_a_domain_dependency_changed_after_d01(tmp_path: Path) -> None:
+    state, paths = _declared_domain_run(tmp_path)
+    paths["dependency"].write_text('{"profile":"drifted"}', encoding="utf-8")
+    update = inputs.D02_COMPILE_EFFECTIVE_RUN(state, _Context())
+    assert update["pending_failure"]["cause"] == "integrity"
+    assert "changed after D01" in update["pending_failure"]["message"]
+
+
+def test_d02_refuses_a_frozen_verifier_fixture_outside_the_domain_schema(
+    tmp_path: Path,
+) -> None:
+    state, paths = _declared_domain_run(tmp_path)
+    paths["accept"].write_text("[]", encoding="utf-8")
+    for record in state["frozen_inputs"]:
+        if record["path"] == str(paths["accept"]):
+            record["sha256"] = _sha256_file(paths["accept"])
+
+    update = inputs.D02_COMPILE_EFFECTIVE_RUN(state, _Context())
+
+    assert update["pending_failure"]["cause"] == "schema_contract"
+    assert "accept fixture 1 violates the frozen domain schema" in (
+        update["pending_failure"]["message"]
+    )
+
+
+def test_d02_refuses_a_verifier_with_an_absolute_repository_path(tmp_path: Path) -> None:
+    state, paths = _declared_domain_run(tmp_path)
+    paths["verifier"].write_text(
+        "from pathlib import Path\n"
+        f"Path({str(paths['dependency'])!r}).stat()\n",
+        encoding="utf-8",
+    )
+    for record in state["frozen_inputs"]:
+        if record["path"] == str(paths["verifier"]):
+            record["sha256"] = _sha256_file(paths["verifier"])
+
+    update = inputs.D02_COMPILE_EFFECTIVE_RUN(state, _Context())
+
+    assert update["pending_failure"]["cause"] == "schema_contract"
+    assert "absolute filesystem path" in update["pending_failure"]["message"]
+
+
+def test_d02_accepts_the_active_verifiers_legitimate_re_compile_call() -> None:
+    engine = Path(__file__).resolve().parents[2]
+    manifest = engine / "curricula/arduino_kit/arduino_kit_curriculum.v5.yaml"
+
+    update = inputs.D02_COMPILE_EFFECTIVE_RUN(_d02_state(manifest, "one", "L01"), _Context())
+
+    assert update["pending_guard"]["value"] == "effective_run_compiled"
+    assert "pending_failure" not in update
+
+
+def test_d02_refuses_dynamic_code_in_a_python_verifier_dependency(tmp_path: Path) -> None:
+    state, paths = _declared_domain_run(tmp_path)
+    engine = Path(state["engine_root"])
+    manifest_path = Path(state["active_manifest_path"])
+    helper = manifest_path.parent / "helper.py"
+    helper.write_text("import subprocess\neval('40 + 2')\n", encoding="utf-8")
+    manifest = yaml.safe_load(manifest_path.read_text(encoding="utf-8"))
+    manifest["domain"]["verifier"]["dependencies"] = [
+        helper.relative_to(engine).as_posix()
+    ]
+    manifest_path.write_text(yaml.safe_dump(manifest, sort_keys=False), encoding="utf-8")
+    state["frozen_inputs"].append(
+        {"path": str(helper), "sha256": _sha256_file(helper), "role": "curriculum"}
+    )
+    for record in state["frozen_inputs"]:
+        if record["path"] == str(manifest_path):
+            record["sha256"] = _sha256_file(manifest_path)
+
+    update = inputs.D02_COMPILE_EFFECTIVE_RUN(state, _Context())
+
+    assert update["pending_failure"]["cause"] == "schema_contract"
+    assert "Python dependency" in update["pending_failure"]["message"]
+
+
+@pytest.mark.parametrize(
+    "source",
+    [
+        "import builtins\nvalue = getattr(builtins, 'eval')('40 + 2')\n",
+        "import importlib\nvalue = importlib.import_module('ctypes')\n",
+        "import os\nvalue = os.fork()\n",
+        "import pathlib\nvalue = pathlib.os.posix_spawn('x', ['x'], {})\n",
+        "import enum\nvalue = enum.bltns.eval('40 + 2')\n",
+        "import yaml\nvalue = yaml.unsafe_load('!!python/object/apply:builtins.eval [\"40 + 2\"]')\n",
+        "from yaml import unsafe_load as parse_yaml\nvalue = parse_yaml('value')\n",
+    ],
+    ids=[
+        "indirect-eval",
+        "dynamic-native-import",
+        "fork",
+        "safe-module-process-reexport",
+        "safe-module-dynamic-reexport",
+        "yaml-unsafe-load",
+        "yaml-unsafe-load-alias",
+    ],
+)
+def test_d02_refuses_indirect_dynamic_native_and_process_surfaces(
+    tmp_path: Path, source: str
+) -> None:
+    state, paths = _declared_domain_run(tmp_path)
+    paths["verifier"].write_text(source, encoding="utf-8")
+    for record in state["frozen_inputs"]:
+        if record["path"] == str(paths["verifier"]):
+            record["sha256"] = _sha256_file(paths["verifier"])
+
+    update = inputs.D02_COMPILE_EFFECTIVE_RUN(state, _Context())
+
+    assert update["pending_failure"]["cause"] == "schema_contract"
+
+
+def test_d02_refuses_indirect_dynamic_code_in_a_python_dependency(tmp_path: Path) -> None:
+    state, _paths = _declared_domain_run(tmp_path)
+    engine = Path(state["engine_root"])
+    manifest_path = Path(state["active_manifest_path"])
+    helper = manifest_path.parent / "helper.py"
+    helper.write_text(
+        "import builtins\nvalue = getattr(builtins, 'eval')('40 + 2')\n",
+        encoding="utf-8",
+    )
+    manifest = yaml.safe_load(manifest_path.read_text(encoding="utf-8"))
+    manifest["domain"]["verifier"]["dependencies"] = [
+        helper.relative_to(engine).as_posix()
+    ]
+    manifest_path.write_text(yaml.safe_dump(manifest, sort_keys=False), encoding="utf-8")
+    state["frozen_inputs"].append(
+        {"path": str(helper), "sha256": _sha256_file(helper), "role": "curriculum"}
+    )
+    for record in state["frozen_inputs"]:
+        if record["path"] == str(manifest_path):
+            record["sha256"] = _sha256_file(manifest_path)
+
+    update = inputs.D02_COMPILE_EFFECTIVE_RUN(state, _Context())
+
+    assert update["pending_failure"]["cause"] == "schema_contract"
+    assert "Python dependency" in update["pending_failure"]["message"]
+
+
+def test_d02_refuses_an_incomplete_domain_contract_at_the_freeze_boundary(tmp_path: Path) -> None:
+    manifest_path, _ = _synthetic_manifest(tmp_path, 1)
+    manifest = yaml.safe_load(manifest_path.read_text(encoding="utf-8"))
+    del manifest["domain"]["calibration"]
+    manifest_path.write_text(yaml.safe_dump(manifest, sort_keys=False), encoding="utf-8")
+
+    update = inputs.D02_COMPILE_EFFECTIVE_RUN(
+        _d02_state(manifest_path, "one", "U001"), _Context()
+    )
+
+    assert update["pending_failure"]["cause"] == "schema_contract"
+    assert update["pending_failure"]["evidence"]["missing"] == ["calibration"]
+    assert "effective_run" not in update
+
+
+def test_d08_refuses_domain_schema_bytes_that_drift_after_d02(tmp_path: Path) -> None:
+    state, paths = _declared_domain_run(tmp_path)
+    frozen_schema = {
+        "type": "object",
+        "additionalProperties": False,
+        "required": ["allowed"],
+        "properties": {"allowed": {"type": "string"}},
+    }
+    paths["schema"].write_text(json.dumps(frozen_schema), encoding="utf-8")
+    paths["reject"].write_text('{"allowed":"reject"}', encoding="utf-8")
+    paths["accept"].write_text('{"allowed":"accept"}', encoding="utf-8")
+    for record in state["frozen_inputs"]:
+        for changed in (paths["schema"], paths["reject"], paths["accept"]):
+            if record["path"] == str(changed):
+                record["sha256"] = _sha256_file(changed)
+    compiled = inputs.D02_COMPILE_EFFECTIVE_RUN(state, _Context())["effective_run"]
+    paths["schema"].write_text(
+        json.dumps({"type": "object", "required": ["other"]}), encoding="utf-8"
+    )
+    body = {"other": "accepted only by drifted bytes"}
+    stream = "units/U001/domain"
+    candidate = {
+        "key": "domain-drift-candidate",
+        "stream": stream,
+        "version": 1,
+        "parent_hash": None,
+        "hash": canonical_digest(body),
+        "body": body,
+        "schema_path": compiled["domain_contract"]["schema"]["path"],
+        "evidence_references": [{"source_id": "s1"}],
+        "unit_id": "U001",
+        "channel": "domain",
+    }
+    update = domain.D08_VALIDATE_DOMAIN({
+        "run_id": "run",
+        "episode_id": "episode",
+        "selected_unit_id": "U001",
+        "engine_root": state["engine_root"],
+        "effective_run": compiled,
+        "artifact_heads": {},
+        "artifact_versions": [candidate],
+        "source_admissions": [{"key": "s1", "fact_id": "f1", "unit_id": "U001"}],
+    }, _Context())
+
+    assert update["pending_failure"]["cause"] == "integrity"
+    assert "changed after D02" in update["pending_failure"]["message"]
+    assert "artifact_heads" not in update
 
 
 def test_a_deep_chain_does_not_exhaust_the_interpreter_stack(tmp_path: Path) -> None:

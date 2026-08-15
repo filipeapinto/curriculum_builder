@@ -1,0 +1,7 @@
+{"at":"2026-08-15T03:19:38.527803Z","event":"attempt_created","parent_attempt_id":null}
+{"argv":["python3","-m","pytest","-q","tests/runtime/test_plan26_cli.py","tests/runtime/test_run_curriculum.py"],"at":"2026-08-15T03:20:22.272900Z","event":"verification_command","exit_code":0}
+{"argv":["python3","-m","pytest","-q","tests/runtime/test_plan26_deterministic_nodes.py","-k","D03 or capability or D06B"],"at":"2026-08-15T03:20:22.991678Z","event":"verification_command","exit_code":0}
+{"argv":["python3","plans/27_langgraph_curriculum_factory_remediation/execution_package_v2/controller/scan_node.py","--node","N30_PREFLIGHT_EGRESS","--graph","plans/27_langgraph_curriculum_factory_remediation/execution_package_v2/implementation.graph.v8.yaml"],"at":"2026-08-15T03:20:23.164773Z","event":"verification_command","exit_code":0}
+{"argv":["python3","plans/27_langgraph_curriculum_factory_remediation/execution_package_v2/tools/validate_result_v2.py","--node","N30_PREFLIGHT_EGRESS"],"at":"2026-08-15T03:20:23.281809Z","event":"verification_command","exit_code":0}
+{"at":"2026-08-15T03:20:23.288789Z","event":"merge_journaled","receipt_sha256":"d7d21da3b0831b00c6d55293b38cb70187c1b66a5afe52ab503a340d9f16e8d1"}
+{"at":"2026-08-15T03:20:23.289871Z","event":"merge_completed","receipt_sha256":"d7d21da3b0831b00c6d55293b38cb70187c1b66a5afe52ab503a340d9f16e8d1"}

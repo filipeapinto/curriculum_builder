@@ -1,0 +1,134 @@
+trigger: N60 attempt 6 full runtime denominator found the Plan 26 N13 receipt stale after current transport.py changed.
+first_controller_attempt: focused verification ran inside an outer restricted sandbox; 175 passed and 5 host-sandbox/loopback tests failed with operation-not-permitted. The exact log was preserved under its SHA-bound name and was not admitted.
+second_controller_attempt: reran the same Plan 26 adopt-v2 --through N13_TRANSPORT_AUTH command with host security-test permissions. All 180 focused transport/egress tests passed, ReceiptStore archived the predecessor receipt automatically, and N13 became PASSED/current.
+targeted_invariant: test_passed_nodes_remain_admissible_after_harness_or_predecessor_change passed (1 passed in 0.13s).
+current_receipt_and_logs:
+81d5cbb3f7d006bd36efb2635ccdbe560dd869a08b144817fd49fcd08253d31a  plans/26_langgraph_curriculum_factory/results/v3/N13_TRANSPORT_AUTH.receipt.v1.json
+020c8d088182a6c86afd5d5f5453b9c09680bf9a211296229adaa7b08f017d6a  plans/26_langgraph_curriculum_factory/results/v3/logs/N13_TRANSPORT_AUTH/adopt-v2.test1.log
+b204c6864d74dd4a9ad69bff652213eeea588ed9e79307d84a753b3f6aed3b7a  plans/26_langgraph_curriculum_factory/results/v3/logs/N13_TRANSPORT_AUTH/adopt-v2-run27-n60-6-sandbox-b204c6864d74dd4a9ad69bff652213eeea588ed9e79307d84a753b3f6aed3b7a.test1.log
+
+current_plan26_status:
+{
+  "graph_digest": "18d619bb4eb509d1c6c590699ce2072660f36781c33cbc18a4ad1f9f8501cac7",
+  "graph_id": "plan26_langgraph_curriculum_factory_implementation",
+  "harness_digest": "a2e5cd37735b3e953f8388e90253daca8add352e8596899473473643f5ecad32",
+  "patches": {
+    "patch_dir": "plans/26_langgraph_curriculum_factory/patches",
+    "records": [
+      {
+        "action": "overlay",
+        "patch_id": "P-N50-001",
+        "sha256": "b763ca5149a698ddffb5b2b5940313d23c6f16bea26bafacbd7ad5666413687f",
+        "target_node": "N50_ADVERSARIAL_REGRESSION"
+      },
+      {
+        "action": "overlay",
+        "patch_id": "P-N50-002",
+        "sha256": "98803a0dc53ad2585ae5f0ddd768188a3d1f96cb7d56705499e95058c3bbfb06",
+        "target_node": "N50_ADVERSARIAL_REGRESSION"
+      },
+      {
+        "action": "overlay",
+        "patch_id": "P-N50-003",
+        "sha256": "e9d1e11b4938ec01a0ca0fe481ec8fcde4f1d580ca3ed0364f7701beac2990c9",
+        "target_node": "N50_ADVERSARIAL_REGRESSION"
+      },
+      {
+        "action": "overlay",
+        "patch_id": "P-N40-001",
+        "sha256": "cae2494fcd5e695778fcfcba774999187330bc8e873eb97e59104ff591ac002d",
+        "target_node": "N40_CLI_CUTOVER"
+      },
+      {
+        "action": "overlay",
+        "patch_id": "P-N31-001",
+        "sha256": "8659025ec5a452dc192a9f29a7229fa1c3d33126440761ef01e66cbfe4042dba",
+        "target_node": "N31_REPAIR_ACCEPTANCE"
+      },
+      {
+        "action": "overlay",
+        "patch_id": "P-N20-001",
+        "sha256": "eb84722a589b5c8b7d42cb94d80f6b5b2378c42bbf56d17ff611e79df57012fe",
+        "target_node": "N20_GRAPH_COMPILER"
+      },
+      {
+        "action": "overlay",
+        "patch_id": "P-N30-001",
+        "sha256": "cb5745d471a748ac2d76fec71202f9cc3dc77461fff1dabab0de968b2d772d78",
+        "target_node": "N30_UNIT_GRAPH"
+      },
+      {
+        "action": "overlay",
+        "patch_id": "P-N31-002",
+        "sha256": "2b523c69a87f1bf15c7047baa1cf70418c6c967c14231ed432bb7b084758bc4f",
+        "target_node": "N31_REPAIR_ACCEPTANCE"
+      },
+      {
+        "action": "overlay",
+        "patch_id": "P-N31-003",
+        "sha256": "cbd00ac6a6562090e4beb1e681ae26931e4a5f451aad1ce2849f868fd773570e",
+        "target_node": "N31_REPAIR_ACCEPTANCE"
+      },
+      {
+        "action": "overlay",
+        "patch_id": "P-N32-001",
+        "sha256": "3cb202e20eb05b254e21f3e78974a93a9f07e361ca4470d4e60bd25ac6871f4a",
+        "target_node": "N32_WORKBOOK_TERMINALS"
+      },
+      {
+        "action": "overlay",
+        "patch_id": "P-N32-002",
+        "sha256": "903b2ffca7c9bbb1d69dc7aa54bcb94778e4b7d9933eb1806c9d61f63c16a570",
+        "target_node": "N32_WORKBOOK_TERMINALS"
+      },
+      {
+        "action": "overlay",
+        "patch_id": "P-N20-002",
+        "sha256": "77283fa8be3fd1aab02fc8ab50fbc03cf1e1a7adb56a1d59bbc9917137e4d940",
+        "target_node": "N20_GRAPH_COMPILER"
+      },
+      {
+        "action": "overlay",
+        "patch_id": "P-N90-001",
+        "sha256": "97cccbf7b4b58133ff92c827ad7f081e73574afd8af8b6bb42943814a4dbcdb7",
+        "target_node": "N90_FINAL_AUDIT"
+      },
+      {
+        "action": "overlay",
+        "patch_id": "P-N90-002",
+        "sha256": "3e142c919444354853891353da18f72e9d8817f3d644fa88480344d05d119361",
+        "target_node": "N90_FINAL_AUDIT"
+      }
+    ]
+  },
+  "ready": [
+    "N21_PERSISTENCE_RESUME",
+    "N22_DETERMINISTIC_NODES",
+    "N23_MODEL_NODES"
+  ],
+  "selected": [
+    "N21_PERSISTENCE_RESUME",
+    "N22_DETERMINISTIC_NODES",
+    "N23_MODEL_NODES"
+  ],
+  "stale_receipts": [],
+  "statuses": {
+    "N00_BASELINE_FREEZE": "PASSED",
+    "N10_DEPENDENCY_API": "PASSED",
+    "N11_STATE_REDUCERS": "PASSED",
+    "N12_EVIDENCE_ARTIFACTS": "PASSED",
+    "N13_TRANSPORT_AUTH": "PASSED",
+    "N20_GRAPH_COMPILER": "PENDING",
+    "N21_PERSISTENCE_RESUME": "READY",
+    "N22_DETERMINISTIC_NODES": "READY",
+    "N23_MODEL_NODES": "READY",
+    "N30_UNIT_GRAPH": "PENDING",
+    "N31_REPAIR_ACCEPTANCE": "PENDING",
+    "N32_WORKBOOK_TERMINALS": "PENDING",
+    "N40_CLI_CUTOVER": "PENDING",
+    "N50_ADVERSARIAL_REGRESSION": "PENDING",
+    "N60_LIVE_PRODUCT_PROOF": "PENDING",
+    "N90_FINAL_AUDIT": "PENDING"
+  }
+}
+

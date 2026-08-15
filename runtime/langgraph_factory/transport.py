@@ -12,6 +12,7 @@ import json
 import os
 import platform
 import re
+import shlex
 import shutil
 import signal
 import sqlite3
@@ -647,7 +648,18 @@ def render_sandbox_profile(
     home: Path,
     readable: Sequence[Path] = (),
     allow_network: bool = True,
+    metadata_denied: Sequence[Path] = (),
+    model_cli_support: bool = True,
+    workspace_writable: bool = True,
+    allow_process_fork: bool = True,
 ) -> str:
+    """Render a deny-by-default macOS sandbox profile.
+
+    macOS process bootstrap requires broad metadata discovery. A deterministic
+    verifier therefore runs a staged frozen snapshot outside the engine and
+    denies all metadata under the engine repository. Subscription model CLIs
+    additionally receive their narrowly named authentication and scratch rules.
+    """
     writable = _subpath_rules([Path(workspace), Path(home)])
     readable_rule = _subpath_rules(list(readable)) if readable else ""
     network = (
@@ -659,18 +671,226 @@ def render_sandbox_profile(
         "(version 1)",
         "(deny default)",
         '(import "system.sb")',
-        "(allow process-exec* process-fork)",
+        "(allow process-exec*)",
         "(allow sysctl-read)",
-        "(allow file-read-metadata)",
         "(allow signal (target self))",
-        f"(allow file-read* file-write* {_cli_runtime_scratch_rule()})",
-        _keychain_access_rule(),
-        _codex_auth_file_rule(),
+        "(allow file-read-metadata)",
     ]
+    if allow_process_fork:
+        lines.append("(allow process-fork)")
+    if model_cli_support:
+        lines.extend([
+            f"(allow file-read* file-write* {_cli_runtime_scratch_rule()})",
+            _keychain_access_rule(),
+            _codex_auth_file_rule(),
+        ])
+    if metadata_denied:
+        lines.append(
+            f"(deny file-read-metadata (require-any {_subpath_rules(metadata_denied)}))"
+        )
     if readable_rule:
         lines.append(f"(allow file-read* {readable_rule})")
-    lines.append(f"(allow file-read* file-write* {writable})")
+    operation = "file-read* file-write*" if workspace_writable else "file-read*"
+    lines.append(f"(allow {operation} {writable})")
     return "\n".join(lines) + "\n" + network
+
+
+def domain_verifier_work_root(*, engine_root: Path, output_root: Path) -> Path:
+    """A stable verifier namespace outside both the engine and its output tree."""
+
+    engine = Path(engine_root).resolve()
+    output = Path(output_root).resolve()
+    namespace = sha256_bytes(str(output).encode("utf-8"))
+    root = (
+        Path(tempfile.gettempdir()).resolve()
+        / "curriculum_factory_domain_verifier"
+        / namespace
+    ).resolve()
+    if root == engine or engine in root.parents:
+        raise VerifierFault(
+            f"system temporary verifier root is inside the engine namespace: {root}")
+    if root == output or output in root.parents:
+        raise VerifierFault(
+            f"system temporary verifier root is inside the output namespace: {root}")
+    return root
+
+
+VERIFIER_RUNTIME_MARKER = "__RUN27_VERIFIER_RUNTIME_MANIFEST__:"
+
+
+VERIFIER_GUARD_SOURCE = r'''from __future__ import annotations
+import builtins
+import errno
+import hashlib
+import io
+import json
+import os
+import posix
+import runpy
+import sys
+
+if len(sys.argv) < 3:
+    raise SystemExit("verifier-guard: expected DENIED_ROOT ENTRY [ARGS...]")
+
+_DENIED_ROOT = os.path.normpath(os.path.abspath(sys.argv[1]))
+_ENTRY = os.path.normpath(os.path.abspath(sys.argv[2]))
+_VERIFIER_ARGS = list(sys.argv[3:])
+
+def _normalized(path):
+    if isinstance(path, int):
+        return None
+    try:
+        value = os.fsdecode(path)
+    except TypeError:
+        return None
+    if not os.path.isabs(value):
+        value = os.path.join(os.getcwd(), value)
+    return os.path.normpath(value)
+
+def _under_denied(path):
+    value = _normalized(path)
+    return value is not None and (
+        value == _DENIED_ROOT or value.startswith(_DENIED_ROOT + os.sep)
+    )
+
+def _missing(path):
+    raise FileNotFoundError(errno.ENOENT, os.strerror(errno.ENOENT), os.fspath(path))
+
+_real_open = builtins.open
+_real_io_open = io.open
+_real_os_open = os.open
+_real_stat = os.stat
+_real_lstat = os.lstat
+_real_listdir = os.listdir
+_real_scandir = os.scandir
+_real_readlink = os.readlink
+_real_access = os.access
+_RUNTIME_MARKER = "__RUN27_VERIFIER_RUNTIME_MANIFEST__:"
+
+def _runtime_manifest():
+    records = []
+    seen = set()
+    for name, module in sorted(sys.modules.items()):
+        raw_path = getattr(module, "__file__", None)
+        if not raw_path:
+            continue
+        path = os.path.realpath(os.fsdecode(raw_path))
+        identity = (name, path)
+        if identity in seen:
+            continue
+        seen.add(identity)
+        try:
+            with _real_open(path, "rb") as stream:
+                digest = hashlib.sha256(stream.read()).hexdigest()
+        except OSError as error:
+            records.append({"module": name, "path": path, "error": repr(error)})
+        else:
+            records.append({"module": name, "path": path, "sha256": digest})
+    return records
+
+def _blocked_process(*args, **kwargs):
+    raise PermissionError(errno.EPERM, "verifier child-process execution is forbidden")
+
+def guarded_open(path, *args, **kwargs):
+    if _under_denied(path):
+        _missing(path)
+    return _real_open(path, *args, **kwargs)
+
+def guarded_io_open(path, *args, **kwargs):
+    if _under_denied(path):
+        _missing(path)
+    return _real_io_open(path, *args, **kwargs)
+
+def guarded_os_open(path, *args, **kwargs):
+    if _under_denied(path):
+        _missing(path)
+    return _real_os_open(path, *args, **kwargs)
+
+def guarded_stat(path, *args, **kwargs):
+    if _under_denied(path):
+        _missing(path)
+    return _real_stat(path, *args, **kwargs)
+
+def guarded_lstat(path, *args, **kwargs):
+    if _under_denied(path):
+        _missing(path)
+    return _real_lstat(path, *args, **kwargs)
+
+def guarded_listdir(path="."):
+    if _under_denied(path):
+        _missing(path)
+    return _real_listdir(path)
+
+def guarded_scandir(path="."):
+    if _under_denied(path):
+        _missing(path)
+    return _real_scandir(path)
+
+def guarded_readlink(path, *args, **kwargs):
+    if _under_denied(path):
+        _missing(path)
+    return _real_readlink(path, *args, **kwargs)
+
+def _guard_one_path(real):
+    def guarded(path, *args, **kwargs):
+        if _under_denied(path):
+            _missing(path)
+        return real(path, *args, **kwargs)
+    return guarded
+
+def _guard_two_paths(real):
+    def guarded(source, destination, *args, **kwargs):
+        if _under_denied(source):
+            _missing(source)
+        if _under_denied(destination):
+            _missing(destination)
+        return real(source, destination, *args, **kwargs)
+    return guarded
+
+builtins.open = guarded_open
+io.open = guarded_io_open
+os.open = guarded_os_open
+os.stat = guarded_stat
+os.lstat = guarded_lstat
+os.listdir = guarded_listdir
+os.scandir = guarded_scandir
+os.readlink = guarded_readlink
+os.access = lambda path, *args, **kwargs: False if _under_denied(path) else _real_access(path, *args, **kwargs)
+posix.open = guarded_os_open
+posix.stat = guarded_stat
+posix.lstat = guarded_lstat
+posix.listdir = guarded_listdir
+posix.scandir = guarded_scandir
+posix.readlink = guarded_readlink
+for _module in (os, posix):
+    for _name in (
+        "chdir", "chmod", "lchmod", "chown", "lchown", "truncate", "unlink", "remove",
+        "rmdir", "mkdir", "statvfs", "pathconf", "chflags", "lchflags",
+        "getxattr", "listxattr", "removexattr", "setxattr", "chroot",
+        "utime", "mkfifo", "mknod",
+    ):
+        _real = getattr(_module, _name, None)
+        if _real is not None:
+            setattr(_module, _name, _guard_one_path(_real))
+    for _name in ("rename", "replace", "link", "symlink"):
+        _real = getattr(_module, _name, None)
+        if _real is not None:
+            setattr(_module, _name, _guard_two_paths(_real))
+for _module in (os, posix):
+    for _name in dir(_module):
+        if _name == "system" or _name == "popen" or _name.startswith("exec") or _name.startswith("spawn"):
+            setattr(_module, _name, _blocked_process)
+
+sys.argv = [_ENTRY, *_VERIFIER_ARGS]
+try:
+    runpy.run_path(_ENTRY, run_name="__main__")
+finally:
+    print(
+        _RUNTIME_MARKER
+        + json.dumps(_runtime_manifest(), sort_keys=True, separators=(",", ":")),
+        file=sys.stderr,
+    )
+'''
 
 
 def build_sandboxed_argv(
@@ -709,8 +929,21 @@ def prove_workspace_isolation(
         render_sandbox_profile(workspace=workspace, home=home, allow_network=False),
         encoding="utf-8")
 
-    inside = run(["/usr/bin/sandbox-exec", "-f", str(profile_path), "/bin/cat", str(probe_file)],
-                 capture_output=True, text=True, timeout=60)
+    # sandbox-exec occasionally returns a transient bootstrap failure on a busy
+    # host before evaluating the profile. Repeat only the positive staged-file
+    # probe; forbidden-path probes are never retried into success and therefore
+    # cannot be weakened by this availability tolerance.
+    inside_attempts: list[Any] = []
+    for _attempt in range(3):
+        inside = run(
+            ["/usr/bin/sandbox-exec", "-f", str(profile_path), "/bin/cat", str(probe_file)],
+            capture_output=True,
+            text=True,
+            timeout=60,
+        )
+        inside_attempts.append(inside)
+        if inside.returncode == 0:
+            break
     leaked: list[str] = []
     for target in forbidden_paths:
         attempt = run(
@@ -726,6 +959,7 @@ def prove_workspace_isolation(
         "enforced": enforced,
         "evidence": (
             f"staged read rc={inside.returncode}; "
+            f"staged attempts={len(inside_attempts)}; "
             f"{len(forbidden_paths)} forbidden path(s) probed; {len(leaked)} readable"),
         "readable_forbidden_paths": leaked,
     }
@@ -1381,7 +1615,7 @@ def _normalize_staged_text(text: str) -> str:
     return "\n".join(compact).strip()
 
 
-def _extract_verified_staged_text(path: Path) -> tuple[str, str]:
+def extract_verified_staged_text(path: Path) -> tuple[str, str]:
     """Project already hash-verified staged bytes into bounded, model-readable text."""
 
     raw = path.read_bytes()
@@ -1432,7 +1666,7 @@ def build_verified_staged_inputs(
         if workspace.staged_sha256.get(item.name) != item.sha256:
             raise WorkspaceViolation(
                 f"staged input {item.name!r} lacks the verified workspace digest")
-        text, text_format = _extract_verified_staged_text(path)
+        text, text_format = extract_verified_staged_text(path)
         truncated = len(text) > MAX_VERIFIED_STAGED_TEXT_CHARS
         bounded = text[:MAX_VERIFIED_STAGED_TEXT_CHARS]
         projected.append({
@@ -1557,6 +1791,10 @@ _LINE_BOX_RE = re.compile(
 
 class RenderFault(TransportError):
     """A renderer, rasterizer, or artifact-store fault. Never a product finding."""
+
+
+class VerifierFault(TransportError):
+    """The frozen curriculum verifier or its fixture proof could not run safely."""
 
 
 class UnavailableExternalFact(TransportError):
@@ -1807,7 +2045,9 @@ class CliTransport:
         env_passthrough: Sequence[str] = (),
         keep_workspaces: bool = False,
         executables: Mapping[str, ExecutableIdentity] | None = None,
+        engine_root: Path | str = REPO_ROOT,
     ) -> None:
+        self.engine_root = Path(engine_root).resolve()
         self.output_root = Path(output_root).resolve()
         self.run_id = run_id
         self.curriculum_digest = curriculum_digest
@@ -1859,6 +2099,369 @@ class CliTransport:
                 "sha256": identity.sha256, "version": identity.version}
 
     # ------------------------------------ product capability surface (D11/D13/D14)
+
+    def verify_domain(
+        self, *, body: Mapping[str, Any], contract: Mapping[str, Any]
+    ) -> dict[str, Any]:
+        """Execute one frozen curriculum verifier and its complete fixture suite.
+
+        The model never supplies this result.  Every declared executable/fixture
+        is re-hashed against D02's frozen reference, the invocation is parsed as
+        argv (never a shell string), and the child runs under a no-network host
+        sandbox with read access limited to the exact frozen verifier files and
+        write access limited to one content-addressed verifier work directory.
+        """
+
+        verifier = contract.get("verifier")
+        if not isinstance(verifier, Mapping):
+            raise VerifierFault("the effective run carries no verifier declaration")
+
+        def resolve_reference(reference: Any, label: str) -> Path:
+            if not isinstance(reference, Mapping):
+                raise VerifierFault(f"{label} is not a frozen file reference")
+            relative = reference.get("path")
+            expected = reference.get("sha256")
+            if not isinstance(relative, str) or not relative or not isinstance(expected, str):
+                raise VerifierFault(f"{label} lacks a path and SHA-256")
+            path = (self.engine_root / relative).resolve()
+            if path == self.engine_root or self.engine_root not in path.parents:
+                raise VerifierFault(f"{label} escapes the engine root: {path}")
+            if not path.is_file():
+                raise VerifierFault(f"{label} is missing: {path}")
+            actual = sha256_file(path)
+            if actual != expected:
+                raise VerifierFault(
+                    f"{label} changed after D02 froze it: expected {expected}, got {actual}")
+            return path
+
+        schema_reference = contract.get("schema")
+        schema_path: Path | None = None
+        if schema_reference is not None:
+            schema_path = resolve_reference(schema_reference, "domain schema")
+
+        entry = resolve_reference(verifier.get("entry_point"), "domain verifier entry point")
+        dependency_declarations = verifier.get("dependencies")
+        if not isinstance(dependency_declarations, Sequence) or isinstance(
+            dependency_declarations, (str, bytes)
+        ):
+            raise VerifierFault("verifier dependencies is not a sequence")
+        if len(dependency_declarations) > 64:
+            raise VerifierFault("verifier dependencies exceeds the frozen bound of 64")
+        dependency_paths = tuple(
+            resolve_reference(reference, f"verifier dependency {index}")
+            for index, reference in enumerate(dependency_declarations, start=1)
+        )
+        if len(set(dependency_paths)) != len(dependency_paths):
+            raise VerifierFault("verifier dependencies contain duplicate paths")
+        invocation = verifier.get("invocation")
+        if not isinstance(invocation, str):
+            raise VerifierFault("domain verifier invocation is not a string")
+        try:
+            template = shlex.split(invocation)
+        except ValueError as error:
+            raise VerifierFault(f"domain verifier invocation is not valid argv: {error}") from error
+        if not template or template.count("<domain>") != 1:
+            raise VerifierFault("domain verifier invocation must contain exactly one <domain> token")
+
+        entry_relative = str(verifier.get("entry_point", {}).get("path", ""))
+        entry_positions = [
+            index for index, token in enumerate(template)
+            if token == entry_relative or (self.engine_root / token).resolve() == entry
+        ]
+        if len(entry_positions) != 1:
+            raise VerifierFault(
+                "domain verifier invocation must name its frozen entry point exactly once")
+
+        executable_token = template[0]
+        if executable_token in {"python", "python3"}:
+            executable = Path(sys.executable).resolve()
+        else:
+            raise VerifierFault(
+                "domain verifier invocation must use the isolated Python runner")
+
+        reject_declarations = verifier.get("must_reject") or []
+        accept_declarations = verifier.get("must_accept") or []
+        if not isinstance(reject_declarations, Sequence) or isinstance(
+            reject_declarations, (str, bytes)
+        ):
+            raise VerifierFault("verifier must_reject is not a sequence")
+        if not isinstance(accept_declarations, Sequence) or isinstance(
+            accept_declarations, (str, bytes)
+        ):
+            raise VerifierFault("verifier must_accept is not a sequence")
+        if not reject_declarations or not accept_declarations:
+            raise VerifierFault("verifier fixture suite requires reject and accept members")
+        if len(reject_declarations) + len(accept_declarations) > 64:
+            raise VerifierFault("verifier fixture suite exceeds the frozen bound of 64")
+        prepared_rejects: list[tuple[Mapping[str, Any], str, Path]] = []
+        for index, declaration in enumerate(reject_declarations, start=1):
+            if not isinstance(declaration, Mapping):
+                raise VerifierFault(f"reject fixture {index} is not an object")
+            fixture_ref = declaration.get("fixture")
+            expected_code = declaration.get("expected_code")
+            if not isinstance(expected_code, str) or not expected_code:
+                raise VerifierFault(f"reject fixture {index} declares no expected code")
+            prepared_rejects.append((
+                fixture_ref,
+                expected_code,
+                resolve_reference(fixture_ref, f"reject fixture {index}"),
+            ))
+        prepared_accepts = [
+            (fixture_ref, resolve_reference(fixture_ref, f"accept fixture {index}"))
+            for index, fixture_ref in enumerate(accept_declarations, start=1)
+        ]
+
+        body_bytes = canonical_json(dict(body)).encode("utf-8")
+        body_sha256 = sha256_bytes(body_bytes)
+        contract_without_digest = {key: value for key, value in contract.items() if key != "digest"}
+        contract_sha256 = canonical_digest(contract_without_digest)
+        declared_contract_sha256 = contract.get("digest")
+        if declared_contract_sha256 is not None and declared_contract_sha256 != contract_sha256:
+            raise VerifierFault(
+                "domain contract digest does not match its frozen verifier inputs")
+        work = (
+            domain_verifier_work_root(
+                engine_root=self.engine_root,
+                output_root=self.output_root,
+            )
+            / contract_sha256
+            / body_sha256
+        )
+        home = work / "home"
+        frozen_root = work / "frozen"
+        work.mkdir(parents=True, exist_ok=True)
+        home.mkdir(parents=True, exist_ok=True)
+        frozen_root.mkdir(parents=True, exist_ok=True)
+        candidate_path = work / "candidate.json"
+        if candidate_path.is_file():
+            if candidate_path.read_bytes() != body_bytes:
+                raise VerifierFault("content-addressed verifier candidate bytes conflict")
+        else:
+            candidate_path.write_bytes(body_bytes)
+
+        def stage_reference(
+            reference: Mapping[str, Any], source: Path, label: str
+        ) -> Path:
+            relative = reference.get("path")
+            expected = reference.get("sha256")
+            destination = (frozen_root / str(relative)).resolve()
+            if destination == frozen_root or frozen_root not in destination.parents:
+                raise VerifierFault(f"{label} staging path escapes the frozen snapshot")
+            try:
+                frozen_bytes = source.read_bytes()
+            except OSError as error:
+                raise VerifierFault(f"{label} could not be staged: {error}") from error
+            actual = sha256_bytes(frozen_bytes)
+            if actual != expected:
+                raise VerifierFault(
+                    f"{label} changed while its frozen snapshot was staged: "
+                    f"expected {expected}, got {actual}")
+            destination.parent.mkdir(parents=True, exist_ok=True)
+            if destination.is_file():
+                if destination.read_bytes() != frozen_bytes:
+                    raise VerifierFault(f"{label} staged bytes conflict with an existing snapshot")
+            else:
+                destination.write_bytes(frozen_bytes)
+            return destination
+
+        staged_entry = stage_reference(
+            verifier["entry_point"], entry, "domain verifier entry point")
+        staged_schema = (
+            stage_reference(schema_reference, schema_path, "domain schema")
+            if schema_path is not None and isinstance(schema_reference, Mapping)
+            else None
+        )
+        staged_dependencies = tuple(
+            stage_reference(reference, source, f"verifier dependency {index}")
+            for index, (reference, source) in enumerate(
+                zip(dependency_declarations, dependency_paths, strict=True), start=1)
+        )
+        staged_rejects = [
+            (
+                fixture_ref,
+                expected_code,
+                stage_reference(fixture_ref, source, f"reject fixture {index}"),
+            )
+            for index, (fixture_ref, expected_code, source) in enumerate(
+                prepared_rejects, start=1)
+        ]
+        staged_accepts = [
+            (fixture_ref, stage_reference(fixture_ref, source, f"accept fixture {index}"))
+            for index, (fixture_ref, source) in enumerate(prepared_accepts, start=1)
+        ]
+        guard_path = work / "verifier_guard.py"
+        guard_bytes = VERIFIER_GUARD_SOURCE.encode("utf-8")
+        if guard_path.is_file():
+            if guard_path.read_bytes() != guard_bytes:
+                raise VerifierFault("verifier guard bytes conflict with an existing snapshot")
+        else:
+            guard_path.write_bytes(guard_bytes)
+
+        profile = home / "verifier.sb"
+        profile.write_text(
+            render_sandbox_profile(
+                workspace=work,
+                home=home,
+                readable=executable_read_roots(str(executable)),
+                allow_network=False,
+                metadata_denied=(self.engine_root,),
+                model_cli_support=False,
+                workspace_writable=False,
+                allow_process_fork=False,
+            ),
+            encoding="utf-8",
+        )
+        environment = build_worker_environment(home=home)
+        environment["PYTHONDONTWRITEBYTECODE"] = "1"
+
+        def run_one(domain_path: Path) -> dict[str, Any]:
+            argv = list(template)
+            verifier_args = argv[1:]
+            verifier_entry_index = entry_positions[0] - 1
+            verifier_args.pop(verifier_entry_index)
+            verifier_args[verifier_args.index("<domain>")] = str(domain_path)
+            argv = [
+                str(executable),
+                "-I",
+                "-S",
+                str(guard_path),
+                str(self.engine_root),
+                str(staged_entry),
+                *verifier_args,
+            ]
+            expected_domain_sha256 = sha256_file(domain_path)
+            completed = subprocess.run(
+                build_sandboxed_argv(argv, profile_path=profile),
+                cwd=str(work),
+                env=environment,
+                capture_output=True,
+                text=True,
+                timeout=120,
+            )
+            if not domain_path.is_file() or sha256_file(domain_path) != expected_domain_sha256:
+                raise VerifierFault(
+                    f"verifier changed the exact input bytes at {domain_path}")
+            raw_output = (completed.stdout or "") + (completed.stderr or "")
+            marker_lines = [
+                line[len(VERIFIER_RUNTIME_MARKER):]
+                for line in raw_output.splitlines()
+                if line.startswith(VERIFIER_RUNTIME_MARKER)
+            ]
+            if len(marker_lines) != 1:
+                raise VerifierFault(
+                    "verifier emitted no unique authenticated runtime-module manifest: "
+                    f"{raw_output[:1_000]}")
+            try:
+                runtime_modules = json.loads(marker_lines[0])
+            except json.JSONDecodeError as error:
+                raise VerifierFault(
+                    f"verifier runtime-module manifest is not valid JSON: {error}") from error
+            if not isinstance(runtime_modules, list):
+                raise VerifierFault("verifier runtime-module manifest is not a list")
+            normalized_modules: list[dict[str, str]] = []
+            for index, record in enumerate(runtime_modules, start=1):
+                if not isinstance(record, Mapping):
+                    raise VerifierFault(
+                        f"verifier runtime-module record {index} is not an object")
+                module_name = record.get("module")
+                raw_path = record.get("path")
+                observed_sha256 = record.get("sha256")
+                if not all(isinstance(value, str) and value for value in (
+                    module_name, raw_path, observed_sha256
+                )):
+                    raise VerifierFault(
+                        f"verifier runtime-module record {index} is incomplete")
+                module_path = Path(raw_path).resolve()
+                if "site-packages" in module_path.parts or "dist-packages" in module_path.parts:
+                    raise VerifierFault(
+                        f"verifier loaded an unreceipted package module: {module_path}")
+                if module_path == self.engine_root or self.engine_root in module_path.parents:
+                    raise VerifierFault(
+                        f"verifier loaded unstaged engine code: {module_path}")
+                if not module_path.is_file():
+                    raise VerifierFault(
+                        f"verifier runtime module disappeared after execution: {module_path}")
+                actual_sha256 = sha256_file(module_path)
+                if actual_sha256 != observed_sha256:
+                    raise VerifierFault(
+                        f"verifier runtime module changed during execution: {module_path}")
+                normalized_modules.append({
+                    "module": module_name,
+                    "path": str(module_path),
+                    "sha256": actual_sha256,
+                })
+            normalized_modules.sort(key=lambda record: (record["module"], record["path"]))
+            visible_lines = [
+                line for line in raw_output.splitlines(keepends=True)
+                if not line.startswith(VERIFIER_RUNTIME_MARKER)
+            ]
+            combined = "".join(visible_lines)[:20_000]
+            codes = sorted(set(re.findall(r"(?m)^([a-z][a-z0-9-]{2,80}):", combined)))
+            return {
+                "returncode": completed.returncode,
+                "codes": codes,
+                "output_sha256": sha256_bytes(combined.encode("utf-8")),
+                "output_excerpt": combined[:2_000],
+                "runtime_modules": normalized_modules,
+                "runtime_digest": canonical_digest(normalized_modules),
+                "schema_valid": True,
+            }
+
+        fixtures: list[dict[str, Any]] = []
+        for fixture_ref, expected_code, fixture in staged_rejects:
+            result = run_one(fixture)
+            if result["returncode"] == 0 or expected_code not in result["codes"]:
+                raise VerifierFault(
+                    f"reject fixture {fixture_ref.get('path')} behaved incorrectly: "
+                    f"expected nonzero/{expected_code}, observed "
+                    f"{result['returncode']}/{result['codes']}")
+            fixtures.append({
+                "path": fixture_ref.get("path"),
+                "sha256": fixture_ref.get("sha256"),
+                "expected": "reject",
+                "expected_code": expected_code,
+                **result,
+            })
+
+        for fixture_ref, fixture in staged_accepts:
+            result = run_one(fixture)
+            if result["returncode"] != 0:
+                raise VerifierFault(
+                    f"accept fixture {fixture_ref.get('path')} was rejected: "
+                    f"{result['codes']}")
+            fixtures.append({
+                "path": fixture_ref.get("path"),
+                "sha256": fixture_ref.get("sha256"),
+                "expected": "accept",
+                **result,
+            })
+
+        candidate = run_one(candidate_path)
+        return {
+            "result": "PASS" if candidate["returncode"] == 0 else "FAIL",
+            "candidate_sha256": body_sha256,
+            "contract_sha256": contract_sha256,
+            "entry_point_sha256": verifier["entry_point"]["sha256"],
+            "schema_sha256": (
+                schema_reference.get("sha256")
+                if staged_schema is not None and isinstance(schema_reference, Mapping)
+                else None
+            ),
+            "guard_sha256": sha256_bytes(guard_bytes),
+            "interpreter": {
+                "path": str(executable),
+                "sha256": sha256_file(executable),
+                "version": platform.python_version(),
+                "flags": ["-I", "-S"],
+            },
+            "dependency_sha256": [
+                reference["sha256"] for reference in dependency_declarations
+            ],
+            "invocation_sha256": sha256_bytes(invocation.encode("utf-8")),
+            "fixtures_result": "PASS",
+            "fixtures": fixtures,
+            "candidate": candidate,
+        }
 
     def read_artifact_body(self, unit_id: str, channel: str, content_hash: str) -> dict[str, Any]:
         """The admitted artifact those bytes hash to, from the content-addressed store."""

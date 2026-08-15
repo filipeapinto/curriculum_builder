@@ -1,0 +1,51 @@
+{
+  "schema_version": 1,
+  "run_id": "run27-execution-package-v2-graph-v9",
+  "node_id": "N30_PREFLIGHT_EGRESS",
+  "attempt_id": "N30_PREFLIGHT_EGRESS-2026-08-15T102305809197Z-9b0aa969",
+  "outcome": "PASSED",
+  "source_spec_sha256": "e14df5a36ce12d700fe9fc4aa4aea466771bc89f31bc6e9d49f812c147b1bb3c",
+  "prompt_sha256": "d74a45bc72efa3e898347946f36bf7db0e12f4622af54a639091ba6fe56b551f",
+  "predecessor_receipts": {
+    "N20_PROVIDER_TRANSPORT": "fd0928c444ae4667cfafb6e960c1623df11b5725d30b1ae79c25ec5a9320f300"
+  },
+  "changed_files": [
+    {"path": "plans/27_langgraph_curriculum_factory_remediation/execution_package_v2/results/v9/evidence/N30_PREFLIGHT_EGRESS/01_pytest_cli.log", "change": "created", "sha256": "c56867b017f0a02048857efa5a54621705ac892535df3ed590ac9fa87ac91b6d"},
+    {"path": "plans/27_langgraph_curriculum_factory_remediation/execution_package_v2/results/v9/evidence/N30_PREFLIGHT_EGRESS/02_pytest_d03_d06b.log", "change": "created", "sha256": "0dcbb351f88ad4dd0545323c853642dc9f6cafe3400a0ff1eb7381149351ed9a"},
+    {"path": "plans/27_langgraph_curriculum_factory_remediation/execution_package_v2/results/v9/evidence/N30_PREFLIGHT_EGRESS/03_scan_node_n30.log", "change": "created", "sha256": "f7543bad51c3ad488f6c4fea095900e7306dd0e8134925da8cca0dd5d4281008"},
+    {"path": "plans/27_langgraph_curriculum_factory_remediation/execution_package_v2/results/v9/evidence/N30_PREFLIGHT_EGRESS/04_preflight_contract.log", "change": "created", "sha256": "5d26bed8d3af32a22e3e45a4cdbc68139f68c548a48ac52429348ac294b61d77"}
+  ],
+  "commands": [
+    {
+      "argv": ["python3", "-m", "pytest", "-q", "tests/runtime/test_plan26_cli.py", "tests/runtime/test_run_curriculum.py"],
+      "exit_code": 0,
+      "log": "plans/27_langgraph_curriculum_factory_remediation/execution_package_v2/results/v9/evidence/N30_PREFLIGHT_EGRESS/01_pytest_cli.log",
+      "log_sha256": "c56867b017f0a02048857efa5a54621705ac892535df3ed590ac9fa87ac91b6d"
+    },
+    {
+      "argv": ["python3", "-m", "pytest", "-q", "tests/runtime/test_plan26_deterministic_nodes.py", "-k", "D03 or capability or D06B"],
+      "exit_code": 0,
+      "log": "plans/27_langgraph_curriculum_factory_remediation/execution_package_v2/results/v9/evidence/N30_PREFLIGHT_EGRESS/02_pytest_d03_d06b.log",
+      "log_sha256": "0dcbb351f88ad4dd0545323c853642dc9f6cafe3400a0ff1eb7381149351ed9a"
+    },
+    {
+      "argv": ["python3", "plans/27_langgraph_curriculum_factory_remediation/execution_package_v2/controller/scan_node.py", "--node", "N30_PREFLIGHT_EGRESS", "--graph", "plans/27_langgraph_curriculum_factory_remediation/execution_package_v2/implementation.graph.v9.yaml"],
+      "exit_code": 0,
+      "log": "plans/27_langgraph_curriculum_factory_remediation/execution_package_v2/results/v9/evidence/N30_PREFLIGHT_EGRESS/03_scan_node_n30.log",
+      "log_sha256": "f7543bad51c3ad488f6c4fea095900e7306dd0e8134925da8cca0dd5d4281008"
+    }
+  ],
+  "evidence": [
+    "plans/27_langgraph_curriculum_factory_remediation/execution_package_v2/results/v9/evidence/N30_PREFLIGHT_EGRESS/01_pytest_cli.log",
+    "plans/27_langgraph_curriculum_factory_remediation/execution_package_v2/results/v9/evidence/N30_PREFLIGHT_EGRESS/02_pytest_d03_d06b.log",
+    "plans/27_langgraph_curriculum_factory_remediation/execution_package_v2/results/v9/evidence/N30_PREFLIGHT_EGRESS/03_scan_node_n30.log",
+    "plans/27_langgraph_curriculum_factory_remediation/execution_package_v2/results/v9/evidence/N30_PREFLIGHT_EGRESS/04_preflight_contract.log"
+  ],
+  "findings": [
+    {"id": "N30V9-F01", "severity": "critical", "summary": "D03 proves all five capability classes from observed executable, subscription, content-free probe, credential/data-boundary, and initialization-event tool/MCP evidence before readiness can be true.", "disposition": "resolved"},
+    {"id": "N30V9-F02", "severity": "critical", "summary": "D02 and D07 freeze and stage the complete digest-bound executable curriculum contract before authoring; D06B preserves the exact-host, exact-byte, typed-failure retrieval boundary.", "disposition": "resolved"},
+    {"id": "N30V9-F03", "severity": "major", "summary": "Production CLI/preflight tests passed 62 tests plus 27 subtests, the exact D03/D06B slice passed 20 tests, and the six-file scoped scan found zero violations.", "disposition": "resolved"},
+    {"id": "N30V9-F04", "severity": "observation", "summary": "Fresh V9 re-verification used unchanged N30 production bytes and created only node-specific evidence plus this result.", "disposition": "resolved"}
+  ],
+  "invalidated_descendants": []
+}

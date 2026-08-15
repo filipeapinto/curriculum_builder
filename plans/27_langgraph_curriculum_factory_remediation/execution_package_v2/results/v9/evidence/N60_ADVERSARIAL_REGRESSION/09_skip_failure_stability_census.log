@@ -1,0 +1,17 @@
+N60 V9 skipped/failed/xfail and stability census
+
+Confirmed complete runtime passes:
+- captured repeat A: 1370 passed, 2 skipped, 419 subtests, failures=0, errors=0
+- captured repeat B: 1370 passed, 2 skipped, 419 subtests, failures=0, errors=0
+- exact-argv capture: 1370 passed, 2 skipped, 419 subtests, exit 0
+
+Intentional pre-existing unrelated skips (identical census):
+1. tests.runtime.test_gemini.GeminiSettingsTests::test_installed_loader_resolves_hashed_system_override — installed Gemini resolver unavailable. This belongs to the unrelated retained Plan 11/19/20/21 Gemini pipeline and is outside the migration-owned Run 27 provider test list.
+2. tests.runtime.test_plan26_lock_drift.TestDriftDetection::test_regeneration_is_byte_identical_to_the_committed_lock — pinned pip==25.3 and pip-tools==7.6.0 generator absent; CI installs both.
+
+Xfail census: zero markers permitted by the focused Run 27 adversarial test across both full test trees.
+Failure/error census: zero in every counted successful denominator.
+Code/test aggregate drift: none; before and after SHA-256 values are identical.
+Evidence disposition: temporary JUnit files are run-scoped and legitimately differ by timestamp/duration; stable product/evidence bytes are covered by N50 deterministic contracts and the unchanged N60 source/test aggregate.
+
+Adversarial coverage includes unauthorized provider/route and API-key activation, hidden fallback, same-family final judge, false-ready preflight, staged/schema escape, identity overclaim, topology/denominator omissions, stale descendant receipt reuse, Markdown spoofing, interrupted merge, nondeterministic evidence, false result/completion, and resume drift.

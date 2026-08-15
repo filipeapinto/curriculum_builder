@@ -9,10 +9,12 @@ stand-in, and no test in this file writes to `nodes/terminal.py`.
 
 from __future__ import annotations
 
+import hashlib
 import json
 import tempfile
 import unittest
 from pathlib import Path
+from types import SimpleNamespace
 from typing import Any
 
 try:  # pragma: no cover - environment probe, not behavior
@@ -30,6 +32,8 @@ from runtime.langgraph_factory import acceptance, repair
 from runtime.langgraph_factory import graph as G
 from runtime.langgraph_factory import unit_graph as U
 from runtime.langgraph_factory.nodes import terminal
+from runtime.langgraph_factory.nodes import domain as domain_nodes
+from runtime.langgraph_factory.nodes import content as content_nodes
 from runtime.langgraph_factory.nodes.domain import DOMAIN_CHECK_IDS
 from runtime.langgraph_factory.nodes.content import CONTENT_CHECK_IDS
 from runtime.langgraph_factory.nodes import SystemFailure, canonical_digest, stream_id
@@ -265,6 +269,237 @@ def test_a_correctly_scoped_model_repair_admits() -> None:
     update = repair.D20_ADMIT_UNIT_REPAIR(state, None)
     assert update["pending_guard"]["value"] == "repair_admitted"
     assert update["artifact_heads"][domain_stream]["version"] == 2
+
+
+def test_an_invalid_first_domain_version_repairs_into_a_revalidatable_genesis(
+    tmp_path: Path,
+) -> None:
+    """A failed v1 is immutable evidence, never a head or physical version 1.
+
+    M06 repairs the exact failed bytes; D20 admits the child as genesis while
+    retaining separate repair lineage and deterministic schema/source metadata.
+    D08 can then revalidate that admitted child without reminting the old M02
+    candidate or trusting a model-authored verifier verdict.
+    """
+
+    schema = {
+        "type": "object",
+        "additionalProperties": False,
+        "required": ["unit_id", "facts"],
+        "properties": {
+            "unit_id": {"const": UNIT},
+            "facts": {
+                "type": "array",
+                "minItems": 1,
+                "items": {
+                    "type": "object",
+                    "additionalProperties": False,
+                    "required": ["fact_id", "statement"],
+                    "properties": {
+                        "fact_id": {"type": "string"},
+                        "statement": {"type": "string", "minLength": 3},
+                    },
+                },
+            },
+        },
+    }
+    schema_path = tmp_path / "domain.schema.json"
+    schema_path.write_text(json.dumps(schema), encoding="utf-8")
+    for relative in domain_nodes.CURRICULUM_CONTRACTS:
+        target = tmp_path / relative
+        target.parent.mkdir(parents=True, exist_ok=True)
+        target.write_bytes((REPO_ROOT / relative).read_bytes())
+
+    stream = stream_id(UNIT, "domain")
+    invalid_body = {"unit_id": UNIT, "facts": [{"fact_id": "f1", "statement": ""}]}
+    invalid_hash = canonical_digest(invalid_body)
+    invalid_version = {
+        "key": "invalid-v1",
+        "stream": stream,
+        "version": 1,
+        "parent_hash": None,
+        "hash": invalid_hash,
+        "body": invalid_body,
+        "schema_path": schema_path.name,
+        "evidence_references": [{"source_id": "s1", "source_location": "p.1"}],
+        "unit_id": UNIT,
+        "channel": "domain",
+    }
+    state = {
+        "run_id": RUN,
+        "episode_id": EPISODE,
+        "selected_unit_id": UNIT,
+        "engine_root": str(tmp_path),
+        "effective_run": {
+            "unit_records": [{"id": UNIT, "title": "test"}],
+            "domain_contract": {"schema": {
+                "path": schema_path.name,
+                "sha256": hashlib.sha256(schema_path.read_bytes()).hexdigest(),
+            }},
+        },
+        "artifact_heads": {},
+        "artifact_versions": [invalid_version],
+        "source_admissions": [{"key": "s1", "fact_id": "f1", "unit_id": UNIT}],
+        "repair_requests": [],
+        "attempt_counters": {},
+        "pending_guard": {
+            "node": "D08_VALIDATE_DOMAIN",
+            "value": "domain_repairable",
+            "detail": {
+                "unit_id": UNIT,
+                "findings": [{
+                    "owner": "curriculum domain",
+                    "check_id": "domain_schema_valid",
+                    "pointer": "/facts/0/statement",
+                    "message": "must be non-empty",
+                    "parent_hash": invalid_hash,
+                }],
+            },
+        },
+    }
+    state = _apply(state, repair.D17_CLASSIFY_UNIT_FINDINGS(state, None))
+    state = _apply(state, repair.D18_PLAN_TARGETED_UNIT_REPAIR(state, None))
+    routed = repair.D19_ROUTE_UNIT_REPAIR(state, None)
+    assert routed["pending_guard"]["value"] == "model_repair"
+    packet = routed["pending_packet"]["packets"][0]
+    assert packet["parent"]["parent_sha256"] == invalid_hash
+    assert json.loads(packet["parent"]["artifact_body"]) == invalid_body
+
+    request = state["repair_requests"][-1]
+    repaired_body = {
+        "unit_id": UNIT,
+        "facts": [{"fact_id": "f1", "statement": "corrected"}],
+    }
+    model_repair = {
+        "key": "candidate:m06-preadmission",
+        "record_kind": "model_candidate",
+        "pre_admission": True,
+        "job_id": "M06_REPAIR_NAMED_UNIT_ARTIFACT",
+        "channel": "domain",
+        "unit_id": UNIT,
+        "parent_sha256": invalid_hash,
+        "payload": {
+            "candidate_child": {
+                "artifact_name": f"domain:{UNIT}",
+                "artifact_body": json.dumps(repaired_body, sort_keys=True),
+                "addressed_finding_ids": request["finding_ids"],
+            },
+            "changed_path_manifest": [{
+                "json_pointer": "/facts/0/statement",
+                "change_kind": "replace",
+                "finding_id": request["finding_ids"][0],
+            }],
+        },
+    }
+    state = _apply(state, routed)
+    state["artifact_versions"] = state["artifact_versions"] + [model_repair]
+    admitted = repair.D20_ADMIT_UNIT_REPAIR(state, None)
+    child = admitted["artifact_versions"][0]
+    assert child["version"] == 1
+    assert child["parent_hash"] is None
+    assert child["repair_parent_hash"] == invalid_hash
+    assert child["schema_path"] == schema_path.name
+    assert child["evidence_references"] == invalid_version["evidence_references"]
+
+    class PassingVerifier:
+        def verify_domain(self, *, body: Any, contract: Any) -> dict[str, Any]:
+            return {
+                "result": "PASS",
+                "candidate_sha256": canonical_digest(body),
+                "fixtures_result": "PASS",
+                "fixtures": [{"expected": "accept", "returncode": 0}],
+                "candidate": {"returncode": 0, "codes": []},
+            }
+
+    state = _apply(state, admitted)
+    revalidated = domain_nodes.D08_VALIDATE_DOMAIN(
+        state,
+        SimpleNamespace(transport_registry=PassingVerifier()),
+    )
+    assert revalidated["pending_guard"]["value"] == "domain_admitted"
+    assert revalidated["artifact_heads"][stream]["hash"] == child["hash"]
+
+
+def test_content_repair_inherits_lineage_and_revalidates_the_exact_head() -> None:
+    """D20 retains D09 authority metadata and D09 accepts current-head replay."""
+
+    state = _passing_state()
+    domain_stream = stream_id(UNIT, "domain")
+    content_stream = stream_id(UNIT, "content")
+    domain_hash = state["artifact_heads"][domain_stream]["hash"]
+    parent_body = {
+        "unit_id": UNIT,
+        "sections": [{"section_id": "s1", "heading": "h", "body": "bad"}],
+        "evidence_references": [{
+            "section_id": "s1", "source_id": "s1", "source_location": "p.1"
+        }],
+        "visuals": [],
+    }
+    parent_hash = canonical_digest(parent_body)
+    state["engine_root"] = str(REPO_ROOT)
+    state["effective_run"] = {"unit_records": [{"id": UNIT, "title": "test"}]}
+    state["artifact_heads"][content_stream] = _head(1, None, parent_hash)
+    state["artifact_versions"] = [
+        record for record in state["artifact_versions"] if record.get("stream") != content_stream
+    ] + [{
+        "key": "content-parent",
+        "stream": content_stream,
+        "version": 1,
+        "parent_hash": None,
+        "hash": parent_hash,
+        "body": parent_body,
+        "schema_path": "schemas/unit_content.schema.v1.json",
+        "domain_hash": domain_hash,
+        "unit_id": UNIT,
+        "channel": "content",
+    }]
+    state["pending_guard"] = {
+        "node": "D09_VALIDATE_CONTENT",
+        "value": "content_repairable",
+        "detail": {"unit_id": UNIT, "findings": [{
+            "owner": "unit content",
+            "check_id": "content_schema_valid",
+            "pointer": "/sections/0/body",
+            "message": "replace bad body",
+            "parent_hash": parent_hash,
+        }]},
+    }
+    state = _apply(state, repair.D17_CLASSIFY_UNIT_FINDINGS(state, None))
+    state = _apply(state, repair.D18_PLAN_TARGETED_UNIT_REPAIR(state, None))
+    request = state["repair_requests"][-1]
+    repaired_body = json.loads(json.dumps(parent_body))
+    repaired_body["sections"][0]["body"] = "Corrected content body"
+    state["artifact_versions"] += [{
+        "key": "candidate:m06-content",
+        "record_kind": "model_candidate",
+        "job_id": "M06_REPAIR_NAMED_UNIT_ARTIFACT",
+        "channel": "content",
+        "unit_id": UNIT,
+        "parent_sha256": parent_hash,
+        "payload": {
+            "candidate_child": {
+                "artifact_name": f"content:{UNIT}",
+                "artifact_body": json.dumps(repaired_body, sort_keys=True),
+                "addressed_finding_ids": request["finding_ids"],
+            },
+            "changed_path_manifest": [{
+                "json_pointer": "/sections/0/body",
+                "change_kind": "replace",
+                "finding_id": request["finding_ids"][0],
+            }],
+        },
+    }]
+
+    admitted = repair.D20_ADMIT_UNIT_REPAIR(state, None)
+    child = admitted["artifact_versions"][0]
+    assert child["schema_path"] == "schemas/unit_content.schema.v1.json"
+    assert child["domain_hash"] == domain_hash
+
+    state = _apply(state, admitted)
+    revalidated = content_nodes.D09_VALIDATE_CONTENT(state, None)
+    assert revalidated["pending_guard"]["value"] == "content_admitted"
+    assert revalidated["artifact_heads"][content_stream]["hash"] == child["hash"]
+    assert "artifact_versions" not in revalidated
 
 
 def test_a_broad_repair_outside_its_boundary_is_refused() -> None:

@@ -1,0 +1,48 @@
+{
+  "attempt": 1,
+  "exit_code": 1,
+  "duration_seconds": 412.56,
+  "transport": "app-server",
+  "session_id": "01a004cf-5bdb-7440-a09a-cf7496bc192b",
+  "thread_id": "01a004cf-5bdb-7440-a09a-cf7496bc192b",
+  "turn_id": "01a004cf-62c0-75c2-86ac-7de0b59bafd7",
+  "usage": {},
+  "model": null,
+  "effort": null,
+  "plugin_version": "1.0.4",
+  "plugin_lib_path": "/Users/filipepinto/.claude/plugins/cache/openai-codex/codex/1.0.4/scripts/lib/codex.mjs",
+  "argv": [
+    "node",
+    "/Users/filipepinto/Projects/curriculum_builder/.claude/skills/qa-gate-codex-run/scripts/codex_bridge.mjs",
+    "<request on stdin>"
+  ],
+  "started_at": "2026-08-15T09:44:53.285835+00:00",
+  "response_sha256": "66f19b6f088298844d4505a3e48b9ff67f446afe01341efea712735773495e81",
+  "request_sha256": "b55fc8f7060e810002e23a29fbba516a5c21e6e50ab610313080c8866a318a60",
+  "round": 1,
+  "cwd": "/Users/filipepinto/Projects/curriculum_builder/plans/27_langgraph_curriculum_factory_remediation/execution_package_v2/release_candidate/rc28/QA/exec",
+  "artifact_path": "/Users/filipepinto/Projects/curriculum_builder/plans/27_langgraph_curriculum_factory_remediation/execution_package_v2/release_candidate/rc28/rc28_review_bundle.v1.md",
+  "artifact_sha256": "93c1c0828e1b5aa4b806fa5f83d9bacf524789447636d5c66af98ef308588301",
+  "grounding": [
+    {
+      "path": "/Users/filipepinto/Projects/curriculum_builder/plans/27_langgraph_curriculum_factory_remediation/execution_package_v2/implementation.graph.v9.yaml",
+      "sha256": "5236bf6b13a2c5171ad11ab80f1147e20b6b59f46708090d25ec16c5a7574379"
+    },
+    {
+      "path": "/Users/filipepinto/Projects/curriculum_builder/plans/27_langgraph_curriculum_factory_remediation/execution_package_v2/schemas/spec_approval.schema.v6.json",
+      "sha256": "5ecc63dd64377b9bac39facb30f147cad1ab07f3d1ad137bbc9254b39dd58bf0"
+    },
+    {
+      "path": "/Users/filipepinto/Projects/curriculum_builder/plans/27_langgraph_curriculum_factory_remediation/execution_package_v2/contracts/spec_approval.v6.yaml",
+      "sha256": "f4e609d1d93f1303c651e6cbe58233ec35b7bb7eab86a9ef393fc002b5229b70"
+    },
+    {
+      "path": "/Users/filipepinto/Projects/curriculum_builder/plans/26_langgraph_curriculum_factory/spec/v3/langgraph_curriculum_factory.spec.v4.md",
+      "sha256": "e14df5a36ce12d700fe9fc4aa4aea466771bc89f31bc6e9d49f812c147b1bb3c"
+    }
+  ],
+  "chain_prev": "GENESIS",
+  "chain": "ecdbc2fbadb6fa5d4af3a191e6ef8727890d22abc0740a1681f8b124f388da51",
+  "rollout_file": "/Users/filipepinto/.codex/sessions/2026/08/15/rollout-2026-08-15T05-44-53-01a004cf-5bdb-7440-a09a-cf7496bc192b.jsonl",
+  "timestamp": "2026-08-15T09:51:45.902524+00:00"
+}

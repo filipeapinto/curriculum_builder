@@ -1,0 +1,71 @@
+{
+  "schema_version": 1,
+  "run_id": "run27-execution-package-v2-graph-v9",
+  "node_id": "N90_REQUIREMENTS_FINAL_AUDIT",
+  "attempt_id": "N90_REQUIREMENTS_FINAL_AUDIT-2026-08-15T105202174407Z-0f9be038",
+  "outcome": "PASSED",
+  "source_spec_sha256": "e14df5a36ce12d700fe9fc4aa4aea466771bc89f31bc6e9d49f812c147b1bb3c",
+  "prompt_sha256": "21076a04f4441f7cc35709702a745baaddb94f00827781b3c28441d3283189e6",
+  "predecessor_receipts": {
+    "N80_LIVE_WORKBOOK_PROOF": "d27bfca2c6144203b50ca6f66d219b3689b98dc953e7ce5b7d3c6ccddf02627f"
+  },
+  "changed_files": [
+    {"path": "plans/27_langgraph_curriculum_factory_remediation/execution_package_v2/results/v9/evidence/N90_REQUIREMENTS_FINAL_AUDIT/01_controller_result_audit.log", "change": "created", "sha256": "c77d7af108de92abd6d49be04057093faf2702f6cb6c307d550e9e7db811b5c1"},
+    {"path": "plans/27_langgraph_curriculum_factory_remediation/execution_package_v2/results/v9/evidence/N90_REQUIREMENTS_FINAL_AUDIT/02_conformance_verifiers.log", "change": "created", "sha256": "b58ccf5a0c331379a6ee7456d8736e4d997cf1c18d87cc43ee3449620c3dbc03"},
+    {"path": "plans/27_langgraph_curriculum_factory_remediation/execution_package_v2/results/v9/evidence/N90_REQUIREMENTS_FINAL_AUDIT/03_product_activation_disposition.log", "change": "created", "sha256": "cbd4687778fdbe0a0a15f0b2d5a801a518fd7681d35a2e6f40b8a551543649da"},
+    {"path": "plans/27_langgraph_curriculum_factory_remediation/execution_package_v2/results/v9/evidence/N90_REQUIREMENTS_FINAL_AUDIT/04_rc29_qa_gate_reverify.log", "change": "created", "sha256": "7ada6cc910e66f156ea13595b7775ba08a3f468a55cdd186d0ef5035a96fe116"},
+    {"path": "plans/27_langgraph_curriculum_factory_remediation/execution_package_v2/results/v9/evidence/N90_REQUIREMENTS_FINAL_AUDIT/05_n90_qa_gate_reverify.log", "change": "created", "sha256": "c783ebcac41d91d1013f1b827423119ff8972e7bb1870f5cd9288b2e9ce2f5b7"},
+    {"path": "plans/27_langgraph_curriculum_factory_remediation/execution_package_v2/results/v9/evidence/N90_REQUIREMENTS_FINAL_AUDIT/N90_QA_criteria.v1.md", "change": "created", "sha256": "4cedbd0d4243f159ac10c3dee3368eafec6c06b5f730533ea1cbd2cc5718c233"},
+    {"path": "plans/27_langgraph_curriculum_factory_remediation/execution_package_v2/results/v9/evidence/N90_REQUIREMENTS_FINAL_AUDIT/N90_final_audit.v1.md", "change": "created", "sha256": "3f6633d0e3f853029ba3e586e5acfbd7fac950660c26c51b6a7222e22c3721d2"},
+    {"path": "plans/27_langgraph_curriculum_factory_remediation/execution_package_v2/results/v9/evidence/N90_REQUIREMENTS_FINAL_AUDIT/QA/exec/N90_QA_criteria.v1.md", "change": "created", "sha256": "4cedbd0d4243f159ac10c3dee3368eafec6c06b5f730533ea1cbd2cc5718c233"},
+    {"path": "plans/27_langgraph_curriculum_factory_remediation/execution_package_v2/results/v9/evidence/N90_REQUIREMENTS_FINAL_AUDIT/QA/exec/N90_final_audit.v1.md", "change": "created", "sha256": "3f6633d0e3f853029ba3e586e5acfbd7fac950660c26c51b6a7222e22c3721d2"},
+    {"path": "plans/27_langgraph_curriculum_factory_remediation/execution_package_v2/results/v9/evidence/N90_REQUIREMENTS_FINAL_AUDIT/QA/rounds/round-01.events.jsonl", "change": "created", "sha256": "674ae89b9525436ad5416376bffc0949454243de1507acb242ebb55b6a052b94"},
+    {"path": "plans/27_langgraph_curriculum_factory_remediation/execution_package_v2/results/v9/evidence/N90_REQUIREMENTS_FINAL_AUDIT/QA/rounds/round-01.meta.json", "change": "created", "sha256": "bfa863d56f020c7269184b654d9ce84b8dccca0da4eaa2720b9e381e991733cf"},
+    {"path": "plans/27_langgraph_curriculum_factory_remediation/execution_package_v2/results/v9/evidence/N90_REQUIREMENTS_FINAL_AUDIT/QA/rounds/round-01.request.md", "change": "created", "sha256": "819a9570770d0557669d3a145883911049d7a37b609fe25a66dd7ef5a07293ee"},
+    {"path": "plans/27_langgraph_curriculum_factory_remediation/execution_package_v2/results/v9/evidence/N90_REQUIREMENTS_FINAL_AUDIT/QA/rounds/round-01.response.json", "change": "created", "sha256": "9cb7fa850652de2a8e4ead4523b2a598cfec6c9db48cde72995b7575fa7fd7fe"},
+    {"path": "plans/27_langgraph_curriculum_factory_remediation/execution_package_v2/results/v9/evidence/N90_REQUIREMENTS_FINAL_AUDIT/QA/rounds/round-01.stderr.txt", "change": "created", "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"},
+    {"path": "plans/27_langgraph_curriculum_factory_remediation/execution_package_v2/results/v9/evidence/N90_REQUIREMENTS_FINAL_AUDIT/QA/session.json", "change": "created", "sha256": "a01e62a4011d19b6f9f284cb3b241593f9f5b3cabd9bc90f6cc14e611473144e"},
+    {"path": "plans/27_langgraph_curriculum_factory_remediation/execution_package_v2/results/v9/evidence/N90_REQUIREMENTS_FINAL_AUDIT/QA/verdict.json", "change": "created", "sha256": "291b9ac1caa342d6a3d6a85bde9c792b9f59f7c5e9bae7b96aff6c9b8dc769b8"},
+    {"path": "plans/27_langgraph_curriculum_factory_remediation/execution_package_v2/results/v9/evidence/N90_REQUIREMENTS_FINAL_AUDIT/QA/verification.json", "change": "created", "sha256": "47dffa4a3d8676fa807159408935a4a6188929ef3266ead83c3489e89de9088b"}
+  ],
+  "commands": [
+    {
+      "argv": ["python3", "plans/27_langgraph_curriculum_factory_remediation/controller/run27_controller.py", "--graph", "plans/27_langgraph_curriculum_factory_remediation/execution_package_v2/implementation.graph.v9.yaml", "--state-dir", "plans/27_langgraph_curriculum_factory_remediation/.run27_state_v9", "--run-id", "run27-execution-package-v2-graph-v9", "audit"],
+      "exit_code": 0,
+      "log": "plans/27_langgraph_curriculum_factory_remediation/execution_package_v2/results/v9/evidence/N90_REQUIREMENTS_FINAL_AUDIT/01_controller_result_audit.log",
+      "log_sha256": "c77d7af108de92abd6d49be04057093faf2702f6cb6c307d550e9e7db811b5c1"
+    },
+    {
+      "argv": ["python3", "plans/27_langgraph_curriculum_factory_remediation/execution_package_v2/controller/scan_node.py", "--graph", "plans/27_langgraph_curriculum_factory_remediation/execution_package_v2/implementation.graph.v9.yaml"],
+      "exit_code": 0,
+      "log": "plans/27_langgraph_curriculum_factory_remediation/execution_package_v2/results/v9/evidence/N90_REQUIREMENTS_FINAL_AUDIT/02_conformance_verifiers.log",
+      "log_sha256": "b58ccf5a0c331379a6ee7456d8736e4d997cf1c18d87cc43ee3449620c3dbc03"
+    },
+    {
+      "argv": ["python3", ".claude/skills/qa-gate-codex-run/scripts/qa_gate.py", "verify", "--qa-dir", "plans/27_langgraph_curriculum_factory_remediation/execution_package_v2/results/v9/evidence/N90_REQUIREMENTS_FINAL_AUDIT/QA"],
+      "exit_code": 0,
+      "log": "plans/27_langgraph_curriculum_factory_remediation/execution_package_v2/results/v9/evidence/N90_REQUIREMENTS_FINAL_AUDIT/05_n90_qa_gate_reverify.log",
+      "log_sha256": "c783ebcac41d91d1013f1b827423119ff8972e7bb1870f5cd9288b2e9ce2f5b7"
+    }
+  ],
+  "evidence": [
+    "plans/27_langgraph_curriculum_factory_remediation/execution_package_v2/results/v9/evidence/N90_REQUIREMENTS_FINAL_AUDIT/N90_final_audit.v1.md",
+    "plans/27_langgraph_curriculum_factory_remediation/execution_package_v2/results/v9/evidence/N90_REQUIREMENTS_FINAL_AUDIT/01_controller_result_audit.log",
+    "plans/27_langgraph_curriculum_factory_remediation/execution_package_v2/results/v9/evidence/N90_REQUIREMENTS_FINAL_AUDIT/02_conformance_verifiers.log",
+    "plans/27_langgraph_curriculum_factory_remediation/execution_package_v2/results/v9/evidence/N90_REQUIREMENTS_FINAL_AUDIT/03_product_activation_disposition.log",
+    "plans/27_langgraph_curriculum_factory_remediation/execution_package_v2/results/v9/evidence/N90_REQUIREMENTS_FINAL_AUDIT/04_rc29_qa_gate_reverify.log",
+    "plans/27_langgraph_curriculum_factory_remediation/execution_package_v2/results/v9/evidence/N90_REQUIREMENTS_FINAL_AUDIT/05_n90_qa_gate_reverify.log",
+    "plans/27_langgraph_curriculum_factory_remediation/execution_package_v2/results/v9/evidence/N90_REQUIREMENTS_FINAL_AUDIT/QA/session.json",
+    "plans/27_langgraph_curriculum_factory_remediation/execution_package_v2/results/v9/evidence/N90_REQUIREMENTS_FINAL_AUDIT/QA/verdict.json",
+    "plans/27_langgraph_curriculum_factory_remediation/execution_package_v2/results/v9/evidence/N90_REQUIREMENTS_FINAL_AUDIT/QA/verification.json"
+  ],
+  "findings": [
+    {"id": "N90V9-F01", "severity": "critical", "summary": "Specification authority is current, user-approved, independently reviewed, and traced through retained requirements before implementation evidence.", "disposition": "resolved"},
+    {"id": "N90V9-F02", "severity": "critical", "summary": "Implementation conformance passed: current N00-N60 receipts, eight-job subscription-only mapping, five-class preflight, exact-host egress, isolated verifier, production topology, 75 ownership claims, deterministic evidence, and complete regression denominator all validate.", "disposition": "resolved"},
+    {"id": "N90V9-F03", "severity": "critical", "summary": "Independent N90 qa-gate review passed in one Codex-witnessed round; verification reports QA_PASSED, chain_valid true, and zero problems for session 01a00510-96e3-7433-96d5-e0ce86cdf9cb.", "disposition": "resolved"},
+    {"id": "N90V9-F04", "severity": "major", "summary": "Product activation is truthfully unavailable because the approved Claude subscription probe failed closed while both live roots remained absent; no product or fallback claim was made.", "disposition": "resolved"},
+    {"id": "N90V9-F05", "severity": "critical", "summary": "Exactly one legal terminal follows from the current outcomes: REMEDIATION_VERIFIED_NOT_ACTIVATED; ACTIVATED and BLOCKED are each mechanically falsified by the grounded evidence.", "disposition": "resolved"}
+  ],
+  "invalidated_descendants": [],
+  "terminal_recommendation": "REMEDIATION_VERIFIED_NOT_ACTIVATED"
+}

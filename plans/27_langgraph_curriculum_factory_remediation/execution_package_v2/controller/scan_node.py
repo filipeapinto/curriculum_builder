@@ -4,7 +4,7 @@
 This is execution package v2's own versioned entry point, required because
 the parent v1 controller module
 (``plans/27_langgraph_curriculum_factory_remediation/controller/check_forbidden_production_refs.py``)
-must not be edited by this package (see this package's ``implementation.graph.v8.yaml``
+must not be edited by this package (see this package's ``implementation.graph.v9.yaml``
 header). It imports that module's scan logic read-only and does not duplicate
 or reimplement the term/credential/guard-region/occurrence rules.
 
@@ -61,7 +61,7 @@ if str(_PARENT_CONTROLLER_DIR) not in sys.path:
 from check_forbidden_production_refs import scan_production, scan_tests  # noqa: E402
 from core import ControllerError, Graph, DEFAULT_REPO_ROOT, covers  # noqa: E402
 
-DEFAULT_GRAPH_PATH = _PACKAGE_DIR / "implementation.graph.v8.yaml"
+DEFAULT_GRAPH_PATH = _PACKAGE_DIR / "implementation.graph.v9.yaml"
 
 
 def in_write_set(relative: str, write_set: list[str]) -> bool:

@@ -315,6 +315,7 @@ def D12_VISUAL_BARRIER_AND_JOIN(projection: dict[str, Any], runtime_context: Any
 
     heads = projection["artifact_heads"]
     content_head = heads.get(stream_id(unit_id, "content"))
+    domain_head = heads.get(stream_id(unit_id, "domain"))
     require(isinstance(content_head, dict), "invalid_input", "no admitted content head")
     require(
         denominator["content_hash"] == content_head["hash"],
@@ -435,11 +436,103 @@ def D12_VISUAL_BARRIER_AND_JOIN(projection: dict[str, Any], runtime_context: Any
         extra=sorted(actual - complete),
     )
 
+    visual_stream = stream_id(unit_id, "visuals")
+    # The admitted body is the portable, content-addressed visual contract.
+    # Runtime paths and upstream head hashes remain provenance in visual_results
+    # and in this version record, but must not make identical assets hash
+    # differently across output roots or harmless declaration permutations.
+    derived_portable_results = {
+        key: {
+            field: results[key][field]
+            for field in (
+                "key",
+                "unit_id",
+                "subset",
+                "provenance",
+                "sha256",
+                "format",
+                "accessibility_text",
+            )
+            if field in results[key]
+        }
+        for key in sorted(complete)
+    }
+    current_visual_head = heads.get(visual_stream)
+    admitted_current = next(
+        (
+            record for record in projection["artifact_versions"]
+            if isinstance(record, dict)
+            and record.get("stream") == visual_stream
+            and isinstance(current_visual_head, dict)
+            and record.get("version") == current_visual_head.get("version")
+            and record.get("hash") == current_visual_head.get("hash")
+        ),
+        None,
+    )
+    minted = admitted_current is None
+    if admitted_current is not None:
+        candidate = admitted_current
+        visual_body = _record(candidate.get("body"), "admitted visual body")
+        require(
+            visual_body.get("unit_id") == unit_id,
+            "integrity",
+            "the revalidated visual body belongs to another unit",
+        )
+        portable_results = _record(visual_body.get("visuals"), "admitted visual set")
+        require(
+            set(portable_results) == complete,
+            "join",
+            "the admitted visual head does not equal the frozen denominator",
+            missing=sorted(complete - set(portable_results)),
+            extra=sorted(set(portable_results) - complete),
+        )
+        parents = candidate.get("parents")
+        require(
+            isinstance(parents, dict) and parents.get("content") == content_head["hash"],
+            "integrity",
+            "the admitted visual head was derived from a superseded content head",
+            declared=(parents or {}).get("content") if isinstance(parents, dict) else None,
+            current=content_head["hash"],
+        )
+    else:
+        portable_results = derived_portable_results
+        visual_body = {
+            "unit_id": unit_id,
+            "visuals": portable_results,
+        }
+        candidate = {
+            "key": canonical_digest({"stream": visual_stream, "body": visual_body}),
+            "stream": visual_stream,
+            "version": (heads.get(visual_stream) or {}).get("version", 0) + 1,
+            "parent_hash": (heads.get(visual_stream) or {}).get("hash"),
+            "hash": canonical_digest(visual_body),
+            "body": visual_body,
+            "unit_id": unit_id,
+            "channel": "visuals",
+            "minted_by": "deterministic_visual_join",
+            "parents": {
+                "content": content_head["hash"],
+                "domain": (
+                    domain_head.get("hash")
+                    if isinstance(domain_head, dict)
+                    else next(
+                        (
+                            brief.get("domain_hash")
+                            for brief in briefs_by_key.values()
+                            if isinstance(brief, dict) and brief.get("domain_hash")
+                        ),
+                        None,
+                    )
+                ),
+            },
+        }
+        require_current_parent(candidate, heads, visual_stream)
+
     attempt = 1
     checks: list[dict[str, Any]] = []
     findings: list[dict[str, Any]] = []
     for key in sorted(complete):
-        result = _record(results[key], f"visual result {key}")
+        result = _record(portable_results[key], f"visual result {key}")
         valid = bool(result.get("sha256")) and bool(result.get("format"))
         provenance_ok = result.get("provenance") in ("deterministic_renderer", "model_candidate")
         checks.append(
@@ -460,6 +553,7 @@ def D12_VISUAL_BARRIER_AND_JOIN(projection: dict[str, Any], runtime_context: Any
                     "owner": "unit visual",
                     "pointer": f"/visuals/{key}",
                     "message": "visual candidate is missing hash, format, or declared provenance",
+                    "parent_hash": candidate["hash"],
                 }
             )
 
@@ -473,7 +567,7 @@ def D12_VISUAL_BARRIER_AND_JOIN(projection: dict[str, Any], runtime_context: Any
     }
 
     if findings:
-        return {
+        update: dict[str, Any] = {
             "visual_join_evidence": [join_evidence],
             "deterministic_checks": checks,
             "pending_guard": guard(
@@ -483,21 +577,16 @@ def D12_VISUAL_BARRIER_AND_JOIN(projection: dict[str, Any], runtime_context: Any
                 findings=findings,
             ),
         }
+        if minted:
+            update["artifact_versions"] = [candidate]
+        return update
 
-    visual_stream = stream_id(unit_id, "visuals")
-    candidate = {
-        "stream": visual_stream,
-        "version": (heads.get(visual_stream) or {}).get("version", 0) + 1,
-        "parent_hash": (heads.get(visual_stream) or {}).get("hash"),
-        "hash": canonical_digest(
-            {"unit_id": unit_id, "visuals": {key: results[key]["sha256"] for key in sorted(complete)}}
-        ),
-    }
-    require_current_parent(candidate, heads, visual_stream)
-
-    return {
+    update = {
         "visual_join_evidence": [join_evidence],
         "deterministic_checks": checks,
         "artifact_heads": head_update(candidate, visual_stream),
         "pending_guard": guard("D12_VISUAL_BARRIER_AND_JOIN", "visuals_admitted", unit_id=unit_id),
     }
+    if minted:
+        update["artifact_versions"] = [candidate]
+    return update

@@ -1,0 +1,48 @@
+schema_version: 6
+approved: true
+approved_spec: plans/26_langgraph_curriculum_factory/spec/v3/langgraph_curriculum_factory.spec.v4.md
+approved_spec_sha256: e14df5a36ce12d700fe9fc4aa4aea466771bc89f31bc6e9d49f812c147b1bb3c
+spec_qa_verdict: QA_PASSED
+spec_qa_verification_sha256: 899c9720be48f071d6caf26eceafa81be626cd3bda685afa05eb0cc1dfe9a631
+approved_rc_manifest: plans/27_langgraph_curriculum_factory_remediation/execution_package_v2/release_candidate/rc3/manifest.v1.json
+approved_rc_manifest_sha256: 0e4fbfe2c258ae6176931e5490f8a2b55bdf8708d3ef0f257b50a05c9e582a6d
+execution_package_qa_verdict: QA_PASSED
+execution_package_qa_verification_sha256: 202e2f214dd732ce24eb758c7cee5965cfcc113d71d03350d8bc5fefa7773217
+approved_graph: plans/27_langgraph_curriculum_factory_remediation/execution_package_v2/implementation.graph.v9.yaml
+approved_graph_sha256: 5236bf6b13a2c5171ad11ab80f1147e20b6b59f46708090d25ec16c5a7574379
+approved_for: plan27_implementation_remediation
+model_assignments:
+  M01_RESEARCH_UNIT_SOURCES: {model: claude-sonnet-5, effort: xhigh}
+  M02_CREATE_UNIT_DOMAIN_DATA: {model: claude-sonnet-5, effort: high}
+  M03_WRITE_UNIT_CONTENT: {model: claude-sonnet-5, effort: high}
+  M04_CREATE_UNIT_VISUALS: {model: claude-sonnet-5, effort: high}
+  M05_REVIEW_ACTUAL_UNIT: {model: gpt-5.6-sol, effort: xhigh}
+  M06_REPAIR_NAMED_UNIT_ARTIFACT: {model: claude-sonnet-5, effort: xhigh}
+  M07_REVIEW_ACTUAL_WORKBOOK: {model: gpt-5.6-sol, effort: xhigh}
+  M08_REPAIR_NAMED_WORKBOOK_DEFECT: {model: claude-sonnet-5, effort: xhigh}
+approved_at: "2026-08-15T04:12:46Z"
+approval_statement: >
+  The user explicitly required autonomous Run 27 live-descendant repair, affected-admission cascade, and retry through N90 in
+  plans/26_langgraph_curriculum_factory/prompts/RUN27_GPT56_SOL_AUTONOMOUS_V8_RECOVERY_TO_N90.prompt.v1.md.
+  This record carries forward the already-approved specification, its witnessed
+  QA verification, the rc3 package-structure manifest and witnessed QA record,
+  and all eight Claude/Codex model and effort assignments without change. It
+  binds those authorities to implementation.graph.v9.yaml at SHA-256
+  5236bf6b13a2c5171ad11ab80f1147e20b6b59f46708090d25ec16c5a7574379.
+  The approved graph-v7 artifact is restored byte-for-byte at SHA-256
+  b7e52ae7f2c8d1eb3984fcea014063a3be29eb88cf7cc5980bdb9ef503728c22;
+  the improperly modified v7 bytes are preserved separately at SHA-256
+  b6c17e81c6e32f32b86183d4577fe9a18894c0657504eca832e36d7daa17865e
+  as recovery input and are never used for new admissions. Fresh results and
+  evidence use the collision-free execution_package_v2/results/v9/ namespace.
+  Graph v9 carries forward the live-proven N30 retrieval/source ownership and
+  N40 deterministic-boundary ownership corrections, the exact-host retrieval
+  policy, subscription-only CLI architecture, and unchanged N00-to-N90 order.
+  No historical result, evidence, release candidate, QA session, graph,
+  contract, schema, or prompt is superseded in place.
+  Graph v8 remains immutable at SHA-256
+  c2d79ac0387c935977385138d2d891cf1539041f1a4532acf94fc8dc687bf6b1
+  with its N00-N60 results and five failed N70 attempts preserved. Graph v9 is
+  limited to the attempt-5 domain-contract, executable-verifier,
+  pre-admission-repair, and physical-artifact-store ownership corrections
+  independently reviewed before entry.

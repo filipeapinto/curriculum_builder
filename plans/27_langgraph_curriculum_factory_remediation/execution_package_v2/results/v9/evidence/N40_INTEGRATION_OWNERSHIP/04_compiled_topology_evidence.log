@@ -1,0 +1,11 @@
+N40 V9 compiled topology and ownership evidence
+Generated: 2026-08-15T10:26:27Z
+Ownership contract: plans/27_langgraph_curriculum_factory_remediation/contracts/integration_ownership.v1.yaml
+Ownership contract SHA-256: cd8a47a7ce2c1d39f34f667a54893e80857769d4f1c3ce24b9f610e2d8c5cc74
+
+- The production CLI compile point reaches the complete D00-D23 unit path, all M01-M06 authoring/review/repair nodes, the D16-D23 repair and unit-acceptance cycle, the D24-D32 workbook/release path, M07/M08, and every declared terminal.
+- The compiled topology rejects undeclared or unreachable registered nodes, forbidden bypass edges, missing joins, and stale edge expectations.
+- Deterministic fake-transport graph walks cover UNIT_ACCEPTED and workbook completion through the production compile point; these remain integration proofs and make no live-product claim.
+- Failed domain/content/visual candidates are append-only physical ArtifactStore versions. D20 carries exact immutable parent hashes, admits only the repaired child, and re-enters the owning deterministic validator before a head advances.
+- The machine-readable contract assigns one owner to every covered body, registration seam, call site, interface, shared output, and integration test. The verifier accepted all 75 claims with zero failures.
+- The exact integration denominator passed 213 tests. The N40 scanner inspected all 14 owned active files and found zero retired-provider or credential violations.

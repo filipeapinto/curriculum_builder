@@ -1,0 +1,13 @@
+Production CLI workbook preflight
+Command: python3 -m runtime.run_curriculum --engine-root . --curriculum curricula/arduino_kit/arduino_kit_curriculum.v5.yaml --output-root outputs/run27/live_workbook --preflight
+Exit: 3
+kind=PREFLIGHT ready=false missing_capabilities=[driver_capability_proof]
+static capabilities: model_cli_identity PASS; retrieval PASS; renderer PASS; rasterizer PASS; persistence PASS; logger PASS
+claude: provider=anthropic model=claude-sonnet-5 ready=false failed_fields=[observable_subscription_backed_usability]
+claude executable SHA-256: 7b39c1588df919d001dea3ffd5651adb682f2451b5a0e18d42d4233296b53cc7
+claude permitted_auth_mode: PASS subscription
+claude content_free_operation: PASS; authorized_input_projection={}; instruction_sha256=931cd18f89a1896a2a49ffc2c46e825046976ac5f6be884744980005c0c3ccc5
+claude observable_subscription_backed_usability: FAIL reason=nonzero_bounded_probe returncode=1 termination=exited stderr=""
+claude tool_mcp_closure: PASS closed=true observed_tools=[StructuredOutput] extra_tools=[] observed_mcp_servers=[] invokable_mcp_servers=[]
+codex: provider=openai model=gpt-5.6-sol ready=true failed_fields=[] observed_model=gpt-5.6-sol
+output collision: null

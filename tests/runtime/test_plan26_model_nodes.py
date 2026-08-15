@@ -593,6 +593,28 @@ def test_m01_discover_no_verified_source_must_match_the_staged_request():
     assert update["pending_failure"]["failure_class"] == "candidate_undeclared_artifact"
 
 
+def test_m01_interpret_no_verified_source_is_typed_not_sent_to_content_repair():
+    candidate = {"no_verified_source": [{
+        "request_id": "REQ-1", "reason": "retrieved text does not support the fact"}]}
+
+    update = run("M01_interpretation", candidate=candidate)
+
+    assert "source_interpretations" not in update
+    failure = update["pending_failure"]
+    assert failure["failure_class"] == "no_verified_source"
+    classified = mn.classify_model_failure(failure, attempts_used=1)
+    assert classified["pending_guard"]["decision"] == "retry"
+
+
+def test_m01_interpret_no_verified_source_must_match_the_staged_request():
+    candidate = {"no_verified_source": [{
+        "request_id": "SOMEONE-ELSES-REQUEST", "reason": "unsupported"}]}
+
+    update = run("M01_interpretation", candidate=candidate)
+
+    assert update["pending_failure"]["failure_class"] == "candidate_undeclared_artifact"
+
+
 def test_m01_discover_accepts_a_locator_whose_host_is_granted():
     """N30V7-F07 positive case: `packet_for('M01_discovery')` grants exactly
     `example.org`, and `CANDIDATES['M01_discovery']` proposes a locator on that

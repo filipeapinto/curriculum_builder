@@ -1,0 +1,9 @@
+{
+  "admission": "normal",
+  "at": "2026-08-15T11:05:02.723629Z",
+  "attempt_id": "N90_REQUIREMENTS_FINAL_AUDIT-2026-08-15T105202174407Z-0f9be038",
+  "node_id": "N90_REQUIREMENTS_FINAL_AUDIT",
+  "receipt": "receipts/N90_REQUIREMENTS_FINAL_AUDIT.receipt.v1.json",
+  "receipt_sha256": "98d36453efef09ca27d4b7ed68efe7e03c4acd4e2edc20f17dcb3d7639a26797",
+  "status": "PASSED"
+}

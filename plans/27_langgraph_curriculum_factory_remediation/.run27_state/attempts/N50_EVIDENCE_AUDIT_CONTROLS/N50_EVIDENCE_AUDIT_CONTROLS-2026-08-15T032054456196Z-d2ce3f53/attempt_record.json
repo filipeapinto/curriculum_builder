@@ -1,0 +1,27 @@
+{
+  "approved_spec_sha256": "e14df5a36ce12d700fe9fc4aa4aea466771bc89f31bc6e9d49f812c147b1bb3c",
+  "attempt_id": "N50_EVIDENCE_AUDIT_CONTROLS-2026-08-15T032054456196Z-d2ce3f53",
+  "baseline": {
+    "plans/27_langgraph_curriculum_factory_remediation/contracts/evidence_determinism.v1.yaml": "d20be37d411ab58ecca060e992a20f1a3975900f4ce7be1c245f1397df551ed9",
+    "plans/27_langgraph_curriculum_factory_remediation/contracts/requirements_lineage.v1.yaml": "1c6b5d2e05f9078d303b657d4f48325d85683df209a8c7485b272abc54b8540e",
+    "plans/27_langgraph_curriculum_factory_remediation/execution_package_v2/results/v8/N50_EVIDENCE_AUDIT_CONTROLS.result.v1.json": "39911f421acd89da2e255ed130117719f77f8b227bd4d2f1bf49d7424c87cb69",
+    "plans/27_langgraph_curriculum_factory_remediation/execution_package_v2/results/v8/evidence/N50_EVIDENCE_AUDIT_CONTROLS": "059fbdef63978d9d983e0a44c9632d4f99a99c6943c4e25f9a46c183528bd7a8",
+    "runtime/langgraph_factory/artifacts.py": "dfb1efa93c0c267b0ae282c9687d769ef043b31c363526871e7212e2890b86cf",
+    "runtime/langgraph_factory/evidence.py": "95ddef6f9e1e5e7031f223d88b285b2b0ffbdd604c70181ae87ad8a21220c199",
+    "runtime/langgraph_factory/persistence.py": "c2b3eb236d2ea7bb6ca7f0ff5d6258c8bd1fdec8cf36d9520c2b2ddb9298b289",
+    "tests/runtime/test_plan26_evidence.py": "229aabeae0bde9795f3f11e820d9f50f915aa0d715ed2ae32dbf643e83068345",
+    "tests/runtime/test_plan26_persistence.py": "4d113741e346be44815d2c640110a60a1ffadd11496d0db5a77f52cf028d9dcc"
+  },
+  "created_at": "2026-08-15T03:20:54.456462Z",
+  "evidence_dir": "attempts/N50_EVIDENCE_AUDIT_CONTROLS/N50_EVIDENCE_AUDIT_CONTROLS-2026-08-15T032054456196Z-d2ce3f53/logs",
+  "graph_sha256": "c2d79ac0387c935977385138d2d891cf1539041f1a4532acf94fc8dc687bf6b1",
+  "node_definition_sha256": "fc02efb55a5b32eb3f96b77803f320a8f975561531787b1fc823df5aad24ed93",
+  "node_id": "N50_EVIDENCE_AUDIT_CONTROLS",
+  "parent_attempt_id": null,
+  "predecessor_receipt_digests": {
+    "N40_INTEGRATION_OWNERSHIP": "bc032a30ed2b0da94d1e6052fcb3b8ac74b5d88c043a5187ffeaf64015c6243c"
+  },
+  "prompt_sha256": "4fe5cd2f076409e9e1616f36f26c35adf16701cb34664e8e5c0991422eed0f82",
+  "run_id": "run27",
+  "schema_version": 1
+}

@@ -493,6 +493,7 @@ NODE_CATALOGUE: dict[str, NodeSpec] = {
             ),
             outputs=(
                 "visual_join_evidence",
+                "artifact_versions",
                 "artifact_heads",
                 "deterministic_checks",
                 "pending_packet",

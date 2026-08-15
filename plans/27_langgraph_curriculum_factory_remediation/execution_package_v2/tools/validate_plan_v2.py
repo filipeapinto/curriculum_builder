@@ -13,12 +13,12 @@ package-v2-specific corrections:
 * ``version`` must be ``2``, not ``1``.
 * ``source_spec`` must be the QA-passed v4 specification artifact, at its
   required digest.
-* ``result_pattern`` must live under this package's own ``results/v8/`` root
+* ``result_pattern`` must live under this package's own ``results/v9/`` root
   -- never the parent v1 package's ``results/`` root, the failed correction's
   ``results/v2/`` root, nor this package's own earlier
   ``results/`` root (where the graph-v5-and-earlier-lineage admitted
   N00/N10 results and the BLOCKED N20 result permanently live; reusing that
-  path was RC8's own defect, see ``implementation.graph.v8.yaml``'s header).
+  path was RC8's own defect, see ``implementation.graph.v9.yaml``'s header).
 * every node-scoped ``scan_node.py --node <ID>`` verification command must
   also carry an explicit ``--graph <this package's graph path>`` -- this is
   the direct fix for PKG-QA-001 (the first execution-package correction's
@@ -53,8 +53,8 @@ package-v2-specific corrections:
   is what argparse resolves unpredictably from this validator's point of
   view.
 * every node's own result write path and evidence root in ``writes`` must sit
-  under this package's own ``results/v8/`` root, matching
-  ``results/v8/{node_id}.result.v1.json`` and ``results/v8/evidence/{node_id}``
+  under this package's own ``results/v9/`` root, matching
+  ``results/v9/{node_id}.result.v1.json`` and ``results/v9/evidence/{node_id}``
   exactly for that node's own ID -- never the parent v1 package's
   ``results/`` root, the failed correction's ``results/v2/`` root, nor this
   package's own earlier ``results/`` root.
@@ -107,25 +107,25 @@ import yaml
 PACKAGE_DIR = Path(__file__).resolve().parents[1]
 PLAN_DIR = PACKAGE_DIR.parent
 REPO_ROOT = PLAN_DIR.parents[1]
-GRAPH_PATH = PACKAGE_DIR / "implementation.graph.v8.yaml"
+GRAPH_PATH = PACKAGE_DIR / "implementation.graph.v9.yaml"
 RESULT_SCHEMA_PATH = PLAN_DIR / "schemas/node_result.schema.v1.json"
 # This package's own package-scoped approval schema (execution_package_v2/schemas/),
 # never the parent v1 package's plans/27_.../schemas/spec_approval.schema.v1.json --
 # that schema const-locks approved_spec to the *parent* package's own spec and
 # cannot validate this package's approval record no matter how it is filled in
 # (the exact defect implementation.graph.v5.yaml's header documents fixing).
-# Schema v5 (this package's current generation) const-locks approved_graph to
-# implementation.graph.v8.yaml instead of v6, correcting the RC8 result-namespace
+# Schema v6 (this package's current generation) const-locks approved_graph to
+# implementation.graph.v9.yaml, preserving the RC8 result-namespace correction
 # collision; schema v3 remains, unedited, the frozen contract for records that
 # still cite v6, exactly as schema v2 remains frozen for records citing v5.
-CONTRACT_SCHEMA_PATH = PACKAGE_DIR / "schemas/spec_approval.schema.v5.json"
-CONTRACT_PATH = PACKAGE_DIR / "contracts/spec_approval.v5.yaml"
+CONTRACT_SCHEMA_PATH = PACKAGE_DIR / "schemas/spec_approval.schema.v6.json"
+CONTRACT_PATH = PACKAGE_DIR / "contracts/spec_approval.v6.yaml"
 RESULT_VALIDATOR_PATH = PACKAGE_DIR / "tools/validate_result_v2.py"
 SCAN_NODE_PATH = PACKAGE_DIR / "controller/scan_node.py"
 
 REQUIRED_SOURCE_SPEC = "plans/26_langgraph_curriculum_factory/spec/v3/langgraph_curriculum_factory.spec.v4.md"
 REQUIRED_SOURCE_SPEC_SHA256 = "e14df5a36ce12d700fe9fc4aa4aea466771bc89f31bc6e9d49f812c147b1bb3c"
-RESULT_PATTERN_PREFIX = "plans/27_langgraph_curriculum_factory_remediation/execution_package_v2/results/v8/"
+RESULT_PATTERN_PREFIX = "plans/27_langgraph_curriculum_factory_remediation/execution_package_v2/results/v9/"
 NODE_SCOPED_SCAN_NODES = {
     "N20_PROVIDER_TRANSPORT",
     "N30_PREFLIGHT_EGRESS",
@@ -406,7 +406,7 @@ def validate_package_v2_corrections(graph: dict[str, Any]) -> None:
         )
 
     nodes = graph["nodes"]
-    graph_flag = "plans/27_langgraph_curriculum_factory_remediation/execution_package_v2/implementation.graph.v8.yaml"
+    graph_flag = "plans/27_langgraph_curriculum_factory_remediation/execution_package_v2/implementation.graph.v9.yaml"
     for node_id in NODE_SCOPED_SCAN_NODES:
         if node_id not in nodes:
             continue

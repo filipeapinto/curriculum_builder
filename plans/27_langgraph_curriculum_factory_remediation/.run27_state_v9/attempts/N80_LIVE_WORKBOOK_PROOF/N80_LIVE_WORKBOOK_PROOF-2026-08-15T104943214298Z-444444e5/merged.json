@@ -1,0 +1,9 @@
+{
+  "admission": "normal",
+  "at": "2026-08-15T10:51:23.985848Z",
+  "attempt_id": "N80_LIVE_WORKBOOK_PROOF-2026-08-15T104943214298Z-444444e5",
+  "node_id": "N80_LIVE_WORKBOOK_PROOF",
+  "receipt": "receipts/N80_LIVE_WORKBOOK_PROOF.receipt.v1.json",
+  "receipt_sha256": "7ddc3bf2004cc56df9d9660d1652033f3a13b6a407f4a2aa274c6ef19885f31f",
+  "status": "NOT_AVAILABLE"
+}

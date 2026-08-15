@@ -1,0 +1,5 @@
+{"at":"2026-08-15T10:49:43.215806Z","event":"attempt_created","parent_attempt_id":null}
+{"argv":["python3","plans/27_langgraph_curriculum_factory_remediation/controller/run27_controller.py","--graph","plans/27_langgraph_curriculum_factory_remediation/execution_package_v2/implementation.graph.v9.yaml","--state-dir","plans/27_langgraph_curriculum_factory_remediation/.run27_state_v9","verify-live-proof","--node","N80_LIVE_WORKBOOK_PROOF"],"at":"2026-08-15T10:51:23.879511Z","event":"verification_command","exit_code":0}
+{"argv":["python3","plans/27_langgraph_curriculum_factory_remediation/execution_package_v2/tools/validate_result_v2.py","--node","N80_LIVE_WORKBOOK_PROOF"],"at":"2026-08-15T10:51:23.982136Z","event":"verification_command","exit_code":0}
+{"at":"2026-08-15T10:51:23.984881Z","event":"merge_journaled","receipt_sha256":"7ddc3bf2004cc56df9d9660d1652033f3a13b6a407f4a2aa274c6ef19885f31f"}
+{"at":"2026-08-15T10:51:23.986069Z","event":"merge_completed","receipt_sha256":"7ddc3bf2004cc56df9d9660d1652033f3a13b6a407f4a2aa274c6ef19885f31f"}

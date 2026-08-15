@@ -1,0 +1,5 @@
+{"at":"2026-08-15T10:52:02.176019Z","event":"attempt_created","parent_attempt_id":null}
+{"argv":["python3","plans/27_langgraph_curriculum_factory_remediation/controller/run27_controller.py","--graph","plans/27_langgraph_curriculum_factory_remediation/execution_package_v2/implementation.graph.v9.yaml","--state-dir","plans/27_langgraph_curriculum_factory_remediation/.run27_state_v9","verify-final-audit","--node","N90_REQUIREMENTS_FINAL_AUDIT"],"at":"2026-08-15T11:05:02.612614Z","event":"verification_command","exit_code":0}
+{"argv":["python3","plans/27_langgraph_curriculum_factory_remediation/execution_package_v2/tools/validate_result_v2.py","--node","N90_REQUIREMENTS_FINAL_AUDIT"],"at":"2026-08-15T11:05:02.717333Z","event":"verification_command","exit_code":0}
+{"at":"2026-08-15T11:05:02.722623Z","event":"merge_journaled","receipt_sha256":"98d36453efef09ca27d4b7ed68efe7e03c4acd4e2edc20f17dcb3d7639a26797"}
+{"at":"2026-08-15T11:05:02.723859Z","event":"merge_completed","receipt_sha256":"98d36453efef09ca27d4b7ed68efe7e03c4acd4e2edc20f17dcb3d7639a26797"}

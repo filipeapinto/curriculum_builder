@@ -1,0 +1,14 @@
+{
+  "state": "QA_FAILED",
+  "reason": "INTEGRITY_BREACH",
+  "chain_valid": false,
+  "rounds_claimed": 1,
+  "rounds_witnessed_by_codex": 1,
+  "session_id": "01a0049f-b00e-7cc2-906d-30728c6cbb91",
+  "rollout_file": "/Users/filipepinto/.codex/sessions/2026/08/15/rollout-2026-08-15T04-52-49-01a0049f-b00e-7cc2-906d-30728c6cbb91.jsonl",
+  "problems": [
+    "round 1: the recorded verdict does not match turn 01a0049f-b6cc-7723-95e7-ac7218e71fc2 in Codex's own session file"
+  ],
+  "artifact": "/Users/filipepinto/Projects/curriculum_builder/plans/27_langgraph_curriculum_factory_remediation/execution_package_v2/release_candidate/rc25/rc25_review_bundle.v1.md",
+  "qa_dir": "/Users/filipepinto/Projects/curriculum_builder/plans/27_langgraph_curriculum_factory_remediation/execution_package_v2/release_candidate/rc25/QA"
+}

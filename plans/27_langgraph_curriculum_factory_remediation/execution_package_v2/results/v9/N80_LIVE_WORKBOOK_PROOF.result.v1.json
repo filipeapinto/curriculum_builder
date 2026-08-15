@@ -1,0 +1,51 @@
+{
+  "schema_version": 1,
+  "run_id": "run27-execution-package-v2-graph-v9",
+  "node_id": "N80_LIVE_WORKBOOK_PROOF",
+  "attempt_id": "N80_LIVE_WORKBOOK_PROOF-2026-08-15T104943214298Z-444444e5",
+  "outcome": "NOT_AVAILABLE",
+  "source_spec_sha256": "e14df5a36ce12d700fe9fc4aa4aea466771bc89f31bc6e9d49f812c147b1bb3c",
+  "prompt_sha256": "c177ae0925a6eaf40e398fa0829030e8ba1f012c044be74a972aad6c7e56a0e1",
+  "predecessor_receipts": {
+    "N70_LIVE_UNIT_PROOF": "cebc693ee9a1f5f911132cc787b39adbdb36255e0e6f60d5fefa4c24f7fcb055"
+  },
+  "changed_files": [
+    {"path": "plans/27_langgraph_curriculum_factory_remediation/execution_package_v2/results/v9/evidence/N80_LIVE_WORKBOOK_PROOF/01_n70_precondition.log", "change": "created", "sha256": "db33c7933b4efc0f69d87d3877947ea059a30e9e06038b0598f7f32cd6d2c9c2"},
+    {"path": "plans/27_langgraph_curriculum_factory_remediation/execution_package_v2/results/v9/evidence/N80_LIVE_WORKBOOK_PROOF/02_workbook_preflight.log", "change": "created", "sha256": "2450710c4b433b86fe0a9c15bfe2d95e189455e214d71497bc45c0f72ea04b93"},
+    {"path": "plans/27_langgraph_curriculum_factory_remediation/execution_package_v2/results/v9/evidence/N80_LIVE_WORKBOOK_PROOF/03_no_workbook_or_copy_proof.log", "change": "created", "sha256": "86300d639d6839d000064ffb473133d1eb8b39a222465e1c31f2f814aa7b5a6a"}
+  ],
+  "commands": [
+    {
+      "argv": ["python3", "-m", "runtime.run_curriculum", "--engine-root", ".", "--curriculum", "curricula/arduino_kit/arduino_kit_curriculum.v5.yaml", "--output-root", "outputs/run27/live_workbook", "--preflight"],
+      "exit_code": 3,
+      "log": "plans/27_langgraph_curriculum_factory_remediation/execution_package_v2/results/v9/evidence/N80_LIVE_WORKBOOK_PROOF/02_workbook_preflight.log",
+      "log_sha256": "2450710c4b433b86fe0a9c15bfe2d95e189455e214d71497bc45c0f72ea04b93"
+    }
+  ],
+  "evidence": [
+    "plans/27_langgraph_curriculum_factory_remediation/execution_package_v2/results/v9/evidence/N80_LIVE_WORKBOOK_PROOF/01_n70_precondition.log",
+    "plans/27_langgraph_curriculum_factory_remediation/execution_package_v2/results/v9/evidence/N80_LIVE_WORKBOOK_PROOF/02_workbook_preflight.log",
+    "plans/27_langgraph_curriculum_factory_remediation/execution_package_v2/results/v9/evidence/N80_LIVE_WORKBOOK_PROOF/03_no_workbook_or_copy_proof.log"
+  ],
+  "findings": [
+    {
+      "id": "N80V9-F01",
+      "severity": "major",
+      "summary": "Current N70 truthfully reports NOT_AVAILABLE and the fresh N80 content-free preflight independently reproduced the unavailable approved Claude subscription driver; no accepted unit set exists for workbook assembly.",
+      "disposition": "open"
+    },
+    {
+      "id": "N80V9-F02",
+      "severity": "critical",
+      "summary": "Neither live unit nor live workbook output root exists; N80 copied or mutated no N70 byte and made no COMPLETE, coverage, page, review, or release claim.",
+      "disposition": "resolved"
+    },
+    {
+      "id": "N80V9-F03",
+      "severity": "observation",
+      "summary": "No fallback, API-key route, manual assembly, narrowed manifest, simulation, or probe-as-product substitution occurred; NOT_AVAILABLE is the sole truthful live-workbook outcome.",
+      "disposition": "resolved"
+    }
+  ],
+  "invalidated_descendants": []
+}

@@ -1,12 +1,12 @@
 {
-  "admission": "normal",
-  "admitted_at": "2026-08-15T02:31:56.909206Z",
+  "admission": "recovery_readmission",
+  "admitted_at": "2026-08-15T03:20:50.167575Z",
   "approved_spec_sha256": "e14df5a36ce12d700fe9fc4aa4aea466771bc89f31bc6e9d49f812c147b1bb3c",
-  "attempt_id": "N40_INTEGRATION_OWNERSHIP-2026-08-15T023136472551Z-6812be1e",
+  "attempt_id": "N40_INTEGRATION_OWNERSHIP-2026-08-15T032028418526Z-fa03e404",
   "baseline": {
     "plans/27_langgraph_curriculum_factory_remediation/contracts/integration_ownership.v1.yaml": "cd8a47a7ce2c1d39f34f667a54893e80857769d4f1c3ce24b9f610e2d8c5cc74",
-    "plans/27_langgraph_curriculum_factory_remediation/execution_package_v2/results/v8/N40_INTEGRATION_OWNERSHIP.result.v1.json": "f1656a7612b3cbc721d0ce954455a760d85209ce13faacd0b4a512a6c35babef",
-    "plans/27_langgraph_curriculum_factory_remediation/execution_package_v2/results/v8/evidence/N40_INTEGRATION_OWNERSHIP": "eef84c615d2640f72a904bbaea762105e2afd2f81d6537675f134652d47bbfe1",
+    "plans/27_langgraph_curriculum_factory_remediation/execution_package_v2/results/v8/N40_INTEGRATION_OWNERSHIP.result.v1.json": "4a0eb5c94e8a41523bee7e32347e649343ed9768cfd2fa5ce057d8f642bdf04f",
+    "plans/27_langgraph_curriculum_factory_remediation/execution_package_v2/results/v8/evidence/N40_INTEGRATION_OWNERSHIP": "810fd5f0fab2cd2485c97c3164dc749ea2a0a4eefe041e7b23e8f39fcf00ddfd",
     "runtime/langgraph_factory/acceptance.py": "9752736b326e0d58c42affd2166177c42cc0db74626e2b4d83783c8024be1bed",
     "runtime/langgraph_factory/graph.py": "d74e86e3b954591f052a961a08d492de0559a0b79c16d6215541e26c56ff160f",
     "runtime/langgraph_factory/nodes/__init__.py": "df4d7021c83f5e5c8fa053c426d17657f64141d866594dee49e80fe030008ae3",
@@ -19,7 +19,7 @@
     "tests/runtime/test_plan26_unit_graph.py": "ac6568a7a528e4d2b6c56c4057fd6a906233aad4f779a9f8391bd37daee4ef3e",
     "tests/runtime/test_plan26_workbook.py": "42ab0d5a2f75e0ea71949d9d5c8dc5bc260d567034a6ad19571c90883a889132"
   },
-  "baseline_sha256": "e9ca983c9c3e96477b01b2284a065190cf086653d990caf6304b7be67dc9de48",
+  "baseline_sha256": "d9e03fe23c3b557fe8ecdf78a6f9bc35f67c7ad895efddb83c69fab10464c192",
   "changed_files": [
     {
       "change": "modified",
@@ -105,6 +105,31 @@
       "change": "created",
       "path": "plans/27_langgraph_curriculum_factory_remediation/execution_package_v2/results/v8/evidence/N40_INTEGRATION_OWNERSHIP/attempts/N40_INTEGRATION_OWNERSHIP.attempt-3.result.v1.json",
       "sha256": "2e7541bc5c85143309aa87fedd5493fe86029b4891713c298425e8efed59f767"
+    },
+    {
+      "change": "created",
+      "path": "plans/27_langgraph_curriculum_factory_remediation/execution_package_v2/results/v8/evidence/N40_INTEGRATION_OWNERSHIP/attempts/N40_INTEGRATION_OWNERSHIP.attempt-4.result.v1.json",
+      "sha256": "f1656a7612b3cbc721d0ce954455a760d85209ce13faacd0b4a512a6c35babef"
+    },
+    {
+      "change": "created",
+      "path": "plans/27_langgraph_curriculum_factory_remediation/execution_package_v2/results/v8/evidence/N40_INTEGRATION_OWNERSHIP/13_pytest_n40_attempt5.log",
+      "sha256": "5511cd73de9db7b719c6c656f1f83df53a2f01a3071a120682d3676bb440a41e"
+    },
+    {
+      "change": "created",
+      "path": "plans/27_langgraph_curriculum_factory_remediation/execution_package_v2/results/v8/evidence/N40_INTEGRATION_OWNERSHIP/14_scan_node_n40_attempt5.log",
+      "sha256": "c25336abd9a5f6e756384d031c358217960e4de7ff2c202e9211ada05f8096d4"
+    },
+    {
+      "change": "created",
+      "path": "plans/27_langgraph_curriculum_factory_remediation/execution_package_v2/results/v8/evidence/N40_INTEGRATION_OWNERSHIP/15_verify_ownership_attempt5.log",
+      "sha256": "25d74851a58994b406e2073ecee8a8481f6189d1936e1c62325ca7e30920cfb9"
+    },
+    {
+      "change": "created",
+      "path": "plans/27_langgraph_curriculum_factory_remediation/execution_package_v2/results/v8/evidence/N40_INTEGRATION_OWNERSHIP/16_empty_projection_repair_cascade.log",
+      "sha256": "644f0a2f0c72b3855ae6102d89c57a8f6dd9e5c0822f510016f59116ebc05940"
     }
   ],
   "commands": [
@@ -120,8 +145,8 @@
         "tests/runtime/test_plan26_workbook.py"
       ],
       "exit_code": 0,
-      "log": "plans/27_langgraph_curriculum_factory_remediation/execution_package_v2/results/v8/evidence/N40_INTEGRATION_OWNERSHIP/11_pytest_n40_attempt4.log",
-      "log_sha256": "648bc1639f50a00cea47531e31aefaff5bd8d8c2478b902a22516f7093d59b64"
+      "log": "plans/27_langgraph_curriculum_factory_remediation/execution_package_v2/results/v8/evidence/N40_INTEGRATION_OWNERSHIP/13_pytest_n40_attempt5.log",
+      "log_sha256": "5511cd73de9db7b719c6c656f1f83df53a2f01a3071a120682d3676bb440a41e"
     },
     {
       "argv": [
@@ -133,8 +158,8 @@
         "plans/27_langgraph_curriculum_factory_remediation/execution_package_v2/implementation.graph.v8.yaml"
       ],
       "exit_code": 0,
-      "log": "plans/27_langgraph_curriculum_factory_remediation/execution_package_v2/results/v8/evidence/N40_INTEGRATION_OWNERSHIP/12_scan_node_n40_attempt4.log",
-      "log_sha256": "e15e9d0dcee50aff9e9ad8b27b1505152f2bafe9ff84b81260af8021fde0ba34"
+      "log": "plans/27_langgraph_curriculum_factory_remediation/execution_package_v2/results/v8/evidence/N40_INTEGRATION_OWNERSHIP/14_scan_node_n40_attempt5.log",
+      "log_sha256": "c25336abd9a5f6e756384d031c358217960e4de7ff2c202e9211ada05f8096d4"
     },
     {
       "argv": [
@@ -146,20 +171,8 @@
         "plans/27_langgraph_curriculum_factory_remediation/execution_package_v2/implementation.graph.v8.yaml"
       ],
       "exit_code": 0,
-      "log": "plans/27_langgraph_curriculum_factory_remediation/execution_package_v2/results/v8/evidence/N40_INTEGRATION_OWNERSHIP/03_verify_ownership.log",
-      "log_sha256": "ccf9998e5aa58f7944bc16de30af264df08d5f3b22d15c416405fb9cacba6821"
-    },
-    {
-      "argv": [
-        "python3",
-        "-m",
-        "pytest",
-        "-q",
-        "tests/runtime/test_plan26_unit_graph.py::test_a_fresh_episode_executes_the_bootstrap_spine_once_through_langgraph"
-      ],
-      "exit_code": 0,
-      "log": "plans/27_langgraph_curriculum_factory_remediation/execution_package_v2/results/v8/evidence/N40_INTEGRATION_OWNERSHIP/04_tuple_contract_harness_repair.log",
-      "log_sha256": "8995634dd1c10007289df002cf830dfa677ee175f9d70ceb7a9970a6706b487d"
+      "log": "plans/27_langgraph_curriculum_factory_remediation/execution_package_v2/results/v8/evidence/N40_INTEGRATION_OWNERSHIP/15_verify_ownership_attempt5.log",
+      "log_sha256": "25d74851a58994b406e2073ecee8a8481f6189d1936e1c62325ca7e30920cfb9"
     }
   ],
   "evidence": [
@@ -178,12 +191,17 @@
     "plans/27_langgraph_curriculum_factory_remediation/execution_package_v2/results/v8/evidence/N40_INTEGRATION_OWNERSHIP/11_pytest_n40_attempt4.log",
     "plans/27_langgraph_curriculum_factory_remediation/execution_package_v2/results/v8/evidence/N40_INTEGRATION_OWNERSHIP/12_scan_node_n40_attempt4.log",
     "plans/27_langgraph_curriculum_factory_remediation/execution_package_v2/results/v8/evidence/N40_INTEGRATION_OWNERSHIP/13_staged_input_repair_cascade.log",
-    "plans/27_langgraph_curriculum_factory_remediation/execution_package_v2/results/v8/evidence/N40_INTEGRATION_OWNERSHIP/attempts/N40_INTEGRATION_OWNERSHIP.attempt-3.result.v1.json"
+    "plans/27_langgraph_curriculum_factory_remediation/execution_package_v2/results/v8/evidence/N40_INTEGRATION_OWNERSHIP/attempts/N40_INTEGRATION_OWNERSHIP.attempt-3.result.v1.json",
+    "plans/27_langgraph_curriculum_factory_remediation/execution_package_v2/results/v8/evidence/N40_INTEGRATION_OWNERSHIP/attempts/N40_INTEGRATION_OWNERSHIP.attempt-4.result.v1.json",
+    "plans/27_langgraph_curriculum_factory_remediation/execution_package_v2/results/v8/evidence/N40_INTEGRATION_OWNERSHIP/13_pytest_n40_attempt5.log",
+    "plans/27_langgraph_curriculum_factory_remediation/execution_package_v2/results/v8/evidence/N40_INTEGRATION_OWNERSHIP/14_scan_node_n40_attempt5.log",
+    "plans/27_langgraph_curriculum_factory_remediation/execution_package_v2/results/v8/evidence/N40_INTEGRATION_OWNERSHIP/15_verify_ownership_attempt5.log",
+    "plans/27_langgraph_curriculum_factory_remediation/execution_package_v2/results/v8/evidence/N40_INTEGRATION_OWNERSHIP/16_empty_projection_repair_cascade.log"
   ],
   "final_outputs": {
     "plans/27_langgraph_curriculum_factory_remediation/contracts/integration_ownership.v1.yaml": "cd8a47a7ce2c1d39f34f667a54893e80857769d4f1c3ce24b9f610e2d8c5cc74",
-    "plans/27_langgraph_curriculum_factory_remediation/execution_package_v2/results/v8/N40_INTEGRATION_OWNERSHIP.result.v1.json": "f1656a7612b3cbc721d0ce954455a760d85209ce13faacd0b4a512a6c35babef",
-    "plans/27_langgraph_curriculum_factory_remediation/execution_package_v2/results/v8/evidence/N40_INTEGRATION_OWNERSHIP": "eef84c615d2640f72a904bbaea762105e2afd2f81d6537675f134652d47bbfe1",
+    "plans/27_langgraph_curriculum_factory_remediation/execution_package_v2/results/v8/N40_INTEGRATION_OWNERSHIP.result.v1.json": "4a0eb5c94e8a41523bee7e32347e649343ed9768cfd2fa5ce057d8f642bdf04f",
+    "plans/27_langgraph_curriculum_factory_remediation/execution_package_v2/results/v8/evidence/N40_INTEGRATION_OWNERSHIP": "810fd5f0fab2cd2485c97c3164dc749ea2a0a4eefe041e7b23e8f39fcf00ddfd",
     "runtime/langgraph_factory/acceptance.py": "9752736b326e0d58c42affd2166177c42cc0db74626e2b4d83783c8024be1bed",
     "runtime/langgraph_factory/graph.py": "d74e86e3b954591f052a961a08d492de0559a0b79c16d6215541e26c56ff160f",
     "runtime/langgraph_factory/nodes/__init__.py": "df4d7021c83f5e5c8fa053c426d17657f64141d866594dee49e80fe030008ae3",
@@ -197,20 +215,27 @@
     "tests/runtime/test_plan26_workbook.py": "42ab0d5a2f75e0ea71949d9d5c8dc5bc260d567034a6ad19571c90883a889132"
   },
   "graph_sha256": "c2d79ac0387c935977385138d2d891cf1539041f1a4532acf94fc8dc687bf6b1",
-  "lineage_fingerprint": "bc3bfaead813be0be7db0048ff8abd8419dc33a5e9ab301220488c4eb23dc02b",
+  "lineage_fingerprint": "1a51eea79223a6ecf7b5310b9cc01005663cb652bd0261665ca978a05e49d0b0",
   "node_definition_sha256": "b6ddedca2e95c24fa09d51c0943340a61e95d6cb88f9deaf571667e1320a0029",
   "node_id": "N40_INTEGRATION_OWNERSHIP",
   "parent_attempt_id": null,
   "predecessor_receipts": {
-    "N30_PREFLIGHT_EGRESS": "d1e4bac143ff38ea2c80308079746540a4e12fb51c5ab4ca78d38104051d0603"
+    "N30_PREFLIGHT_EGRESS": "d7d21da3b0831b00c6d55293b38cb70187c1b66a5afe52ab503a340d9f16e8d1"
   },
   "predecessor_results": {
-    "N30_PREFLIGHT_EGRESS": "4a5ad874c9455fec2428e2508cea9aad8c9a10d03d5efbe8871c2b5a6be6fd41"
+    "N30_PREFLIGHT_EGRESS": "6c59a2bc58b616b703ec8518cc890d9b7de9a436542f813d1ea92f7691a6b7b3"
   },
   "prompt_sha256": "a517a0198de0cecca6340b317c9380410a400af11d7f358baa08bf68c5b8b797",
-  "receipt_id": "N40_INTEGRATION_OWNERSHIP-c2f9e0ec7d6440d6bba2b1e5cf9ced48",
+  "receipt_id": "N40_INTEGRATION_OWNERSHIP-b02e716ec6f14c62a0a6162fba62c3a9",
+  "recovery": {
+    "expect_result_sha256": "4a0eb5c94e8a41523bee7e32347e649343ed9768cfd2fa5ce057d8f642bdf04f",
+    "reason": "N20_N30_live_source_repair_cascade",
+    "reason_code": "ANCESTOR_REWORK_REVALIDATION",
+    "superseded_receipt_sha256": "c1711eb6ea247a70119749a033384f174dfe5933315046886598624f0a1acd0b",
+    "verification_rerun": true
+  },
   "result_path": "plans/27_langgraph_curriculum_factory_remediation/execution_package_v2/results/v8/N40_INTEGRATION_OWNERSHIP.result.v1.json",
-  "result_sha256": "f1656a7612b3cbc721d0ce954455a760d85209ce13faacd0b4a512a6c35babef",
+  "result_sha256": "4a0eb5c94e8a41523bee7e32347e649343ed9768cfd2fa5ce057d8f642bdf04f",
   "run_id": "run27",
   "schema_version": 1,
   "status": "PASSED",
@@ -227,8 +252,8 @@
         "tests/runtime/test_plan26_workbook.py"
       ],
       "exit_code": 0,
-      "log": "attempts/N40_INTEGRATION_OWNERSHIP/N40_INTEGRATION_OWNERSHIP-2026-08-15T023136472551Z-6812be1e/logs/verify_00.log",
-      "log_sha256": "262f51ac2a320054baaa105c8a375875e1c99cc91c0444c95c6de68029e3257b"
+      "log": "attempts/N40_INTEGRATION_OWNERSHIP/N40_INTEGRATION_OWNERSHIP-2026-08-15T032028418526Z-fa03e404/logs/verify_00.log",
+      "log_sha256": "a21939baea5e9f18410cf7c31e2743da48d48c2b86edf51b9755e83160c86428"
     },
     {
       "argv": [
@@ -240,7 +265,7 @@
         "plans/27_langgraph_curriculum_factory_remediation/execution_package_v2/implementation.graph.v8.yaml"
       ],
       "exit_code": 0,
-      "log": "attempts/N40_INTEGRATION_OWNERSHIP/N40_INTEGRATION_OWNERSHIP-2026-08-15T023136472551Z-6812be1e/logs/verify_01.log",
+      "log": "attempts/N40_INTEGRATION_OWNERSHIP/N40_INTEGRATION_OWNERSHIP-2026-08-15T032028418526Z-fa03e404/logs/verify_01.log",
       "log_sha256": "c25336abd9a5f6e756384d031c358217960e4de7ff2c202e9211ada05f8096d4"
     },
     {
@@ -253,7 +278,7 @@
         "plans/27_langgraph_curriculum_factory_remediation/execution_package_v2/implementation.graph.v8.yaml"
       ],
       "exit_code": 0,
-      "log": "attempts/N40_INTEGRATION_OWNERSHIP/N40_INTEGRATION_OWNERSHIP-2026-08-15T023136472551Z-6812be1e/logs/verify_02.log",
+      "log": "attempts/N40_INTEGRATION_OWNERSHIP/N40_INTEGRATION_OWNERSHIP-2026-08-15T032028418526Z-fa03e404/logs/verify_02.log",
       "log_sha256": "25d74851a58994b406e2073ecee8a8481f6189d1936e1c62325ca7e30920cfb9"
     },
     {
@@ -264,8 +289,8 @@
         "N40_INTEGRATION_OWNERSHIP"
       ],
       "exit_code": 0,
-      "log": "attempts/N40_INTEGRATION_OWNERSHIP/N40_INTEGRATION_OWNERSHIP-2026-08-15T023136472551Z-6812be1e/logs/verify_03.log",
-      "log_sha256": "474543a10070bf750fe53c0b351897f7fef87d4dd4ccf560e7cba578d9c81119"
+      "log": "attempts/N40_INTEGRATION_OWNERSHIP/N40_INTEGRATION_OWNERSHIP-2026-08-15T032028418526Z-fa03e404/logs/verify_03.log",
+      "log_sha256": "64e7eaee4b8de63be2baa769c76edb82b65b9fefe07dca2c8c865cf80466e95f"
     }
   ]
 }

@@ -1,0 +1,21 @@
+{
+  "approved_spec_sha256": "e14df5a36ce12d700fe9fc4aa4aea466771bc89f31bc6e9d49f812c147b1bb3c",
+  "attempt_id": "N80_LIVE_WORKBOOK_PROOF-2026-08-15T104943214298Z-444444e5",
+  "baseline": {
+    "outputs/run27/live_workbook": null,
+    "plans/27_langgraph_curriculum_factory_remediation/execution_package_v2/results/v9/N80_LIVE_WORKBOOK_PROOF.result.v1.json": null,
+    "plans/27_langgraph_curriculum_factory_remediation/execution_package_v2/results/v9/evidence/N80_LIVE_WORKBOOK_PROOF": null
+  },
+  "created_at": "2026-08-15T10:49:43.214617Z",
+  "evidence_dir": "attempts/N80_LIVE_WORKBOOK_PROOF/N80_LIVE_WORKBOOK_PROOF-2026-08-15T104943214298Z-444444e5/logs",
+  "graph_sha256": "5236bf6b13a2c5171ad11ab80f1147e20b6b59f46708090d25ec16c5a7574379",
+  "node_definition_sha256": "5229bf5996595066cfd58403fe40879084ac3c213c152b0fefbf376e284cfe40",
+  "node_id": "N80_LIVE_WORKBOOK_PROOF",
+  "parent_attempt_id": null,
+  "predecessor_receipt_digests": {
+    "N70_LIVE_UNIT_PROOF": "63f547d377fec1281eb7edfba446070165fc9587578fbe6af067c2a5d0f0eaea"
+  },
+  "prompt_sha256": "c177ae0925a6eaf40e398fa0829030e8ba1f012c044be74a972aad6c7e56a0e1",
+  "run_id": "run27-execution-package-v2-graph-v9",
+  "schema_version": 1
+}

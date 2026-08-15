@@ -1,0 +1,68 @@
+{
+  "opened_at": "2026-08-15T04-54-33.150919+00-00",
+  "artifact_original": "/Users/filipepinto/Projects/curriculum_builder/plans/27_langgraph_curriculum_factory_remediation/execution_package_v2/release_candidate/rc14/rc14_review_bundle.v1.md",
+  "artifact_current": "/Users/filipepinto/Projects/curriculum_builder/plans/27_langgraph_curriculum_factory_remediation/execution_package_v2/release_candidate/rc14/rc14_review_bundle.v1.md",
+  "session_id": "01a003c5-9169-7430-ae1a-5fbbd6fdcbe4",
+  "chain": "e920d02520d7ae171d83c52619062f77030081738f5abd80bc29e0e9eb11ee9d",
+  "rounds_completed": 1,
+  "rounds": [
+    {
+      "round": 1,
+      "timestamp": "2026-08-15T05:07:47.985897+00:00",
+      "verdict": "FAIL",
+      "artifact_path": "/Users/filipepinto/Projects/curriculum_builder/plans/27_langgraph_curriculum_factory_remediation/execution_package_v2/release_candidate/rc14/rc14_review_bundle.v1.md",
+      "artifact_sha256": "917b0938ec1f8dbff9bc92681c4553956912552d9b9645853f65d19ca7cda873",
+      "findings_at_threshold": [
+        {
+          "id": "RC14-QA-001",
+          "title": "D08 consumes an unfrozen circuit-library dependency",
+          "severity": "blocker",
+          "criterion_ref": "Criterion 4 requires D02 to bind every curriculum-owned domain input used by D08 and reject drift; Criterion 6 requires a deterministic receipt from the exact frozen invocation; Criterion 11 forbids an unverifiable N70 path."
+        }
+      ],
+      "observations_count": 4,
+      "chain": "e920d02520d7ae171d83c52619062f77030081738f5abd80bc29e0e9eb11ee9d"
+    }
+  ],
+  "stall_count": 0,
+  "last_fingerprint": "2d202d2ff311d52c5098bb4e4fa5aa2279e5b25e471cf4aa681ec1110abc9598",
+  "exec_copied": [
+    "QA_criteria.rc14.v1.md",
+    "rc14_review_bundle.v1.md",
+    "validation.v1.md"
+  ],
+  "terminal": null,
+  "config": {
+    "criteria": "# RC14 independent QA criteria\n\nReport only blocker findings: each finding must name the criterion it defeats,\na reproducible trigger, and the consequence. Style and optional hardening are\nobservations.\n\n1. Historical integrity: graph v8 must still hash to\n   `c2d79ac0387c935977385138d2d891cf1539041f1a4532acf94fc8dc687bf6b1`, and\n   v9 must use distinct graph/contract/schema/prompt/result/state lineage without\n   overwriting v8 evidence.\n2. Package coherence: graph v9, approval schema v6, contract v6, prompts,\n   scanner, validators, and package tests must bind to v9/results-v9 consistently;\n   all digest claims must recompute and the real plan validator must pass.\n3. Ownership: every changed production/runtime/test path must be in the exact\n   sequential owner write set that implements it, without ambiguous ownership.\n4. Complete freeze: D02 must bind every curriculum-owned domain input used by\n   M02 or D08, reject drift/escape/incomplete proof before entry, and include the\n   contract digest in effective-run identity. D08 must parse the hash-verified\n   frozen artifact-schema bytes, not later replacement bytes.\n5. Bounded authoring: D07/M02 may see only admitted source claims and verified\n   staged domain inputs. M02 must not claim admission or verifier authority.\n6. Executable verification: D08 must use a deterministic candidate-bound receipt\n   produced by the exact frozen invocation and complete positive/negative fixture\n   suite under a no-network sandbox; model-declared verdicts cannot satisfy it.\n7. First-version recovery: invalid initial domain/content/visual candidates must\n   remain immutable and non-head; D19/M06 must target exact bytes; D20 must reject\n   stale/out-of-bound/no-op repair; repaired children must retain validator\n   lineage, admit as genesis where appropriate, and revalidate as exact heads.\n8. Replay and physical admission: D08/D09/D12/D20 heads must have canonical bytes\n   in ArtifactStore before downstream reads. Same logical heads must replay\n   idempotently across different admitting nodes; conflicts must fail closed.\n   Revalidation must never replace repaired bytes with stale pre-repair state.\n9. Regression proof: the focused, package, and full-runtime suites must execute\n   successfully, including all six RC13 reproduction paths.\n10. Security/architecture preservation: exact-host retrieval, SSRF/redirect\n    checks, tool-closed subscription CLIs, model assignments, topology, terminals,\n    and no-billed-API/no-provider-SDK constraints must remain intact.\n11. Entry safety: no blocker may make a fresh graph-v9 N00→N90 cascade dishonest,\n    unverifiable, or unable to run the real N70/N80 path.\n",
+    "focus": "Block only on a concrete defect that invalidates graph-v9 entry or the repaired N70/N80 path. Reproduce the six RC13 blockers and verify their closures, recompute all graph/contract bindings, and execute the plan/package/focused/full-runtime proof where useful.",
+    "threshold": "blocker",
+    "max_iterations": 5,
+    "timeout_seconds": 900,
+    "retries": 2,
+    "model": null,
+    "effort": null,
+    "transport": "exec",
+    "allow_execution": true,
+    "grounding": [
+      "/Users/filipepinto/Projects/curriculum_builder/plans/26_langgraph_curriculum_factory/prompts/RUN27_GPT56_SOL_AUTONOMOUS_V8_RECOVERY_TO_N90.prompt.v1.md",
+      "/Users/filipepinto/Projects/curriculum_builder/plans/26_langgraph_curriculum_factory/spec/v3/langgraph_curriculum_factory.spec.v4.md",
+      "/Users/filipepinto/Projects/curriculum_builder/plans/27_langgraph_curriculum_factory_remediation/execution_package_v2/implementation.graph.v9.yaml",
+      "/Users/filipepinto/Projects/curriculum_builder/plans/27_langgraph_curriculum_factory_remediation/execution_package_v2/contracts/spec_approval.v6.yaml",
+      "/Users/filipepinto/Projects/curriculum_builder/plans/27_langgraph_curriculum_factory_remediation/execution_package_v2/schemas/spec_approval.schema.v6.json",
+      "/Users/filipepinto/Projects/curriculum_builder/runtime/langgraph_factory/transport.py",
+      "/Users/filipepinto/Projects/curriculum_builder/runtime/langgraph_factory/nodes/inputs.py",
+      "/Users/filipepinto/Projects/curriculum_builder/runtime/langgraph_factory/nodes/sources.py",
+      "/Users/filipepinto/Projects/curriculum_builder/runtime/langgraph_factory/nodes/domain.py",
+      "/Users/filipepinto/Projects/curriculum_builder/runtime/langgraph_factory/nodes/content.py",
+      "/Users/filipepinto/Projects/curriculum_builder/runtime/langgraph_factory/nodes/visuals.py",
+      "/Users/filipepinto/Projects/curriculum_builder/runtime/langgraph_factory/graph.py",
+      "/Users/filipepinto/Projects/curriculum_builder/runtime/langgraph_factory/repair.py",
+      "/Users/filipepinto/Projects/curriculum_builder/tests/runtime/test_plan26_transport.py",
+      "/Users/filipepinto/Projects/curriculum_builder/tests/runtime/test_plan26_deterministic_nodes.py",
+      "/Users/filipepinto/Projects/curriculum_builder/tests/runtime/test_plan26_unit_graph.py",
+      "/Users/filipepinto/Projects/curriculum_builder/tests/runtime/test_plan26_repair_acceptance.py",
+      "/Users/filipepinto/Projects/curriculum_builder/plans/27_langgraph_curriculum_factory_remediation/execution_package_v2/tests/test_execution_package_v2.py"
+    ]
+  },
+  "thread_id": "01a003c5-9169-7430-ae1a-5fbbd6fdcbe4"
+}

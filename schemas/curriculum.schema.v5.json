@@ -49,6 +49,7 @@
       "required": [
         "schema",
         "manifest_schema",
+        "calibration",
         "verifier",
         "config"
       ],
@@ -63,6 +64,11 @@
           "type": "string",
           "pattern": "^curricula/[a-z0-9_]+/[A-Za-z0-9_.-]+\\.json$"
         },
+        "calibration": {
+          "description": "Repository-relative path to the curriculum-owned calibration values M02 may use. D02 freezes its bytes and D07 stages only that verified file; a worker never searches the curriculum directory for undeclared calibration.",
+          "type": "string",
+          "pattern": "^curricula/[a-z0-9_]+/[A-Za-z0-9_.-]+\\.(yaml|yml|json)$"
+        },
         "config": {
           "type": "object",
           "minProperties": 1,
@@ -75,6 +81,7 @@
           "required": [
             "entry_point",
             "invocation",
+            "dependencies",
             "must_reject",
             "must_accept",
             "proven"
@@ -89,6 +96,16 @@
               "description": "The exact command, with <domain> standing for the unit's domain block. Exit 0 accepts; non-zero rejects and prints one line per rule that fired.",
               "type": "string",
               "minLength": 20
+            },
+            "dependencies": {
+              "description": "Every curriculum-owned file the verifier may read besides its candidate and declared fixtures. D02 freezes each file and the verifier sandbox grants no read access to undeclared curriculum files.",
+              "type": "array",
+              "maxItems": 64,
+              "uniqueItems": true,
+              "items": {
+                "type": "string",
+                "pattern": "^curricula/[a-z0-9_]+/[A-Za-z0-9_./-]+$"
+              }
             },
             "must_reject": {
               "description": "Fixtures the verifier must refuse, each with the code it must refuse them for. A detector that only ever accepts is not a verifier, and one that rejects for the wrong reason is a check that has stopped seeing what it was written to see.",

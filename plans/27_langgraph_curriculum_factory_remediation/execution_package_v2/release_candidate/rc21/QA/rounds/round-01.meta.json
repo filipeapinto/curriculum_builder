@@ -1,0 +1,84 @@
+{
+  "attempt": 2,
+  "exit_code": 0,
+  "duration_seconds": 752.27,
+  "transport": "exec",
+  "session_id": "01a00451-c3fc-7352-9b25-d6a78cbb0473",
+  "thread_id": "01a00451-c3fc-7352-9b25-d6a78cbb0473",
+  "turn_id": null,
+  "usage": {
+    "input_tokens": 6215778,
+    "cached_input_tokens": 6032896,
+    "cache_write_input_tokens": 0,
+    "output_tokens": 17935,
+    "reasoning_output_tokens": 8092
+  },
+  "model": null,
+  "effort": null,
+  "plugin_version": null,
+  "plugin_lib_path": null,
+  "argv": [
+    "codex",
+    "exec",
+    "--json",
+    "--skip-git-repo-check",
+    "--output-schema",
+    "/Users/filipepinto/Projects/curriculum_builder/.claude/skills/qa-gate-codex-run/scripts/verdict.schema.json",
+    "-o",
+    "/Users/filipepinto/Projects/curriculum_builder/plans/27_langgraph_curriculum_factory_remediation/execution_package_v2/release_candidate/rc21/QA/rounds/round-01.response.json",
+    "-s",
+    "workspace-write",
+    "-C",
+    "/Users/filipepinto/Projects/curriculum_builder/plans/27_langgraph_curriculum_factory_remediation/execution_package_v2/release_candidate/rc21/QA/exec",
+    "<prompt>"
+  ],
+  "started_at": "2026-08-15T07:27:41.739147+00:00",
+  "response_sha256": "530589d898a1fc1066e48ba12fda5bc1ffc0591a11addb2008238391f4dbb89f",
+  "request_sha256": "ad745b611442fa67eb7b5b86e71b2302d261fd097bca40c94e8677f409059a0e",
+  "round": 1,
+  "cwd": "/Users/filipepinto/Projects/curriculum_builder/plans/27_langgraph_curriculum_factory_remediation/execution_package_v2/release_candidate/rc21/QA/exec",
+  "artifact_path": "/Users/filipepinto/Projects/curriculum_builder/plans/27_langgraph_curriculum_factory_remediation/execution_package_v2/release_candidate/rc21/rc21_review_bundle.v1.md",
+  "artifact_sha256": "f14134f3bccde0c80151c9a89f89fd1ce8eb4bb4a1f7d25ab2faaa3145856d7c",
+  "grounding": [
+    {
+      "path": "/Users/filipepinto/Projects/curriculum_builder/plans/26_langgraph_curriculum_factory/spec/v3/langgraph_curriculum_factory.spec.v4.md",
+      "sha256": "e14df5a36ce12d700fe9fc4aa4aea466771bc89f31bc6e9d49f812c147b1bb3c"
+    },
+    {
+      "path": "/Users/filipepinto/Projects/curriculum_builder/plans/27_langgraph_curriculum_factory_remediation/execution_package_v2/implementation.graph.v9.yaml",
+      "sha256": "5236bf6b13a2c5171ad11ab80f1147e20b6b59f46708090d25ec16c5a7574379"
+    },
+    {
+      "path": "/Users/filipepinto/Projects/curriculum_builder/curricula/arduino_kit/arduino_kit_curriculum.v5.yaml",
+      "sha256": "7c8efffb6ff6256bac215b7a541fa728ebe8768f95e65de338efd56b8143d2c6"
+    },
+    {
+      "path": "/Users/filipepinto/Projects/curriculum_builder/runtime/langgraph_factory/nodes/inputs.py",
+      "sha256": "3a4e214bd0565b872a33ebc29464209cd661c489ff5e18d8c689ffc8e47c4737"
+    },
+    {
+      "path": "/Users/filipepinto/Projects/curriculum_builder/runtime/langgraph_factory/transport.py",
+      "sha256": "b710242e39dacd13a4fe9b40ad8807a8e4ade9552c67b1f98309a626b1a04e2d"
+    },
+    {
+      "path": "/Users/filipepinto/Projects/curriculum_builder/tests/runtime/test_plan26_deterministic_nodes.py",
+      "sha256": "7c900362aa958ba259c2e952e1b9c63cac6b27f23f4ec86acde8d3f3c6b7bc59"
+    },
+    {
+      "path": "/Users/filipepinto/Projects/curriculum_builder/tests/runtime/test_plan26_transport.py",
+      "sha256": "5c470bb4865e697707fea5679b8ff2358f465fc36d4897cd10ac4cf2b9a264e8"
+    },
+    {
+      "path": "/Users/filipepinto/Projects/curriculum_builder/plans/27_langgraph_curriculum_factory_remediation/execution_package_v2/release_candidate/rc19/QA/rounds/round-01.response.json",
+      "sha256": "2cf0442c9cca99dce8ff62933ad4e96f390d3a9f86d23e09ade4ddc44ca310da"
+    },
+    {
+      "path": "/Users/filipepinto/Projects/curriculum_builder/plans/27_langgraph_curriculum_factory_remediation/execution_package_v2/release_candidate/rc20/QA/session.json",
+      "sha256": "59fa7be9b3daa253e7129981d85fa8b68bf0a4b674ed801012431d81c7942451"
+    }
+  ],
+  "chain_prev": "GENESIS",
+  "chain": "3de903e4cbefbc8714449f1ef50b7e6c043fc7454fa8fd76942adfa099edbbc4",
+  "rollout_file": "/Users/filipepinto/.codex/sessions/2026/08/15/rollout-2026-08-15T03-27-42-01a00451-c3fc-7352-9b25-d6a78cbb0473.jsonl",
+  "timestamp": "2026-08-15T07:40:14.073626+00:00"
+}

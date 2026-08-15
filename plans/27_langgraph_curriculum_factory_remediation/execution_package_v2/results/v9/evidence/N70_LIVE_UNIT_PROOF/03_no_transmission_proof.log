@@ -1,0 +1,10 @@
+N70 V9 no-transmission proof
+Checked: 2026-08-15T10:47:58Z
+
+- Both production preflights used the fixed content-free instruction whose SHA-256 is 931cd18f89a1896a2a49ffc2c46e825046976ac5f6be884744980005c0c3ccc5.
+- Both transmitted an empty authorized_input_projection. No curriculum artifact, source excerpt, PDF, page raster, evidence bundle, or user-owned file entered either model probe.
+- Both stopped at the mandatory driver_capability_proof before a production episode could be created.
+- outputs/run27/live_unit does not exist after either preflight. There are no unit bytes, workspaces, source retrievals, model attempts, or evidence records to claim as product.
+- The live authorization remained valid, but authorization cannot convert an unavailable approved driver into readiness.
+- Codex was ready; Claude was not. Production policy prohibits reassignment, provider substitution, API-key activation, direct HTTP model calls, or fallback.
+- Therefore the only truthful N70 outcome is NOT_AVAILABLE, not PASSED and not an engine/product BLOCKED claim.

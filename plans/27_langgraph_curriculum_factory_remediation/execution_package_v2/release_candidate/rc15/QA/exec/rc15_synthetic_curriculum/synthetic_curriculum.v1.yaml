@@ -1,0 +1,25 @@
+domain:
+  schema: plans/27_langgraph_curriculum_factory_remediation/execution_package_v2/release_candidate/rc15/QA/exec/rc15_synthetic_curriculum/domain.schema.v1.json
+  manifest_schema: plans/27_langgraph_curriculum_factory_remediation/execution_package_v2/release_candidate/rc15/QA/exec/rc15_synthetic_curriculum/manifest.domain.schema.v1.json
+  calibration: plans/27_langgraph_curriculum_factory_remediation/execution_package_v2/release_candidate/rc15/QA/exec/rc15_synthetic_curriculum/calibration.v1.yaml
+  config: {}
+  verifier:
+    entry_point: plans/27_langgraph_curriculum_factory_remediation/execution_package_v2/release_candidate/rc15/QA/exec/rc15_synthetic_curriculum/verify.py
+    invocation: python3 plans/27_langgraph_curriculum_factory_remediation/execution_package_v2/release_candidate/rc15/QA/exec/rc15_synthetic_curriculum/verify.py --domain <domain> --forbidden plans/27_langgraph_curriculum_factory_remediation/execution_package_v2/release_candidate/rc15/QA/exec/rc15_sandbox_probe_metadata.txt
+    dependencies: []
+    must_reject:
+      - fixture: plans/27_langgraph_curriculum_factory_remediation/execution_package_v2/release_candidate/rc15/QA/exec/rc15_synthetic_curriculum/fixtures/reject.json
+        expected_code: synthetic-reject
+    must_accept:
+      - plans/27_langgraph_curriculum_factory_remediation/execution_package_v2/release_candidate/rc15/QA/exec/rc15_synthetic_curriculum/fixtures/accept.json
+    proven:
+      result: all_fixtures_behaved
+labs:
+  - id: U001
+    title: Synthetic
+    sequence:
+      prerequisites: []
+      prepares_for: []
+    required_explanation:
+      - fact
+    core_activity: {}

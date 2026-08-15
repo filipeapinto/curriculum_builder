@@ -1,0 +1,15 @@
+{
+  "state": "QA_ERROR",
+  "reason": "CODEX_EXIT_1",
+  "detail": "Reading additional input from stdin...",
+  "artifact": "/Users/filipepinto/Projects/curriculum_builder/plans/27_langgraph_curriculum_factory_remediation/execution_package_v2/release_candidate/rc26/rc26_review_bundle.v1.md",
+  "rounds_completed": 0,
+  "max_iterations": 5,
+  "session_id": null,
+  "thread_id": null,
+  "transport": "exec",
+  "rollout_file": "",
+  "chain": "GENESIS",
+  "qa_dir": "/Users/filipepinto/Projects/curriculum_builder/plans/27_langgraph_curriculum_factory_remediation/execution_package_v2/release_candidate/rc26/QA",
+  "finalized_at": "2026-08-15T09:02:13.208098+00:00"
+}

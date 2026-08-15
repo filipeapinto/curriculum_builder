@@ -1,0 +1,229 @@
+{
+  "at": "2026-08-15T10:30:22.310605Z",
+  "attempt_id": "N50_EVIDENCE_AUDIT_CONTROLS-2026-08-15T102814091389Z-2b0827df",
+  "node_id": "N50_EVIDENCE_AUDIT_CONTROLS",
+  "previous_receipt": null,
+  "previous_receipt_sha256": null,
+  "receipt": {
+    "admission": "normal",
+    "admitted_at": "2026-08-15T10:30:22.308331Z",
+    "approved_spec_sha256": "e14df5a36ce12d700fe9fc4aa4aea466771bc89f31bc6e9d49f812c147b1bb3c",
+    "attempt_id": "N50_EVIDENCE_AUDIT_CONTROLS-2026-08-15T102814091389Z-2b0827df",
+    "baseline": {
+      "plans/27_langgraph_curriculum_factory_remediation/contracts/evidence_determinism.v1.yaml": "d20be37d411ab58ecca060e992a20f1a3975900f4ce7be1c245f1397df551ed9",
+      "plans/27_langgraph_curriculum_factory_remediation/contracts/requirements_lineage.v1.yaml": "1c6b5d2e05f9078d303b657d4f48325d85683df209a8c7485b272abc54b8540e",
+      "plans/27_langgraph_curriculum_factory_remediation/execution_package_v2/results/v9/N50_EVIDENCE_AUDIT_CONTROLS.result.v1.json": null,
+      "plans/27_langgraph_curriculum_factory_remediation/execution_package_v2/results/v9/evidence/N50_EVIDENCE_AUDIT_CONTROLS": null,
+      "runtime/langgraph_factory/artifacts.py": "dfb1efa93c0c267b0ae282c9687d769ef043b31c363526871e7212e2890b86cf",
+      "runtime/langgraph_factory/evidence.py": "95ddef6f9e1e5e7031f223d88b285b2b0ffbdd604c70181ae87ad8a21220c199",
+      "runtime/langgraph_factory/persistence.py": "c2b3eb236d2ea7bb6ca7f0ff5d6258c8bd1fdec8cf36d9520c2b2ddb9298b289",
+      "tests/runtime/test_plan26_evidence.py": "229aabeae0bde9795f3f11e820d9f50f915aa0d715ed2ae32dbf643e83068345",
+      "tests/runtime/test_plan26_persistence.py": "4d113741e346be44815d2c640110a60a1ffadd11496d0db5a77f52cf028d9dcc"
+    },
+    "baseline_sha256": "95274022aba9eb10bb50c748c98d24f2de590122effcedd19462192f63aba04d",
+    "changed_files": [
+      {
+        "change": "created",
+        "path": "plans/27_langgraph_curriculum_factory_remediation/execution_package_v2/results/v9/evidence/N50_EVIDENCE_AUDIT_CONTROLS/01_pytest_n50_run1.log",
+        "sha256": "f486a1dace109e1f719101f41c429920a3b98b4a0a669e4d118a0703742cec38"
+      },
+      {
+        "change": "created",
+        "path": "plans/27_langgraph_curriculum_factory_remediation/execution_package_v2/results/v9/evidence/N50_EVIDENCE_AUDIT_CONTROLS/02_pytest_n50_run2.log",
+        "sha256": "d9ade4a2a019d7e94a9b5d219a44af1c51cf094df31cf402dba2767a1f3531aa"
+      },
+      {
+        "change": "created",
+        "path": "plans/27_langgraph_curriculum_factory_remediation/execution_package_v2/results/v9/evidence/N50_EVIDENCE_AUDIT_CONTROLS/03_verify_evidence_determinism.log",
+        "sha256": "cd0b1ddcd5c27b33000173f7d6fdd738d39ab53708a94a9e8fd17c48cbc0fbf0"
+      },
+      {
+        "change": "created",
+        "path": "plans/27_langgraph_curriculum_factory_remediation/execution_package_v2/results/v9/evidence/N50_EVIDENCE_AUDIT_CONTROLS/04_verify_requirements_lineage.log",
+        "sha256": "d60a0c0deae3071fda15b3c2763e95c1c182e4793cd702eb01f2d184e04ccb3d"
+      },
+      {
+        "change": "created",
+        "path": "plans/27_langgraph_curriculum_factory_remediation/execution_package_v2/results/v9/evidence/N50_EVIDENCE_AUDIT_CONTROLS/05_scan_node_n50.log",
+        "sha256": "b622746731b53fd692961b762705fa52a9c02169cfe73731d2874ab9b930ef45"
+      },
+      {
+        "change": "created",
+        "path": "plans/27_langgraph_curriculum_factory_remediation/execution_package_v2/results/v9/evidence/N50_EVIDENCE_AUDIT_CONTROLS/06_determinism_lineage_matrix.log",
+        "sha256": "d3ae26cee594119881c91f959ab444cb7d829dbd0e6b5e8b3286c99a5097e6c2"
+      }
+    ],
+    "commands": [
+      {
+        "argv": [
+          "python3",
+          "-m",
+          "pytest",
+          "-q",
+          "tests/runtime/test_plan26_evidence.py",
+          "tests/runtime/test_plan26_persistence.py"
+        ],
+        "exit_code": 0,
+        "log": "plans/27_langgraph_curriculum_factory_remediation/execution_package_v2/results/v9/evidence/N50_EVIDENCE_AUDIT_CONTROLS/01_pytest_n50_run1.log",
+        "log_sha256": "f486a1dace109e1f719101f41c429920a3b98b4a0a669e4d118a0703742cec38"
+      },
+      {
+        "argv": [
+          "python3",
+          "-m",
+          "pytest",
+          "-q",
+          "tests/runtime/test_plan26_evidence.py",
+          "tests/runtime/test_plan26_persistence.py"
+        ],
+        "exit_code": 0,
+        "log": "plans/27_langgraph_curriculum_factory_remediation/execution_package_v2/results/v9/evidence/N50_EVIDENCE_AUDIT_CONTROLS/02_pytest_n50_run2.log",
+        "log_sha256": "d9ade4a2a019d7e94a9b5d219a44af1c51cf094df31cf402dba2767a1f3531aa"
+      },
+      {
+        "argv": [
+          "python3",
+          "plans/27_langgraph_curriculum_factory_remediation/controller/verify_evidence_determinism.py",
+          "--contract",
+          "plans/27_langgraph_curriculum_factory_remediation/contracts/evidence_determinism.v1.yaml",
+          "--graph",
+          "plans/27_langgraph_curriculum_factory_remediation/execution_package_v2/implementation.graph.v9.yaml"
+        ],
+        "exit_code": 0,
+        "log": "plans/27_langgraph_curriculum_factory_remediation/execution_package_v2/results/v9/evidence/N50_EVIDENCE_AUDIT_CONTROLS/03_verify_evidence_determinism.log",
+        "log_sha256": "cd0b1ddcd5c27b33000173f7d6fdd738d39ab53708a94a9e8fd17c48cbc0fbf0"
+      },
+      {
+        "argv": [
+          "python3",
+          "plans/27_langgraph_curriculum_factory_remediation/controller/verify_requirements_lineage.py",
+          "--contract",
+          "plans/27_langgraph_curriculum_factory_remediation/contracts/requirements_lineage.v1.yaml",
+          "--graph",
+          "plans/27_langgraph_curriculum_factory_remediation/execution_package_v2/implementation.graph.v9.yaml"
+        ],
+        "exit_code": 0,
+        "log": "plans/27_langgraph_curriculum_factory_remediation/execution_package_v2/results/v9/evidence/N50_EVIDENCE_AUDIT_CONTROLS/04_verify_requirements_lineage.log",
+        "log_sha256": "d60a0c0deae3071fda15b3c2763e95c1c182e4793cd702eb01f2d184e04ccb3d"
+      },
+      {
+        "argv": [
+          "python3",
+          "plans/27_langgraph_curriculum_factory_remediation/execution_package_v2/controller/scan_node.py",
+          "--node",
+          "N50_EVIDENCE_AUDIT_CONTROLS",
+          "--graph",
+          "plans/27_langgraph_curriculum_factory_remediation/execution_package_v2/implementation.graph.v9.yaml"
+        ],
+        "exit_code": 0,
+        "log": "plans/27_langgraph_curriculum_factory_remediation/execution_package_v2/results/v9/evidence/N50_EVIDENCE_AUDIT_CONTROLS/05_scan_node_n50.log",
+        "log_sha256": "b622746731b53fd692961b762705fa52a9c02169cfe73731d2874ab9b930ef45"
+      }
+    ],
+    "evidence": [
+      "plans/27_langgraph_curriculum_factory_remediation/contracts/evidence_determinism.v1.yaml",
+      "plans/27_langgraph_curriculum_factory_remediation/contracts/requirements_lineage.v1.yaml",
+      "plans/27_langgraph_curriculum_factory_remediation/execution_package_v2/results/v9/evidence/N50_EVIDENCE_AUDIT_CONTROLS/01_pytest_n50_run1.log",
+      "plans/27_langgraph_curriculum_factory_remediation/execution_package_v2/results/v9/evidence/N50_EVIDENCE_AUDIT_CONTROLS/02_pytest_n50_run2.log",
+      "plans/27_langgraph_curriculum_factory_remediation/execution_package_v2/results/v9/evidence/N50_EVIDENCE_AUDIT_CONTROLS/03_verify_evidence_determinism.log",
+      "plans/27_langgraph_curriculum_factory_remediation/execution_package_v2/results/v9/evidence/N50_EVIDENCE_AUDIT_CONTROLS/04_verify_requirements_lineage.log",
+      "plans/27_langgraph_curriculum_factory_remediation/execution_package_v2/results/v9/evidence/N50_EVIDENCE_AUDIT_CONTROLS/05_scan_node_n50.log",
+      "plans/27_langgraph_curriculum_factory_remediation/execution_package_v2/results/v9/evidence/N50_EVIDENCE_AUDIT_CONTROLS/06_determinism_lineage_matrix.log"
+    ],
+    "final_outputs": {
+      "plans/27_langgraph_curriculum_factory_remediation/contracts/evidence_determinism.v1.yaml": "d20be37d411ab58ecca060e992a20f1a3975900f4ce7be1c245f1397df551ed9",
+      "plans/27_langgraph_curriculum_factory_remediation/contracts/requirements_lineage.v1.yaml": "1c6b5d2e05f9078d303b657d4f48325d85683df209a8c7485b272abc54b8540e",
+      "plans/27_langgraph_curriculum_factory_remediation/execution_package_v2/results/v9/N50_EVIDENCE_AUDIT_CONTROLS.result.v1.json": "f1905dbd453862d876ab22d20dad036c823de723470caece992b92cb5fbb4ce1",
+      "plans/27_langgraph_curriculum_factory_remediation/execution_package_v2/results/v9/evidence/N50_EVIDENCE_AUDIT_CONTROLS": "0456224a677c64762f1ee1d96a12a3f8126e042f9689f6077e465a1e0de5e1ff",
+      "runtime/langgraph_factory/artifacts.py": "dfb1efa93c0c267b0ae282c9687d769ef043b31c363526871e7212e2890b86cf",
+      "runtime/langgraph_factory/evidence.py": "95ddef6f9e1e5e7031f223d88b285b2b0ffbdd604c70181ae87ad8a21220c199",
+      "runtime/langgraph_factory/persistence.py": "c2b3eb236d2ea7bb6ca7f0ff5d6258c8bd1fdec8cf36d9520c2b2ddb9298b289",
+      "tests/runtime/test_plan26_evidence.py": "229aabeae0bde9795f3f11e820d9f50f915aa0d715ed2ae32dbf643e83068345",
+      "tests/runtime/test_plan26_persistence.py": "4d113741e346be44815d2c640110a60a1ffadd11496d0db5a77f52cf028d9dcc"
+    },
+    "graph_sha256": "5236bf6b13a2c5171ad11ab80f1147e20b6b59f46708090d25ec16c5a7574379",
+    "lineage_fingerprint": "47b82430948faf5c7765a2bf2ae9dc9ebc607b021c449edb0ba93234aa6995d3",
+    "node_definition_sha256": "61ab82d86a88a7d4bbda6eb245a006192d4c704925c3530726facbda742d6edf",
+    "node_id": "N50_EVIDENCE_AUDIT_CONTROLS",
+    "parent_attempt_id": null,
+    "predecessor_receipts": {
+      "N40_INTEGRATION_OWNERSHIP": "155ee64e184c1c8862c136044e6ea8596eb9cdc01e77bd680e9cfcc1a764b2da"
+    },
+    "predecessor_results": {
+      "N40_INTEGRATION_OWNERSHIP": "4babb3aaf8b2ebe65b05868826374f8a689936f27498cee2f7678eb717dd5981"
+    },
+    "prompt_sha256": "4fe5cd2f076409e9e1616f36f26c35adf16701cb34664e8e5c0991422eed0f82",
+    "receipt_id": "N50_EVIDENCE_AUDIT_CONTROLS-0ec4b230f5314126a7d0e292e7f10cec",
+    "result_path": "plans/27_langgraph_curriculum_factory_remediation/execution_package_v2/results/v9/N50_EVIDENCE_AUDIT_CONTROLS.result.v1.json",
+    "result_sha256": "f1905dbd453862d876ab22d20dad036c823de723470caece992b92cb5fbb4ce1",
+    "run_id": "run27-execution-package-v2-graph-v9",
+    "schema_version": 1,
+    "status": "PASSED",
+    "verification": [
+      {
+        "argv": [
+          "python3",
+          "-m",
+          "pytest",
+          "-q",
+          "tests/runtime/test_plan26_evidence.py",
+          "tests/runtime/test_plan26_persistence.py"
+        ],
+        "exit_code": 0,
+        "log": "attempts/N50_EVIDENCE_AUDIT_CONTROLS/N50_EVIDENCE_AUDIT_CONTROLS-2026-08-15T102814091389Z-2b0827df/logs/verify_00.log",
+        "log_sha256": "0d1cef472d9fff5e3df371a11438430b507545b69fb996b2a497c0e5762f806c"
+      },
+      {
+        "argv": [
+          "python3",
+          "plans/27_langgraph_curriculum_factory_remediation/controller/verify_evidence_determinism.py",
+          "--contract",
+          "plans/27_langgraph_curriculum_factory_remediation/contracts/evidence_determinism.v1.yaml",
+          "--graph",
+          "plans/27_langgraph_curriculum_factory_remediation/execution_package_v2/implementation.graph.v9.yaml"
+        ],
+        "exit_code": 0,
+        "log": "attempts/N50_EVIDENCE_AUDIT_CONTROLS/N50_EVIDENCE_AUDIT_CONTROLS-2026-08-15T102814091389Z-2b0827df/logs/verify_01.log",
+        "log_sha256": "0bd321b994748023225c4a9585f8a0753067b06a8aba84bd2ace2af7399b5846"
+      },
+      {
+        "argv": [
+          "python3",
+          "plans/27_langgraph_curriculum_factory_remediation/controller/verify_requirements_lineage.py",
+          "--contract",
+          "plans/27_langgraph_curriculum_factory_remediation/contracts/requirements_lineage.v1.yaml",
+          "--graph",
+          "plans/27_langgraph_curriculum_factory_remediation/execution_package_v2/implementation.graph.v9.yaml"
+        ],
+        "exit_code": 0,
+        "log": "attempts/N50_EVIDENCE_AUDIT_CONTROLS/N50_EVIDENCE_AUDIT_CONTROLS-2026-08-15T102814091389Z-2b0827df/logs/verify_02.log",
+        "log_sha256": "ba3e8796ca7527bc3785f32fad820fb3769bf84478970e33989df06001243ed4"
+      },
+      {
+        "argv": [
+          "python3",
+          "plans/27_langgraph_curriculum_factory_remediation/execution_package_v2/controller/scan_node.py",
+          "--node",
+          "N50_EVIDENCE_AUDIT_CONTROLS",
+          "--graph",
+          "plans/27_langgraph_curriculum_factory_remediation/execution_package_v2/implementation.graph.v9.yaml"
+        ],
+        "exit_code": 0,
+        "log": "attempts/N50_EVIDENCE_AUDIT_CONTROLS/N50_EVIDENCE_AUDIT_CONTROLS-2026-08-15T102814091389Z-2b0827df/logs/verify_03.log",
+        "log_sha256": "7609d3a3b034cddb2eeae333dce50fbd725dcee51ef2f787d9249a450e963c65"
+      },
+      {
+        "argv": [
+          "python3",
+          "plans/27_langgraph_curriculum_factory_remediation/execution_package_v2/tools/validate_result_v2.py",
+          "--node",
+          "N50_EVIDENCE_AUDIT_CONTROLS"
+        ],
+        "exit_code": 0,
+        "log": "attempts/N50_EVIDENCE_AUDIT_CONTROLS/N50_EVIDENCE_AUDIT_CONTROLS-2026-08-15T102814091389Z-2b0827df/logs/verify_04.log",
+        "log_sha256": "74cdfb3403ffed238efc52b6c10f1b0ec843bf8424538ff06ca2438be5c1ee4c"
+      }
+    ]
+  },
+  "receipt_sha256": "4eb7d7efff9d6950de75cb176fabb277d447f038e0ebfa80840972042cfd0600"
+}

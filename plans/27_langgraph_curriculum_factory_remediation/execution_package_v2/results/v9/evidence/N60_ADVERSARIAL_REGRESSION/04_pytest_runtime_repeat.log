@@ -1,0 +1,5 @@
+Equivalent complete denominator with temporary JUnit census:
+python3 -m pytest -q tests/runtime --junitxml=/tmp/run27_v9_n60_runtime_run3.xml
+1370 passed, 2 skipped, 419 subtests passed in 135.80s (0:02:15)
+JUnit tests=1791 errors=0 failures=0 skipped=2.
+Run-scoped JUnit SHA-256: 367bf628ec791c09756ea36206221e7379a7b52e1af859b913014b148a71e435

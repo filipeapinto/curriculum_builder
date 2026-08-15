@@ -1,0 +1,20 @@
+{
+  "approved_spec_sha256": "e14df5a36ce12d700fe9fc4aa4aea466771bc89f31bc6e9d49f812c147b1bb3c",
+  "attempt_id": "N90_REQUIREMENTS_FINAL_AUDIT-2026-08-15T105202174407Z-0f9be038",
+  "baseline": {
+    "plans/27_langgraph_curriculum_factory_remediation/execution_package_v2/results/v9/N90_REQUIREMENTS_FINAL_AUDIT.result.v1.json": null,
+    "plans/27_langgraph_curriculum_factory_remediation/execution_package_v2/results/v9/evidence/N90_REQUIREMENTS_FINAL_AUDIT": null
+  },
+  "created_at": "2026-08-15T10:52:02.174757Z",
+  "evidence_dir": "attempts/N90_REQUIREMENTS_FINAL_AUDIT/N90_REQUIREMENTS_FINAL_AUDIT-2026-08-15T105202174407Z-0f9be038/logs",
+  "graph_sha256": "5236bf6b13a2c5171ad11ab80f1147e20b6b59f46708090d25ec16c5a7574379",
+  "node_definition_sha256": "9b18e692beb7a7cf06e7fcf89f216362d7b3698725c752d53cc9e3698f9140c9",
+  "node_id": "N90_REQUIREMENTS_FINAL_AUDIT",
+  "parent_attempt_id": null,
+  "predecessor_receipt_digests": {
+    "N80_LIVE_WORKBOOK_PROOF": "7ddc3bf2004cc56df9d9660d1652033f3a13b6a407f4a2aa274c6ef19885f31f"
+  },
+  "prompt_sha256": "21076a04f4441f7cc35709702a745baaddb94f00827781b3c28441d3283189e6",
+  "run_id": "run27-execution-package-v2-graph-v9",
+  "schema_version": 1
+}

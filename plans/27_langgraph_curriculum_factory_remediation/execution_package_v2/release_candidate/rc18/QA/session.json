@@ -1,0 +1,76 @@
+{
+  "opened_at": "2026-08-15T06-29-42.557776+00-00",
+  "artifact_original": "/Users/filipepinto/Projects/curriculum_builder/plans/27_langgraph_curriculum_factory_remediation/execution_package_v2/release_candidate/rc18/rc18_review_bundle.v1.md",
+  "artifact_current": "/Users/filipepinto/Projects/curriculum_builder/plans/27_langgraph_curriculum_factory_remediation/execution_package_v2/release_candidate/rc18/rc18_review_bundle.v1.md",
+  "session_id": "01a0041c-aa90-76e0-83c6-9a8274497339",
+  "chain": "0710559783f65d8457f908a693eeab55ef393d70967a6701b25a32aef6b0c86d",
+  "rounds_completed": 1,
+  "rounds": [
+    {
+      "round": 1,
+      "timestamp": "2026-08-15T06:34:52.623981+00:00",
+      "verdict": "PASS",
+      "artifact_path": "/Users/filipepinto/Projects/curriculum_builder/plans/27_langgraph_curriculum_factory_remediation/execution_package_v2/release_candidate/rc18/rc18_review_bundle.v1.md",
+      "artifact_sha256": "d13b5f4aa63d4a85e4e20ef6628cf1854a73f249fa5ba5ceac78f8fab59ea7d8",
+      "findings_at_threshold": [],
+      "observations_count": 1,
+      "chain": "0710559783f65d8457f908a693eeab55ef393d70967a6701b25a32aef6b0c86d"
+    }
+  ],
+  "stall_count": 0,
+  "last_fingerprint": null,
+  "exec_copied": [
+    "QA_criteria.rc18.v1.md",
+    "rc18_review_bundle.v1.md",
+    "validation.v1.md"
+  ],
+  "terminal": {
+    "state": "QA_PASSED",
+    "reason": "CONVERGED",
+    "detail": "Codex passed the artifact at round 1",
+    "artifact": "/Users/filipepinto/Projects/curriculum_builder/plans/27_langgraph_curriculum_factory_remediation/execution_package_v2/release_candidate/rc18/rc18_review_bundle.v1.md",
+    "rounds_completed": 1,
+    "max_iterations": 5,
+    "session_id": "01a0041c-aa90-76e0-83c6-9a8274497339",
+    "thread_id": "01a0041c-aa90-76e0-83c6-9a8274497339",
+    "transport": "app-server",
+    "rollout_file": "/Users/filipepinto/.codex/sessions/2026/08/15/rollout-2026-08-15T02-29-42-01a0041c-aa90-76e0-83c6-9a8274497339.jsonl",
+    "chain": "0710559783f65d8457f908a693eeab55ef393d70967a6701b25a32aef6b0c86d",
+    "qa_dir": "/Users/filipepinto/Projects/curriculum_builder/plans/27_langgraph_curriculum_factory_remediation/execution_package_v2/release_candidate/rc18/QA",
+    "finalized_at": "2026-08-15T06:34:52.636473+00:00"
+  },
+  "config": {
+    "criteria": "# RC18 independent QA criteria\n\nReport only blocker findings, each with the defeated criterion, reproducible trigger,\nand consequence. Style and optional hardening are observations.\n\n1. Historical integrity: graph v8 retains SHA-256\n   `c2d79ac0387c935977385138d2d891cf1539041f1a4532acf94fc8dc687bf6b1`;\n   v9 uses separate graph/contract/schema/prompt/result/state lineage.\n2. Package coherence and ownership: all active bindings/digests recompute; the real\n   plan validator and exact ownership checks pass.\n3. Complete freeze: D02 binds every curriculum-owned domain input used by M02/D08;\n   missing declarations, escape, duplicates, oversize, and drift fail before entry.\n4. External, race-free staging: for the prescribed engine-nested N70 output, the\n   verifier work root must resolve outside engine and output roots. D08 must verify\n   source bytes while staging into contract/candidate-addressed storage, preserve\n   declared relative layout, reject conflicts, and execute only staged frozen bytes.\n5. Closed sandbox: cwd and staged files are outside the engine. The verifier has no\n   network, model auth, or model scratch rule; no byte or metadata visibility into\n   undeclared engine paths, including files and directory/ancestor metadata; and no\n   engine metadata exemption.\n6. Replay invariance: declared drift fails before execution, while additions,\n   removals, renames, and byte/metadata changes to undeclared repository paths cannot\n   change the same candidate/frozen-contract verdict.\n7. Bounded authoring and recovery: M02 has no admission/verifier authority; invalid\n   first versions stay immutable/non-head; repairs are exact, bounded, lineage-safe,\n   and revalidate exact repaired heads.\n8. Physical replay: D08/D09/D12/D20 persist canonical bytes before reads, replay\n   idempotently across nodes, fail conflicts closed, and preserve repaired heads.\n9. Regression proof: focused, package, and full-runtime suites pass, including all\n   RC13 triggers and RC14–RC17 byte/metadata/output-location attacks.\n10. Security/architecture: exact-host retrieval, SSRF/redirect checks, tool-closed\n    subscription CLIs, model assignments, topology, terminals, and no-billed-API/\n    no-provider-SDK constraints remain intact.\n11. Entry safety: no blocker prevents an honest, verifiable fresh graph-v9 N00→N90\n    cascade through the real N70/N80 path.\n",
+    "focus": "Reproduce RC14-RC17 attacks, especially the prescribed N70 output under engine/outputs. Verify the actual verifier work root is outside engine/output, staged bytes are race-checked, direct and ancestor metadata are denied without exemptions, and graph-v9 can honestly enter N00-to-N90. Report only genuine blockers.",
+    "threshold": "blocker",
+    "max_iterations": 5,
+    "timeout_seconds": 900,
+    "retries": 2,
+    "model": null,
+    "effort": null,
+    "transport": "app-server",
+    "allow_execution": true,
+    "grounding": [
+      "/Users/filipepinto/Projects/curriculum_builder/plans/26_langgraph_curriculum_factory/spec/v3/langgraph_curriculum_factory.spec.v4.md",
+      "/Users/filipepinto/Projects/curriculum_builder/plans/27_langgraph_curriculum_factory_remediation/execution_package_v2/implementation.graph.v8.yaml",
+      "/Users/filipepinto/Projects/curriculum_builder/plans/27_langgraph_curriculum_factory_remediation/execution_package_v2/implementation.graph.v9.yaml",
+      "/Users/filipepinto/Projects/curriculum_builder/plans/27_langgraph_curriculum_factory_remediation/execution_package_v2/schemas/spec_approval.schema.v6.json",
+      "/Users/filipepinto/Projects/curriculum_builder/plans/27_langgraph_curriculum_factory_remediation/execution_package_v2/contracts/spec_approval.v6.yaml",
+      "/Users/filipepinto/Projects/curriculum_builder/schemas/curriculum.schema.v5.json",
+      "/Users/filipepinto/Projects/curriculum_builder/curricula/arduino_kit/arduino_kit_curriculum.v5.yaml",
+      "/Users/filipepinto/Projects/curriculum_builder/curricula/arduino_kit/verify_domain.py",
+      "/Users/filipepinto/Projects/curriculum_builder/curricula/arduino_kit/domain.schema.v1.json",
+      "/Users/filipepinto/Projects/curriculum_builder/curricula/arduino_kit/kit_calibration.v1.yaml",
+      "/Users/filipepinto/Projects/curriculum_builder/curricula/arduino_kit/circuit_library.v1.yaml",
+      "/Users/filipepinto/Projects/curriculum_builder/runtime/langgraph_factory/nodes/inputs.py",
+      "/Users/filipepinto/Projects/curriculum_builder/runtime/langgraph_factory/transport.py",
+      "/Users/filipepinto/Projects/curriculum_builder/tests/runtime/test_plan26_deterministic_nodes.py",
+      "/Users/filipepinto/Projects/curriculum_builder/tests/runtime/test_plan26_transport.py",
+      "/Users/filipepinto/Projects/curriculum_builder/plans/27_langgraph_curriculum_factory_remediation/execution_package_v2/release_candidate/rc14/QA/rounds/round-01.response.json",
+      "/Users/filipepinto/Projects/curriculum_builder/plans/27_langgraph_curriculum_factory_remediation/execution_package_v2/release_candidate/rc15/QA/rounds/round-01.response.json",
+      "/Users/filipepinto/Projects/curriculum_builder/plans/27_langgraph_curriculum_factory_remediation/execution_package_v2/release_candidate/rc16/QA/rounds/round-01.response.json",
+      "/Users/filipepinto/Projects/curriculum_builder/plans/27_langgraph_curriculum_factory_remediation/execution_package_v2/release_candidate/rc17/QA/rounds/round-01.response.json"
+    ]
+  },
+  "thread_id": "01a0041c-aa90-76e0-83c6-9a8274497339"
+}

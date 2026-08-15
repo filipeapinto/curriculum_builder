@@ -1,0 +1,32 @@
+{
+  "approved_spec_sha256": "e14df5a36ce12d700fe9fc4aa4aea466771bc89f31bc6e9d49f812c147b1bb3c",
+  "attempt_id": "N40_INTEGRATION_OWNERSHIP-2026-08-15T032028418526Z-fa03e404",
+  "baseline": {
+    "plans/27_langgraph_curriculum_factory_remediation/contracts/integration_ownership.v1.yaml": "cd8a47a7ce2c1d39f34f667a54893e80857769d4f1c3ce24b9f610e2d8c5cc74",
+    "plans/27_langgraph_curriculum_factory_remediation/execution_package_v2/results/v8/N40_INTEGRATION_OWNERSHIP.result.v1.json": "4a0eb5c94e8a41523bee7e32347e649343ed9768cfd2fa5ce057d8f642bdf04f",
+    "plans/27_langgraph_curriculum_factory_remediation/execution_package_v2/results/v8/evidence/N40_INTEGRATION_OWNERSHIP": "810fd5f0fab2cd2485c97c3164dc749ea2a0a4eefe041e7b23e8f39fcf00ddfd",
+    "runtime/langgraph_factory/acceptance.py": "9752736b326e0d58c42affd2166177c42cc0db74626e2b4d83783c8024be1bed",
+    "runtime/langgraph_factory/graph.py": "d74e86e3b954591f052a961a08d492de0559a0b79c16d6215541e26c56ff160f",
+    "runtime/langgraph_factory/nodes/__init__.py": "df4d7021c83f5e5c8fa053c426d17657f64141d866594dee49e80fe030008ae3",
+    "runtime/langgraph_factory/repair.py": "976b47410a001b58b9b5c8be62b2bda21ea2fce0feed5744a953d0ae4b05bb23",
+    "runtime/langgraph_factory/routing.py": "6be93bf8bd951ae9984f74dc9dbe91c709a41edca0a1a6ff6d72be52cd998079",
+    "runtime/langgraph_factory/unit_graph.py": "286995f398826be63bc2263ea5148f87b23ee7683973e4245c4ee3687a6f309c",
+    "runtime/langgraph_factory/workbook.py": "903abda0f4df3b01dd91d1c8d515721c91db4df78da36a55b803a4e14b422439",
+    "tests/runtime/test_plan26_repair_acceptance.py": "de6552e7f6d419405ae2cceb619087cc07bf358cc72a6a006cb17b2e3c769385",
+    "tests/runtime/test_plan26_topology.py": "dbc435c439b6ddb9a327ec560c0b5d6bf32dbb8716d207d8c8146fb7e038502a",
+    "tests/runtime/test_plan26_unit_graph.py": "ac6568a7a528e4d2b6c56c4057fd6a906233aad4f779a9f8391bd37daee4ef3e",
+    "tests/runtime/test_plan26_workbook.py": "42ab0d5a2f75e0ea71949d9d5c8dc5bc260d567034a6ad19571c90883a889132"
+  },
+  "created_at": "2026-08-15T03:20:28.418850Z",
+  "evidence_dir": "attempts/N40_INTEGRATION_OWNERSHIP/N40_INTEGRATION_OWNERSHIP-2026-08-15T032028418526Z-fa03e404/logs",
+  "graph_sha256": "c2d79ac0387c935977385138d2d891cf1539041f1a4532acf94fc8dc687bf6b1",
+  "node_definition_sha256": "b6ddedca2e95c24fa09d51c0943340a61e95d6cb88f9deaf571667e1320a0029",
+  "node_id": "N40_INTEGRATION_OWNERSHIP",
+  "parent_attempt_id": null,
+  "predecessor_receipt_digests": {
+    "N30_PREFLIGHT_EGRESS": "d7d21da3b0831b00c6d55293b38cb70187c1b66a5afe52ab503a340d9f16e8d1"
+  },
+  "prompt_sha256": "a517a0198de0cecca6340b317c9380410a400af11d7f358baa08bf68c5b8b797",
+  "run_id": "run27",
+  "schema_version": 1
+}

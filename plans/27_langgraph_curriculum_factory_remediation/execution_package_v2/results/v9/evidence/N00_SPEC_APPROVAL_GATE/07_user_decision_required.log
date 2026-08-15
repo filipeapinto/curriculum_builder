@@ -1,0 +1,11 @@
+47:| §7.1 (route table) | Exact Codex model/effort per job; M05/M07 frozen to the retired third-party family and model identifier | **Superseded** for M05/M07 family; **retained mechanism, re-derived assignment** for all eight jobs. Exact per-job Claude model/effort is `USER_DECISION_REQUIRED-01` (§7.1). | PM-01 |
+55:| (new) | — | **Added:** §2.0 authority hierarchy; §7.1 five-proof-class preflight; §19 requirements-lineage audit ordering; §22 historical regression controls; explicit `USER_DECISION_REQUIRED` markers. | PM-02, PM-20; postmortem §8 |
+777:> **`USER_DECISION_REQUIRED-01`** — no existing frozen policy or registry
+795:`USER_DECISION_REQUIRED-01` unless the user confirms reuse of an existing
+944:route (`USER_DECISION_REQUIRED-01`, §7.1). The receipt distinguishes
+1784:| resolved decisions/no deferred architecture, `USER_DECISION_REQUIRED` items named explicitly | 20 | contract metadata | all above | spec lint for banned placeholders; `USER_DECISION_REQUIRED-01` tracked open |
+1876:- **resolve `USER_DECISION_REQUIRED-01` (§7.1): the exact Claude model
+1889:`USER_DECISION_REQUIRED-01` above. If any prerequisite is absent,
+1925:- [x] **Exactly one item, `USER_DECISION_REQUIRED-01`, is left open, and it
+
+Resolution: exactly one decision marker exists; spec_approval.v6.yaml structurally carries the exact eight user-resolved model/effort assignments and 05_contract_validation.log proves equality.

@@ -1,0 +1,11 @@
+{
+  "state": "QA_PASSED",
+  "reason": "CONVERGED",
+  "chain_valid": true,
+  "rounds_claimed": 1,
+  "rounds_witnessed_by_codex": 1,
+  "session_id": "01a00510-96e3-7433-96d5-e0ce86cdf9cb",
+  "chain": "5396f16b4d7adf19cc9ae3b262b33f56518a4cc99302aedde983f2cbabb740cd",
+  "problems": [],
+  "artifact": "plans/27_langgraph_curriculum_factory_remediation/execution_package_v2/results/v9/evidence/N90_REQUIREMENTS_FINAL_AUDIT/N90_final_audit.v1.md"
+}

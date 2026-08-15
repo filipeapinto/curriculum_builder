@@ -1,32 +1,32 @@
 {
-  "admission": "normal",
-  "admitted_at": "2026-08-15T02:31:27.095991Z",
+  "admission": "recovery_readmission",
+  "admitted_at": "2026-08-15T03:20:23.283817Z",
   "approved_spec_sha256": "e14df5a36ce12d700fe9fc4aa4aea466771bc89f31bc6e9d49f812c147b1bb3c",
-  "attempt_id": "N30_PREFLIGHT_EGRESS-2026-08-15T023042001279Z-f3803dc9",
+  "attempt_id": "N30_PREFLIGHT_EGRESS-2026-08-15T031938524426Z-4720b776",
   "baseline": {
     "curricula/arduino_kit/arduino_kit_curriculum.v5.yaml": "0dd0e0d441c3881e136c2be56143a10e49b4bc0a631e2ae9d935b853a1a37280",
-    "plans/27_langgraph_curriculum_factory_remediation/execution_package_v2/results/v8/N30_PREFLIGHT_EGRESS.result.v1.json": "4a5ad874c9455fec2428e2508cea9aad8c9a10d03d5efbe8871c2b5a6be6fd41",
-    "plans/27_langgraph_curriculum_factory_remediation/execution_package_v2/results/v8/evidence/N30_PREFLIGHT_EGRESS": "b53865cb3e1e1114e7fb23dc5a48661ac2af42cf1bc266d84d72791a0b55fae5",
+    "plans/27_langgraph_curriculum_factory_remediation/execution_package_v2/results/v8/N30_PREFLIGHT_EGRESS.result.v1.json": "6c59a2bc58b616b703ec8518cc890d9b7de9a436542f813d1ea92f7691a6b7b3",
+    "plans/27_langgraph_curriculum_factory_remediation/execution_package_v2/results/v8/evidence/N30_PREFLIGHT_EGRESS": "b9e7245c6b32bda90fec4a0488dc87b07089dbf82f6e474f26b7ae2efa3a7521",
     "policy/retrieval_hosts.v1.yaml": "ee56cf4988691647ebd1f28bd90724208112bcae6a4b7324543b42bbc21c32be",
     "runtime/langgraph_factory/nodes/inputs.py": "04651f38a5d762a69edfa1827046637cb06f8705805a1b661212223d63f61047",
-    "runtime/langgraph_factory/nodes/sources.py": "74420ae029c5daff809d9d15d2819f32f12f1b2558ab2448765ef989d42068be",
+    "runtime/langgraph_factory/nodes/sources.py": "833fe35f6702457264ab350db864a30ceff42766812799f8f9bc1f60903a8a85",
     "runtime/run_curriculum.py": "10236810e66ff4afb064635b77082a840c4f7bf8ba107970ba80d6e80a8d1e8b",
     "schemas/curriculum.schema.v5.json": "7ee2b15e22f14eeb5e297b55dac626df03de072e7d9ee4be86ec3f26498acd89",
     "tests/runtime/test_plan26_cli.py": "ef5ef6f817cf16c542d1abb1da0a4b5acc2b1df8c79c5563cee22179310bcbe2",
-    "tests/runtime/test_plan26_deterministic_nodes.py": "6a535e5df40c81f3490be0a77d1d5fff3e6787628764ec394b7300fec7783ecc",
+    "tests/runtime/test_plan26_deterministic_nodes.py": "af84225bf4d8b77cd7d125602b272a7147ad704682ac0fde593ff183882cf4d1",
     "tests/runtime/test_run_curriculum.py": "914bb9e61b7d52de563ef814e5c4e106f2cbe96c32926c26b54ab8a9c2d744a7"
   },
-  "baseline_sha256": "12c1579a1ba6c7097240de1bb282d82d99efc85b2c1057f985c0d2719789d8be",
+  "baseline_sha256": "3c68610582ac06057ad12536f31bfc6d2fe2fe45681b79b12036c571d0b13731",
   "changed_files": [
     {
       "change": "modified",
       "path": "runtime/langgraph_factory/nodes/sources.py",
-      "sha256": "74420ae029c5daff809d9d15d2819f32f12f1b2558ab2448765ef989d42068be"
+      "sha256": "833fe35f6702457264ab350db864a30ceff42766812799f8f9bc1f60903a8a85"
     },
     {
       "change": "modified",
       "path": "tests/runtime/test_plan26_deterministic_nodes.py",
-      "sha256": "6a535e5df40c81f3490be0a77d1d5fff3e6787628764ec394b7300fec7783ecc"
+      "sha256": "af84225bf4d8b77cd7d125602b272a7147ad704682ac0fde593ff183882cf4d1"
     },
     {
       "change": "created",
@@ -122,6 +122,31 @@
       "change": "created",
       "path": "plans/27_langgraph_curriculum_factory_remediation/execution_package_v2/results/v8/evidence/N30_PREFLIGHT_EGRESS/attempts/N30_PREFLIGHT_EGRESS.attempt-3.result.v1.json",
       "sha256": "57d4f17d6477043ab5f947ccb10fa75cf764c5cdfea1179c735cf2dad46c2a2e"
+    },
+    {
+      "change": "created",
+      "path": "plans/27_langgraph_curriculum_factory_remediation/execution_package_v2/results/v8/evidence/N30_PREFLIGHT_EGRESS/attempts/N30_PREFLIGHT_EGRESS.attempt-4.result.v1.json",
+      "sha256": "4a5ad874c9455fec2428e2508cea9aad8c9a10d03d5efbe8871c2b5a6be6fd41"
+    },
+    {
+      "change": "created",
+      "path": "plans/27_langgraph_curriculum_factory_remediation/execution_package_v2/results/v8/evidence/N30_PREFLIGHT_EGRESS/17_pytest_cli_attempt5.log",
+      "sha256": "735fbed768e43a3f7c6af1d1a28058acd9eba8a6d735abcca759b95ecf651f57"
+    },
+    {
+      "change": "created",
+      "path": "plans/27_langgraph_curriculum_factory_remediation/execution_package_v2/results/v8/evidence/N30_PREFLIGHT_EGRESS/18_pytest_d03_d06b_attempt5.log",
+      "sha256": "6204d7a5c324f4e9f94c9d335e99bdcab0cdd01fc448ec0c8e509ddb2310926b"
+    },
+    {
+      "change": "created",
+      "path": "plans/27_langgraph_curriculum_factory_remediation/execution_package_v2/results/v8/evidence/N30_PREFLIGHT_EGRESS/19_scan_node_n30_attempt5.log",
+      "sha256": "9e197b3f302b2aa14dafacfe002cc5e4f597914f3246e9719b40e9b965285326"
+    },
+    {
+      "change": "created",
+      "path": "plans/27_langgraph_curriculum_factory_remediation/execution_package_v2/results/v8/evidence/N30_PREFLIGHT_EGRESS/20_empty_visible_text_fallback_repair.log",
+      "sha256": "6abc12a91d56119ee25b0d23a390157b40a747a093f13dbecd3c22ce4fb3bbd2"
     }
   ],
   "commands": [
@@ -135,8 +160,8 @@
         "tests/runtime/test_run_curriculum.py"
       ],
       "exit_code": 0,
-      "log": "plans/27_langgraph_curriculum_factory_remediation/execution_package_v2/results/v8/evidence/N30_PREFLIGHT_EGRESS/13_pytest_cli_attempt4.log",
-      "log_sha256": "cea04916c5fc32c02c66185bc2216d65b3b5fb7752f14200533ae736a4f9e2b1"
+      "log": "plans/27_langgraph_curriculum_factory_remediation/execution_package_v2/results/v8/evidence/N30_PREFLIGHT_EGRESS/17_pytest_cli_attempt5.log",
+      "log_sha256": "735fbed768e43a3f7c6af1d1a28058acd9eba8a6d735abcca759b95ecf651f57"
     },
     {
       "argv": [
@@ -149,8 +174,8 @@
         "D03 or capability or D06B"
       ],
       "exit_code": 0,
-      "log": "plans/27_langgraph_curriculum_factory_remediation/execution_package_v2/results/v8/evidence/N30_PREFLIGHT_EGRESS/14_pytest_d03_d06b_attempt4.log",
-      "log_sha256": "cb508372d9bcf78b2810a7cf6db7a5d68fd80085fa4e6c2b9a39efc0d5c1f32f"
+      "log": "plans/27_langgraph_curriculum_factory_remediation/execution_package_v2/results/v8/evidence/N30_PREFLIGHT_EGRESS/18_pytest_d03_d06b_attempt5.log",
+      "log_sha256": "6204d7a5c324f4e9f94c9d335e99bdcab0cdd01fc448ec0c8e509ddb2310926b"
     },
     {
       "argv": [
@@ -162,18 +187,8 @@
         "plans/27_langgraph_curriculum_factory_remediation/execution_package_v2/implementation.graph.v8.yaml"
       ],
       "exit_code": 0,
-      "log": "plans/27_langgraph_curriculum_factory_remediation/execution_package_v2/results/v8/evidence/N30_PREFLIGHT_EGRESS/15_scan_node_n30_attempt4.log",
-      "log_sha256": "2a30bb6ec4191596c106c684a63e5fb71a48377daa31c147f54fff1e88a6f4b8"
-    },
-    {
-      "argv": [
-        "python3",
-        "-c",
-        "compose real SourceRetriever and D06B; assert tuple contract, receipt fields, digest verification, content-addressed persistence, and staged input identity"
-      ],
-      "exit_code": 0,
-      "log": "plans/27_langgraph_curriculum_factory_remediation/execution_package_v2/results/v8/evidence/N30_PREFLIGHT_EGRESS/08_live_locator_fallback_repair.log",
-      "log_sha256": "144edb9af509039807ffdff7e0b9dfe7ce2cf7ecbed7f0a81d4a4484e1192b38"
+      "log": "plans/27_langgraph_curriculum_factory_remediation/execution_package_v2/results/v8/evidence/N30_PREFLIGHT_EGRESS/19_scan_node_n30_attempt5.log",
+      "log_sha256": "9e197b3f302b2aa14dafacfe002cc5e4f597914f3246e9719b40e9b965285326"
     }
   ],
   "evidence": [
@@ -195,36 +210,48 @@
     "plans/27_langgraph_curriculum_factory_remediation/execution_package_v2/results/v8/evidence/N30_PREFLIGHT_EGRESS/14_pytest_d03_d06b_attempt4.log",
     "plans/27_langgraph_curriculum_factory_remediation/execution_package_v2/results/v8/evidence/N30_PREFLIGHT_EGRESS/15_scan_node_n30_attempt4.log",
     "plans/27_langgraph_curriculum_factory_remediation/execution_package_v2/results/v8/evidence/N30_PREFLIGHT_EGRESS/16_staged_input_repair_cascade.log",
-    "plans/27_langgraph_curriculum_factory_remediation/execution_package_v2/results/v8/evidence/N30_PREFLIGHT_EGRESS/attempts/N30_PREFLIGHT_EGRESS.attempt-3.result.v1.json"
+    "plans/27_langgraph_curriculum_factory_remediation/execution_package_v2/results/v8/evidence/N30_PREFLIGHT_EGRESS/attempts/N30_PREFLIGHT_EGRESS.attempt-3.result.v1.json",
+    "plans/27_langgraph_curriculum_factory_remediation/execution_package_v2/results/v8/evidence/N30_PREFLIGHT_EGRESS/attempts/N30_PREFLIGHT_EGRESS.attempt-4.result.v1.json",
+    "plans/27_langgraph_curriculum_factory_remediation/execution_package_v2/results/v8/evidence/N30_PREFLIGHT_EGRESS/17_pytest_cli_attempt5.log",
+    "plans/27_langgraph_curriculum_factory_remediation/execution_package_v2/results/v8/evidence/N30_PREFLIGHT_EGRESS/18_pytest_d03_d06b_attempt5.log",
+    "plans/27_langgraph_curriculum_factory_remediation/execution_package_v2/results/v8/evidence/N30_PREFLIGHT_EGRESS/19_scan_node_n30_attempt5.log",
+    "plans/27_langgraph_curriculum_factory_remediation/execution_package_v2/results/v8/evidence/N30_PREFLIGHT_EGRESS/20_empty_visible_text_fallback_repair.log"
   ],
   "final_outputs": {
     "curricula/arduino_kit/arduino_kit_curriculum.v5.yaml": "0dd0e0d441c3881e136c2be56143a10e49b4bc0a631e2ae9d935b853a1a37280",
-    "plans/27_langgraph_curriculum_factory_remediation/execution_package_v2/results/v8/N30_PREFLIGHT_EGRESS.result.v1.json": "4a5ad874c9455fec2428e2508cea9aad8c9a10d03d5efbe8871c2b5a6be6fd41",
-    "plans/27_langgraph_curriculum_factory_remediation/execution_package_v2/results/v8/evidence/N30_PREFLIGHT_EGRESS": "b53865cb3e1e1114e7fb23dc5a48661ac2af42cf1bc266d84d72791a0b55fae5",
+    "plans/27_langgraph_curriculum_factory_remediation/execution_package_v2/results/v8/N30_PREFLIGHT_EGRESS.result.v1.json": "6c59a2bc58b616b703ec8518cc890d9b7de9a436542f813d1ea92f7691a6b7b3",
+    "plans/27_langgraph_curriculum_factory_remediation/execution_package_v2/results/v8/evidence/N30_PREFLIGHT_EGRESS": "b9e7245c6b32bda90fec4a0488dc87b07089dbf82f6e474f26b7ae2efa3a7521",
     "policy/retrieval_hosts.v1.yaml": "ee56cf4988691647ebd1f28bd90724208112bcae6a4b7324543b42bbc21c32be",
     "runtime/langgraph_factory/nodes/inputs.py": "04651f38a5d762a69edfa1827046637cb06f8705805a1b661212223d63f61047",
-    "runtime/langgraph_factory/nodes/sources.py": "74420ae029c5daff809d9d15d2819f32f12f1b2558ab2448765ef989d42068be",
+    "runtime/langgraph_factory/nodes/sources.py": "833fe35f6702457264ab350db864a30ceff42766812799f8f9bc1f60903a8a85",
     "runtime/run_curriculum.py": "10236810e66ff4afb064635b77082a840c4f7bf8ba107970ba80d6e80a8d1e8b",
     "schemas/curriculum.schema.v5.json": "7ee2b15e22f14eeb5e297b55dac626df03de072e7d9ee4be86ec3f26498acd89",
     "tests/runtime/test_plan26_cli.py": "ef5ef6f817cf16c542d1abb1da0a4b5acc2b1df8c79c5563cee22179310bcbe2",
-    "tests/runtime/test_plan26_deterministic_nodes.py": "6a535e5df40c81f3490be0a77d1d5fff3e6787628764ec394b7300fec7783ecc",
+    "tests/runtime/test_plan26_deterministic_nodes.py": "af84225bf4d8b77cd7d125602b272a7147ad704682ac0fde593ff183882cf4d1",
     "tests/runtime/test_run_curriculum.py": "914bb9e61b7d52de563ef814e5c4e106f2cbe96c32926c26b54ab8a9c2d744a7"
   },
   "graph_sha256": "c2d79ac0387c935977385138d2d891cf1539041f1a4532acf94fc8dc687bf6b1",
-  "lineage_fingerprint": "54c9ef4c75151eb50114e393aa4277ec63c57193cff9c5075aec724dffd8a5d1",
+  "lineage_fingerprint": "5d5a52680b2fcd3c96b37232cb46cdc040627c7ac96e4a643ec28f3cd59ed56d",
   "node_definition_sha256": "aec435b8da5fffaf100cb4f38404e2e87d07fad2b18f64412f9dff5c38f1de3a",
   "node_id": "N30_PREFLIGHT_EGRESS",
   "parent_attempt_id": null,
   "predecessor_receipts": {
-    "N20_PROVIDER_TRANSPORT": "7ab7a8fc087eff4f616b965e2513a599e75dd1b27da0dd5b3f4ae92789ad990c"
+    "N20_PROVIDER_TRANSPORT": "5e23c55841fba1a681b95c9581ba032670bb39e5c51b26c660eff1157382fe1d"
   },
   "predecessor_results": {
-    "N20_PROVIDER_TRANSPORT": "1b86df3a36bd41c5f1a0a82cdef4ae30d9b00bd08e53f20034941a08b8713260"
+    "N20_PROVIDER_TRANSPORT": "9ed6bf2940b5e2b32d7359b808df57ace16e235a08b085356d7239c594ea03e1"
   },
   "prompt_sha256": "93ed1d4cc9766d4f1280fe84fc7f39d138e4aeb435586cd68e13ed65feb87874",
-  "receipt_id": "N30_PREFLIGHT_EGRESS-953712dfb43b4734ba83bd93e876e8ca",
+  "receipt_id": "N30_PREFLIGHT_EGRESS-df271a0dbb9d4912a8a5ec25724b5ef7",
+  "recovery": {
+    "expect_result_sha256": "6c59a2bc58b616b703ec8518cc890d9b7de9a436542f813d1ea92f7691a6b7b3",
+    "reason": "live_N70_attempt_4_empty_visible_text_fallback_repair",
+    "reason_code": "ANCESTOR_REWORK_REVALIDATION",
+    "superseded_receipt_sha256": "d1e4bac143ff38ea2c80308079746540a4e12fb51c5ab4ca78d38104051d0603",
+    "verification_rerun": true
+  },
   "result_path": "plans/27_langgraph_curriculum_factory_remediation/execution_package_v2/results/v8/N30_PREFLIGHT_EGRESS.result.v1.json",
-  "result_sha256": "4a5ad874c9455fec2428e2508cea9aad8c9a10d03d5efbe8871c2b5a6be6fd41",
+  "result_sha256": "6c59a2bc58b616b703ec8518cc890d9b7de9a436542f813d1ea92f7691a6b7b3",
   "run_id": "run27",
   "schema_version": 1,
   "status": "PASSED",
@@ -239,8 +266,8 @@
         "tests/runtime/test_run_curriculum.py"
       ],
       "exit_code": 0,
-      "log": "attempts/N30_PREFLIGHT_EGRESS/N30_PREFLIGHT_EGRESS-2026-08-15T023042001279Z-f3803dc9/logs/verify_00.log",
-      "log_sha256": "72952aaabefd2e1902b305230a66da9560d79f0d8d5c8d8b7180e4d919802afe"
+      "log": "attempts/N30_PREFLIGHT_EGRESS/N30_PREFLIGHT_EGRESS-2026-08-15T031938524426Z-4720b776/logs/verify_00.log",
+      "log_sha256": "8f7f86fcb49e3101d253c30a94bafdab76904daef1037aee0ce5e5a2ec932a4e"
     },
     {
       "argv": [
@@ -253,8 +280,8 @@
         "D03 or capability or D06B"
       ],
       "exit_code": 0,
-      "log": "attempts/N30_PREFLIGHT_EGRESS/N30_PREFLIGHT_EGRESS-2026-08-15T023042001279Z-f3803dc9/logs/verify_01.log",
-      "log_sha256": "b9a137d9ab7786454e9b2e142138bb312022abffa69ac411623cb408d5371b76"
+      "log": "attempts/N30_PREFLIGHT_EGRESS/N30_PREFLIGHT_EGRESS-2026-08-15T031938524426Z-4720b776/logs/verify_01.log",
+      "log_sha256": "1a788b0e0511799d13da0cf45b3b55c54fd1fd7b812324e7229b8ba5493b90a3"
     },
     {
       "argv": [
@@ -266,7 +293,7 @@
         "plans/27_langgraph_curriculum_factory_remediation/execution_package_v2/implementation.graph.v8.yaml"
       ],
       "exit_code": 0,
-      "log": "attempts/N30_PREFLIGHT_EGRESS/N30_PREFLIGHT_EGRESS-2026-08-15T023042001279Z-f3803dc9/logs/verify_02.log",
+      "log": "attempts/N30_PREFLIGHT_EGRESS/N30_PREFLIGHT_EGRESS-2026-08-15T031938524426Z-4720b776/logs/verify_02.log",
       "log_sha256": "9e197b3f302b2aa14dafacfe002cc5e4f597914f3246e9719b40e9b965285326"
     },
     {
@@ -277,8 +304,8 @@
         "N30_PREFLIGHT_EGRESS"
       ],
       "exit_code": 0,
-      "log": "attempts/N30_PREFLIGHT_EGRESS/N30_PREFLIGHT_EGRESS-2026-08-15T023042001279Z-f3803dc9/logs/verify_03.log",
-      "log_sha256": "8c9c23f98decd0819e08c6809780ab177c50d4749f18bea960d5a17aa7524ae9"
+      "log": "attempts/N30_PREFLIGHT_EGRESS/N30_PREFLIGHT_EGRESS-2026-08-15T031938524426Z-4720b776/logs/verify_03.log",
+      "log_sha256": "78ca7b9b6276bb18339d4c067aff38833145707a1fb74bb9988edb965e53bd42"
     }
   ]
 }

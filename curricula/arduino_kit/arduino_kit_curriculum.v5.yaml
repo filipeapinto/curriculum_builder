@@ -27,9 +27,14 @@ curriculum:
 domain:
   schema: curricula/arduino_kit/domain.schema.v1.json
   manifest_schema: curricula/arduino_kit/manifest.domain.schema.v1.json
+  calibration: curricula/arduino_kit/kit_calibration.v1.yaml
   verifier:
     entry_point: curricula/arduino_kit/verify_domain.py
     invocation: python3 curricula/arduino_kit/verify_domain.py --domain <domain>
+    dependencies:
+    - curricula/arduino_kit/domain.schema.v1.json
+    - curricula/arduino_kit/kit_calibration.v1.yaml
+    - curricula/arduino_kit/circuit_library.v1.yaml
     must_reject:
     - fixture: curricula/arduino_kit/fixtures/domain_polarity_asserted.reject.json
       expected_code: polarity-unevidenced

@@ -1,0 +1,15 @@
+Run 26 controller behavior disposition (attempt-2 re-verification)
+
+RETAINED: deterministic dependency scheduling; schema-bound JSON admission;
+per-node commands/findings/evidence/hashes; explicit PASSED/BLOCKED outcomes;
+read-only status, plan, validate, and audit operations.
+
+REPLACED: prose status with receipt validation; mutable shared attempts with
+immutable parent-bound records; local predecessor checks with transitive
+invalidation; non-atomic merge with journaled recovery; reusable logs with
+attempt-scoped write-once evidence; implicit resume/recovery with named audited
+operations; loose final status with N90 exactly-one-terminal enforcement.
+
+REJECTED: reuse of the old 537-event stream as clean evidence; Markdown as state
+authority; post-N00 result-schema edits; overlapping writes; partial merge;
+stale descendant joins; and any later-node execution without current N00.

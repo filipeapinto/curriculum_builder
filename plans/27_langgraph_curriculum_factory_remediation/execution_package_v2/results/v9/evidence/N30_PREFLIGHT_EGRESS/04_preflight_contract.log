@@ -1,0 +1,11 @@
+N30 V9 preflight and executable-domain-contract disposition
+Generated: 2026-08-15T10:23:45Z
+
+- D03 readiness requires all five independent proof classes: executable identity, permitted auth mode, observable subscription-backed usability with a content-free probe, forbidden API-key absence plus approved data boundary, and directly observed tool/MCP closure. Unknown or failed evidence makes ready false and the production CLI nonzero.
+- Tool closure is derived from the initialization event, never the presence of intent flags. A listed but non-authenticated/non-invokable MCP server does not itself grant a tool; an exposed non-structured tool or authenticated/invokable MCP tool fails closed.
+- Missing driver, spoofed executable, wrong auth mode, unavailable subscription, malformed/nonzero probe, requested/observed identity mismatch, API-key credential, custom endpoint, or fallback attempt cannot activate another route.
+- Probes are content-free. Curriculum artifacts, source text, PDFs, pages, evidence, and user files remain outside the probe boundary.
+- The production CLI consumes N20's authorization/transmission functions and does not reproduce the provider allowlist or provider data-class mapping.
+- D02 freezes artifact schema, manifest schema, config, calibration, verifier entry point/invocation/dependencies, and every accept/reject fixture by digest. D07 stages only those hash-verified bytes and admitted-source claims. Path escape, drift, incomplete fixtures, or an unproven declaration fails before M02.
+- D06B invokes SourceRetriever with its keyword authorization contract, persists exact verified bytes and receipts, and passes only the bounded hash-bound visible-text projection to M01 INTERPRET. It tries bounded locators in order and emits a typed pause only after all required-fact candidates are unusable.
+- Exact CLI/preflight tests: 62 passed plus 27 subtests. Exact D03/D06B slice: 20 passed. Scoped retired-provider/credential scan: six files, zero violations.

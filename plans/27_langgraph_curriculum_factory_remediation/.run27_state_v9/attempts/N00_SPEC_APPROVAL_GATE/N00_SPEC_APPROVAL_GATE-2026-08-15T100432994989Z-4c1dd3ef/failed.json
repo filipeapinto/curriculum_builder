@@ -1,0 +1,11 @@
+{
+  "at": "2026-08-15T10:08:09.087859Z",
+  "code": "NONZERO_COMMAND_IN_PASSED",
+  "message": "NONZERO_COMMAND_IN_PASSED: nonzero command: ['python3', '-c', 'initial contract helper compared a nonexistent v1 structured assignment field']",
+  "problems": [
+    {
+      "code": "NONZERO_COMMAND_IN_PASSED",
+      "message": "nonzero command: ['python3', '-c', 'initial contract helper compared a nonexistent v1 structured assignment field']"
+    }
+  ]
+}

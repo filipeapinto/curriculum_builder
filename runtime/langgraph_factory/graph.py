@@ -40,7 +40,13 @@ from langgraph.graph.state import CompiledStateGraph
 from langgraph.runtime import Runtime
 
 from . import acceptance, routing, transport as tp, unit_graph, workbook
-from .artifacts import ArtifactStore
+from .artifacts import (
+    UNIT_SCOPE,
+    ArtifactStore,
+    ArtifactStream,
+    canonical_digest as artifact_digest,
+    canonical_json_bytes,
+)
 from .egress import EgressGuard, ReceiptLog, RetrievalPolicy, SourceRetriever
 from .evidence import EvidenceStore
 from .model_nodes import (
@@ -220,6 +226,7 @@ def build_runtime_context(
         path_guard=ArtifactStore(output_root),
         evidence_service=EvidenceStore(output_root),
         transport_registry=tp.CliTransport(
+            engine_root=engine_root,
             output_root=output_root,
             run_id=run_id,
             curriculum_digest=curriculum_digest,
@@ -253,6 +260,109 @@ def _mark_interrupt(update: Mapping[str, Any], node_id: str) -> dict[str, Any]:
     return marked
 
 
+_ARTIFACT_ADMISSION_NODES: frozenset[str] = frozenset({
+    "D08_VALIDATE_DOMAIN",
+    "D09_VALIDATE_CONTENT",
+    "D12_VISUAL_BARRIER_AND_JOIN",
+    "D20_ADMIT_UNIT_REPAIR",
+})
+
+
+def _persist_admitted_head_updates(
+    node_id: str,
+    state: Mapping[str, Any],
+    update: Mapping[str, Any],
+    context: RuntimeContext,
+) -> None:
+    """Commit every state head update to the replay-safe ArtifactStore first.
+
+    The state reducers prove lineage but do not write the bytes D11/D13 later
+    resolve. This boundary bridges those two halves atomically enough for
+    checkpoint replay: `admit_version` is idempotent by a deterministic key,
+    and an already-equal physical head is an explicit successful replay.
+    Failed pre-admission candidates carry no head update and never enter here.
+    """
+
+    if node_id not in _ARTIFACT_ADMISSION_NODES:
+        return
+    head_updates = update.get("artifact_heads")
+    if not isinstance(head_updates, Mapping) or not head_updates:
+        return
+    store = getattr(context, "path_guard", None)
+    if not isinstance(store, ArtifactStore):
+        raise GraphBindingError("artifact admission requires the runtime ArtifactStore")
+
+    candidates_by_identity: dict[tuple[Any, Any, Any], Mapping[str, Any]] = {}
+    for record in (
+        list(state.get("artifact_versions") or [])
+        + list(update.get("artifact_versions") or [])
+    ):
+        if not isinstance(record, Mapping):
+            continue
+        identity = (record.get("stream"), record.get("version"), record.get("hash"))
+        prior = candidates_by_identity.get(identity)
+        if prior is not None and prior.get("body") != record.get("body"):
+            raise GraphBindingError(
+                f"artifact identity {identity!r} resolves to conflicting immutable bodies"
+            )
+        candidates_by_identity[identity] = record
+    candidates = list(candidates_by_identity.values())
+    for stream_id, head in sorted(head_updates.items()):
+        if not isinstance(stream_id, str) or not isinstance(head, Mapping):
+            raise GraphBindingError("artifact head update is not a stream/head mapping")
+        parts = stream_id.split("/")
+        if len(parts) != 3 or parts[0] != UNIT_SCOPE:
+            raise GraphBindingError(f"unsupported unit artifact stream {stream_id!r}")
+        _scope, unit_id, channel = parts
+        matching = [
+            record for record in candidates
+            if record.get("stream") == stream_id
+            and record.get("hash") == head.get("hash")
+            and record.get("version") == head.get("version")
+        ]
+        if len(matching) != 1 or not isinstance(matching[0].get("body"), Mapping):
+            raise GraphBindingError(
+                f"head {stream_id}@{head.get('version')} has no unique immutable body record")
+        body = dict(matching[0]["body"])
+        if artifact_digest(body) != head.get("hash"):
+            raise GraphBindingError(f"head {stream_id} does not hash its immutable body")
+        stream = ArtifactStream(scope=UNIT_SCOPE, unit_id=unit_id, channel=channel)
+        # Admission identity belongs to the immutable artifact, not to the
+        # deterministic node that happened to prove it.  D20 admits a repaired
+        # child and D08/D09/D12 subsequently revalidate that same logical head;
+        # including ``node_id`` here made that required cross-node replay look
+        # like a second, conflicting version.
+        idempotency_key = artifact_digest({
+            "stream": stream_id,
+            "version": head.get("version"),
+            "parent_hash": head.get("parent_hash"),
+            "hash": head.get("hash"),
+        })
+        current = store.current_head(stream)
+        if (
+            current is not None
+            and current.version == int(head["version"])
+            and current.parent_hash == head.get("parent_hash")
+            and current.content_hash == head.get("hash")
+        ):
+            # The physical store already contains and points at the exact
+            # logical head.  Revalidation is therefore an idempotent success;
+            # do not ask ArtifactStore to mint the same version under another
+            # historical key.
+            continue
+        admitted = store.admit_version(
+            stream,
+            data=canonical_json_bytes(body),
+            version=int(head["version"]),
+            parent_hash=head.get("parent_hash"),
+            idempotency_key=idempotency_key,
+        )
+        current = store.current_head(stream)
+        if current is not None and current.record_hash == admitted.record_hash:
+            continue
+        store.advance_head(stream, admitted)
+
+
 def _boundary(node_id: str, body: Callable[..., Any], *, model_node: bool) -> Callable[..., Any]:
     """Wrap one node body in the common boundary of spec section 6.1.
 
@@ -269,6 +379,7 @@ def _boundary(node_id: str, body: Callable[..., Any], *, model_node: bool) -> Ca
                 update = body(state, build_model_node_context(context))
             else:
                 update = body(state, context)
+            _persist_admitted_head_updates(node_id, state, update, context)
         except GraphBubbleUp:
             # LangGraph's own control flow (interrupt/resume propagation) is not a
             # product failure and must reach the engine untouched.

@@ -1,0 +1,37 @@
+{
+  "approved_spec_sha256": "e14df5a36ce12d700fe9fc4aa4aea466771bc89f31bc6e9d49f812c147b1bb3c",
+  "attempt_id": "N20_PROVIDER_TRANSPORT-2026-08-15T031853853822Z-2cdec2b8",
+  "baseline": {
+    "plans/27_langgraph_curriculum_factory_remediation/execution_package_v2/results/v8/N20_PROVIDER_TRANSPORT.result.v1.json": "9ed6bf2940b5e2b32d7359b808df57ace16e235a08b085356d7239c594ea03e1",
+    "plans/27_langgraph_curriculum_factory_remediation/execution_package_v2/results/v8/evidence/N20_PROVIDER_TRANSPORT": "2cb077bf56ce0e7a05d3a2cceb1955360873b739cc755d2f853bdde030d49389",
+    "policy/routes.v1.yaml": "baa96fbe52bb8863f467ae16d02a2caeceed0ab49b00510a4dd185a683766b2a",
+    "policy/routing/model_registry.v1.yaml": "adfa0672fd4c150e8c18b98d5b4687d4fc6334c3710823759ae282548c3348c5",
+    "runtime/langgraph_factory/config": "e3ea6ce8c2ac43048ea29599d91af9412e316d2c071e26492678b54f5a8e7d8c",
+    "runtime/langgraph_factory/egress.py": "d48869dc37df95bc4f861f7ac1c4ae5043ecb417e4b9df6c0e29929c3f7bba4d",
+    "runtime/langgraph_factory/model_nodes.py": "0a8479b3b2650980d88b596277a3ed0ee2eca85ac4e64e57f4bbdc9eb51055ce",
+    "runtime/langgraph_factory/prompts": "aa22fc4c34458ba4a9bbed8865c10b0b5c8806db3b1893c762eb7bfceb320cfe",
+    "runtime/langgraph_factory/schemas": "9cb04bdc058b09fa2e4fb4bfe3c6ca67ad986dbca575ab708e53975447cca9fd",
+    "runtime/langgraph_factory/transport.py": "35f471ebd9ec6702ab7f0efb0b37a21b1bc3d4f84def4978c358f7b2573d32c1",
+    "schemas/model_registry.schema.v1.json": "5a13c98cd841259f9c0b7b7c65b5f3c49421ad89e7bf08a0febb6ec863dab717",
+    "schemas/routes.schema.v1.json": "53f1032a3239086637d00e2d6b906953476f80bc8b8d68ed0b8f3a9c6c40189f",
+    "tests/runtime/test_curriculum_factory_graph.py": "337c1cd34122988f6b3a2c05c70ebd0d3a4a31bc9a5e8129ec2e91ad9a015790",
+    "tests/runtime/test_plan26_adversarial.py": "e781840121cb9f2a899f335ff7752447e8083a29dc5e3d8a4e594fd3d6b71bfb",
+    "tests/runtime/test_plan26_api_contract.py": "8369203073fdcf1b553669774c52c780836f5e86f328ef428e899e0cdce873c5",
+    "tests/runtime/test_plan26_egress.py": "687c557531b1ba528413bd8d36f2e26a94018b07a681f6f1e12263bfa1655816",
+    "tests/runtime/test_plan26_lock_drift.py": "211a1e0e7627fcd6762540acde5fbb7f2dd7df665ea7e3c72cca3dda719f4761",
+    "tests/runtime/test_plan26_model_nodes.py": "8a05e9273adc38103b608f6a565cd9e9b3ab815219edfa2b340f849193df8e28",
+    "tests/runtime/test_plan26_transport.py": "398cdb58fc674d754ee409ff1b6584f02a137a9e323b66be416fcb9f74adf8e1"
+  },
+  "created_at": "2026-08-15T03:18:53.854146Z",
+  "evidence_dir": "attempts/N20_PROVIDER_TRANSPORT/N20_PROVIDER_TRANSPORT-2026-08-15T031853853822Z-2cdec2b8/logs",
+  "graph_sha256": "c2d79ac0387c935977385138d2d891cf1539041f1a4532acf94fc8dc687bf6b1",
+  "node_definition_sha256": "4eccb12b61b5e7c3ffc7e9976cd769382883bde15296a6c5ea27dfe0bbb3398d",
+  "node_id": "N20_PROVIDER_TRANSPORT",
+  "parent_attempt_id": null,
+  "predecessor_receipt_digests": {
+    "N10_HARNESS_PROTOCOL": "78c2d3f9e249ea3506e08b791800dc4b34f1af88c1df5d43995eaea5d9b2a369"
+  },
+  "prompt_sha256": "1dc683636fa45a32004776e889da8cbfe656958575f7d4ea7c26a5782a6c0e26",
+  "run_id": "run27",
+  "schema_version": 1
+}

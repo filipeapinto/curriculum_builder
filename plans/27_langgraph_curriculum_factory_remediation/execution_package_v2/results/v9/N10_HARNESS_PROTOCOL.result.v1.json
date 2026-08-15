@@ -1,0 +1,36 @@
+{
+  "schema_version": 1,
+  "run_id": "run27-execution-package-v2-graph-v9",
+  "node_id": "N10_HARNESS_PROTOCOL",
+  "attempt_id": "N10_HARNESS_PROTOCOL-2026-08-15T101324927286Z-da421773",
+  "outcome": "PASSED",
+  "source_spec_sha256": "e14df5a36ce12d700fe9fc4aa4aea466771bc89f31bc6e9d49f812c147b1bb3c",
+  "prompt_sha256": "2114b50ba59fa1657b51179a7550bbd3bbb7e0770900b2d808f528263d20ae25",
+  "predecessor_receipts": {
+    "N00_SPEC_APPROVAL_GATE": "d64fa8aad0ba2ab485a140826f0efb69e506cdd7171fc84a7ab0885f979bb6c3"
+  },
+  "changed_files": [
+    {"path": "plans/27_langgraph_curriculum_factory_remediation/execution_package_v2/results/v9/evidence/N10_HARNESS_PROTOCOL/05_attempt2_pytest_run1.log", "change": "created", "sha256": "1684d2287001a19c9fb9de9783f4f37b01f70d7baf687c65f773a22338921baa"},
+    {"path": "plans/27_langgraph_curriculum_factory_remediation/execution_package_v2/results/v9/evidence/N10_HARNESS_PROTOCOL/06_attempt2_pytest_run2.log", "change": "created", "sha256": "426d826398f0d3869303eaa79d2f7742f4a4ad5b1635dc93a40bc46423abddb0"},
+    {"path": "plans/27_langgraph_curriculum_factory_remediation/execution_package_v2/results/v9/evidence/N10_HARNESS_PROTOCOL/07_attempt2_validate_plan_v2.log", "change": "created", "sha256": "176e9ba38236264d063a17ac51d86f88018b960bd7c73c01c03e102a06cb6b07"},
+    {"path": "plans/27_langgraph_curriculum_factory_remediation/execution_package_v2/results/v9/evidence/N10_HARNESS_PROTOCOL/08_attempt2_run26_behavior_disposition.log", "change": "created", "sha256": "b0353218ea044bfc80550e506a247122d8c3a20ab2cad38f1ba90bc1bc6af393"}
+  ],
+  "commands": [
+    {"argv": ["python3", "-m", "pytest", "-q", "plans/27_langgraph_curriculum_factory_remediation/tests/test_run27_controller.py", "plans/27_langgraph_curriculum_factory_remediation/tests/test_node_result_protocol.py", "plans/27_langgraph_curriculum_factory_remediation/tests/test_forbidden_production_scan.py"], "exit_code": 0, "log": "plans/27_langgraph_curriculum_factory_remediation/execution_package_v2/results/v9/evidence/N10_HARNESS_PROTOCOL/05_attempt2_pytest_run1.log", "log_sha256": "1684d2287001a19c9fb9de9783f4f37b01f70d7baf687c65f773a22338921baa"},
+    {"argv": ["python3", "-m", "pytest", "-q", "plans/27_langgraph_curriculum_factory_remediation/tests/test_run27_controller.py", "plans/27_langgraph_curriculum_factory_remediation/tests/test_node_result_protocol.py", "plans/27_langgraph_curriculum_factory_remediation/tests/test_forbidden_production_scan.py"], "exit_code": 0, "log": "plans/27_langgraph_curriculum_factory_remediation/execution_package_v2/results/v9/evidence/N10_HARNESS_PROTOCOL/06_attempt2_pytest_run2.log", "log_sha256": "426d826398f0d3869303eaa79d2f7742f4a4ad5b1635dc93a40bc46423abddb0"},
+    {"argv": ["python3", "plans/27_langgraph_curriculum_factory_remediation/execution_package_v2/tools/validate_plan_v2.py"], "exit_code": 0, "log": "plans/27_langgraph_curriculum_factory_remediation/execution_package_v2/results/v9/evidence/N10_HARNESS_PROTOCOL/07_attempt2_validate_plan_v2.log", "log_sha256": "176e9ba38236264d063a17ac51d86f88018b960bd7c73c01c03e102a06cb6b07"}
+  ],
+  "evidence": [
+    "plans/27_langgraph_curriculum_factory_remediation/execution_package_v2/results/v9/evidence/N10_HARNESS_PROTOCOL/05_attempt2_pytest_run1.log",
+    "plans/27_langgraph_curriculum_factory_remediation/execution_package_v2/results/v9/evidence/N10_HARNESS_PROTOCOL/06_attempt2_pytest_run2.log",
+    "plans/27_langgraph_curriculum_factory_remediation/execution_package_v2/results/v9/evidence/N10_HARNESS_PROTOCOL/07_attempt2_validate_plan_v2.log",
+    "plans/27_langgraph_curriculum_factory_remediation/execution_package_v2/results/v9/evidence/N10_HARNESS_PROTOCOL/08_attempt2_run26_behavior_disposition.log"
+  ],
+  "findings": [
+    {"id": "N10V9-F01", "severity": "major", "summary": "The deterministic controller, receipt protocol, transitive invalidation, join refusal, write-set checks, atomic recovery, and frozen result schema passed all 81 tests twice.", "disposition": "resolved"},
+    {"id": "N10V9-F02", "severity": "major", "summary": "Every Run 26 behavior is explicitly retained, replaced, or rejected; the old 537-event stream is not reused as clean evidence.", "disposition": "resolved"},
+    {"id": "N10V9-F03", "severity": "minor", "summary": "Attempt 1 was preserved as failed after binding the scheduler receipt instead of the required predecessor result digest; attempt 2 binds the exact current N00 result.", "disposition": "resolved"},
+    {"id": "N10V9-F04", "severity": "observation", "summary": "Pure fresh V9 re-verification over unchanged controller-owned bytes created only unique attempt-2 evidence and the result.", "disposition": "resolved"}
+  ],
+  "invalidated_descendants": []
+}

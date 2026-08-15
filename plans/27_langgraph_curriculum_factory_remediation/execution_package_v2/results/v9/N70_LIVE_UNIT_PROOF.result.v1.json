@@ -1,0 +1,57 @@
+{
+  "schema_version": 1,
+  "run_id": "run27-execution-package-v2-graph-v9",
+  "node_id": "N70_LIVE_UNIT_PROOF",
+  "attempt_id": "N70_LIVE_UNIT_PROOF-2026-08-15T104735440447Z-481062ca",
+  "outcome": "NOT_AVAILABLE",
+  "source_spec_sha256": "e14df5a36ce12d700fe9fc4aa4aea466771bc89f31bc6e9d49f812c147b1bb3c",
+  "prompt_sha256": "d92410c51fb3be1073d2b52c9b6b386ef4e3ef5fbe46a7de8564f407d9d58159",
+  "predecessor_receipts": {
+    "N60_ADVERSARIAL_REGRESSION": "76f1aad362e4465d678d8a7109384827e2176a3a5a7a64d213afbbdef51ecfba"
+  },
+  "changed_files": [
+    {"path": "plans/27_langgraph_curriculum_factory_remediation/execution_package_v2/results/v9/evidence/N70_LIVE_UNIT_PROOF/01_preflight_run1.log", "change": "created", "sha256": "f402193dd55199697545138da5f3b9b07d0bfeb0a2b9c1353ac773864c0624fd"},
+    {"path": "plans/27_langgraph_curriculum_factory_remediation/execution_package_v2/results/v9/evidence/N70_LIVE_UNIT_PROOF/02_preflight_run2.log", "change": "created", "sha256": "c7e0dd1cd26b62b676e3803eefbc0b6760bd5ad3d7497b7c01985d34d8228599"},
+    {"path": "plans/27_langgraph_curriculum_factory_remediation/execution_package_v2/results/v9/evidence/N70_LIVE_UNIT_PROOF/03_no_transmission_proof.log", "change": "created", "sha256": "db7d0804c2559ea5bc4855e873e764a6bd4cca9df2904717a979554e5a7431d8"}
+  ],
+  "commands": [
+    {
+      "argv": ["python3", "-m", "runtime.run_curriculum", "--engine-root", ".", "--curriculum", "curricula/arduino_kit/arduino_kit_curriculum.v5.yaml", "--output-root", "outputs/run27/live_unit", "--preflight"],
+      "exit_code": 3,
+      "log": "plans/27_langgraph_curriculum_factory_remediation/execution_package_v2/results/v9/evidence/N70_LIVE_UNIT_PROOF/01_preflight_run1.log",
+      "log_sha256": "f402193dd55199697545138da5f3b9b07d0bfeb0a2b9c1353ac773864c0624fd"
+    },
+    {
+      "argv": ["python3", "-m", "runtime.run_curriculum", "--engine-root", ".", "--curriculum", "curricula/arduino_kit/arduino_kit_curriculum.v5.yaml", "--output-root", "outputs/run27/live_unit", "--preflight"],
+      "exit_code": 3,
+      "log": "plans/27_langgraph_curriculum_factory_remediation/execution_package_v2/results/v9/evidence/N70_LIVE_UNIT_PROOF/02_preflight_run2.log",
+      "log_sha256": "c7e0dd1cd26b62b676e3803eefbc0b6760bd5ad3d7497b7c01985d34d8228599"
+    }
+  ],
+  "evidence": [
+    "plans/27_langgraph_curriculum_factory_remediation/execution_package_v2/results/v9/evidence/N70_LIVE_UNIT_PROOF/01_preflight_run1.log",
+    "plans/27_langgraph_curriculum_factory_remediation/execution_package_v2/results/v9/evidence/N70_LIVE_UNIT_PROOF/02_preflight_run2.log",
+    "plans/27_langgraph_curriculum_factory_remediation/execution_package_v2/results/v9/evidence/N70_LIVE_UNIT_PROOF/03_no_transmission_proof.log"
+  ],
+  "findings": [
+    {
+      "id": "N70V9-F01",
+      "severity": "major",
+      "summary": "The approved Claude subscription driver was unavailable: two content-free production preflights observed the installed authenticated-mode executable and closed tool boundary, but its bounded claude-sonnet-5 probe exited 1 both times; Codex remained ready.",
+      "disposition": "open"
+    },
+    {
+      "id": "N70V9-F02",
+      "severity": "critical",
+      "summary": "Both preflights failed before transmission with an empty authorized input projection; outputs/run27/live_unit remains absent and no curriculum or user-owned bytes were sent.",
+      "disposition": "resolved"
+    },
+    {
+      "id": "N70V9-F03",
+      "severity": "observation",
+      "summary": "No fallback, reassignment, API-key route, direct model HTTP call, simulation, or product claim was used; NOT_AVAILABLE is the graph-authorized truthful outcome.",
+      "disposition": "resolved"
+    }
+  ],
+  "invalidated_descendants": []
+}

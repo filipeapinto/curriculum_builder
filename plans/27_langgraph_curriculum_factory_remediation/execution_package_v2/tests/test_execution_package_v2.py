@@ -37,7 +37,8 @@ PARENT_CONTROLLER_DIR = PLAN_DIR / "controller"
 PARENT_TOOLS_DIR = PLAN_DIR / "tools"
 PARENT_GRAPH = PLAN_DIR / "implementation.graph.v1.yaml"
 
-PACKAGE_GRAPH = PACKAGE_DIR / "implementation.graph.v8.yaml"
+PACKAGE_GRAPH = PACKAGE_DIR / "implementation.graph.v9.yaml"
+APPROVED_GRAPH_V8 = PACKAGE_DIR / "implementation.graph.v8.yaml"
 APPROVED_GRAPH_V7 = PACKAGE_DIR / "implementation.graph.v7.yaml"
 RECOVERY_GRAPH_V7_MODIFIED = PACKAGE_DIR / "recovery/implementation.graph.v7.modified.b6c17e81.yaml"
 DEPRECATED_GRAPH_V4 = PACKAGE_DIR / "deprecated/implementation.graph.v4.yaml"
@@ -49,8 +50,10 @@ CONTRACT_SCHEMA_V3 = PACKAGE_DIR / "schemas/spec_approval.schema.v3.json"
 CONTRACT_V3 = PACKAGE_DIR / "contracts/spec_approval.v3.yaml"
 CONTRACT_SCHEMA_V5 = PACKAGE_DIR / "schemas/spec_approval.schema.v5.json"
 CONTRACT_V5 = PACKAGE_DIR / "contracts/spec_approval.v5.yaml"
+CONTRACT_SCHEMA_V6 = PACKAGE_DIR / "schemas/spec_approval.schema.v6.json"
+CONTRACT_V6 = PACKAGE_DIR / "contracts/spec_approval.v6.yaml"
 PARENT_APPROVAL_SCHEMA_V1 = PLAN_DIR / "schemas/spec_approval.schema.v1.json"
-RESULTS_V8_PREFIX = "plans/27_langgraph_curriculum_factory_remediation/execution_package_v2/results/v8/"
+RESULTS_V9_PREFIX = "plans/27_langgraph_curriculum_factory_remediation/execution_package_v2/results/v9/"
 LEGACY_RESULTS_PREFIX = "plans/27_langgraph_curriculum_factory_remediation/execution_package_v2/results/"
 SCAN_NODE = PACKAGE_CONTROLLER_DIR / "scan_node.py"
 VALIDATE_PLAN_V2 = PACKAGE_TOOLS_DIR / "validate_plan_v2.py"
@@ -134,6 +137,20 @@ def test_node_scoped_scan_defaults_to_the_package_v2_graph_not_the_parent() -> N
     assert payload["graph_sha256"] != sha256_file(PARENT_GRAPH)
 
 
+def test_graph_v9_controller_state_namespace_is_fresh_and_explicit() -> None:
+    expected = PLAN_DIR / ".run27_state_v9"
+    document = yaml.safe_load(PACKAGE_GRAPH.read_text(encoding="utf-8"))
+    state_relative = expected.relative_to(REPO_ROOT).as_posix()
+    for node_id in ("N70_LIVE_UNIT_PROOF", "N80_LIVE_WORKBOOK_PROOF", "N90_REQUIREMENTS_FINAL_AUDIT"):
+        controller_commands = [
+            command for command in document["nodes"][node_id]["verification"]
+            if len(command) > 1 and command[1].endswith("run27_controller.py")
+        ]
+        assert controller_commands
+        for command in controller_commands:
+            assert command[command.index("--state-dir") + 1] == state_relative
+
+
 def test_using_the_wrong_parent_graph_explicitly_excludes_n20s_new_egress_ownership() -> None:
     """PKG-QA-001 was exactly this: a node-scoped scan bound to the wrong graph
     silently used stale write sets. Proving the *wrong* binding produces a
@@ -153,7 +170,7 @@ def test_using_the_wrong_parent_graph_explicitly_excludes_n20s_new_egress_owners
 def test_n20_node_mode_includes_its_newly_owned_egress_module_and_test() -> None:
     """This is the exact real command that reached BLOCKED under graph v5
     (finding N20V2-F01): scan_node.py --node N20_PROVIDER_TRANSPORT --graph
-    implementation.graph.v8.yaml (v6 originally fixed this; v7 carries the
+    implementation.graph.v9.yaml (v6 originally fixed this; v9 carries the
     fix forward unchanged, correcting only the unrelated result-namespace
     collision documented in its own header). PKGV2-T22(a) requires dedicated
     proof that it now passes with zero violations, not merely that it scans
@@ -354,7 +371,7 @@ def test_each_n20_to_n50_scan_command_carries_the_exact_package_v2_graph(node_id
 def test_each_n20_to_n50_node_owns_its_own_exact_result_path_and_evidence_root(node_id: str) -> None:
     document = yaml.safe_load(PACKAGE_GRAPH.read_text(encoding="utf-8"))
     writes = document["nodes"][node_id]["writes"]
-    prefix = RESULTS_V8_PREFIX
+    prefix = RESULTS_V9_PREFIX
     assert f"{prefix}{node_id}.result.v1.json" in writes
     assert f"{prefix}evidence/{node_id}" in writes
     for write in writes:
@@ -438,7 +455,7 @@ def test_validator_rejects_a_node_result_write_moved_to_the_parent_v1_results_ro
     module = _load_module("validate_plan_v2_result_path_under_test", VALIDATE_PLAN_V2)
     document = module.load_yaml(module.GRAPH_PATH)
     node = document["nodes"]["N40_INTEGRATION_OWNERSHIP"]
-    package_result = f"{RESULTS_V8_PREFIX}N40_INTEGRATION_OWNERSHIP.result.v1.json"
+    package_result = f"{RESULTS_V9_PREFIX}N40_INTEGRATION_OWNERSHIP.result.v1.json"
     parent_result = (
         "plans/27_langgraph_curriculum_factory_remediation/"
         "results/N40_INTEGRATION_OWNERSHIP.result.v1.json"
@@ -453,7 +470,7 @@ def test_validator_rejects_an_evidence_root_moved_to_the_parent_v1_results_root(
     module = _load_module("validate_plan_v2_evidence_path_under_test", VALIDATE_PLAN_V2)
     document = module.load_yaml(module.GRAPH_PATH)
     node = document["nodes"]["N50_EVIDENCE_AUDIT_CONTROLS"]
-    package_evidence = f"{RESULTS_V8_PREFIX}evidence/N50_EVIDENCE_AUDIT_CONTROLS"
+    package_evidence = f"{RESULTS_V9_PREFIX}evidence/N50_EVIDENCE_AUDIT_CONTROLS"
     parent_evidence = (
         "plans/27_langgraph_curriculum_factory_remediation/"
         "results/evidence/N50_EVIDENCE_AUDIT_CONTROLS"
@@ -1087,7 +1104,7 @@ def test_graph_reference_check_rejects_an_equals_form_stale_reference() -> None:
     still be caught."""
 
     text = (
-        "Use the whitespace form: --graph plans/27_langgraph_curriculum_factory_remediation/execution_package_v2/implementation.graph.v8.yaml\n"
+        "Use the whitespace form: --graph plans/27_langgraph_curriculum_factory_remediation/execution_package_v2/implementation.graph.v9.yaml\n"
         "Retained stale equals form: --graph=execution_package_v2/implementation.graph.v1.yaml\n"
     )
     references = _graph_references(text)
@@ -1102,18 +1119,18 @@ def test_graph_reference_check_rejects_a_wrong_prefix_reference_ending_in_the_ri
 
     text = (
         "python3 controller/scan_node.py --node N20_PROVIDER_TRANSPORT "
-        "--graph other/execution_package_v2/implementation.graph.v8.yaml"
+        "--graph other/execution_package_v2/implementation.graph.v9.yaml"
     )
     references = _graph_references(text)
-    assert references == ["other/execution_package_v2/implementation.graph.v8.yaml"]
+    assert references == ["other/execution_package_v2/implementation.graph.v9.yaml"]
     assert not _resolves_to_enforced_graph(references[0])
 
 
 @pytest.mark.parametrize(
     "flag_spelling",
     [
-        "--graph plans/27_langgraph_curriculum_factory_remediation/execution_package_v2/implementation.graph.v8.yaml",
-        "--graph=plans/27_langgraph_curriculum_factory_remediation/execution_package_v2/implementation.graph.v8.yaml",
+        "--graph plans/27_langgraph_curriculum_factory_remediation/execution_package_v2/implementation.graph.v9.yaml",
+        "--graph=plans/27_langgraph_curriculum_factory_remediation/execution_package_v2/implementation.graph.v9.yaml",
     ],
     ids=["whitespace-form", "equals-form"],
 )
@@ -1143,7 +1160,7 @@ def test_graph_reference_check_accepts_a_genuinely_correct_reference_in_either_s
 # assignment is rejected by the real validator (not merely undocumented),
 # and the old parent schema is untouched.
 
-CONTRACT_V5_DIGEST_FIELDS = [
+CONTRACT_V6_DIGEST_FIELDS = [
     "approved_spec_sha256",
     "spec_qa_verification_sha256",
     "approved_rc_manifest_sha256",
@@ -1152,30 +1169,30 @@ CONTRACT_V5_DIGEST_FIELDS = [
 ]
 
 
-def _schema_v5() -> dict[str, Any]:
-    return json.loads(CONTRACT_SCHEMA_V5.read_text(encoding="utf-8"))
+def _schema_v6() -> dict[str, Any]:
+    return json.loads(CONTRACT_SCHEMA_V6.read_text(encoding="utf-8"))
 
 
-def _contract_v4() -> dict[str, Any]:
-    return yaml.safe_load(CONTRACT_V5.read_text(encoding="utf-8"))
+def _contract_v6() -> dict[str, Any]:
+    return yaml.safe_load(CONTRACT_V6.read_text(encoding="utf-8"))
 
 
-def _write_mutated_contract_v4(tmp_path: Path, mutate) -> Path:
-    contract = _contract_v4()
+def _write_mutated_contract_v6(tmp_path: Path, mutate) -> Path:
+    contract = _contract_v6()
     mutate(contract)
-    mutated_path = tmp_path / "spec_approval.v4.mutated.yaml"
+    mutated_path = tmp_path / "spec_approval.v6.mutated.yaml"
     mutated_path.write_text(yaml.safe_dump(contract, sort_keys=False), encoding="utf-8")
     return mutated_path
 
 
-def test_graph_v8_declares_schema_v5_frozen_not_schema_v3_v2_or_the_parent_v1_schema() -> None:
+def test_graph_v9_declares_schema_v6_frozen_not_older_or_parent_schemas() -> None:
     document = yaml.safe_load(PACKAGE_GRAPH.read_text(encoding="utf-8"))
     frozen = document["rules"]["frozen_before_entry"]
-    schema_v5_relative = CONTRACT_SCHEMA_V5.relative_to(REPO_ROOT).as_posix()
+    schema_v6_relative = CONTRACT_SCHEMA_V6.relative_to(REPO_ROOT).as_posix()
     schema_v3_relative = CONTRACT_SCHEMA_V3.relative_to(REPO_ROOT).as_posix()
     schema_v2_relative = CONTRACT_SCHEMA_V2.relative_to(REPO_ROOT).as_posix()
     parent_v1_relative = PARENT_APPROVAL_SCHEMA_V1.relative_to(REPO_ROOT).as_posix()
-    assert schema_v5_relative in frozen
+    assert schema_v6_relative in frozen
     assert schema_v3_relative not in frozen
     assert schema_v2_relative not in frozen
     assert parent_v1_relative not in frozen
@@ -1183,7 +1200,7 @@ def test_graph_v8_declares_schema_v5_frozen_not_schema_v3_v2_or_the_parent_v1_sc
     assert document["node_result_schema"] in frozen
 
 
-def test_n00_prompt_v8_validates_against_schema_v5_not_schema_v3_v2_or_the_parent_v1_schema() -> None:
+def test_n00_prompt_v9_validates_against_schema_v6() -> None:
     """The prompt's own explanatory prose legitimately names the historical
     parent v1 schema and schemas v2/v3 (to explain the defect being fixed,
     exactly as prompt v6 named v2's stale-schema-binding defect) -- so a
@@ -1192,50 +1209,50 @@ def test_n00_prompt_v8_validates_against_schema_v5_not_schema_v3_v2_or_the_paren
     step 6) targets schema v5."""
 
     prompt_path = _fresh_prompt_path("N00_SPEC_APPROVAL_GATE")
-    assert prompt_path.name == "N00_spec_approval_gate.prompt.v8.md"
+    assert prompt_path.name == "N00_spec_approval_gate.prompt.v9.md"
     text = prompt_path.read_text(encoding="utf-8")
     assert (
-        "Validate `execution_package_v2/contracts/spec_approval.v5.yaml` against\n"
-        "   `plans/27_langgraph_curriculum_factory_remediation/execution_package_v2/schemas/spec_approval.schema.v5.json`"
+        "Validate `execution_package_v2/contracts/spec_approval.v6.yaml` against\n"
+        "   `plans/27_langgraph_curriculum_factory_remediation/execution_package_v2/schemas/spec_approval.schema.v6.json`"
     ) in text
     assert "Validate a new `execution_package_v2/contracts/spec_approval.v1.yaml`" not in text
 
 
-def test_n00_prompt_v8_does_not_repeat_the_false_frozen_claim_about_schema_v1() -> None:
+def test_n00_prompt_v9_does_not_repeat_the_false_frozen_claim_about_schema_v1() -> None:
     prompt_path = _fresh_prompt_path("N00_SPEC_APPROVAL_GATE")
     text = prompt_path.read_text(encoding="utf-8")
     assert "is frozen and unversioned per" not in text
 
 
-def test_schema_v5_spec_path_const_matches_graph_v8_source_spec() -> None:
-    schema = _schema_v5()
+def test_schema_v6_spec_path_const_matches_graph_v9_source_spec() -> None:
+    schema = _schema_v6()
     document = yaml.safe_load(PACKAGE_GRAPH.read_text(encoding="utf-8"))
     assert schema["properties"]["approved_spec"]["const"] == document["source_spec"]
 
 
-def test_schema_v5_graph_path_const_matches_this_packages_own_active_graph() -> None:
-    schema = _schema_v5()
+def test_schema_v6_graph_path_const_matches_this_packages_own_active_graph() -> None:
+    schema = _schema_v6()
     expected = PACKAGE_GRAPH.relative_to(REPO_ROOT).as_posix()
     assert schema["properties"]["approved_graph"]["const"] == expected
 
 
-def test_schema_v5_spec_path_const_resolves_to_the_live_v4_specification_file() -> None:
-    schema = _schema_v5()
+def test_schema_v6_spec_path_const_resolves_to_the_live_v4_specification_file() -> None:
+    schema = _schema_v6()
     spec_path = REPO_ROOT / schema["properties"]["approved_spec"]["const"]
     assert spec_path.is_file()
     assert spec_path.name == "langgraph_curriculum_factory.spec.v4.md"
 
 
-def test_contract_v4_validates_against_schema_v5() -> None:
-    schema = _schema_v5()
+def test_contract_v6_validates_against_schema_v6() -> None:
+    schema = _schema_v6()
     jsonschema.Draft202012Validator.check_schema(schema)
-    contract = _contract_v4()
+    contract = _contract_v6()
     jsonschema.Draft202012Validator(schema, format_checker=jsonschema.FormatChecker()).validate(contract)
 
 
-@pytest.mark.parametrize("field", CONTRACT_V5_DIGEST_FIELDS)
-def test_contract_v4_bound_digest_recomputes_against_live_bytes(field: str) -> None:
-    contract = _contract_v4()
+@pytest.mark.parametrize("field", CONTRACT_V6_DIGEST_FIELDS)
+def test_contract_v6_bound_digest_recomputes_against_live_bytes(field: str) -> None:
+    contract = _contract_v6()
     rc_manifest_path = REPO_ROOT / contract["approved_rc_manifest"]
     paths_by_field = {
         "approved_spec_sha256": REPO_ROOT / contract["approved_spec"],
@@ -1249,7 +1266,7 @@ def test_contract_v4_bound_digest_recomputes_against_live_bytes(field: str) -> N
     assert contract[field] == sha256_file(path)
 
 
-def test_contract_v4_recomputed_digests_match_the_v3_contracts_original_approval() -> None:
+def test_contract_v6_recomputed_digests_match_the_original_approval() -> None:
     """Four of contract v5's five digests must be the *same* already-approved
     values from spec_approval.v3.yaml (spec, spec QA, rc3 manifest, rc3 QA)
     -- carried forward, not reinvented, and rc3 remains the approved
@@ -1258,7 +1275,7 @@ def test_contract_v4_recomputed_digests_match_the_v3_contracts_original_approval
     approved_graph_sha256 legitimately advances, with the v6->v7
     result-namespace correction this record itself performs."""
 
-    contract = _contract_v4()
+    contract = _contract_v6()
     assert contract["approved_spec_sha256"] == "e14df5a36ce12d700fe9fc4aa4aea466771bc89f31bc6e9d49f812c147b1bb3c"
     assert contract["spec_qa_verification_sha256"] == "899c9720be48f071d6caf26eceafa81be626cd3bda685afa05eb0cc1dfe9a631"
     assert contract["approved_rc_manifest_sha256"] == "0e4fbfe2c258ae6176931e5490f8a2b55bdf8708d3ef0f257b50a05c9e582a6d"
@@ -1268,8 +1285,8 @@ def test_contract_v4_recomputed_digests_match_the_v3_contracts_original_approval
     )
 
 
-def test_contract_v4_model_assignments_match_user_decision_required_01() -> None:
-    assignments = _contract_v4()["model_assignments"]
+def test_contract_v6_model_assignments_match_user_decision_required_01() -> None:
+    assignments = _contract_v6()["model_assignments"]
     expected = {
         "M01_RESEARCH_UNIT_SOURCES": {"model": "claude-sonnet-5", "effort": "xhigh"},
         "M02_CREATE_UNIT_DOMAIN_DATA": {"model": "claude-sonnet-5", "effort": "high"},
@@ -1283,8 +1300,8 @@ def test_contract_v4_model_assignments_match_user_decision_required_01() -> None
     assert assignments == expected
 
 
-def test_validate_plan_v2_module_is_wired_to_schema_v5_not_schema_v3_v2_or_v1() -> None:
-    assert validate_plan_v2.CONTRACT_SCHEMA_PATH == CONTRACT_SCHEMA_V5
+def test_validate_plan_v2_module_is_wired_to_schema_v6_not_older_schemas() -> None:
+    assert validate_plan_v2.CONTRACT_SCHEMA_PATH == CONTRACT_SCHEMA_V6
     assert not hasattr(validate_plan_v2, "APPROVAL_SCHEMA_PATH")
     assert validate_plan_v2.GRAPH_PATH == PACKAGE_GRAPH
 
@@ -1295,7 +1312,7 @@ def test_validate_plan_v2_passes_end_to_end_against_the_live_contract() -> None:
     assert payload["valid"] is True
 
 
-@pytest.mark.parametrize("field", CONTRACT_V5_DIGEST_FIELDS)
+@pytest.mark.parametrize("field", CONTRACT_V6_DIGEST_FIELDS)
 def test_validator_rejects_a_wrong_but_well_formed_bound_digest(monkeypatch: pytest.MonkeyPatch, tmp_path: Path, field: str) -> None:
     """JSON Schema cannot hash a file, so a syntactically well-formed but
     wrong digest passes schema-shape validation alone. The validator-level
@@ -1303,7 +1320,7 @@ def test_validator_rejects_a_wrong_but_well_formed_bound_digest(monkeypatch: pyt
     reject it -- proving this is a real integrity check, not documentation."""
 
     wrong_digest = "0" * 64
-    mutated_path = _write_mutated_contract_v4(tmp_path, lambda c: c.__setitem__(field, wrong_digest))
+    mutated_path = _write_mutated_contract_v6(tmp_path, lambda c: c.__setitem__(field, wrong_digest))
     monkeypatch.setattr(validate_plan_v2, "CONTRACT_PATH", mutated_path)
     with pytest.raises(validate_plan_v2.ValidationError):
         validate_plan_v2.validate_spec_approval_contract()
@@ -1321,7 +1338,7 @@ def test_validator_rejects_a_nonexistent_rc_manifest_generation(monkeypatch: pyt
             "release_candidate/rc99/manifest.v1.json"
         )
 
-    mutated_path = _write_mutated_contract_v4(tmp_path, _mutate)
+    mutated_path = _write_mutated_contract_v6(tmp_path, _mutate)
     monkeypatch.setattr(validate_plan_v2, "CONTRACT_PATH", mutated_path)
     with pytest.raises(validate_plan_v2.ValidationError):
         validate_plan_v2.validate_spec_approval_contract()
@@ -1336,7 +1353,7 @@ def test_validator_rejects_a_wrong_approved_spec_path(monkeypatch: pytest.Monkey
     def _mutate(contract: dict[str, Any]) -> None:
         contract["approved_spec"] = "plans/26_langgraph_curriculum_factory/spec/langgraph_curriculum_factory.spec.v2.md"
 
-    mutated_path = _write_mutated_contract_v4(tmp_path, _mutate)
+    mutated_path = _write_mutated_contract_v6(tmp_path, _mutate)
     monkeypatch.setattr(validate_plan_v2, "CONTRACT_PATH", mutated_path)
     with pytest.raises(jsonschema.ValidationError):
         validate_plan_v2.validate_spec_approval_contract()
@@ -1353,7 +1370,7 @@ def test_validator_rejects_a_wrong_approved_graph_path(monkeypatch: pytest.Monke
             "deprecated/implementation.graph.v6.yaml"
         )
 
-    mutated_path = _write_mutated_contract_v4(tmp_path, _mutate)
+    mutated_path = _write_mutated_contract_v6(tmp_path, _mutate)
     monkeypatch.setattr(validate_plan_v2, "CONTRACT_PATH", mutated_path)
     with pytest.raises(jsonschema.ValidationError):
         validate_plan_v2.validate_spec_approval_contract()
@@ -1373,18 +1390,18 @@ def test_validator_rejects_a_wrong_model_assignment(
     def _mutate(contract: dict[str, Any]) -> None:
         contract["model_assignments"][job_id] = wrong_assignment
 
-    mutated_path = _write_mutated_contract_v4(tmp_path, _mutate)
+    mutated_path = _write_mutated_contract_v6(tmp_path, _mutate)
     monkeypatch.setattr(validate_plan_v2, "CONTRACT_PATH", mutated_path)
     with pytest.raises(jsonschema.ValidationError):
         validate_plan_v2.validate_spec_approval_contract()
 
 
-def test_unmutated_contract_v4_copy_still_passes(monkeypatch: pytest.MonkeyPatch, tmp_path: Path) -> None:
+def test_unmutated_contract_v6_copy_still_passes(monkeypatch: pytest.MonkeyPatch, tmp_path: Path) -> None:
     """Positive control for every mutation test above: an unmutated copy at a
     different path must still pass, so the rejections above are proving a
     real mutation was caught, not that the check always fails."""
 
-    mutated_path = _write_mutated_contract_v4(tmp_path, lambda c: None)
+    mutated_path = _write_mutated_contract_v6(tmp_path, lambda c: None)
     monkeypatch.setattr(validate_plan_v2, "CONTRACT_PATH", mutated_path)
     validate_plan_v2.validate_spec_approval_contract()
 
@@ -1584,8 +1601,8 @@ def test_admitted_or_blocked_result_file_is_byte_unchanged(filename: str) -> Non
     assert sha256_file(path) == ADMITTED_OR_BLOCKED_RESULT_HASHES[filename]
 
 
-def test_graph_v8_result_pattern_never_collides_with_the_legacy_results_root() -> None:
-    """The direct proof that the RC8 defect is fixed: graph v8's own
+def test_graph_v9_result_pattern_never_collides_with_prior_results_roots() -> None:
+    """The active graph has its own collision-free result namespace.
     result_pattern, formatted for every admitted/blocked node, never equals
     the exact legacy path those nodes' real results live at. results/v7/ is
     legitimately a subdirectory of results/ (that is not the defect -- the
@@ -1594,7 +1611,7 @@ def test_graph_v8_result_pattern_never_collides_with_the_legacy_results_root() -
 
     document = yaml.safe_load(PACKAGE_GRAPH.read_text(encoding="utf-8"))
     pattern = document["result_pattern"]
-    assert pattern.startswith(RESULTS_V8_PREFIX)
+    assert pattern.startswith(RESULTS_V9_PREFIX)
     for filename in ADMITTED_OR_BLOCKED_RESULT_FILES:
         node_id = filename.rsplit(".result.v1.json", 1)[0]
         v7_path = pattern.format(node_id=node_id)
@@ -1616,7 +1633,7 @@ def test_validate_result_v2_reports_missing_not_a_collision_for_admitted_nodes(n
     assert code == 1
     assert payload["valid"] is False
     assert "missing result" in payload["error"]
-    assert "results/v8" in payload["error"]
+    assert "results/v9" in payload["error"]
 
 
 def test_graph_v8_carries_the_modified_recovery_input_in_versioned_form() -> None:
@@ -1625,7 +1642,7 @@ def test_graph_v8_carries_the_modified_recovery_input_in_versioned_form() -> Non
     operational bindings to v8."""
 
     recovered = yaml.safe_load(RECOVERY_GRAPH_V7_MODIFIED.read_text(encoding="utf-8"))
-    v8 = yaml.safe_load(PACKAGE_GRAPH.read_text(encoding="utf-8"))
+    v8 = yaml.safe_load(APPROVED_GRAPH_V8.read_text(encoding="utf-8"))
 
     assert sha256_file(APPROVED_GRAPH_V7) == "b7e52ae7f2c8d1eb3984fcea014063a3be29eb88cf7cc5980bdb9ef503728c22"
     assert sha256_file(RECOVERY_GRAPH_V7_MODIFIED) == "b6c17e81c6e32f32b86183d4577fe9a18894c0657504eca832e36d7daa17865e"
@@ -1648,7 +1665,7 @@ def test_graph_v8_carries_the_modified_recovery_input_in_versioned_form() -> Non
 
 def test_graph_v8_result_writes_are_the_recovery_writes_moved_under_results_v8() -> None:
     recovered = yaml.safe_load(RECOVERY_GRAPH_V7_MODIFIED.read_text(encoding="utf-8"))
-    v8 = yaml.safe_load(PACKAGE_GRAPH.read_text(encoding="utf-8"))
+    v8 = yaml.safe_load(APPROVED_GRAPH_V8.read_text(encoding="utf-8"))
     for node_id, recovered_node in recovered["nodes"].items():
         v8_node = v8["nodes"][node_id]
         recovered_results = {w for w in recovered_node["writes"] if "/results/" in w}

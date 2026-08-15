@@ -1,0 +1,24 @@
+N50 V9 determinism comparison and requirements-lineage matrix
+Generated: 2026-08-15T10:28:47Z
+
+Evidence determinism contract
+- Path: plans/27_langgraph_curriculum_factory_remediation/contracts/evidence_determinism.v1.yaml
+- SHA-256: d20be37d411ab58ecca060e992a20f1a3975900f4ce7be1c245f1397df551ed9
+- Equivalent-input report command: repeated successfully; one distinct canonical output.
+- Stable-path command: exit 0; drifted path set empty.
+- Direct evidence/persistence test denominator: 64 tests plus 58 subtests, passed twice. Run-scoped timing differs but stable asserted bytes and hashes remain deterministic.
+
+Requirements-lineage contract
+- Path: plans/27_langgraph_curriculum_factory_remediation/contracts/requirements_lineage.v1.yaml
+- SHA-256: 1c6b5d2e05f9078d303b657d4f48325d85683df209a8c7485b272abc54b8540e
+- Normative: current user approval; approved v2/specification correction; retained Plans 20-22 execution requirements.
+- Superseded: provider assignments and mechanisms explicitly superseded by the approved corrected specification are retained as labeled history, never current authority.
+- Historical evidence: Run 26 event/receipt history and preserved Run 27 attempts support incident and invalidation claims but cannot authorize present admission.
+- Implementation observation: current evidence/artifact/persistence modules, tests, deterministic probes, receipts, shipped artifacts, and independently validated node results.
+- Covered denominator: user approval -> approved specification -> retained plans/product requirements -> code -> tests -> product evidence; all seven requirement IDs plus completeness claim accepted, uncovered set empty.
+
+Audit controls
+- Material human claims derive from receipted artifacts; workbook registration without a production call site is rejected.
+- Domain-verifier verdicts, scheduler admission outcomes, and Run 27 terminal states remain distinct typed facts.
+- Receipt/attempt history is append-only; descendant invalidation and every original failure reason remain visible after re-admission.
+- N50 scoped scan inspected five owned active files with zero violations.

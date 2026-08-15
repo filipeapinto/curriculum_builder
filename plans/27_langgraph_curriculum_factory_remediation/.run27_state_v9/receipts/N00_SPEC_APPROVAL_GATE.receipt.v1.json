@@ -1,0 +1,182 @@
+{
+  "admission": "normal",
+  "admitted_at": "2026-08-15T10:11:09.493748Z",
+  "approved_spec_sha256": "e14df5a36ce12d700fe9fc4aa4aea466771bc89f31bc6e9d49f812c147b1bb3c",
+  "attempt_id": "N00_SPEC_APPROVAL_GATE-2026-08-15T100832722905Z-5cc36f98",
+  "baseline": {
+    "plans/27_langgraph_curriculum_factory_remediation/execution_package_v2/results/v9/N00_SPEC_APPROVAL_GATE.result.v1.json": "f92b9abfd48399c44af4ec3cfe307db335301f241889e0c96a5d65a4a78407e2",
+    "plans/27_langgraph_curriculum_factory_remediation/execution_package_v2/results/v9/evidence/N00_SPEC_APPROVAL_GATE": "1d227f96ba55bfe48ecf0c23ffb401a0028bc48f80b82b4c59390426b6de7985"
+  },
+  "baseline_sha256": "ba571765f09c96da920f45df438819b107cca159ed9406ffb9128c61981d846f",
+  "changed_files": [
+    {
+      "change": "created",
+      "path": "plans/27_langgraph_curriculum_factory_remediation/execution_package_v2/results/v9/evidence/N00_SPEC_APPROVAL_GATE/09_attempt2_authority_hashes.log",
+      "sha256": "8ecd6b378750224d582bb5dd402eff8b96065dc18a9dd158535f549a54ce1f87"
+    },
+    {
+      "change": "created",
+      "path": "plans/27_langgraph_curriculum_factory_remediation/execution_package_v2/results/v9/evidence/N00_SPEC_APPROVAL_GATE/10_attempt2_spec_qa_verify.log",
+      "sha256": "c8e8f4dd2ba8d222cf117858c7a1ccf8fb15557952b6c7b87aed8bd6eb037674"
+    },
+    {
+      "change": "created",
+      "path": "plans/27_langgraph_curriculum_factory_remediation/execution_package_v2/results/v9/evidence/N00_SPEC_APPROVAL_GATE/11_attempt2_rc3_qa_verify.log",
+      "sha256": "81ae438483d321b9aa5dd8d8779d3285765258d3b249cffba5f5afd2cc81bd02"
+    },
+    {
+      "change": "created",
+      "path": "plans/27_langgraph_curriculum_factory_remediation/execution_package_v2/results/v9/evidence/N00_SPEC_APPROVAL_GATE/12_attempt2_contract_validation.log",
+      "sha256": "4aa488f0703dcadc1e6275efa5847ed836e007043a4731e65b1354e0e1cd665d"
+    },
+    {
+      "change": "created",
+      "path": "plans/27_langgraph_curriculum_factory_remediation/execution_package_v2/results/v9/evidence/N00_SPEC_APPROVAL_GATE/13_attempt2_plan_validation.log",
+      "sha256": "176e9ba38236264d063a17ac51d86f88018b960bd7c73c01c03e102a06cb6b07"
+    },
+    {
+      "change": "created",
+      "path": "plans/27_langgraph_curriculum_factory_remediation/execution_package_v2/results/v9/evidence/N00_SPEC_APPROVAL_GATE/14_attempt2_user_decision_required.log",
+      "sha256": "34cbcbd61868cb6665108f75f9cc9c4672c53f72c0c782a6c7399ffd3f425c4a"
+    },
+    {
+      "change": "created",
+      "path": "plans/27_langgraph_curriculum_factory_remediation/execution_package_v2/results/v9/evidence/N00_SPEC_APPROVAL_GATE/15_attempt2_rc29_qa_verify.log",
+      "sha256": "bbd9bf18a62cae39744126e9f3ff624d707115e06bae549946af47c84a279176"
+    }
+  ],
+  "commands": [
+    {
+      "argv": [
+        "shasum",
+        "-a",
+        "256",
+        "plans/26_langgraph_curriculum_factory/spec/langgraph_curriculum_factory.spec.v1.md",
+        "plans/26_langgraph_curriculum_factory/spec/langgraph_curriculum_factory.spec.v2.md",
+        "plans/26_langgraph_curriculum_factory/spec/v3/langgraph_curriculum_factory.spec.v4.md",
+        "plans/27_langgraph_curriculum_factory_remediation/execution_package_v2/implementation.graph.v7.yaml",
+        "plans/27_langgraph_curriculum_factory_remediation/execution_package_v2/recovery/implementation.graph.v7.modified.b6c17e81.yaml",
+        "plans/27_langgraph_curriculum_factory_remediation/execution_package_v2/implementation.graph.v8.yaml",
+        "plans/27_langgraph_curriculum_factory_remediation/execution_package_v2/implementation.graph.v9.yaml"
+      ],
+      "exit_code": 0,
+      "log": "plans/27_langgraph_curriculum_factory_remediation/execution_package_v2/results/v9/evidence/N00_SPEC_APPROVAL_GATE/09_attempt2_authority_hashes.log",
+      "log_sha256": "8ecd6b378750224d582bb5dd402eff8b96065dc18a9dd158535f549a54ce1f87"
+    },
+    {
+      "argv": [
+        "python3",
+        ".claude/skills/qa-gate-codex-run/scripts/qa_gate.py",
+        "verify",
+        "--qa-dir",
+        "plans/26_langgraph_curriculum_factory/spec/v3/QA"
+      ],
+      "exit_code": 0,
+      "log": "plans/27_langgraph_curriculum_factory_remediation/execution_package_v2/results/v9/evidence/N00_SPEC_APPROVAL_GATE/10_attempt2_spec_qa_verify.log",
+      "log_sha256": "c8e8f4dd2ba8d222cf117858c7a1ccf8fb15557952b6c7b87aed8bd6eb037674"
+    },
+    {
+      "argv": [
+        "python3",
+        ".claude/skills/qa-gate-codex-run/scripts/qa_gate.py",
+        "verify",
+        "--qa-dir",
+        "plans/27_langgraph_curriculum_factory_remediation/execution_package_v2/release_candidate/rc3/QA"
+      ],
+      "exit_code": 0,
+      "log": "plans/27_langgraph_curriculum_factory_remediation/execution_package_v2/results/v9/evidence/N00_SPEC_APPROVAL_GATE/11_attempt2_rc3_qa_verify.log",
+      "log_sha256": "81ae438483d321b9aa5dd8d8779d3285765258d3b249cffba5f5afd2cc81bd02"
+    },
+    {
+      "argv": [
+        "python3",
+        "-c",
+        "validate schema-v6 with format checking, recompute five digests, verify graph freeze/namespace and exact eight assignments"
+      ],
+      "exit_code": 0,
+      "log": "plans/27_langgraph_curriculum_factory_remediation/execution_package_v2/results/v9/evidence/N00_SPEC_APPROVAL_GATE/12_attempt2_contract_validation.log",
+      "log_sha256": "4aa488f0703dcadc1e6275efa5847ed836e007043a4731e65b1354e0e1cd665d"
+    },
+    {
+      "argv": [
+        "python3",
+        "plans/27_langgraph_curriculum_factory_remediation/execution_package_v2/tools/validate_plan_v2.py"
+      ],
+      "exit_code": 0,
+      "log": "plans/27_langgraph_curriculum_factory_remediation/execution_package_v2/results/v9/evidence/N00_SPEC_APPROVAL_GATE/13_attempt2_plan_validation.log",
+      "log_sha256": "176e9ba38236264d063a17ac51d86f88018b960bd7c73c01c03e102a06cb6b07"
+    },
+    {
+      "argv": [
+        "rg",
+        "-n",
+        "USER_DECISION_REQUIRED",
+        "plans/26_langgraph_curriculum_factory/spec/v3/langgraph_curriculum_factory.spec.v4.md"
+      ],
+      "exit_code": 0,
+      "log": "plans/27_langgraph_curriculum_factory_remediation/execution_package_v2/results/v9/evidence/N00_SPEC_APPROVAL_GATE/14_attempt2_user_decision_required.log",
+      "log_sha256": "34cbcbd61868cb6665108f75f9cc9c4672c53f72c0c782a6c7399ffd3f425c4a"
+    },
+    {
+      "argv": [
+        "python3",
+        ".claude/skills/qa-gate-codex-run/scripts/qa_gate.py",
+        "verify",
+        "--qa-dir",
+        "plans/27_langgraph_curriculum_factory_remediation/execution_package_v2/release_candidate/rc29/QA"
+      ],
+      "exit_code": 0,
+      "log": "plans/27_langgraph_curriculum_factory_remediation/execution_package_v2/results/v9/evidence/N00_SPEC_APPROVAL_GATE/15_attempt2_rc29_qa_verify.log",
+      "log_sha256": "bbd9bf18a62cae39744126e9f3ff624d707115e06bae549946af47c84a279176"
+    }
+  ],
+  "evidence": [
+    "plans/27_langgraph_curriculum_factory_remediation/execution_package_v2/results/v9/evidence/N00_SPEC_APPROVAL_GATE/09_attempt2_authority_hashes.log",
+    "plans/27_langgraph_curriculum_factory_remediation/execution_package_v2/results/v9/evidence/N00_SPEC_APPROVAL_GATE/10_attempt2_spec_qa_verify.log",
+    "plans/27_langgraph_curriculum_factory_remediation/execution_package_v2/results/v9/evidence/N00_SPEC_APPROVAL_GATE/11_attempt2_rc3_qa_verify.log",
+    "plans/27_langgraph_curriculum_factory_remediation/execution_package_v2/results/v9/evidence/N00_SPEC_APPROVAL_GATE/12_attempt2_contract_validation.log",
+    "plans/27_langgraph_curriculum_factory_remediation/execution_package_v2/results/v9/evidence/N00_SPEC_APPROVAL_GATE/13_attempt2_plan_validation.log",
+    "plans/27_langgraph_curriculum_factory_remediation/execution_package_v2/results/v9/evidence/N00_SPEC_APPROVAL_GATE/14_attempt2_user_decision_required.log",
+    "plans/27_langgraph_curriculum_factory_remediation/execution_package_v2/results/v9/evidence/N00_SPEC_APPROVAL_GATE/15_attempt2_rc29_qa_verify.log"
+  ],
+  "final_outputs": {
+    "plans/27_langgraph_curriculum_factory_remediation/execution_package_v2/results/v9/N00_SPEC_APPROVAL_GATE.result.v1.json": "d64fa8aad0ba2ab485a140826f0efb69e506cdd7171fc84a7ab0885f979bb6c3",
+    "plans/27_langgraph_curriculum_factory_remediation/execution_package_v2/results/v9/evidence/N00_SPEC_APPROVAL_GATE": "8991a1c9b17b36548a99e72b600084125c5c5a33c94b3e3a203d4be2e5eb1afa"
+  },
+  "graph_sha256": "5236bf6b13a2c5171ad11ab80f1147e20b6b59f46708090d25ec16c5a7574379",
+  "lineage_fingerprint": "6819a1b5e90c714b9944934067f584af2176eab1b05a80ce2044aa6c093b3766",
+  "node_definition_sha256": "10d6b6ec2b717fe4d0fe837b5cd2c466be708ca4a7c06d78da8b2b1301d5b78e",
+  "node_id": "N00_SPEC_APPROVAL_GATE",
+  "parent_attempt_id": null,
+  "predecessor_receipts": {},
+  "predecessor_results": {},
+  "prompt_sha256": "b033df8e44418ac14ded5ddc021dae03b4398e734c6719b572d7427af272626f",
+  "receipt_id": "N00_SPEC_APPROVAL_GATE-bf48c751a2244b1bb2b00961eae48334",
+  "result_path": "plans/27_langgraph_curriculum_factory_remediation/execution_package_v2/results/v9/N00_SPEC_APPROVAL_GATE.result.v1.json",
+  "result_sha256": "d64fa8aad0ba2ab485a140826f0efb69e506cdd7171fc84a7ab0885f979bb6c3",
+  "run_id": "run27-execution-package-v2-graph-v9",
+  "schema_version": 1,
+  "status": "PASSED",
+  "verification": [
+    {
+      "argv": [
+        "python3",
+        "plans/27_langgraph_curriculum_factory_remediation/execution_package_v2/tools/validate_plan_v2.py"
+      ],
+      "exit_code": 0,
+      "log": "attempts/N00_SPEC_APPROVAL_GATE/N00_SPEC_APPROVAL_GATE-2026-08-15T100832722905Z-5cc36f98/logs/verify_00.log",
+      "log_sha256": "176e9ba38236264d063a17ac51d86f88018b960bd7c73c01c03e102a06cb6b07"
+    },
+    {
+      "argv": [
+        "python3",
+        "plans/27_langgraph_curriculum_factory_remediation/execution_package_v2/tools/validate_result_v2.py",
+        "--node",
+        "N00_SPEC_APPROVAL_GATE"
+      ],
+      "exit_code": 0,
+      "log": "attempts/N00_SPEC_APPROVAL_GATE/N00_SPEC_APPROVAL_GATE-2026-08-15T100832722905Z-5cc36f98/logs/verify_01.log",
+      "log_sha256": "07cb1c5deb171bcfc1781a837848e8c1e08f9635394b71a3174ce5d7b25e1397"
+    }
+  ]
+}

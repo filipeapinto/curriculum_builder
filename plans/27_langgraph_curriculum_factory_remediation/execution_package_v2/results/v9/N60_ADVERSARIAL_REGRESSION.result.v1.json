@@ -1,0 +1,50 @@
+{
+  "schema_version": 1,
+  "run_id": "run27-execution-package-v2-graph-v9",
+  "node_id": "N60_ADVERSARIAL_REGRESSION",
+  "attempt_id": "N60_ADVERSARIAL_REGRESSION-2026-08-15T103048160300Z-1a513ddf",
+  "outcome": "PASSED",
+  "source_spec_sha256": "e14df5a36ce12d700fe9fc4aa4aea466771bc89f31bc6e9d49f812c147b1bb3c",
+  "prompt_sha256": "2f4e8155eeefc5ee9ea4c9a3a4f95c8cc48425463e47a78bb824db7e6016b4e3",
+  "predecessor_receipts": {
+    "N50_EVIDENCE_AUDIT_CONTROLS": "f1905dbd453862d876ab22d20dad036c823de723470caece992b92cb5fbb4ce1"
+  },
+  "changed_files": [
+    {"path": "plans/27_langgraph_curriculum_factory_remediation/execution_package_v2/results/v9/evidence/N60_ADVERSARIAL_REGRESSION/01_frozen_denominator.log", "change": "created", "sha256": "d71602d90946cf560bc1282c54b0e95c91ed781e5ec39ea68ba87a3ac8de1c6d"},
+    {"path": "plans/27_langgraph_curriculum_factory_remediation/execution_package_v2/results/v9/evidence/N60_ADVERSARIAL_REGRESSION/02_pytest_n60_focused.log", "change": "created", "sha256": "c98216cb00f6fb339aa317fd8aa55400d73ebfb8288c1c2acbbcc1eb1ec7d443"},
+    {"path": "plans/27_langgraph_curriculum_factory_remediation/execution_package_v2/results/v9/evidence/N60_ADVERSARIAL_REGRESSION/03_pytest_runtime_exact.log", "change": "created", "sha256": "f1a5bea8bab6c94fb0f1c3dc07f010dd7d95cdfe19d5bf532aab188ae7615d24"},
+    {"path": "plans/27_langgraph_curriculum_factory_remediation/execution_package_v2/results/v9/evidence/N60_ADVERSARIAL_REGRESSION/04_pytest_runtime_repeat.log", "change": "created", "sha256": "cea6a621b593ee90b6cd15ad5afdb663a614d83438b61bdab779eac6ffb26470"},
+    {"path": "plans/27_langgraph_curriculum_factory_remediation/execution_package_v2/results/v9/evidence/N60_ADVERSARIAL_REGRESSION/05_pytest_plan27_run1.log", "change": "created", "sha256": "f163dc0fe7e4463f3b5c8d096106b6f665967db32217be833f443eeffa7b88d2"},
+    {"path": "plans/27_langgraph_curriculum_factory_remediation/execution_package_v2/results/v9/evidence/N60_ADVERSARIAL_REGRESSION/06_pytest_plan27_run2.log", "change": "created", "sha256": "42327add9bb903b04a9a3c85da68b486813b8b4179a562fdcab65ffd5d4c846b"},
+    {"path": "plans/27_langgraph_curriculum_factory_remediation/execution_package_v2/results/v9/evidence/N60_ADVERSARIAL_REGRESSION/07_scan_complete_tree_run1.log", "change": "created", "sha256": "2313a5eaae3707000dadaac660474f7770baaa7588d5faf22f83ea666adf7f25"},
+    {"path": "plans/27_langgraph_curriculum_factory_remediation/execution_package_v2/results/v9/evidence/N60_ADVERSARIAL_REGRESSION/08_scan_complete_tree_run2.log", "change": "created", "sha256": "2313a5eaae3707000dadaac660474f7770baaa7588d5faf22f83ea666adf7f25"},
+    {"path": "plans/27_langgraph_curriculum_factory_remediation/execution_package_v2/results/v9/evidence/N60_ADVERSARIAL_REGRESSION/09_skip_failure_stability_census.log", "change": "created", "sha256": "9bb7fcc8682559e73ff7b0394ff97d26f3e94f7db1d90584fa1a0d2582bb48e5"}
+  ],
+  "commands": [
+    {"argv": ["python3", "-m", "pytest", "-q", "tests/runtime/test_plan27_adversarial.py", "plans/27_langgraph_curriculum_factory_remediation/tests/test_run27_adversarial.py"], "exit_code": 0, "log": "plans/27_langgraph_curriculum_factory_remediation/execution_package_v2/results/v9/evidence/N60_ADVERSARIAL_REGRESSION/02_pytest_n60_focused.log", "log_sha256": "c98216cb00f6fb339aa317fd8aa55400d73ebfb8288c1c2acbbcc1eb1ec7d443"},
+    {"argv": ["python3", "-m", "pytest", "-q", "tests/runtime"], "exit_code": 0, "log": "plans/27_langgraph_curriculum_factory_remediation/execution_package_v2/results/v9/evidence/N60_ADVERSARIAL_REGRESSION/03_pytest_runtime_exact.log", "log_sha256": "f1a5bea8bab6c94fb0f1c3dc07f010dd7d95cdfe19d5bf532aab188ae7615d24"},
+    {"argv": ["python3", "-m", "pytest", "-q", "tests/runtime", "--junitxml=/tmp/run27_v9_n60_runtime_run3.xml"], "exit_code": 0, "log": "plans/27_langgraph_curriculum_factory_remediation/execution_package_v2/results/v9/evidence/N60_ADVERSARIAL_REGRESSION/04_pytest_runtime_repeat.log", "log_sha256": "cea6a621b593ee90b6cd15ad5afdb663a614d83438b61bdab779eac6ffb26470"},
+    {"argv": ["python3", "-m", "pytest", "-q", "plans/27_langgraph_curriculum_factory_remediation/tests"], "exit_code": 0, "log": "plans/27_langgraph_curriculum_factory_remediation/execution_package_v2/results/v9/evidence/N60_ADVERSARIAL_REGRESSION/05_pytest_plan27_run1.log", "log_sha256": "f163dc0fe7e4463f3b5c8d096106b6f665967db32217be833f443eeffa7b88d2"},
+    {"argv": ["python3", "-m", "pytest", "-q", "plans/27_langgraph_curriculum_factory_remediation/tests"], "exit_code": 0, "log": "plans/27_langgraph_curriculum_factory_remediation/execution_package_v2/results/v9/evidence/N60_ADVERSARIAL_REGRESSION/06_pytest_plan27_run2.log", "log_sha256": "42327add9bb903b04a9a3c85da68b486813b8b4179a562fdcab65ffd5d4c846b"},
+    {"argv": ["python3", "plans/27_langgraph_curriculum_factory_remediation/execution_package_v2/controller/scan_node.py", "--graph", "plans/27_langgraph_curriculum_factory_remediation/execution_package_v2/implementation.graph.v9.yaml"], "exit_code": 0, "log": "plans/27_langgraph_curriculum_factory_remediation/execution_package_v2/results/v9/evidence/N60_ADVERSARIAL_REGRESSION/07_scan_complete_tree_run1.log", "log_sha256": "2313a5eaae3707000dadaac660474f7770baaa7588d5faf22f83ea666adf7f25"},
+    {"argv": ["python3", "plans/27_langgraph_curriculum_factory_remediation/execution_package_v2/controller/scan_node.py", "--graph", "plans/27_langgraph_curriculum_factory_remediation/execution_package_v2/implementation.graph.v9.yaml"], "exit_code": 0, "log": "plans/27_langgraph_curriculum_factory_remediation/execution_package_v2/results/v9/evidence/N60_ADVERSARIAL_REGRESSION/08_scan_complete_tree_run2.log", "log_sha256": "2313a5eaae3707000dadaac660474f7770baaa7588d5faf22f83ea666adf7f25"}
+  ],
+  "evidence": [
+    "plans/27_langgraph_curriculum_factory_remediation/execution_package_v2/results/v9/evidence/N60_ADVERSARIAL_REGRESSION/01_frozen_denominator.log",
+    "plans/27_langgraph_curriculum_factory_remediation/execution_package_v2/results/v9/evidence/N60_ADVERSARIAL_REGRESSION/02_pytest_n60_focused.log",
+    "plans/27_langgraph_curriculum_factory_remediation/execution_package_v2/results/v9/evidence/N60_ADVERSARIAL_REGRESSION/03_pytest_runtime_exact.log",
+    "plans/27_langgraph_curriculum_factory_remediation/execution_package_v2/results/v9/evidence/N60_ADVERSARIAL_REGRESSION/04_pytest_runtime_repeat.log",
+    "plans/27_langgraph_curriculum_factory_remediation/execution_package_v2/results/v9/evidence/N60_ADVERSARIAL_REGRESSION/05_pytest_plan27_run1.log",
+    "plans/27_langgraph_curriculum_factory_remediation/execution_package_v2/results/v9/evidence/N60_ADVERSARIAL_REGRESSION/06_pytest_plan27_run2.log",
+    "plans/27_langgraph_curriculum_factory_remediation/execution_package_v2/results/v9/evidence/N60_ADVERSARIAL_REGRESSION/07_scan_complete_tree_run1.log",
+    "plans/27_langgraph_curriculum_factory_remediation/execution_package_v2/results/v9/evidence/N60_ADVERSARIAL_REGRESSION/08_scan_complete_tree_run2.log",
+    "plans/27_langgraph_curriculum_factory_remediation/execution_package_v2/results/v9/evidence/N60_ADVERSARIAL_REGRESSION/09_skip_failure_stability_census.log"
+  ],
+  "findings": [
+    {"id": "N60V9-F01", "severity": "critical", "summary": "The full runtime denominator passed repeatedly with 1370 tests, 419 subtests, two frozen unrelated skips, and zero failures/errors; no skip, xfail, filter, deletion, or weakened test was used for migration success.", "disposition": "resolved"},
+    {"id": "N60V9-F02", "severity": "critical", "summary": "Focused Run 27 attacks cover false routes/readiness/identity/results/completion, hidden fallback, boundary/schema escape, same-family judgment, topology/denominator gaps, stale receipts, interrupted merges, nondeterminism, and resume drift.", "disposition": "resolved"},
+    {"id": "N60V9-F03", "severity": "major", "summary": "The Run 27 package passed 83 tests twice, the complete-tree scanner inspected 67 files with zero violations twice, and the frozen code/test aggregate did not drift.", "disposition": "resolved"},
+    {"id": "N60V9-F04", "severity": "observation", "summary": "The two intentional skips are pre-existing unrelated capability fixtures: an unavailable installed Gemini resolver and absent pinned pip-tools lock generator; neither is migration-owned or required for the live Run 27 path.", "disposition": "resolved"}
+  ],
+  "invalidated_descendants": []
+}

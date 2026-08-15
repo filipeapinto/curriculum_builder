@@ -1428,10 +1428,26 @@ def m01_interpret_unit_sources(packet: Mapping[str, Any],
         _validate_candidate_shape(dispatch.candidate, dispatch.route)
     except CANDIDATE_VALIDATION_ERRORS as error:
         return _reject(dispatch, "candidate_control_field", str(error))
+    request_id = dispatch.projection["request"].get("request_id")
+    if "no_verified_source" in dispatch.candidate:
+        # The shared M01 schema permits this honest negative result. Although
+        # D06B now filters empty/unprojectable candidates before dispatch, a
+        # readable source can still fail to support the requested fact. Treat
+        # that as the same bounded, typed source failure as discovery -- never
+        # misclassify it as repairable authoring content.
+        for entry in dispatch.candidate["no_verified_source"]:
+            if entry.get("request_id") != request_id:
+                return _reject(dispatch, "candidate_undeclared_artifact",
+                               f"no_verified_source cites request "
+                               f"{entry.get('request_id')!r}, projection declared "
+                               f"{request_id!r}")
+        reasons = "; ".join(
+            str(entry.get("reason")) for entry in dispatch.candidate["no_verified_source"])
+        return _reject(dispatch, "no_verified_source",
+                       f"retrieved source could not verify {request_id!r}: {reasons}")
     if "interpretations" not in dispatch.candidate:
         return _reject(dispatch, "candidate_undeclared_artifact",
                        "interpretation must emit interpretations, not locators")
-    request_id = dispatch.projection["request"].get("request_id")
     group = dispatch.projection["retrieval_group"]
     retrieval_ids = [str(item.get("retrieval_id"))
                      for item in group.get("retrieved_records", [])]

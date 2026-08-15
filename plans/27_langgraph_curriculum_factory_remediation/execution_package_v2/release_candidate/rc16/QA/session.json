@@ -1,0 +1,67 @@
+{
+  "opened_at": "2026-08-15T06-01-03.328906+00-00",
+  "artifact_original": "/Users/filipepinto/Projects/curriculum_builder/plans/27_langgraph_curriculum_factory_remediation/execution_package_v2/release_candidate/rc16/rc16_review_bundle.v1.md",
+  "artifact_current": "/Users/filipepinto/Projects/curriculum_builder/plans/27_langgraph_curriculum_factory_remediation/execution_package_v2/release_candidate/rc16/rc16_review_bundle.v1.md",
+  "session_id": "01a00402-6ec5-7332-b871-1a53dfca7d78",
+  "chain": "692e4bcb9ef81270c782e85af1a71d66d98052477ea56c56b8878e972f0c9b4a",
+  "rounds_completed": 1,
+  "rounds": [
+    {
+      "round": 1,
+      "timestamp": "2026-08-15T06:10:46.609826+00:00",
+      "verdict": "FAIL",
+      "artifact_path": "/Users/filipepinto/Projects/curriculum_builder/plans/27_langgraph_curriculum_factory_remediation/execution_package_v2/release_candidate/rc16/rc16_review_bundle.v1.md",
+      "artifact_sha256": "ce7181e4b069072fdeef1aa5a782c297e66011114de057d3221de91046e61f3b",
+      "findings_at_threshold": [
+        {
+          "id": "RC16-QA-001",
+          "title": "Ancestor-directory metadata exemption preserves an undeclared engine-file oracle",
+          "severity": "blocker",
+          "criterion_ref": "Criterion 6 requires that changing any undeclared repository file never yield a different verdict for the same candidate and frozen contract, and that undeclared metadata be unobservable."
+        }
+      ],
+      "observations_count": 5,
+      "chain": "692e4bcb9ef81270c782e85af1a71d66d98052477ea56c56b8878e972f0c9b4a"
+    }
+  ],
+  "stall_count": 0,
+  "last_fingerprint": "f4771358c16b452fc14a5bdec36d0c5b224cf2a64cae197415feb4730fba54e7",
+  "exec_copied": [
+    "QA_criteria.rc16.v1.md",
+    "rc16_review_bundle.v1.md",
+    "validation.v1.md"
+  ],
+  "terminal": null,
+  "config": {
+    "criteria": "# RC16 independent QA criteria\n\nReport only blocker findings: each finding must name the criterion it defeats,\na reproducible trigger, and the consequence. Style and optional hardening are\nobservations.\n\n1. Historical integrity: graph v8 must still hash to\n   `c2d79ac0387c935977385138d2d891cf1539041f1a4532acf94fc8dc687bf6b1`, and\n   v9 must retain separate graph/contract/schema/prompt/result/state lineage.\n2. Package coherence: graph v9, approval schema v6, contract v6, prompts,\n   scanner, validators, and package tests must consistently bind v9/results-v9;\n   digest claims must recompute and the real plan validator must pass.\n3. Ownership: every changed production/runtime/test path must have one exact\n   sequential owner write set without ambiguity.\n4. Complete freeze: D02 must bind every curriculum-owned domain input used by\n   M02 or D08, including verifier code, fixtures, schemas, calibration, and\n   sidecars. Missing declaration, path escape, duplicates, and drift must fail\n   before entry, and the full contract digest must identify the effective run.\n5. Closed verifier execution: D08 must re-hash the complete frozen verifier input\n   set and execute the exact invocation/fixtures in a no-network sandbox. The\n   process must have neither byte nor metadata access to undeclared curriculum or\n   engine files, and must not receive model-CLI authentication/scratch rules.\n6. Replay invariance: changing any undeclared repository file or any declared\n   dependency after D02 must never yield a different verdict for the same candidate\n   and frozen contract. Declared drift must fail before execution; undeclared bytes\n   and metadata must be unobservable.\n7. Bounded authoring: D07/M02 may see only admitted source claims and verified\n   staged domain inputs, with no admission or verifier authority delegated to M02.\n8. First-version recovery: invalid initial domain/content/visual candidates remain\n   immutable non-head evidence; repair targets exact bytes, stays within the named\n   scope, preserves validator lineage, and revalidates the exact repaired head.\n9. Replay and physical admission: D08/D09/D12/D20 canonical bytes must exist in\n   ArtifactStore before downstream reads; cross-node replay is idempotent, conflicts\n   fail closed, and stale pre-repair state never replaces a repaired head.\n10. Regression proof: focused, package, and full-runtime suites must pass, including\n    the six RC13 triggers, RC14 dependency drift, and RC15 metadata-stat channel.\n11. Security/architecture preservation: exact-host retrieval, SSRF/redirect checks,\n    tool-closed subscription CLIs, model assignments, topology, terminals, and the\n    no-billed-API/no-provider-SDK constraints remain intact.\n12. Entry safety: no blocker may make a fresh graph-v9 N00→N90 cascade dishonest,\n    unverifiable, or unable to run the real N70/N80 path.\n",
+    "focus": "Reproduce both prior verifier attacks: declared circuit-library drift and undeclared engine-file stat metadata. Verify declared files remain executable, undeclared repository bytes and metadata are unavailable, and the unchanged graph-v9 package is safe for a fresh N00-to-N90 cascade. Report only genuine blockers.",
+    "threshold": "blocker",
+    "max_iterations": 5,
+    "timeout_seconds": 900,
+    "retries": 2,
+    "model": null,
+    "effort": null,
+    "transport": "app-server",
+    "allow_execution": true,
+    "grounding": [
+      "/Users/filipepinto/Projects/curriculum_builder/plans/26_langgraph_curriculum_factory/spec/v3/langgraph_curriculum_factory.spec.v4.md",
+      "/Users/filipepinto/Projects/curriculum_builder/plans/27_langgraph_curriculum_factory_remediation/execution_package_v2/implementation.graph.v8.yaml",
+      "/Users/filipepinto/Projects/curriculum_builder/plans/27_langgraph_curriculum_factory_remediation/execution_package_v2/implementation.graph.v9.yaml",
+      "/Users/filipepinto/Projects/curriculum_builder/plans/27_langgraph_curriculum_factory_remediation/execution_package_v2/schemas/spec_approval.schema.v6.json",
+      "/Users/filipepinto/Projects/curriculum_builder/plans/27_langgraph_curriculum_factory_remediation/execution_package_v2/contracts/spec_approval.v6.yaml",
+      "/Users/filipepinto/Projects/curriculum_builder/schemas/curriculum.schema.v5.json",
+      "/Users/filipepinto/Projects/curriculum_builder/curricula/arduino_kit/arduino_kit_curriculum.v5.yaml",
+      "/Users/filipepinto/Projects/curriculum_builder/curricula/arduino_kit/verify_domain.py",
+      "/Users/filipepinto/Projects/curriculum_builder/curricula/arduino_kit/domain.schema.v1.json",
+      "/Users/filipepinto/Projects/curriculum_builder/curricula/arduino_kit/kit_calibration.v1.yaml",
+      "/Users/filipepinto/Projects/curriculum_builder/curricula/arduino_kit/circuit_library.v1.yaml",
+      "/Users/filipepinto/Projects/curriculum_builder/runtime/langgraph_factory/nodes/inputs.py",
+      "/Users/filipepinto/Projects/curriculum_builder/runtime/langgraph_factory/transport.py",
+      "/Users/filipepinto/Projects/curriculum_builder/tests/runtime/test_plan26_deterministic_nodes.py",
+      "/Users/filipepinto/Projects/curriculum_builder/tests/runtime/test_plan26_transport.py",
+      "/Users/filipepinto/Projects/curriculum_builder/plans/27_langgraph_curriculum_factory_remediation/execution_package_v2/release_candidate/rc14/QA/rounds/round-01.response.json",
+      "/Users/filipepinto/Projects/curriculum_builder/plans/27_langgraph_curriculum_factory_remediation/execution_package_v2/release_candidate/rc15/QA/rounds/round-01.response.json"
+    ]
+  },
+  "thread_id": "01a00402-6ec5-7332-b871-1a53dfca7d78"
+}

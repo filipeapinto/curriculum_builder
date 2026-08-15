@@ -1,0 +1,11 @@
+{
+  "state": "QA_PASSED",
+  "reason": "CONVERGED",
+  "chain_valid": true,
+  "rounds_claimed": 1,
+  "rounds_witnessed_by_codex": 1,
+  "session_id": "01a004d7-57fd-7080-853e-9e3a3f1afabc",
+  "chain": "cfd2295d138e59724fa460a6e3c1d5a5d67c5bd747bd77f9f7615300e813843c",
+  "problems": [],
+  "artifact": "plans/27_langgraph_curriculum_factory_remediation/execution_package_v2/release_candidate/rc29/rc29_review_bundle.v1.md"
+}

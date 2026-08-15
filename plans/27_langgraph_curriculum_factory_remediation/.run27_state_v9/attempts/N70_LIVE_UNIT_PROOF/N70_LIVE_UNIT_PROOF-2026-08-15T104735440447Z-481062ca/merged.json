@@ -1,0 +1,9 @@
+{
+  "admission": "normal",
+  "at": "2026-08-15T10:49:15.799966Z",
+  "attempt_id": "N70_LIVE_UNIT_PROOF-2026-08-15T104735440447Z-481062ca",
+  "node_id": "N70_LIVE_UNIT_PROOF",
+  "receipt": "receipts/N70_LIVE_UNIT_PROOF.receipt.v1.json",
+  "receipt_sha256": "63f547d377fec1281eb7edfba446070165fc9587578fbe6af067c2a5d0f0eaea",
+  "status": "NOT_AVAILABLE"
+}

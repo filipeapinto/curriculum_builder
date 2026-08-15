@@ -1,0 +1,9 @@
+{
+  "admission": "recovery_readmission",
+  "at": "2026-08-15T03:20:50.172955Z",
+  "attempt_id": "N40_INTEGRATION_OWNERSHIP-2026-08-15T032028418526Z-fa03e404",
+  "node_id": "N40_INTEGRATION_OWNERSHIP",
+  "receipt": "receipts/N40_INTEGRATION_OWNERSHIP.receipt.v1.json",
+  "receipt_sha256": "bc032a30ed2b0da94d1e6052fcb3b8ac74b5d88c043a5187ffeaf64015c6243c",
+  "status": "PASSED"
+}

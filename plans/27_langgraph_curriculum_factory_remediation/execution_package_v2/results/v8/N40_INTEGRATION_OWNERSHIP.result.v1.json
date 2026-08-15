@@ -2,56 +2,166 @@
   "schema_version": 1,
   "run_id": "run27-execution-package-v2-graph-v8",
   "node_id": "N40_INTEGRATION_OWNERSHIP",
-  "attempt_id": "N40_INTEGRATION_OWNERSHIP-execpkgv2-v8-attempt-4",
+  "attempt_id": "N40_INTEGRATION_OWNERSHIP-execpkgv2-v8-attempt-5",
   "outcome": "PASSED",
   "source_spec_sha256": "e14df5a36ce12d700fe9fc4aa4aea466771bc89f31bc6e9d49f812c147b1bb3c",
   "prompt_sha256": "a517a0198de0cecca6340b317c9380410a400af11d7f358baa08bf68c5b8b797",
   "predecessor_receipts": {
-    "N30_PREFLIGHT_EGRESS": "4a5ad874c9455fec2428e2508cea9aad8c9a10d03d5efbe8871c2b5a6be6fd41"
+    "N30_PREFLIGHT_EGRESS": "6c59a2bc58b616b703ec8518cc890d9b7de9a436542f813d1ea92f7691a6b7b3"
   },
   "changed_files": [
-    {"path": "tests/runtime/test_plan26_unit_graph.py", "change": "modified", "sha256": "ac6568a7a528e4d2b6c56c4057fd6a906233aad4f779a9f8391bd37daee4ef3e"},
-    {"path": "plans/27_langgraph_curriculum_factory_remediation/execution_package_v2/results/v8/evidence/N40_INTEGRATION_OWNERSHIP/01_pytest_n40.log", "change": "created", "sha256": "a4844f3797c00eb1a3f86a455a3881d64de4218c092dc12eb70999e02fd15a63"},
-    {"path": "plans/27_langgraph_curriculum_factory_remediation/execution_package_v2/results/v8/evidence/N40_INTEGRATION_OWNERSHIP/02_scan_node_n40.log", "change": "created", "sha256": "c25336abd9a5f6e756384d031c358217960e4de7ff2c202e9211ada05f8096d4"},
-    {"path": "plans/27_langgraph_curriculum_factory_remediation/execution_package_v2/results/v8/evidence/N40_INTEGRATION_OWNERSHIP/03_verify_ownership.log", "change": "created", "sha256": "ccf9998e5aa58f7944bc16de30af264df08d5f3b22d15c416405fb9cacba6821"},
-    {"path": "plans/27_langgraph_curriculum_factory_remediation/execution_package_v2/results/v8/evidence/N40_INTEGRATION_OWNERSHIP/04_tuple_contract_harness_repair.log", "change": "created", "sha256": "8995634dd1c10007289df002cf830dfa677ee175f9d70ceb7a9970a6706b487d"},
-    {"path": "plans/27_langgraph_curriculum_factory_remediation/execution_package_v2/results/v8/evidence/N40_INTEGRATION_OWNERSHIP/05_pytest_n40_attempt2.log", "change": "created", "sha256": "a38ef6f2db63255822223092555714be4d0e5bf5611d16ef87e1aa8f339d85db"},
-    {"path": "plans/27_langgraph_curriculum_factory_remediation/execution_package_v2/results/v8/evidence/N40_INTEGRATION_OWNERSHIP/06_scan_node_n40_attempt2.log", "change": "created", "sha256": "c25336abd9a5f6e756384d031c358217960e4de7ff2c202e9211ada05f8096d4"},
-    {"path": "plans/27_langgraph_curriculum_factory_remediation/execution_package_v2/results/v8/evidence/N40_INTEGRATION_OWNERSHIP/07_live_repair_cascade.log", "change": "created", "sha256": "c06dc089b962c299592634b6ea73b5869850e35a8ef9a466221979d6bd8c0ef8"},
-    {"path": "plans/27_langgraph_curriculum_factory_remediation/execution_package_v2/results/v8/evidence/N40_INTEGRATION_OWNERSHIP/attempts/N40_INTEGRATION_OWNERSHIP.attempt-1.result.v1.json", "change": "created", "sha256": "d5bb248832a7950e399a084e87495b7b3995464c0128066513199cef310b4d06"},
-    {"path": "plans/27_langgraph_curriculum_factory_remediation/execution_package_v2/results/v8/evidence/N40_INTEGRATION_OWNERSHIP/08_pytest_n40_attempt3.log", "change": "created", "sha256": "6b3f0b33ee9d4371f4d288c431df5678552495defd7193cd4b0fd1fb9b0fa9dc"},
-    {"path": "plans/27_langgraph_curriculum_factory_remediation/execution_package_v2/results/v8/evidence/N40_INTEGRATION_OWNERSHIP/09_scan_node_n40_attempt3.log", "change": "created", "sha256": "c25336abd9a5f6e756384d031c358217960e4de7ff2c202e9211ada05f8096d4"},
-    {"path": "plans/27_langgraph_curriculum_factory_remediation/execution_package_v2/results/v8/evidence/N40_INTEGRATION_OWNERSHIP/10_user_agent_repair_cascade.log", "change": "created", "sha256": "783ef0c662192126950533eeb1272aa3a9c1d1581cd2ac66f3011484eb4994c2"},
-    {"path": "plans/27_langgraph_curriculum_factory_remediation/execution_package_v2/results/v8/evidence/N40_INTEGRATION_OWNERSHIP/attempts/N40_INTEGRATION_OWNERSHIP.attempt-2.result.v1.json", "change": "created", "sha256": "c3884bde14b3b74f58bf436e9d2ffe901b906112b5f711bf6e6f3b9d0a506403"},
-    {"path": "plans/27_langgraph_curriculum_factory_remediation/execution_package_v2/results/v8/evidence/N40_INTEGRATION_OWNERSHIP/11_pytest_n40_attempt4.log", "change": "created", "sha256": "648bc1639f50a00cea47531e31aefaff5bd8d8c2478b902a22516f7093d59b64"},
-    {"path": "plans/27_langgraph_curriculum_factory_remediation/execution_package_v2/results/v8/evidence/N40_INTEGRATION_OWNERSHIP/12_scan_node_n40_attempt4.log", "change": "created", "sha256": "e15e9d0dcee50aff9e9ad8b27b1505152f2bafe9ff84b81260af8021fde0ba34"},
-    {"path": "plans/27_langgraph_curriculum_factory_remediation/execution_package_v2/results/v8/evidence/N40_INTEGRATION_OWNERSHIP/13_staged_input_repair_cascade.log", "change": "created", "sha256": "1f78e087e0489d7b4e58c31487d016015ac5602d9d5f6296625cd24f251affef"},
-    {"path": "plans/27_langgraph_curriculum_factory_remediation/execution_package_v2/results/v8/evidence/N40_INTEGRATION_OWNERSHIP/attempts/N40_INTEGRATION_OWNERSHIP.attempt-3.result.v1.json", "change": "created", "sha256": "2e7541bc5c85143309aa87fedd5493fe86029b4891713c298425e8efed59f767"}
+    {
+      "path": "tests/runtime/test_plan26_unit_graph.py",
+      "change": "modified",
+      "sha256": "ac6568a7a528e4d2b6c56c4057fd6a906233aad4f779a9f8391bd37daee4ef3e"
+    },
+    {
+      "path": "plans/27_langgraph_curriculum_factory_remediation/execution_package_v2/results/v8/evidence/N40_INTEGRATION_OWNERSHIP/01_pytest_n40.log",
+      "change": "created",
+      "sha256": "a4844f3797c00eb1a3f86a455a3881d64de4218c092dc12eb70999e02fd15a63"
+    },
+    {
+      "path": "plans/27_langgraph_curriculum_factory_remediation/execution_package_v2/results/v8/evidence/N40_INTEGRATION_OWNERSHIP/02_scan_node_n40.log",
+      "change": "created",
+      "sha256": "c25336abd9a5f6e756384d031c358217960e4de7ff2c202e9211ada05f8096d4"
+    },
+    {
+      "path": "plans/27_langgraph_curriculum_factory_remediation/execution_package_v2/results/v8/evidence/N40_INTEGRATION_OWNERSHIP/03_verify_ownership.log",
+      "change": "created",
+      "sha256": "ccf9998e5aa58f7944bc16de30af264df08d5f3b22d15c416405fb9cacba6821"
+    },
+    {
+      "path": "plans/27_langgraph_curriculum_factory_remediation/execution_package_v2/results/v8/evidence/N40_INTEGRATION_OWNERSHIP/04_tuple_contract_harness_repair.log",
+      "change": "created",
+      "sha256": "8995634dd1c10007289df002cf830dfa677ee175f9d70ceb7a9970a6706b487d"
+    },
+    {
+      "path": "plans/27_langgraph_curriculum_factory_remediation/execution_package_v2/results/v8/evidence/N40_INTEGRATION_OWNERSHIP/05_pytest_n40_attempt2.log",
+      "change": "created",
+      "sha256": "a38ef6f2db63255822223092555714be4d0e5bf5611d16ef87e1aa8f339d85db"
+    },
+    {
+      "path": "plans/27_langgraph_curriculum_factory_remediation/execution_package_v2/results/v8/evidence/N40_INTEGRATION_OWNERSHIP/06_scan_node_n40_attempt2.log",
+      "change": "created",
+      "sha256": "c25336abd9a5f6e756384d031c358217960e4de7ff2c202e9211ada05f8096d4"
+    },
+    {
+      "path": "plans/27_langgraph_curriculum_factory_remediation/execution_package_v2/results/v8/evidence/N40_INTEGRATION_OWNERSHIP/07_live_repair_cascade.log",
+      "change": "created",
+      "sha256": "c06dc089b962c299592634b6ea73b5869850e35a8ef9a466221979d6bd8c0ef8"
+    },
+    {
+      "path": "plans/27_langgraph_curriculum_factory_remediation/execution_package_v2/results/v8/evidence/N40_INTEGRATION_OWNERSHIP/attempts/N40_INTEGRATION_OWNERSHIP.attempt-1.result.v1.json",
+      "change": "created",
+      "sha256": "d5bb248832a7950e399a084e87495b7b3995464c0128066513199cef310b4d06"
+    },
+    {
+      "path": "plans/27_langgraph_curriculum_factory_remediation/execution_package_v2/results/v8/evidence/N40_INTEGRATION_OWNERSHIP/08_pytest_n40_attempt3.log",
+      "change": "created",
+      "sha256": "6b3f0b33ee9d4371f4d288c431df5678552495defd7193cd4b0fd1fb9b0fa9dc"
+    },
+    {
+      "path": "plans/27_langgraph_curriculum_factory_remediation/execution_package_v2/results/v8/evidence/N40_INTEGRATION_OWNERSHIP/09_scan_node_n40_attempt3.log",
+      "change": "created",
+      "sha256": "c25336abd9a5f6e756384d031c358217960e4de7ff2c202e9211ada05f8096d4"
+    },
+    {
+      "path": "plans/27_langgraph_curriculum_factory_remediation/execution_package_v2/results/v8/evidence/N40_INTEGRATION_OWNERSHIP/10_user_agent_repair_cascade.log",
+      "change": "created",
+      "sha256": "783ef0c662192126950533eeb1272aa3a9c1d1581cd2ac66f3011484eb4994c2"
+    },
+    {
+      "path": "plans/27_langgraph_curriculum_factory_remediation/execution_package_v2/results/v8/evidence/N40_INTEGRATION_OWNERSHIP/attempts/N40_INTEGRATION_OWNERSHIP.attempt-2.result.v1.json",
+      "change": "created",
+      "sha256": "c3884bde14b3b74f58bf436e9d2ffe901b906112b5f711bf6e6f3b9d0a506403"
+    },
+    {
+      "path": "plans/27_langgraph_curriculum_factory_remediation/execution_package_v2/results/v8/evidence/N40_INTEGRATION_OWNERSHIP/11_pytest_n40_attempt4.log",
+      "change": "created",
+      "sha256": "648bc1639f50a00cea47531e31aefaff5bd8d8c2478b902a22516f7093d59b64"
+    },
+    {
+      "path": "plans/27_langgraph_curriculum_factory_remediation/execution_package_v2/results/v8/evidence/N40_INTEGRATION_OWNERSHIP/12_scan_node_n40_attempt4.log",
+      "change": "created",
+      "sha256": "e15e9d0dcee50aff9e9ad8b27b1505152f2bafe9ff84b81260af8021fde0ba34"
+    },
+    {
+      "path": "plans/27_langgraph_curriculum_factory_remediation/execution_package_v2/results/v8/evidence/N40_INTEGRATION_OWNERSHIP/13_staged_input_repair_cascade.log",
+      "change": "created",
+      "sha256": "1f78e087e0489d7b4e58c31487d016015ac5602d9d5f6296625cd24f251affef"
+    },
+    {
+      "path": "plans/27_langgraph_curriculum_factory_remediation/execution_package_v2/results/v8/evidence/N40_INTEGRATION_OWNERSHIP/attempts/N40_INTEGRATION_OWNERSHIP.attempt-3.result.v1.json",
+      "change": "created",
+      "sha256": "2e7541bc5c85143309aa87fedd5493fe86029b4891713c298425e8efed59f767"
+    },
+    {
+      "path": "plans/27_langgraph_curriculum_factory_remediation/execution_package_v2/results/v8/evidence/N40_INTEGRATION_OWNERSHIP/attempts/N40_INTEGRATION_OWNERSHIP.attempt-4.result.v1.json",
+      "change": "created",
+      "sha256": "f1656a7612b3cbc721d0ce954455a760d85209ce13faacd0b4a512a6c35babef"
+    },
+    {
+      "path": "plans/27_langgraph_curriculum_factory_remediation/execution_package_v2/results/v8/evidence/N40_INTEGRATION_OWNERSHIP/13_pytest_n40_attempt5.log",
+      "change": "created",
+      "sha256": "5511cd73de9db7b719c6c656f1f83df53a2f01a3071a120682d3676bb440a41e"
+    },
+    {
+      "path": "plans/27_langgraph_curriculum_factory_remediation/execution_package_v2/results/v8/evidence/N40_INTEGRATION_OWNERSHIP/14_scan_node_n40_attempt5.log",
+      "change": "created",
+      "sha256": "c25336abd9a5f6e756384d031c358217960e4de7ff2c202e9211ada05f8096d4"
+    },
+    {
+      "path": "plans/27_langgraph_curriculum_factory_remediation/execution_package_v2/results/v8/evidence/N40_INTEGRATION_OWNERSHIP/15_verify_ownership_attempt5.log",
+      "change": "created",
+      "sha256": "25d74851a58994b406e2073ecee8a8481f6189d1936e1c62325ca7e30920cfb9"
+    },
+    {
+      "path": "plans/27_langgraph_curriculum_factory_remediation/execution_package_v2/results/v8/evidence/N40_INTEGRATION_OWNERSHIP/16_empty_projection_repair_cascade.log",
+      "change": "created",
+      "sha256": "644f0a2f0c72b3855ae6102d89c57a8f6dd9e5c0822f510016f59116ebc05940"
+    }
   ],
   "commands": [
     {
-      "argv": ["python3", "-m", "pytest", "-q", "tests/runtime/test_plan26_topology.py", "tests/runtime/test_plan26_unit_graph.py", "tests/runtime/test_plan26_repair_acceptance.py", "tests/runtime/test_plan26_workbook.py"],
+      "argv": [
+        "python3",
+        "-m",
+        "pytest",
+        "-q",
+        "tests/runtime/test_plan26_topology.py",
+        "tests/runtime/test_plan26_unit_graph.py",
+        "tests/runtime/test_plan26_repair_acceptance.py",
+        "tests/runtime/test_plan26_workbook.py"
+      ],
       "exit_code": 0,
-      "log": "plans/27_langgraph_curriculum_factory_remediation/execution_package_v2/results/v8/evidence/N40_INTEGRATION_OWNERSHIP/11_pytest_n40_attempt4.log",
-      "log_sha256": "648bc1639f50a00cea47531e31aefaff5bd8d8c2478b902a22516f7093d59b64"
+      "log": "plans/27_langgraph_curriculum_factory_remediation/execution_package_v2/results/v8/evidence/N40_INTEGRATION_OWNERSHIP/13_pytest_n40_attempt5.log",
+      "log_sha256": "5511cd73de9db7b719c6c656f1f83df53a2f01a3071a120682d3676bb440a41e"
     },
     {
-      "argv": ["python3", "plans/27_langgraph_curriculum_factory_remediation/execution_package_v2/controller/scan_node.py", "--node", "N40_INTEGRATION_OWNERSHIP", "--graph", "plans/27_langgraph_curriculum_factory_remediation/execution_package_v2/implementation.graph.v8.yaml"],
+      "argv": [
+        "python3",
+        "plans/27_langgraph_curriculum_factory_remediation/execution_package_v2/controller/scan_node.py",
+        "--node",
+        "N40_INTEGRATION_OWNERSHIP",
+        "--graph",
+        "plans/27_langgraph_curriculum_factory_remediation/execution_package_v2/implementation.graph.v8.yaml"
+      ],
       "exit_code": 0,
-      "log": "plans/27_langgraph_curriculum_factory_remediation/execution_package_v2/results/v8/evidence/N40_INTEGRATION_OWNERSHIP/12_scan_node_n40_attempt4.log",
-      "log_sha256": "e15e9d0dcee50aff9e9ad8b27b1505152f2bafe9ff84b81260af8021fde0ba34"
+      "log": "plans/27_langgraph_curriculum_factory_remediation/execution_package_v2/results/v8/evidence/N40_INTEGRATION_OWNERSHIP/14_scan_node_n40_attempt5.log",
+      "log_sha256": "c25336abd9a5f6e756384d031c358217960e4de7ff2c202e9211ada05f8096d4"
     },
     {
-      "argv": ["python3", "plans/27_langgraph_curriculum_factory_remediation/controller/verify_ownership.py", "--contract", "plans/27_langgraph_curriculum_factory_remediation/contracts/integration_ownership.v1.yaml", "--graph", "plans/27_langgraph_curriculum_factory_remediation/execution_package_v2/implementation.graph.v8.yaml"],
+      "argv": [
+        "python3",
+        "plans/27_langgraph_curriculum_factory_remediation/controller/verify_ownership.py",
+        "--contract",
+        "plans/27_langgraph_curriculum_factory_remediation/contracts/integration_ownership.v1.yaml",
+        "--graph",
+        "plans/27_langgraph_curriculum_factory_remediation/execution_package_v2/implementation.graph.v8.yaml"
+      ],
       "exit_code": 0,
-      "log": "plans/27_langgraph_curriculum_factory_remediation/execution_package_v2/results/v8/evidence/N40_INTEGRATION_OWNERSHIP/03_verify_ownership.log",
-      "log_sha256": "ccf9998e5aa58f7944bc16de30af264df08d5f3b22d15c416405fb9cacba6821"
-    },
-    {
-      "argv": ["python3", "-m", "pytest", "-q", "tests/runtime/test_plan26_unit_graph.py::test_a_fresh_episode_executes_the_bootstrap_spine_once_through_langgraph"],
-      "exit_code": 0,
-      "log": "plans/27_langgraph_curriculum_factory_remediation/execution_package_v2/results/v8/evidence/N40_INTEGRATION_OWNERSHIP/04_tuple_contract_harness_repair.log",
-      "log_sha256": "8995634dd1c10007289df002cf830dfa677ee175f9d70ceb7a9970a6706b487d"
+      "log": "plans/27_langgraph_curriculum_factory_remediation/execution_package_v2/results/v8/evidence/N40_INTEGRATION_OWNERSHIP/15_verify_ownership_attempt5.log",
+      "log_sha256": "25d74851a58994b406e2073ecee8a8481f6189d1936e1c62325ca7e30920cfb9"
     }
   ],
   "evidence": [
@@ -70,15 +180,59 @@
     "plans/27_langgraph_curriculum_factory_remediation/execution_package_v2/results/v8/evidence/N40_INTEGRATION_OWNERSHIP/11_pytest_n40_attempt4.log",
     "plans/27_langgraph_curriculum_factory_remediation/execution_package_v2/results/v8/evidence/N40_INTEGRATION_OWNERSHIP/12_scan_node_n40_attempt4.log",
     "plans/27_langgraph_curriculum_factory_remediation/execution_package_v2/results/v8/evidence/N40_INTEGRATION_OWNERSHIP/13_staged_input_repair_cascade.log",
-    "plans/27_langgraph_curriculum_factory_remediation/execution_package_v2/results/v8/evidence/N40_INTEGRATION_OWNERSHIP/attempts/N40_INTEGRATION_OWNERSHIP.attempt-3.result.v1.json"
+    "plans/27_langgraph_curriculum_factory_remediation/execution_package_v2/results/v8/evidence/N40_INTEGRATION_OWNERSHIP/attempts/N40_INTEGRATION_OWNERSHIP.attempt-3.result.v1.json",
+    "plans/27_langgraph_curriculum_factory_remediation/execution_package_v2/results/v8/evidence/N40_INTEGRATION_OWNERSHIP/attempts/N40_INTEGRATION_OWNERSHIP.attempt-4.result.v1.json",
+    "plans/27_langgraph_curriculum_factory_remediation/execution_package_v2/results/v8/evidence/N40_INTEGRATION_OWNERSHIP/13_pytest_n40_attempt5.log",
+    "plans/27_langgraph_curriculum_factory_remediation/execution_package_v2/results/v8/evidence/N40_INTEGRATION_OWNERSHIP/14_scan_node_n40_attempt5.log",
+    "plans/27_langgraph_curriculum_factory_remediation/execution_package_v2/results/v8/evidence/N40_INTEGRATION_OWNERSHIP/15_verify_ownership_attempt5.log",
+    "plans/27_langgraph_curriculum_factory_remediation/execution_package_v2/results/v8/evidence/N40_INTEGRATION_OWNERSHIP/16_empty_projection_repair_cascade.log"
   ],
   "findings": [
-    {"id": "N40V8-F01", "severity": "major", "summary": "A stale N40-owned end-to-end retriever stub violated the newly admitted real tuple contract; it was repaired and the compiled single-unit episode now reaches UNIT_ACCEPTED.", "disposition": "resolved"},
-    {"id": "N40V8-F02", "severity": "major", "summary": "All 210 topology, unit graph, repair/acceptance, and workbook integration tests pass after repair.", "disposition": "resolved"},
-    {"id": "N40V8-F03", "severity": "major", "summary": "All 75 ownership claims are valid and the 11-file node scan reports zero violations.", "disposition": "resolved"},
-    {"id": "N40V8-F04", "severity": "major", "summary": "After the live N70 HTTP/fallback repair changed N20/N30, downstream N40 was invalidated, its first result was preserved, and the complete N40 verification slice passed again against the repaired production code.", "disposition": "resolved"},
-    {"id": "N40V8-F05", "severity": "major", "summary": "After the N20 User-Agent repair, N40 again passed all 210 reachability/integration tests, 75 ownership claims, and its exact zero-violation scan; attempt 2 is preserved.", "disposition": "resolved"},
-    {"id": "N40V8-F06", "severity": "major", "summary": "After staged source text entered the real M01 path, N40 re-proved 210 integration tests, all 75 ownership claims, and the zero-violation scan against the attempt-4 predecessor chain.", "disposition": "resolved"}
+    {
+      "id": "N40V8-F01",
+      "severity": "major",
+      "summary": "A stale N40-owned end-to-end retriever stub violated the newly admitted real tuple contract; it was repaired and the compiled single-unit episode now reaches UNIT_ACCEPTED.",
+      "disposition": "resolved"
+    },
+    {
+      "id": "N40V8-F02",
+      "severity": "major",
+      "summary": "All 210 topology, unit graph, repair/acceptance, and workbook integration tests pass after repair.",
+      "disposition": "resolved"
+    },
+    {
+      "id": "N40V8-F03",
+      "severity": "major",
+      "summary": "All 75 ownership claims are valid and the 11-file node scan reports zero violations.",
+      "disposition": "resolved"
+    },
+    {
+      "id": "N40V8-F04",
+      "severity": "major",
+      "summary": "After the live N70 HTTP/fallback repair changed N20/N30, downstream N40 was invalidated, its first result was preserved, and the complete N40 verification slice passed again against the repaired production code.",
+      "disposition": "resolved"
+    },
+    {
+      "id": "N40V8-F05",
+      "severity": "major",
+      "summary": "After the N20 User-Agent repair, N40 again passed all 210 reachability/integration tests, 75 ownership claims, and its exact zero-violation scan; attempt 2 is preserved.",
+      "disposition": "resolved"
+    },
+    {
+      "id": "N40V8-F06",
+      "severity": "major",
+      "summary": "After staged source text entered the real M01 path, N40 re-proved 210 integration tests, all 75 ownership claims, and the zero-violation scan against the attempt-4 predecessor chain.",
+      "disposition": "resolved"
+    },
+    {
+      "id": "N40V8-F07",
+      "severity": "major",
+      "summary": "After the N20/N30 empty-visible-source repair invalidated integration descendants, all 210 topology and integration tests, all 75 ownership claims, and the 11-file zero-violation scan passed against the repaired predecessor chain.",
+      "disposition": "resolved"
+    }
   ],
-  "invalidated_descendants": []
+  "invalidated_descendants": [
+    "N50_EVIDENCE_AUDIT_CONTROLS",
+    "N60_ADVERSARIAL_REGRESSION"
+  ]
 }

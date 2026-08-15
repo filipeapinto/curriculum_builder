@@ -1,0 +1,18 @@
+N60 V9 frozen final-code/test denominator
+Frozen at: 2026-08-15T10:30:48Z
+Rechecked after all direct N60 runs: 2026-08-15T10:40:42Z
+Git HEAD: 14532fdca172c6a7d8fd6728eb03ad479edceecf
+Source specification SHA-256: e14df5a36ce12d700fe9fc4aa4aea466771bc89f31bc6e9d49f812c147b1bb3c
+Implementation graph v9 SHA-256: 5236bf6b13a2c5171ad11ab80f1147e20b6b59f46708090d25ec16c5a7574379
+Node-result schema SHA-256: 5ae553f83a685847542afebe084e5e7581dbb1057607f8dc5cb9208eb1f1cc18
+Approval contract v6 SHA-256: f4e609d1d93f1303c651e6cbe58233ec35b7bb7eab86a9ef393fc002b5229b70
+Code/test aggregate SHA-256 before: 336314adfe2ddb7921950da52d1fd93c3b5c2d374e190b9e008ac0afb3711c2d
+Code/test aggregate SHA-256 after:  336314adfe2ddb7921950da52d1fd93c3b5c2d374e190b9e008ac0afb3711c2d
+Aggregate roots: runtime, tests, policy, schemas, curricula, Run 27 controller/tests/contracts/schemas; caches excluded; sorted path+content SHA-256 records.
+
+Complete verification denominator:
+- focused N60 adversarial: tests/runtime/test_plan27_adversarial.py and plans/27_langgraph_curriculum_factory_remediation/tests/test_run27_adversarial.py
+- complete runtime: tests/runtime with no filter, deletion, xfail, or weakened marker
+- complete Run 27 package/controller: plans/27_langgraph_curriculum_factory_remediation/tests
+- complete-tree forbidden provider/credential scanner against implementation.graph.v9.yaml
+- exact node-result schema validation and independent controller admission

@@ -1,0 +1,250 @@
+{
+  "at": "2026-08-15T10:45:00.368522Z",
+  "attempt_id": "N60_ADVERSARIAL_REGRESSION-2026-08-15T103048160300Z-1a513ddf",
+  "node_id": "N60_ADVERSARIAL_REGRESSION",
+  "previous_receipt": null,
+  "previous_receipt_sha256": null,
+  "receipt": {
+    "admission": "normal",
+    "admitted_at": "2026-08-15T10:45:00.365669Z",
+    "approved_spec_sha256": "e14df5a36ce12d700fe9fc4aa4aea466771bc89f31bc6e9d49f812c147b1bb3c",
+    "attempt_id": "N60_ADVERSARIAL_REGRESSION-2026-08-15T103048160300Z-1a513ddf",
+    "baseline": {
+      "plans/27_langgraph_curriculum_factory_remediation/execution_package_v2/results/v9/N60_ADVERSARIAL_REGRESSION.result.v1.json": null,
+      "plans/27_langgraph_curriculum_factory_remediation/execution_package_v2/results/v9/evidence/N60_ADVERSARIAL_REGRESSION": null,
+      "plans/27_langgraph_curriculum_factory_remediation/tests/test_run27_adversarial.py": "eae3ef5735f84ec83b97ea9ace98ff33994c74b3d808c075be7d1ec1df0f54fb",
+      "tests/runtime/test_plan27_adversarial.py": "52fe193f23b8e5b0cbb6dfa5efcdc30195dddcc1772684e82a9382b6ded43d43"
+    },
+    "baseline_sha256": "9697dd582d23e82f6bf2ec1000dde741fdab84f1f0163d7e8861824083a3bb0f",
+    "changed_files": [
+      {
+        "change": "created",
+        "path": "plans/27_langgraph_curriculum_factory_remediation/execution_package_v2/results/v9/evidence/N60_ADVERSARIAL_REGRESSION/01_frozen_denominator.log",
+        "sha256": "d71602d90946cf560bc1282c54b0e95c91ed781e5ec39ea68ba87a3ac8de1c6d"
+      },
+      {
+        "change": "created",
+        "path": "plans/27_langgraph_curriculum_factory_remediation/execution_package_v2/results/v9/evidence/N60_ADVERSARIAL_REGRESSION/02_pytest_n60_focused.log",
+        "sha256": "c98216cb00f6fb339aa317fd8aa55400d73ebfb8288c1c2acbbcc1eb1ec7d443"
+      },
+      {
+        "change": "created",
+        "path": "plans/27_langgraph_curriculum_factory_remediation/execution_package_v2/results/v9/evidence/N60_ADVERSARIAL_REGRESSION/03_pytest_runtime_exact.log",
+        "sha256": "f1a5bea8bab6c94fb0f1c3dc07f010dd7d95cdfe19d5bf532aab188ae7615d24"
+      },
+      {
+        "change": "created",
+        "path": "plans/27_langgraph_curriculum_factory_remediation/execution_package_v2/results/v9/evidence/N60_ADVERSARIAL_REGRESSION/04_pytest_runtime_repeat.log",
+        "sha256": "cea6a621b593ee90b6cd15ad5afdb663a614d83438b61bdab779eac6ffb26470"
+      },
+      {
+        "change": "created",
+        "path": "plans/27_langgraph_curriculum_factory_remediation/execution_package_v2/results/v9/evidence/N60_ADVERSARIAL_REGRESSION/05_pytest_plan27_run1.log",
+        "sha256": "f163dc0fe7e4463f3b5c8d096106b6f665967db32217be833f443eeffa7b88d2"
+      },
+      {
+        "change": "created",
+        "path": "plans/27_langgraph_curriculum_factory_remediation/execution_package_v2/results/v9/evidence/N60_ADVERSARIAL_REGRESSION/06_pytest_plan27_run2.log",
+        "sha256": "42327add9bb903b04a9a3c85da68b486813b8b4179a562fdcab65ffd5d4c846b"
+      },
+      {
+        "change": "created",
+        "path": "plans/27_langgraph_curriculum_factory_remediation/execution_package_v2/results/v9/evidence/N60_ADVERSARIAL_REGRESSION/07_scan_complete_tree_run1.log",
+        "sha256": "2313a5eaae3707000dadaac660474f7770baaa7588d5faf22f83ea666adf7f25"
+      },
+      {
+        "change": "created",
+        "path": "plans/27_langgraph_curriculum_factory_remediation/execution_package_v2/results/v9/evidence/N60_ADVERSARIAL_REGRESSION/08_scan_complete_tree_run2.log",
+        "sha256": "2313a5eaae3707000dadaac660474f7770baaa7588d5faf22f83ea666adf7f25"
+      },
+      {
+        "change": "created",
+        "path": "plans/27_langgraph_curriculum_factory_remediation/execution_package_v2/results/v9/evidence/N60_ADVERSARIAL_REGRESSION/09_skip_failure_stability_census.log",
+        "sha256": "9bb7fcc8682559e73ff7b0394ff97d26f3e94f7db1d90584fa1a0d2582bb48e5"
+      }
+    ],
+    "commands": [
+      {
+        "argv": [
+          "python3",
+          "-m",
+          "pytest",
+          "-q",
+          "tests/runtime/test_plan27_adversarial.py",
+          "plans/27_langgraph_curriculum_factory_remediation/tests/test_run27_adversarial.py"
+        ],
+        "exit_code": 0,
+        "log": "plans/27_langgraph_curriculum_factory_remediation/execution_package_v2/results/v9/evidence/N60_ADVERSARIAL_REGRESSION/02_pytest_n60_focused.log",
+        "log_sha256": "c98216cb00f6fb339aa317fd8aa55400d73ebfb8288c1c2acbbcc1eb1ec7d443"
+      },
+      {
+        "argv": [
+          "python3",
+          "-m",
+          "pytest",
+          "-q",
+          "tests/runtime"
+        ],
+        "exit_code": 0,
+        "log": "plans/27_langgraph_curriculum_factory_remediation/execution_package_v2/results/v9/evidence/N60_ADVERSARIAL_REGRESSION/03_pytest_runtime_exact.log",
+        "log_sha256": "f1a5bea8bab6c94fb0f1c3dc07f010dd7d95cdfe19d5bf532aab188ae7615d24"
+      },
+      {
+        "argv": [
+          "python3",
+          "-m",
+          "pytest",
+          "-q",
+          "tests/runtime",
+          "--junitxml=/tmp/run27_v9_n60_runtime_run3.xml"
+        ],
+        "exit_code": 0,
+        "log": "plans/27_langgraph_curriculum_factory_remediation/execution_package_v2/results/v9/evidence/N60_ADVERSARIAL_REGRESSION/04_pytest_runtime_repeat.log",
+        "log_sha256": "cea6a621b593ee90b6cd15ad5afdb663a614d83438b61bdab779eac6ffb26470"
+      },
+      {
+        "argv": [
+          "python3",
+          "-m",
+          "pytest",
+          "-q",
+          "plans/27_langgraph_curriculum_factory_remediation/tests"
+        ],
+        "exit_code": 0,
+        "log": "plans/27_langgraph_curriculum_factory_remediation/execution_package_v2/results/v9/evidence/N60_ADVERSARIAL_REGRESSION/05_pytest_plan27_run1.log",
+        "log_sha256": "f163dc0fe7e4463f3b5c8d096106b6f665967db32217be833f443eeffa7b88d2"
+      },
+      {
+        "argv": [
+          "python3",
+          "-m",
+          "pytest",
+          "-q",
+          "plans/27_langgraph_curriculum_factory_remediation/tests"
+        ],
+        "exit_code": 0,
+        "log": "plans/27_langgraph_curriculum_factory_remediation/execution_package_v2/results/v9/evidence/N60_ADVERSARIAL_REGRESSION/06_pytest_plan27_run2.log",
+        "log_sha256": "42327add9bb903b04a9a3c85da68b486813b8b4179a562fdcab65ffd5d4c846b"
+      },
+      {
+        "argv": [
+          "python3",
+          "plans/27_langgraph_curriculum_factory_remediation/execution_package_v2/controller/scan_node.py",
+          "--graph",
+          "plans/27_langgraph_curriculum_factory_remediation/execution_package_v2/implementation.graph.v9.yaml"
+        ],
+        "exit_code": 0,
+        "log": "plans/27_langgraph_curriculum_factory_remediation/execution_package_v2/results/v9/evidence/N60_ADVERSARIAL_REGRESSION/07_scan_complete_tree_run1.log",
+        "log_sha256": "2313a5eaae3707000dadaac660474f7770baaa7588d5faf22f83ea666adf7f25"
+      },
+      {
+        "argv": [
+          "python3",
+          "plans/27_langgraph_curriculum_factory_remediation/execution_package_v2/controller/scan_node.py",
+          "--graph",
+          "plans/27_langgraph_curriculum_factory_remediation/execution_package_v2/implementation.graph.v9.yaml"
+        ],
+        "exit_code": 0,
+        "log": "plans/27_langgraph_curriculum_factory_remediation/execution_package_v2/results/v9/evidence/N60_ADVERSARIAL_REGRESSION/08_scan_complete_tree_run2.log",
+        "log_sha256": "2313a5eaae3707000dadaac660474f7770baaa7588d5faf22f83ea666adf7f25"
+      }
+    ],
+    "evidence": [
+      "plans/27_langgraph_curriculum_factory_remediation/execution_package_v2/results/v9/evidence/N60_ADVERSARIAL_REGRESSION/01_frozen_denominator.log",
+      "plans/27_langgraph_curriculum_factory_remediation/execution_package_v2/results/v9/evidence/N60_ADVERSARIAL_REGRESSION/02_pytest_n60_focused.log",
+      "plans/27_langgraph_curriculum_factory_remediation/execution_package_v2/results/v9/evidence/N60_ADVERSARIAL_REGRESSION/03_pytest_runtime_exact.log",
+      "plans/27_langgraph_curriculum_factory_remediation/execution_package_v2/results/v9/evidence/N60_ADVERSARIAL_REGRESSION/04_pytest_runtime_repeat.log",
+      "plans/27_langgraph_curriculum_factory_remediation/execution_package_v2/results/v9/evidence/N60_ADVERSARIAL_REGRESSION/05_pytest_plan27_run1.log",
+      "plans/27_langgraph_curriculum_factory_remediation/execution_package_v2/results/v9/evidence/N60_ADVERSARIAL_REGRESSION/06_pytest_plan27_run2.log",
+      "plans/27_langgraph_curriculum_factory_remediation/execution_package_v2/results/v9/evidence/N60_ADVERSARIAL_REGRESSION/07_scan_complete_tree_run1.log",
+      "plans/27_langgraph_curriculum_factory_remediation/execution_package_v2/results/v9/evidence/N60_ADVERSARIAL_REGRESSION/08_scan_complete_tree_run2.log",
+      "plans/27_langgraph_curriculum_factory_remediation/execution_package_v2/results/v9/evidence/N60_ADVERSARIAL_REGRESSION/09_skip_failure_stability_census.log"
+    ],
+    "final_outputs": {
+      "plans/27_langgraph_curriculum_factory_remediation/execution_package_v2/results/v9/N60_ADVERSARIAL_REGRESSION.result.v1.json": "76f1aad362e4465d678d8a7109384827e2176a3a5a7a64d213afbbdef51ecfba",
+      "plans/27_langgraph_curriculum_factory_remediation/execution_package_v2/results/v9/evidence/N60_ADVERSARIAL_REGRESSION": "edaa49384cb253542a9537ebb0d6380103e66454a6b6cab164e7ae1a465cae12",
+      "plans/27_langgraph_curriculum_factory_remediation/tests/test_run27_adversarial.py": "eae3ef5735f84ec83b97ea9ace98ff33994c74b3d808c075be7d1ec1df0f54fb",
+      "tests/runtime/test_plan27_adversarial.py": "52fe193f23b8e5b0cbb6dfa5efcdc30195dddcc1772684e82a9382b6ded43d43"
+    },
+    "graph_sha256": "5236bf6b13a2c5171ad11ab80f1147e20b6b59f46708090d25ec16c5a7574379",
+    "lineage_fingerprint": "fc7139ce3cc5e58d77ad1b9a238ea6acd36335b1062a1b9e0b30a96241de445d",
+    "node_definition_sha256": "450336f3d74aba09b5eca2c06691b1de87fe2aa88a86bddf4581e67f895798bb",
+    "node_id": "N60_ADVERSARIAL_REGRESSION",
+    "parent_attempt_id": null,
+    "predecessor_receipts": {
+      "N50_EVIDENCE_AUDIT_CONTROLS": "4eb7d7efff9d6950de75cb176fabb277d447f038e0ebfa80840972042cfd0600"
+    },
+    "predecessor_results": {
+      "N50_EVIDENCE_AUDIT_CONTROLS": "f1905dbd453862d876ab22d20dad036c823de723470caece992b92cb5fbb4ce1"
+    },
+    "prompt_sha256": "2f4e8155eeefc5ee9ea4c9a3a4f95c8cc48425463e47a78bb824db7e6016b4e3",
+    "receipt_id": "N60_ADVERSARIAL_REGRESSION-b0c1e4453b334122ab756d457347b55a",
+    "result_path": "plans/27_langgraph_curriculum_factory_remediation/execution_package_v2/results/v9/N60_ADVERSARIAL_REGRESSION.result.v1.json",
+    "result_sha256": "76f1aad362e4465d678d8a7109384827e2176a3a5a7a64d213afbbdef51ecfba",
+    "run_id": "run27-execution-package-v2-graph-v9",
+    "schema_version": 1,
+    "status": "PASSED",
+    "verification": [
+      {
+        "argv": [
+          "python3",
+          "-m",
+          "pytest",
+          "-q",
+          "tests/runtime/test_plan27_adversarial.py",
+          "plans/27_langgraph_curriculum_factory_remediation/tests/test_run27_adversarial.py"
+        ],
+        "exit_code": 0,
+        "log": "attempts/N60_ADVERSARIAL_REGRESSION/N60_ADVERSARIAL_REGRESSION-2026-08-15T103048160300Z-1a513ddf/logs/verify_00.log",
+        "log_sha256": "4de1c8d217bfa757141707a3ea7b8ef4c43a5bb24de974e80b5c717b2e4e10b4"
+      },
+      {
+        "argv": [
+          "python3",
+          "-m",
+          "pytest",
+          "-q",
+          "tests/runtime"
+        ],
+        "exit_code": 0,
+        "log": "attempts/N60_ADVERSARIAL_REGRESSION/N60_ADVERSARIAL_REGRESSION-2026-08-15T103048160300Z-1a513ddf/logs/verify_01.log",
+        "log_sha256": "ebcff70bfe99fe412891fbf65ac3faf4b0bfc8c9bb6a5c7f0a46fc839373456a"
+      },
+      {
+        "argv": [
+          "python3",
+          "-m",
+          "pytest",
+          "-q",
+          "plans/27_langgraph_curriculum_factory_remediation/tests"
+        ],
+        "exit_code": 0,
+        "log": "attempts/N60_ADVERSARIAL_REGRESSION/N60_ADVERSARIAL_REGRESSION-2026-08-15T103048160300Z-1a513ddf/logs/verify_02.log",
+        "log_sha256": "4745935a6d5dd2f706e087fe30bc83e7c75d5cb67cdeab4022915c146d495ef2"
+      },
+      {
+        "argv": [
+          "python3",
+          "plans/27_langgraph_curriculum_factory_remediation/execution_package_v2/controller/scan_node.py",
+          "--graph",
+          "plans/27_langgraph_curriculum_factory_remediation/execution_package_v2/implementation.graph.v9.yaml"
+        ],
+        "exit_code": 0,
+        "log": "attempts/N60_ADVERSARIAL_REGRESSION/N60_ADVERSARIAL_REGRESSION-2026-08-15T103048160300Z-1a513ddf/logs/verify_03.log",
+        "log_sha256": "05a0225b85a3b3f4f1e3691b68c2d4e9eeb037b7eafa86e28e27ec8ee4e08e18"
+      },
+      {
+        "argv": [
+          "python3",
+          "plans/27_langgraph_curriculum_factory_remediation/execution_package_v2/tools/validate_result_v2.py",
+          "--node",
+          "N60_ADVERSARIAL_REGRESSION"
+        ],
+        "exit_code": 0,
+        "log": "attempts/N60_ADVERSARIAL_REGRESSION/N60_ADVERSARIAL_REGRESSION-2026-08-15T103048160300Z-1a513ddf/logs/verify_04.log",
+        "log_sha256": "7ab410815e61d8830e2b7f5338182cc064cf6d6aa18bf609fffedf8afc1848b5"
+      }
+    ]
+  },
+  "receipt_sha256": "8172513e7ce80fef6ac5c01a2e9e258efe9aaa13415f638d5decf12c2ce3ab6d"
+}

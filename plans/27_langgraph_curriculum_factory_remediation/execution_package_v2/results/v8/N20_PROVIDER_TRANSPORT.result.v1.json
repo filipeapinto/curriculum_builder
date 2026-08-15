@@ -2,7 +2,7 @@
   "schema_version": 1,
   "run_id": "run27-execution-package-v2-graph-v8",
   "node_id": "N20_PROVIDER_TRANSPORT",
-  "attempt_id": "N20_PROVIDER_TRANSPORT-execpkgv2-v8-attempt-4",
+  "attempt_id": "N20_PROVIDER_TRANSPORT-execpkgv2-v8-attempt-5",
   "outcome": "PASSED",
   "source_spec_sha256": "e14df5a36ce12d700fe9fc4aa4aea466771bc89f31bc6e9d49f812c147b1bb3c",
   "prompt_sha256": "1dc683636fa45a32004776e889da8cbfe656958575f7d4ea7c26a5782a6c0e26",
@@ -10,46 +10,174 @@
     "N10_HARNESS_PROTOCOL": "dff3e3180e1f27cecc4a156a5de5ef9d8f36aed3311aaab9d0fe1e008ae635da"
   },
   "changed_files": [
-    {"path": "runtime/langgraph_factory/egress.py", "change": "modified", "sha256": "d48869dc37df95bc4f861f7ac1c4ae5043ecb417e4b9df6c0e29929c3f7bba4d"},
-    {"path": "runtime/langgraph_factory/transport.py", "change": "modified", "sha256": "bbaafccd6966615f1d7a4742133fa22b3c0a75e0c89a631fa57941f6a25cb105"},
-    {"path": "runtime/langgraph_factory/prompts/M01_research_unit_sources.prompt.md", "change": "modified", "sha256": "60c4f945ad52b53583ff155b42518c6c5eb72a816136d73b522de66f4362900e"},
-    {"path": "tests/runtime/test_plan26_egress.py", "change": "modified", "sha256": "687c557531b1ba528413bd8d36f2e26a94018b07a681f6f1e12263bfa1655816"},
-    {"path": "tests/runtime/test_plan26_transport.py", "change": "modified", "sha256": "398cdb58fc674d754ee409ff1b6584f02a137a9e323b66be416fcb9f74adf8e1"},
-    {"path": "tests/runtime/test_plan26_adversarial.py", "change": "modified", "sha256": "e781840121cb9f2a899f335ff7752447e8083a29dc5e3d8a4e594fd3d6b71bfb"},
-    {"path": "plans/27_langgraph_curriculum_factory_remediation/execution_package_v2/results/v8/evidence/N20_PROVIDER_TRANSPORT/01_pytest_n20.log", "change": "created", "sha256": "1e447a1f3be78b2eaf73a09b5e083165cf9d85bca936f33aa1f0a991394061f1"},
-    {"path": "plans/27_langgraph_curriculum_factory_remediation/execution_package_v2/results/v8/evidence/N20_PROVIDER_TRANSPORT/02_scan_node_n20.log", "change": "created", "sha256": "2d471cf440eeeead175a5f5eb2abd59afe0c56f62a78b8fd11d834c7a55d2b9a"},
-    {"path": "plans/27_langgraph_curriculum_factory_remediation/execution_package_v2/results/v8/evidence/N20_PROVIDER_TRANSPORT/03_rc9_qa_binding.log", "change": "created", "sha256": "cc27f8499336b1e3458d57201fa95c3cf078e4dbae7ced6fcd124a44ccf7af20"},
-    {"path": "plans/27_langgraph_curriculum_factory_remediation/execution_package_v2/results/v8/evidence/N20_PROVIDER_TRANSPORT/attempts/N20_PROVIDER_TRANSPORT.attempt-1.result.v1.json", "change": "created", "sha256": "60a07096000f5dc8c955c647baf136c10151d1a9f1ce4bdbcc591eb1a5f80168"},
-    {"path": "plans/27_langgraph_curriculum_factory_remediation/execution_package_v2/results/v8/evidence/N20_PROVIDER_TRANSPORT/04_pytest_n20_attempt2.log", "change": "created", "sha256": "cbe6dede1a14bc20f76cc0597d2c208b15402f711523dea3074b784212a3201d"},
-    {"path": "plans/27_langgraph_curriculum_factory_remediation/execution_package_v2/results/v8/evidence/N20_PROVIDER_TRANSPORT/05_scan_node_n20_attempt2.log", "change": "created", "sha256": "2d471cf440eeeead175a5f5eb2abd59afe0c56f62a78b8fd11d834c7a55d2b9a"},
-    {"path": "plans/27_langgraph_curriculum_factory_remediation/execution_package_v2/results/v8/evidence/N20_PROVIDER_TRANSPORT/06_live_http_status_repair.log", "change": "created", "sha256": "e89f2613607150af27a46357b663ed8df384d7097953aac3849d63e73fd86fa8"},
-    {"path": "plans/27_langgraph_curriculum_factory_remediation/execution_package_v2/results/v8/evidence/N20_PROVIDER_TRANSPORT/07_pytest_n20_attempt3.log", "change": "created", "sha256": "d4ccbc6baa5792c80f0290cd513a0b68edf1d2ccf73a75857e90477e2fc2efcd"},
-    {"path": "plans/27_langgraph_curriculum_factory_remediation/execution_package_v2/results/v8/evidence/N20_PROVIDER_TRANSPORT/08_scan_node_n20_attempt3.log", "change": "created", "sha256": "2d471cf440eeeead175a5f5eb2abd59afe0c56f62a78b8fd11d834c7a55d2b9a"},
-    {"path": "plans/27_langgraph_curriculum_factory_remediation/execution_package_v2/results/v8/evidence/N20_PROVIDER_TRANSPORT/09_live_user_agent_repair.log", "change": "created", "sha256": "81139a8cef902b658d69d24bf09284b813e4281f592a1ed001eb384dcd0a8ec3"},
-    {"path": "plans/27_langgraph_curriculum_factory_remediation/execution_package_v2/results/v8/evidence/N20_PROVIDER_TRANSPORT/attempts/N20_PROVIDER_TRANSPORT.attempt-2.result.v1.json", "change": "created", "sha256": "a7fec4602b12fa9f360c32ccbb0d1324b375844a988bbbd91d2df74b25bcee7b"},
-    {"path": "plans/27_langgraph_curriculum_factory_remediation/execution_package_v2/results/v8/evidence/N20_PROVIDER_TRANSPORT/10_pytest_n20_attempt4.log", "change": "created", "sha256": "77297f60e1f162c1164f8e2839137716c0439eaa7c669dd545dcaf8c168ecc2a"},
-    {"path": "plans/27_langgraph_curriculum_factory_remediation/execution_package_v2/results/v8/evidence/N20_PROVIDER_TRANSPORT/11_scan_node_n20_attempt4.log", "change": "created", "sha256": "eced05067ef0512560d68ae2bae10ab8a7064e77c0cc98699001dd42efde05f0"},
-    {"path": "plans/27_langgraph_curriculum_factory_remediation/execution_package_v2/results/v8/evidence/N20_PROVIDER_TRANSPORT/12_live_staged_input_projection_repair.log", "change": "created", "sha256": "967892ab351ee6427981f41f334eb4e4f7f12b825d26de1036128dac517fa5ba"},
-    {"path": "plans/27_langgraph_curriculum_factory_remediation/execution_package_v2/results/v8/evidence/N20_PROVIDER_TRANSPORT/attempts/N20_PROVIDER_TRANSPORT.attempt-3.result.v1.json", "change": "created", "sha256": "0f79654f0449812c3d3f861f24caa01759c95c5c3d289ec410709c985db15dd8"}
+    {
+      "path": "runtime/langgraph_factory/egress.py",
+      "change": "modified",
+      "sha256": "d48869dc37df95bc4f861f7ac1c4ae5043ecb417e4b9df6c0e29929c3f7bba4d"
+    },
+    {
+      "path": "runtime/langgraph_factory/transport.py",
+      "change": "modified",
+      "sha256": "35f471ebd9ec6702ab7f0efb0b37a21b1bc3d4f84def4978c358f7b2573d32c1"
+    },
+    {
+      "path": "runtime/langgraph_factory/prompts/M01_research_unit_sources.prompt.md",
+      "change": "modified",
+      "sha256": "60c4f945ad52b53583ff155b42518c6c5eb72a816136d73b522de66f4362900e"
+    },
+    {
+      "path": "tests/runtime/test_plan26_egress.py",
+      "change": "modified",
+      "sha256": "687c557531b1ba528413bd8d36f2e26a94018b07a681f6f1e12263bfa1655816"
+    },
+    {
+      "path": "tests/runtime/test_plan26_transport.py",
+      "change": "modified",
+      "sha256": "398cdb58fc674d754ee409ff1b6584f02a137a9e323b66be416fcb9f74adf8e1"
+    },
+    {
+      "path": "tests/runtime/test_plan26_adversarial.py",
+      "change": "modified",
+      "sha256": "e781840121cb9f2a899f335ff7752447e8083a29dc5e3d8a4e594fd3d6b71bfb"
+    },
+    {
+      "path": "plans/27_langgraph_curriculum_factory_remediation/execution_package_v2/results/v8/evidence/N20_PROVIDER_TRANSPORT/01_pytest_n20.log",
+      "change": "created",
+      "sha256": "1e447a1f3be78b2eaf73a09b5e083165cf9d85bca936f33aa1f0a991394061f1"
+    },
+    {
+      "path": "plans/27_langgraph_curriculum_factory_remediation/execution_package_v2/results/v8/evidence/N20_PROVIDER_TRANSPORT/02_scan_node_n20.log",
+      "change": "created",
+      "sha256": "2d471cf440eeeead175a5f5eb2abd59afe0c56f62a78b8fd11d834c7a55d2b9a"
+    },
+    {
+      "path": "plans/27_langgraph_curriculum_factory_remediation/execution_package_v2/results/v8/evidence/N20_PROVIDER_TRANSPORT/03_rc9_qa_binding.log",
+      "change": "created",
+      "sha256": "cc27f8499336b1e3458d57201fa95c3cf078e4dbae7ced6fcd124a44ccf7af20"
+    },
+    {
+      "path": "plans/27_langgraph_curriculum_factory_remediation/execution_package_v2/results/v8/evidence/N20_PROVIDER_TRANSPORT/attempts/N20_PROVIDER_TRANSPORT.attempt-1.result.v1.json",
+      "change": "created",
+      "sha256": "60a07096000f5dc8c955c647baf136c10151d1a9f1ce4bdbcc591eb1a5f80168"
+    },
+    {
+      "path": "plans/27_langgraph_curriculum_factory_remediation/execution_package_v2/results/v8/evidence/N20_PROVIDER_TRANSPORT/04_pytest_n20_attempt2.log",
+      "change": "created",
+      "sha256": "cbe6dede1a14bc20f76cc0597d2c208b15402f711523dea3074b784212a3201d"
+    },
+    {
+      "path": "plans/27_langgraph_curriculum_factory_remediation/execution_package_v2/results/v8/evidence/N20_PROVIDER_TRANSPORT/05_scan_node_n20_attempt2.log",
+      "change": "created",
+      "sha256": "2d471cf440eeeead175a5f5eb2abd59afe0c56f62a78b8fd11d834c7a55d2b9a"
+    },
+    {
+      "path": "plans/27_langgraph_curriculum_factory_remediation/execution_package_v2/results/v8/evidence/N20_PROVIDER_TRANSPORT/06_live_http_status_repair.log",
+      "change": "created",
+      "sha256": "e89f2613607150af27a46357b663ed8df384d7097953aac3849d63e73fd86fa8"
+    },
+    {
+      "path": "plans/27_langgraph_curriculum_factory_remediation/execution_package_v2/results/v8/evidence/N20_PROVIDER_TRANSPORT/07_pytest_n20_attempt3.log",
+      "change": "created",
+      "sha256": "d4ccbc6baa5792c80f0290cd513a0b68edf1d2ccf73a75857e90477e2fc2efcd"
+    },
+    {
+      "path": "plans/27_langgraph_curriculum_factory_remediation/execution_package_v2/results/v8/evidence/N20_PROVIDER_TRANSPORT/08_scan_node_n20_attempt3.log",
+      "change": "created",
+      "sha256": "2d471cf440eeeead175a5f5eb2abd59afe0c56f62a78b8fd11d834c7a55d2b9a"
+    },
+    {
+      "path": "plans/27_langgraph_curriculum_factory_remediation/execution_package_v2/results/v8/evidence/N20_PROVIDER_TRANSPORT/09_live_user_agent_repair.log",
+      "change": "created",
+      "sha256": "81139a8cef902b658d69d24bf09284b813e4281f592a1ed001eb384dcd0a8ec3"
+    },
+    {
+      "path": "plans/27_langgraph_curriculum_factory_remediation/execution_package_v2/results/v8/evidence/N20_PROVIDER_TRANSPORT/attempts/N20_PROVIDER_TRANSPORT.attempt-2.result.v1.json",
+      "change": "created",
+      "sha256": "a7fec4602b12fa9f360c32ccbb0d1324b375844a988bbbd91d2df74b25bcee7b"
+    },
+    {
+      "path": "plans/27_langgraph_curriculum_factory_remediation/execution_package_v2/results/v8/evidence/N20_PROVIDER_TRANSPORT/10_pytest_n20_attempt4.log",
+      "change": "created",
+      "sha256": "77297f60e1f162c1164f8e2839137716c0439eaa7c669dd545dcaf8c168ecc2a"
+    },
+    {
+      "path": "plans/27_langgraph_curriculum_factory_remediation/execution_package_v2/results/v8/evidence/N20_PROVIDER_TRANSPORT/11_scan_node_n20_attempt4.log",
+      "change": "created",
+      "sha256": "eced05067ef0512560d68ae2bae10ab8a7064e77c0cc98699001dd42efde05f0"
+    },
+    {
+      "path": "plans/27_langgraph_curriculum_factory_remediation/execution_package_v2/results/v8/evidence/N20_PROVIDER_TRANSPORT/12_live_staged_input_projection_repair.log",
+      "change": "created",
+      "sha256": "967892ab351ee6427981f41f334eb4e4f7f12b825d26de1036128dac517fa5ba"
+    },
+    {
+      "path": "plans/27_langgraph_curriculum_factory_remediation/execution_package_v2/results/v8/evidence/N20_PROVIDER_TRANSPORT/attempts/N20_PROVIDER_TRANSPORT.attempt-3.result.v1.json",
+      "change": "created",
+      "sha256": "0f79654f0449812c3d3f861f24caa01759c95c5c3d289ec410709c985db15dd8"
+    },
+    {
+      "path": "runtime/langgraph_factory/model_nodes.py",
+      "change": "modified",
+      "sha256": "0a8479b3b2650980d88b596277a3ed0ee2eca85ac4e64e57f4bbdc9eb51055ce"
+    },
+    {
+      "path": "tests/runtime/test_plan26_model_nodes.py",
+      "change": "modified",
+      "sha256": "8a05e9273adc38103b608f6a565cd9e9b3ab815219edfa2b340f849193df8e28"
+    },
+    {
+      "path": "plans/27_langgraph_curriculum_factory_remediation/execution_package_v2/results/v8/evidence/N20_PROVIDER_TRANSPORT/attempts/N20_PROVIDER_TRANSPORT.attempt-4.result.v1.json",
+      "change": "created",
+      "sha256": "1b86df3a36bd41c5f1a0a82cdef4ae30d9b00bd08e53f20034941a08b8713260"
+    },
+    {
+      "path": "plans/27_langgraph_curriculum_factory_remediation/execution_package_v2/results/v8/evidence/N20_PROVIDER_TRANSPORT/13_pytest_n20_attempt5.log",
+      "change": "created",
+      "sha256": "6c095d35c1a1066dab98ceff6976449c5f1e1bd548a4737dac2d4523c79d5e65"
+    },
+    {
+      "path": "plans/27_langgraph_curriculum_factory_remediation/execution_package_v2/results/v8/evidence/N20_PROVIDER_TRANSPORT/14_scan_node_n20_attempt5.log",
+      "change": "created",
+      "sha256": "2d471cf440eeeead175a5f5eb2abd59afe0c56f62a78b8fd11d834c7a55d2b9a"
+    },
+    {
+      "path": "plans/27_langgraph_curriculum_factory_remediation/execution_package_v2/results/v8/evidence/N20_PROVIDER_TRANSPORT/15_live_empty_projection_repair.log",
+      "change": "created",
+      "sha256": "95dafd9a82f3f96ae0c36efe60570fddcd15140cc0e4e114a2785e6adbd98bac"
+    }
   ],
   "commands": [
     {
-      "argv": ["python3", "-m", "pytest", "-q", "tests/runtime/test_plan26_transport.py", "tests/runtime/test_plan26_model_nodes.py", "tests/runtime/test_plan26_egress.py", "tests/runtime/test_capabilities.py", "tests/runtime/test_curriculum_factory_graph.py", "tests/runtime/test_plan26_adversarial.py", "tests/runtime/test_plan26_api_contract.py", "tests/runtime/test_plan26_lock_drift.py"],
+      "argv": [
+        "python3",
+        "-m",
+        "pytest",
+        "-q",
+        "tests/runtime/test_plan26_transport.py",
+        "tests/runtime/test_plan26_model_nodes.py",
+        "tests/runtime/test_plan26_egress.py",
+        "tests/runtime/test_capabilities.py",
+        "tests/runtime/test_curriculum_factory_graph.py",
+        "tests/runtime/test_plan26_adversarial.py",
+        "tests/runtime/test_plan26_api_contract.py",
+        "tests/runtime/test_plan26_lock_drift.py"
+      ],
       "exit_code": 0,
-      "log": "plans/27_langgraph_curriculum_factory_remediation/execution_package_v2/results/v8/evidence/N20_PROVIDER_TRANSPORT/10_pytest_n20_attempt4.log",
-      "log_sha256": "77297f60e1f162c1164f8e2839137716c0439eaa7c669dd545dcaf8c168ecc2a"
+      "log": "plans/27_langgraph_curriculum_factory_remediation/execution_package_v2/results/v8/evidence/N20_PROVIDER_TRANSPORT/13_pytest_n20_attempt5.log",
+      "log_sha256": "6c095d35c1a1066dab98ceff6976449c5f1e1bd548a4737dac2d4523c79d5e65"
     },
     {
-      "argv": ["python3", "plans/27_langgraph_curriculum_factory_remediation/execution_package_v2/controller/scan_node.py", "--node", "N20_PROVIDER_TRANSPORT", "--graph", "plans/27_langgraph_curriculum_factory_remediation/execution_package_v2/implementation.graph.v8.yaml"],
+      "argv": [
+        "python3",
+        "plans/27_langgraph_curriculum_factory_remediation/execution_package_v2/controller/scan_node.py",
+        "--node",
+        "N20_PROVIDER_TRANSPORT",
+        "--graph",
+        "plans/27_langgraph_curriculum_factory_remediation/execution_package_v2/implementation.graph.v8.yaml"
+      ],
       "exit_code": 0,
-      "log": "plans/27_langgraph_curriculum_factory_remediation/execution_package_v2/results/v8/evidence/N20_PROVIDER_TRANSPORT/11_scan_node_n20_attempt4.log",
-      "log_sha256": "eced05067ef0512560d68ae2bae10ab8a7064e77c0cc98699001dd42efde05f0"
-    },
-    {
-      "argv": ["python3", ".claude/skills/qa-gate-codex-run/scripts/qa_gate.py", "verify", "--qa-dir", "plans/27_langgraph_curriculum_factory_remediation/execution_package_v2/release_candidate/rc9/QA"],
-      "exit_code": 0,
-      "log": "plans/27_langgraph_curriculum_factory_remediation/execution_package_v2/results/v8/evidence/N20_PROVIDER_TRANSPORT/03_rc9_qa_binding.log",
-      "log_sha256": "cc27f8499336b1e3458d57201fa95c3cf078e4dbae7ced6fcd124a44ccf7af20"
+      "log": "plans/27_langgraph_curriculum_factory_remediation/execution_package_v2/results/v8/evidence/N20_PROVIDER_TRANSPORT/14_scan_node_n20_attempt5.log",
+      "log_sha256": "2d471cf440eeeead175a5f5eb2abd59afe0c56f62a78b8fd11d834c7a55d2b9a"
     }
   ],
   "evidence": [
@@ -67,15 +195,66 @@
     "plans/27_langgraph_curriculum_factory_remediation/execution_package_v2/results/v8/evidence/N20_PROVIDER_TRANSPORT/10_pytest_n20_attempt4.log",
     "plans/27_langgraph_curriculum_factory_remediation/execution_package_v2/results/v8/evidence/N20_PROVIDER_TRANSPORT/11_scan_node_n20_attempt4.log",
     "plans/27_langgraph_curriculum_factory_remediation/execution_package_v2/results/v8/evidence/N20_PROVIDER_TRANSPORT/12_live_staged_input_projection_repair.log",
-    "plans/27_langgraph_curriculum_factory_remediation/execution_package_v2/results/v8/evidence/N20_PROVIDER_TRANSPORT/attempts/N20_PROVIDER_TRANSPORT.attempt-3.result.v1.json"
+    "plans/27_langgraph_curriculum_factory_remediation/execution_package_v2/results/v8/evidence/N20_PROVIDER_TRANSPORT/attempts/N20_PROVIDER_TRANSPORT.attempt-3.result.v1.json",
+    "plans/27_langgraph_curriculum_factory_remediation/execution_package_v2/results/v8/evidence/N20_PROVIDER_TRANSPORT/attempts/N20_PROVIDER_TRANSPORT.attempt-4.result.v1.json",
+    "plans/27_langgraph_curriculum_factory_remediation/execution_package_v2/results/v8/evidence/N20_PROVIDER_TRANSPORT/13_pytest_n20_attempt5.log",
+    "plans/27_langgraph_curriculum_factory_remediation/execution_package_v2/results/v8/evidence/N20_PROVIDER_TRANSPORT/14_scan_node_n20_attempt5.log",
+    "plans/27_langgraph_curriculum_factory_remediation/execution_package_v2/results/v8/evidence/N20_PROVIDER_TRANSPORT/15_live_empty_projection_repair.log"
   ],
   "findings": [
-    {"id": "N20V8-F01", "severity": "critical", "summary": "SourceRetriever now validates every redirect through the production urllib hook before request construction/follow, denies excess hops and downgrade redirects, and requires an explicit allowed Content-Type.", "disposition": "resolved"},
-    {"id": "N20V8-F02", "severity": "major", "summary": "The real provider/transport boundary passed 495 tests, 140 subtests, and an independently witnessed three-round QA correction chain.", "disposition": "resolved"},
-    {"id": "N20V8-F03", "severity": "major", "summary": "The scoped provider/import and credential scanner inspected 35 files and found zero violations; subscription CLI remains the only model path.", "disposition": "resolved"},
-    {"id": "N20V8-F04", "severity": "major", "summary": "Live N70 showed urllib converting a normal source-side HTTP 403 into a tool exception; the production opener now preserves it as a bounded response for SourceRetriever's receipted http_status_not_ok denial.", "disposition": "resolved"},
-    {"id": "N20V8-F05", "severity": "major", "summary": "Live N70 attempt 2 proved urllib's default token caused false 403 availability failures on an otherwise public allowlisted source; the opener now sends the fixed transparent curriculum-builder/1.0 identity while retaining every egress control.", "disposition": "resolved"},
-    {"id": "N20V8-F06", "severity": "critical", "summary": "Live N70 attempt 3 proved M01 INTERPRET could not inspect retrieved bytes through the tool-closed subscription CLI. The authenticated stdin envelope now carries bounded, workspace-reverified visible text plus source and text digests; HTML active content is excluded, PDF text is page-marked, and model tools remain closed.", "disposition": "resolved"}
+    {
+      "id": "N20V8-F01",
+      "severity": "critical",
+      "summary": "SourceRetriever now validates every redirect through the production urllib hook before request construction/follow, denies excess hops and downgrade redirects, and requires an explicit allowed Content-Type.",
+      "disposition": "resolved"
+    },
+    {
+      "id": "N20V8-F02",
+      "severity": "major",
+      "summary": "The real provider/transport boundary passed 495 tests, 140 subtests, and an independently witnessed three-round QA correction chain.",
+      "disposition": "resolved"
+    },
+    {
+      "id": "N20V8-F03",
+      "severity": "major",
+      "summary": "The scoped provider/import and credential scanner inspected 35 files and found zero violations; subscription CLI remains the only model path.",
+      "disposition": "resolved"
+    },
+    {
+      "id": "N20V8-F04",
+      "severity": "major",
+      "summary": "Live N70 showed urllib converting a normal source-side HTTP 403 into a tool exception; the production opener now preserves it as a bounded response for SourceRetriever's receipted http_status_not_ok denial.",
+      "disposition": "resolved"
+    },
+    {
+      "id": "N20V8-F05",
+      "severity": "major",
+      "summary": "Live N70 attempt 2 proved urllib's default token caused false 403 availability failures on an otherwise public allowlisted source; the opener now sends the fixed transparent curriculum-builder/1.0 identity while retaining every egress control.",
+      "disposition": "resolved"
+    },
+    {
+      "id": "N20V8-F06",
+      "severity": "critical",
+      "summary": "Live N70 attempt 3 proved M01 INTERPRET could not inspect retrieved bytes through the tool-closed subscription CLI. The authenticated stdin envelope now carries bounded, workspace-reverified visible text plus source and text digests; HTML active content is excluded, PDF text is page-marked, and model tools remain closed.",
+      "disposition": "resolved"
+    },
+    {
+      "id": "N20V8-F07",
+      "severity": "critical",
+      "summary": "Live N70 attempt 4 proved a receipted HTTP-200 body can still project to no text inside the tool-closed M01 input. The exact transport projector is now shared with deterministic retrieval selection, so model-visible source usability is tested before dispatch.",
+      "disposition": "resolved"
+    },
+    {
+      "id": "N20V8-F08",
+      "severity": "major",
+      "summary": "M01 INTERPRET now recognizes the shared schema's honest no_verified_source result as the typed bounded source failure, with request-correlation enforcement, rather than misrouting it into content repair.",
+      "disposition": "resolved"
+    }
   ],
-  "invalidated_descendants": []
+  "invalidated_descendants": [
+    "N30_PREFLIGHT_EGRESS",
+    "N40_INTEGRATION_OWNERSHIP",
+    "N50_EVIDENCE_AUDIT_CONTROLS",
+    "N60_ADVERSARIAL_REGRESSION"
+  ]
 }

@@ -1,0 +1,14 @@
+{
+  "state": "QA_FAILED",
+  "reason": "INTEGRITY_BREACH",
+  "chain_valid": false,
+  "rounds_claimed": 1,
+  "rounds_witnessed_by_codex": 1,
+  "session_id": "01a0041c-aa90-76e0-83c6-9a8274497339",
+  "rollout_file": "/Users/filipepinto/.codex/sessions/2026/08/15/rollout-2026-08-15T02-29-42-01a0041c-aa90-76e0-83c6-9a8274497339.jsonl",
+  "problems": [
+    "round 1: the recorded verdict does not match turn 01a0041c-b151-7503-aa91-3d532901c758 in Codex's own session file"
+  ],
+  "artifact": "/Users/filipepinto/Projects/curriculum_builder/plans/27_langgraph_curriculum_factory_remediation/execution_package_v2/release_candidate/rc18/rc18_review_bundle.v1.md",
+  "qa_dir": "/Users/filipepinto/Projects/curriculum_builder/plans/27_langgraph_curriculum_factory_remediation/execution_package_v2/release_candidate/rc18/QA"
+}

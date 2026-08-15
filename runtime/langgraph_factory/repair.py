@@ -34,7 +34,6 @@ from .nodes import (
     SystemFailure,
     candidate_payload,
     canonical_digest,
-    latest_model_candidate,
     require,
     staged_dispatch,
     stream_id,
@@ -253,7 +252,27 @@ def normalize_findings(
             )
         channel = CHANNEL_BY_OWNER[owner]
         parent_head = artifact_heads.get(stream_id(unit_id, channel))
-        parent_hash = parent_head.get("hash") if isinstance(parent_head, Mapping) else None
+        head_hash = parent_head.get("hash") if isinstance(parent_head, Mapping) else None
+        declared_parent = raw.get("parent_hash")
+        if declared_parent is not None:
+            require(
+                isinstance(declared_parent, str)
+                and len(declared_parent) == 64
+                and all(character in "0123456789abcdef" for character in declared_parent),
+                "integrity",
+                "a finding declares an invalid immutable parent hash",
+                owner=owner,
+                parent_hash=declared_parent,
+            )
+        require(
+            head_hash is None or declared_parent in (None, head_hash),
+            "integrity",
+            "a finding names a parent other than the current admitted head",
+            owner=owner,
+            declared=declared_parent,
+            current=head_hash,
+        )
+        parent_hash = head_hash or declared_parent
         message = raw.get("message", "")
         finding_id = canonical_digest(
             {"unit_id": unit_id, "owner": owner, "pointer": pointer, "message": str(message)}
@@ -335,7 +354,10 @@ def json_pointer_diff(parent: Any, child: Any, path: str = "") -> set[str]:
 def within_boundary(pointer: str, allowed: Sequence[str]) -> bool:
     """Whether ``pointer`` is exactly, or nested under, one declared boundary pointer."""
 
-    return any(pointer == allow or pointer.startswith(f"{allow}/") for allow in allowed)
+    return any(
+        allow == "/" or pointer == allow or pointer.startswith(f"{allow}/")
+        for allow in allowed
+    )
 
 
 def _guard(node_id: str, value: str, **detail: Any) -> dict[str, Any]:
@@ -700,22 +722,18 @@ def D19_ROUTE_UNIT_REPAIR(state: Mapping[str, Any], runtime_context: Any) -> dic
 
     route = route_owner(request["owner"], state=state, findings=findings)
     stream = request["stream"]
-    heads = state.get("artifact_heads") or {}
-    parent_head = heads.get(stream)
+    parent_body, repair_parent_hash, _version, _head_tracked, _body_keyed, _pre_admission = (
+        _repair_parent(state, request)
+    )
 
     if route == "model":
-        artifact_versions = state.get("artifact_versions") or []
-        parent_body = None
-        if isinstance(parent_head, Mapping):
-            for record in artifact_versions:
-                if (
-                    isinstance(record, Mapping)
-                    and record.get("stream") == stream
-                    and record.get("hash") == parent_head.get("hash")
-                ):
-                    parent_body = record.get("body")
-                    break
-        require(isinstance(parent_body, Mapping), "invalid_input", "no admitted parent body to repair", stream=stream)
+        require(
+            isinstance(parent_body, Mapping),
+            "invalid_input",
+            "no immutable parent body to repair",
+            stream=stream,
+            requested_parent=request.get("parent_hash"),
+        )
 
         packet = worker_packet(
             run_id=state.get("run_id"),
@@ -737,7 +755,7 @@ def D19_ROUTE_UNIT_REPAIR(state: Mapping[str, Any], runtime_context: Any) -> dic
                     "artifact_body": json.dumps(parent_body, sort_keys=True),
                     "channel": request["channel"],
                     "unit_id": unit_id,
-                    "parent_sha256": parent_head.get("hash"),
+                    "parent_sha256": repair_parent_hash,
                 },
                 "boundary": request["boundary"],
                 "allowed_facts": request.get("allowed_facts") or {},
@@ -757,7 +775,6 @@ def D19_ROUTE_UNIT_REPAIR(state: Mapping[str, Any], runtime_context: Any) -> dic
     # since D20 is the one and only admission authority and no intervening
     # dispatch node exists on the deterministic side (spec section 12: a
     # deterministic repair producer "receives no prompt").
-    parent_body, current_hash, _current_version, _head_tracked, _body_keyed = _current_parent(state, stream)
     new_body = _deterministic_repair_candidate(request, parent_body)
     candidate = {
         "key": canonical_digest({"request_key": request["key"], "kind": "deterministic_candidate"}),
@@ -768,7 +785,7 @@ def D19_ROUTE_UNIT_REPAIR(state: Mapping[str, Any], runtime_context: Any) -> dic
         "unit_id": unit_id,
         "request_key": request["key"],
         "owner": request["owner"],
-        "parent_sha256": current_hash,
+        "parent_sha256": repair_parent_hash,
         "addressed_finding_ids": request["finding_ids"],
         "body": new_body,
     }
@@ -879,6 +896,76 @@ def _current_parent(state: Mapping[str, Any], stream: str) -> tuple[Any, str | N
     )
 
 
+def _repair_parent(
+    state: Mapping[str, Any], request: Mapping[str, Any]
+) -> tuple[Any, str | None, int, bool, bool, bool]:
+    """Resolve the exact immutable parent named by a repair request.
+
+    A normal repair targets the current admitted head. A first-version product
+    defect has no head yet, so D08/D09/D12 preserve the deterministically minted
+    candidate record and the request names that exact hash. The repaired child
+    may then become the genesis admitted head while retaining its separate
+    `repair_parent_hash` lineage; the invalid parent never becomes a head.
+    """
+
+    stream = str(request["stream"])
+    requested_hash = request.get("parent_hash")
+    heads = state.get("artifact_heads") or {}
+    head = heads.get(stream)
+    versions = state.get("artifact_versions") or []
+
+    if isinstance(head, Mapping):
+        require(
+            requested_hash == head.get("hash"),
+            "integrity",
+            "repair request does not target the current admitted head",
+            stream=stream,
+            requested=requested_hash,
+            current=head.get("hash"),
+        )
+        for record in versions:
+            if (
+                isinstance(record, Mapping)
+                and record.get("stream") == stream
+                and record.get("hash") == requested_hash
+            ):
+                return (
+                    _record_content(record), requested_hash, int(head.get("version", 0)),
+                    True, "body" in record, False,
+                )
+        raise SystemFailure(
+            "integrity", "current repair head has no immutable version record",
+            {"stream": stream, "hash": requested_hash},
+        )
+
+    if isinstance(requested_hash, str):
+        matches = [
+            record for record in versions
+            if isinstance(record, Mapping)
+            and record.get("stream") == stream
+            and record.get("hash") == requested_hash
+        ]
+        require(
+            len(matches) == 1,
+            "integrity",
+            "pre-admission repair parent is missing or ambiguous",
+            stream=stream,
+            requested=requested_hash,
+            matches=len(matches),
+        )
+        record = matches[0]
+        return _record_content(record), requested_hash, 0, True, "body" in record, True
+
+    body, current_hash, version, head_tracked, body_keyed = _current_parent(state, stream)
+    require(
+        current_hash is not None,
+        "invalid_input",
+        "repair request names neither an admitted nor a pre-admission parent",
+        stream=stream,
+    )
+    return body, current_hash, version, head_tracked, body_keyed, False
+
+
 def D20_ADMIT_UNIT_REPAIR(state: Mapping[str, Any], runtime_context: Any) -> dict[str, Any]:
     """Admit a boundary-checked child atomically, or refuse it as a system fault.
 
@@ -902,13 +989,27 @@ def D20_ADMIT_UNIT_REPAIR(state: Mapping[str, Any], runtime_context: Any) -> dic
     request = requests[-1]
     stream = request["stream"]
     boundary = request["boundary"]["json_pointers"]
-    heads = state.get("artifact_heads") or {}
-    parent_head = heads.get(stream)
     artifact_versions = state.get("artifact_versions") or []
 
-    parent_body, current_hash, current_version, head_tracked, body_keyed = _current_parent(state, stream)
+    (
+        parent_body,
+        repair_parent_hash,
+        current_version,
+        head_tracked,
+        body_keyed,
+        pre_admission_parent,
+    ) = _repair_parent(state, request)
 
-    model_candidate = latest_model_candidate(artifact_versions, channel=request["channel"], unit_id=unit_id)
+    model_candidates = [
+        record for record in artifact_versions
+        if isinstance(record, Mapping)
+        and record.get("record_kind") == "model_candidate"
+        and record.get("job_id") == "M06_REPAIR_NAMED_UNIT_ARTIFACT"
+        and record.get("channel") == request["channel"]
+        and record.get("unit_id") == unit_id
+        and record.get("parent_sha256") == repair_parent_hash
+    ]
+    model_candidate = model_candidates[-1] if model_candidates else None
     deterministic_candidate = _latest_deterministic_candidate(
         artifact_versions, stream=stream, request_key=request["key"]
     )
@@ -935,10 +1036,10 @@ def D20_ADMIT_UNIT_REPAIR(state: Mapping[str, Any], runtime_context: Any) -> dic
         declared_parent_sha = deterministic_candidate.get("parent_sha256")
 
     require(
-        declared_parent_sha == current_hash,
+        declared_parent_sha == repair_parent_hash,
         "integrity",
-        "the repair candidate's declared parent is not the current head (stale repair)",
-        stream=stream, declared=declared_parent_sha, current=current_hash,
+        "the repair candidate's declared parent is not the requested immutable parent",
+        stream=stream, declared=declared_parent_sha, current=repair_parent_hash,
     )
 
     diff = json_pointer_diff(parent_body, new_body)
@@ -954,7 +1055,7 @@ def D20_ADMIT_UNIT_REPAIR(state: Mapping[str, Any], runtime_context: Any) -> dic
     child_record: dict[str, Any] = {
         "stream": stream,
         "version": current_version + 1,
-        "parent_hash": current_hash,
+        "parent_hash": None if pre_admission_parent else repair_parent_hash,
         "hash": canonical_digest(new_body),
         "minted_by": "targeted_repair_admission",
         "unit_id": unit_id,
@@ -963,6 +1064,34 @@ def D20_ADMIT_UNIT_REPAIR(state: Mapping[str, Any], runtime_context: Any) -> dic
         "owner": request["owner"],
         "attempt": request["attempt_ordinal"],
     }
+    if pre_admission_parent:
+        child_record["repair_parent_hash"] = repair_parent_hash
+    # Validation lineage is deterministic admission metadata, not
+    # model-editable body data.  A repaired child inherits the fields its own
+    # channel validator needs from the exact immutable parent.
+    validation_metadata = {
+        "domain": ("schema_path", "evidence_references"),
+        "content": ("schema_path", "domain_hash"),
+        "visuals": ("parents",),
+    }
+    inherited_fields = validation_metadata.get(request["channel"], ())
+    if inherited_fields:
+        parent_records = [
+            record for record in artifact_versions
+            if isinstance(record, Mapping)
+            and record.get("stream") == stream
+            and record.get("hash") == repair_parent_hash
+        ]
+        require(
+            len(parent_records) == 1,
+            "integrity",
+            "repair validation metadata has no unique immutable parent record",
+            stream=stream,
+            parent_hash=repair_parent_hash,
+        )
+        for field in inherited_fields:
+            if field in parent_records[0]:
+                child_record[field] = parent_records[0][field]
     # Admit the child in the same shape convention its own channel's real
     # producer already uses: `body`-keyed for domain/content (`nodes/domain
     # .py`, `nodes/content.py`), spread at top level for a channel like layout

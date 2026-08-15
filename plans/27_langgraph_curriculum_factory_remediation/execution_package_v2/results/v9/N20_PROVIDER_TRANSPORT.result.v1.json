@@ -1,0 +1,76 @@
+{
+  "schema_version": 1,
+  "run_id": "run27-execution-package-v2-graph-v9",
+  "node_id": "N20_PROVIDER_TRANSPORT",
+  "attempt_id": "N20_PROVIDER_TRANSPORT-2026-08-15T102004834223Z-4230e27d",
+  "outcome": "PASSED",
+  "source_spec_sha256": "e14df5a36ce12d700fe9fc4aa4aea466771bc89f31bc6e9d49f812c147b1bb3c",
+  "prompt_sha256": "3055b8b5d0ee568d5dc21ca42ed5cd6add5a41450407d6f05ae27d800dd2ef3a",
+  "predecessor_receipts": {
+    "N10_HARNESS_PROTOCOL": "b093502759fe6c79665158343410e0283c05ab19dd4e83879c628f140355d25e"
+  },
+  "changed_files": [
+    {
+      "path": "plans/27_langgraph_curriculum_factory_remediation/execution_package_v2/results/v9/evidence/N20_PROVIDER_TRANSPORT/04_attempt2_pytest_n20.log",
+      "change": "created",
+      "sha256": "fd85afb5fe0eaf6e64b9b627563ae6d0fc3dc840c8a568d45635476fb6cc7cec"
+    },
+    {
+      "path": "plans/27_langgraph_curriculum_factory_remediation/execution_package_v2/results/v9/evidence/N20_PROVIDER_TRANSPORT/05_attempt2_scan_node_n20.log",
+      "change": "created",
+      "sha256": "666f89738e6b8d68bd33ff34b054fdcbe19c13098821ee5d50e9a6ac320afc28"
+    },
+    {
+      "path": "plans/27_langgraph_curriculum_factory_remediation/execution_package_v2/results/v9/evidence/N20_PROVIDER_TRANSPORT/06_attempt2_environment_disposition.log",
+      "change": "created",
+      "sha256": "3ccdd0b39b0a95c22c1c7f578be39a11041ccb9f74f2976fb0a35394b889620d"
+    }
+  ],
+  "commands": [
+    {
+      "argv": ["python3", "-m", "pytest", "-q", "tests/runtime/test_plan26_transport.py", "tests/runtime/test_plan26_model_nodes.py", "tests/runtime/test_plan26_egress.py", "tests/runtime/test_capabilities.py", "tests/runtime/test_curriculum_factory_graph.py", "tests/runtime/test_plan26_adversarial.py", "tests/runtime/test_plan26_api_contract.py", "tests/runtime/test_plan26_lock_drift.py"],
+      "exit_code": 0,
+      "log": "plans/27_langgraph_curriculum_factory_remediation/execution_package_v2/results/v9/evidence/N20_PROVIDER_TRANSPORT/04_attempt2_pytest_n20.log",
+      "log_sha256": "fd85afb5fe0eaf6e64b9b627563ae6d0fc3dc840c8a568d45635476fb6cc7cec"
+    },
+    {
+      "argv": ["python3", "plans/27_langgraph_curriculum_factory_remediation/execution_package_v2/controller/scan_node.py", "--node", "N20_PROVIDER_TRANSPORT", "--graph", "plans/27_langgraph_curriculum_factory_remediation/execution_package_v2/implementation.graph.v9.yaml"],
+      "exit_code": 0,
+      "log": "plans/27_langgraph_curriculum_factory_remediation/execution_package_v2/results/v9/evidence/N20_PROVIDER_TRANSPORT/05_attempt2_scan_node_n20.log",
+      "log_sha256": "666f89738e6b8d68bd33ff34b054fdcbe19c13098821ee5d50e9a6ac320afc28"
+    }
+  ],
+  "evidence": [
+    "plans/27_langgraph_curriculum_factory_remediation/execution_package_v2/results/v9/evidence/N20_PROVIDER_TRANSPORT/03_eight_job_conformance.log",
+    "plans/27_langgraph_curriculum_factory_remediation/execution_package_v2/results/v9/evidence/N20_PROVIDER_TRANSPORT/04_attempt2_pytest_n20.log",
+    "plans/27_langgraph_curriculum_factory_remediation/execution_package_v2/results/v9/evidence/N20_PROVIDER_TRANSPORT/05_attempt2_scan_node_n20.log",
+    "plans/27_langgraph_curriculum_factory_remediation/execution_package_v2/results/v9/evidence/N20_PROVIDER_TRANSPORT/06_attempt2_environment_disposition.log"
+  ],
+  "findings": [
+    {
+      "id": "N20V9-F01",
+      "severity": "critical",
+      "summary": "The eight production jobs conform to their frozen authoring-versus-independent-review split, subscription CLI drivers, typed input boundaries, canonical output schemas, observed identity rules, and fail-closed dispositions.",
+      "disposition": "resolved"
+    },
+    {
+      "id": "N20V9-F02",
+      "severity": "critical",
+      "summary": "The isolated D08 verifier transport, staged model boundary, provider transport, egress authorization, route policy, and adversarial contracts passed 508 tests plus 140 subtests with one intentional skip.",
+      "disposition": "resolved"
+    },
+    {
+      "id": "N20V9-F03",
+      "severity": "major",
+      "summary": "The graph-scoped production and migration-owned test scan inspected 35 files and found zero retired-provider, forbidden credential, dispatch, import, or fallback violations.",
+      "disposition": "resolved"
+    },
+    {
+      "id": "N20V9-F04",
+      "severity": "observation",
+      "summary": "Attempt 1 was preserved as failed when the managed outer sandbox denied its nested sandbox and loopback proofs; attempt 2 reran unchanged product bytes with those host capabilities and passed the entire exact denominator.",
+      "disposition": "resolved"
+    }
+  ],
+  "invalidated_descendants": []
+}

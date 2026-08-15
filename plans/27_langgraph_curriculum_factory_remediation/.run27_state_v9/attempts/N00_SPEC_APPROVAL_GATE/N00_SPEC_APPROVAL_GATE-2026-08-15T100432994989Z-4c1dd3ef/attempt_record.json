@@ -1,0 +1,18 @@
+{
+  "approved_spec_sha256": "e14df5a36ce12d700fe9fc4aa4aea466771bc89f31bc6e9d49f812c147b1bb3c",
+  "attempt_id": "N00_SPEC_APPROVAL_GATE-2026-08-15T100432994989Z-4c1dd3ef",
+  "baseline": {
+    "plans/27_langgraph_curriculum_factory_remediation/execution_package_v2/results/v9/N00_SPEC_APPROVAL_GATE.result.v1.json": null,
+    "plans/27_langgraph_curriculum_factory_remediation/execution_package_v2/results/v9/evidence/N00_SPEC_APPROVAL_GATE": null
+  },
+  "created_at": "2026-08-15T10:04:32.997005Z",
+  "evidence_dir": "attempts/N00_SPEC_APPROVAL_GATE/N00_SPEC_APPROVAL_GATE-2026-08-15T100432994989Z-4c1dd3ef/logs",
+  "graph_sha256": "5236bf6b13a2c5171ad11ab80f1147e20b6b59f46708090d25ec16c5a7574379",
+  "node_definition_sha256": "10d6b6ec2b717fe4d0fe837b5cd2c466be708ca4a7c06d78da8b2b1301d5b78e",
+  "node_id": "N00_SPEC_APPROVAL_GATE",
+  "parent_attempt_id": null,
+  "predecessor_receipt_digests": {},
+  "prompt_sha256": "b033df8e44418ac14ded5ddc021dae03b4398e734c6719b572d7427af272626f",
+  "run_id": "run27-execution-package-v2-graph-v9",
+  "schema_version": 1
+}

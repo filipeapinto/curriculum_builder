@@ -1,0 +1,10 @@
+N80 N70 prerequisite check
+Checked: 2026-08-15T10:50:10Z
+
+N70_LIVE_UNIT_PROOF is admitted, current, and reports NOT_AVAILABLE.
+N70 result SHA-256: cebc693ee9a1f5f911132cc787b39adbdb36255e0e6f60d5fefa4c24f7fcb055
+N70 scheduler receipt SHA-256: 63f547d377fec1281eb7edfba446070165fc9587578fbe6af067c2a5d0f0eaea
+N70 current reasons: []
+N70 product root: absent
+
+Per the N80 prompt, N70 NOT_AVAILABLE is not product proof and cannot be reinterpreted as an accepted unit. It truthfully establishes an unavailable approved subscription driver, so N80 may report only NOT_AVAILABLE unless a fresh preflight becomes ready.

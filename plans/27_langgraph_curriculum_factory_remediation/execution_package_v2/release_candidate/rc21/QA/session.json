@@ -1,0 +1,71 @@
+{
+  "opened_at": "2026-08-15T07-22-29.066046+00-00",
+  "artifact_original": "/Users/filipepinto/Projects/curriculum_builder/plans/27_langgraph_curriculum_factory_remediation/execution_package_v2/release_candidate/rc21/rc21_review_bundle.v1.md",
+  "artifact_current": "/Users/filipepinto/Projects/curriculum_builder/plans/27_langgraph_curriculum_factory_remediation/execution_package_v2/release_candidate/rc21/rc21_review_bundle.v1.md",
+  "session_id": "01a00451-c3fc-7352-9b25-d6a78cbb0473",
+  "chain": "3de903e4cbefbc8714449f1ef50b7e6c043fc7454fa8fd76942adfa099edbbc4",
+  "rounds_completed": 1,
+  "rounds": [
+    {
+      "round": 1,
+      "timestamp": "2026-08-15T07:40:14.073626+00:00",
+      "verdict": "FAIL",
+      "artifact_path": "/Users/filipepinto/Projects/curriculum_builder/plans/27_langgraph_curriculum_factory_remediation/execution_package_v2/release_candidate/rc21/rc21_review_bundle.v1.md",
+      "artifact_sha256": "f14134f3bccde0c80151c9a89f89fd1ce8eb4bb4a1f7d25ab2faaa3145856d7c",
+      "findings_at_threshold": [
+        {
+          "id": "RC21-QA-001",
+          "title": "The active Arduino verifier cannot pass fresh-run compilation",
+          "severity": "blocker",
+          "criterion_ref": "Criterion 10: “A real fresh graph-v9 N00→N90 cascade through N70/N80 is honest and executable.”"
+        },
+        {
+          "id": "RC21-QA-002",
+          "title": "D02 does not inspect executable verifier dependencies",
+          "severity": "blocker",
+          "criterion_ref": "Criterion 2 requires D02 to bind the complete verifier closure and reject “dynamic-code, native, and process-launch verifier surfaces before entry.”"
+        },
+        {
+          "id": "RC21-QA-003",
+          "title": "os.chdir exposes an undeclared engine-path existence oracle",
+          "severity": "blocker",
+          "criterion_ref": "Criterion 4 requires existing-versus-absent path oracles to be normalized or blocked; criterion 6 requires undeclared repository rename changes not to alter the same candidate/frozen-contract verdict."
+        }
+      ],
+      "observations_count": 4,
+      "chain": "3de903e4cbefbc8714449f1ef50b7e6c043fc7454fa8fd76942adfa099edbbc4"
+    }
+  ],
+  "stall_count": 0,
+  "last_fingerprint": "39923b2c9cd1d884e802bcf59d18dd68807ecf4d4bdcd6eb1d117f88363ab815",
+  "exec_copied": [
+    "QA_criteria.rc21.v1.md",
+    "rc21_review_bundle.v1.md",
+    "validation.v1.md"
+  ],
+  "terminal": null,
+  "config": {
+    "criteria": "# RC21 independent QA criteria\n\nComplete all probes before verdict. Report only blocker findings with criterion,\ntrigger, and consequence.\n\n1. Preserve graph-v8 hash/history and distinct graph-v9 package/result/state lineage;\n   recompute all active digests and pass real plan/ownership validation.\n2. D02 binds the complete curriculum-owned M02/D08 input closure and rejects missing,\n   escaped, duplicate, oversized, drifted, absolute-path, dynamic-code, native, and\n   process-launch verifier surfaces before entry.\n3. For real engine-nested N70 output, D08 stages race-checked bytes outside engine and\n   output, preserves only declared layout, rejects conflicts, and executes only the\n   staged frozen entry/dependencies/fixtures and exact candidate.\n4. Verifier execution is read-only, no-network, no-fork, no-model-auth/scratch; has no\n   undeclared engine byte/metadata access or metadata exemptions; process escape and\n   existing-versus-absent path oracles are normalized/blocked.\n5. Candidate and fixture bytes are identical before/after execution, and the receipt\n   binds exactly the bytes evaluated. Candidate overwrite/restore cannot pass.\n6. Declared drift fails before execution; undeclared repository add/remove/rename/\n   byte/metadata changes cannot change the same candidate/frozen-contract verdict.\n7. Bounded M02 authority, immutable first-failure repair, exact repair lineage,\n   ArtifactStore persistence, and D08/D09/D12/D20 cross-node replay remain correct.\n8. Package/focused/full suites pass, including RC13 and RC14–RC19 reproductions.\n9. Exact-host/SSRF/redirect protections, subscription-only tool-closed CLIs, model\n   assignments, topology, terminals, and no-billed-API/no-provider-SDK remain intact.\n10. A real fresh graph-v9 N00→N90 cascade through N70/N80 is honest and executable.\n",
+    "focus": "Complete all probes before verdict. Reproduce RC19 candidate mutation and path-existence attacks first, then verify external N70 staging, D02 verifier rejection, regression counts, package lineage, and fresh v9 entry safety. Report only genuine blockers.",
+    "threshold": "blocker",
+    "max_iterations": 5,
+    "timeout_seconds": 900,
+    "retries": 2,
+    "model": null,
+    "effort": null,
+    "transport": "exec",
+    "allow_execution": true,
+    "grounding": [
+      "/Users/filipepinto/Projects/curriculum_builder/plans/26_langgraph_curriculum_factory/spec/v3/langgraph_curriculum_factory.spec.v4.md",
+      "/Users/filipepinto/Projects/curriculum_builder/plans/27_langgraph_curriculum_factory_remediation/execution_package_v2/implementation.graph.v9.yaml",
+      "/Users/filipepinto/Projects/curriculum_builder/curricula/arduino_kit/arduino_kit_curriculum.v5.yaml",
+      "/Users/filipepinto/Projects/curriculum_builder/runtime/langgraph_factory/nodes/inputs.py",
+      "/Users/filipepinto/Projects/curriculum_builder/runtime/langgraph_factory/transport.py",
+      "/Users/filipepinto/Projects/curriculum_builder/tests/runtime/test_plan26_deterministic_nodes.py",
+      "/Users/filipepinto/Projects/curriculum_builder/tests/runtime/test_plan26_transport.py",
+      "/Users/filipepinto/Projects/curriculum_builder/plans/27_langgraph_curriculum_factory_remediation/execution_package_v2/release_candidate/rc19/QA/rounds/round-01.response.json",
+      "/Users/filipepinto/Projects/curriculum_builder/plans/27_langgraph_curriculum_factory_remediation/execution_package_v2/release_candidate/rc20/QA/session.json"
+    ]
+  },
+  "thread_id": "01a00451-c3fc-7352-9b25-d6a78cbb0473"
+}

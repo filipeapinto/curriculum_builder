@@ -1,0 +1,11 @@
+{
+  "at": "2026-08-15T10:13:16.161942Z",
+  "code": "PREDECESSOR_DIGEST_MISMATCH",
+  "message": "PREDECESSOR_DIGEST_MISMATCH: N00_SPEC_APPROVAL_GATE: result declares 9bdfb2847fa25f327d9451a7ec4a4cae04ea1f9f2ef7d585fe2a3bdb5351e5b0 but the current predecessor result digest is d64fa8aad0ba2ab485a140826f0efb69e506cdd7171fc84a7ab0885f979bb6c3",
+  "problems": [
+    {
+      "code": "PREDECESSOR_DIGEST_MISMATCH",
+      "message": "N00_SPEC_APPROVAL_GATE: result declares 9bdfb2847fa25f327d9451a7ec4a4cae04ea1f9f2ef7d585fe2a3bdb5351e5b0 but the current predecessor result digest is d64fa8aad0ba2ab485a140826f0efb69e506cdd7171fc84a7ab0885f979bb6c3"
+    }
+  ]
+}

@@ -1,0 +1,77 @@
+{
+  "opened_at": "2026-08-15T06-36-59.263172+00-00",
+  "artifact_original": "/Users/filipepinto/Projects/curriculum_builder/plans/27_langgraph_curriculum_factory_remediation/execution_package_v2/release_candidate/rc19/rc19_review_bundle.v1.md",
+  "artifact_current": "/Users/filipepinto/Projects/curriculum_builder/plans/27_langgraph_curriculum_factory_remediation/execution_package_v2/release_candidate/rc19/rc19_review_bundle.v1.md",
+  "session_id": "01a0042c-e716-70e1-a8ae-caec17d2b573",
+  "chain": "34eab3d42302bd2975060b4cd6aed9d370a8b06b6c65e29707aade0042aa2420",
+  "rounds_completed": 1,
+  "rounds": [
+    {
+      "round": 1,
+      "timestamp": "2026-08-15T07:01:49.434847+00:00",
+      "verdict": "FAIL",
+      "artifact_path": "/Users/filipepinto/Projects/curriculum_builder/plans/27_langgraph_curriculum_factory_remediation/execution_package_v2/release_candidate/rc19/rc19_review_bundle.v1.md",
+      "artifact_sha256": "200c434a43aa2f1a68da635948b69be2409cd36e78905305c137acdaf9ca7348",
+      "findings_at_threshold": [
+        {
+          "id": "RC19-QA-001",
+          "title": "Verifier can replace the exact candidate before validating it",
+          "severity": "blocker",
+          "criterion_ref": "Criterion 4 requires D08 to execute “only staged frozen entry/dependency/fixture bytes plus the exact candidate”; criterion 11 requires an honest, verifiable real N70 path."
+        },
+        {
+          "id": "RC19-QA-002",
+          "title": "Undeclared engine-path existence changes a frozen replay after rename",
+          "severity": "blocker",
+          "criterion_ref": "Criterion 3 requires missing declarations to fail pre-entry; criterion 5 forbids undeclared engine metadata visibility; criterion 6 requires undeclared add/remove/rename changes not to alter the same candidate and frozen-contract verdict."
+        }
+      ],
+      "observations_count": 4,
+      "chain": "34eab3d42302bd2975060b4cd6aed9d370a8b06b6c65e29707aade0042aa2420"
+    }
+  ],
+  "stall_count": 0,
+  "last_fingerprint": "19e8be2435f5ddde43bb1382eba31f5e2dba13c5d28e898fedc563a4c61fc004",
+  "exec_copied": [
+    "QA_criteria.rc19.v1.md",
+    "rc19_review_bundle.v1.md",
+    "validation.v1.md"
+  ],
+  "terminal": null,
+  "config": {
+    "criteria": "# RC19 independent QA criteria\n\nReport only blocker findings, each naming the defeated criterion, reproducible\ntrigger, and consequence. A PASS is valid only after every required probe finishes;\nreasoning that says review or probes remain underway is not a completed verdict.\n\n1. Historical integrity: graph v8 retains SHA-256\n   `c2d79ac0387c935977385138d2d891cf1539041f1a4532acf94fc8dc687bf6b1`;\n   v9 retains separate graph/contract/schema/prompt/result/state lineage.\n2. Package coherence/ownership: active bindings and digests recompute; the real\n   plan validator and exact ownership verifier pass.\n3. Complete freeze: D02 binds every curriculum-owned input used by M02/D08;\n   missing declarations, escape, duplicates, oversize, and drift fail pre-entry.\n4. External race-free staging: for engine-nested production N70 output, the work\n   root resolves outside engine and output roots. D08 verifies bytes during staging,\n   preserves declared layout, rejects conflicts, and executes only staged frozen\n   entry/dependency/fixture bytes plus the exact candidate.\n5. Closed sandbox: cwd/staged files are external; no network/model-auth/model-scratch\n   rules; no undeclared engine byte or metadata visibility, including file and\n   directory/ancestor metadata; no engine metadata exemptions.\n6. Replay invariance: declared drift fails before execution; undeclared repository\n   add/remove/rename/content/metadata changes cannot alter the same candidate and\n   frozen-contract verdict.\n7. Bounded authoring/recovery: M02 has no verifier/admission authority; invalid first\n   versions stay immutable/non-head; repair is exact, bounded, lineage-preserving,\n   and exact-head revalidated.\n8. Physical replay: D08/D09/D12/D20 persist canonical bytes before reads, replay\n   idempotently, fail conflicts closed, and preserve repaired heads.\n9. Regression proof: package, focused, and full-runtime suites pass, including all\n   RC13 and RC14–RC17 attacks.\n10. Security/architecture: exact-host retrieval, SSRF/redirect checks, tool-closed\n    subscription CLIs, model assignments, topology, terminals, and no-billed-API/\n    no-provider-SDK constraints remain intact.\n11. Entry safety: a fresh graph-v9 N00→N90 cascade through real N70/N80 is honest,\n    verifiable, and executable.\n",
+    "focus": "Complete every probe before verdict. Reproduce RC14-RC17 attacks against the prescribed engine-nested N70 output, verify the external work root and staged-byte race checks, inspect emitted sandbox rules for zero engine metadata exemptions, and assess honest fresh graph-v9 N00-to-N90 entry. Report only genuine blockers.",
+    "threshold": "blocker",
+    "max_iterations": 5,
+    "timeout_seconds": 900,
+    "retries": 2,
+    "model": null,
+    "effort": null,
+    "transport": "exec",
+    "allow_execution": true,
+    "grounding": [
+      "/Users/filipepinto/Projects/curriculum_builder/plans/26_langgraph_curriculum_factory/spec/v3/langgraph_curriculum_factory.spec.v4.md",
+      "/Users/filipepinto/Projects/curriculum_builder/plans/27_langgraph_curriculum_factory_remediation/execution_package_v2/implementation.graph.v8.yaml",
+      "/Users/filipepinto/Projects/curriculum_builder/plans/27_langgraph_curriculum_factory_remediation/execution_package_v2/implementation.graph.v9.yaml",
+      "/Users/filipepinto/Projects/curriculum_builder/plans/27_langgraph_curriculum_factory_remediation/execution_package_v2/schemas/spec_approval.schema.v6.json",
+      "/Users/filipepinto/Projects/curriculum_builder/plans/27_langgraph_curriculum_factory_remediation/execution_package_v2/contracts/spec_approval.v6.yaml",
+      "/Users/filipepinto/Projects/curriculum_builder/schemas/curriculum.schema.v5.json",
+      "/Users/filipepinto/Projects/curriculum_builder/curricula/arduino_kit/arduino_kit_curriculum.v5.yaml",
+      "/Users/filipepinto/Projects/curriculum_builder/curricula/arduino_kit/verify_domain.py",
+      "/Users/filipepinto/Projects/curriculum_builder/curricula/arduino_kit/domain.schema.v1.json",
+      "/Users/filipepinto/Projects/curriculum_builder/curricula/arduino_kit/kit_calibration.v1.yaml",
+      "/Users/filipepinto/Projects/curriculum_builder/curricula/arduino_kit/circuit_library.v1.yaml",
+      "/Users/filipepinto/Projects/curriculum_builder/runtime/langgraph_factory/nodes/inputs.py",
+      "/Users/filipepinto/Projects/curriculum_builder/runtime/langgraph_factory/transport.py",
+      "/Users/filipepinto/Projects/curriculum_builder/tests/runtime/test_plan26_deterministic_nodes.py",
+      "/Users/filipepinto/Projects/curriculum_builder/tests/runtime/test_plan26_transport.py",
+      "/Users/filipepinto/Projects/curriculum_builder/plans/27_langgraph_curriculum_factory_remediation/execution_package_v2/release_candidate/rc14/QA/rounds/round-01.response.json",
+      "/Users/filipepinto/Projects/curriculum_builder/plans/27_langgraph_curriculum_factory_remediation/execution_package_v2/release_candidate/rc15/QA/rounds/round-01.response.json",
+      "/Users/filipepinto/Projects/curriculum_builder/plans/27_langgraph_curriculum_factory_remediation/execution_package_v2/release_candidate/rc16/QA/rounds/round-01.response.json",
+      "/Users/filipepinto/Projects/curriculum_builder/plans/27_langgraph_curriculum_factory_remediation/execution_package_v2/release_candidate/rc17/QA/rounds/round-01.response.json",
+      "/Users/filipepinto/Projects/curriculum_builder/plans/27_langgraph_curriculum_factory_remediation/execution_package_v2/release_candidate/rc18/QA/rounds/round-01.response.json",
+      "/Users/filipepinto/Projects/curriculum_builder/plans/27_langgraph_curriculum_factory_remediation/execution_package_v2/release_candidate/rc18/QA/postmortem.md"
+    ]
+  },
+  "thread_id": "01a0042c-e716-70e1-a8ae-caec17d2b573"
+}

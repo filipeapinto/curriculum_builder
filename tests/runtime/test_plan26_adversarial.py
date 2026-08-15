@@ -185,6 +185,15 @@ class _StubRegistry:
     def observe_executable(self, name: str) -> dict[str, Any]:
         return {"name": name, "path": f"/usr/bin/{name}", "sha256": "0" * 64}
 
+    def verify_domain(self, *, body: Any, contract: Any) -> dict[str, Any]:
+        return {
+            "result": "PASS",
+            "candidate_sha256": canonical_digest(body),
+            "fixtures_result": "PASS",
+            "fixtures": [{"expected": "accept", "returncode": 0}],
+            "candidate": {"returncode": 0, "codes": []},
+        }
+
     def render_deterministic_visual(self, brief: Any, permitted_facts: Any) -> dict[str, Any]:
         path = self.sandbox / "visuals" / (str(brief["key"]).replace("/", "_") + ".svg")
         path.parent.mkdir(parents=True, exist_ok=True)
@@ -400,7 +409,10 @@ ENGINE_CONTRACTS: tuple[str, ...] = (
     *domain.CURRICULUM_CONTRACTS,
 )
 
-SYNTHETIC_DOMAIN_SCHEMA_RELATIVE = "schemas/synthetic_domain.v1.json"
+SYNTHETIC_DOMAIN_SCHEMA_RELATIVE = "curricula/synthetic/domain.schema.v1.json"
+SYNTHETIC_MANIFEST_SCHEMA_RELATIVE = "curricula/synthetic/manifest.domain.schema.v1.json"
+SYNTHETIC_CALIBRATION_RELATIVE = "curricula/synthetic/calibration.v1.yaml"
+SYNTHETIC_VERIFIER_RELATIVE = "curricula/synthetic/verify_domain.py"
 SYNTHETIC_DOMAIN_SCHEMA: dict[str, Any] = {
     "$schema": "https://json-schema.org/draft/2020-12/schema",
     "$id": "plan26/test/synthetic_domain.v1.json",
@@ -439,6 +451,26 @@ def _build_episode_fixture(tmp_path: Path, units: int = 1) -> dict[str, Any]:
     (engine / SYNTHETIC_DOMAIN_SCHEMA_RELATIVE).write_text(
         json.dumps(SYNTHETIC_DOMAIN_SCHEMA, indent=2), encoding="utf-8"
     )
+    (engine / SYNTHETIC_MANIFEST_SCHEMA_RELATIVE).write_text(
+        json.dumps({
+            "$defs": {
+                "config": {"type": "object", "required": ["profile"]},
+                "core_activity": {},
+            }
+        }),
+        encoding="utf-8",
+    )
+    (engine / SYNTHETIC_CALIBRATION_RELATIVE).write_text("profile: test\n", encoding="utf-8")
+    (engine / SYNTHETIC_VERIFIER_RELATIVE).write_text("# frozen test verifier\n", encoding="utf-8")
+    fixtures = curriculum / "fixtures"
+    fixtures.mkdir()
+    fixture_body = {
+        "unit_id": "U001",
+        "facts": [{"fact_id": "f1", "statement": "frozen fixture"}],
+        "verifier_result": {"result": "all_fixtures_behaved"},
+    }
+    (fixtures / "reject.json").write_text(json.dumps(fixture_body), encoding="utf-8")
+    (fixtures / "accept.json").write_text(json.dumps(fixture_body), encoding="utf-8")
     labs = [
         {
             "id": f"U{index:03d}",
@@ -452,7 +484,30 @@ def _build_episode_fixture(tmp_path: Path, units: int = 1) -> dict[str, Any]:
     manifest = curriculum / "synthetic_curriculum.v1.yaml"
     manifest.write_text(
         yaml.safe_dump(
-            {"domain": {"manifest_schema": SYNTHETIC_DOMAIN_SCHEMA_RELATIVE}, "labs": labs}, sort_keys=False
+            {
+                "domain": {
+                    "schema": SYNTHETIC_DOMAIN_SCHEMA_RELATIVE,
+                    "manifest_schema": SYNTHETIC_MANIFEST_SCHEMA_RELATIVE,
+                    "calibration": SYNTHETIC_CALIBRATION_RELATIVE,
+                    "config": {"profile": "test"},
+                    "verifier": {
+                        "entry_point": SYNTHETIC_VERIFIER_RELATIVE,
+                        "invocation": f"python3 {SYNTHETIC_VERIFIER_RELATIVE} --domain <domain>",
+                        "dependencies": [],
+                        "must_reject": [{
+                            "fixture": "curricula/synthetic/fixtures/reject.json",
+                            "expected_code": "synthetic-reject",
+                        }],
+                        "must_accept": ["curricula/synthetic/fixtures/accept.json"],
+                        "proven": {
+                            "executed_utc": "2026-01-01T00:00:00Z",
+                            "result": "all_fixtures_behaved",
+                        },
+                    },
+                },
+                "labs": labs,
+            },
+            sort_keys=False,
         ),
         encoding="utf-8",
     )
@@ -554,8 +609,34 @@ def _synthetic_manifest(
         random.Random(shuffle_seed).shuffle(units)
     curriculum_root = tmp_path / "curricula" / "synthetic"
     curriculum_root.mkdir(parents=True, exist_ok=True)
+    fixtures = curriculum_root / "fixtures"
+    fixtures.mkdir(exist_ok=True)
+    (curriculum_root / "domain.schema.v1.json").write_text('{"type":"object"}', encoding="utf-8")
+    (curriculum_root / "manifest.domain.schema.v1.json").write_text(
+        '{"$defs":{"config":{"type":"object"},"core_activity":{}}}', encoding="utf-8"
+    )
+    (curriculum_root / "calibration.v1.yaml").write_text("profile: test\n", encoding="utf-8")
+    (curriculum_root / "verify_domain.py").write_text("# frozen verifier\n", encoding="utf-8")
+    (fixtures / "reject.json").write_text("{}", encoding="utf-8")
+    (fixtures / "accept.json").write_text("{}", encoding="utf-8")
     path = curriculum_root / "synthetic_curriculum.v1.yaml"
-    path.write_text(yaml.safe_dump({"labs": units}, sort_keys=False), encoding="utf-8")
+    path.write_text(yaml.safe_dump({
+        "domain": {
+            "schema": "curricula/synthetic/domain.schema.v1.json",
+            "manifest_schema": "curricula/synthetic/manifest.domain.schema.v1.json",
+            "calibration": "curricula/synthetic/calibration.v1.yaml",
+            "config": {"profile": "test"},
+            "verifier": {
+                "entry_point": "curricula/synthetic/verify_domain.py",
+                "invocation": "python3 curricula/synthetic/verify_domain.py --domain <domain>",
+                "dependencies": [],
+                "must_reject": [{"fixture": "curricula/synthetic/fixtures/reject.json", "expected_code": "synthetic-reject"}],
+                "must_accept": ["curricula/synthetic/fixtures/accept.json"],
+                "proven": {"executed_utc": "2026-01-01T00:00:00Z", "result": "all_fixtures_behaved"},
+            },
+        },
+        "labs": units,
+    }, sort_keys=False), encoding="utf-8")
     return path, [unit["id"] for unit in units]
 
 
@@ -570,7 +651,10 @@ def _d02_state(manifest_path: Path, mode: str, requested: str | None) -> dict[st
         "active_manifest_path": str(manifest_path),
         "mode": mode,
         "requested_unit_id": requested,
-        "frozen_inputs": [{"path": str(manifest_path), "sha256": _sha256_file(manifest_path), "role": "active_manifest"}],
+        "frozen_inputs": [
+            {"path": str(path), "sha256": _sha256_file(path), "role": "curriculum"}
+            for path in sorted(manifest_path.parent.rglob("*")) if path.is_file()
+        ],
     }
 
 

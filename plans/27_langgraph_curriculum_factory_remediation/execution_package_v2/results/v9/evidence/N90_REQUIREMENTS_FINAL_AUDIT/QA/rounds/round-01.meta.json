@@ -1,0 +1,88 @@
+{
+  "attempt": 1,
+  "exit_code": 0,
+  "duration_seconds": 321.02,
+  "transport": "app-server",
+  "session_id": "01a00510-96e3-7433-96d5-e0ce86cdf9cb",
+  "thread_id": "01a00510-96e3-7433-96d5-e0ce86cdf9cb",
+  "turn_id": "01a00510-9dd5-7520-91be-4e8bba12e6a8",
+  "usage": {},
+  "model": null,
+  "effort": null,
+  "plugin_version": "1.0.4",
+  "plugin_lib_path": "/Users/filipepinto/.claude/plugins/cache/openai-codex/codex/1.0.4/scripts/lib/codex.mjs",
+  "argv": [
+    "node",
+    "/Users/filipepinto/Projects/curriculum_builder/.claude/skills/qa-gate-codex-run/scripts/codex_bridge.mjs",
+    "<request on stdin>"
+  ],
+  "started_at": "2026-08-15T10:56:08.139793+00:00",
+  "response_sha256": "9cb7fa850652de2a8e4ead4523b2a598cfec6c9db48cde72995b7575fa7fd7fe",
+  "request_sha256": "819a9570770d0557669d3a145883911049d7a37b609fe25a66dd7ef5a07293ee",
+  "round": 1,
+  "cwd": "/Users/filipepinto/Projects/curriculum_builder/plans/27_langgraph_curriculum_factory_remediation/execution_package_v2/results/v9/evidence/N90_REQUIREMENTS_FINAL_AUDIT/QA/exec",
+  "artifact_path": "/Users/filipepinto/Projects/curriculum_builder/plans/27_langgraph_curriculum_factory_remediation/execution_package_v2/results/v9/evidence/N90_REQUIREMENTS_FINAL_AUDIT/N90_final_audit.v1.md",
+  "artifact_sha256": "3f6633d0e3f853029ba3e586e5acfbd7fac950660c26c51b6a7222e22c3721d2",
+  "grounding": [
+    {
+      "path": "/Users/filipepinto/Projects/curriculum_builder/plans/26_langgraph_curriculum_factory/spec/v3/langgraph_curriculum_factory.spec.v4.md",
+      "sha256": "e14df5a36ce12d700fe9fc4aa4aea466771bc89f31bc6e9d49f812c147b1bb3c"
+    },
+    {
+      "path": "/Users/filipepinto/Projects/curriculum_builder/plans/27_langgraph_curriculum_factory_remediation/execution_package_v2/implementation.graph.v9.yaml",
+      "sha256": "5236bf6b13a2c5171ad11ab80f1147e20b6b59f46708090d25ec16c5a7574379"
+    },
+    {
+      "path": "/Users/filipepinto/Projects/curriculum_builder/plans/27_langgraph_curriculum_factory_remediation/contracts/requirements_lineage.v1.yaml",
+      "sha256": "1c6b5d2e05f9078d303b657d4f48325d85683df209a8c7485b272abc54b8540e"
+    },
+    {
+      "path": "/Users/filipepinto/Projects/curriculum_builder/plans/27_langgraph_curriculum_factory_remediation/execution_package_v2/release_candidate/rc29/QA/verification.json",
+      "sha256": "0bdc965d3c6cefa65272d744a39cde235d7177ac86d19a567c435e85a02a2d37"
+    },
+    {
+      "path": "/Users/filipepinto/Projects/curriculum_builder/plans/27_langgraph_curriculum_factory_remediation/execution_package_v2/release_candidate/rc29/QA/session.json",
+      "sha256": "a80bb30faf438f6274fab886e82668b64db4adae8d55f8b2d0457fb437e60694"
+    },
+    {
+      "path": "/Users/filipepinto/Projects/curriculum_builder/plans/27_langgraph_curriculum_factory_remediation/execution_package_v2/results/v9/N00_SPEC_APPROVAL_GATE.result.v1.json",
+      "sha256": "d64fa8aad0ba2ab485a140826f0efb69e506cdd7171fc84a7ab0885f979bb6c3"
+    },
+    {
+      "path": "/Users/filipepinto/Projects/curriculum_builder/plans/27_langgraph_curriculum_factory_remediation/execution_package_v2/results/v9/N10_HARNESS_PROTOCOL.result.v1.json",
+      "sha256": "b093502759fe6c79665158343410e0283c05ab19dd4e83879c628f140355d25e"
+    },
+    {
+      "path": "/Users/filipepinto/Projects/curriculum_builder/plans/27_langgraph_curriculum_factory_remediation/execution_package_v2/results/v9/N20_PROVIDER_TRANSPORT.result.v1.json",
+      "sha256": "fd0928c444ae4667cfafb6e960c1623df11b5725d30b1ae79c25ec5a9320f300"
+    },
+    {
+      "path": "/Users/filipepinto/Projects/curriculum_builder/plans/27_langgraph_curriculum_factory_remediation/execution_package_v2/results/v9/N30_PREFLIGHT_EGRESS.result.v1.json",
+      "sha256": "5c39030a97c4e8e2f0986a6eb7514f7d1aab739742f6560672d1d8bc3532e310"
+    },
+    {
+      "path": "/Users/filipepinto/Projects/curriculum_builder/plans/27_langgraph_curriculum_factory_remediation/execution_package_v2/results/v9/N40_INTEGRATION_OWNERSHIP.result.v1.json",
+      "sha256": "4babb3aaf8b2ebe65b05868826374f8a689936f27498cee2f7678eb717dd5981"
+    },
+    {
+      "path": "/Users/filipepinto/Projects/curriculum_builder/plans/27_langgraph_curriculum_factory_remediation/execution_package_v2/results/v9/N50_EVIDENCE_AUDIT_CONTROLS.result.v1.json",
+      "sha256": "f1905dbd453862d876ab22d20dad036c823de723470caece992b92cb5fbb4ce1"
+    },
+    {
+      "path": "/Users/filipepinto/Projects/curriculum_builder/plans/27_langgraph_curriculum_factory_remediation/execution_package_v2/results/v9/N60_ADVERSARIAL_REGRESSION.result.v1.json",
+      "sha256": "76f1aad362e4465d678d8a7109384827e2176a3a5a7a64d213afbbdef51ecfba"
+    },
+    {
+      "path": "/Users/filipepinto/Projects/curriculum_builder/plans/27_langgraph_curriculum_factory_remediation/execution_package_v2/results/v9/N70_LIVE_UNIT_PROOF.result.v1.json",
+      "sha256": "cebc693ee9a1f5f911132cc787b39adbdb36255e0e6f60d5fefa4c24f7fcb055"
+    },
+    {
+      "path": "/Users/filipepinto/Projects/curriculum_builder/plans/27_langgraph_curriculum_factory_remediation/execution_package_v2/results/v9/N80_LIVE_WORKBOOK_PROOF.result.v1.json",
+      "sha256": "d27bfca2c6144203b50ca6f66d219b3689b98dc953e7ce5b7d3c6ccddf02627f"
+    }
+  ],
+  "chain_prev": "GENESIS",
+  "chain": "5396f16b4d7adf19cc9ae3b262b33f56518a4cc99302aedde983f2cbabb740cd",
+  "rollout_file": "/Users/filipepinto/.codex/sessions/2026/08/15/rollout-2026-08-15T06-56-08-01a00510-96e3-7433-96d5-e0ce86cdf9cb.jsonl",
+  "timestamp": "2026-08-15T11:01:29.238362+00:00"
+}

@@ -1,0 +1,8 @@
+N20 attempt 1 admission environment disposition
+Date: 2026-08-15
+Attempt 1: N20_PROVIDER_TRANSPORT-2026-08-15T101521764947Z-0c6137e6
+Attempt 2: N20_PROVIDER_TRANSPORT-2026-08-15T102004834223Z-4230e27d
+
+The initial direct N20 suite executed with the host capabilities required by its tests and passed 508 tests plus 140 subtests with one intentional skip. Controller admission was then invoked inside the managed outer tool sandbox. Thirteen tests that intentionally start macOS sandbox-exec or bind an ephemeral loopback listener were denied by that outer sandbox with `sandbox_apply: Operation not permitted` or socket `PermissionError`; the remaining 495 tests and all 140 subtests passed. The controller correctly preserved attempt 1 as FAILED.
+
+Attempt 2 reran the exact suite with permission to exercise its own nested sandbox and loopback controls. It passed 508 tests plus 140 subtests with one intentional skip. No production, policy, configuration, prompt, schema, or test source changed between the failed environmental run and this successful rerun. The node scanner again inspected 35 files with zero violations. Controller admission must use the same host capability so its independent exact verification is meaningful.

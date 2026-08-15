@@ -1,0 +1,29 @@
+{
+  "approved_spec_sha256": "e14df5a36ce12d700fe9fc4aa4aea466771bc89f31bc6e9d49f812c147b1bb3c",
+  "attempt_id": "N30_PREFLIGHT_EGRESS-2026-08-15T031938524426Z-4720b776",
+  "baseline": {
+    "curricula/arduino_kit/arduino_kit_curriculum.v5.yaml": "0dd0e0d441c3881e136c2be56143a10e49b4bc0a631e2ae9d935b853a1a37280",
+    "plans/27_langgraph_curriculum_factory_remediation/execution_package_v2/results/v8/N30_PREFLIGHT_EGRESS.result.v1.json": "6c59a2bc58b616b703ec8518cc890d9b7de9a436542f813d1ea92f7691a6b7b3",
+    "plans/27_langgraph_curriculum_factory_remediation/execution_package_v2/results/v8/evidence/N30_PREFLIGHT_EGRESS": "b9e7245c6b32bda90fec4a0488dc87b07089dbf82f6e474f26b7ae2efa3a7521",
+    "policy/retrieval_hosts.v1.yaml": "ee56cf4988691647ebd1f28bd90724208112bcae6a4b7324543b42bbc21c32be",
+    "runtime/langgraph_factory/nodes/inputs.py": "04651f38a5d762a69edfa1827046637cb06f8705805a1b661212223d63f61047",
+    "runtime/langgraph_factory/nodes/sources.py": "833fe35f6702457264ab350db864a30ceff42766812799f8f9bc1f60903a8a85",
+    "runtime/run_curriculum.py": "10236810e66ff4afb064635b77082a840c4f7bf8ba107970ba80d6e80a8d1e8b",
+    "schemas/curriculum.schema.v5.json": "7ee2b15e22f14eeb5e297b55dac626df03de072e7d9ee4be86ec3f26498acd89",
+    "tests/runtime/test_plan26_cli.py": "ef5ef6f817cf16c542d1abb1da0a4b5acc2b1df8c79c5563cee22179310bcbe2",
+    "tests/runtime/test_plan26_deterministic_nodes.py": "af84225bf4d8b77cd7d125602b272a7147ad704682ac0fde593ff183882cf4d1",
+    "tests/runtime/test_run_curriculum.py": "914bb9e61b7d52de563ef814e5c4e106f2cbe96c32926c26b54ab8a9c2d744a7"
+  },
+  "created_at": "2026-08-15T03:19:38.524725Z",
+  "evidence_dir": "attempts/N30_PREFLIGHT_EGRESS/N30_PREFLIGHT_EGRESS-2026-08-15T031938524426Z-4720b776/logs",
+  "graph_sha256": "c2d79ac0387c935977385138d2d891cf1539041f1a4532acf94fc8dc687bf6b1",
+  "node_definition_sha256": "aec435b8da5fffaf100cb4f38404e2e87d07fad2b18f64412f9dff5c38f1de3a",
+  "node_id": "N30_PREFLIGHT_EGRESS",
+  "parent_attempt_id": null,
+  "predecessor_receipt_digests": {
+    "N20_PROVIDER_TRANSPORT": "5e23c55841fba1a681b95c9581ba032670bb39e5c51b26c660eff1157382fe1d"
+  },
+  "prompt_sha256": "93ed1d4cc9766d4f1280fe84fc7f39d138e4aeb435586cd68e13ed65feb87874",
+  "run_id": "run27",
+  "schema_version": 1
+}

@@ -1,0 +1,91 @@
+{
+  "schema_version": 1,
+  "run_id": "run27-execution-package-v2-graph-v8",
+  "node_id": "N30_PREFLIGHT_EGRESS",
+  "attempt_id": "N30_PREFLIGHT_EGRESS-execpkgv2-v8-attempt-4",
+  "outcome": "PASSED",
+  "source_spec_sha256": "e14df5a36ce12d700fe9fc4aa4aea466771bc89f31bc6e9d49f812c147b1bb3c",
+  "prompt_sha256": "93ed1d4cc9766d4f1280fe84fc7f39d138e4aeb435586cd68e13ed65feb87874",
+  "predecessor_receipts": {
+    "N20_PROVIDER_TRANSPORT": "1b86df3a36bd41c5f1a0a82cdef4ae30d9b00bd08e53f20034941a08b8713260"
+  },
+  "changed_files": [
+    {"path": "runtime/langgraph_factory/nodes/sources.py", "change": "modified", "sha256": "74420ae029c5daff809d9d15d2819f32f12f1b2558ab2448765ef989d42068be"},
+    {"path": "tests/runtime/test_plan26_deterministic_nodes.py", "change": "modified", "sha256": "6a535e5df40c81f3490be0a77d1d5fff3e6787628764ec394b7300fec7783ecc"},
+    {"path": "plans/27_langgraph_curriculum_factory_remediation/execution_package_v2/results/v8/evidence/N30_PREFLIGHT_EGRESS/01_pytest_cli.log", "change": "created", "sha256": "62222f43d13ea1d32d5baf53e21e1b46d45f2c408cba5824227a94f3b034ff1e"},
+    {"path": "plans/27_langgraph_curriculum_factory_remediation/execution_package_v2/results/v8/evidence/N30_PREFLIGHT_EGRESS/02_pytest_d03_d06b.log", "change": "created", "sha256": "b9a137d9ab7786454e9b2e142138bb312022abffa69ac411623cb408d5371b76"},
+    {"path": "plans/27_langgraph_curriculum_factory_remediation/execution_package_v2/results/v8/evidence/N30_PREFLIGHT_EGRESS/03_scan_node_n30.log", "change": "created", "sha256": "9e197b3f302b2aa14dafacfe002cc5e4f597914f3246e9719b40e9b965285326"},
+    {"path": "plans/27_langgraph_curriculum_factory_remediation/execution_package_v2/results/v8/evidence/N30_PREFLIGHT_EGRESS/04_retrieval_contract.log", "change": "created", "sha256": "cc653a92e5f7c955564684cf3653217f944ee0aadcd717b762360e7777bdc7f8"},
+    {"path": "plans/27_langgraph_curriculum_factory_remediation/execution_package_v2/results/v8/evidence/N30_PREFLIGHT_EGRESS/attempts/N30_PREFLIGHT_EGRESS.attempt-1.result.v1.json", "change": "created", "sha256": "8fd042ea1fb458d7b9c17aa891966d26a10801ded77b964226576a9782806dde"},
+    {"path": "plans/27_langgraph_curriculum_factory_remediation/execution_package_v2/results/v8/evidence/N30_PREFLIGHT_EGRESS/05_pytest_cli_attempt2.log", "change": "created", "sha256": "69b7460004639c04393c161dd90c607f4fcd44ba4ebf70649dd0a18ef2385088"},
+    {"path": "plans/27_langgraph_curriculum_factory_remediation/execution_package_v2/results/v8/evidence/N30_PREFLIGHT_EGRESS/06_pytest_d03_d06b_attempt2.log", "change": "created", "sha256": "b9a137d9ab7786454e9b2e142138bb312022abffa69ac411623cb408d5371b76"},
+    {"path": "plans/27_langgraph_curriculum_factory_remediation/execution_package_v2/results/v8/evidence/N30_PREFLIGHT_EGRESS/07_scan_node_n30_attempt2.log", "change": "created", "sha256": "9e197b3f302b2aa14dafacfe002cc5e4f597914f3246e9719b40e9b965285326"},
+    {"path": "plans/27_langgraph_curriculum_factory_remediation/execution_package_v2/results/v8/evidence/N30_PREFLIGHT_EGRESS/08_live_locator_fallback_repair.log", "change": "created", "sha256": "144edb9af509039807ffdff7e0b9dfe7ce2cf7ecbed7f0a81d4a4484e1192b38"},
+    {"path": "plans/27_langgraph_curriculum_factory_remediation/execution_package_v2/results/v8/evidence/N30_PREFLIGHT_EGRESS/09_pytest_cli_attempt3.log", "change": "created", "sha256": "f5380d5c0e87c696597d850690638e168ca275058e21d7b395b1882b088438d8"},
+    {"path": "plans/27_langgraph_curriculum_factory_remediation/execution_package_v2/results/v8/evidence/N30_PREFLIGHT_EGRESS/10_pytest_d03_d06b_attempt3.log", "change": "created", "sha256": "195cc0fde3ce29caa345ae88baf2b6355fb257bedc46c1280c7db870009446fa"},
+    {"path": "plans/27_langgraph_curriculum_factory_remediation/execution_package_v2/results/v8/evidence/N30_PREFLIGHT_EGRESS/11_scan_node_n30_attempt3.log", "change": "created", "sha256": "9e197b3f302b2aa14dafacfe002cc5e4f597914f3246e9719b40e9b965285326"},
+    {"path": "plans/27_langgraph_curriculum_factory_remediation/execution_package_v2/results/v8/evidence/N30_PREFLIGHT_EGRESS/12_user_agent_repair_cascade.log", "change": "created", "sha256": "396c057af9efb75e408647a0d3a0528d1922c3cabc7a44f9adccf01bd46e1591"},
+    {"path": "plans/27_langgraph_curriculum_factory_remediation/execution_package_v2/results/v8/evidence/N30_PREFLIGHT_EGRESS/attempts/N30_PREFLIGHT_EGRESS.attempt-2.result.v1.json", "change": "created", "sha256": "b1bdbfb0eb86f483cb298acc0d8cffc60a7dfea53c0ee6729271da7e2abcf97b"},
+    {"path": "plans/27_langgraph_curriculum_factory_remediation/execution_package_v2/results/v8/evidence/N30_PREFLIGHT_EGRESS/13_pytest_cli_attempt4.log", "change": "created", "sha256": "cea04916c5fc32c02c66185bc2216d65b3b5fb7752f14200533ae736a4f9e2b1"},
+    {"path": "plans/27_langgraph_curriculum_factory_remediation/execution_package_v2/results/v8/evidence/N30_PREFLIGHT_EGRESS/14_pytest_d03_d06b_attempt4.log", "change": "created", "sha256": "cb508372d9bcf78b2810a7cf6db7a5d68fd80085fa4e6c2b9a39efc0d5c1f32f"},
+    {"path": "plans/27_langgraph_curriculum_factory_remediation/execution_package_v2/results/v8/evidence/N30_PREFLIGHT_EGRESS/15_scan_node_n30_attempt4.log", "change": "created", "sha256": "2a30bb6ec4191596c106c684a63e5fb71a48377daa31c147f54fff1e88a6f4b8"},
+    {"path": "plans/27_langgraph_curriculum_factory_remediation/execution_package_v2/results/v8/evidence/N30_PREFLIGHT_EGRESS/16_staged_input_repair_cascade.log", "change": "created", "sha256": "8331d54bad431f4d5ac478e8f52bc683dc268c1d91f37f00ca35432508d96dc6"},
+    {"path": "plans/27_langgraph_curriculum_factory_remediation/execution_package_v2/results/v8/evidence/N30_PREFLIGHT_EGRESS/attempts/N30_PREFLIGHT_EGRESS.attempt-3.result.v1.json", "change": "created", "sha256": "57d4f17d6477043ab5f947ccb10fa75cf764c5cdfea1179c735cf2dad46c2a2e"}
+  ],
+  "commands": [
+    {
+      "argv": ["python3", "-m", "pytest", "-q", "tests/runtime/test_plan26_cli.py", "tests/runtime/test_run_curriculum.py"],
+      "exit_code": 0,
+      "log": "plans/27_langgraph_curriculum_factory_remediation/execution_package_v2/results/v8/evidence/N30_PREFLIGHT_EGRESS/13_pytest_cli_attempt4.log",
+      "log_sha256": "cea04916c5fc32c02c66185bc2216d65b3b5fb7752f14200533ae736a4f9e2b1"
+    },
+    {
+      "argv": ["python3", "-m", "pytest", "-q", "tests/runtime/test_plan26_deterministic_nodes.py", "-k", "D03 or capability or D06B"],
+      "exit_code": 0,
+      "log": "plans/27_langgraph_curriculum_factory_remediation/execution_package_v2/results/v8/evidence/N30_PREFLIGHT_EGRESS/14_pytest_d03_d06b_attempt4.log",
+      "log_sha256": "cb508372d9bcf78b2810a7cf6db7a5d68fd80085fa4e6c2b9a39efc0d5c1f32f"
+    },
+    {
+      "argv": ["python3", "plans/27_langgraph_curriculum_factory_remediation/execution_package_v2/controller/scan_node.py", "--node", "N30_PREFLIGHT_EGRESS", "--graph", "plans/27_langgraph_curriculum_factory_remediation/execution_package_v2/implementation.graph.v8.yaml"],
+      "exit_code": 0,
+      "log": "plans/27_langgraph_curriculum_factory_remediation/execution_package_v2/results/v8/evidence/N30_PREFLIGHT_EGRESS/15_scan_node_n30_attempt4.log",
+      "log_sha256": "2a30bb6ec4191596c106c684a63e5fb71a48377daa31c147f54fff1e88a6f4b8"
+    },
+    {
+      "argv": ["python3", "-c", "compose real SourceRetriever and D06B; assert tuple contract, receipt fields, digest verification, content-addressed persistence, and staged input identity"],
+      "exit_code": 0,
+      "log": "plans/27_langgraph_curriculum_factory_remediation/execution_package_v2/results/v8/evidence/N30_PREFLIGHT_EGRESS/08_live_locator_fallback_repair.log",
+      "log_sha256": "144edb9af509039807ffdff7e0b9dfe7ce2cf7ecbed7f0a81d4a4484e1192b38"
+    }
+  ],
+  "evidence": [
+    "plans/27_langgraph_curriculum_factory_remediation/execution_package_v2/results/v8/evidence/N30_PREFLIGHT_EGRESS/01_pytest_cli.log",
+    "plans/27_langgraph_curriculum_factory_remediation/execution_package_v2/results/v8/evidence/N30_PREFLIGHT_EGRESS/02_pytest_d03_d06b.log",
+    "plans/27_langgraph_curriculum_factory_remediation/execution_package_v2/results/v8/evidence/N30_PREFLIGHT_EGRESS/03_scan_node_n30.log",
+    "plans/27_langgraph_curriculum_factory_remediation/execution_package_v2/results/v8/evidence/N30_PREFLIGHT_EGRESS/04_retrieval_contract.log",
+    "plans/27_langgraph_curriculum_factory_remediation/execution_package_v2/results/v8/evidence/N30_PREFLIGHT_EGRESS/attempts/N30_PREFLIGHT_EGRESS.attempt-1.result.v1.json",
+    "plans/27_langgraph_curriculum_factory_remediation/execution_package_v2/results/v8/evidence/N30_PREFLIGHT_EGRESS/05_pytest_cli_attempt2.log",
+    "plans/27_langgraph_curriculum_factory_remediation/execution_package_v2/results/v8/evidence/N30_PREFLIGHT_EGRESS/06_pytest_d03_d06b_attempt2.log",
+    "plans/27_langgraph_curriculum_factory_remediation/execution_package_v2/results/v8/evidence/N30_PREFLIGHT_EGRESS/07_scan_node_n30_attempt2.log",
+    "plans/27_langgraph_curriculum_factory_remediation/execution_package_v2/results/v8/evidence/N30_PREFLIGHT_EGRESS/08_live_locator_fallback_repair.log",
+    "plans/27_langgraph_curriculum_factory_remediation/execution_package_v2/results/v8/evidence/N30_PREFLIGHT_EGRESS/09_pytest_cli_attempt3.log",
+    "plans/27_langgraph_curriculum_factory_remediation/execution_package_v2/results/v8/evidence/N30_PREFLIGHT_EGRESS/10_pytest_d03_d06b_attempt3.log",
+    "plans/27_langgraph_curriculum_factory_remediation/execution_package_v2/results/v8/evidence/N30_PREFLIGHT_EGRESS/11_scan_node_n30_attempt3.log",
+    "plans/27_langgraph_curriculum_factory_remediation/execution_package_v2/results/v8/evidence/N30_PREFLIGHT_EGRESS/12_user_agent_repair_cascade.log",
+    "plans/27_langgraph_curriculum_factory_remediation/execution_package_v2/results/v8/evidence/N30_PREFLIGHT_EGRESS/attempts/N30_PREFLIGHT_EGRESS.attempt-2.result.v1.json",
+    "plans/27_langgraph_curriculum_factory_remediation/execution_package_v2/results/v8/evidence/N30_PREFLIGHT_EGRESS/13_pytest_cli_attempt4.log",
+    "plans/27_langgraph_curriculum_factory_remediation/execution_package_v2/results/v8/evidence/N30_PREFLIGHT_EGRESS/14_pytest_d03_d06b_attempt4.log",
+    "plans/27_langgraph_curriculum_factory_remediation/execution_package_v2/results/v8/evidence/N30_PREFLIGHT_EGRESS/15_scan_node_n30_attempt4.log",
+    "plans/27_langgraph_curriculum_factory_remediation/execution_package_v2/results/v8/evidence/N30_PREFLIGHT_EGRESS/16_staged_input_repair_cascade.log",
+    "plans/27_langgraph_curriculum_factory_remediation/execution_package_v2/results/v8/evidence/N30_PREFLIGHT_EGRESS/attempts/N30_PREFLIGHT_EGRESS.attempt-3.result.v1.json"
+  ],
+  "findings": [
+    {"id": "N30V8-F01", "severity": "critical", "summary": "D06B now consumes SourceRetriever's actual tuple contract, verifies and persists the exact body bytes, and gives M01 a hash-bound staged input rather than fabricated metadata.", "disposition": "resolved"},
+    {"id": "N30V8-F02", "severity": "major", "summary": "CLI/preflight and deterministic D03/D06B suites passed with the exact-host policy and typed authorization/failure boundaries active.", "disposition": "resolved"},
+    {"id": "N30V8-F03", "severity": "major", "summary": "The N30 scoped scan found zero forbidden provider, import, or credential references across its six active files.", "disposition": "resolved"},
+    {"id": "N30V8-F04", "severity": "major", "summary": "Live N70 proved one denied locator incorrectly exhausted a request; D06B now tries the remaining bounded candidates in order and pauses only when every candidate for a required fact is unavailable.", "disposition": "resolved"},
+    {"id": "N30V8-F05", "severity": "major", "summary": "After N20's transparent User-Agent repair invalidated descendants, N30 re-proved CLI/preflight, D03/D06B, and its exact zero-violation write-set scan against the new predecessor.", "disposition": "resolved"},
+    {"id": "N30V8-F06", "severity": "major", "summary": "After the live staged-input transmission repair, N30 re-proved the CLI/preflight and D03/D06B source-handoff contracts and binds the attempt-4 N20 receipt.", "disposition": "resolved"}
+  ],
+  "invalidated_descendants": []
+}

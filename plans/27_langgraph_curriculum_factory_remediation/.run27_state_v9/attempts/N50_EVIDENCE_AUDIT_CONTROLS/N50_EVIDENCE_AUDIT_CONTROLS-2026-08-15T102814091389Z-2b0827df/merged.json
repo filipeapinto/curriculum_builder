@@ -1,0 +1,9 @@
+{
+  "admission": "normal",
+  "at": "2026-08-15T10:30:22.311942Z",
+  "attempt_id": "N50_EVIDENCE_AUDIT_CONTROLS-2026-08-15T102814091389Z-2b0827df",
+  "node_id": "N50_EVIDENCE_AUDIT_CONTROLS",
+  "receipt": "receipts/N50_EVIDENCE_AUDIT_CONTROLS.receipt.v1.json",
+  "receipt_sha256": "4eb7d7efff9d6950de75cb176fabb277d447f038e0ebfa80840972042cfd0600",
+  "status": "PASSED"
+}

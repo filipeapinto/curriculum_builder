@@ -16,15 +16,18 @@ from . import (
     PrerequisitePause,
     SystemFailure,
     candidate_field,
+    candidate_payload,
     canonical_digest,
     contract_reference,
     deterministic_node,
     guard,
+    is_model_candidate,
     require,
     staged_dispatch,
     worker_packet,
 )
 from ..egress import AuthorizationRecord, EgressDenied, authorize_transmission
+from ..transport import WorkspaceViolation, extract_verified_staged_text
 
 __all__ = [
     "SOURCE_REQUEST_FIELDS",
@@ -479,6 +482,28 @@ def D06B_RETRIEVE_SOURCE_CANDIDATES(
                 body=body,
                 expected_sha256=response_record["bytes_sha256"],
             )
+            try:
+                staged_text, staged_text_format = extract_verified_staged_text(
+                    Path(source_path))
+            except WorkspaceViolation as error:
+                # HTTP success is not source success when the tool-closed model
+                # cannot receive a deterministic textual projection of the
+                # retrieved bytes. Continue through the bounded candidates;
+                # never ask the model to infer content it cannot actually see.
+                candidate_failures.append({
+                    "locator": locator,
+                    "reason": f"retrieved source is not projectable: {error}",
+                })
+                continue
+            if not staged_text.strip():
+                candidate_failures.append({
+                    "locator": locator,
+                    "reason": (
+                        "retrieved source has no model-readable verified text "
+                        f"after {staged_text_format} projection"
+                    ),
+                })
+                continue
             retrievals[request_key] = {
                 "key": request_key,
                 "unit_id": unit_id,
@@ -670,6 +695,29 @@ def D07_CORRELATE_AND_ADMIT_SOURCES(
     for key in sorted(expected):
         interpretation = _record(interpretations[key], f"interpretation {key}")
         retrieval = _record(retrievals[key], f"retrieval {key}")
+        payload = (
+            candidate_payload(interpretation, f"interpretation candidate {key}")
+            if is_model_candidate(interpretation)
+            else {
+                "interpretations": [{
+                    "request_id": key,
+                    "claims": list(interpretation.get("claims") or []),
+                    "limitations": list(interpretation.get("limitations") or []),
+                }]
+            }
+        )
+        interpreted_members = [
+            member for member in payload.get("interpretations", [])
+            if isinstance(member, dict) and member.get("request_id") == key
+        ]
+        require(
+            len(interpreted_members) == 1,
+            "join",
+            "an admitted source must have exactly one interpretation for its request",
+            request_key=key,
+            member_count=len(interpreted_members),
+        )
+        interpreted_member = interpreted_members[0]
         admissions.append(
             {
                 "key": key,
@@ -683,6 +731,8 @@ def D07_CORRELATE_AND_ADMIT_SOURCES(
                 "scope": candidate_field(
                     interpretation, "scope", requests_by_key.get(key, {}).get("scope")
                 ),
+                "claims": list(interpreted_member.get("claims") or []),
+                "limitations": list(interpreted_member.get("limitations") or []),
             }
         )
 
@@ -695,6 +745,60 @@ def D07_CORRELATE_AND_ADMIT_SOURCES(
     }
 
     engine_root = projection["engine_root"]
+    domain_contract = projection["effective_run"].get("domain_contract")
+    staged_inputs: list[dict[str, Any]] = []
+
+    def staged_reference(reference: dict[str, Any], staged_name: str) -> dict[str, Any]:
+        projected = dict(reference)
+        projected["staged_name"] = staged_name
+        staged_inputs.append({
+            "name": staged_name,
+            "source_path": str((Path(engine_root) / reference["path"]).resolve()),
+            "sha256": reference["sha256"],
+        })
+        return projected
+
+    if isinstance(domain_contract, dict):
+        domain_schema = staged_reference(domain_contract["schema"], "domain_schema.json")
+        calibration = staged_reference(domain_contract["calibration"], "domain_calibration.yaml")
+        verifier = domain_contract["verifier"]
+        must_reject: list[dict[str, Any]] = []
+        for index, declaration in enumerate(verifier["must_reject"], start=1):
+            must_reject.append({
+                "fixture": staged_reference(
+                    declaration["fixture"], f"verifier_reject_{index:03d}.json"),
+                "expected_code": declaration["expected_code"],
+            })
+        must_accept = [
+            staged_reference(reference, f"verifier_accept_{index:03d}.json")
+            for index, reference in enumerate(verifier["must_accept"], start=1)
+        ]
+        verifier_interface = {
+            "entry_point": dict(verifier["entry_point"]),
+            "argv_template": verifier["invocation"],
+            "must_reject": must_reject,
+            "must_accept": must_accept,
+            "required_candidate_exit_code": 0,
+            "proven_by": "D08_VALIDATE_DOMAIN",
+        }
+        domain_config = dict(domain_contract["config"])
+    else:
+        # Compatibility for isolated legacy node fixtures that hand D07 an
+        # effective-run fragment predating `domain_contract`.  A state produced
+        # by D02 always carries the key, and may not author through this branch.
+        require(
+            "domain_contract" not in projection["effective_run"],
+            "schema_contract",
+            "the effective run carries no compiled domain contract",
+        )
+        domain_schema = contract_reference(engine_root, DOMAIN_SCHEMA_CONTRACT)
+        calibration = contract_reference(engine_root, DOMAIN_CALIBRATION_CONTRACT)
+        verifier_interface = {
+            "required_candidate_exit_code": 0,
+            "proven_by": "D08_VALIDATE_DOMAIN",
+        }
+        domain_config = None
+
     packet = worker_packet(
         run_id=projection["run_id"],
         episode_id=projection["episode_id"],
@@ -709,17 +813,17 @@ def D07_CORRELATE_AND_ADMIT_SOURCES(
                     "sha256": admission["sha256"],
                     "content_type": admission["content_type"],
                     "scope": admission["scope"],
+                    "claims": admission["claims"],
+                    "limitations": admission["limitations"],
                 }
                 for admission in admissions
             ],
-            "domain_schema": contract_reference(engine_root, DOMAIN_SCHEMA_CONTRACT),
-            "verifier_interface": {
-                "declared_at": "/verifier_result",
-                "required_result": "all_fixtures_behaved",
-                "proven_by": "D08_VALIDATE_DOMAIN",
-            },
-            "calibration": contract_reference(engine_root, DOMAIN_CALIBRATION_CONTRACT),
+            "domain_schema": domain_schema,
+            "domain_config": domain_config,
+            "verifier_interface": verifier_interface,
+            "calibration": calibration,
         },
+        staged_inputs=staged_inputs,
     )
 
     return {

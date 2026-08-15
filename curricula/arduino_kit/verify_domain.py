@@ -13,9 +13,11 @@ arduino_kit's. It is ordinary code over structured data — the thing CircuitLM 
 as *"what eliminated fatal errors"*. **No model is called from here, ever.** A model
 checking a model's circuit is the one role the evidence specifically rules out.
 
-Seven rules, each with its own code, each reported by name:
+Six curriculum-specific rules, each with its own code, each reported by name.
+The engine validates the exact candidate and every fixture against the separately
+frozen JSON Schema before this script is entered, so schema admission is not
+delegated to an importable verifier library:
 
-    domain-schema-invalid     the block does not satisfy this curriculum's own contract
     polarity-unevidenced      a terminal or coordinate asserts a connector polarity
     supply-not-permitted      a supply that is not a verified_official permitted input
     current-limit-absent      current flows through a rated part with nothing limiting it
@@ -40,7 +42,6 @@ from __future__ import annotations
 import argparse
 import json
 import re
-import sys
 from pathlib import Path
 
 HERE = Path(__file__).resolve().parent
@@ -68,27 +69,14 @@ CURRENT_UNITS = {"A", "mA", "uA"}
 
 
 def _load(path: Path):
-    text = path.read_text(encoding="utf-8")
-    if path.suffix.lower() in (".yaml", ".yml"):
-        import yaml
-
-        return yaml.safe_load(text)
-    return json.loads(text)
+    # The curriculum-owned sidecars use JSON bytes even where their historical
+    # extension remains .yaml. JSON is a YAML subset, so engine-side readers stay
+    # compatible while the isolated verifier needs only the standard library.
+    return json.loads(path.read_text(encoding="utf-8"))
 
 
 # ---------------------------------------------------------------------------
 # The rules
-
-
-def rule_schema(domain) -> list[str]:
-    import jsonschema
-
-    validator = jsonschema.Draft202012Validator(_load(DOMAIN_SCHEMA))
-    errors = sorted(validator.iter_errors(domain), key=lambda e: list(e.absolute_path))
-    return [
-        f"domain-schema-invalid: {'.'.join(str(p) for p in e.absolute_path) or '<root>'}: {e.message}"
-        for e in errors[:5]
-    ]
 
 
 def _strings(node, found=None) -> list[str]:
@@ -284,9 +272,6 @@ def rule_composed_circuit(domain, policy: str) -> list[str]:
 
 
 def verify(domain, policy: str = "composed") -> list[str]:
-    problems = rule_schema(domain)
-    if problems:
-        return problems  # a block that is not the right shape cannot be read further
     return (
         rule_polarity(domain)
         + rule_supply(domain)
@@ -312,7 +297,8 @@ def main() -> int:
     for problem in problems:
         print(problem)
     if not problems:
-        print("accepted: 7 rules ran, none fired. This is structural checking and not "
+        print("accepted: 6 curriculum rules ran after engine schema validation, none fired. "
+              "This is structural checking and not "
               "simulation; a circuit is simulated once, when it enters the library.")
     return 0 if not problems else 1
 

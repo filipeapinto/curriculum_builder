@@ -1,0 +1,15 @@
+{
+  "state": "QA_PASSED",
+  "reason": "CONVERGED",
+  "detail": "Codex passed the artifact at round 1",
+  "artifact": "/Users/filipepinto/Projects/curriculum_builder/plans/27_langgraph_curriculum_factory_remediation/execution_package_v2/release_candidate/rc28/rc28_review_bundle.v1.md",
+  "rounds_completed": 1,
+  "max_iterations": 5,
+  "session_id": "01a004cf-5bdb-7440-a09a-cf7496bc192b",
+  "thread_id": "01a004cf-5bdb-7440-a09a-cf7496bc192b",
+  "transport": "app-server",
+  "rollout_file": "/Users/filipepinto/.codex/sessions/2026/08/15/rollout-2026-08-15T05-44-53-01a004cf-5bdb-7440-a09a-cf7496bc192b.jsonl",
+  "chain": "ecdbc2fbadb6fa5d4af3a191e6ef8727890d22abc0740a1681f8b124f388da51",
+  "qa_dir": "/Users/filipepinto/Projects/curriculum_builder/plans/27_langgraph_curriculum_factory_remediation/execution_package_v2/release_candidate/rc28/QA",
+  "finalized_at": "2026-08-15T09:51:45.910801+00:00"
+}

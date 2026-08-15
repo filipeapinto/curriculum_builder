@@ -7,10 +7,14 @@ anything at all. None of them produces curriculum content.
 
 from __future__ import annotations
 
+import ast
+import hashlib
+import json
 import re
 from pathlib import Path
 from typing import Any
 
+import jsonschema
 import yaml
 
 from . import (
@@ -641,6 +645,381 @@ def compile_prerequisite_closure(
     return [unit[_UNIT_ID_KEY] for unit in unit_records if unit[_UNIT_ID_KEY] in required]
 
 
+def _frozen_curriculum_reference(
+    relative: Any,
+    *,
+    label: str,
+    engine_root: Path,
+    curriculum_root: Path,
+    frozen: dict[str, str],
+) -> dict[str, str]:
+    """Resolve one manifest-declared curriculum file against D01's frozen bytes."""
+
+    require(isinstance(relative, str) and relative, "schema_contract", f"{label} is missing")
+    declared = Path(relative)
+    require(
+        not declared.is_absolute() and ".." not in declared.parts,
+        "integrity",
+        f"{label} must be an engine-relative path without traversal",
+        value=relative,
+    )
+    path = (engine_root / declared).resolve()
+    require(
+        path != curriculum_root and curriculum_root in path.parents,
+        "integrity",
+        f"{label} escapes the curriculum root",
+        path=str(path),
+    )
+    require(path.is_file(), "schema_contract", f"{label} is missing", path=str(path))
+    expected = frozen.get(str(path))
+    require(
+        isinstance(expected, str),
+        "integrity",
+        f"{label} is not in the D01 frozen input set",
+        path=str(path),
+    )
+    actual = _sha256_file(path)
+    require(
+        actual == expected,
+        "integrity",
+        f"{label} changed after D01 froze it",
+        path=str(path),
+        expected=expected,
+        actual=actual,
+    )
+    return {"path": relative, "sha256": actual}
+
+
+_SAFE_VERIFIER_IMPORT_ROOTS = frozenset({
+    "__future__",
+    "argparse",
+    "json",
+    "pathlib",
+    "re",
+})
+
+_FORBIDDEN_VERIFIER_IMPORT_ROOTS = frozenset({
+    "asyncio",
+    "builtins",
+    "cffi",
+    "ctypes",
+    "importlib",
+    "marshal",
+    "multiprocessing",
+    "os",
+    "posix",
+    "runpy",
+    "socket",
+    "subprocess",
+    "types",
+})
+
+
+def _validate_verifier_python_source(
+    path: Path,
+    *,
+    label: str,
+    allowed_local_imports: frozenset[str] = frozenset(),
+) -> None:
+    try:
+        verifier_source = path.read_text(encoding="utf-8")
+        verifier_tree = ast.parse(verifier_source, filename=str(path))
+    except (OSError, UnicodeError, SyntaxError) as error:
+        raise SystemFailure(
+            "schema_contract", f"{label} must be valid UTF-8 Python: {error}"
+        ) from error
+    forbidden_names = {
+        "eval", "exec", "compile", "__import__", "getattr", "setattr",
+        "delattr", "globals", "locals", "vars", "breakpoint",
+    }
+    allowed_dunder_names = {"__doc__", "__file__", "__name__"}
+    forbidden_attributes = {
+        "FunctionType", "fork", "forkpty", "import_module", "kill", "killpg",
+        "load_module", "modules", "popen", "reload", "startfile", "system",
+    }
+    allowed_dunder_attributes = {"__name__"}
+    permitted_imports = _SAFE_VERIFIER_IMPORT_ROOTS | allowed_local_imports
+    for node in ast.walk(verifier_tree):
+        if isinstance(node, ast.Constant) and isinstance(node.value, str):
+            value = node.value.strip()
+            require(
+                not value.startswith("/") and not re.match(r"^[A-Za-z]:[\\/]", value),
+                "schema_contract",
+                f"{label} may not embed an absolute filesystem path",
+            )
+        if isinstance(node, (ast.Import, ast.ImportFrom)):
+            if isinstance(node, ast.Import):
+                roots = {alias.name.split(".", 1)[0] for alias in node.names}
+            elif node.level:
+                roots = {
+                    (node.module or alias.name).split(".", 1)[0]
+                    for alias in node.names
+                }
+            else:
+                roots = {(node.module or "").split(".", 1)[0]}
+            require(
+                bool(roots) and all(root in permitted_imports for root in roots),
+                "schema_contract",
+                f"{label} imports a module outside the closed verifier allowlist",
+                imported=sorted(roots),
+            )
+            if isinstance(node, ast.ImportFrom):
+                imported_names = {alias.name for alias in node.names}
+                require(
+                    not any(
+                        name.startswith("_")
+                        or name in forbidden_attributes
+                        or name in _FORBIDDEN_VERIFIER_IMPORT_ROOTS
+                        for name in imported_names
+                    ),
+                    "schema_contract",
+                    f"{label} imports a dynamic, native, or process surface",
+                    imported=sorted(imported_names),
+                )
+        if isinstance(node, ast.Name):
+            require(
+                node.id not in forbidden_names
+                and (not node.id.startswith("__") or node.id in allowed_dunder_names),
+                "schema_contract",
+                f"{label} references dynamic interpreter state or code",
+            )
+        if isinstance(node, ast.Attribute):
+            name = node.attr
+            safe_regex_compile = (
+                name == "compile"
+                and isinstance(node.value, ast.Name)
+                and node.value.id == "re"
+            )
+            require(
+                (not name.startswith("_") or name in allowed_dunder_attributes)
+                and not name.startswith("exec")
+                and "fork" not in name
+                and "spawn" not in name
+                and (name not in forbidden_names or safe_regex_compile)
+                and name not in forbidden_attributes
+                and name not in _FORBIDDEN_VERIFIER_IMPORT_ROOTS,
+                "schema_contract",
+                f"{label} references dynamic, native, or process execution",
+            )
+
+
+def _compile_domain_contract(
+    manifest: dict[str, Any],
+    *,
+    engine_root: Path,
+    curriculum_root: Path,
+    frozen: dict[str, str],
+    unit_records: list[dict[str, Any]],
+) -> dict[str, Any]:
+    """Freeze the real artifact schema/config/verifier/fixtures/calibration.
+
+    D02 is the pre-entry freeze boundary.  An incomplete declaration must fail
+    here, before capability proof, retrieval, or model work; deferring the
+    refusal to D07 would leave the effective-run identity without the authority
+    bytes that later admissions claim to validate against.
+    """
+
+    declared = manifest.get("domain")
+    require(isinstance(declared, dict), "schema_contract", "manifest declares no domain contract")
+    required = {"schema", "manifest_schema", "config", "verifier", "calibration"}
+    missing = sorted(required - set(declared))
+    require(
+        not missing,
+        "schema_contract",
+        "manifest domain contract is incomplete",
+        missing=missing,
+    )
+
+    schema_ref = _frozen_curriculum_reference(
+        declared["schema"], label="domain artifact schema", engine_root=engine_root,
+        curriculum_root=curriculum_root, frozen=frozen)
+    manifest_schema_ref = _frozen_curriculum_reference(
+        declared["manifest_schema"], label="domain manifest schema", engine_root=engine_root,
+        curriculum_root=curriculum_root, frozen=frozen)
+    calibration_ref = _frozen_curriculum_reference(
+        declared["calibration"], label="curriculum calibration", engine_root=engine_root,
+        curriculum_root=curriculum_root, frozen=frozen)
+
+    try:
+        domain_schema = json.loads((engine_root / schema_ref["path"]).read_text(encoding="utf-8"))
+        manifest_schema = json.loads(
+            (engine_root / manifest_schema_ref["path"]).read_text(encoding="utf-8"))
+    except (OSError, UnicodeDecodeError, json.JSONDecodeError) as error:
+        raise SystemFailure(
+            "schema_contract", f"a curriculum domain schema is not readable JSON: {error}"
+        ) from error
+    try:
+        jsonschema.Draft202012Validator.check_schema(domain_schema)
+        jsonschema.Draft202012Validator.check_schema(manifest_schema)
+    except jsonschema.SchemaError as error:
+        raise SystemFailure("schema_contract", f"invalid curriculum domain schema: {error}") from error
+
+    defs = manifest_schema.get("$defs") if isinstance(manifest_schema, dict) else None
+    require(
+        isinstance(defs, dict) and isinstance(defs.get("config"), dict)
+        and isinstance(defs.get("core_activity"), dict),
+        "schema_contract",
+        "domain manifest schema must define config and core_activity contracts",
+    )
+    try:
+        jsonschema.Draft202012Validator(defs["config"]).validate(declared["config"])
+        activity_validator = jsonschema.Draft202012Validator(defs["core_activity"])
+        for unit in unit_records:
+            activity_validator.validate(unit.get("core_activity"))
+    except jsonschema.ValidationError as error:
+        raise SystemFailure(
+            "schema_contract", f"manifest domain surface violates its curriculum contract: {error}"
+        ) from error
+
+    verifier = declared.get("verifier")
+    require(isinstance(verifier, dict), "schema_contract", "domain verifier must be an object")
+    require(
+        (verifier.get("proven") or {}).get("result") == "all_fixtures_behaved",
+        "schema_contract",
+        "the curriculum does not claim a proven verifier fixture suite",
+    )
+    invocation = verifier.get("invocation")
+    require(
+        isinstance(invocation, str) and invocation.split().count("<domain>") == 1,
+        "schema_contract",
+        "domain verifier invocation must contain exactly one <domain> token",
+    )
+    entry_ref = _frozen_curriculum_reference(
+        verifier.get("entry_point"), label="domain verifier entry point",
+        engine_root=engine_root, curriculum_root=curriculum_root, frozen=frozen)
+    entry_path = (engine_root / entry_ref["path"]).resolve()
+    raw_dependencies = verifier.get("dependencies")
+    require(
+        isinstance(raw_dependencies, list),
+        "schema_contract",
+        "domain verifier dependencies must be an array",
+    )
+    require(
+        len(raw_dependencies) <= 64 and len(raw_dependencies) == len(set(raw_dependencies)),
+        "schema_contract",
+        "domain verifier dependencies exceed the bound or contain duplicates",
+    )
+    dependencies = [
+        _frozen_curriculum_reference(
+            value,
+            label=f"domain verifier dependency {index}",
+            engine_root=engine_root,
+            curriculum_root=curriculum_root,
+            frozen=frozen,
+        )
+        for index, value in enumerate(raw_dependencies, start=1)
+    ]
+    entry_relative_parent = Path(entry_ref["path"]).parent
+    local_import_roots: set[str] = set()
+    for reference in dependencies:
+        dependency_relative = Path(reference["path"])
+        if dependency_relative.suffix.lower() != ".py":
+            continue
+        try:
+            from_entry = dependency_relative.relative_to(entry_relative_parent)
+        except ValueError:
+            from_entry = dependency_relative
+        first = from_entry.parts[0]
+        local_import_roots.add(
+            Path(first).stem if len(from_entry.parts) == 1 else first
+        )
+    unsafe_local_roots = local_import_roots - _SAFE_VERIFIER_IMPORT_ROOTS
+    require(
+        all(root.isidentifier() and not root.startswith("_") for root in unsafe_local_roots)
+        and not (local_import_roots & _FORBIDDEN_VERIFIER_IMPORT_ROOTS),
+        "schema_contract",
+        "domain verifier Python dependencies do not form safe import names",
+        imported=sorted(local_import_roots),
+    )
+    allowed_local_imports = frozenset(local_import_roots)
+    _validate_verifier_python_source(
+        entry_path,
+        label="domain verifier entry point",
+        allowed_local_imports=allowed_local_imports,
+    )
+    for index, reference in enumerate(dependencies, start=1):
+        dependency_path = (engine_root / reference["path"]).resolve()
+        if dependency_path.suffix.lower() == ".py":
+            _validate_verifier_python_source(
+                dependency_path,
+                label=f"domain verifier Python dependency {index}",
+                allowed_local_imports=allowed_local_imports,
+            )
+
+    must_reject: list[dict[str, Any]] = []
+    for index, item in enumerate(verifier.get("must_reject") or [], start=1):
+        require(isinstance(item, dict), "schema_contract", f"reject fixture {index} is not an object")
+        must_reject.append({
+            "fixture": _frozen_curriculum_reference(
+                item.get("fixture"), label=f"reject fixture {index}", engine_root=engine_root,
+                curriculum_root=curriculum_root, frozen=frozen),
+            "expected_code": _text(item.get("expected_code"), f"reject fixture {index} code"),
+        })
+    must_accept = [
+        _frozen_curriculum_reference(
+            value, label=f"accept fixture {index}", engine_root=engine_root,
+            curriculum_root=curriculum_root, frozen=frozen)
+        for index, value in enumerate(verifier.get("must_accept") or [], start=1)
+    ]
+    require(must_reject and must_accept, "schema_contract", "verifier requires reject and accept fixtures")
+    require(
+        len(must_reject) + len(must_accept) <= 64,
+        "schema_contract",
+        "verifier fixture suite exceeds the frozen bound of 64",
+    )
+    fixture_validator = jsonschema.Draft202012Validator(domain_schema)
+    fixture_references = [
+        (f"reject fixture {index}", item["fixture"])
+        for index, item in enumerate(must_reject, start=1)
+    ] + [
+        (f"accept fixture {index}", reference)
+        for index, reference in enumerate(must_accept, start=1)
+    ]
+    for label, reference in fixture_references:
+        fixture_path = (engine_root / reference["path"]).resolve()
+        try:
+            fixture_bytes = fixture_path.read_bytes()
+            fixture_value = json.loads(fixture_bytes)
+        except (OSError, UnicodeDecodeError, json.JSONDecodeError) as error:
+            raise SystemFailure(
+                "schema_contract", f"{label} is not readable JSON: {error}"
+            ) from error
+        require(
+            hashlib.sha256(fixture_bytes).hexdigest() == reference["sha256"],
+            "integrity",
+            f"{label} changed while D02 validated its frozen bytes",
+            path=str(fixture_path),
+        )
+        fixture_errors = sorted(
+            fixture_validator.iter_errors(fixture_value),
+            key=lambda error: tuple(str(part) for part in error.absolute_path),
+        )
+        require(
+            not fixture_errors,
+            "schema_contract",
+            f"{label} violates the frozen domain schema",
+            path=str(fixture_path),
+            error=fixture_errors[0].message if fixture_errors else None,
+        )
+
+    contract = {
+        "schema": schema_ref,
+        "manifest_schema": manifest_schema_ref,
+        "config": dict(declared["config"]),
+        "calibration": calibration_ref,
+        "verifier": {
+            "entry_point": entry_ref,
+            "invocation": invocation,
+            "dependencies": dependencies,
+            "must_reject": must_reject,
+            "must_accept": must_accept,
+            "proven": dict(verifier["proven"]),
+        },
+    }
+    contract["digest"] = canonical_digest(contract)
+    return contract
+
+
 @deterministic_node("D02_COMPILE_EFFECTIVE_RUN")
 def D02_COMPILE_EFFECTIVE_RUN(projection: dict[str, Any], runtime_context: Any) -> dict[str, Any]:
     """Freeze the ordered unit list, target closure, and acceptance denominator."""
@@ -700,17 +1079,30 @@ def D02_COMPILE_EFFECTIVE_RUN(projection: dict[str, Any], runtime_context: Any) 
         )
         target_closure = compile_prerequisite_closure(unit_records, requested_unit_id)
 
-    # The curriculum's own domain contract. The engine's metaschema constrains the
-    # shape of this file; the file constrains the domain a unit's artifacts assert.
+    engine_root = Path(projection["engine_root"]).resolve()
+    curriculum_root = Path(projection["curriculum_root"]).resolve()
+
+    # The curriculum's own two different domain contracts: manifest_schema
+    # constrains human-authored manifest surfaces; schema constrains the artifact
+    # M02 creates.  Keeping them distinct is what prevents D08 from validating a
+    # domain artifact against the wrong document language.
     declared_domain = manifest.get("domain") if isinstance(manifest, dict) else None
     manifest_schema = (
         declared_domain.get("manifest_schema") if isinstance(declared_domain, dict) else None
+    )
+    domain_contract = _compile_domain_contract(
+        manifest,
+        engine_root=engine_root,
+        curriculum_root=curriculum_root,
+        frozen=frozen,
+        unit_records=unit_records,
     )
 
     effective_run = {
         "mode": mode,
         "requested_unit_id": requested_unit_id,
         "manifest_schema": manifest_schema,
+        "domain_contract": domain_contract,
         "ordered_unit_ids": ordered_ids,
         "unit_records": unit_records,
         "target_closure": target_closure,
@@ -722,6 +1114,9 @@ def D02_COMPILE_EFFECTIVE_RUN(projection: dict[str, Any], runtime_context: Any) 
             "manifest_digest": actual,
             "mode": mode,
             "target_closure": target_closure,
+            "domain_contract_digest": (
+                domain_contract.get("digest") if isinstance(domain_contract, dict) else None
+            ),
         }
     )
 

@@ -1,0 +1,83 @@
+{
+  "opened_at": "2026-08-15T07-49-43.829289+00-00",
+  "artifact_original": "/Users/filipepinto/Projects/curriculum_builder/plans/27_langgraph_curriculum_factory_remediation/execution_package_v2/release_candidate/rc22/rc22_review_bundle.v1.md",
+  "artifact_current": "/Users/filipepinto/Projects/curriculum_builder/plans/27_langgraph_curriculum_factory_remediation/execution_package_v2/release_candidate/rc22/rc22_review_bundle.v2.md",
+  "session_id": "01a00475-65ae-72f0-98f1-6df4ad3b9aa4",
+  "chain": "83792cfed4375010978389fa64f4d248729dc63c3703c8b90ab58d00fb39fe94",
+  "rounds_completed": 1,
+  "rounds": [
+    {
+      "round": 1,
+      "timestamp": "2026-08-15T08:19:20.431737+00:00",
+      "verdict": "FAIL",
+      "artifact_path": "/Users/filipepinto/Projects/curriculum_builder/plans/27_langgraph_curriculum_factory_remediation/execution_package_v2/release_candidate/rc22/rc22_review_bundle.v1.md",
+      "artifact_sha256": "1b7a436f133dbacc6f07e7b749256b561175bf23784c7961e559f5d9fe914d01",
+      "findings_at_threshold": [
+        {
+          "id": "RC22-QA-001",
+          "title": "D02's Python policy is bypassable in entry points and dependencies",
+          "severity": "blocker",
+          "criterion_ref": "Criterion 2 requires D02 to reject dynamic-code, native, and process-launch surfaces in both the Python entry point and every `.py` dependency."
+        },
+        {
+          "id": "RC22-QA-002",
+          "title": "Unguarded filesystem operations expose undeclared engine-path state",
+          "severity": "blocker",
+          "criterion_ref": "Criterion 4 requires all ordinary filesystem path probes to be normalized or blocked; Criterion 6 requires undeclared repository add/remove/rename/metadata changes not to change the same candidate/frozen-contract verdict."
+        }
+      ],
+      "observations_count": 6,
+      "chain": "83792cfed4375010978389fa64f4d248729dc63c3703c8b90ab58d00fb39fe94"
+    }
+  ],
+  "stall_count": 0,
+  "last_fingerprint": "4a57182b67e61176e3bbd53c48b970c9b6f71790b32a3c068f28dd20644b5e6e",
+  "exec_copied": [
+    "QA_criteria.rc22.v1.md",
+    "rc22_review_bundle.v2.md",
+    "validation.v1.md"
+  ],
+  "terminal": {
+    "state": "QA_ERROR",
+    "reason": "CODEX_EXIT_1",
+    "detail": "no stderr",
+    "artifact": "/Users/filipepinto/Projects/curriculum_builder/plans/27_langgraph_curriculum_factory_remediation/execution_package_v2/release_candidate/rc22/rc22_review_bundle.v2.md",
+    "rounds_completed": 1,
+    "max_iterations": 5,
+    "session_id": "01a00475-65ae-72f0-98f1-6df4ad3b9aa4",
+    "thread_id": "01a00475-65ae-72f0-98f1-6df4ad3b9aa4",
+    "transport": "exec",
+    "rollout_file": "/Users/filipepinto/.codex/sessions/2026/08/15/rollout-2026-08-15T04-06-37-01a00475-65ae-72f0-98f1-6df4ad3b9aa4.jsonl",
+    "chain": "83792cfed4375010978389fa64f4d248729dc63c3703c8b90ab58d00fb39fe94",
+    "qa_dir": "/Users/filipepinto/Projects/curriculum_builder/plans/27_langgraph_curriculum_factory_remediation/execution_package_v2/release_candidate/rc22/QA",
+    "finalized_at": "2026-08-15T08:37:51.352234+00:00"
+  },
+  "config": {
+    "criteria": "# RC22 independent QA criteria\n\nComplete all probes before verdict. Report only blocker findings with criterion,\ntrigger, consequence, and executed or directly inspectable evidence.\n\n1. Preserve graph-v8 hash/history and distinct graph-v9 package/result/state lineage;\n   recompute all active digests and pass real plan and ownership validation.\n2. D02 binds the complete curriculum-owned M02/D08 input closure. It rejects missing,\n   escaped, duplicate, oversized, drifted, absolute-path, dynamic-code, native, and\n   process-launch surfaces in both the Python entry point and every `.py` dependency,\n   while admitting the active Arduino verifier's legitimate `re.compile` call.\n3. For real engine-nested N70 output, D08 stages race-checked bytes outside engine and\n   output, preserves only declared layout, rejects conflicts, and executes only the\n   staged entry/dependencies/fixtures and exact candidate.\n4. Verifier execution is read-only, no-network, no-fork, no-model-auth/scratch; has no\n   undeclared engine byte/metadata access or exemptions; all ordinary filesystem path\n   probes including `os.chdir`, and process escape surfaces, are normalized or blocked.\n5. Candidate and fixture bytes are identical before/after execution, and the receipt\n   binds exactly the bytes evaluated. Candidate overwrite/restore cannot pass.\n6. Declared drift fails before execution; undeclared repository add/remove/rename/\n   byte/metadata changes cannot change the same candidate/frozen-contract verdict.\n7. Bounded M02 authority, immutable first-failure repair, exact repair lineage,\n   ArtifactStore persistence, and D08/D09/D12/D20 cross-node replay remain correct.\n8. Package/focused/full suites pass, including RC13 through RC21 reproductions.\n9. Exact-host/SSRF/redirect protections, subscription-only tool-closed CLIs, model\n   assignments, topology, terminals, and no-billed-API/no-provider-SDK remain intact.\n10. A real fresh graph-v9 N00→N90 cascade through N70 and N80 is honest and executable.\n",
+    "focus": "Reproduce every RC21 blocker first: real active Arduino D01-D02 with re.compile, malicious Python verifier dependency, and existing-to-renamed undeclared directory through os.chdir. Then complete all ten criteria, with special attention to unguarded filesystem/process surfaces, actual fresh graph-v9 entry executability, and candidate/fixture immutability. RC21 FAIL is evidence, never approval.",
+    "threshold": "blocker",
+    "max_iterations": 5,
+    "timeout_seconds": 3600,
+    "retries": 1,
+    "model": null,
+    "effort": null,
+    "transport": "exec",
+    "allow_execution": true,
+    "grounding": [
+      "/Users/filipepinto/Projects/curriculum_builder/plans/26_langgraph_curriculum_factory/spec/v3/langgraph_curriculum_factory.spec.v4.md",
+      "/Users/filipepinto/Projects/curriculum_builder/plans/27_langgraph_curriculum_factory_remediation/execution_package_v2/implementation.graph.v9.yaml",
+      "/Users/filipepinto/Projects/curriculum_builder/plans/27_langgraph_curriculum_factory_remediation/execution_package_v2/contracts/spec_approval.v6.yaml",
+      "/Users/filipepinto/Projects/curriculum_builder/curricula/arduino_kit/arduino_kit_curriculum.v5.yaml",
+      "/Users/filipepinto/Projects/curriculum_builder/curricula/arduino_kit/verify_domain.py",
+      "/Users/filipepinto/Projects/curriculum_builder/schemas/curriculum.schema.v5.json",
+      "/Users/filipepinto/Projects/curriculum_builder/runtime/langgraph_factory/nodes/inputs.py",
+      "/Users/filipepinto/Projects/curriculum_builder/runtime/langgraph_factory/transport.py",
+      "/Users/filipepinto/Projects/curriculum_builder/tests/runtime/test_plan26_deterministic_nodes.py",
+      "/Users/filipepinto/Projects/curriculum_builder/tests/runtime/test_plan26_transport.py",
+      "/Users/filipepinto/Projects/curriculum_builder/plans/27_langgraph_curriculum_factory_remediation/controller/run27_controller.py",
+      "/Users/filipepinto/Projects/curriculum_builder/plans/27_langgraph_curriculum_factory_remediation/execution_package_v2/release_candidate/rc21/QA/rounds/round-01.response.json",
+      "/Users/filipepinto/Projects/curriculum_builder/plans/27_langgraph_curriculum_factory_remediation/execution_package_v2/release_candidate/rc22/validation.v1.md"
+    ]
+  },
+  "thread_id": "01a00475-65ae-72f0-98f1-6df4ad3b9aa4"
+}

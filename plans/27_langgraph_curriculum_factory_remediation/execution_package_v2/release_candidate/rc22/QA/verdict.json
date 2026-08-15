@@ -1,0 +1,15 @@
+{
+  "state": "QA_ERROR",
+  "reason": "CODEX_EXIT_1",
+  "detail": "no stderr",
+  "artifact": "/Users/filipepinto/Projects/curriculum_builder/plans/27_langgraph_curriculum_factory_remediation/execution_package_v2/release_candidate/rc22/rc22_review_bundle.v2.md",
+  "rounds_completed": 1,
+  "max_iterations": 5,
+  "session_id": "01a00475-65ae-72f0-98f1-6df4ad3b9aa4",
+  "thread_id": "01a00475-65ae-72f0-98f1-6df4ad3b9aa4",
+  "transport": "exec",
+  "rollout_file": "/Users/filipepinto/.codex/sessions/2026/08/15/rollout-2026-08-15T04-06-37-01a00475-65ae-72f0-98f1-6df4ad3b9aa4.jsonl",
+  "chain": "83792cfed4375010978389fa64f4d248729dc63c3703c8b90ab58d00fb39fe94",
+  "qa_dir": "/Users/filipepinto/Projects/curriculum_builder/plans/27_langgraph_curriculum_factory_remediation/execution_package_v2/release_candidate/rc22/QA",
+  "finalized_at": "2026-08-15T08:37:51.352234+00:00"
+}

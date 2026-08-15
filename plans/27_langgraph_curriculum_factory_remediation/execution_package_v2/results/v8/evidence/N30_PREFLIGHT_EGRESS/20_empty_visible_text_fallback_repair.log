@@ -1,0 +1,9 @@
+N70 live attempt 4 recovery repair
+N30_owner=runtime/langgraph_factory/nodes/sources.py now applies the same deterministic verified-text projection after each receipted retrieval
+behavior=HTTP success with empty or unprojectable model-readable text is an unavailable candidate; D06B continues through at most the three frozen locators in order
+all_unusable=required request raises typed required_external_fact_unavailable without partial retrieval admission or fabricated evidence
+positive_regression=test_D06B_skips_http_success_with_empty_visible_text_and_uses_fallback
+negative_regression=test_D06B_pauses_when_every_http_success_has_no_verified_visible_text
+cli_suite=62 passed, 27 subtests passed in 29.54s
+source_suite=20 passed, 234 deselected in 0.11s
+node_scan={"mode": "node", "node_id": "N30_PREFLIGHT_EGRESS", "ok": true, "scanned_files": 6, "violations": []}

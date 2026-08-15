@@ -1,0 +1,10 @@
+N70 live attempt 4 recovery repair
+run_id=860002069a52bbe2bf72c12e0d8e778b6c93607ad640af5bd2145f284697d306
+episode_id=c6ff8d6d981bccd769fd2d34c0644da85873d02793345000ed38cf9e62291be0
+observed_failure=request L01/1/safety_focus:001 retrieved HTTP 200 bytes whose deterministic html_visible_text projection was empty
+N20_owner=runtime/langgraph_factory/transport.py exposes the exact deterministic staged-text projection used by the tool-closed worker handoff
+N20_owner=runtime/langgraph_factory/model_nodes.py recognizes schema-valid interpretation no_verified_source as the typed bounded source failure instead of content repair
+positive_regression=test_m01_interpret_no_verified_source_is_typed_not_sent_to_content_repair
+negative_regression=test_m01_interpret_no_verified_source_must_match_the_staged_request
+scoped_suite=498 passed, 1 skipped, 140 subtests passed in 25.98s
+node_scan={"mode": "node", "node_id": "N20_PROVIDER_TRANSPORT", "ok": true, "scanned_files": 35, "violations": []}

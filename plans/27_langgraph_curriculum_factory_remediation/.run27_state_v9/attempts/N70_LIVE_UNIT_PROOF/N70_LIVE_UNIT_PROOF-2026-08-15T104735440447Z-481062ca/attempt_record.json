@@ -1,0 +1,21 @@
+{
+  "approved_spec_sha256": "e14df5a36ce12d700fe9fc4aa4aea466771bc89f31bc6e9d49f812c147b1bb3c",
+  "attempt_id": "N70_LIVE_UNIT_PROOF-2026-08-15T104735440447Z-481062ca",
+  "baseline": {
+    "outputs/run27/live_unit": null,
+    "plans/27_langgraph_curriculum_factory_remediation/execution_package_v2/results/v9/N70_LIVE_UNIT_PROOF.result.v1.json": null,
+    "plans/27_langgraph_curriculum_factory_remediation/execution_package_v2/results/v9/evidence/N70_LIVE_UNIT_PROOF": null
+  },
+  "created_at": "2026-08-15T10:47:35.440815Z",
+  "evidence_dir": "attempts/N70_LIVE_UNIT_PROOF/N70_LIVE_UNIT_PROOF-2026-08-15T104735440447Z-481062ca/logs",
+  "graph_sha256": "5236bf6b13a2c5171ad11ab80f1147e20b6b59f46708090d25ec16c5a7574379",
+  "node_definition_sha256": "ddc743c542ae523ce988720120ea8c8718739f757853885d6e610bd0cde795bd",
+  "node_id": "N70_LIVE_UNIT_PROOF",
+  "parent_attempt_id": null,
+  "predecessor_receipt_digests": {
+    "N60_ADVERSARIAL_REGRESSION": "8172513e7ce80fef6ac5c01a2e9e258efe9aaa13415f638d5decf12c2ce3ab6d"
+  },
+  "prompt_sha256": "d92410c51fb3be1073d2b52c9b6b386ef4e3ef5fbe46a7de8564f407d9d58159",
+  "run_id": "run27-execution-package-v2-graph-v9",
+  "schema_version": 1
+}
