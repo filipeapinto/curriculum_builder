@@ -18,7 +18,7 @@ from tests.runtime import unit_fixture
 ENGINE = unit_fixture.ENGINE
 FIXTURES = ENGINE / "tests/fixtures"
 SOURCE_ROOT = FIXTURES / "unit_claim_source"
-RUN = ENGINE / "outputs/arduino_kit_run_v2"
+RUN = unit_fixture.RUN_FIXTURE
 
 
 def _fixture(name):
@@ -66,7 +66,7 @@ def test_a_numeric_rating_with_no_sourced_claim_at_all_is_rejected():
 # --- the two concrete miscitations issue 006 names ------------------------------------
 
 def test_l03s_jumper_rating_is_derived_with_premises_not_attributed():
-    lab = json.loads((RUN / "L03/workers/lab.json").read_text())
+    lab = json.loads((RUN / "L03/lab.json").read_text())
     rating = lab["domain"]["electrical"]["ratings_and_limits"][0]
     assert rating["absolute_max"] == "1" and rating["unit"] == "A"
     assert "derived" in rating["source"].lower()
@@ -87,7 +87,7 @@ def _asserted(lab):
 
 
 def test_l03s_expansion_board_claim_is_scope_corrected():
-    lab = json.loads((RUN / "L03/workers/lab.json").read_text())
+    lab = json.loads((RUN / "L03/lab.json").read_text())
     assert "breadboard expansion board" not in _asserted(lab), \
         "the over-scoped 'expansion board is in the kit' claim is gone"
     claim = next(entry for entry in lab["content"]["sourced_claims"]
@@ -96,7 +96,7 @@ def test_l03s_expansion_board_claim_is_scope_corrected():
 
 
 def test_l04_states_neither_removed_universal_claim():
-    lab = json.loads((RUN / "L04/workers/lab.json").read_text())
+    lab = json.loads((RUN / "L04/lab.json").read_text())
     blob = _asserted(lab)
     assert "200 mA" not in blob and "200mA" not in blob, \
         "the universal 200 mA threshold is gone"

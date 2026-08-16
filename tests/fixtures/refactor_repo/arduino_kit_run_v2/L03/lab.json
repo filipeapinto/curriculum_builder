@@ -1,0 +1,445 @@
+{
+  "identity": {
+    "unit_id": "L03",
+    "slug": "jumper-wires-and-expansion",
+    "kind": "foundation",
+    "title": "Jumper Wires and Expansion Board",
+    "subject_job_sentence": "Jumper wires deliberately connect two different electrical points; an expansion board makes grouped connections easier to reach."
+  },
+  "pedagogy": {
+    "learning_objectives": [
+      {
+        "statement": "Name both endpoints of a planned jumper-wire connection before inserting it.",
+        "bloom_level": "remember",
+        "success_criterion": "I can write down endpoint A and endpoint B for a wire before I place it."
+      },
+      {
+        "statement": "Explain that a wire's colour is a convention and not an electrical property.",
+        "bloom_level": "understand",
+        "success_criterion": "I can explain why two different-coloured wires can do the exact same job."
+      },
+      {
+        "statement": "Make a labelled connection plan using the expansion board.",
+        "bloom_level": "apply",
+        "success_criterion": "I can trace the connection plan and complete the evidence card in order."
+      }
+    ],
+    "prior_knowledge": {
+      "prerequisite_labs": [
+        "L01",
+        "L02"
+      ],
+      "assumed_ideas": [
+        "Five-hole groups share one clip; the centre trench does not."
+      ],
+      "retrieval_prompt": "What did the last lab teach you about which holes share a connection?"
+    },
+    "misconceptions": [
+      {
+        "misconception": "A red wire always means power and a black wire always means ground.",
+        "why_it_is_common": "Kits often ship wires in those colours by convention, so the colour looks like a rule.",
+        "confronted_by": "The connection plan requires naming both real endpoints, which the colour alone never supplies."
+      }
+    ],
+    "vocabulary": [
+      {
+        "term": "jumper wire",
+        "child_definition": "A single wire that connects exactly two chosen points.",
+        "introduced_in": "explore"
+      },
+      {
+        "term": "endpoint",
+        "child_definition": "One of the two named places a wire connects.",
+        "introduced_in": "explain"
+      }
+    ],
+    "scaffolding": {
+      "adult_does": [
+        "Keep the board disconnected from any power source.",
+        "Verify the child's connection plan names both endpoints before any wire is inserted."
+      ],
+      "child_does": [
+        "Name both endpoints of a planned connection.",
+        "Trace the connection plan on the map.",
+        "Tick each evidence-card item after checking it."
+      ],
+      "fading_note": "The adult still confirms the safety state; the child now leads naming both endpoints before any wire touches the board."
+    },
+    "cognitive_load": {
+      "segments": [
+        "Notice a loose wire",
+        "Name endpoint A",
+        "Name endpoint B",
+        "Find the expansion row",
+        "Trace the plan",
+        "Complete evidence card"
+      ],
+      "concrete_before_abstract": "The child names two physical points before meeting the word endpoint.",
+      "worked_example": "The adult picks up one wire and says its two endpoint names aloud before miming where each would go."
+    }
+  },
+  "sequence": {
+    "engage": {
+      "hook": "The same wire could connect two completely different circuits depending only on where its two ends are placed.",
+      "eliciting_question": "Do you think a wire's colour changes what job it does?"
+    },
+    "explore": {
+      "predict": {
+        "question": "If you swap a red wire for a blue wire between the same two points, does the circuit change?",
+        "options": [
+          "no, colour is just a label",
+          "yes, red always means power",
+          "yes, blue always means signal"
+        ],
+        "recorded_before_observing": true
+      },
+      "observe": {
+        "what_to_observe": "First, that the two labelled ends joined by the dashed line on the map are the two ends of the one wire in your hand. Second, where the expansion row sits — the map shows it on its own, joined to nothing.",
+        "record_method": "tick_or_circle",
+        "evidence_fields": [
+          "my prediction, written down first",
+          "the two named places this one wire would join",
+          "the expansion row I located, joined to neither end of the wire",
+          "board still disconnected"
+        ]
+      },
+      "steps": [
+        {
+          "number": 1,
+          "action": "Check with the adult that no wire is connected to a power source."
+        },
+        {
+          "number": 2,
+          "action": "Circle your prediction about wire colour."
+        },
+        {
+          "number": 3,
+          "action": "Pick one wire and name its first planned endpoint."
+        },
+        {
+          "number": 4,
+          "action": "Name its second planned endpoint."
+        },
+        {
+          "number": 5,
+          "action": "Find one row on the expansion board the plan would use."
+        },
+        {
+          "number": 6,
+          "action": "Trace the three locations on the connection plan with a finger."
+        },
+        {
+          "number": 7,
+          "action": "Tick each place found and ask the adult to verify the card."
+        }
+      ],
+      "expected_observation": "The two ends of one wire are joined to each other, and the expansion row is a separate place joined to neither of them.",
+      "not_yet_outcome": {
+        "symptom": "The child names a colour instead of a location for an endpoint.",
+        "first_check": "Point to the physical hole or row again and ask for its location name, not its colour."
+      }
+    },
+    "explain": {
+      "what_you_saw": "You saw that the two labelled ends on the map are the two ends of one wire, joined to each other. You found the expansion row on its own, joined to neither end.",
+      "why_it_happened": "A jumper wire is a passive conductor: it joins whatever two points it is plugged into, and nothing about its own colour changes that job. Wire colour is a convention some kits use to help people read their own plans, never an electrical property. An expansion board just brings grouped connections to a place that is easier to reach with a jumper.",
+      "self_explanation_prompt": "Tell the adult why naming a wire's two endpoints tells you more than naming its colour."
+    },
+    "elaborate": {
+      "near_transfer": [
+        "Plan a second wire's two endpoints using a different expansion board row."
+      ],
+      "far_transfer": [
+        "A garden hose carries water between whatever two points it is connected to, regardless of its colour.",
+        "A phone charging cable works the same job whether it is white or black."
+      ]
+    },
+    "evaluate": {
+      "success_criteria_checklist": [
+        "I can write down endpoint A and endpoint B for a wire before I place it.",
+        "I can explain why two different-coloured wires can do the exact same job.",
+        "I can trace the connection plan and complete the evidence card in order."
+      ],
+      "hinge_question": {
+        "question": "If a wire is coloured green but its two endpoints are on a rail and a resistor, what does the green colour prove about the circuit?",
+        "reveals": "Whether the learner still treats colour as functionally meaningful instead of just a labelling convention."
+      },
+      "next_lab_link": "L05 asks you to plan a resistor's two connection points the same way this lab planned a wire's."
+    }
+  },
+  "content": {
+    "identification": {
+      "child_name": "jumper wire",
+      "technical_name": "male-to-male jumper wire and prototype-shield expansion row",
+      "distinguishing_features": "A flexible single-conductor wire with a rigid pin at each end. This unit also uses the kit's prototype shield, whose extra rows of holes are what 'expansion row' means here.",
+      "orientation_cue": "Do not infer a wire's job from its colour; an adult verifies the named endpoints against the connection plan.",
+      "parts": [
+        {
+          "label": "wire endpoint a",
+          "role": "The first point a jumper wire's connection plan names."
+        },
+        {
+          "label": "wire endpoint b",
+          "role": "The second point a jumper wire's connection plan names."
+        },
+        {
+          "label": "expansion board row",
+          "role": "A grouped row of holes on the kit's prototype shield, reachable by a planned jumper."
+        }
+      ]
+    },
+    "troubleshooting": [
+      {
+        "what_you_notice": "You cannot remember which two points a wire was meant to connect.",
+        "likely_reason": "The connection plan was not written down before the wire was picked up.",
+        "safe_first_check": "Set the wire aside and re-write both endpoint names on the plan before touching the board."
+      },
+      {
+        "what_you_notice": "Two wires of the same colour seem to be doing different jobs.",
+        "likely_reason": "Colour is only a labelling convention, so same-coloured wires can have completely different endpoints.",
+        "safe_first_check": "Check each wire's own endpoint plan instead of relying on its colour."
+      }
+    ],
+    "sourced_claims": [
+      {
+        "claim": "A conservative 1 A planning limit is used for 20 AWG breadboard jumper wire.",
+        "source_locator": {
+          "path": "sources/source_01.html",
+          "section_or_line": "these holes are sized to allow wire of up to 20 awg to be inserted"
+        },
+        "subject_scope": {
+          "model_independent": true,
+          "justification": "The wire gauge a breadboard hole accepts is a property of the standard 0.1-inch board, not of one product."
+        },
+        "evidence_scope": "The cited text establishes the 20 AWG gauge limit only. It states no jumper-wire current rating, so the 1 A figure is derived and marked as such rather than attributed to this source.",
+        "derivation": {
+          "premises": [
+            "The cited guide states a good-quality breadboard's contact current is generally limited to around 2 A.",
+            "A jumper wire's own contact is one of the two contacts in that path, so it cannot carry more than the path does.",
+            "1 A is chosen as half the cited 2 A path figure, as a deliberately conservative planning limit.",
+            "Nothing in this unit is energized, so no current flows and the limit is used for planning only."
+          ]
+        }
+      },
+      {
+        "claim": "The extra rows this unit calls an expansion row are the prototype shield's grouped holes.",
+        "source_locator": {
+          "path": "sources/source_01.html",
+          "section_or_line": "each of the rows of 5 holes has internal spring contacts that connect the 5 holes electrically"
+        },
+        "subject_scope": {
+          "model_independent": true,
+          "justification": "What a grouped row of holes is electrically is standard breadboard construction, described generically by the cited guide."
+        },
+        "evidence_scope": "The cited guide supports what a grouped row of holes does electrically, and nothing about which board ships in any particular kit. Which item in this kit carries those rows is scoped to the kit photograph and roster instead, and this claim no longer asserts that a separate 'breadboard expansion board' is in the kit."
+      }
+    ],
+    "unresolved_visual_roles": [],
+    "derived": [
+      {
+        "domain_pointer": "/build_map/traced_path/0",
+        "rendered_value": "wire endpoint a"
+      },
+      {
+        "domain_pointer": "/build_map/traced_path/1",
+        "rendered_value": "wire endpoint b"
+      },
+      {
+        "domain_pointer": "/build_map/traced_path/2",
+        "rendered_value": "expansion board row"
+      },
+      {
+        "domain_pointer": "/build_map/evidence_card/prompt",
+        "rendered_value": "With every wire out of the board, name both ends of the one wire you are planning to use, then find the expansion row separately, and tick each place you can identify."
+      },
+      {
+        "domain_pointer": "/build_map/evidence_card/child_records/0",
+        "rendered_value": "endpoint a named — one end of the wire"
+      },
+      {
+        "domain_pointer": "/build_map/evidence_card/child_records/1",
+        "rendered_value": "endpoint b named — the other end of the same wire"
+      },
+      {
+        "domain_pointer": "/build_map/evidence_card/child_records/2",
+        "rendered_value": "expansion row found, on its own and joined to nothing"
+      },
+      {
+        "domain_pointer": "/build_map/evidence_card/child_records/3",
+        "rendered_value": "board still disconnected"
+      },
+      {
+        "domain_pointer": "/electrical/behaviour/child_level",
+        "rendered_value": "A wire is just a path between the two points you choose; it does not decide by itself what a circuit does."
+      }
+    ]
+  },
+  "safety": {
+    "hazard_mode": "fully disconnected low-voltage planning",
+    "adult_verification": {
+      "variant": "ELEGOO UNO R3 Super Starter Kit male-to-male jumper wires and the kit's prototype shield, represented by the frozen official reference",
+      "marking": "Male-to-male jumper wires and the prototype shield's expansion rows, both visible in the kit photograph",
+      "verified_configuration": "No wire connected to any power source; connection plan used for endpoint naming only.",
+      "limits": "No energized work, no measurement, no ambiguous or unlabeled endpoint in this lab.",
+      "endpoint_check": "Adult confirms both named endpoints and the expansion row before signing the evidence card.",
+      "signoff_required": true
+    }
+  },
+  "visuals": [
+    {
+      "role": "subject_identification",
+      "source_kind": "verified_photograph",
+      "supports_section": "identification",
+      "carries_exact_domain_fact": true,
+      "provenance": {
+        "publisher": "ELEGOO",
+        "item_or_family": "UNO R3 Super Starter Kit",
+        "access_date": "2026-08-08",
+        "file_hash": "590e6a228c1f58abf130dc9eda2d786cba2d9d7cb67088af676e0d802d8b2398",
+        "embedded_as": "assets/photo_jumper_wires.jpg",
+        "crop_transform_history": [
+          "Cropped from official_kit_photo.jpg to the region containing the jumper wires (pixels 0,1225 to 735,1500).",
+          "Both wire types the unit teaches: the male-male jumper bundle with bare pin ends visible at both ends of each wire, and the male-female Dupont ribbon with its black housings.",
+          "Verified by direct visual inspection, plans/runtime_integrity_remediation RIR-T01, 2026-08-08."
+        ],
+        "url": "https://www.elegoo.com/en-gb/products/elegoo-uno-r3-super-starter-kit"
+      },
+      "omission_finding": "The photograph shows what the subject looks like and shows no wiring or connection."
+    },
+    {
+      "role": "orientation_and_parts",
+      "source_kind": "deterministic_render",
+      "supports_section": "identification",
+      "carries_exact_domain_fact": true,
+      "provenance": {
+        "publisher": "curriculum runtime deterministic renderer",
+        "item_or_family": "L03 connection endpoint diagram",
+        "access_date": "2026-08-08",
+        "file_hash": "af620686dee13477d3703ecd928014e735ef7948cb3beb105a076ed88177ef46",
+        "embedded_as": "assets/connection_endpoint_diagram.svg",
+        "crop_transform_history": [
+          "Rendered from this unit's own named parts."
+        ]
+      },
+      "omission_finding": "The diagram names parts only; it shows no powered or connected configuration."
+    },
+    {
+      "role": "assembly_or_path_map",
+      "source_kind": "deterministic_render",
+      "supports_section": "assembly",
+      "carries_exact_domain_fact": true,
+      "provenance": {
+        "publisher": "curriculum runtime deterministic renderer",
+        "item_or_family": "L03 deterministic route overlay",
+        "access_date": "2026-08-08",
+        "file_hash": "3f3f763d885a5889b0752398cd82968084dfb2b6c85dd06450126cc104d264d7",
+        "embedded_as": "assets/path_map.svg",
+        "crop_transform_history": [
+          "Rendered from this unit's own build map data: connectivity/same_wire."
+        ]
+      },
+      "omission_finding": "The map shows only what can be traced with everything disconnected and unpowered."
+    },
+    {
+      "role": "safety_or_troubleshooting",
+      "source_kind": "deterministic_render",
+      "supports_section": "troubleshooting",
+      "carries_exact_domain_fact": true,
+      "provenance": {
+        "publisher": "curriculum runtime deterministic renderer",
+        "item_or_family": "L03 loose-wire hazard",
+        "access_date": "2026-08-08",
+        "file_hash": "b19bd604900c1e56888dc901cdaec8a81560c4c22a446fc03856024035dbef37",
+        "embedded_as": "assets/loose_wire_hazard.svg",
+        "crop_transform_history": [
+          "Rendered from this unit's own recorded failure mode."
+        ]
+      },
+      "omission_finding": "The picture shows what to avoid and shows no permitted live configuration."
+    },
+    {
+      "role": "expected_result",
+      "source_kind": "deterministic_render",
+      "supports_section": "evaluate",
+      "carries_exact_domain_fact": true,
+      "provenance": {
+        "publisher": "curriculum runtime deterministic renderer",
+        "item_or_family": "L03 child evidence card",
+        "access_date": "2026-08-08",
+        "file_hash": "91e5b56aa3c3275a20e58ac1344b346d784f6a02c5c40500f5e6f3b142c75e44",
+        "embedded_as": "assets/evidence_card.svg",
+        "crop_transform_history": [
+          "Rendered from this unit's own evidence-card records."
+        ]
+      },
+      "omission_finding": "The card records what was found and grants no permission to energize anything."
+    }
+  ],
+  "domain": {
+    "electrical": {
+      "component_spec": {
+        "part_family": "jumper wire and breadboard expansion row",
+        "designator_prefix": "W",
+        "parameters": [
+          {
+            "name": "jumper wire termination style",
+            "value": "male-to-male",
+            "unit": "none",
+            "condition": "Male/male termination is used for breadboard-to-breadboard jumpers; male/female and female/female mate to pin headers.",
+            "source": "sources/source_01.html, SHA-256 2785dd51d0012f53dcfa8005acccd2c67349c46ee41bab0cf2504609847a3681"
+          }
+        ]
+      },
+      "quantities_taught": [
+        {
+          "quantity": "continuity",
+          "depth": "observe",
+          "child_facing_meaning": "A wire only joins the two exact points it is plugged into; naming both ends is how you know what it would connect."
+        }
+      ],
+      "circuit": {
+        "status": "not_designed"
+      },
+      "behaviour": {
+        "child_level": "A wire is just a path between the two points you choose; it does not decide by itself what a circuit does.",
+        "adult_level": "A jumper wire is a passive conductor between two named endpoints; its colour is a labelling convention only, never an electrical property, and a connection plan must name both endpoints before insertion.",
+        "relationship": "none",
+        "simplification_check": "The child account keeps the two-endpoint idea intact and omits wire-gauge and contact-resistance detail that does not change the safety-relevant fact being taught."
+      },
+      "ratings_and_limits": [
+        {
+          "parameter": "conservative planning limit for breadboard jumper wire current, derived and not cited to a stated jumper rating",
+          "absolute_max": "1",
+          "unit": "A",
+          "source": "Derived, not sourced. See content.sourced_claims: the cached guide states only that breadboard contacts take wire up to 20 AWG and that a good-quality breadboard is generally limited to around 2 A. No cited source states a jumper-wire rating."
+        }
+      ],
+      "failure_modes": [
+        {
+          "wrong_action": "Insert a wire without first naming both endpoints on the connection plan.",
+          "consequence": "An unplanned connection could join two points that were never meant to be joined.",
+          "prevented_by": "Write both endpoint names on the plan before any wire is inserted.",
+          "reversible": true
+        }
+      ]
+    },
+    "build_map": {
+      "map_kind": "connectivity",
+      "traced_path": [
+        "wire endpoint a",
+        "wire endpoint b",
+        "expansion board row"
+      ],
+      "evidence_card": {
+        "prompt": "With every wire out of the board, name both ends of the one wire you are planning to use, then find the expansion row separately, and tick each place you can identify.",
+        "child_records": [
+          "endpoint a named — one end of the wire",
+          "endpoint b named — the other end of the same wire",
+          "expansion row found, on its own and joined to nothing",
+          "board still disconnected"
+        ]
+      },
+      "power_on_release": false,
+      "relationship": "same_wire"
+    }
+  }
+}

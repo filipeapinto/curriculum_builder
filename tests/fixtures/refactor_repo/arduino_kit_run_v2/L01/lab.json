@@ -1,0 +1,399 @@
+{
+  "identity": {
+    "unit_id": "L01",
+    "slug": "safe-power",
+    "kind": "foundation",
+    "title": "Power Source and Safe Start",
+    "subject_job_sentence": "The power module can provide a chosen low-voltage rail to a breadboard after an adult verifies the setup."
+  },
+  "pedagogy": {
+    "learning_objectives": [
+      {
+        "statement": "Identify the battery lead, module input, and candidate rail in the official kit reference.",
+        "bloom_level": "remember",
+        "success_criterion": "I can point to the three places in the disconnected teaching path."
+      },
+      {
+        "statement": "Explain why every connection stays open while I trace the possible power path.",
+        "bloom_level": "understand",
+        "success_criterion": "I can explain why I move parts only while the battery lead is disconnected."
+      },
+      {
+        "statement": "Trace a possible power path and record each location on an evidence card.",
+        "bloom_level": "apply",
+        "success_criterion": "I can trace the teaching path and complete the evidence card in order."
+      }
+    ],
+    "prior_knowledge": {
+      "prerequisite_labs": [],
+      "assumed_ideas": [],
+      "retrieval_prompt": "Without looking at the page, name one thing you already do before touching an electrical device."
+    },
+    "misconceptions": [
+      {
+        "misconception": "A coloured breadboard rail always has a fixed electrical job.",
+        "why_it_is_common": "The coloured lines look like permanent instructions even when nothing has been connected or verified.",
+        "confronted_by": "The disconnected path map calls it a candidate output location and requires an adult check before later use."
+      }
+    ],
+    "vocabulary": [
+      {
+        "term": "rail",
+        "child_definition": "A long group of joined breadboard holes that may share one electrical connection.",
+        "introduced_in": "explore"
+      },
+      {
+        "term": "circuit",
+        "child_definition": "A complete loop with a path out from a source and a path back to it.",
+        "introduced_in": "explain"
+      }
+    ],
+    "scaffolding": {
+      "adult_does": [
+        "Place the disconnected kit parts beside the official reference photograph.",
+        "Confirm that the battery lead remains physically disconnected throughout the activity.",
+        "Verify the module and candidate rail before signing the evidence card."
+      ],
+      "child_does": [
+        "Match each visible kit part to the official reference photograph.",
+        "Trace the three-location teaching path with a finger.",
+        "Tick each evidence-card statement only after pointing to the matching place."
+      ],
+      "fading_note": "Because this is the first lab, the adult models the safety check; later labs ask the child to initiate the same power-off check."
+    },
+    "cognitive_load": {
+      "segments": [
+        "Notice the disconnected parts",
+        "Make a prediction",
+        "Match three locations",
+        "Trace the open path",
+        "Complete the evidence card",
+        "Ask for adult signoff"
+      ],
+      "concrete_before_abstract": "The child first points to the physical battery lead, module, and breadboard before meeting the word circuit.",
+      "worked_example": "The adult points to the source lead end in the photograph, finds the same end on the table, and ticks only that first item."
+    }
+  },
+  "sequence": {
+    "engage": {
+      "hook": "Three objects can belong to one possible power path even while every connection is safely open on the table.",
+      "eliciting_question": "What do you think the coloured line beside a breadboard rail tells you?"
+    },
+    "explore": {
+      "predict": {
+        "question": "Which location do you think comes between the battery lead and a candidate breadboard rail?",
+        "options": [
+          "module DC input",
+          "any coloured rail",
+          "the Arduino USB socket"
+        ],
+        "recorded_before_observing": true
+      },
+      "observe": {
+        "what_to_observe": "Compare the official photograph, the disconnected parts, and the three labelled locations on the path map.",
+        "record_method": "tick_or_circle",
+        "evidence_fields": [
+          "prediction",
+          "source lead end",
+          "module DC input",
+          "candidate output label",
+          "disconnected check"
+        ]
+      },
+      "steps": [
+        {
+          "number": 1,
+          "action": "Check with the adult that the battery lead is physically disconnected."
+        },
+        {
+          "number": 2,
+          "action": "Circle your predicted middle location before looking at the path map."
+        },
+        {
+          "number": 3,
+          "action": "Find the battery and DC lead in the official kit photograph."
+        },
+        {
+          "number": 4,
+          "action": "Point to the source lead end on the disconnected part."
+        },
+        {
+          "number": 5,
+          "action": "Point to the module DC input without inserting the lead."
+        },
+        {
+          "number": 6,
+          "action": "Point to one labelled candidate output location without moving a selector."
+        },
+        {
+          "number": 7,
+          "action": "Trace the three dashed teaching links on the path map with a finger."
+        },
+        {
+          "number": 8,
+          "action": "Tick each place found and ask the adult to verify the card."
+        }
+      ],
+      "expected_observation": "The three locations form an ordered teaching path, but visible gaps remain because nothing is connected.",
+      "not_yet_outcome": {
+        "symptom": "One location cannot be matched confidently between the reference and the real parts.",
+        "first_check": "Keep everything disconnected and ask the adult to repeat the photograph-to-part match."
+      }
+    },
+    "explain": {
+      "what_you_saw": "You found three different locations and traced their order while the source lead remained separated from the module.",
+      "why_it_happened": "The battery and DC lead, the module, and the breadboard rail have different jobs. In later verified work, a source can feed a module and the module can feed a selected rail. Electricity needs a complete circuit: a path out from one source terminal, through the parts, and back to the other source terminal. Today the lead stays disconnected, so the path is deliberately open and no current can follow it. A rail colour is only a visual label; an adult must verify the physical map and selector setting before that rail is assigned a job.",
+      "self_explanation_prompt": "Tell the adult why the coloured rail line alone cannot prove what the rail will do."
+    },
+    "elaborate": {
+      "near_transfer": [
+        "With the parts still disconnected, start at the candidate rail and trace the same teaching path backward."
+      ],
+      "far_transfer": [
+        "A battery-powered toy also needs a complete path before energy can reach its motor.",
+        "A flashlight remains off when its switch leaves an open gap in the circuit."
+      ]
+    },
+    "evaluate": {
+      "success_criteria_checklist": [
+        "I can point to the three places in the disconnected teaching path.",
+        "I can explain why I move parts only while the battery lead is disconnected.",
+        "I can trace the teaching path and complete the evidence card in order."
+      ],
+      "hinge_question": {
+        "question": "If a rail has a red line but no verified connection, what electrical job does the colour prove?",
+        "reveals": "The answer reveals whether the learner treats a visual label as evidence of an electrical connection."
+      },
+      "next_lab_link": "L02 reuses the habit of checking the power state before the child handles a new component."
+    }
+  },
+  "content": {
+    "identification": {
+      "child_name": "breadboard power module",
+      "technical_name": "breadboard power-supply module",
+      "distinguishing_features": "A small module in the official kit that sits between a DC source lead and a breadboard power rail in the teaching path.",
+      "orientation_cue": "Do not infer placement from shape alone; an adult verifies the module against the supplied path map.",
+      "parts": [
+        {
+          "label": "9 V battery and DC lead",
+          "role": "The disconnected source item named by the official kit listing."
+        },
+        {
+          "label": "module DC input",
+          "role": "The middle location on the unpowered teaching path."
+        },
+        {
+          "label": "candidate output label",
+          "role": "A location to identify before an adult assigns any later electrical job."
+        },
+        {
+          "label": "breadboard rail",
+          "role": "A long group of joined holes whose use must be verified."
+        }
+      ]
+    },
+    "troubleshooting": [
+      {
+        "what_you_notice": "The real part does not look exactly like the enlarged path-map symbol.",
+        "likely_reason": "The path map teaches location and order rather than photographic appearance.",
+        "safe_first_check": "Keep the lead disconnected and compare the real part with the official reference photograph."
+      },
+      {
+        "what_you_notice": "You are unsure which labelled output location to record.",
+        "likely_reason": "A colour or nearby marking was mistaken for a verified connection.",
+        "safe_first_check": "Do not move a selector; ask the adult to verify the candidate label on the map."
+      }
+    ],
+    "sourced_claims": [
+      {
+        "claim": "The supply this activity identifies is the kit's included 9 V battery with a DC connector.",
+        "source_locator": {
+          "path": "inputs/kit_calibration.v1.yaml",
+          "section_or_line": "Included 9 V battery with DC connector"
+        },
+        "subject_scope": {
+          "exact_model": "kit_battery_9v"
+        },
+        "evidence_scope": "The curriculum's own calibration lists this battery as a permitted input and states its voltage; it establishes nothing about any other supply."
+      }
+    ],
+    "unresolved_visual_roles": [
+      {
+        "role": "safe disconnected setup photograph",
+        "reason": "official_kit_photo.jpg is an inventory flat-lay, not a photograph of an assembled-but-disconnected L01 setup. No region shows the source lead end, the module DC input and the candidate output location together, and reusing the whole-frame inventory shot for this role would be the oversized-unrelated-asset substitution issue 003 records."
+      }
+    ],
+    "derived": [
+      {
+        "domain_pointer": "/build_map/traced_path/0",
+        "rendered_value": "source lead end"
+      },
+      {
+        "domain_pointer": "/build_map/traced_path/1",
+        "rendered_value": "module DC input"
+      },
+      {
+        "domain_pointer": "/build_map/traced_path/2",
+        "rendered_value": "labelled candidate output location"
+      },
+      {
+        "domain_pointer": "/build_map/evidence_card/prompt",
+        "rendered_value": "With every connection open, trace the teaching path and tick each place you can identify."
+      },
+      {
+        "domain_pointer": "/build_map/evidence_card/child_records/0",
+        "rendered_value": "source lead end found"
+      },
+      {
+        "domain_pointer": "/build_map/evidence_card/child_records/1",
+        "rendered_value": "module DC input found"
+      },
+      {
+        "domain_pointer": "/build_map/evidence_card/child_records/2",
+        "rendered_value": "candidate output label found"
+      },
+      {
+        "domain_pointer": "/build_map/evidence_card/child_records/3",
+        "rendered_value": "battery lead still disconnected"
+      },
+      {
+        "domain_pointer": "/electrical/behaviour/child_level",
+        "rendered_value": "The battery lead, module input, and chosen rail are different places along a possible power path, but no electricity moves while the lead is disconnected."
+      }
+    ]
+  },
+  "safety": {
+    "hazard_mode": "fully disconnected low-voltage identification",
+    "adult_verification": {
+      "variant": "ELEGOO UNO R3 Super Starter Kit represented by the frozen official reference",
+      "marking": "9 V battery with DC connector and breadboard power-supply module",
+      "verified_configuration": "Battery lead visibly separated from the module; no jumper connects a source to a rail.",
+      "limits": "No energized work, no connector insertion, no selector movement, and no measurement in this lab.",
+      "endpoint_check": "Adult points to all three path locations, confirms every connection is open, and signs the evidence card.",
+      "signoff_required": true
+    }
+  },
+  "visuals": [
+    {
+      "role": "subject_identification",
+      "source_kind": "verified_photograph",
+      "supports_section": "identification",
+      "carries_exact_domain_fact": true,
+      "provenance": {
+        "publisher": "ELEGOO",
+        "item_or_family": "UNO R3 Super Starter Kit",
+        "access_date": "2026-08-08",
+        "file_hash": "ed742e10dc34e493f6bedf0d55d554b6af4f8df746fee390f9d7348cf0f595fa",
+        "embedded_as": "assets/photo_kit_inventory.jpg",
+        "crop_transform_history": [
+          "Cropped from official_kit_photo.jpg to the region containing the kit inventory (pixels 0,0 to 1500,1500).",
+          "The subject of this role is the kit itself, so the uncropped inventory flat-lay is the subject and needs no crop.",
+          "Verified by direct visual inspection, plans/runtime_integrity_remediation RIR-T01, 2026-08-08."
+        ],
+        "url": "https://www.elegoo.com/en-gb/products/elegoo-uno-r3-super-starter-kit"
+      },
+      "omission_finding": "The photograph shows what the subject looks like and shows no wiring or connection."
+    },
+    {
+      "role": "assembly_or_path_map",
+      "source_kind": "deterministic_render",
+      "supports_section": "assembly",
+      "carries_exact_domain_fact": true,
+      "provenance": {
+        "publisher": "curriculum runtime deterministic renderer",
+        "item_or_family": "L01 deterministic verified power-path and orientation map",
+        "access_date": "2026-08-08",
+        "file_hash": "48601bca483d0617d2ef2fc1ea2899882857e83992da133d3d1f36cf4915183f",
+        "embedded_as": "assets/path_map.svg",
+        "crop_transform_history": [
+          "Rendered from this unit's own build map data: power_path."
+        ]
+      },
+      "omission_finding": "The map shows only what can be traced with everything disconnected and unpowered."
+    },
+    {
+      "role": "expected_result",
+      "source_kind": "deterministic_render",
+      "supports_section": "evaluate",
+      "carries_exact_domain_fact": true,
+      "provenance": {
+        "publisher": "curriculum runtime deterministic renderer",
+        "item_or_family": "L01 child tick-box evidence card",
+        "access_date": "2026-08-08",
+        "file_hash": "44bfb0a3ef7cb4e8c3549c27e3d74f75e91d4b0dd0ae6d71aa334166b7a0bc8c",
+        "embedded_as": "assets/evidence_card.svg",
+        "crop_transform_history": [
+          "Rendered from this unit's own evidence-card records."
+        ]
+      },
+      "omission_finding": "The card records what was found and grants no permission to energize anything."
+    }
+  ],
+  "domain": {
+    "electrical": {
+      "component_spec": {
+        "part_family": "breadboard power-supply module",
+        "designator_prefix": "PS",
+        "parameters": [
+          {
+            "name": "included battery label",
+            "value": "9",
+            "unit": "V",
+            "condition": "The official kit listing identifies a 9 V battery with DC connector; this lab keeps it disconnected.",
+            "source": "sources/source_01.html, SHA-256 7a415c555ad2b050dea114285fa77aa479ebaef6f09ddbb2e5c008c54c5619e9"
+          }
+        ]
+      },
+      "quantities_taught": [
+        {
+          "quantity": "continuity",
+          "depth": "observe",
+          "child_facing_meaning": "A path shows which places would have to join for a complete loop; today every connection stays open."
+        }
+      ],
+      "circuit": {
+        "status": "not_designed"
+      },
+      "behaviour": {
+        "child_level": "The battery lead, module input, and chosen rail are different places along a possible power path, but no electricity moves while the lead is disconnected.",
+        "adult_level": "This foundation activity identifies a conceptual source-to-input-to-output path only. It specifies no closed circuit, asserts no connector orientation, and makes no claim about an energized module output.",
+        "relationship": "none",
+        "simplification_check": "The child account omits terminal-level detail while correctly preserving that a working circuit would require a closed return path."
+      },
+      "ratings_and_limits": [
+        {
+          "parameter": "source voltage represented in this identification activity",
+          "absolute_max": "9",
+          "unit": "V",
+          "source": "Official ELEGOO kit listing cached as sources/source_01.html, SHA-256 7a415c555ad2b050dea114285fa77aa479ebaef6f09ddbb2e5c008c54c5619e9"
+        }
+      ],
+      "failure_modes": [
+        {
+          "wrong_action": "Connect the battery lead or move a selector during the child activity.",
+          "consequence": "The setup would no longer be the verified unpowered identification activity.",
+          "prevented_by": "Keep the battery lead physically disconnected and require adult signoff before any later powered work.",
+          "reversible": true
+        }
+      ]
+    },
+    "build_map": {
+      "map_kind": "power_path",
+      "traced_path": [
+        "source lead end",
+        "module DC input",
+        "labelled candidate output location"
+      ],
+      "evidence_card": {
+        "prompt": "With every connection open, trace the teaching path and tick each place you can identify.",
+        "child_records": [
+          "source lead end found",
+          "module DC input found",
+          "candidate output label found",
+          "battery lead still disconnected"
+        ]
+      },
+      "power_on_release": false
+    }
+  }
+}

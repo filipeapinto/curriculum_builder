@@ -17,6 +17,7 @@ from curriculum_factory.visual_maps import regenerate_assets
 
 ENGINE = Path(__file__).resolve().parents[2]
 CURRICULUM = ENGINE / "curricula/arduino_kit"
+RUN_FIXTURE = ENGINE / "tests/fixtures/refactor_repo/arduino_kit_run_v2"
 
 SOURCE_HTML = """<html><body>
 <p>A good-quality breadboard is generally limited to around 2 A.</p>
@@ -26,8 +27,8 @@ SOURCE_HTML = """<html><body>
 
 
 def lab_from_run(unit_id: str) -> dict[str, Any]:
-    """The shipped unit as it stands in outputs/arduino_kit_run_v2, as a starting point."""
-    return json.loads((ENGINE / "outputs/arduino_kit_run_v2" / unit_id / "workers/lab.json").read_text())
+    """Return the minimal tracked lab fixture migrated from the historical run."""
+    return json.loads((RUN_FIXTURE / unit_id / "lab.json").read_text())
 
 
 def build_run(root: Path, *, unit_id: str, lab: dict[str, Any],
@@ -56,13 +57,13 @@ def build_run(root: Path, *, unit_id: str, lab: dict[str, Any],
     shutil.copy2(ENGINE / "policy/calibration.v1.yaml", inputs / "calibration.yaml")
 
     (unit_root / "sources").mkdir(parents=True, exist_ok=True)
-    shipped_sources = ENGINE / "outputs/arduino_kit_run_v2" / unit_id / "sources"
+    shipped_sources = RUN_FIXTURE / unit_id / "sources"
     if shipped_sources.is_dir():
         for cached in shipped_sources.glob("source_*.html"):
             shutil.copy2(cached, unit_root / "sources" / cached.name)
     else:
         (unit_root / "sources/source_01.html").write_text(SOURCE_HTML, encoding="utf-8")
-    shipped_manifest = ENGINE / "outputs/arduino_kit_run_v2" / unit_id / "inputs/manifest.yaml"
+    shipped_manifest = RUN_FIXTURE / unit_id / "manifest.yaml"
     if shipped_manifest.is_file():
         shutil.copy2(shipped_manifest, inputs / "manifest.yaml")
     (unit_root / "results").mkdir(parents=True, exist_ok=True)

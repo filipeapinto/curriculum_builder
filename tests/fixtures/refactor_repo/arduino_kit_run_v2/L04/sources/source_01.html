@@ -1,0 +1,1242 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <!-- Google Tag Manager -->
+<script>(function(w,d,s,l,i){w[l]=w[l]||[];w[l].push({'gtm.start':
+new Date().getTime(),event:'gtm.js'});var f=d.getElementsByTagName(s)[0],
+j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
+'https://www.googletagmanager.com/gtm.js?id='+i+dl;f.parentNode.insertBefore(j,f);
+})(window,document,'script','dataLayer','GTM-WLMFVVN');</script>
+<!-- End Google Tag Manager -->
+    <meta charset="utf-8">
+          <meta name="viewport" content="width=device-width, initial-scale=1"> <!-- mobile mode if small screen device -->
+    
+    <title>How to Use a Multimeter - SparkFun Learn</title>
+
+          <link rel="canonical" href="https://learn.sparkfun.com/tutorials/how-to-use-a-multimeter/all">
+            
+    <link href="/css/bootstrap.min.css?rev=1785268692" rel="stylesheet">
+    <link rel="stylesheet" href="/css/theme.github.css?rev=1785268692" type="text/css" media="screen" />    <link rel="alternate" type="application/atom+xml" title="Education Blog" href="https://learn.sparkfun.com/feeds/blog" />
+    <link rel="alternate" type="application/atom+xml" title="Tutorials" href="https://learn.sparkfun.com/feeds/tutorials" />
+    <link rel="alternate" type="application/atom+xml" title="Education Blog Comments" href="https://learn.sparkfun.com/feeds/blog_comments" />
+    <link rel="alternate" type="application/atom+xml" title="Tutorial Comments" href="https://learn.sparkfun.com/feeds/tutorial_comments" />
+  </head>
+
+  <body id=learn class="layout-default no-type tutorials-view" ontouchstart="">
+    <!-- Google Tag Manager (noscript) -->
+<noscript><iframe src="https://www.googletagmanager.com/ns.html?id=GTM-WLMFVVN"
+height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
+<!-- End Google Tag Manager (noscript) -->
+    <script>;</script>
+    <div class="wrapper" itemscope itemtype="http://schema.org/WebSite">
+      <meta itemprop="url" content="https://learn.sparkfun.com/">
+      <div class=wrapper-inner>
+
+    <header>
+  <div class="support-nav-container container-fluid hidden-xs">
+    <div class="container">
+      <div class="support-nav">
+        <div aria-hidden="true">&nbsp;</div>
+
+        <div>
+          <ul class="professional-links">
+            <li><a href="https://www.sparkfun.com/professional">Professional</a></li>
+            <li><a href="https://www.sparkfun.com/education">EDU</a>            <li><a href="https://www.sparkfun.com/become-a-distributor">Distributor</a>          </ul>
+        </div>
+
+        <div class="cs">
+          <a href="https://www.sparkfun.com/support">Customer Support</a>        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="top-nav-buttons container-fluid hidden-xs">
+    <div class="container">
+      <div class="tab-bar">
+        <ul class="tab-navigation" aria-label="sparkfun.com navigation">
+  <li><a href="https://www.sparkfun.com/">Shop</a></li>
+  <li class="active"><a href="https://learn.sparkfun.com/">Documentation</a></li>
+  <li class=""><a href="https://news.sparkfun.com/">News</a></li>
+</ul>
+
+<ul class="sale-links" aria-label="Deals and special interests">
+  <li><a href="https://www.sparkfun.com/todays-deals"><span class="icon-header icon-header-sale" aria-hidden="true"></span>Today's Deals</a></li>
+  <li><a href="https://community.sparkfun.com/" target="_blank"><span class=" icon-header icon-header-community" aria-hidden="true"></span>Community</a></li>
+  <li><a class="sparkx" href="https://www.sparkpnt.com"><span class="logo-spark-pnt-primary"><span class="sr-only">SparkPNT (Position, Navigation & Timing)</span></span></a></li>
+</ul>
+      </div>
+    </div>
+  </div>
+
+  <div class="container">
+    <div class="header-content">
+      <div class="logo-container">
+        <button id="mobile-nav-menu-trigger" class="mobile-menu-button btn-unstyled hidden-sm hidden-md hidden-lg" type="button" aria-label="Open navigation menu">
+          <span class="glyphicon glyphicon-menu-hamburger" aria-hidden="true"></span>
+        </button>
+
+        <a class="logo" href="https://www.sparkfun.com/">
+          <span class="logo-sfe-primary"><span class="visuallyhidden">SparkFun Electronics - sparkfun.com</span></span>
+        </a>
+      </div>
+
+      <div class="search-block">
+                  <form id="search_form" class="search-block-form" action="https://learn.sparkfun.com/search/results" method="get">
+            <label for="global-search" class="sr-only">search documentation</label>
+            <input name="term" id="global-search" class="form-control" type="text" value="" placeholder="search documentation" autocomplete="off">
+            <button type="submit" class="glyphicon glyphicon-search global-search-icon" aria-label="Search"></button>
+          </form>
+        
+        <a href="https://www.sparkfun.com/" class="hidden-xs">Back to Webstore<span class="icon-header icon-header-undo" aria-hidden="true"></span></a>
+      </div>
+
+        <a class="account-link" href="https://www.sparkfun.com/customer/account">
+          <span class="img-account-silhouette visible-xs-inline-block"><span class="sr-only">My Account</span></span>
+          <span class="hidden-xs">My Account</span>
+        </a>
+
+    </div>
+  </div>
+
+  <div class="header-nav container-fluid hidden-xs">
+    <div class="container">
+      <ul class="nav-product-categories" aria-label="Featured product categories">
+  <li><a href="https://www.sparkfun.com/featured">Featured <span class="sr-only">Products</span></a></li>
+  <li><a href="https://www.sparkfun.com/gnss">GPS/GNSS</a></li>
+  <li><a href="https://www.sparkfun.com/sensors">Sensors</a></li>
+  <li><a href="https://www.sparkfun.com/development-boards">Development Boards</a></li>
+  <li class="header-nav-iot"><a href="https://www.sparkfun.com/iot-wireless">IoT & Wireless</a></li>
+  <li class="header-nav-components"><a href="https://www.sparkfun.com/components">Components</a></li>
+  <li class="header-nav-kits"><a href="https://www.sparkfun.com/kits">Kits</a></li>
+  <li class="all-cat"><a href="https://www.sparkfun.com/all-categories"><span class="visible-xs-inline">Shop </span>All <span class="sr-only">Product</span> Categories</a></li>
+</ul>
+    </div>
+  </div>
+  <div id="nav-mobile-menu" class="nav-mobile-menu" aria-labelledby="nav-mobile-menu-heading" aria-role="dialog" aria-modal="true">
+    <h2 id="nav-mobile-menu-heading" class="sr-only">Navigation menu</h2>
+    <ul class="mobile-menu-tabs">
+      <li class="active"><a>Menu</a></li>
+      <li><a href="https://www.sparkfun.com/customer/account">Account</a></li>
+    </ul>
+    <ul class="nav-product-categories" aria-label="Featured product categories">
+  <li><a href="https://www.sparkfun.com/featured">Featured <span class="sr-only">Products</span></a></li>
+  <li><a href="https://www.sparkfun.com/gnss">GPS/GNSS</a></li>
+  <li><a href="https://www.sparkfun.com/sensors">Sensors</a></li>
+  <li><a href="https://www.sparkfun.com/development-boards">Development Boards</a></li>
+  <li class="header-nav-iot"><a href="https://www.sparkfun.com/iot-wireless">IoT & Wireless</a></li>
+  <li class="header-nav-components"><a href="https://www.sparkfun.com/components">Components</a></li>
+  <li class="header-nav-kits"><a href="https://www.sparkfun.com/kits">Kits</a></li>
+  <li class="all-cat"><a href="https://www.sparkfun.com/all-categories"><span class="visible-xs-inline">Shop </span>All <span class="sr-only">Product</span> Categories</a></li>
+</ul>
+    <ul class="tab-navigation" aria-label="sparkfun.com navigation">
+  <li><a href="https://www.sparkfun.com/">Shop</a></li>
+  <li class="active"><a href="https://learn.sparkfun.com/">Documentation</a></li>
+  <li class=""><a href="https://news.sparkfun.com/">News</a></li>
+</ul>
+
+<ul class="sale-links" aria-label="Deals and special interests">
+  <li><a href="https://www.sparkfun.com/todays-deals"><span class="icon-header icon-header-sale" aria-hidden="true"></span>Today's Deals</a></li>
+  <li><a href="https://community.sparkfun.com/" target="_blank"><span class=" icon-header icon-header-community" aria-hidden="true"></span>Community</a></li>
+  <li><a class="sparkx" href="https://www.sparkpnt.com"><span class="logo-spark-pnt-primary"><span class="sr-only">SparkPNT (Position, Navigation & Timing)</span></span></a></li>
+</ul>
+  </div>
+</header>
+
+    
+    <div class=content>
+      <div class=container id=airlock>
+
+        
+        <div class=main-title>
+  <ul class="breadcrumb">
+    <li><a href="https://learn.sparkfun.com/">Home</a></li>
+    <li><a href="https://learn.sparkfun.com/tutorials">Tutorials</a></li>
+    <li>How to Use a Multimeter</li>
+      </ul>
+
+  <h1>
+    How to Use a Multimeter  </h1>
+
+</div>
+
+<div class="row">
+  <div class="col-sm-12 well">
+    <h2 class="text-center">This Tutorial is <strong>Retired</strong>!</h2>
+     <p class="text-center"><strong>This tutorial covers concepts or technologies that are no longer current. It's still here for you to read and enjoy, but may not be as useful as our <a href="https://learn.sparkfun.com/tutorials">newest tutorials</a>.</strong></p>
+    <p class="text-right">
+    </p>
+  </div>
+</div>
+
+<a id=nav_toggle_pages class="nav_toggle nav-toggle-trigger" href="#"><span>&#8801;</span> Pages</a>
+
+<div id=tutorial class="row">
+
+  <div class="col-sm-8" id="sections">
+
+    <div class="contributors">
+                      Contributors:
+                <span class="contributor-alias"><img src="https://cdn.sparkfun.com/avatar/1ff6ad39b8c242a14296a76845e116cd?d=retro&s=20&r=pg" /> Nate</span>          </div>
+
+    <div class="share-link-inline">
+
+  <a class="share-link-toggle" href="#">
+    <span class="share-title">
+      <span class="sfe-icon-share"></span>
+      Share    </span>
+  </a>
+
+  <div class="share-link-inner dialog">
+    Use this URL to share:<br>
+    <input class="form-control input-sm" type="text" value="http://sfe.io/t4035" onclick="$(this).trigger('select');">
+
+    <div class="share-social">
+
+      <a rel=nofollow onclick="return $(this).sfeutil('track_link',this,'Share','clicked','tumblr');" href="https://www.tumblr.com/share/link?url=http%3A%2F%2Fsfe.io%2Ft4035&name=How+to+Use+a+Multimeter" title="Share on Tumblr"><span class="sfe-icon-tumblr hidetext"><span>Share on Tumblr</span></span></a>
+
+      <a rel=nofollow onclick="return $(this).sfeutil('track_link',this,'Share','clicked','reddit');" href="https://www.reddit.com/submit?url=http%3A%2F%2Fsfe.io%2Ft4035" title="Submit to reddit"><span class="sfe-icon-reddit hidetext"><span>Submit to reddi</span></span></a>
+
+    </div>
+
+    </div>
+  
+  <div class="share-social">
+
+    <a rel=nofollow onclick="return $(this).sfeutil('track_link',this,'Share','clicked','twitter');" href="https://twitter.com/intent/tweet?text=How+to+Use+a+Multimeter&url=http%3A%2F%2Fsfe.io%2Ft4035&via=sparkfun" title="Share on Twitter"><span class="sfe-icon-twitter hidetext"><span>Share on Twitter</span></span></a>
+
+    <a rel=nofollow onclick="return $(this).sfeutil('track_link',this,'Share','clicked','facebook');" href="http://www.facebook.com/sharer.php?u=http%3A%2F%2Fsfe.io%2Ft4035&t=How+to+Use+a+Multimeter" title="Share on Facebook"><span class="sfe-icon-facebook-nobox hidetext"><span>Share on Facebook</span></span></a>
+
+          <a rel=nofollow onclick="return $(this).sfeutil('track_link',this,'Share','clicked','pinterest');" href="https://www.pinterest.com/pin/create/button/?url=http%3A%2F%2Fsfe.io%2Ft4035&media=https%3A%2F%2Fcdn.sparkfun.com%2F%2Fr%2F500-1000%2Fassets%2Flearn_tutorials%2F4%2F0%2F3%2F5%2F01_Multimeter_Tutorial-02.jpg&description=How+to+Use+a+Multimeter" title="Pin It"><span class="sfe-icon-pinterest hidetext"><span>Pin It</span></span></a>
+    
+  </div>
+
+  
+</div>
+
+          <div class="section tutorial-page">
+        <h2 id="introduction">Introduction</h2>
+        <div class="col-md-7" style="margin-left:0; padding-left:0;">
+<p>So... how do I use a <a href="http://en.wikipedia.org/wiki/Multimeter">multimeter</a>? This tutorial will show you how to use a digital multimeter (DMM), an indispensable tool that you can use to diagnose circuits, learn about other people's electronic designs, and even test a battery. Hence the 'multi'-'meter' (multiple measurement) name.
+</p>
+<p>The most basic things we measure are voltage and current. A multimeter is also great for some basic sanity checks and troubleshooting. Is your circuit not working? Does the switch work? Put a meter on it! The multimeter is your first defense when troubleshooting a system. In this tutorial we will cover measuring <a href="http://learn.sparkfun.com/tutorials/voltage-current-resistance-and-ohms-law">voltage, current, resistance</a> and continuity. </p>
+<hr>
+<h2>Suggested Reading</h2>
+
+These concepts may be helpful with this tutorial:
+<ul>
+<li><a href="https://learn.sparkfun.com/resources/120">How to use a Multi-meter Hand-out</a></li>
+<li><a href="https://learn.sparkfun.com/tutorials/what-is-electricity">What is Electricity?</a></li>
+<li><a href="http://learn.sparkfun.com/tutorials/voltage-current-resistance-and-ohms-law">Voltage, Current, Resistance, and Ohm's Law</a></li>
+<li><a href="http://learn.sparkfun.com/tutorials/what-is-a-circuit">What is a circuit?</a></li>
+<li><a href="https://learn.sparkfun.com/tutorials/metric-prefixes-and-si-units">Metric Prefixes</a></li>
+<li><a href="https://learn.sparkfun.com/tutorials/how-to-use-a-breadboard">How to Use a Breadboard</a></li>
+<li><a href="https://learn.sparkfun.com/tutorials/connector-basics">Connector Basis</a></li>
+<li><a href="https://learn.sparkfun.com/tutorials/polarity">Polarity</a></li>
+<li><a href="https://learn.sparkfun.com/tutorials/series-and-parallel-circuits">Series and Parallel Circuits</a></li>
+<li><a href="https://learn.sparkfun.com/tutorials/alternating-current-ac-vs-direct-current-dc">AC vs DC current</a></li>
+<li><a href="https://learn.sparkfun.com/tutorials/pcb-basics">PCB Basics</a></li>
+</ul>
+</div>
+
+<div class="col-md-5">
+<div class="alert alert-info">
+<p>We will be using the <a href="https://www.sparkfun.com/products/12966">SparkFun VC830L</a> throughout the tutorial, but these methods should apply to most multimeters.</p> </div>
+
+
+<div >
+<div class="tile product-tile big grid " data-id="product-12966">
+  <div class="actions-wrap">
+          <a class="thumb" href="https://www.sparkfun.com/digital-multimeter-basic.html">
+        <img src="https://cdn.sparkfun.com/r/600-600/assets/parts/9/9/0/7/12966-01.jpg" alt="Digital Multimeter - Basic" height="600">
+      </a>
+      </div>
+
+  <div class="main">
+    
+    <h3 class="title">
+              <a href="https://www.sparkfun.com/digital-multimeter-basic.html">
+          <span>Digital Multimeter - Basic</span>
+        </a>
+          </h3>
+
+    <span class="sku">
+      TOL-12966    </span>
+
+          <p class="description" style="display:none">
+        The digital multimeter (DMM) is an essential tool in every electronic enthusiasts arsenal. The SparkFun Digital Multimeter, h&hellip;      </p>
+      </div>
+
+      <div>
+      <div class="prices">
+                <span class="price-sale">
+          <span class="price">$21.50</span>
+        </span>
+      </div>
+    </div>
+  
+  </div>
+</div>
+
+
+
+</div>
+
+<div class="col-sm-12" style="margin:0; padding:0;">
+</div>
+
+<div style="clear:both;"></div>
+
+<h2>Video</h2>
+
+<div style="position:relative;height:0;padding-bottom:56.25%"><iframe src="https://www.youtube.com/embed/SLkPtmnglOI?ecver=2" width="640" height="360" frameborder="0" style="position:absolute;width:100%;height:100%;left:0" allowfullscreen></iframe></div>
+
+<h2>Looking for the Multimeter that's right for you?</h2>
+
+<div class="row">
+<p class="lead" style="margin-left:15px;">We've got you covered!</p>
+    <div class="col-md-12">
+    
+
+<div class="tile-wrap">
+<div class="tile product-tile  grid " data-id="product-12966">
+  <div class="actions-wrap">
+          <a class="thumb" href="https://www.sparkfun.com/digital-multimeter-basic.html">
+        <img src="https://cdn.sparkfun.com/r/140-140/assets/parts/9/9/0/7/12966-01.jpg" alt="Digital Multimeter - Basic" height="140">
+      </a>
+      </div>
+
+  <div class="main">
+    
+    <h3 class="title">
+              <a href="https://www.sparkfun.com/digital-multimeter-basic.html">
+          <span>Digital Multimeter - Basic</span>
+        </a>
+          </h3>
+
+    <span class="sku">
+      TOL-12966    </span>
+
+          <p class="description" style="display:none">
+        The digital multimeter (DMM) is an essential tool in every electronic enthusiasts arsenal. The SparkFun Digital Multimeter, h&hellip;      </p>
+      </div>
+
+      <div>
+      <div class="prices">
+                <span class="price-sale">
+          <span class="price">$21.50</span>
+        </span>
+      </div>
+    </div>
+  
+  </div>
+<div class="tile product-tile  grid " data-id="product-10829">
+  <div class="actions-wrap">
+          <a class="thumb" href="https://www.sparkfun.com/smart-smd-tester.html">
+        <img src="https://cdn.sparkfun.com/r/140-140/assets/parts/5/8/3/0/10829-01.jpg" alt="Smart SMD Tester" height="140">
+      </a>
+      </div>
+
+  <div class="main">
+    
+    <h3 class="title">
+              <a href="https://www.sparkfun.com/smart-smd-tester.html">
+          <span>Smart SMD Tester</span>
+        </a>
+          </h3>
+
+    <span class="sku">
+      TOL-10829    </span>
+
+          <p class="description" style="display:none">
+        This smart SMD tester is essentially a pair of multimeter tweezers. This allows you to troubleshoot circuits with small SMD p&hellip;      </p>
+      </div>
+
+      <div>
+      <div class="prices">
+                <span class="price-sale">
+          <span class="price">$46.95</span>
+        </span>
+      </div>
+    </div>
+  
+  </div>
+<div class="tile product-tile  grid " data-id="product-15571">
+  <div class="actions-wrap">
+          <a class="thumb" href="https://www.sparkfun.com/usb-power-meter-color-tft-lcd.html">
+        <img src="https://cdn.sparkfun.com/r/140-140/assets/parts/1/4/1/6/7/15571-USB_Power_Meter-02.jpg" alt="USB Power Meter (Color TFT LCD)" height="140">
+      </a>
+      </div>
+
+  <div class="main">
+    
+    <h3 class="title">
+              <a href="https://www.sparkfun.com/usb-power-meter-color-tft-lcd.html">
+          <span>USB Power Meter (Color TFT LCD)</span>
+        </a>
+          </h3>
+
+    <span class="sku">
+      TOL-15571    </span>
+
+          <p class="description" style="display:none">
+        This USB Power Meter is a versatile tool that can provide voltage, current, capacity, and impedance displayed on the built-in&hellip;      </p>
+      </div>
+
+      <div>
+      <div class="prices">
+                <span class="price-sale">
+          <span class="price">$43.50</span>
+        </span>
+      </div>
+    </div>
+  
+  </div>
+<div class="tile product-tile  grid retired" data-id="product-12967">
+  <div class="actions-wrap">
+          <a class="thumb" href="https://www.sparkfun.com/products/12967">
+        <img src="https://cdn.sparkfun.com/r/140-140/assets/parts/9/9/0/8/12967-01.jpg" alt="USB Digital Multimeter - Auto-Ranging (RS232 Output)" height="140">
+      </a>
+      </div>
+
+  <div class="main">
+    
+    <h3 class="title">
+              <a href="https://www.sparkfun.com/products/12967">
+          <span>USB Digital Multimeter - Auto-Ranging (RS232 Output)</span>
+        </a>
+          </h3>
+
+    <span class="sku">
+      TOL-12967    </span>
+
+          <p class="description" style="display:none">
+        It seems like everything plugs in to your computer these days, and this digital multimeter is no exception. This auto-ranging&hellip;      </p>
+      </div>
+
+  
+      <strong class="retired">Retired</strong>
+  </div>
+</div>
+
+  <div class="clearfix"></div>
+
+
+    <div align="center"><a href="https://www.sparkfun.com/categories/372" class="btn btn-default">See all of our Multimeter options</a></div>
+    </div>
+</div>
+
+<hr>      </div>
+          <div class="section tutorial-page">
+        <h2 id="parts-of-a-multimeter">Parts of a Multimeter</h2>
+        <p><div class="center-block text-center"> <a href="https://cdn.sparkfun.com/assets/learn_tutorials/1/01_Multimeter_Tutorial-01.jpg"><img src="https://cdn.sparkfun.com/r/600-600/assets/learn_tutorials/1/01_Multimeter_Tutorial-01.jpg" alt="multimeter parts" /></a> </div></p>
+
+<p>A multimeter is has three parts:</p>
+
+<ul>
+<li>Display</li>
+<li>Selection Knob</li>
+<li>Ports</li>
+</ul>
+
+<p>The <strong>display</strong> usually has four digits and the ability to display a negative sign. A few multimeters have illuminated displays for better viewing in low light situations.</p>
+
+<p>The <strong>selection knob</strong> allows the user to set the multimeter to read different things such as milliamps (mA) of <a href="https://learn.sparkfun.com/tutorials/voltage-current-resistance-and-ohms-law#current">current</a>, <a href="https://learn.sparkfun.com/tutorials/voltage-current-resistance-and-ohms-law#voltage">voltage</a> (V) and <a href="https://learn.sparkfun.com/tutorials/voltage-current-resistance-and-ohms-law#resistance">resistance</a> (&ohm;).</p>
+
+<p>Two probes are plugged into two of the <strong>ports</strong> on the front of the unit. <strong>COM</strong> stands for common and is almost always connected to Ground or ‘-’ of a circuit. The <strong>COM</strong> probe is conventionally black but there is no difference between the red probe and black probe other than color. <strong>10A</strong> is the special port used when measuring large currents (greater than 200mA). <strong>mAVΩ</strong> is the port that the red probe is conventionally plugged in to. This port allows the measurement of current (up to 200mA), voltage (V), and resistance (&ohm;). The probes have a <em>banana</em> type connector on the end that plugs into the multimeter. Any probe with a banana plug will work with this meter. This allows for different <a href="https://www.sparkfun.com/search/results?term=banana&amp;what=products">types of probes</a> to be used.</p>
+
+<p><div class="center-block text-center"> <a href="https://cdn.sparkfun.com/assets/learn_tutorials/1/01_Multimeter_Tutorial-03.jpg"><img src="https://cdn.sparkfun.com/r/600-600/assets/learn_tutorials/1/01_Multimeter_Tutorial-03.jpg" alt="using a multimeter" /></a> </div></p>
+
+<p><div class="center-block text-center"><em>Using a Multimeter to test the voltage on a LiPo Battery.</em></div></p>
+
+<hr>      </div>
+          <div class="section tutorial-page">
+        <h2 id="probe-types">Probe Types</h2>
+        <p>There are many different <a href="https://www.sparkfun.com/search/results?term=banana&amp;what=products">types of probes</a> available for multimeters. Here are a few of our favorites:</p>
+
+<ul>
+<li><a href="https://www.sparkfun.com/products/509">Banana to Alligator Clips</a> : These are great cables for connecting to large wires or pins on a breadboard. Good for performing longer term tests where you don’t have to have to hold the probes in place while you manipulate a circuit.</li>
+<li><a href="https://www.sparkfun.com/products/506">Banana to IC Hook</a> : IC hooks work well on smaller ICs and legs of ICs.</li>
+<li><a href="https://www.sparkfun.com/products/11060">Banana to Tweezers</a> : Tweezers are handy if you are needing to test SMD components.</li>
+<li><a href="https://www.sparkfun.com/products/12078">Banana to Test Probes</a> : If you ever break a probe, they are cheap to replace!</li>
+</ul>
+
+
+
+<div class="tile-wrap">
+<div class="tile product-tile  grid " data-id="product-506">
+  <div class="actions-wrap">
+          <a class="thumb" href="https://www.sparkfun.com/banana-to-ic-hook-cables.html">
+        <img src="https://cdn.sparkfun.com/r/140-140/assets/parts/3/4/6/506-Feature2.jpg" alt="Banana to IC Hook Cables" height="140">
+      </a>
+      </div>
+
+  <div class="main">
+    
+    <h3 class="title">
+              <a href="https://www.sparkfun.com/banana-to-ic-hook-cables.html">
+          <span>Banana to IC Hook Cables</span>
+        </a>
+          </h3>
+
+    <span class="sku">
+      CAB-00506    </span>
+
+          <p class="description" style="display:none">
+        These are various leaded cables for attaching to multimeters, power supplies, oscilloscopes, function generators, etc. Cables&hellip;      </p>
+      </div>
+
+      <div>
+      <div class="prices">
+                <span class="price-sale">
+          <span class="price">$7.95</span>
+        </span>
+      </div>
+    </div>
+  
+  </div>
+<div class="tile product-tile  grid " data-id="product-509">
+  <div class="actions-wrap">
+          <a class="thumb" href="https://www.sparkfun.com/banana-to-alligator-cable.html">
+        <img src="https://cdn.sparkfun.com/r/140-140/assets/parts/3/4/9/509-feature.jpg" alt="Banana to Alligator Cable" height="140">
+      </a>
+      </div>
+
+  <div class="main">
+    
+    <h3 class="title">
+              <a href="https://www.sparkfun.com/banana-to-alligator-cable.html">
+          <span>Banana to Alligator Cable</span>
+        </a>
+          </h3>
+
+    <span class="sku">
+      CAB-00509    </span>
+
+          <p class="description" style="display:none">
+        These are various leaded cables for attaching to multimeters, power supplies, oscilloscopes, function generators, etc. Cables&hellip;      </p>
+      </div>
+
+      <div>
+      <div class="prices">
+                <span class="price-sale">
+          <span class="price">$6.95</span>
+        </span>
+      </div>
+    </div>
+  
+  </div>
+<div class="tile product-tile  grid " data-id="product-12078">
+  <div class="actions-wrap">
+          <a class="thumb" href="https://www.sparkfun.com/multimeter-probes-needle-tipped.html">
+        <img src="https://cdn.sparkfun.com/r/140-140/assets/parts/8/6/9/5/12078-01.jpg" alt="Multimeter Probes - Needle Tipped" height="140">
+      </a>
+      </div>
+
+  <div class="main">
+    
+    <h3 class="title">
+              <a href="https://www.sparkfun.com/multimeter-probes-needle-tipped.html">
+          <span>Multimeter Probes - Needle Tipped</span>
+        </a>
+          </h3>
+
+    <span class="sku">
+      TOL-12078    </span>
+
+          <p class="description" style="display:none">
+        These needle tipped multimeter probes are great for attaching to multimeters, power supplies, oscilloscopes, function generat&hellip;      </p>
+      </div>
+
+      <div>
+      <div class="prices">
+                <span class="price-sale">
+          <span class="price">$6.95</span>
+        </span>
+      </div>
+    </div>
+  
+  </div>
+<div class="tile product-tile  grid retired" data-id="product-11060">
+  <div class="actions-wrap">
+          <a class="thumb" href="https://www.sparkfun.com/products/11060">
+        <img src="https://cdn.sparkfun.com/r/140-140/assets/parts/6/4/3/2/11060-01.jpg" alt="Multimeter Probes - Tweezers" height="140">
+      </a>
+      </div>
+
+  <div class="main">
+    
+    <h3 class="title">
+              <a href="https://www.sparkfun.com/products/11060">
+          <span>Multimeter Probes - Tweezers</span>
+        </a>
+          </h3>
+
+    <span class="sku">
+      TOL-11060    </span>
+
+          <p class="description" style="display:none">
+        Testing surface-mount components with standard test leads is anything but easy. Everyone has their own method: some people ta&hellip;      </p>
+      </div>
+
+  
+      <strong class="retired">Retired</strong>
+  </div>
+</div>
+
+  <div class="clearfix"></div>
+
+
+
+<hr>      </div>
+          <div class="section tutorial-page">
+        <h2 id="measuring-voltage">Measuring Voltage</h2>
+        <p>To start, let's measure voltage on a AA battery: Plug the black probe into <strong>COM</strong> and the red probe into <strong>mAVΩ</strong>. Set the multimeter to "2V" in the DC (direct current) range. Almost all portable electronics use <a href="https://learn.sparkfun.com/tutorials/alternating-current-ac-vs-direct-current-dc/direct-current-dc">direct current</a>), not <a href="https://learn.sparkfun.com/tutorials/alternating-current-ac-vs-direct-current-dc/alternating-current-ac">alternating current</a>. Connect the black probe to the battery's ground or '-' and the red probe to power or '+'. Squeeze the probes with a little pressure against the positive and negative terminals of the AA battery. If you've got a fresh battery, you should see around 1.5V on the display (this battery is brand new, so its voltage is slightly higher than 1.5V).</p>
+
+<p><div class="center-block text-center"> <a href="https://cdn.sparkfun.com/assets/learn_tutorials/4/2/8/01_Multimeter_Tutorial-02.jpg"><img src="https://cdn.sparkfun.com/r/600-600/assets/learn_tutorials/4/2/8/01_Multimeter_Tutorial-02.jpg" alt="Testing a AA Battery with Multimeter" /></a> </div></p>
+
+<p>If you're measuring DC voltage (such as a battery or a sensor hooked up to an Arduino) you want to set the knob where the V has a straight line. AC voltage (like what comes out of the wall) can be dangerous, so we rarely need to use the AC voltage setting (the V with a wavy line next to it). If you're messing with AC, we recommend you get a <a href="https://www.google.com/#hl=en&amp;q=fluke%20non-contact%20voltage%20tester">non-contact tester</a> rather than use a digital multimeter.</p>
+
+<p><div class="center-block text-center"> <a href="https://cdn.sparkfun.com/assets/learn_tutorials/1/01_VoltsDC0.jpg"><img src="https://cdn.sparkfun.com/assets/learn_tutorials/1/01_VoltsDC0.jpg" alt="Volts DC" /></a> </div></p>
+
+<p><div class="center-block text-center"> Use the V with a straight line to measure DC Voltage </div></p>
+
+<p><div class="center-block text-center"> <a href="https://cdn.sparkfun.com/assets/learn_tutorials/1/01_VoltsAC.jpg"><img src="https://cdn.sparkfun.com/assets/learn_tutorials/1/01_VoltsAC.jpg" alt="Volts AC" /></a> </div></p>
+
+<p><div class="center-block text-center"> Use the V with a wavy line to measure AC Voltage </div></p>
+
+<p>What happens if you switch the red and black probes? The reading on the multimeter is simply negative. Nothing bad happens! The multimeter measures voltage in relation to the common probe. How much voltage is there on the ‘+’ of the battery compared to common or the negative pin? 1.5V. If we switch the probes, we define ‘+’ as the common or zero point. How much voltage is there on the ‘-’ of the battery compared to our new zero? -1.5V!</p>
+
+<p><div class="center-block text-center"> <a href="https://cdn.sparkfun.com/assets/learn_tutorials/1/01_Multimeter_Tutorial-04.jpg"><img src="https://cdn.sparkfun.com/r/600-600/assets/learn_tutorials/1/01_Multimeter_Tutorial-04.jpg" alt="alt text" /></a> </div></p>
+
+<p>Now let's construct a simple circuit to demonstrate how to measure voltage in a real world scenario. The circuit is simply a 1k&ohm; and a Blue super bright LED powered with a <a href="https://www.sparkfun.com/products/10804">SparkFun Breadboard Power Supply Stick</a>. To begin, let's make sure the circuit you are working on is powered up correctly. If your project should be at 5V but is less than 4.5V or greater than 5.5V, this would quickly give you an indication that something is wrong and you may need to check your power connections or the wiring of your circuit.</p>
+
+<p><div class="center-block text-center"> <a href="https://cdn.sparkfun.com/assets/learn_tutorials/1/01_Multimeter_Tutorial-17.jpg"><img src="https://cdn.sparkfun.com/r/600-600/assets/learn_tutorials/1/01_Multimeter_Tutorial-17.jpg" alt="alt text" /></a> </div></p>
+
+<p><div class="center-block text-center"><em>Measuring the voltage coming off of a Power Supply Stick.</em></div></p>
+
+<p>Set the knob to "20V" in the DC range (the DC Voltage range has a V with a straight line next to it). Multimeters are generally not autoranging. You have to set the multimeter to a range that it can measure. For example, <strong>2V</strong> measures voltages <strong>up to 2 volts</strong>, and <strong>20V</strong> measures voltages <strong>up to 20 volts</strong>. So if you've measuring a 12V battery, use the 20V setting. 5V system? Use the 20V setting. If you set it incorrectly, you will probably see the meter screen change and then read '1'.</p>
+
+<p><div class="center-block text-center"> <a href="https://cdn.sparkfun.com/assets/learn_tutorials/1/01_Multimeter_Tutorial-18.jpg"><img src="https://cdn.sparkfun.com/r/600-600/assets/learn_tutorials/1/01_Multimeter_Tutorial-18.jpg" alt="alt text" /></a> </div></p>
+
+<p>With some force (imagine poking a fork into a piece of cooked meat), push the probes onto two exposed pieces of metal. One probe should contact a GND connection. One probe to the VCC or 5V connection.</p>
+
+<p>We can test different parts of the circuit as well. This practice is called <a href="http://en.wikipedia.org/wiki/Nodal_analysis">nodal analysis</a>, and it is a basic building block in circuit analysis. By measuring the voltage across the circuit we can see how much voltage each component requires. Let's measure the whole circuit first. Measuring from where the voltage is going in to the resistor and then where ground is on the LED, we should see the full voltage of the circuit, expected to be around 5V.</p>
+
+<p><div class="center-block text-center"> <a href="https://cdn.sparkfun.com/assets/learn_tutorials/1/01_Multimeter_Tutorial-19.jpg"><img src="https://cdn.sparkfun.com/r/600-600/assets/learn_tutorials/1/01_Multimeter_Tutorial-19.jpg" alt="alt text" /></a> </div></p>
+
+<p>We can then see how much voltage the LED is using. This is what is referred to as the <strong>voltage drop</strong> across the LED. If that doesn't make sense now, fear not. It will as you explore the world of electronics more. The important thing to take away is that different parts of a circuit can be measured to analyze the circuit as a whole.</p>
+
+<p><div class="center-block text-center"> <a href="https://cdn.sparkfun.com/assets/learn_tutorials/1/01_Multimeter_Tutorial-20.jpg"><img src="https://cdn.sparkfun.com/r/600-600/assets/learn_tutorials/1/01_Multimeter_Tutorial-20.jpg" alt="alt text" /></a> </div></p>
+
+<p><div class="center-block text-center"><em>This LED is using 2.66V of the available 5V supply to illuminate. This is lower than the forward voltage stated in the <a href="http://www.sparkfun.com/datasheets/Components/YSL-R542B5C-A11.pdf">datasheet</a> on account of the circuit only having small amount of current running though it, but more on that in a bit.</em></div></p>
+
+<h3>Overload</h3>
+
+<p>What happens if you select a voltage setting that is too low for the voltage you're trying to measure? Nothing bad. The meter will simply display a 1. This is the meter trying to tell you that it is overloaded or out-of-range. Whatever you're trying to read is too much for that particular setting. Try changing the multimeter knob to a the next highest setting.</p>
+
+<p><div class="center-block text-center"> <a href="https://cdn.sparkfun.com/assets/learn_tutorials/1/01_Multimeter_Tutorial-23.jpg"><img src="https://cdn.sparkfun.com/r/600-600/assets/learn_tutorials/1/01_Multimeter_Tutorial-23.jpg" alt="alt text" /></a> </div></p>
+
+<p><div class="center-block text-center"><em>Reading the 5V across this circuit is too much for the 2V setting on the multimeter.</em></div></p>
+
+<h3>Selection Knob</h3>
+
+<p><div class="center-block text-center"> <a href="https://cdn.sparkfun.com/assets/learn_tutorials/1/01_Multimeter_Tutorial-24.jpg"><img src="https://cdn.sparkfun.com/r/600-600/assets/learn_tutorials/1/01_Multimeter_Tutorial-24.jpg" alt="alt text" /></a> </div></p>
+
+<p>Why does the meter knob read 20V and not 10V? If you're looking to measure a voltage less than 20V, you turn to the 20V setting. This will allow you to read from <strong>2.00</strong> to <strong>19.99</strong>.</p>
+
+<p>The first digit on many multimeters is only able to display a '1' so the ranges are limited to <strong>1</strong>9.99 instead of <strong>9</strong>9.99. Hence the 20V max range instead of 99V max range.</p>
+
+<div class="alert alert-warning"><b>Warning!</b> In general, stick to DC circuits (the settings on the multimeter with straight lines, not curvy lines). Most multimeters can measure AC (alternating current) systems, but AC circuits can be dangerous. A wall outlet with AC or 'main voltage' is the stuff that can zap you pretty good. VERY carefully respect AC. If you need to check to see if an outlet is 'on' then use a <a href ="https://www.google.com/#hl=en&q=fluke%20non-contact%20voltage%20tester"> AC tester</a>. Really the only times we've needed to measure AC are when we've got an outlet that is acting funny (is it really at 110V?), or if we're trying to control a heater (such as a <a href="http://www.sparkfun.com/tutorials/59"> hot plate</a>). Go slow and double check everything before you test an AC circuit.</div>
+
+<hr>      </div>
+          <div class="section tutorial-page">
+        <h2 id="measuring-resistance">Measuring Resistance</h2>
+        <p>Normal <a href="https://learn.sparkfun.com/tutorials/resistors">resistors</a> have <a href="https://learn.sparkfun.com/tutorials/resistors/all#decoding-resistor-markings">color codes</a> on them. If you don't know what they mean, that's ok! There are plenty of <a href="https://www.google.com/search?q=resistor+color+calculator">online calculators</a> that are easy to use. However, if you ever find yourself without internet access, a multimeter is very handy at measuring resistance.</p>
+
+<p>Pick out a random resistor and set the multimeter to the 20kΩ setting. Then hold the probes against the resistor legs with the same amount of pressure you when pressing a key on a keyboard.</p>
+
+<p><div class="center-block text-center"> <a href="https://cdn.sparkfun.com/assets/learn_tutorials/1/01_Multimeter_Tutorial-08.jpg"><img src="https://cdn.sparkfun.com/r/600-600/assets/learn_tutorials/1/01_Multimeter_Tutorial-08.jpg" alt="alt text" /></a> </div></p>
+
+<p>The meter will read one of three things, <strong>0.00</strong>, <strong>1</strong>, or the <strong>actual resistor value</strong>.</p>
+
+<ul>
+<li><p>In this case, the meter reads 0.97, meaning this resistor has a value of 970Ω, or about 1kΩ (remember you are in the 20kΩ or 20,000 Ohm mode so you need to move the decimal three places to the right or 970 Ohms).</p></li>
+<li><p>If the multimeter <strong>reads 1</strong> or displays <strong>OL</strong>, it's overloaded. You will need to try a higher mode such as <strong>200kΩ</strong> mode or <strong>2MΩ</strong> (megaohm) mode. There is no harm if this happen, it simply means the range knob needs to be adjusted.</p></li>
+<li><p>If the multimeter reads <strong>0.00</strong> or nearly zero, then you need to lower the mode to <strong>2kΩ</strong> or <strong>200Ω</strong>.</p></li>
+</ul>
+
+<p>Remember that many resistors have a 5% tolerance. This means that the color codes may indicate 10,000 Ohms (10kΩ), but because of discrepancies in the manufacturing process a 10kΩ resistor could be as low as 9.5kΩ or as high as 10.5kΩ. Don't worry, it'll work just fine as a pull-up or general resistor.</p>
+
+<p>Let's drop the meter down to the next lowest setting, 2K&ohm;. What happens?</p>
+
+<p><div class="center-block text-center"> <a href="https://cdn.sparkfun.com/assets/learn_tutorials/1/01_Multimeter_Tutorial-06.jpg"><img src="https://cdn.sparkfun.com/r/600-600/assets/learn_tutorials/1/01_Multimeter_Tutorial-06.jpg" alt="alt text" /></a> </div></p>
+
+<p>Not a whole lot changed. Because this resistor (a 1K&ohm;) is less than 2K&ohm;, it still shows up on the display. However, you'll notice that there is one more digit after the decimal point giving us a slightly higher resolution in our reading. What about the next lowest setting?</p>
+
+<p><div class="center-block text-center"> <a href="https://cdn.sparkfun.com/assets/learn_tutorials/1/01_Multimeter_Tutorial-07.jpg"><img src="https://cdn.sparkfun.com/r/600-600/assets/learn_tutorials/1/01_Multimeter_Tutorial-07.jpg" alt="alt text" /></a> </div></p>
+
+<p>Now, since 1k&ohm; is greater than 200&ohm;, we've maxed out the meter, and it is telling you that it is overloaded and that you need to try a higher value setting.</p>
+
+<p>As a rule of thumb, it's rare to see a resistor less than 1 Ohm. Remember that measuring resistance is not perfect. Temperature can affect the reading a lot. Also, measuring resistance of a device while it is physically installed in a circuit can be very tricky. The surrounding components on a circuit board can greatly affect the reading.</p>
+
+<hr>      </div>
+          <div class="section tutorial-page">
+        <h2 id="measuring-current">Measuring Current</h2>
+        <p>Reading current is one of the trickiest and most insightful readings in the world of embedded electronics. It's tricky because you have to measure current in <a href="https://learn.sparkfun.com/tutorials/series-and-parallel-circuits/all#series-circuits">series</a>. Where voltage is measure by poking at VCC and GND (in <a href="https://learn.sparkfun.com/tutorials/series-and-parallel-circuits/all#parallel-circuits">parallel</a>), to measure current you have to physically interrupt the flow of current and put the meter in-line. To demonstrate this, we'll use the same circuit we used in the measuring voltage section.</p>
+
+<p>The first thing we'll need is an extra piece of wire. As mentioned, we'll need to physically interrupt the circuit to measure the current. Said another way, pull out the VCC wire going to the resistor, add a wire where that wire was connected, and then probe from the power pin on the power supply to the resistor. This effectively "breaks" power to the circuit. We then insert the multimeter in-line so that it can measure the current as it "flows" through to the multimeter into the bread board.</p>
+
+<p>For these pictures, we cheated and used <a href="https://www.sparkfun.com/products/509">alligator clips</a>. When measuring current, it's often good to watch what your system does over time, for a few seconds or minutes. While you might want to stand there and hold the probes to the system, sometimes it's easier to free up your hands. These alligator clip probes can come in handy. Note that almost all multimeters have the same sized jacks (they're called "banana plugs") so if you're in a pinch, you can use your friend's probes.</p>
+
+<p><div class="center-block text-center"> <a href="https://cdn.sparkfun.com/assets/learn_tutorials/1/01_Multimeter_Tutorial-21.jpg"><img src="https://cdn.sparkfun.com/r/600-600/assets/learn_tutorials/1/01_Multimeter_Tutorial-21.jpg" alt="alt text" /></a> </div></p>
+
+<p>With the multimeter connected, we can now set the dial to the proper setting and measure some current. Measuring current works the same as voltage and resistance -- you have to get the correct range. Set the multimeter to 200mA, and work from there. The current consumption for many breadboard projects is usually under 200mA. Make sure the red probe is plugged into the 200mA fused port. On our favorite <a href="http://www.sparkfun.com/products/9141">multimeter</a>, the 200mA hole is the same port/hole as voltage and resistance reading (the port is labeled <strong>mAVΩ</strong>). This means you can keep the red probe in the same port to measure current, voltage, or resistance. However, if you suspect that your circuit will be using close to or more than 200mA, switch your probe to the 10A side, just to be safe. Overloading the current can result in a blown fuse rather than just an overload display. More on that in a bit.</p>
+
+<p><div class="center-block text-center"> <a href="https://cdn.sparkfun.com/assets/learn_tutorials/1/01_Multimeter_Tutorial-22.jpg"><img src="https://cdn.sparkfun.com/r/600-600/assets/learn_tutorials/1/01_Multimeter_Tutorial-22.jpg" alt="alt text" /></a> </div></p>
+
+<p><div class="center-block text-center"><em>This circuit was only pulling 1.8mA at the time of measurement, not a lot of current. The average reading was closer to 2.1mA.</em></div></p>
+
+<p>Realize that the multimeter is acting as a piece of wire -- you've now completed the circuit, and the circuit will power on. This is important because as time goes on the LED, microcontroller, sensor, or whatever device being measured may change its power consumption (such as turning on an LED can resulting in a 20mA increase for a second, then decrease for a second when it turns off). On the multimeter display you should see the instantaneous current reading. All multimeters take readings over time and then give you the <strong>average</strong>, so expect the reading to fluctuate. In general, cheaper meters will average more harshly and respond more slowly, so take each reading with a grain of salt. In your head, take an average range such as 7 to 8mA under normal 5V conditions (not 7.48mA).</p>
+
+<p>Similar to the other measurements, when measuring current, the color of the probes does not matter. What happens if we switch probes? Nothing bad happens! It simply causes the current reading to become negative:</p>
+
+<p><div class="center-block text-center"> <a href="https://cdn.sparkfun.com/assets/learn_tutorials/1/01_Multimeter_Tutorial-25.jpg"><img src="https://cdn.sparkfun.com/r/600-600/assets/learn_tutorials/1/01_Multimeter_Tutorial-25.jpg" alt="alt text" /></a> </div></p>
+
+<p>Current is still flowing through the system, you've just changed your perspective and now the meter reads negative.</p>
+
+<div class="alert alert-warning"><b>Remember! </b> When you're done using the meter, always return the meter to read voltage (return the probes to the voltage port, set the meter to read the DC voltage range if necessary). It's common to grab a meter and begin to quickly measure the voltage between two pins. If you have left your meter in 'current' mode, you won't see the voltage on the display. Instead you'll see '0.000' indicating that there is no current between VCC and GND. Within that split second you will have connected VCC to GND through your meter and the 200mA fuse will blow = not good. So before you put the meter down for the night, remember to leave your meter in a friendly state.</div>
+
+<p>Measuring current can be tricky the first couple of times. Don't worry if you blow the fuse - we've done it dozens of times! We'll show you how to replace the fuse in a <a href="https://learn.sparkfun.com/tutorials/how-to-use-a-multimeter#fuse">later section</a>.</p>
+
+<hr>      </div>
+          <div class="section tutorial-page">
+        <h2 id="continuity">Continuity</h2>
+        <p>Continuity testing is the act of testing the resistance between two points. If there is very low resistance (less than a few &ohm;s), the two points are connected electrically, and a tone is emitted. If there is more than a few &ohm;s of resistance, than the circuit is open, and no tone is emitted. This test helps insure that connections are made correctly between two points. This test also helps us detect if two points are connected that should not be.</p>
+
+<p>Continuity is quite possibly the single most important function for embedded hardware gurus. This feature allows us to test for conductivity of materials and to trace where electrical connections have been made or not made.</p>
+
+<p>Set the multimeter to 'Continuity' mode. It may vary among DMMs, but look for a diode symbol with propagation waves around it (like sound coming from a speaker).</p>
+
+<p><div class="center-block text-center"> <a href="https://cdn.sparkfun.com/assets/learn_tutorials/1/01_Multimeter_Tutorial-09.jpg"><img src="https://cdn.sparkfun.com/r/600-600/assets/learn_tutorials/1/01_Multimeter_Tutorial-09.jpg" alt="alt text" /></a> </div></p>
+
+<p><div class="center-block text-center"> <em>Multimeter is set to continuity mode.</em> </div></p>
+
+<p>Now touch the probes together. The multimeter should emit a tone (Note: Not all multimeters have a continuity setting, but most should). This shows that a very small amount of current is allowed to flow without resistance (or at least a very very small resistance) between probes.</p>
+
+<div class="alert alert-warning"><b>Warning!</b> In general, turn OFF the system before checking for continuity.</div>
+
+<p>On a breadboard that is <em>not</em> powered, use the probes to poke at two separate ground pins. You should hear a tone indicating that they are connected. Poke the probes from the VCC pin on a microcontroller to VCC on your power supply. It should emit a tone indicating that power is free to flow from the VCC pin to the micro. If it does not emit a tone, then you can begin to follow the route that copper trace takes and tell if there are breaks in the line, wire, breadboard, or PCB.</p>
+
+<p>Continuity is a great way to test if two SMD pins are touching. If your eyes can't see it, the multimeter is usually a great second testing resource.</p>
+
+<p>When a system is not working, continuity is one more thing to help troubleshoot the system. Here are the steps to take:</p>
+
+<ol>
+<li>If the system is on, carefully check VCC and GND with the voltage setting to make sure the voltage is the correct level. If the 5V system is running at 4.2V check your regulator carefully, it could be very hot indicating the system is pulling too much current.</li>
+<li>Power the system down and check continuity between VCC and GND. If there is continuity (if you hear a beep), then you've got a short somewhere.</li>
+<li>Power the system down. With continuity, check that VCC and GND are correctly wired to the pins on the microcontroller and other devices. The system may be powering up, but the individual ICs may be wired wrong.</li>
+<li>Assuming you can get the microcontroller running, set the multimeter aside, and move on to serial debugging or use a logic analyzer to inspect the digital signals.</li>
+</ol>
+
+<p><strong>Continuity and large capacitors:</strong> During normal troubleshooting. you will be probing for continuity between ground and the VCC rail. This is a good sanity check before powering up a prototype to make sure there is not a short on the power system. But don't be surprised if you hear a short 'beep!' when probing. This is because there is often significant amounts of capacitance on the power system. The multimeter is looking for very low resistance to see if two points are connected. Capacitors will act like a short for a split second until they fill up with energy, and then act like an open connection. Therefore, you will hear a short beep and then nothing. That's ok, it's just the caps charging up.</p>
+
+<hr>      </div>
+          <div class="section tutorial-page">
+        <h2 id="fuse">Changing the Fuse</h2>
+        <p>One of the most common mistakes with a new multimeter is to measure current on a bread board by probing from VCC to GND (bad!). This will immediately short power to ground through the multimeter causing the bread board power supply to brown out. As the current rushes through the multimeter, the internal fuse will heat up and then burn out as 200mA flows through it. It will happen in a split second and without any real audible or physical indication that something is wrong.</p>
+
+<p>Wow, that was neat. Now what? Well first, remember that measuring current is done in series (interrupt the VCC line to the breadboard or microcontroller to measure current). If you try to measure the current with a blown fuse, you'll probably notice that the meter reads '0.00' and that the system doesn't turn on like it should when you attach the multimeter. This is because the internal fuse is broken and acts as a broken wire or open. Don't worry, this happens all the time, and it costs <a href="https://www.sparkfun.com/products/10165">about $1</a> to fix.</p>
+
+<p>To change the fuse, find your handy dandy <a href="http://www.sparkfun.com/products/9146">mini screw driver</a>, and start taking out screws. The SparkFun DMM is pretty easy to pull apart. Start by removing the battery plate and the battery.</p>
+
+<p><div class="center-block text-center"> <a href="https://cdn.sparkfun.com/assets/learn_tutorials/1/01_Multimeter_Tutorial-11.jpg"><img src="https://cdn.sparkfun.com/r/600-600/assets/learn_tutorials/1/01_Multimeter_Tutorial-11.jpg" alt="alt text" /></a> </div></p>
+
+<p>Next, remove the two screws hiding behind the battery plate.</p>
+
+<p><div class="center-block text-center"> <a href="https://cdn.sparkfun.com/assets/learn_tutorials/1/01_Multimeter_Tutorial-12.jpg"><img src="https://cdn.sparkfun.com/r/600-600/assets/learn_tutorials/1/01_Multimeter_Tutorial-12.jpg" alt="alt text" /></a> </div></p>
+
+<p>Lift the face of the multimeter slightly.</p>
+
+<p><div class="center-block text-center"> <a href="https://cdn.sparkfun.com/assets/learn_tutorials/1/01_Multimeter_Tutorial-13.jpg"><img src="https://cdn.sparkfun.com/r/600-600/assets/learn_tutorials/1/01_Multimeter_Tutorial-13.jpg" alt="alt text" /></a> </div></p>
+
+<p>Now notice the hooks on the bottom edge of the face. You will need to slide the face sideways with a little force to disengage these hooks.</p>
+
+<p><div class="center-block text-center"> <a href="https://cdn.sparkfun.com/assets/learn_tutorials/1/01_Multimeter_Tutorial-14.jpg"><img src="https://cdn.sparkfun.com/r/600-600/assets/learn_tutorials/1/01_Multimeter_Tutorial-14.jpg" alt="alt text" /></a> </div></p>
+
+<p>Once the face is unhooked, it should come out easily. Now you can see inside the multimeter!</p>
+
+<p><div class="center-block text-center"> <a href="https://cdn.sparkfun.com/assets/learn_tutorials/1/01_Multimeter_Tutorial-15.jpg"><img src="https://cdn.sparkfun.com/r/600-600/assets/learn_tutorials/1/01_Multimeter_Tutorial-15.jpg" alt="alt text" /></a> </div></p>
+
+<p>Gently lift up on the fuse, and it will pop out.</p>
+
+<p><div class="center-block text-center"> <a href="https://cdn.sparkfun.com/assets/learn_tutorials/1/01_Multimeter_Tutorial-16.jpg"><img src="https://cdn.sparkfun.com/r/600-600/assets/learn_tutorials/1/01_Multimeter_Tutorial-16.jpg" alt="alt text" /></a> </div></p>
+
+<p>Make sure to <strong>replace the correct fuse with the correct type</strong>. In other words, replace the 200mA fuse with a <a href="https://www.sparkfun.com/products/10165">200mA fuse</a>.</p>
+
+<div class="alert alert-warning"><b>Warning!</b> <b>DO NOT put a 10A fuse where a 200mA fuse should go. </b>The placement of the fuses may not match the placement of the probe ports. Read the metal cap on either end of the fuse to double check which is which. </div>
+
+<p>The components and PCB traces inside the multimeter are designed to take different amounts of current. You will damage and possibly ruin your multimeter if you accidentally push 5A through the 200mA port.</p>
+
+<p>There are times where you need to measure high current devices like a motor or heating element. Do you see the two places to put the red probe on the front of the multimeter? <strong>10A</strong> on the left and <strong>mAVΩ</strong> on the right? If you try to measure more than 200mA on the <strong>mAVΩ</strong> port you run the risk of blowing the fuse. But if you use the 10A port to measure current, you run a much lower risk of blowing the fuse. The trade-off is sensitivity. As we talked about above, by using the 10A port and knob setting, you will only be able to read down to 0.01A or 10mA. Most of my systems use more than 10mA so the 10A setting and port works well enough. If you're trying to measure very low power (micro or nano amps) the 200mA port with the 2mA, 200uA, or 20uA could be what you need.</p>
+
+<p><div class="center-block text-center"> <a href="https://cdn.sparkfun.com/assets/learn_tutorials/1/01_10A.jpg"><img src="https://cdn.sparkfun.com/r/600-600/assets/learn_tutorials/1/01_10A.jpg" alt="alt text" /></a> </div></p>
+
+<p><strong>Remember:</strong> If your system has the potential to use more than 100mA you should start with the red probe plugged into the <strong>10A</strong> port and <strong>10A</strong> knob setting.</p>
+
+<p>With sub $50 digital multimeters, the measurements you are likely to take are just trouble shooting readings, not scientific experimental results. If you really need to see how the IC uses current or voltage over time, use an <a href="https://www.google.com/search?q=agilent+multimeters&amp;ie=utf-8&amp;oe=utf-8#q=agilent+technologies+multimeters&amp;tbm=shop">Agilent</a> or other high quality bench unit. These units have higher precision and offer a wide range of fancy functions (some <a href="http://www.youtube.com/watch?v=dCrefzlt7IQ">include Tetris</a>!). <a href="http://www.bunniestudios.com/">Bunnie Huang</a>, hardware designer behind <a href="http://www.chumby.com/">Chumby</a>, uses high-precision current readings to trouble shoot boards during the final testing procedures of a Chumby. By looking at the current consumption of different boards that have failed (for example a given failed board uses 210mA over the normal), he could identify what was wrong with the board (when the RAM fails, it generally uses 210mA over normal). By pinpointing what may be potentially wrong, the rework and repair of boards is made much easier.</p>
+
+<hr>      </div>
+          <div class="section tutorial-page">
+        <h2 id="what-makes-a-good-multimeter">What Makes a Good Multimeter?</h2>
+        <p>Everyone has his or her preference, but in general multimeters that have continuity are preferred. Every other feature is just icing on the cake.</p>
+
+<p><div class="center-block text-center"> <a href="https://cdn.sparkfun.com/assets/learn_tutorials/1/agilent.jpg"><img src="//cdn.sparkfun.com/r/700-700/assets/learn_tutorials/1/agilent.jpg" alt="Agilent Meter" /></a> </div></p>
+
+<p>There are fancy multimeters that are <strong>autoranging</strong>, meaning they automatically change their internal range to attempt to find the correct voltage, resistance, or current of the thing you're poking at. Auto-ranging can be very helpful if you know how to use it. Generally speaking, autoranging multimeters are higher quality and generally have more features. So if someone gives you a multimeter with auto-range, put it to use! Just know how to get it into manual mode. A circuit's voltage or current can fluctuate quite quickly. With some of the systems, the current or voltage is so sporadic that the auto-range can't keep up sensibly.</p>
+
+<p>A <strong>back-lit LCD</strong> is fancy, but when was the last time you measured your circuit in the dark? We generally steer clear of scary forests and situations that require us to test stuff in the middle of the night, but some people may want or need a dark-friendly multimeter.</p>
+
+<p>A <strong>good click</strong> on the range selector is actually a major plus in our book. A soft knob is usually indicative of a shoddy meter.</p>
+
+<p><strong>Decent probes</strong> are a plus. Over time the leads will tend to break down at the flex point. We've seen wires come completely out of probes - and it's always at the moment you need the probes to work! If you do break a probe, they are reasonably <a href="https://www.sparkfun.com/products/12078">cheap to replace</a>.</p>
+
+<p><strong>Auto-off</strong> is a great feature that is rarely seen on cheaper multimeters. This is a feature that can benefit beginners and advanced users alike, as it's easy to forget to turn the meter off at 2AM. The <a href="https://www.sparkfun.com/products/9141">SparkFun digital multimeter</a> doesn't have this feature, but luckily the meter is very low-power. We've left the multimeter for two days straight before the 9V battery began to get low. That said, don't forget to turn your meter off!</p>
+
+<p>You're now ready to use your digital multimeter to start measuring the world around you. Feel free to start using it to answer many questions. I believe my LED is getting 20mA, is it really? How much voltage does a lemon have? Is a glass of water conductive? Can I use aluminum foil to replace these wires? A digital multimeter will answer these and many more questions about electronics.</p>
+
+<hr>      </div>
+          <div class="section tutorial-page">
+        <h2 id="purchasing-a-multimeter">Purchasing a Multimeter</h2>
+        <p>A digital multimeter is an essential tool in every electronic enthusiasts arsenal. Here are a few multimeters and kits with multimeters to suit the needs of beginners and experienced hobbyists alike.</p>
+
+<h3>Our Recommendations:</h3>
+
+
+
+<div class="tile-wrap">
+<div class="tile product-tile  grid " data-id="product-12966">
+  <div class="actions-wrap">
+          <a class="thumb" href="https://www.sparkfun.com/digital-multimeter-basic.html">
+        <img src="https://cdn.sparkfun.com/r/140-140/assets/parts/9/9/0/7/12966-01.jpg" alt="Digital Multimeter - Basic" height="140">
+      </a>
+      </div>
+
+  <div class="main">
+    
+    <h3 class="title">
+              <a href="https://www.sparkfun.com/digital-multimeter-basic.html">
+          <span>Digital Multimeter - Basic</span>
+        </a>
+          </h3>
+
+    <span class="sku">
+      TOL-12966    </span>
+
+          <p class="description" style="display:none">
+        The digital multimeter (DMM) is an essential tool in every electronic enthusiasts arsenal. The SparkFun Digital Multimeter, h&hellip;      </p>
+      </div>
+
+      <div>
+      <div class="prices">
+                <span class="price-sale">
+          <span class="price">$21.50</span>
+        </span>
+      </div>
+    </div>
+  
+  </div>
+<div class="tile product-tile  grid retired" data-id="product-11805">
+  <div class="actions-wrap">
+          <a class="thumb" href="https://www.sparkfun.com/products/11805">
+        <img src="https://cdn.sparkfun.com/r/140-140/assets/parts/8/1/2/7/11805-SparkFun_Deluxe_Tool_Kit.jpg" alt="SparkFun Deluxe Tool Kit" height="140">
+      </a>
+      </div>
+
+  <div class="main">
+    
+    <h3 class="title">
+              <a href="https://www.sparkfun.com/products/11805">
+          <span>SparkFun Deluxe Tool Kit</span>
+        </a>
+          </h3>
+
+    <span class="sku">
+      TOL-11805    </span>
+
+          <p class="description" style="display:none">
+        This assortment of tools is great for those of you who have experience with tools but need a fresh set of new parts for your &hellip;      </p>
+      </div>
+
+  
+      <strong class="retired">Retired</strong>
+  </div>
+<div class="tile product-tile  grid retired" data-id="product-12967">
+  <div class="actions-wrap">
+          <a class="thumb" href="https://www.sparkfun.com/products/12967">
+        <img src="https://cdn.sparkfun.com/r/140-140/assets/parts/9/9/0/8/12967-01.jpg" alt="USB Digital Multimeter - Auto-Ranging (RS232 Output)" height="140">
+      </a>
+      </div>
+
+  <div class="main">
+    
+    <h3 class="title">
+              <a href="https://www.sparkfun.com/products/12967">
+          <span>USB Digital Multimeter - Auto-Ranging (RS232 Output)</span>
+        </a>
+          </h3>
+
+    <span class="sku">
+      TOL-12967    </span>
+
+          <p class="description" style="display:none">
+        It seems like everything plugs in to your computer these days, and this digital multimeter is no exception. This auto-ranging&hellip;      </p>
+      </div>
+
+  
+      <strong class="retired">Retired</strong>
+  </div>
+<div class="tile product-tile  grid retired" data-id="product-13843">
+  <div class="actions-wrap">
+          <a class="thumb" href="https://www.sparkfun.com/products/13843">
+        <img src="https://cdn.sparkfun.com/r/140-140/assets/parts/1/1/4/4/9/13843-03.jpg" alt="Mooshimeter" height="140">
+      </a>
+      </div>
+
+  <div class="main">
+    
+    <h3 class="title">
+              <a href="https://www.sparkfun.com/products/13843">
+          <span>Mooshimeter</span>
+        </a>
+          </h3>
+
+    <span class="sku">
+      TOL-13843    </span>
+
+          <p class="description" style="display:none">
+        The Mooshimeter is a multi-channel circuit testing multimeter that uses your smartphone or tablet, through Bluetooth 4.0, as &hellip;      </p>
+      </div>
+
+  
+      <strong class="retired">Retired</strong>
+  </div>
+</div>
+
+  <div class="clearfix"></div>
+
+
+
+<p><div class="center-block text-center"> <a href="https://www.sparkfun.com/categories/372" class="btn btn-default">Click to Browse Additional Multimeter Options</a> </div></p>
+
+<div class="col-sm-12" style="padding-left:0;">
+    <div class="alert alert-default" style="background-color:#f7f7f7;">
+        <div class="col-sm-8">
+            <h2>Interested in learning more foundational topics?</h2>
+                <p class="lead">See our <strong><a href="https://www.sparkfun.com/engineering_essentials">Engineering Essentials</a></strong> page for a full list of cornerstone topics surrounding electrical engineering.</p>
+                <p><a href="https://www.sparkfun.com/engineering_essentials" class="btn btn-md btn-primary">Take me there!</a></p>
+        </div>
+        <div class="col-sm-4 hidden-xs" style="margin-top:10px;">
+            <img src="https://cdn.sparkfun.com/assets/learn_tutorials/7/6/multimeter-300.png" class="img-responsive">
+        </div>
+        <div class="clearfix"></div>
+    </div>
+</div>      </div>
+          <div class="section tutorial-page">
+        <h2 id="res">Resources and Going Further</h2>
+        <p>Now that you know the basics of how to use a digital multimeter, check out these tutorials to use your new skill:</p>
+
+<ul>
+<li><a href="https://learn.sparkfun.com/tutorials/polarity/diode-and-led-polarity">Testing LED and Diode Polarity with a Multimeter</a></li>
+<li><a href="https://learn.sparkfun.com/tutorials/light-emitting-diodes-leds">LEDs</a></li>
+<li><a href="https://learn.sparkfun.com/tutorials/diodes">Diodes</a></li>
+<li><a href="https://learn.sparkfun.com/tutorials/electric-power">Electric Power</a></li>
+<li><a href="http://learn.sparkfun.com/tutorials/battery-technologies">Battery Technologies</a></li>
+<li><a href="https://learn.sparkfun.com/tutorials/how-to-power-a-project">Powering Your Project</a></li>
+</ul>
+
+<p>Or check out some of these related blog posts.</p>
+
+
+<div class="tile-wrap">
+  <div class="tile blog-tile " data-id="news-1428">
+  <a href="https://news.sparkfun.com/1428" title="March 19, 2014: SparkFun is forced to incinerate 2,000 multimeters because they are yellow.">
+              <div class="thumb" style="background-image:url(https://cdn.sparkfun.com/c/338-190/assets/home_page_posts/1/4/2/8/SF-Flame-Bubble-1C-01.jpg)"></div>
+        <h3 class="title">Fluke, we love you but you&#039;re killing us.</h3>
+          <div class="metaline">
+        <span class="meta">March 19, 2014</span>
+      </div>
+        <p class="readmore">Read Post</p>
+      </a>
+  </div>
+<div class="tile blog-tile " data-id="news-1430">
+  <a href="https://news.sparkfun.com/1430" title="March 20, 2014: Fluke responds to our issue with US Customs seizing our shipment of multimeters over a trademark violation.">
+              <div class="thumb" style="background-image:url(https://cdn.sparkfun.com/c/338-190/assets/home_page_posts/1/4/3/0/SF-Flame-Bubble-1C-01.jpg)"></div>
+        <h3 class="title">Fluke Responds to Trademark Problems</h3>
+          <div class="metaline">
+        <span class="meta">March 20, 2014</span>
+      </div>
+        <p class="readmore">Read Post</p>
+      </a>
+  </div>
+<div class="tile blog-tile " data-id="news-2173">
+  <a href="https://news.sparkfun.com/2173" title="August 25, 2016: This Enginursday tests a 7805 regulator with various heat sinks.">
+              <div class="thumb" style="background-image:url(https://cdn.sparkfun.com/c/338-190/assets/home_page_posts/2/1/7/3/thumb.jpg)"></div>
+        <h3 class="title">Enginursday: Linear Regulator Thermal Tests</h3>
+          <div class="metaline">
+        <span class="meta">August 25, 2016</span>
+      </div>
+        <p class="readmore">Read Post</p>
+      </a>
+  </div>
+</div>
+
+  <div class="clearfix"></div>      </div>
+    
+        <div class="share-link-inline">
+
+  <a class="share-link-toggle" href="#">
+    <span class="share-title">
+      <span class="sfe-icon-share"></span>
+      Share    </span>
+  </a>
+
+  <div class="share-link-inner dialog">
+    Use this URL to share:<br>
+    <input class="form-control input-sm" type="text" value="http://sfe.io/t4035" onclick="$(this).trigger('select');">
+
+    <div class="share-social">
+
+      <a rel=nofollow onclick="return $(this).sfeutil('track_link',this,'Share','clicked','tumblr');" href="https://www.tumblr.com/share/link?url=http%3A%2F%2Fsfe.io%2Ft4035&name=How+to+Use+a+Multimeter" title="Share on Tumblr"><span class="sfe-icon-tumblr hidetext"><span>Share on Tumblr</span></span></a>
+
+      <a rel=nofollow onclick="return $(this).sfeutil('track_link',this,'Share','clicked','reddit');" href="https://www.reddit.com/submit?url=http%3A%2F%2Fsfe.io%2Ft4035" title="Submit to reddit"><span class="sfe-icon-reddit hidetext"><span>Submit to reddi</span></span></a>
+
+    </div>
+
+    </div>
+  
+  <div class="share-social">
+
+    <a rel=nofollow onclick="return $(this).sfeutil('track_link',this,'Share','clicked','twitter');" href="https://twitter.com/intent/tweet?text=How+to+Use+a+Multimeter&url=http%3A%2F%2Fsfe.io%2Ft4035&via=sparkfun" title="Share on Twitter"><span class="sfe-icon-twitter hidetext"><span>Share on Twitter</span></span></a>
+
+    <a rel=nofollow onclick="return $(this).sfeutil('track_link',this,'Share','clicked','facebook');" href="http://www.facebook.com/sharer.php?u=http%3A%2F%2Fsfe.io%2Ft4035&t=How+to+Use+a+Multimeter" title="Share on Facebook"><span class="sfe-icon-facebook-nobox hidetext"><span>Share on Facebook</span></span></a>
+
+          <a rel=nofollow onclick="return $(this).sfeutil('track_link',this,'Share','clicked','pinterest');" href="https://www.pinterest.com/pin/create/button/?url=http%3A%2F%2Fsfe.io%2Ft4035&media=https%3A%2F%2Fcdn.sparkfun.com%2F%2Fr%2F500-1000%2Fassets%2Flearn_tutorials%2F4%2F0%2F3%2F5%2F01_Multimeter_Tutorial-02.jpg&description=How+to+Use+a+Multimeter" title="Pin It"><span class="sfe-icon-pinterest hidetext"><span>Pin It</span></span></a>
+    
+  </div>
+
+  
+</div>
+
+  </div>
+
+  <div class="col-sm-4 nav-menu" id="nav-pages">
+    <div id="sidebar_affix">
+      <div id="tutorial-pages" class="list-group">
+        <a class="list-group-item"><b>Sections</b></a>
+                          <a data-pagename="introduction" class="list-group-item" href="#introduction">
+            Introduction          </a>
+                  <a data-pagename="parts-of-a-multimeter" class="list-group-item" href="#parts-of-a-multimeter">
+            Parts of a Multimeter          </a>
+                  <a data-pagename="probe-types" class="list-group-item" href="#probe-types">
+            Probe Types          </a>
+                  <a data-pagename="measuring-voltage" class="list-group-item" href="#measuring-voltage">
+            Measuring Voltage          </a>
+                  <a data-pagename="measuring-resistance" class="list-group-item" href="#measuring-resistance">
+            Measuring Resistance          </a>
+                  <a data-pagename="measuring-current" class="list-group-item" href="#measuring-current">
+            Measuring Current          </a>
+                  <a data-pagename="continuity" class="list-group-item" href="#continuity">
+            Continuity          </a>
+                  <a data-pagename="fuse" class="list-group-item" href="#fuse">
+            Changing the Fuse          </a>
+                  <a data-pagename="what-makes-a-good-multimeter" class="list-group-item" href="#what-makes-a-good-multimeter">
+            What Makes a Good Multimeter?          </a>
+                  <a data-pagename="purchasing-a-multimeter" class="list-group-item" href="#purchasing-a-multimeter">
+            Purchasing a Multimeter          </a>
+                  <a data-pagename="res" class="list-group-item" href="#res">
+            Resources and Going Further          </a>
+              </div>
+
+      <div class="list-group">
+        <a class="list-group-item" href="https://learn.sparkfun.com/tutorials/how-to-use-a-multimeter/discuss">
+          Comments
+          <span class="badge">0</span>
+        </a>
+                  <a class="list-group-item" href="https://learn.sparkfun.com/tutorials/how-to-use-a-multimeter/introduction">
+            View Paginated
+          </a>
+                <a class="list-group-item" href="#" onclick="window.print(); return false;">
+          Print
+        </a>
+      </div>
+
+      <ul class="list-group">
+        <li class="list-group-item"><b>Tags</b></li>
+        <li class="list-group-item"><ul class="tags-list">
+  <li>
+    <a class="tag" href="https://learn.sparkfun.com/tutorials/tags/electrical-engineering">Electrical Engineering</a>  </li>
+  <li>
+    <a class="tag" href="https://learn.sparkfun.com/tutorials/tags/skill">Skill</a>  </li>
+  <li>
+    <a class="tag" href="https://learn.sparkfun.com/tutorials/tags/start-a-project">Start a Project</a>  </li>
+  <li>
+    <a class="tag" href="https://learn.sparkfun.com/tutorials/tags/tools">Tools</a>  </li>
+</ul>
+</li>
+      </ul>
+
+      <ul class="list-group">
+        <li class="list-group-item"><b>License</b></li>
+        <li class="list-group-item">
+          <span class="sfe-icon-cc">
+            <span class="visuallyhidden">Creative Commons</span>
+          </span>
+          <small>tutorials are <a href="https://creativecommons.org/licenses/by-sa/4.0/" target="new">CC BY-SA 4.0</a></small>
+        </li>
+      </ul>
+
+    </div>
+  </div>
+
+</div>
+
+      </div> <!-- /container -->
+    </div> <!-- /content -->
+
+    <footer>
+  <div class="container">
+
+  <div class="row">
+      <div class="col-sm-6 col-md-4">
+        <div class="footer-col-inner">
+          <h3>About SparkFun</h3>
+          <ul>
+            <li><a href="https://www.sparkfun.com/about-sparkfun">Read Our Story</a></li>
+            <li><a href="https://www.sparkfun.com/press-and-media">Press &amp; Media</a></li>
+            <li><a href="http://www.sparkfuneducation.com" target="_blank">SparkFun Education <span class="glyphicon glyphicon-new-window"></span></a></li>
+            <li><a href="https://www.sparkfun.com/jobs">Job Openings</a></li>
+          </ul>
+
+          <h3>Partner With Us</h3>
+          <ul>
+            <li><a href="https://www.sparkfun.com/partner">See Our Partners</a></li>
+            <li><a href="https://www.sparkfun.com/services">View Our Services</a></li>
+            <li><a href="https://www.sparkfun.com/become-a-distributor">Become a Distributor/Reseller</a></li>
+            <li><a href="https://www.sparkfun.com/volume-sales">Receive Volume Discounts</a></li>
+          </ul>
+        </div>
+      </div>
+      <div class="col-sm-6 col-md-4">
+        <div class="footer-col-inner">
+          <h3>Support</h3>
+          <ul>
+            <li><a href="https://www.sparkfun.com/support">Customer Support</a></li>
+            <li><a href="https://www.sparkfun.com/payments">Purchase Order &amp; Payment Terms</a></li>
+            <li><a href="https://www.sparkfun.com/technical-assistance">Technical Assistance</a></li>
+            <li><a href="https://www.sparkfun.com/faq">FAQs</a></li>
+          </ul>
+          <h3>Site Information</h3>
+          <ul>
+            <li><a href="https://www.sparkfun.com/terms">Terms Of Service</a></li>
+            <li><a href="https://www.sparkfun.com/privacy">Privacy Policy</a></li>
+            <li><a href="https://www.sparkfun.com/compliance">Compliance</a></li>
+            <li><a href="https://www.sparkfun.com/sitemap">Site Map</a></li>
+          </ul>
+        </div>
+      </div>
+      <div class="col-sm-6 col-md-4">
+        <div class="footer-col-inner">
+          <h3>Subscribe</h3>
+          <script charset="utf-8" type="text/javascript" src="//js.hsforms.net/forms/embed/v2.js"></script>
+          <script>
+            hbspt.forms.create({
+              region: "na1",
+              portalId: "2224003",
+              formId: "257ad1af-ab9e-4275-8788-cbad81cc229e"
+            });
+          </script>
+        </div>
+      </div>
+      <div class="col-sm-6 col-md-4">
+        <div class="footer-col-inner">
+          <h3>View Our Social Channels</h3>
+          <ul class="spew">
+            <li><a href="https://www.youtube.com/sparkfun" target="_blank" class="icon-social-youtube"><span class="sr-only">YouTube</span></a></li>
+            <li><a href="https://www.instagram.com/sparkfun/" target="_blank" class="icon-social-instagram"><span class="sr-only">Instagram</span></a></li>
+            <li><a href="https://www.github.com/sparkfun" target="_blank" class="icon-social-github"><span class="sr-only">GitHub</span></a></li>
+            <li><a href="https://www.facebook.com/SparkFun" target="_blank" class="icon-social-facebook"><span class="sr-only">Facebook</span></a></li>
+            <li><a href="https://twitter.com/sparkfun" target="_blank" class="icon-social-twitter"><span class="sr-only">Twitter</span></a></li>
+            <li><a href="https://www.sparkfun.com/feeds" class="icon-social-rss"><span class="sr-only">RSS</span></a></li>
+            <li><a href="https://www.tiktok.com/@sparkfun.electronics?lang=en" target="_blank" class="icon-social-tiktok"><span class="sr-only">TikTok</span></a></li>
+          </ul>
+        </div>
+      </div>
+    </div><!-- end .row -->
+    <div class="row">
+      <div class="col-xs-12 text-center">
+        <p class="copyleft">
+          <strong>SparkFun Electronics&nbsp;&reg;</strong>
+          <span class="hidden-xs hidden-sm">/</span>
+          <br class="visible-xs-inline visible-sm-inline"/>
+          6333 Dry Creek Parkway,
+          <br class="visible-xs-inline"/>
+          Niwot, CO 80503
+        </p>
+      </div>
+    </div><!-- end .row -->
+  </div><!-- end .container -->
+</footer>
+
+      </div><!-- end .wrapper-inner -->
+    </div><!-- end .wrapper -->
+
+    <script type="text/javascript">
+      var SFECONFIG = {
+        dnt: false,
+        http_server: 'http://learn.sparkfun.com',
+        https_server: 'https://learn.sparkfun.com',
+        http_static: 'https://cdn.sparkfun.com',
+        learn_server: 'https://learn.sparkfun.com',
+        news_server: 'https://news.sparkfun.com',
+        base_url: '/',
+        url: '/',
+        controller: 'tutorials',
+        action: 'view',
+        entity_id: '',
+        auth: false,
+        sparkrev: '1785268692',
+        search_key: 'search-sngw3quge7ojic1tgr4eft5c',
+        search_url: 'https://sparkfun-electronics.ent.us-central1.gcp.cloud.es.io/api/as/v1/engines/sparkfun-01/search'
+      };
+    </script>
+          <script src="//cdnjs.cloudflare.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
+      <script src="//ajax.googleapis.com/ajax/libs/jqueryui/1.13.2/jquery-ui.min.js"></script>
+      <script src="/js/learn-built.min.js?sparkrev=1785268692"></script>
+    
+    <script>
+      $.sfe();
+      $.shared();
+      $('#learn').learn();
+      $('#learn').sfeutil();
+    </script>
+                            <script src="/js/tutorials-built.min.js?sparkrev=1785268692"></script>
+                                    <script>
+    var fbq = null;
+  </script>
+      
+          <script type="text/javascript">
+      (function(d,s,i,r) {
+        if (d.getElementById(i)){return;}
+        var n=d.createElement(s),e=d.getElementsByTagName(s)[0];
+        n.id=i;n.src='//js.hs-analytics.net/analytics/'+(Math.ceil(new Date()/r)*r)+'/2224003.js';
+        e.parentNode.insertBefore(n, e);
+      })(document,"script","hs-analytics",300000);
+    </script>
+        <script type="text/javascript">
+    setTimeout(function(){var a=document.createElement("script");
+    var b=document.getElementsByTagName("script")[0];
+    a.src=document.location.protocol+"//script.crazyegg.com/pages/scripts/0046/4761.js?"+Math.floor(new Date().getTime()/3600000);
+    a.async=true;a.type="text/javascript";b.parentNode.insertBefore(a,b)}, 1);
+  </script>
+      </body>
+</html>

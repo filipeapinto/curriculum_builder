@@ -1,0 +1,475 @@
+{
+  "identity": {
+    "unit_id": "L04",
+    "slug": "multimeter",
+    "kind": "foundation",
+    "title": "Multimeter: Looking for Evidence",
+    "subject_job_sentence": "A multimeter measures or tests selected electrical properties when its probes, sockets, and mode are used correctly."
+  },
+  "pedagogy": {
+    "learning_objectives": [
+      {
+        "statement": "Identify the meter's three probe sockets and its mode dial from the meter's own labels.",
+        "bloom_level": "remember",
+        "success_criterion": "I can point to all four locations on the meter."
+      },
+      {
+        "statement": "Distinguish voltage, continuity, and current modes and which socket each uses.",
+        "bloom_level": "understand",
+        "success_criterion": "I can say which socket and mode I would choose for a connection question versus a current question."
+      },
+      {
+        "statement": "Hand an adult a safe measurement plan naming the socket and mode before any probe touches a circuit.",
+        "bloom_level": "apply",
+        "success_criterion": "I can trace the socket-and-mode map and complete the evidence card in order."
+      }
+    ],
+    "prior_knowledge": {
+      "prerequisite_labs": [
+        "L01",
+        "L02"
+      ],
+      "assumed_ideas": [
+        "Only trace or plan connections while everything stays disconnected."
+      ],
+      "retrieval_prompt": "What did the jumper-wire lab teach you about naming both ends of a connection before making it?"
+    },
+    "misconceptions": [
+      {
+        "misconception": "A meter can be placed across a supply in any mode, because it only reads.",
+        "why_it_is_common": "Voltage mode really can be placed straight across a supply, and the meter looks and behaves the same in every mode from the outside.",
+        "confronted_by": "The red-X picture shows current mode put across a supply, crossed out. The unit also says the rule in plain words: Current mode is never placed directly across a supply."
+      }
+    ],
+    "vocabulary": [
+      {
+        "term": "continuity",
+        "child_definition": "A quick beep-test that checks whether two points are joined by a low-resistance path.",
+        "introduced_in": "explore"
+      },
+      {
+        "term": "COM socket",
+        "child_definition": "The socket that always takes the black return probe, no matter what you are measuring.",
+        "introduced_in": "explain"
+      }
+    ],
+    "scaffolding": {
+      "adult_does": [
+        "Keep the meter powered off during identification.",
+        "Verify the child's socket-and-mode plan before any later powered measurement."
+      ],
+      "child_does": [
+        "Point to each socket and the mode dial.",
+        "Trace the socket-and-mode map.",
+        "Tick each evidence-card item after checking it."
+      ],
+      "fading_note": "The adult still leads any later live measurement; the child now leads identifying the correct socket and mode to plan for it."
+    },
+    "cognitive_load": {
+      "segments": [
+        "Notice the four locations",
+        "Predict a socket-mode pairing",
+        "Trace COM and the red probe's socket",
+        "Trace the high-current socket and the mode dial",
+        "Complete evidence card"
+      ],
+      "concrete_before_abstract": "The child points to the physical sockets before meeting the word continuity.",
+      "worked_example": "The adult points to COM and says the black probe always goes there, in every mode, before tracing the rest of the map."
+    }
+  },
+  "sequence": {
+    "engage": {
+      "hook": "One meter can answer three different questions about a circuit, but only if its probes are in the right sockets first.",
+      "eliciting_question": "Do you think the same socket is used for every kind of measurement?"
+    },
+    "explore": {
+      "predict": {
+        "question": "Which socket do you think the red probe uses to check whether two points are connected?",
+        "options": [
+          "the voltage, resistance and continuity socket",
+          "the high-current socket",
+          "COM"
+        ],
+        "recorded_before_observing": true
+      },
+      "observe": {
+        "what_to_observe": "On the jack-and-dial diagram, which socket and which dial position you would choose for one named connection question — with the meter switched off and no measurement taken.",
+        "record_method": "tick_or_circle",
+        "evidence_fields": [
+          "my prediction, written down first",
+          "the socket I chose on the diagram for the black probe",
+          "the socket I chose on the diagram for the red probe",
+          "the dial position I chose for a connection question",
+          "meter still off"
+        ]
+      },
+      "steps": [
+        {
+          "number": 1,
+          "action": "Check with the adult that the multimeter is switched off."
+        },
+        {
+          "number": 2,
+          "action": "Circle your prediction for the continuity socket."
+        },
+        {
+          "number": 3,
+          "action": "On the jack-and-dial diagram, find COM and note it always takes the black probe."
+        },
+        {
+          "number": 4,
+          "action": "Find the socket the red probe uses for voltage, resistance and continuity."
+        },
+        {
+          "number": 5,
+          "action": "Find the separate high-current socket and read what your own meter prints beside it."
+        },
+        {
+          "number": 6,
+          "action": "Find the mode dial and its voltage, continuity and current positions."
+        },
+        {
+          "number": 7,
+          "action": "Point to the socket and dial position you would choose for one connection question."
+        },
+        {
+          "number": 8,
+          "action": "Tick each place found and ask the adult to verify the card."
+        }
+      ],
+      "expected_observation": "COM never moves; the socket the red probe uses changes with the mode you choose on the dial.",
+      "not_yet_outcome": {
+        "symptom": "Your meter's sockets are not labelled the way the diagram names them.",
+        "first_check": "Read your own meter's face and its manual, and match each socket by what it says."
+      }
+    },
+    "explain": {
+      "what_you_saw": "You found the meter's sockets and dial positions on the diagram and chose one socket and one dial position for a connection question, without switching anything on.",
+      "why_it_happened": "Voltage always compares two points. Both probes must be placed before a voltage reading means anything. Continuity is a quick, low-energy check for whether two points are joined. Current is different. To read current, the meter has to become part of the loop. Inside the meter, that path is close to a plain piece of wire. That is why current mode is never placed directly across a supply. It would put a near-short straight across the source. Which socket each mode uses is printed on your own meter. Read it there. Do not remember a number from another meter.",
+      "self_explanation_prompt": "Tell the adult, in your own words, why current mode must never go straight across a supply."
+    },
+    "elaborate": {
+      "near_transfer": [
+        "Plan which socket and mode you would use to check whether a wire is broken, without touching a live circuit."
+      ],
+      "far_transfer": [
+        "A kitchen scale needs food placed on its plate before it means anything, the way a voltage reading needs both probes placed.",
+        "A stethoscope only tells a doctor something once it is placed against the right spot, similar to choosing the right socket first."
+      ]
+    },
+    "evaluate": {
+      "success_criteria_checklist": [
+        "I can point to all four locations on the meter.",
+        "I can say which socket and mode I would choose for a connection question versus a current question.",
+        "I can trace the socket-and-mode map and complete the evidence card in order."
+      ],
+      "hinge_question": {
+        "question": "If you want to check whether two breadboard rows are joined, which mode and which two sockets do you plan to use?",
+        "reveals": "Whether the learner connects the continuity idea to the correct socket pairing rather than guessing."
+      },
+      "next_lab_link": "L05 uses the same evidence-first habit to read a resistor's value before any circuit is built."
+    }
+  },
+  "content": {
+    "identification": {
+      "child_name": "multimeter",
+      "technical_name": "digital multimeter",
+      "distinguishing_features": "A hand-held meter with a mode dial and three probe sockets. Here it stays switched off. Meters differ, so read every label from the meter in front of you.",
+      "orientation_cue": "Do not guess the red probe's socket from habit. Read the labels on this meter. An adult checks your socket and mode plan before any powered use.",
+      "parts": [
+        {
+          "label": "COM socket",
+          "role": "Always takes the black return probe, in every mode."
+        },
+        {
+          "label": "voltage, resistance and continuity socket",
+          "role": "Takes the red probe for voltage, resistance and continuity, and for small currents."
+        },
+        {
+          "label": "high-current socket",
+          "role": "A separate socket for the red probe when a larger current is expected. Your own meter's face says which currents belong here."
+        },
+        {
+          "label": "mode dial",
+          "role": "Selects which quantity the meter is set to read."
+        }
+      ]
+    },
+    "troubleshooting": [
+      {
+        "what_you_notice": "You are not sure which socket the red probe should use.",
+        "likely_reason": "The mode has not been chosen and named first.",
+        "safe_first_check": "Name the mode you are planning to use before choosing a socket for the red probe."
+      },
+      {
+        "what_you_notice": "The evidence card mentions a socket you cannot find.",
+        "likely_reason": "Some meters label the current sockets slightly differently.",
+        "safe_first_check": "Ask the adult to confirm the label against the official reference before continuing."
+      }
+    ],
+    "sourced_claims": [
+      {
+        "claim": "This unit takes no measurement at all; the activity is unpowered.",
+        "source_locator": {
+          "path": "inputs/manifest.yaml",
+          "section_or_line": "question: Which meter mode answers a connection question without powering the circuit?"
+        },
+        "subject_scope": {
+          "model_independent": true,
+          "justification": "The curriculum's own manifest sets this unit's activity mode, independently of which meter is used."
+        },
+        "evidence_scope": "Establishes the activity mode for this unit and nothing about any meter."
+      },
+      {
+        "claim": "Current mode is never placed directly across a supply.",
+        "source_locator": {
+          "path": "inputs/manifest.yaml",
+          "section_or_line": "Current mode is never placed directly across a supply."
+        },
+        "subject_scope": {
+          "model_independent": true,
+          "justification": "In current mode any meter presents a near-short, so the prohibition holds for every meter and is stated by the curriculum without naming a model."
+        },
+        "evidence_scope": "The curriculum states this as one of the unit's required explanations. It is an absolute prohibition, not a threshold, so it carries no number to exceed."
+      },
+      {
+        "claim": "Current range and socket selection is read from the meter's own labels, because this curriculum names no meter model.",
+        "source_locator": {
+          "path": "inputs/manifest.yaml",
+          "section_or_line": "primary: Digital multimeter"
+        },
+        "subject_scope": {
+          "model_independent": true,
+          "justification": "The manifest names this unit's subject as a digital multimeter and no further, so nothing model-specific can be verified."
+        },
+        "evidence_scope": "Establishes that the subject is a digital multimeter generically, with no model named. It supports no threshold of its own, which is exactly why the removed 200 mA and 10 A universal claims are gone."
+      }
+    ],
+    "unresolved_visual_roles": [
+      {
+        "role": "photorealistic meter",
+        "reason": "No multimeter, meter probe or meter dial appears anywhere in official_kit_photo.jpg. All four quadrants were inspected at full resolution; the visible inventory is the power supply module, joystick, HC-SR04, relay, DHT11, RGB LED module, fan blade and DC motor, UNO R3, ULN2003 stepper driver, disc, prototype shield with mini breadboard, LEDs, transistors, photoresistors, electrolytic capacitor, active and passive buzzers, tactile buttons, one- and four-digit seven-segment displays, breadboard, 9V battery with barrel lead, DIP ICs, USB cable, IR remote, resistors, 10K potentiometer, LCD1602, jumper wires, servo, stepper motor and mounting hardware."
+      }
+    ],
+    "derived": [
+      {
+        "domain_pointer": "/build_map/traced_path/0",
+        "rendered_value": "COM socket"
+      },
+      {
+        "domain_pointer": "/build_map/traced_path/1",
+        "rendered_value": "voltage, resistance and continuity socket"
+      },
+      {
+        "domain_pointer": "/build_map/traced_path/2",
+        "rendered_value": "high-current socket"
+      },
+      {
+        "domain_pointer": "/build_map/traced_path/3",
+        "rendered_value": "mode dial"
+      },
+      {
+        "domain_pointer": "/build_map/evidence_card/prompt",
+        "rendered_value": "With the meter off, name the socket for each probe and the mode you would choose for a connection question, and tick each place you can identify."
+      },
+      {
+        "domain_pointer": "/build_map/evidence_card/child_records/0",
+        "rendered_value": "COM socket found — the black probe's socket, in every mode"
+      },
+      {
+        "domain_pointer": "/build_map/evidence_card/child_records/1",
+        "rendered_value": "the red probe's voltage, resistance and continuity socket found"
+      },
+      {
+        "domain_pointer": "/build_map/evidence_card/child_records/2",
+        "rendered_value": "the separate high-current socket found"
+      },
+      {
+        "domain_pointer": "/build_map/evidence_card/child_records/3",
+        "rendered_value": "mode dial found, with its voltage, continuity and current positions"
+      },
+      {
+        "domain_pointer": "/build_map/evidence_card/child_records/4",
+        "rendered_value": "meter still off"
+      },
+      {
+        "domain_pointer": "/electrical/behaviour/child_level",
+        "rendered_value": "The meter has a black wire that always goes in the same hole. The red wire moves, depending on what you are checking. Current mode is never placed directly across a supply."
+      }
+    ]
+  },
+  "safety": {
+    "hazard_mode": "fully disconnected low-voltage identification",
+    "adult_verification": {
+      "variant": "Any basic digital multimeter, as specified by curricula/arduino_kit/roster.md; this unit is model-agnostic by design",
+      "marking": "Socket and dial markings read from the meter in front of the learner; no model is named by this curriculum and none is assumed",
+      "verified_configuration": "Meter powered off; no probe placed on any circuit.",
+      "limits": "Current mode is never placed directly across a supply. No live measurement in this unit. No probe goes into a powered circuit. No fuse is replaced. Current is measured in series and only by an adult.",
+      "endpoint_check": "Adult confirms all four traced locations, confirms the child can state that current mode is never placed directly across a supply, and confirms the meter remains switched off before signing the evidence card.",
+      "signoff_required": true
+    }
+  },
+  "visuals": [
+    {
+      "role": "assembly_or_path_map",
+      "source_kind": "deterministic_render",
+      "supports_section": "assembly",
+      "carries_exact_domain_fact": true,
+      "provenance": {
+        "publisher": "curriculum runtime deterministic renderer",
+        "item_or_family": "L04 deterministic jack-and-dial map",
+        "access_date": "2026-08-08",
+        "file_hash": "1f93bcc74ef5b79e2ac39ea8f05203e75de26c5a285270ce2eaf4c5cbd9d4fdd",
+        "embedded_as": "assets/path_map.svg",
+        "crop_transform_history": [
+          "Rendered from this unit's own build map data: connectivity/enumeration."
+        ]
+      },
+      "omission_finding": "The map shows only what can be traced with everything disconnected and unpowered."
+    },
+    {
+      "role": "orientation_and_parts",
+      "source_kind": "deterministic_render",
+      "supports_section": "identification",
+      "carries_exact_domain_fact": true,
+      "provenance": {
+        "publisher": "curriculum runtime deterministic renderer",
+        "item_or_family": "L04 probe placement diagram",
+        "access_date": "2026-08-08",
+        "file_hash": "d42fb14dcad626e8926711f43b2f985aa02204865a702c7814b9e6fbed370181",
+        "embedded_as": "assets/probe_placement_diagram.svg",
+        "crop_transform_history": [
+          "Rendered from this unit's own named parts."
+        ]
+      },
+      "omission_finding": "The diagram names parts only; it shows no powered or connected configuration."
+    },
+    {
+      "role": "safety_or_troubleshooting",
+      "source_kind": "deterministic_render",
+      "supports_section": "troubleshooting",
+      "carries_exact_domain_fact": true,
+      "provenance": {
+        "publisher": "curriculum runtime deterministic renderer",
+        "item_or_family": "L04 current-mode red-X",
+        "access_date": "2026-08-08",
+        "file_hash": "3090e862dbb059d5344906200d24b50426c63501b599220724e0e69e5fc87de5",
+        "embedded_as": "assets/current_mode_red_x.svg",
+        "crop_transform_history": [
+          "Rendered from this unit's own recorded failure mode."
+        ]
+      },
+      "omission_finding": "The picture shows what to avoid and shows no permitted live configuration."
+    },
+    {
+      "role": "expected_result",
+      "source_kind": "deterministic_render",
+      "supports_section": "evaluate",
+      "carries_exact_domain_fact": true,
+      "provenance": {
+        "publisher": "curriculum runtime deterministic renderer",
+        "item_or_family": "L04 child evidence card",
+        "access_date": "2026-08-08",
+        "file_hash": "ed24474f071a759d72120fb50820002b7703f9e936baa5b63bcf4b7cd775f472",
+        "embedded_as": "assets/evidence_card.svg",
+        "crop_transform_history": [
+          "Rendered from this unit's own evidence-card records."
+        ]
+      },
+      "omission_finding": "The card records what was found and grants no permission to energize anything."
+    }
+  ],
+  "domain": {
+    "electrical": {
+      "component_spec": {
+        "part_family": "digital multimeter",
+        "designator_prefix": "M",
+        "parameters": [
+          {
+            "name": "socket and mode labelling read from the meter itself",
+            "value": "as printed on the meter",
+            "unit": "none",
+            "condition": "Socket names, current ranges and which socket a range uses differ between meters. This unit reads them from the meter in front of the learner and from its own manual, and states no universal figure.",
+            "source": "curricula/arduino_kit/roster.md, which specifies only 'a basic digital multimeter' and names no model, so no model-specific figure can be verified for this curriculum."
+          }
+        ]
+      },
+      "quantities_taught": [
+        {
+          "quantity": "voltage",
+          "depth": "observe",
+          "child_facing_meaning": "Voltage always compares two points; the meter needs both probes placed to read it, never just one."
+        },
+        {
+          "quantity": "continuity",
+          "depth": "observe",
+          "child_facing_meaning": "A beep in continuity mode means the meter found a low-resistance path between the two probes."
+        }
+      ],
+      "circuit": {
+        "status": "not_designed"
+      },
+      "behaviour": {
+        "child_level": "The meter has a black wire that always goes in the same hole. The red wire moves, depending on what you are checking. Current mode is never placed directly across a supply.",
+        "adult_level": "COM takes the black return probe in every mode. The red probe moves between the voltage/resistance/continuity socket and a separate high-current socket; which socket a given range uses, and at what current, is printed on the meter's own face and stated in its own manual, and differs between meters. One rule does not differ: Current mode is never placed directly across a supply. In current mode the meter is a near-short, so placing it across a supply puts that near-short directly across the source.",
+        "relationship": "none",
+        "simplification_check": "The child account keeps the fixed-black/moving-red socket rule and the current-mode prohibition, the two facts this unit's evidence card and adult check turn on, and omits range arithmetic that differs by meter and that no source in this curriculum can verify."
+      },
+      "ratings_and_limits": [
+        {
+          "parameter": "current measurement permitted in this unit",
+          "absolute_max": "none — no measurement is taken",
+          "unit": "none",
+          "source": "curricula/arduino_kit/arduino_kit_curriculum.v5.yaml L04 core_activity, mode unpowered; the unit plans a measurement and never takes one."
+        },
+        {
+          "parameter": "placing the meter in current mode directly across a supply",
+          "absolute_max": "never permitted, at any voltage",
+          "unit": "none",
+          "source": "curricula/arduino_kit/arduino_kit_curriculum.v5.yaml L04 required_explanation: Current mode is never placed directly across a supply."
+        },
+        {
+          "parameter": "current range and socket selection",
+          "absolute_max": "the limit printed on your own meter's face and stated in its own manual",
+          "unit": "none",
+          "source": "curricula/arduino_kit/roster.md names only 'a basic digital multimeter'; no model is specified anywhere in this curriculum, so the meter's own labels are the authority."
+        }
+      ],
+      "failure_modes": [
+        {
+          "wrong_action": "Put the meter in current mode and place its two probes straight across a supply, one on each terminal.",
+          "consequence": "In current mode the meter is close to a plain piece of wire. This puts a near-short straight across the supply. At best the meter's fuse blows. At worst the supply, the leads or the meter are damaged.",
+          "prevented_by": "Current mode is never placed directly across a supply. Current is measured in series, as part of the loop, and only with an adult. Read your own meter's labels first.",
+          "reversible": false
+        },
+        {
+          "wrong_action": "Leave the red probe in a current socket and then switch the dial to a voltage mode.",
+          "consequence": "The next voltage reading would place the meter's low-resistance current path across the two points being measured.",
+          "prevented_by": "Return the red probe to the voltage/resistance socket before switching the dial, and check the socket against the meter's own labels.",
+          "reversible": true
+        }
+      ]
+    },
+    "build_map": {
+      "map_kind": "connectivity",
+      "traced_path": [
+        "COM socket",
+        "voltage, resistance and continuity socket",
+        "high-current socket",
+        "mode dial"
+      ],
+      "evidence_card": {
+        "prompt": "With the meter off, name the socket for each probe and the mode you would choose for a connection question, and tick each place you can identify.",
+        "child_records": [
+          "COM socket found — the black probe's socket, in every mode",
+          "the red probe's voltage, resistance and continuity socket found",
+          "the separate high-current socket found",
+          "mode dial found, with its voltage, continuity and current positions",
+          "meter still off"
+        ]
+      },
+      "power_on_release": false,
+      "relationship": "enumeration"
+    }
+  }
+}

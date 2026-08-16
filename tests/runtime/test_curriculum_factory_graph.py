@@ -14,7 +14,7 @@ from curriculum_factory.io import sha256_file
 
 ENGINE = Path(__file__).resolve().parents[2]
 MANIFEST = ENGINE / "curricula/arduino_kit/arduino_kit_curriculum.v5.yaml"
-SHIPPED_L01 = ENGINE / "outputs/arduino_kit_run_v2/L01"
+SHIPPED_L01 = ENGINE / "tests/fixtures/refactor_repo/arduino_kit_run_v2/L01"
 
 
 class FakeCapabilities:
@@ -61,9 +61,9 @@ class FakeWorker:
                     "claim_scope": "kit inventory only",
                 }], "unresolved": []}
         elif job == "create_unit_domain_data":
-            result = json.loads((SHIPPED_L01 / "workers/lab.json").read_text())["domain"]
+            result = json.loads((SHIPPED_L01 / "lab.json").read_text())["domain"]
         elif job == "write_unit_content":
-            result = json.loads((SHIPPED_L01 / "workers/lab.json").read_text())
+            result = json.loads((SHIPPED_L01 / "lab.json").read_text())
         elif job == "create_unit_visuals":
             result = {
                 "filename": "safe_disconnected_setup.svg",
