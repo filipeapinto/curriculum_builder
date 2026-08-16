@@ -626,7 +626,7 @@ def _prove_live_capabilities(context: Any, engine_root: Path, output_root: Path)
     return proof
 
 
-def _preflight_capabilities() -> tuple[dict[str, dict[str, Any]], list[str], dict[str, Any]]:
+def _preflight_capabilities(engine_root: Path) -> tuple[dict[str, dict[str, Any]], list[str], dict[str, Any]]:
     """Bounded local capability probes only; never populates the real output root."""
 
     with tempfile.TemporaryDirectory(prefix="plan26-preflight-") as raw_probe_root:
@@ -643,6 +643,7 @@ def _preflight_capabilities() -> tuple[dict[str, dict[str, Any]], list[str], dic
             ledger=tp.AttemptLedger(),
             capability_proof=None,
             evidence_root=probe_root / "evidence",
+            engine_root=engine_root,
         )
         guard.install()
         try:
@@ -666,7 +667,7 @@ def _preflight_capabilities() -> tuple[dict[str, dict[str, Any]], list[str], dic
 
 def _run_preflight(engine_root: Path, curriculum_root: Path, output_root: Path) -> tuple[dict[str, Any], int]:
     collision = _collision_reason(output_root)
-    capabilities, missing, driver_capabilities = _preflight_capabilities()
+    capabilities, missing, driver_capabilities = _preflight_capabilities(engine_root)
     ready = collision is None and not missing
     payload: dict[str, Any] = {
         "contract_version": CONTRACT_VERSION,

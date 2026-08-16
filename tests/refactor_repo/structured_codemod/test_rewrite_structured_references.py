@@ -46,11 +46,16 @@ def fixtures_manifest():
 
 
 def get_fixture_data(name: str) -> Dict:
-    """Get a single fixture from the manifest by name."""
+    """Get a single fixture from the manifest by name.
+
+    Falls back to a bare ``{"name": name}`` for standalone fixtures (used by the
+    determinism/idempotence/dry-run tests below) that are not part of the fixture
+    matrix and so carry no manifest entry.
+    """
     for fixture in FIXTURES_MANIFEST["fixtures"]:
         if fixture["name"] == name:
             return fixture
-    raise ValueError(f"Fixture not found: {name}")
+    return {"name": name}
 
 
 # ============================================================================
@@ -71,17 +76,18 @@ class TestFixtureMatrix:
         if not before_path.exists():
             pytest.skip(f"Fixture file not found: {before_path}")
 
-        # Create the transformation from fixture spec
-        trans_spec = fixture_data["transformation"]
-        transformation = StructuredTransformation(
-            file_format=trans_spec["file_format"],
-            key_path=trans_spec["key_path"],
-            old_value=trans_spec["old_value"],
-            new_value=trans_spec["new_value"],
-        )
+        # Each fixture rewrites every string value containing a mapped old value,
+        # wherever it occurs (key_path unset). Fixtures may override the shared
+        # default mapping with their own "mapping" (see yaml_ambiguous_type_safe).
+        mapping = fixture_data.get("mapping", FIXTURES_MANIFEST["default_mapping"])
+        transformations = [
+            StructuredTransformation(
+                file_format=fixture_data["format"], old_value=old, new_value=new)
+            for old, new in mapping.items()
+        ]
 
         # Apply transformation
-        result = transform_file(before_path, [transformation])
+        result = transform_file(before_path, transformations)
 
         # Verify changed flag
         assert result.changed == fixture_data["expect_changed"], \
@@ -90,9 +96,10 @@ class TestFixtureMatrix:
 
         # Verify unsafe flag
         has_unsafe = result.has_unsafe()
-        assert has_unsafe == fixture_data["expect_unsafe"], \
+        expect_unsafe = not fixture_data["expect_safe"]
+        assert has_unsafe == expect_unsafe, \
             f"Fixture {fixture_name}: has_unsafe={has_unsafe}, " \
-            f"expected {fixture_data['expect_unsafe']}"
+            f"expected {expect_unsafe}"
 
         # Verify diagnostic kinds
         actual_kinds = {d.kind.value for d in result.diagnostics}

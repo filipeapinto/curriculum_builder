@@ -49,7 +49,7 @@ from .egress import (
 # this module's own __file__. On an ordinary unpacked wheel these are Paths and behave
 # exactly as before; on a zipped or otherwise non-filesystem distribution they are
 # Traversables, and every read below goes through an API that accepts one.
-PACKAGE_ROOT = package_resources.package_root()
+PACKAGE_ROOT = package_resources.factory_root()
 REGISTRY_PATH = package_resources.config_dir() / "model_jobs.v1.yaml"
 SCHEMA_DIR = package_resources.schema_dir()
 PROMPT_DIR = package_resources.prompt_dir()

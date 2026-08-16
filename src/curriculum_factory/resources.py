@@ -28,6 +28,7 @@ from typing import Any
 __all__ = [
     "ResourceError",
     "package_root",
+    "factory_root",
     "config_dir",
     "prompt_dir",
     "schema_dir",
@@ -53,6 +54,15 @@ def package_root() -> Traversable:
     file on disk is genuinely required.
     """
     return resources.files("curriculum_factory")
+
+
+def factory_root() -> Traversable:
+    """The ``curriculum_factory.langgraph_factory`` subpackage root.
+
+    Distinct from :func:`package_root`: ``transport.py`` and ``egress.py`` live one
+    level below the distribution root, inside this subpackage.
+    """
+    return resources.files(_FACTORY)
 
 
 def _factory_dir(name: str) -> Traversable:

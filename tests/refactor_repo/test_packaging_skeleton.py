@@ -40,7 +40,15 @@ EXPECTED_RUNTIME_DEPENDENCIES = {
 }
 
 # requirements/plan26.in "--- development only (tests; not installed on a production-only path) ---".
-EXPECTED_DEV_DEPENDENCIES = {"pytest==9.0.3"}
+EXPECTED_DEV_DEPENDENCIES = {
+    "pytest==9.0.3",
+    # P02/P02S codemod tool dependencies (tools/refactor_repo/): pinned exactly, and
+    # checked at import time, because the codemods refuse to run under an unpinned
+    # parser version.
+    "libcst==1.8.2",
+    "tomlkit==0.15.1",
+    "ruamel.yaml==0.19.1",
+}
 
 # P00 inventory python_surface.entry_points (4 module_main_guard commands under runtime/).
 EXPECTED_CONSOLE_SCRIPT_TARGETS = {

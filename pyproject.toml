@@ -19,6 +19,9 @@ dependencies = [
 [project.optional-dependencies]
 dev = [
     "pytest==9.0.3",
+    "libcst==1.8.2",
+    "tomlkit==0.15.1",
+    "ruamel.yaml==0.19.1",
 ]
 
 [project.scripts]

@@ -66,6 +66,12 @@ def build_run(root: Path, *, unit_id: str, lab: dict[str, Any],
     shipped_manifest = RUN_FIXTURE / unit_id / "manifest.yaml"
     if shipped_manifest.is_file():
         shutil.copy2(shipped_manifest, inputs / "manifest.yaml")
+    else:
+        # Some units (e.g. L04) cite the curriculum's own active manifest as a
+        # source_locator, rather than a per-run manifest snapshot.
+        active_manifests = sorted(CURRICULUM.glob("*curriculum.v*.yaml"))
+        if active_manifests:
+            shutil.copy2(active_manifests[0], inputs / "manifest.yaml")
     (unit_root / "results").mkdir(parents=True, exist_ok=True)
 
     workers = unit_root / "workers"
