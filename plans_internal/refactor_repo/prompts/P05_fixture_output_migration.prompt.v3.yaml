@@ -11,6 +11,8 @@ authorized_paths:
   - .gitignore
   - plans_internal/refactor_repo/checkpoints/P05/
   - plans_internal/refactor_repo/execution/P05/execution_log.jsonl
+  - plans_internal/refactor_repo/execution/P05/.execution_log.counter.json
+  - plans_internal/refactor_repo/execution/P05/.execution_log.lock
 
 model: sonnet
 

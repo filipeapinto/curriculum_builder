@@ -7,6 +7,8 @@ authorized_paths:
   - tests/refactor_repo/test_packaging_skeleton.py
   - plans_internal/refactor_repo/checkpoints/P01/
   - plans_internal/refactor_repo/execution/P01/execution_log.jsonl
+  - plans_internal/refactor_repo/execution/P01/.execution_log.counter.json
+  - plans_internal/refactor_repo/execution/P01/.execution_log.lock
 
 model: sonnet
 

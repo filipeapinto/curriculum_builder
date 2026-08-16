@@ -7,6 +7,8 @@ authorized_paths:
   - tests/refactor_repo/test_schema_identity.py
   - plans_internal/refactor_repo/checkpoints/P06/
   - plans_internal/refactor_repo/execution/P06/execution_log.jsonl
+  - plans_internal/refactor_repo/execution/P06/.execution_log.counter.json
+  - plans_internal/refactor_repo/execution/P06/.execution_log.lock
 
 model: sonnet
 

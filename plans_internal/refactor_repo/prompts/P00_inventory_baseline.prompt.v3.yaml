@@ -9,6 +9,8 @@ authorized_paths:
   - plans_internal/refactor_repo/baseline/
   - plans_internal/refactor_repo/checkpoints/P00/
   - plans_internal/refactor_repo/execution/P00/execution_log.jsonl
+  - plans_internal/refactor_repo/execution/P00/.execution_log.counter.json
+  - plans_internal/refactor_repo/execution/P00/.execution_log.lock
 
 model: sonnet
 
@@ -127,12 +129,14 @@ tests:
 
 loop:
   steps:
-    - Apply the operations restart protocol and record the initial commit and dirty state.
+    - Before constructing ExecutionLogger or writing any file, capture and persist in the first journal action the t=0 tracked, untracked, and ignored path inventory plus byte digests for every pre-existing authorized-path file; then apply the restart protocol and record the initial commit and dirty state.
     - Read specification v8 and derive a versioned inventory schema before implementing collectors.
     - Implement independent collectors and explicit failure aggregation without repository writes.
     - Run inventory and behavioral baseline capture in an isolated checkout.
     - Reconcile human and machine reports; stop on every unresolved classification or collection failure.
-    - Run all tests, create the checkpoint report, and complete the independent QA gate.
+    - Run every required test and gate, recording each exact command, exit code, complete output artifact, environment, and resulting digest in the checkpoint and journal; an aggregate claim without per-command evidence fails closed.
+    - Immediately before QA, regenerate the checkpoint review surface from the final working-tree state, record its source and output digests, and reject any checkpoint or QA input whose digest predates the latest tracked or untracked mutation.
+    - Create the checkpoint report from that current review surface and complete the independent QA gate.
     - Apply every completion gate and identify P01 and P02 as successors only.
   stopping_condition: >-
     Stop successfully only when all six tests pass, inventory collection is complete,

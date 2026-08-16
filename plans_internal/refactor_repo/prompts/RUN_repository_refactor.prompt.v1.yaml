@@ -5,6 +5,8 @@ authorized_paths:
   - plans_internal/refactor_repo/orchestration/
   - plans_internal/refactor_repo/checkpoints/RUN/
   - plans_internal/refactor_repo/execution/RUN/execution_log.jsonl
+  - plans_internal/refactor_repo/execution/RUN/.execution_log.counter.json
+  - plans_internal/refactor_repo/execution/RUN/.execution_log.lock
   - delegated:plans_internal/refactor_repo/prompts/resolved/prompt_manifest.resolved.v1.yaml#active_prompt_authorized_paths
   - git:refs/heads/refactor/curriculum-factory-repository
   - github:origin/refs/heads/refactor/curriculum-factory-repository

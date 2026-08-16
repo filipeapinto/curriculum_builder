@@ -11,6 +11,8 @@ authorized_paths:
   - plans_internal/refactor_repo/exceptions/source_move.v1.yaml
   - plans_internal/refactor_repo/checkpoints/P03/
   - plans_internal/refactor_repo/execution/P03/execution_log.jsonl
+  - plans_internal/refactor_repo/execution/P03/.execution_log.counter.json
+  - plans_internal/refactor_repo/execution/P03/.execution_log.lock
 
 model: sonnet
 

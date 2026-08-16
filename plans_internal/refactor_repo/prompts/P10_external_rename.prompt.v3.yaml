@@ -6,6 +6,8 @@ authorized_paths:
   - plans_internal/refactor_repo/migration_report.P10.addendum.v1.md
   - plans_internal/refactor_repo/checkpoints/P10/
   - plans_internal/refactor_repo/execution/P10/execution_log.jsonl
+  - plans_internal/refactor_repo/execution/P10/.execution_log.counter.json
+  - plans_internal/refactor_repo/execution/P10/.execution_log.lock
 
 model: sonnet
 
