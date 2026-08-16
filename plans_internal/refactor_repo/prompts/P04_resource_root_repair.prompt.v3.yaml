@@ -6,6 +6,8 @@ authorized_paths:
   - tests/
   - plans_internal/refactor_repo/checkpoints/P04/
   - plans_internal/refactor_repo/execution/P04/execution_log.jsonl
+  - plans_internal/refactor_repo/execution/P04/.execution_log.counter.json
+  - plans_internal/refactor_repo/execution/P04/.execution_log.lock
 
 model: sonnet
 

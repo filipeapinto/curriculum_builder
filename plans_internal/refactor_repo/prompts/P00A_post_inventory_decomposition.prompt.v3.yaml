@@ -6,6 +6,8 @@ authorized_paths:
   - plans_internal/refactor_repo/prompts/generated/
   - plans_internal/refactor_repo/checkpoints/P00A/
   - plans_internal/refactor_repo/execution/P00A/execution_log.jsonl
+  - plans_internal/refactor_repo/execution/P00A/.execution_log.counter.json
+  - plans_internal/refactor_repo/execution/P00A/.execution_log.lock
 
 model: sonnet
 

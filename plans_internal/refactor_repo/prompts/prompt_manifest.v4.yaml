@@ -47,10 +47,10 @@ publication_policy:
     - treating_commit_push_authority_as_P10_rename_authority
 model_governance:
   source: .claude/governance/subagent_cost.md
-  orchestrator_model: sonnet
+  orchestrator_model: haiku
   child_agent:
     subagent_type: general-purpose
-    model: sonnet
+    model: haiku
     lifecycle: fresh_agent_call_per_prompt
     concurrency: one_mutation_prompt_at_a_time
   rationale: >-

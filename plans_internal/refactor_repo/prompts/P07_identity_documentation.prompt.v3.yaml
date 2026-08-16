@@ -10,6 +10,8 @@ authorized_paths:
   - plans_internal/refactor_repo/exceptions/identity_and_paths.v1.yaml
   - plans_internal/refactor_repo/checkpoints/P07/
   - plans_internal/refactor_repo/execution/P07/execution_log.jsonl
+  - plans_internal/refactor_repo/execution/P07/.execution_log.counter.json
+  - plans_internal/refactor_repo/execution/P07/.execution_log.lock
 
 model: sonnet
 

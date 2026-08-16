@@ -6,6 +6,8 @@ authorized_paths:
   - tests/refactor_repo/structured_codemod/
   - plans_internal/refactor_repo/checkpoints/P02S/
   - plans_internal/refactor_repo/execution/P02S/execution_log.jsonl
+  - plans_internal/refactor_repo/execution/P02S/.execution_log.counter.json
+  - plans_internal/refactor_repo/execution/P02S/.execution_log.lock
 
 model: sonnet
 
