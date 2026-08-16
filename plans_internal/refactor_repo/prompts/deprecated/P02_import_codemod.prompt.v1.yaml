@@ -1,0 +1,129 @@
+# yaml-language-server: $schema=../../../../schemas/prompt.schema.v4.json
+title: P02 — Build and Prove the Syntax-Aware Import Codemod
+
+authorized_paths:
+  - tools/refactor_repo/rewrite_runtime_imports.py
+  - tests/refactor_repo/codemod/
+  - plans_internal/refactor_repo/checkpoints/P02/
+  - plans_internal/refactor_repo/execution/P02/execution_log.jsonl
+
+model: opus
+
+agent:
+  execution_path: claude_code_direct
+  reasoning: >-
+    A parser-based, reviewable, idempotent codemod must exist before repository-wide
+    import and qualified-name changes are applied.
+
+operations:
+  executor:
+    kind: agent_native
+    implementation: runtime.logger.ExecutionLogger
+  journal:
+    path: plans_internal/refactor_repo/execution/P02/execution_log.jsonl
+    schema: schemas/execution_log.schema.v2.json
+    format: jsonl
+    write_mode: append_only
+  action_protocol:
+    before_action: append_act_started
+    after_success: append_act_completed_closing_start
+    after_failure: append_exec_closing_start
+  restart:
+    detection: compute_unclosed_starts
+    no_journal: fresh_start
+    closed_action: reuse_if_inputs_unchanged
+    unclosed_action: resume_or_idempotently_repeat
+  completion_gate:
+    require_valid_journal: true
+    require_zero_unclosed_starts: true
+    require_all_tests_pass: true
+    require_authorized_paths_only: true
+
+goal: >-
+  After P00 passes, implement a version-pinned LibCST-based transformation from the
+  production import root runtime to curriculum_factory for Python imports and qualified
+  names. Provide before/after fixtures for aliases, multiline forms, comments, strings,
+  dynamic and ambiguous references, and already-migrated input; add deterministic
+  dry-run diff, apply mode, explicit non-targets, diagnostics, and residual-reference
+  postconditions. Do not apply it to live production/tests, edit prose or structured
+  configuration, move files, or perform broad regex replacement. Stop on any construct
+  that cannot be classified safely. Rollback is removal/reversion of the authorized
+  codemod assets followed by the unchanged P00 inventory check. Passing P02 unblocks
+  P03 only after P01 passes.
+
+tests:
+  - description: Fixture matrix covers every required transformation class
+    check: >-
+      Enumerate fixture metadata and assert cases for aliased and multiline imports,
+      from-imports, module-qualified names, preserved comments/formatting, strings,
+      dynamic imports, ambiguous references, and already curriculum_factory input.
+    expected: >-
+      Every required class has a named expected transformation or a named diagnostic;
+      comments and ordinary strings are not silently rewritten.
+
+  - description: Dry-run is deterministic, reviewable, and write-free
+    check: >-
+      Snapshot fixture bytes, run dry-run twice with the pinned tool version and stable
+      ordering, compare emitted unified diffs and diagnostics, then compare the files
+      with the snapshot.
+    expected: >-
+      Dry-run output is byte-identical, names every candidate/skip/failure, and changes
+      no input file.
+
+  - description: Apply mode produces exact fixtures and is idempotent
+    check: >-
+      Apply the codemod to disposable fixture copies, compare with expected outputs,
+      then apply it a second time and capture the resulting diff and exit status.
+    expected: The first result matches exactly and the second application is an empty change.
+
+  - description: Unsafe and residual references fail closed
+    check: >-
+      Exercise dynamic import strings, computed module names, malformed Python, mixed
+      old/new qualified names, and configured post-scan roots including an unexpected
+      new curriculum_factory reference.
+    expected: >-
+      Unsafe constructs produce actionable nonzero diagnostics; allowed non-targets are
+      reported; old residuals and unexpected new references cannot pass silently.
+
+  - description: Live repository rehearsal is dry-run only
+    check: >-
+      Run the codemod in dry-run mode against the P00-classified Python surface and
+      compare candidates/diagnostics with P00 AST and lexical inventories plus git status.
+    expected: >-
+      Candidate coverage reconciles with P00, every mismatch is explained, and no live
+      repository file outside authorized paths changes.
+
+  - description: Independent Codex QA accepts the P02 checkpoint
+    check: >-
+      Gate a versioned P02 checkpoint report with qa-gate-codex-run using the shared
+      checkpoint criteria and this prompt, fixture evidence, dry-run evidence, and
+      specification v8 as grounding; use threshold blocker, at most five iterations,
+      and run verify.
+    expected: The witnessed verify result is QA_PASSED and identifies the passing artifact.
+    verifier:
+      execution_path: codex_plugin
+      invokes:
+        type: skill
+        skill: qa-gate-codex-run
+      reasoning: Codemod safety cannot be self-certified by its author.
+
+loop:
+  steps:
+    - Apply restart handling and verify the P00 checkpoint and pinned parser dependency.
+    - Define fixture metadata and explicit targets/non-targets before implementation.
+    - Implement dry-run, diagnostics, apply mode, and residual postconditions.
+    - Run fixtures, determinism, idempotence, failure, and live dry-run rehearsal tests.
+    - Record the rollback checkpoint and complete the independent QA protocol.
+    - Apply completion gates and identify P03 as successor contingent on P01.
+  stopping_condition: >-
+    Stop successfully only when all six tests pass, unsafe constructs fail closed,
+    live rehearsal is write-free, scope/journal gates pass, and QA verify says QA_PASSED.
+  resume_check: >-
+    Compare the parser version, fixture digests, codemod digest, and P00 inventory digest
+    before reusing any closed action; rerun when any input differs.
+  escalation: >-
+    On any unclassifiable syntax or two repeated failures, stop and report the smallest
+    additional fixture or transformation rule needed; never fall back to broad regex.
+  retry_policy:
+    auto_retry: [tool-error, partial-run]
+    requires_fix: [missing-input, bad-input, wrong-output, other]

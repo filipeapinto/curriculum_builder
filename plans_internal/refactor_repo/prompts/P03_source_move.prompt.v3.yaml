@@ -1,0 +1,164 @@
+# yaml-language-server: $schema=../../../schemas/prompt.schema.v4.json
+title: P03 — Move Production Source and Rewrite Runtime Imports
+
+authorized_paths:
+  - runtime/
+  - src/curriculum_factory/
+  - tests/runtime/
+  - tests/gates/fr_p5_unit.py
+  - tests/check_meta_prompt.py
+  - tests/meta_prompt_source.py
+  - plans_internal/refactor_repo/exceptions/source_move.v1.yaml
+  - plans_internal/refactor_repo/checkpoints/P03/
+  - plans_internal/refactor_repo/execution/P03/execution_log.jsonl
+
+model: sonnet
+
+agent:
+  execution_path: claude_code_direct
+  reasoning: >-
+    Model selection: sonnet is explicit because a repository-wide move, ambiguity handling, regression triage, and rollback decisions require non-trivial judgment; this is not pure lookup work suitable for haiku.
+    This is a mechanical relocation checkpoint: preserve module boundaries and behavior,
+    apply the proven codemod, and isolate semantic root/resource repair for P04.
+
+operations:
+  executor:
+    kind: agent_native
+    implementation: execution-log-v2 append protocol across the runtime-to-package move
+  journal:
+    path: plans_internal/refactor_repo/execution/P03/execution_log.jsonl
+    schema: schemas/execution_log.schema.v2.json
+    format: jsonl
+    write_mode: append_only
+  action_protocol:
+    before_action: append_act_started
+    after_success: append_act_completed_closing_start
+    after_failure: append_exec_closing_start
+  restart:
+    detection: compute_unclosed_starts
+    no_journal: fresh_start
+    closed_action: reuse_if_inputs_unchanged
+    unclosed_action: require_operator_review
+  completion_gate:
+    require_valid_journal: true
+    require_zero_unclosed_starts: true
+    require_all_tests_pass: true
+    require_authorized_paths_only: true
+
+goal: >-
+  After P00A activates this prompt and P01/P02 pass, move the complete production runtime package to
+  src/curriculum_factory while preserving its module/subpackage boundaries and
+  non-Python resource-relative layout. Use the P02 codemod to change Python imports,
+  qualified names, module strings, mocks, and test references from runtime to
+  curriculum_factory. Verify that P01's predeclared entry-point targets and package
+  discovery become live, but do not edit pyproject.toml. Inputs are P00's exact source
+  map and baseline, P01 artifacts, and P02 dry-run inventory. Non-targets are resource
+  loading semantics, repository-root redesign, fixture/output cleanup, schema IDs,
+  pyproject.toml, product prose, test-tree organization, and subsystem decomposition. Stop before
+  applying if candidate coverage does not reconcile, on any ambiguous transform, or
+  when a required edit is outside authorized_paths. Rollback is the inverse source-map
+  move or checkpoint revert plus P00 baseline verification. P03 unblocks P04 only.
+
+tests:
+  - description: Resolved manifest grants exact non-overlapping mutation ownership
+    check: >-
+      Load prompts/resolved/prompt_manifest.resolved.v1.yaml, verify it activates this
+      exact prompt version, expand its path plus structured-key, symbol, transformation-
+      class, move-operation, or external-target selectors, and compare those units with
+      the planned and final diff/action journal plus every other active prompt's units.
+    expected: >-
+      Every intended and actual mutation unit is owned by this prompt exactly once; no
+      unit is unowned, shared, borrowed from a successor, or merely covered by a broader
+      authorized path.
+
+  - description: Prerequisites and pre-move source map reconcile exactly
+    check: >-
+      Verify witnessed P01/P02 passes, compare current runtime files and digests with
+      P00, and compare P02 live dry-run candidates and diagnostics with the current AST
+      inventory before the first move.
+    expected: >-
+      Inputs are unchanged or deliberately re-inventoried; every candidate is classified
+      and zero ambiguous transformations remain.
+
+  - description: Source relocation preserves the complete production tree
+    check: >-
+      Compare the P00 source map with src/curriculum_factory after accounting only for
+      the package-root rename and authorized import token changes; inspect file modes,
+      resource-relative paths, and module count; inspect runtime/ for residual source.
+    expected: >-
+      Every production file has one destination, no file is duplicated or omitted,
+      module boundaries are unchanged, and runtime/ contains no live production package.
+
+  - description: Codemod application is complete and idempotent
+    check: >-
+      Capture the P02 dry-run, apply once to the authorized live Python surface, run it
+      a second time, and run syntax-aware plus lexical residual scans for runtime imports,
+      qualified names, mocks, and module strings.
+    expected: >-
+      First application matches the reviewed diff, second application is empty, and
+      every residual is either absent or recorded with exact consumer/rationale/removal.
+
+  - description: Installed imports and module origins use only curriculum_factory
+    check: >-
+      Build and install the wheel into a fresh environment; from repository root,
+      tests/runtime, and an external working directory import representative top-level,
+      CLI, and langgraph modules and print their __file__ origins without sys.path edits.
+    expected: >-
+      Imports succeed as curriculum_factory, resolve inside the installed distribution,
+      and never resolve from the checkout or test tree; importing runtime as production
+      fails.
+
+  - description: CLI interface matches the P00 baseline at the mechanical boundary
+    check: >-
+      Compare console and python -m curriculum_factory.run_curriculum help, argument
+      parsing, invalid-input exit codes, and no-mutation preflight behavior with P00,
+      applying only predeclared normalization.
+    expected: >-
+      Command names use the target identity and observable interface behavior is
+      equivalent; resource/root-dependent cases may be delegated only when explicitly
+      listed in the P04 handoff and may not be reported as passing here.
+
+  - description: Regression delta is confined to predeclared P04 handoff failures
+    check: >-
+      Run the full existing test and gate baseline in an installed-distribution
+      environment and compare failures with P00 plus the before-move P04 handoff list.
+    expected: >-
+      No test is weakened; all non-root/resource tests pass, and any failing case is
+      predeclared, causally demonstrated, and owned by an exact P04 test/path.
+
+  - description: Independent Codex QA accepts the P03 checkpoint
+    check: >-
+      Gate a versioned P03 checkpoint report with qa-gate-codex-run using shared criteria
+      and this prompt, P00-P02 evidence, source maps, diffs, test results, and specification
+      v8 as grounding; use threshold blocker, at most five iterations, then verify.
+    expected: The witnessed verify result is QA_PASSED and identifies the passing artifact.
+    verifier:
+      execution_path: codex_plugin
+      invokes:
+        type: skill
+        skill: qa-gate-codex-run
+      reasoning: A repository-wide move requires an independent coverage and scope verdict.
+
+loop:
+  steps:
+    - Apply restart handling and verify P00A activation/ownership; because a move may be half-complete, require operator review for an unclosed action.
+    - Verify P01/P02 and reconcile P00 source/import maps with the present checkout.
+    - Capture dry-run, move the tree without redesign, and apply only reviewed transformations.
+    - Build/install in isolation and run origin, CLI, focused, full-suite, and residual checks.
+    - Revert and stop if failures exceed the exact P04 handoff boundary.
+    - Record the source-map rollback checkpoint and complete independent QA.
+    - Apply completion gates and identify P04 as the sole successor.
+  stopping_condition: >-
+    Stop successfully only when all eight tests pass, the move is complete/idempotent,
+    failures do not exceed the exact P04 handoff, scope/journal gates pass, and QA verify
+    says QA_PASSED.
+  resume_check: >-
+    Recompute source-map parity and journal unclosed starts before acting; never guess
+    whether a partially moved path is source or destination, and require review when the
+    move action lacks its closing record.
+  escalation: >-
+    Stop immediately on ambiguous transformation, source-map mismatch, or unowned test
+    failure; after two identical tool failures report the smallest recovery action.
+  retry_policy:
+    auto_retry: [tool-error]
+    requires_fix: [missing-input, bad-input, wrong-output, partial-run, other]

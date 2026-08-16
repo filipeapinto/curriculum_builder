@@ -1,0 +1,149 @@
+manifest_version: 3
+manifest_kind: pre_inventory_template_catalog
+specification: plans_internal/refactor_repo/refactor_repository.spec.v8.html
+prompt_schema: schemas/prompt.schema.v4.json
+template_execution_plan: plans_internal/refactor_repo/prompts/execution_plan.v2.md
+checkpoint_qa_skill: .claude/skills/qa-gate-codex-run
+activation:
+  initially_executable: P00_inventory_baseline
+  after_P00: P00A_post_inventory_decomposition
+  downstream_rule: >-
+    P01-P10 and P02S are templates, not execution authorization. P00A must create
+    prompts/resolved/prompt_manifest.resolved.v1.yaml from current P00 evidence and may
+    activate, split, omit, or replace templates with new generated versions. A downstream
+    prompt may execute only when the resolved manifest names its exact version and
+    mutation units and its schema and independent QA gates pass.
+  final_prompt_count_fixed: false
+model_governance:
+  source: .claude/governance/subagent_cost.md
+  prompt_level_model: sonnet
+  rationale: >-
+    Every candidate combines implementation with synthesis, acceptance judgment,
+    stop/rollback decisions, or external authorization. None is pure lookup suitable
+    for haiku. Future general-purpose/Explore delegation must pin haiku for pure lookup
+    or sonnet with explicit non-trivial-reasoning justification.
+candidate_order:
+  - P00_inventory_baseline
+  - P00A_post_inventory_decomposition
+  - P01_packaging_skeleton
+  - P02_import_codemod
+  - P02S_structured_data_codemod
+  - P03_source_move
+  - P04_resource_root_repair
+  - P05_fixture_output_migration
+  - P06_schema_compatibility
+  - P07_identity_documentation
+  - P08_clean_room_release
+  - P09_test_tree_organization
+  - P10_external_rename
+prompts:
+  P00_inventory_baseline:
+    path: plans_internal/refactor_repo/prompts/P00_inventory_baseline.prompt.v3.yaml
+    depends_on: []
+    status: bootstrap_active
+    owns: [inventory_tool_reports_and_behavioral_baseline]
+  P00A_post_inventory_decomposition:
+    path: plans_internal/refactor_repo/prompts/P00A_post_inventory_decomposition.prompt.v3.yaml
+    depends_on: [P00_inventory_baseline]
+    status: bootstrap_after_P00
+    owns: [resolved_execution_plan_manifest_and_generated_prompts]
+  P01_packaging_skeleton:
+    path: plans_internal/refactor_repo/prompts/P01_packaging_skeleton.prompt.v3.yaml
+    depends_on: [P00A_post_inventory_decomposition]
+    status: template_requires_resolution
+    owns: [all_pyproject_toml_keys_and_packaging_skeleton]
+  P02_import_codemod:
+    path: plans_internal/refactor_repo/prompts/P02_import_codemod.prompt.v3.yaml
+    depends_on: [P00A_post_inventory_decomposition]
+    status: template_requires_resolution
+    owns: [python_import_and_qualified_name_codemod_tooling]
+  P02S_structured_data_codemod:
+    path: plans_internal/refactor_repo/prompts/P02S_structured_data_codemod.prompt.v3.yaml
+    depends_on: [P00A_post_inventory_decomposition, P01_packaging_skeleton]
+    status: template_requires_resolution
+    owns: [toml_json_yaml_codemod_tooling]
+  P03_source_move:
+    path: plans_internal/refactor_repo/prompts/P03_source_move.prompt.v3.yaml
+    depends_on: [P01_packaging_skeleton, P02_import_codemod]
+    status: template_requires_resolution
+    owns: [runtime_to_src_relocation, python_import_and_qualified_name_application]
+  P04_resource_root_repair:
+    path: plans_internal/refactor_repo/prompts/P04_resource_root_repair.prompt.v3.yaml
+    depends_on: [P03_source_move]
+    status: template_requires_resolution
+    owns: [package_resource_loader_semantics, explicit_data_root_semantics, output_containment]
+  P05_fixture_output_migration:
+    path: plans_internal/refactor_repo/prompts/P05_fixture_output_migration.prompt.v3.yaml
+    depends_on: [P04_resource_root_repair]
+    status: template_requires_resolution
+    owns: [inventory_resolved_output_consumer_changes, fixture_manifests, output_cleanup]
+  P06_schema_compatibility:
+    path: plans_internal/refactor_repo/prompts/P06_schema_compatibility.prompt.v3.yaml
+    depends_on: [P04_resource_root_repair]
+    status: template_requires_resolution
+    owns: [schema_decision_ledger_and_resolution_tests]
+  P07_identity_documentation:
+    path: plans_internal/refactor_repo/prompts/P07_identity_documentation.prompt.v3.yaml
+    depends_on: [P04_resource_root_repair, P06_schema_compatibility]
+    status: template_requires_resolution
+    owns: [live_markdown_html_and_prose_identity_changes]
+  P08_clean_room_release:
+    path: plans_internal/refactor_repo/prompts/P08_clean_room_release.prompt.v3.yaml
+    depends_on: [P02S_structured_data_codemod, P05_fixture_output_migration, P06_schema_compatibility, P07_identity_documentation]
+    status: template_requires_resolution
+    owns: [release_harness, rollback_and_migration_reports, complete_cli_acceptance, combined_codemod_safety_acceptance]
+  P09_test_tree_organization:
+    path: plans_internal/refactor_repo/prompts/P09_test_tree_organization.prompt.v3.yaml
+    depends_on: [P02S_structured_data_codemod, P08_clean_room_release]
+    status: template_requires_resolution
+    owns: [test_path_moves, test_reference_updates, plan26_workflow_yaml]
+  P10_external_rename:
+    path: plans_internal/refactor_repo/prompts/P10_external_rename.prompt.v3.yaml
+    depends_on: [P09_test_tree_organization]
+    status: template_requires_resolution
+    owns: [authorized_external_repository_and_checkout_rename]
+exclusive_path_owners:
+  pyproject.toml: P01_packaging_skeleton
+  .github/workflows/plan26-lock-drift.yml: P09_test_tree_organization
+ordered_shared_path_units:
+  src/curriculum_factory/**:
+    - owner: P03_source_move
+      selector: relocation_and_runtime_to_curriculum_factory_import_tokens_only
+    - owner: P04_resource_root_repair
+      selector: package_resource_explicit_data_root_and_output_containment_semantics_only
+  tests/**:
+    - owner: P03_source_move
+      selector: production_import_and_qualified_name_tokens_only
+    - owner: P04_resource_root_repair
+      selector: root_resource_and_containment_assertions_only
+    - owner: P05_fixture_output_migration
+      selector: inventory_resolved_output_consumer_references_and_fixture_manifests_only
+    - owner: P09_test_tree_organization
+      selector: test_path_moves_discovery_and_path_reference_updates_only
+acceptance_criteria_primary_prompt:
+  installed_imports: P03_source_move
+  cli_behavior: P08_clean_room_release
+  root_resolution: P04_resource_root_repair
+  distribution_artifacts: P08_clean_room_release
+  module_origin: P03_source_move
+  test_tree_decision: P09_test_tree_organization
+  shadowing_rejection: P09_test_tree_organization
+  output_containment: P04_resource_root_repair
+  fixture_closure: P05_fixture_output_migration
+  ignored_state_independence: P05_fixture_output_migration
+  empty_output_resilience: P05_fixture_output_migration
+  schema_identity: P06_schema_compatibility
+  reference_integrity: P07_identity_documentation
+  documentation_integrity: P07_identity_documentation
+  fresh_clone_reproducibility: P08_clean_room_release
+  clean_room_verification: P08_clean_room_release
+  behavioral_differential: P08_clean_room_release
+  codemod_safety: P08_clean_room_release
+  regression_and_scope: P08_clean_room_release
+  inventory_reproducibility: P00_inventory_baseline
+deferred:
+  optional_subsystem_decomposition:
+    mutation_authorized: false
+    reason: >-
+      P00A may generate a new exact-target prompt only if inventory proves all five
+      specification conditions; the template catalogue does not authorize it.

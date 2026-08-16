@@ -1,0 +1,114 @@
+manifest_version: 2
+specification: plans_internal/refactor_repo/refactor_repository.spec.v8.html
+prompt_schema: schemas/prompt.schema.v4.json
+checkpoint_qa_skill: .claude/skills/qa-gate-codex-run
+model_governance:
+  source: .claude/governance/subagent_cost.md
+  prompt_level_model: sonnet
+  rationale: >-
+    Every checkpoint combines implementation with synthesis, acceptance judgment,
+    stop/rollback decisions, or external authorization. None is a pure mechanical
+    search/lookup task appropriate for haiku. No prompt delegates to general-purpose
+    or Explore; if future versions add such delegation, each call must pin haiku for
+    pure lookup or sonnet with explicit reasoning for non-trivial judgment.
+execution_order:
+  - P00_inventory_baseline
+  - P01_packaging_skeleton
+  - P02_import_codemod
+  - P03_source_move
+  - P04_resource_root_repair
+  - P05_fixture_output_migration
+  - P06_schema_compatibility
+  - P07_identity_documentation
+  - P08_clean_room_release
+  - P09_test_tree_organization
+  - P10_external_rename
+prompts:
+  P00_inventory_baseline:
+    path: plans_internal/refactor_repo/prompts/P00_inventory_baseline.prompt.v2.yaml
+    depends_on: []
+    owns:
+      - read-only inventory tooling and its schemas/tests
+      - timestamped inventory and behavioral-baseline evidence
+  P01_packaging_skeleton:
+    path: plans_internal/refactor_repo/prompts/P01_packaging_skeleton.prompt.v2.yaml
+    depends_on: [P00_inventory_baseline]
+    owns:
+      - distribution metadata and src-only package discovery skeleton
+      - declared console-entry-point metadata
+  P02_import_codemod:
+    path: plans_internal/refactor_repo/prompts/P02_import_codemod.prompt.v2.yaml
+    depends_on: [P00_inventory_baseline]
+    owns:
+      - syntax-aware runtime-to-curriculum_factory codemod and transformation fixtures
+  P03_source_move:
+    path: plans_internal/refactor_repo/prompts/P03_source_move.prompt.v2.yaml
+    depends_on: [P01_packaging_skeleton, P02_import_codemod]
+    owns:
+      - mechanical relocation of runtime into src/curriculum_factory
+      - import and qualified-name rewrites required by that relocation
+  P04_resource_root_repair:
+    path: plans_internal/refactor_repo/prompts/P04_resource_root_repair.prompt.v2.yaml
+    depends_on: [P03_source_move]
+    owns:
+      - package-resource loading and distribution inclusion
+      - explicit repository data-root resolution and output containment
+  P05_fixture_output_migration:
+    path: plans_internal/refactor_repo/prompts/P05_fixture_output_migration.prompt.v2.yaml
+    depends_on: [P04_resource_root_repair]
+    owns:
+      - migration of durable consumers out of ignored outputs
+      - fixture manifests, retained evidence, and generated-output cleanup
+  P06_schema_compatibility:
+    path: plans_internal/refactor_repo/prompts/P06_schema_compatibility.prompt.v2.yaml
+    depends_on: [P04_resource_root_repair]
+    owns:
+      - preserve-or-version schema identifier ledger and reference-resolution tests
+  P07_identity_documentation:
+    path: plans_internal/refactor_repo/prompts/P07_identity_documentation.prompt.v2.yaml
+    depends_on: [P04_resource_root_repair, P06_schema_compatibility]
+    owns:
+      - human-facing product identity, live commands, paths, URLs, and exceptions
+  P08_clean_room_release:
+    path: plans_internal/refactor_repo/prompts/P08_clean_room_release.prompt.v2.yaml
+    depends_on: [P05_fixture_output_migration, P06_schema_compatibility, P07_identity_documentation]
+    owns:
+      - clean-room verification harness, rollback map, and migration report
+  P09_test_tree_organization:
+    path: plans_internal/refactor_repo/prompts/P09_test_tree_organization.prompt.v2.yaml
+    depends_on: [P08_clean_room_release]
+    owns:
+      - evidence-supported test classification and any resulting test-tree move
+  P10_external_rename:
+    path: plans_internal/refactor_repo/prompts/P10_external_rename.prompt.v2.yaml
+    depends_on: [P09_test_tree_organization]
+    owns:
+      - external-system inventory and separately authorized repository/checkout rename
+acceptance_criteria_primary_prompt:
+  installed_imports: P03_source_move
+  cli_behavior: P03_source_move
+  root_resolution: P04_resource_root_repair
+  distribution_artifacts: P08_clean_room_release
+  module_origin: P03_source_move
+  test_tree_decision: P09_test_tree_organization
+  shadowing_rejection: P09_test_tree_organization
+  output_containment: P04_resource_root_repair
+  fixture_closure: P05_fixture_output_migration
+  ignored_state_independence: P05_fixture_output_migration
+  empty_output_resilience: P05_fixture_output_migration
+  schema_identity: P06_schema_compatibility
+  reference_integrity: P07_identity_documentation
+  documentation_integrity: P07_identity_documentation
+  fresh_clone_reproducibility: P08_clean_room_release
+  clean_room_verification: P08_clean_room_release
+  behavioral_differential: P08_clean_room_release
+  codemod_safety: P02_import_codemod
+  regression_and_scope: P08_clean_room_release
+  inventory_reproducibility: P00_inventory_baseline
+deferred:
+  optional_subsystem_decomposition:
+    reason: >-
+      No current evidence package proves all five specification conditions. A new,
+      exact-target prompt must be authored and independently gated if later evidence
+      supports decomposition.
+    mutation_authorized: false

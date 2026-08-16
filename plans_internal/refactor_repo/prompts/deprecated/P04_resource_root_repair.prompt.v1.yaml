@@ -1,0 +1,153 @@
+# yaml-language-server: $schema=../../../../schemas/prompt.schema.v4.json
+title: P04 — Repair Package Resources and Repository Data Roots
+
+authorized_paths:
+  - pyproject.toml
+  - src/curriculum_factory/controller.py
+  - src/curriculum_factory/curriculum_factory_graph.py
+  - src/curriculum_factory/session_bridge.py
+  - src/curriculum_factory/capability_cycle.py
+  - src/curriculum_factory/finalize_evidence.py
+  - src/curriculum_factory/routing.py
+  - src/curriculum_factory/run_state.py
+  - src/curriculum_factory/checks.py
+  - src/curriculum_factory/lesson_render.py
+  - src/curriculum_factory/langgraph_factory/egress.py
+  - src/curriculum_factory/langgraph_factory/config/
+  - src/curriculum_factory/langgraph_factory/prompts/
+  - src/curriculum_factory/langgraph_factory/schemas/
+  - tests/runtime/test_controller.py
+  - tests/runtime/test_curriculum_factory_graph.py
+  - tests/runtime/test_run_curriculum.py
+  - tests/runtime/test_plan26_cli.py
+  - tests/runtime/test_plan26_egress.py
+  - tests/refactor_repo/test_resource_root_contract.py
+  - plans_internal/refactor_repo/checkpoints/P04/
+  - plans_internal/refactor_repo/execution/P04/execution_log.jsonl
+
+model: opus
+
+agent:
+  execution_path: claude_code_direct
+  reasoning: >-
+    Separate package-internal immutable resources from caller-supplied repository data
+    roots and prove boundary behavior from an installed wheel outside the checkout.
+
+operations:
+  executor:
+    kind: agent_native
+    implementation: curriculum_factory.logger.ExecutionLogger
+  journal:
+    path: plans_internal/refactor_repo/execution/P04/execution_log.jsonl
+    schema: schemas/execution_log.schema.v2.json
+    format: jsonl
+    write_mode: append_only
+  action_protocol:
+    before_action: append_act_started
+    after_success: append_act_completed_closing_start
+    after_failure: append_exec_closing_start
+  restart:
+    detection: compute_unclosed_starts
+    no_journal: fresh_start
+    closed_action: reuse_if_inputs_unchanged
+    unclosed_action: resume_or_idempotently_repeat
+  completion_gate:
+    require_valid_journal: true
+    require_zero_unclosed_starts: true
+    require_all_tests_pass: true
+    require_authorized_paths_only: true
+
+goal: >-
+  After P03 passes, classify every non-Python production resource and repair access
+  from the installed src-layout package. Package-owned prompts, schemas, and config
+  must be declared in wheel and sdist and read with importlib.resources or an equivalent
+  non-filesystem-assuming loader. Repository-owned policy, schemas, curricula, meta
+  prompt inputs, and outputs must be reached only through an explicit application
+  data-root/repository-root input, never Path(__file__).parents counting. Preserve CLI
+  behavior except for a documented explicit root option when required. Enforce that run
+  outputs are created only beneath the selected repository outputs boundary and reject
+  an external path before creating any artifact. Non-targets are fixtures/output cleanup,
+  schema-ID changes, identity prose, test-tree moves, and subsystem redesign. Stop when
+  P03 handoff evidence is incomplete or a needed production/test file is unauthorized.
+  Rollback is the P03 checkpoint revert plus P03 verification. P04 unblocks P05-P07.
+
+tests:
+  - description: Every production resource has exactly one classified loading contract
+    check: >-
+      Reconcile P00/P03 resource inventories with code access sites and classify each as
+      package-owned or repository-owned; scan production code for file-relative access,
+      __file__ parent counting, and unclassified literal resource paths.
+    expected: >-
+      Each resource has one owner/loader and tests; production contains no repository-root
+      inference from its installed file location and no unclassified access remains.
+
+  - description: Wheel and sdist include and load all package-owned resources
+    check: >-
+      Build both artifacts, inspect file lists, install the wheel, and from a working
+      directory outside the checkout load every package prompt/schema/config through
+      the public/internal resource API, including a zip-style resource traversal test.
+    expected: >-
+      Both artifacts contain the declared resource set and all loaders work without
+      converting a Traversable to an assumed permanent filesystem path.
+
+  - description: Repository-owned inputs require and honor an explicit data root
+    check: >-
+      From outside the checkout exercise API and CLI paths with a valid explicit root,
+      a missing root, a wrong root, and a root containing policy/schemas/curricula with
+      distinct sentinel content.
+    expected: >-
+      Valid explicit data is used, missing/invalid roots fail before work with actionable
+      errors, sentinels prove the supplied root is authoritative, and package location
+      is never treated as repository location.
+
+  - description: Output containment rejects escape before mutation
+    check: >-
+      In disposable roots attempt an accepted outputs/run path plus absolute external,
+      parent traversal, symlink escape, and alternate-spelling paths while snapshotting
+      all candidate destinations before and after.
+    expected: >-
+      The internal run is accepted; every escape is rejected before any file/directory
+      creation outside the canonical outputs boundary.
+
+  - description: CLI and root-dependent P03 handoff regressions are closed
+    check: >-
+      Re-run every P03 handoff test and the relevant controller, CLI, egress, resource,
+      schema, curriculum, and output tests against an installed wheel outside checkout.
+    expected: >-
+      Every delegated failure now passes with no weakened assertion and no new failure.
+
+  - description: Independent Codex QA accepts the P04 checkpoint
+    check: >-
+      Gate a versioned P04 checkpoint report with qa-gate-codex-run using shared criteria
+      and this prompt, P00/P03 evidence, artifact listings, root/containment test evidence,
+      and specification v8 as grounding; threshold blocker, five iterations maximum,
+      then verify.
+    expected: The witnessed verify result is QA_PASSED and identifies the passing artifact.
+    verifier:
+      execution_path: codex_plugin
+      invokes:
+        type: skill
+        skill: qa-gate-codex-run
+      reasoning: Installed resource and containment claims require independent review.
+
+loop:
+  steps:
+    - Apply restart handling, verify P03, and reconcile its exact P04 handoff.
+    - Freeze the resource classification before changing any loader.
+    - Implement package-resource APIs and explicit repository data-root plumbing only in authorized files.
+    - Build/install artifacts and run resource, root, containment, CLI, and handoff tests externally.
+    - Run residual scans, record rollback verification, and complete independent QA.
+    - Apply completion gates and identify P05, P06, and P07 as successors.
+  stopping_condition: >-
+    Stop successfully only when all six tests pass, package/repository resources are
+    fully classified, output escape is mutation-free, scope/journal gates pass, and QA
+    verify says QA_PASSED.
+  resume_check: >-
+    Compare P03 artifact and source-map digests plus the resource classification before
+    reusing closed actions; idempotently repeat any interrupted loader/test action.
+  escalation: >-
+    Stop on an unclassified resource or required unauthorized file; after two repeated
+    failures report the exact resource, consumer, and missing ownership decision.
+  retry_policy:
+    auto_retry: [tool-error, partial-run]
+    requires_fix: [missing-input, bad-input, wrong-output, other]

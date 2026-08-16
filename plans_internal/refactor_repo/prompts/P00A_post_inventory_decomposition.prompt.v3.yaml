@@ -1,0 +1,169 @@
+# yaml-language-server: $schema=../../../schemas/prompt.schema.v4.json
+title: P00A — Derive the Execution Plan and Prompt Set from Inventory
+
+authorized_paths:
+  - plans_internal/refactor_repo/prompts/resolved/
+  - plans_internal/refactor_repo/prompts/generated/
+  - plans_internal/refactor_repo/checkpoints/P00A/
+  - plans_internal/refactor_repo/execution/P00A/execution_log.jsonl
+
+model: sonnet
+
+agent:
+  execution_path: claude_code_direct
+  reasoning: >-
+    Model selection: sonnet is explicit because inventory-driven decomposition,
+    ownership allocation, dependency design, and acceptance traceability require
+    non-trivial judgment; this is not pure lookup work suitable for haiku.
+
+operations:
+  executor:
+    kind: agent_native
+    implementation: runtime.logger.ExecutionLogger
+  journal:
+    path: plans_internal/refactor_repo/execution/P00A/execution_log.jsonl
+    schema: schemas/execution_log.schema.v2.json
+    format: jsonl
+    write_mode: append_only
+  action_protocol:
+    before_action: append_act_started
+    after_success: append_act_completed_closing_start
+    after_failure: append_exec_closing_start
+  restart:
+    detection: compute_unclosed_starts
+    no_journal: fresh_start
+    closed_action: reuse_if_inputs_unchanged
+    unclosed_action: resume_or_idempotently_repeat
+  completion_gate:
+    require_valid_journal: true
+    require_zero_unclosed_starts: true
+    require_all_tests_pass: true
+    require_authorized_paths_only: true
+
+goal: >-
+  After P00 has produced a complete, current, independently gated inventory and
+  behavioral baseline, create the inventory-resolved execution plan, prompt manifest,
+  and final downstream execution prompts. Prompt count, exact mutation paths, consumer
+  lists, module lists, target trees, dependencies, and acceptance ownership must be
+  derived from P00 evidence rather than copied from the v3 template catalogue. The
+  resolved manifest may activate an unchanged v3 template only when its boundaries
+  exactly match inventory; otherwise create a higher/new version under generated/
+  without overwriting any existing prompt. Split or add prompts whenever needed for one
+  principal objective and non-overlapping mutation units. Include a parser-based
+  TOML/JSON/YAML codemod prompt whenever structured files will change. Assign each
+  planned change and all 20 specification acceptance criteria to exactly one primary
+  prompt; the complete CLI criterion must have one owner that covers every documented
+  entry point/module command, arguments, and exit behavior after root/resource repair.
+  Do not implement the refactor, edit production/tests/configuration, or pre-authorize
+  downstream mutations. Stop if P00 is incomplete/stale, an ownership collision remains,
+  a required path is unresolved, or any generated prompt fails schema or independent QA.
+  Rollback removes/reverts only resolved/generated planning artifacts. Completion
+  unblocks only prompts activated by the resolved manifest.
+
+tests:
+  - description: P00 evidence is complete, current, and the sole change-surface source
+    check: >-
+      Verify P00's witnessed pass, rerun its read-only freshness check, and trace every
+      module, consumer, structured file, test subtree, output child, identity reference,
+      schema decision, and external dependency in the resolved plan to inventory item IDs.
+    expected: >-
+      The inventory commit/state matches planning inputs and every planned or deferred
+      item has an evidence trace; no hard-coded template list substitutes for discovery.
+
+  - description: Prompt count and boundaries are inventory-derived
+    check: >-
+      Compare inventory change clusters with resolved phases/prompts and test that each
+      prompt has one objective, exact prerequisites, permitted mutation units, non-targets,
+      required inputs, executable checks, evidence, stop conditions, rollback, and successors.
+    expected: >-
+      Every cluster is covered, unsupported optional work is deferred, and prompts are
+      split or added where inventory proves the template catalogue insufficient.
+
+  - description: Mutation ownership is complete and non-overlapping
+    check: >-
+      Expand each manifest ownership selector to path plus structured key, symbol,
+      transformation class, or move operation; compare all planned changes pairwise and
+      verify every change has exactly one primary owner even when phases touch one file.
+    expected: >-
+      Zero change unit is unowned or multiply owned. Path reuse is permitted only when
+      selectors are disjoint, ordered, and enforced by before/after diff tests.
+
+  - description: Structured-file transformations have full codemod controls
+    check: >-
+      For every planned TOML, JSON, or YAML edit identify the parser-based codemod owner
+      and verify pinned tool/version, before/after fixtures, dry-run diff, deterministic
+      output, idempotence, explicit non-targets/unsafe diagnostics, and residual/new-
+      reference postconditions in its generated prompt.
+    expected: >-
+      Every structured edit is either parser-generated under all controls or explicitly
+      classified as new-file construction; no live structured edit relies on regex.
+
+  - description: Changes, deliverables, and acceptance criteria have exact traceability
+    check: >-
+      Compare specification §§2-11, nine deliverables, and 20 executable acceptance
+      criteria with the resolved manifest and prompt tests; count primary assignments.
+    expected: >-
+      Every planned change and criterion has exactly one primary prompt; all are covered;
+      CLI behavior is assigned to a prompt that runs the complete post-repair interface,
+      while earlier partial CLI checks are prerequisite evidence only.
+
+  - description: Generated prompts validate and are independently gated
+    check: >-
+      Run schemas/validate_instance.py against prompt.schema.v4.json for every activated
+      or generated prompt, verify qa-gate-codex-run is schema-bound, then run the sanctioned
+      QA gate and verify protocol for each new/changed prompt before manifest activation.
+    expected: >-
+      Every activated prompt is valid and has a witnessed QA_PASSED result; QA_ERROR,
+      failure, missing witness, or an unreviewed generated prompt blocks activation.
+    verifier:
+      execution_path: codex_plugin
+      invokes:
+        type: skill
+        skill: qa-gate-codex-run
+      reasoning: The planning agent cannot certify the prompts it authored.
+
+  - description: Versioning and scope preserve all prior artifacts
+    check: >-
+      Compare paths and hashes before/after; inspect generated filenames/directives and
+      ensure no existing prompt, manifest, plan, QA transcript, source, test, or config
+      file was overwritten or modified.
+    expected: >-
+      Only authorized resolved/generated/checkpoint/journal paths change and every revised
+      artifact uses a strictly newer or new versioned filename.
+
+  - description: Independent Codex QA accepts the P00A checkpoint
+    check: >-
+      Gate a versioned P00A checkpoint report with qa-gate-codex-run using shared criteria
+      and this prompt, P00 evidence, resolved plan/manifest, generated prompts, ownership
+      expansion, validation/QA results, and specification v8 as grounding; threshold
+      blocker, at most five iterations, then verify.
+    expected: The witnessed verify result is QA_PASSED and identifies the passing artifact.
+    verifier:
+      execution_path: codex_plugin
+      invokes:
+        type: skill
+        skill: qa-gate-codex-run
+      reasoning: Inventory-to-prompt decomposition requires independent completeness review.
+
+loop:
+  steps:
+    - Apply restart handling and verify the current P00 evidence and its witnessed QA result.
+    - Cluster actual inventory changes and define ordered phases, target trees, rollback points, and acceptance commands.
+    - Allocate exact mutation units and criteria before selecting, splitting, or generating prompts.
+    - Add controlled structured-data codemods for every planned TOML/JSON/YAML edit.
+    - Write only new resolved/generated versions; validate and independently gate each activated prompt.
+    - Reconcile complete coverage, zero ownership overlap, dependency order, and successor boundaries.
+    - Gate the P00A checkpoint and activate only the resolved manifest's prompt set.
+  stopping_condition: >-
+    Stop successfully only when all eight tests pass, inventory is current, prompt count
+    and paths are evidence-derived, ownership is disjoint, all activated prompts validate
+    and have witnessed QA_PASSED results, and completion gates pass.
+  resume_check: >-
+    Revalidate P00 inventory commit/state and hash every resolved/generated artifact before
+    reusing a closed planning action; stale inventory invalidates all downstream planning.
+  escalation: >-
+    Stop on incomplete inventory, unresolved path, ownership collision, unhandled
+    structured edit, schema failure, or QA_ERROR; report the exact evidence/decision needed.
+  retry_policy:
+    auto_retry: [tool-error, partial-run]
+    requires_fix: [missing-input, bad-input, wrong-output, other]

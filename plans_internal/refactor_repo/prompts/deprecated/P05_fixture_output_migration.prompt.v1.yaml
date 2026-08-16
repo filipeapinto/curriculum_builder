@@ -1,0 +1,144 @@
+# yaml-language-server: $schema=../../../../schemas/prompt.schema.v4.json
+title: P05 — Migrate Durable Output Consumers and Empty Outputs
+
+authorized_paths:
+  - tests/fixtures/refactor_repo/
+  - tests/runtime/test_claim_entailment.py
+  - tests/refactor_repo/test_fixture_closure.py
+  - plans_internal/refactor_repo/retained_evidence/
+  - plans_internal/refactor_repo/fixture_dispositions.v1.yaml
+  - outputs/
+  - .gitignore
+  - plans_internal/refactor_repo/checkpoints/P05/
+  - plans_internal/refactor_repo/execution/P05/execution_log.jsonl
+
+model: opus
+
+agent:
+  execution_path: claude_code_direct
+  reasoning: >-
+    Durable consumers must be closed in both directions before any ignored output is
+    removed, with recoverable handling for untracked historical bytes.
+
+operations:
+  executor:
+    kind: agent_native
+    implementation: curriculum_factory.logger.ExecutionLogger
+  journal:
+    path: plans_internal/refactor_repo/execution/P05/execution_log.jsonl
+    schema: schemas/execution_log.schema.v2.json
+    format: jsonl
+    write_mode: append_only
+  action_protocol:
+    before_action: append_act_started
+    after_success: append_act_completed_closing_start
+    after_failure: append_exec_closing_start
+  restart:
+    detection: compute_unclosed_starts
+    no_journal: fresh_start
+    closed_action: always_reverify
+    unclosed_action: require_operator_review
+  completion_gate:
+    require_valid_journal: true
+    require_zero_unclosed_starts: true
+    require_all_tests_pass: true
+    require_authorized_paths_only: true
+
+goal: >-
+  After P04 passes, rerun P00 inventory immediately before cleanup, enumerate every
+  child of ignored outputs/, and migrate every durable test/evidence consumer to a
+  tracked fixture, deterministic generator, or retained-evidence location. Each retained
+  run-derived fixture needs a machine-readable manifest containing relative path,
+  SHA-256, named active consumer, required assertion/citation/behavior, exact-byte versus
+  generated status, source run, and migration date. Enforce bidirectional consumer
+  closure, then remove generated children so outputs/ remains the ignored runtime write
+  boundary and the full suite is independent of local ignored state. Do not use arbitrary
+  count/size caps, disguise evidence as fixtures, or alter unrelated tests. Stop when a
+  consumer lies outside authorized_paths, disposition is unresolved, or inventory is
+  incomplete. Before deletion, place an exact hashed recovery archive in a mktemp-created
+  directory and record it; retain it until checkpoint acceptance. Rollback restores from
+  that archive and reverts tracked changes. P05 unblocks P08 after P06/P07.
+
+tests:
+  - description: Pre-cleanup inventory is current, complete, and dispositioned
+    check: >-
+      Run P00 immediately before cleanup and compare every outputs/ child with the
+      disposition ledger, including size, producer, tracked/untracked consumers,
+      reproducibility, evidence value, and destination/removal reason.
+    expected: >-
+      Sets are identical, no point-in-time count from the specification is reused, and
+      every child has a supported disposition with no unresolved consumer.
+
+  - description: Retained fixture manifests are valid and digest-accurate
+    check: >-
+      Parse each fixture manifest, recompute every SHA-256, validate required fields,
+      resolve named consumers and generators, and compare listed files with actual files
+      recursively in both directions.
+    expected: >-
+      Every retained file has exactly one valid entry and active need; every declared
+      dependency resolves; no unlisted or orphaned file remains.
+
+  - description: Exact bytes, generated data, and evidence follow disposition rules
+    check: >-
+      Review every migrated item against its consumer assertion/citation and prove exact
+      historical bytes are retained only when required, behavioral data is generated
+      when equivalent, and non-test evidence resides under retained_evidence.
+    expected: >-
+      Each disposition is evidence-supported and no evidence is mislabeled as a fixture.
+
+  - description: Output cleanup is recoverable and leaves the ignored boundary empty
+    check: >-
+      Before deletion create and verify a hashed temporary recovery archive; after
+      migration remove generated children, inspect outputs/, .gitignore, and git status,
+      then rehearse restore into a separate temporary location.
+    expected: >-
+      outputs/ has no generated children, remains ignored, tracked migrations are
+      reviewable, and every removed byte is recoverable from the recorded archive until
+      checkpoint acceptance.
+
+  - description: Tests and active references are independent of ignored output state
+    check: >-
+      With outputs/ empty, run the full suite and gates; perform lexical and structured
+      scans for durable outputs references; then create an unrelated ignored run and
+      prove test selection/results do not consume it.
+    expected: >-
+      The suite passes, no active evidence/test requires ignored files, and unrelated
+      generated state cannot change results.
+
+  - description: Independent Codex QA accepts the P05 checkpoint
+    check: >-
+      Gate a versioned P05 checkpoint report with qa-gate-codex-run using shared criteria
+      and this prompt, both inventory runs, dispositions, manifests, cleanup/restore
+      evidence, and specification v8 as grounding; threshold blocker, at most five
+      iterations, then verify before discarding any recovery archive.
+    expected: The witnessed verify result is QA_PASSED and identifies the passing artifact.
+    verifier:
+      execution_path: codex_plugin
+      invokes:
+        type: skill
+        skill: qa-gate-codex-run
+      reasoning: Destructive ignored-state cleanup requires independent closure review.
+
+loop:
+  steps:
+    - Apply restart handling and verify P04 plus a fresh complete P00 inventory.
+    - Freeze disposition and consumer maps before copying, generating, or deleting.
+    - Migrate consumers and build bidirectional manifests before any output removal.
+    - Create and verify a temporary recovery archive, then remove only disposition-approved children.
+    - Run empty-output, closure, reference, full-suite, and restore-rehearsal tests.
+    - Gate the checkpoint independently; retain recovery material until acceptance.
+    - Apply completion gates and identify P08 as successor contingent on P06/P07.
+  stopping_condition: >-
+    Stop successfully only when all six tests pass, outputs is empty/ignored, closure is
+    bidirectional, recovery is proven, scope/journal gates pass, and QA verify says
+    QA_PASSED.
+  resume_check: >-
+    Re-run inventory and closure before every resumed destructive action; an unclosed
+    copy/delete action requires operator review against source, destination, manifest,
+    and recovery archive hashes.
+  escalation: >-
+    Stop immediately on unresolved disposition, missing consumer, hash mismatch, or
+    unauthorized consumer path; never delete to force convergence.
+  retry_policy:
+    auto_retry: [tool-error]
+    requires_fix: [missing-input, bad-input, wrong-output, partial-run, other]

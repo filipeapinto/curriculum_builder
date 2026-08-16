@@ -1,0 +1,307 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://example.invalid/curriculum_builder/repository_refactor_inventory.schema.v1.json",
+  "title": "Repository refactor inventory v1",
+  "description": "Validates the machine-readable output of tools/refactor_repo/inventory.py, the read-only inventory required by refactor_repository.spec.v8.html §7. Every top-level directory, import surface, output child, test subtree, and schema identifier discovered by the collectors must appear with an owner/reader, lifecycle, tracked/ignored state, disposition, and source evidence, or the collection run must fail rather than emit an empty field.",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "inventory_version",
+    "schema",
+    "provenance",
+    "identities",
+    "directories",
+    "python_surface",
+    "old_identity_references",
+    "structured_configuration",
+    "outputs_children",
+    "test_subtrees",
+    "schema_identifiers",
+    "environment"
+  ],
+  "properties": {
+    "inventory_version": { "const": "1.0" },
+    "schema": { "const": "schemas/repository_refactor_inventory.schema.v1.json" },
+    "provenance": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "generated_at_utc",
+        "repository_commit",
+        "dirty_state",
+        "tool_versions",
+        "command",
+        "configuration",
+        "omissions",
+        "collection_failures",
+        "complete"
+      ],
+      "properties": {
+        "generated_at_utc": { "type": "string", "format": "date-time" },
+        "repository_commit": { "type": "string", "minLength": 7 },
+        "dirty_state": {
+          "type": "object",
+          "additionalProperties": false,
+          "required": ["is_dirty", "changed_paths"],
+          "properties": {
+            "is_dirty": { "type": "boolean" },
+            "changed_paths": { "type": "array", "items": { "type": "string" } }
+          }
+        },
+        "tool_versions": {
+          "type": "object",
+          "additionalProperties": { "type": "string" },
+          "required": ["python", "git"]
+        },
+        "command": { "type": "string", "minLength": 1 },
+        "configuration": { "type": "object" },
+        "omissions": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "additionalProperties": false,
+            "required": ["collector", "reason"],
+            "properties": {
+              "collector": { "type": "string" },
+              "reason": { "type": "string" }
+            }
+          }
+        },
+        "collection_failures": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "additionalProperties": false,
+            "required": ["collector", "error"],
+            "properties": {
+              "collector": { "type": "string" },
+              "error": { "type": "string" }
+            }
+          }
+        },
+        "complete": { "type": "boolean" }
+      }
+    },
+    "identities": {
+      "type": "array",
+      "minItems": 1,
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": ["identity", "current_values", "target_value", "used_for"],
+        "properties": {
+          "identity": { "type": "string" },
+          "current_values": { "type": "array", "items": { "type": "string" } },
+          "target_value": { "type": "string" },
+          "used_for": { "type": "string" }
+        }
+      }
+    },
+    "directories": {
+      "type": "array",
+      "minItems": 1,
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": [
+          "path", "owner_or_reader", "tracked_state", "lifecycle_class",
+          "proposed_disposition", "evidence"
+        ],
+        "properties": {
+          "path": { "type": "string" },
+          "owner_or_reader": { "type": "string" },
+          "tracked_state": { "enum": ["tracked", "ignored", "mixed", "untracked"] },
+          "lifecycle_class": {
+            "enum": [
+              "production_source", "repository_contract", "domain_input",
+              "generated_runtime_data", "cache_or_scratch", "test_fixture",
+              "retained_evidence", "active_documentation", "deprecated_history",
+              "unresolved"
+            ]
+          },
+          "proposed_disposition": { "type": "string" },
+          "evidence": { "type": "array", "items": { "type": "string" }, "minItems": 1 }
+        }
+      }
+    },
+    "python_surface": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "runtime_imports", "runtime_module_commands", "entry_points",
+        "file_based_root_traversals", "absolute_checkout_paths"
+      ],
+      "properties": {
+        "runtime_imports": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "additionalProperties": false,
+            "required": ["source_file", "line", "statement"],
+            "properties": {
+              "source_file": { "type": "string" },
+              "line": { "type": "integer" },
+              "statement": { "type": "string" }
+            }
+          }
+        },
+        "runtime_module_commands": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "additionalProperties": false,
+            "required": ["source_file", "line", "command"],
+            "properties": {
+              "source_file": { "type": "string" },
+              "line": { "type": "integer" },
+              "command": { "type": "string" }
+            }
+          }
+        },
+        "entry_points": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "additionalProperties": false,
+            "required": ["source_file", "kind", "target"],
+            "properties": {
+              "source_file": { "type": "string" },
+              "kind": { "type": "string" },
+              "target": { "type": "string" }
+            }
+          }
+        },
+        "file_based_root_traversals": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "additionalProperties": false,
+            "required": ["source_file", "line", "expression"],
+            "properties": {
+              "source_file": { "type": "string" },
+              "line": { "type": "integer" },
+              "expression": { "type": "string" }
+            }
+          }
+        },
+        "absolute_checkout_paths": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "additionalProperties": false,
+            "required": ["source_file", "line", "text"],
+            "properties": {
+              "source_file": { "type": "string" },
+              "line": { "type": "integer" },
+              "text": { "type": "string" }
+            }
+          }
+        }
+      }
+    },
+    "old_identity_references": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": ["identity", "source_file", "line", "text"],
+        "properties": {
+          "identity": { "type": "string" },
+          "source_file": { "type": "string" },
+          "line": { "type": "integer" },
+          "text": { "type": "string" }
+        }
+      }
+    },
+    "structured_configuration": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": ["path", "format", "role", "present"],
+        "properties": {
+          "path": { "type": "string" },
+          "format": { "enum": ["toml", "json", "yaml", "cfg", "ini", "absent"] },
+          "role": { "type": "string" },
+          "present": { "type": "boolean" }
+        }
+      }
+    },
+    "outputs_children": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": [
+          "path", "size_bytes", "producer", "tracked_consumers",
+          "untracked_consumers", "reproducible", "evidence_value", "proposed_disposition"
+        ],
+        "properties": {
+          "path": { "type": "string" },
+          "size_bytes": { "type": "integer", "minimum": 0 },
+          "producer": { "type": "string" },
+          "tracked_consumers": { "type": "array", "items": { "type": "string" } },
+          "untracked_consumers": { "type": "array", "items": { "type": "string" } },
+          "reproducible": { "enum": ["yes", "no", "unknown"] },
+          "evidence_value": { "type": "string" },
+          "proposed_disposition": { "type": "string" }
+        }
+      }
+    },
+    "test_subtrees": {
+      "type": "array",
+      "minItems": 1,
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": [
+          "path", "package_import_status", "scope", "execution_cost",
+          "environment_needs", "ci_lane", "direct_references"
+        ],
+        "properties": {
+          "path": { "type": "string" },
+          "package_import_status": { "type": "string" },
+          "scope": { "type": "string" },
+          "execution_cost": { "type": "string" },
+          "environment_needs": { "type": "array", "items": { "type": "string" } },
+          "ci_lane": { "type": "array", "items": { "type": "string" } },
+          "direct_references": { "type": "array", "items": { "type": "string" } }
+        }
+      }
+    },
+    "schema_identifiers": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": ["path", "id", "referenced_by"],
+        "properties": {
+          "path": { "type": "string" },
+          "id": { "type": "string" },
+          "referenced_by": { "type": "array", "items": { "type": "string" } }
+        }
+      }
+    },
+    "environment": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["python_version", "platform", "installed_packages"],
+      "properties": {
+        "python_version": { "type": "string" },
+        "platform": { "type": "string" },
+        "installed_packages": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "additionalProperties": false,
+            "required": ["name", "version"],
+            "properties": {
+              "name": { "type": "string" },
+              "version": { "type": "string" }
+            }
+          }
+        }
+      }
+    }
+  }
+}

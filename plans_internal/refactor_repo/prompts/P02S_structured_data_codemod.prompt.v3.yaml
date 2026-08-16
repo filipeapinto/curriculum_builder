@@ -1,0 +1,155 @@
+# yaml-language-server: $schema=../../../schemas/prompt.schema.v4.json
+title: P02S — Build Parser-Based TOML JSON and YAML Codemods
+
+authorized_paths:
+  - tools/refactor_repo/rewrite_structured_references.py
+  - tests/refactor_repo/structured_codemod/
+  - plans_internal/refactor_repo/checkpoints/P02S/
+  - plans_internal/refactor_repo/execution/P02S/execution_log.jsonl
+
+model: sonnet
+
+agent:
+  execution_path: claude_code_direct
+  reasoning: >-
+    Model selection: sonnet is explicit because format-preserving structured edits,
+    semantic target selection, and unsafe-case classification require non-trivial
+    judgment; this is not pure lookup work suitable for haiku.
+
+operations:
+  executor:
+    kind: agent_native
+    implementation: runtime.logger.ExecutionLogger
+  journal:
+    path: plans_internal/refactor_repo/execution/P02S/execution_log.jsonl
+    schema: schemas/execution_log.schema.v2.json
+    format: jsonl
+    write_mode: append_only
+  action_protocol:
+    before_action: append_act_started
+    after_success: append_act_completed_closing_start
+    after_failure: append_exec_closing_start
+  restart:
+    detection: compute_unclosed_starts
+    no_journal: fresh_start
+    closed_action: reuse_if_inputs_unchanged
+    unclosed_action: resume_or_idempotently_repeat
+  completion_gate:
+    require_valid_journal: true
+    require_zero_unclosed_starts: true
+    require_all_tests_pass: true
+    require_authorized_paths_only: true
+
+goal: >-
+  After P00A activates this prompt and P01 declares the inventory-selected, version-
+  pinned parser dependencies, implement parser-based TOML, JSON, and YAML transformations
+  for the exact structured reference and identity changes in the resolved plan. Preserve
+  comments, ordering, quoting, anchors/aliases, formatting, numeric/string types, and
+  unrelated keys to the degree supported by the selected format-specific parser; when
+  safe round-trip preservation is impossible, fail with an actionable diagnostic rather
+  than falling back to regex. Provide before/after fixtures, write-free dry-run unified
+  diffs, deterministic output, recorded tool/parser versions, idempotence, explicit
+  targets/non-targets, unsafe/ambiguous warnings or failures, and residual old/unexpected
+  new reference postconditions. Do not edit live TOML/JSON/YAML files; downstream owners
+  apply the proven codemod only to mutation units allocated by the resolved manifest.
+  Stop if P00A has no exact structured change inventory, a parser dependency is unpinned,
+  or a construct cannot be transformed safely. Rollback reverts only codemod assets and
+  reruns P00A ownership checks. Passing P02S unblocks activated structured-file owners.
+
+tests:
+  - description: Resolved manifest grants exact non-overlapping mutation ownership
+    check: >-
+      Load prompts/resolved/prompt_manifest.resolved.v1.yaml, verify it activates this
+      exact prompt version, expand its path plus structured-key, symbol, transformation-
+      class, move-operation, or external-target selectors, and compare those units with
+      the planned and final diff/action journal plus every other active prompt's units.
+    expected: >-
+      Every intended and actual mutation unit is owned by this prompt exactly once; no
+      unit is unowned, shared, borrowed from a successor, or merely covered by a broader
+      authorized path.
+
+  - description: Format-specific fixture matrix covers required syntax and semantics
+    check: >-
+      Enumerate TOML, JSON, and YAML fixtures and verify cases for nested keys, arrays,
+      tables/mappings, aliases/anchors, comments where legal, quote styles, multiline
+      values, scalar types, old/new references, ambiguous/dynamic values, malformed input,
+      and already-migrated input.
+    expected: >-
+      Every resolved transformation class has a named exact output or named diagnostic;
+      unrelated structure and values remain semantically and, where promised, textually stable.
+
+  - description: Parsers and transformation versions are pinned and recorded
+    check: >-
+      Compare P01 dependency pins, runtime imported versions, codemod metadata, and
+      checkpoint evidence for every TOML/JSON/YAML parser and transformation contract.
+    expected: >-
+      Exact parser/tool versions and transformation version are consistent and no
+      environment-only unpinned dependency is used.
+
+  - description: Dry-run is deterministic, reviewable, and write-free
+    check: >-
+      Snapshot fixture/live rehearsal bytes, run dry-run twice with stable ordering,
+      compare unified diffs/diagnostics byte-for-byte, and compare all inputs afterward.
+    expected: >-
+      Dry-run output is deterministic, identifies format/key/change owner, and writes nothing.
+
+  - description: Apply output is exact and a second application is empty
+    check: >-
+      Apply each transformation to disposable copies, parse and compare with expected
+      semantic/text fixtures, then apply again and capture diff/status.
+    expected: >-
+      First output matches exactly and the second application produces no change for
+      TOML, JSON, and YAML.
+
+  - description: Unsafe inputs and residual references fail closed
+    check: >-
+      Exercise malformed files, duplicate/ambiguous keys, unsupported tags, alias cycles,
+      type-changing substitutions, unexpected old references, and unexpected newly
+      introduced target references.
+    expected: >-
+      Each unsafe case warns or fails according to explicit policy, and residual/new-
+      reference postconditions prevent silent partial success.
+
+  - description: Inventory-selected live rehearsal changes no repository file
+    check: >-
+      Run dry-run against every structured file/change unit assigned by P00A, reconcile
+      candidates with the inventory/resolved manifest, and compare git/filesystem state.
+    expected: >-
+      Candidate sets match exactly, discrepancies block downstream activation, and no
+      live repository byte changes.
+
+  - description: Independent Codex QA accepts the P02S checkpoint
+    check: >-
+      Gate a versioned P02S checkpoint report with qa-gate-codex-run using shared criteria
+      and this prompt, P00A structured-change inventory, parser pins, fixtures, dry-run,
+      determinism, idempotence, unsafe/residual results, and specification v8 as grounding;
+      threshold blocker, at most five iterations, then verify.
+    expected: The witnessed verify result is QA_PASSED and identifies the passing artifact.
+    verifier:
+      execution_path: codex_plugin
+      invokes:
+        type: skill
+        skill: qa-gate-codex-run
+      reasoning: Structured transformation safety cannot be self-certified by its author.
+
+loop:
+  steps:
+    - Apply restart handling and verify P00A activation/ownership plus P01 parser pins.
+    - Freeze structured targets/non-targets and fixture metadata before implementation.
+    - Implement parser-based dry-run, apply, diagnostics, and residual postconditions.
+    - Run exact-output, determinism, idempotence, unsafe-input, and live dry-run tests.
+    - Record rollback verification and complete independent QA.
+    - Apply completion gates and identify only resolved structured-file owners as successors.
+  stopping_condition: >-
+    Stop successfully only when all eight tests pass for TOML, JSON, and YAML, live
+    rehearsal is write-free, parser versions are pinned, scope/journal gates pass, and
+    QA verify says QA_PASSED.
+  resume_check: >-
+    Compare resolved change-unit, parser, fixture, and codemod digests before reusing any
+    closed action; rerun all affected formats after a change.
+  escalation: >-
+    Stop on an unpinned parser, unsupported round-trip construct, ownership mismatch,
+    or repeated failure; never substitute regex for a structured edit.
+  retry_policy:
+    auto_retry: [tool-error, partial-run]
+    requires_fix: [missing-input, bad-input, wrong-output, other]

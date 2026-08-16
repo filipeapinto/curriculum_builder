@@ -1,0 +1,140 @@
+# yaml-language-server: $schema=../../../schemas/prompt.schema.v4.json
+title: P01 — Add the Buildable Src-Layout Packaging Skeleton
+
+authorized_paths:
+  - pyproject.toml
+  - src/curriculum_factory/__init__.py
+  - tests/refactor_repo/test_packaging_skeleton.py
+  - plans_internal/refactor_repo/checkpoints/P01/
+  - plans_internal/refactor_repo/execution/P01/execution_log.jsonl
+
+model: sonnet
+
+agent:
+  execution_path: claude_code_direct
+  reasoning: >-
+    Model selection: sonnet is explicit because dependency provenance, packaging metadata, and entry-point decisions require non-trivial judgment; this is not pure lookup work suitable for haiku.
+    Packaging metadata must be proven independently before any production source is
+    moved, with no hidden repository-root package discovery.
+
+operations:
+  executor:
+    kind: agent_native
+    implementation: runtime.logger.ExecutionLogger
+  journal:
+    path: plans_internal/refactor_repo/execution/P01/execution_log.jsonl
+    schema: schemas/execution_log.schema.v2.json
+    format: jsonl
+    write_mode: append_only
+  action_protocol:
+    before_action: append_act_started
+    after_success: append_act_completed_closing_start
+    after_failure: append_exec_closing_start
+  restart:
+    detection: compute_unclosed_starts
+    no_journal: fresh_start
+    closed_action: reuse_if_inputs_unchanged
+    unclosed_action: resume_or_idempotently_repeat
+  completion_gate:
+    require_valid_journal: true
+    require_zero_unclosed_starts: true
+    require_all_tests_pass: true
+    require_authorized_paths_only: true
+
+goal: >-
+  After P00A activates this prompt in the inventory-resolved manifest, add pyproject.toml and the minimal src/curriculum_factory package
+  skeleton for distribution curriculum-factory. Declare a build backend, Python and
+  dependency metadata derived from the inventory, src-only discovery, final package-
+  data declarations, test discovery defaults, and explicit console entry-point metadata
+  for the production commands identified by P00. P01 is the sole owner of every
+  pyproject.toml key; later prompts must verify it but may not edit it. Prove
+  wheel and sdist construction before moving runtime/. Do not move production files,
+  rewrite imports, repair resources, rename tests, change schema identifiers, or claim
+  installed behavioral parity in this checkpoint. Stop if P00/P00A evidence is absent or stale, resolved ownership does not assign
+  all pyproject.toml keys solely to P01,
+  dependency intent is ambiguous, or a build needs an undeclared source outside the
+  authorized paths. Rollback is a revert of this checkpoint followed by the P00
+  inventory reproducibility test. Passing P01 unblocks P03 only after P02 also passes.
+
+tests:
+  - description: Resolved manifest grants exact non-overlapping mutation ownership
+    check: >-
+      Load prompts/resolved/prompt_manifest.resolved.v1.yaml, verify it activates this
+      exact prompt version, expand its path plus structured-key, symbol, transformation-
+      class, move-operation, or external-target selectors, and compare those units with
+      the planned and final diff/action journal plus every other active prompt's units.
+    expected: >-
+      Every intended and actual mutation unit is owned by this prompt exactly once; no
+      unit is unowned, shared, borrowed from a successor, or merely covered by a broader
+      authorized path.
+
+  - description: P00 prerequisite and metadata provenance are satisfied
+    check: >-
+      Verify P00/P00A witnessed QA passes and this prompt's resolved activation, and trace every project name, Python constraint,
+      runtime dependency, optional development/refactor dependency, and console entry
+      point in pyproject.toml to the P00 reports or an existing declared contract.
+    expected: No invented dependency or command is present and every value has evidence.
+
+  - description: Package discovery is src-only and excludes repository contracts
+    check: >-
+      Inspect the configured build backend and build both artifacts; list their files
+      and search for runtime/, tests/, policy/, schemas/, curricula/, docs/, outputs/,
+      plans/, and ignored or untracked local material.
+    expected: >-
+      Discovery includes only src/curriculum_factory from the authorized skeleton and
+      no repository-root package or unrelated tree leaks into either artifact.
+
+  - description: Distribution metadata and console entry points are explicit
+    check: >-
+      Inspect wheel METADATA and entry_points.txt plus sdist PKG-INFO and compare names,
+      version source, Python requirement, dependencies, and every P00-classified
+      production command with pyproject.toml.
+    expected: >-
+      Distribution identity is curriculum-factory, package identity is
+      curriculum_factory, metadata agrees across artifacts, and all intended entry
+      points are declared. Runtime invocation is explicitly deferred to P03.
+
+  - description: Skeleton builds reproducibly without source movement
+    check: >-
+      Build wheel and sdist twice from clean isolated checkouts using the documented
+      toolchain, normalize only archive timestamps recorded by the build format, and
+      compare file lists, metadata, and content digests; confirm runtime/ is unchanged.
+    expected: >-
+      Both builds exit 0 with equivalent normalized contents and the production source
+      tree remains byte-identical to P00.
+
+  - description: Independent Codex QA accepts the P01 checkpoint
+    check: >-
+      Gate a versioned P01 checkpoint report with qa-gate-codex-run using
+      checkpoint_qa_criteria.v1.md as criteria and this prompt, P00 evidence, and
+      specification v8 as grounding; use threshold blocker, at most five iterations,
+      and run the skill's verify command.
+    expected: The witnessed verify result is QA_PASSED and identifies the passing artifact.
+    verifier:
+      execution_path: codex_plugin
+      invokes:
+        type: skill
+        skill: qa-gate-codex-run
+      reasoning: Packaging completion requires an independent checkpoint verdict.
+
+loop:
+  steps:
+    - Apply restart handling and verify P00/P00A checkpoints, resolved activation, and unchanged prerequisite inputs.
+    - Record the starting diff and derive metadata solely from inventory evidence.
+    - Add the minimal skeleton and focused packaging test without moving runtime/.
+    - Build and inspect wheel and sdist twice in isolated worktrees.
+    - Run every test, record the rollback checkpoint, and gate the report independently.
+    - Apply completion gates and name P03 as successor contingent on P02.
+  stopping_condition: >-
+    Stop successfully only when all six tests pass, artifacts are buildable and clean,
+    runtime/ is unchanged, the journal closes, scope is authorized, and QA verify says
+    QA_PASSED.
+  resume_check: >-
+    On resume compare P00 report digests, pyproject.toml, source skeleton, and build-tool
+    versions with journaled inputs before reusing any completed build inspection.
+  escalation: >-
+    Stop after two identical failures or immediately on ambiguous distribution metadata;
+    report the exact missing decision without moving production code as a workaround.
+  retry_policy:
+    auto_retry: [tool-error, partial-run]
+    requires_fix: [missing-input, bad-input, wrong-output, other]
