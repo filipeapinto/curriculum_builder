@@ -39,9 +39,11 @@ NORMALIZATION_RULES = [
     "repository_commit: ignore literal value only if both captures were taken against the same "
     "checkout state as recorded by tests_and_gates.pytest_collect.exit_code and collected_count; "
     "a differing commit is reported, never silently dropped.",
-    "import_origin.origin: normalize by stripping any filesystem prefix up to and including the "
-    "checkout root, so two different absolute checkout paths for the same relative module "
-    "location compare equal.",
+    "import_origin.origin: compared as origin_relative_to_repo_root (already computed at capture "
+    "time by resolving against that capture's own repo_root), not the raw absolute origin, so two "
+    "different checkout locations for the same relative module compare equal. The relative path "
+    "itself changing (runtime/__init__.py -> src/curriculum_factory/__init__.py) is not normalized "
+    "away: that is the intended P03 source move, a real and expected difference, not noise.",
     "cli_help_and_invalid_input[*].stdout_sha256/stderr_sha256: compared as literal digests; "
     "argparse output is deterministic for a fixed argv and program name, so no normalization "
     "is applied here — a changed digest is a real behavioral difference.",
@@ -209,14 +211,6 @@ def capture(repo_root: Path) -> dict:
     return document
 
 
-def _strip_root(value: str, root_markers: tuple[str, ...] = ("/runtime/", "\\runtime\\")) -> str:
-    for marker in root_markers:
-        idx = value.find(marker)
-        if idx != -1:
-            return value[idx + 1:]
-    return value
-
-
 def compare(first: dict, second: dict) -> dict:
     diffs = []
     equivalent = []
@@ -234,9 +228,9 @@ def compare(first: dict, second: dict) -> dict:
         note(f"tests_and_gates.{key}.exit_code", a.get("exit_code"), b.get("exit_code"),
              a.get("exit_code") == b.get("exit_code"))
 
-    a_origin = _strip_root(first["import_origin"]["origin"])
-    b_origin = _strip_root(second["import_origin"]["origin"])
-    note("import_origin.origin (root-stripped)", a_origin, b_origin, a_origin == b_origin)
+    a_origin = first["import_origin"]["origin_relative_to_repo_root"]
+    b_origin = second["import_origin"]["origin_relative_to_repo_root"]
+    note("import_origin.origin (relative to repo root)", a_origin, b_origin, a_origin == b_origin)
 
     for i, (a, b) in enumerate(zip(first["cli_help_and_invalid_input"], second["cli_help_and_invalid_input"])):
         note(f"cli_help_and_invalid_input[{i}].exit_code", a.get("exit_code"), b.get("exit_code"),
