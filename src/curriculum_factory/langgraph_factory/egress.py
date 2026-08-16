@@ -497,7 +497,7 @@ def _default_opener(
     # the socket grant remains pinned to the admitted endpoint.
     request = urllib.request.Request(
         url,
-        headers={"User-Agent": "curriculum-builder/1.0"},
+        headers={"User-Agent": "curriculum-factory/1.0"},
         method="GET",
     )
     try:

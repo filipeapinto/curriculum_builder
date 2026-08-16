@@ -110,7 +110,7 @@ def prepare(engine: Path, curriculum_value: Path, lab_id: str, output: Path) -> 
                               trigger=url, expected="cached primary-source bytes and resolving hash")
         target = sources / f"source_{index:02d}.html"
         try:
-            request = Request(url, headers={"User-Agent": "curriculum-runtime/1.0"})
+            request = Request(url, headers={"User-Agent": "curriculum-factory/1.0"})
             with urlopen(request, timeout=45) as response:
                 payload = response.read()
             target.write_bytes(payload)

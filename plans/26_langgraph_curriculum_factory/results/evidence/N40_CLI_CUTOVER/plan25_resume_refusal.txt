@@ -2,8 +2,8 @@ TEST 7: a Plan 25-shaped output root (checkpoints/0001.json, no
 .langgraph/) passed to --resume.
 
 exit_code: 3
-stdout: {"contract_version": "1", "error_code": "RESUME-NO-IDENTITY", "message": "--output-root has no Plan 26 run identity to resume: /private/var/folders/kj/z_75gwxx2ls7p55rnx4t5kg00000gn/T/tmpre3yn6bg/legacy"}
-stderr: RESUME-NO-IDENTITY: --output-root has no Plan 26 run identity to resume: /private/var/folders/kj/z_75gwxx2ls7p55rnx4t5kg00000gn/T/tmpre3yn6bg/legacy
+stdout: {"contract_version": "1", "error_code": "RESUME-NO-IDENTITY", "message": "--output-root has no Plan 26 run identity to resume: /private/var/folders/kj/z_75gwxx2ls7p55rnx4t5kg00000gn/T/tmp4igj5row/legacy"}
+stderr: RESUME-NO-IDENTITY: --output-root has no Plan 26 run identity to resume: /private/var/folders/kj/z_75gwxx2ls7p55rnx4t5kg00000gn/T/tmp4igj5row/legacy
 files_before: ['checkpoints', 'checkpoints/0001.json']
 files_after:  ['checkpoints', 'checkpoints/0001.json']
 root_untouched: True

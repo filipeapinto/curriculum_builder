@@ -8,8 +8,9 @@ edges spec section 8.1's "normal unit path" declares.
 Two things it deliberately does not do.
 
 It registers no node body. N20's `validate_bindings` restricts a production
-binding to `runtime.langgraph_factory.nodes` and `runtime.langgraph_factory
-.model_nodes`, so a callable authored here could not be a node even if this
+binding to `curriculum_factory.langgraph_factory.nodes` and
+`curriculum_factory.langgraph_factory.model_nodes`, so a callable authored
+here could not be a node even if this
 module wanted one — which is the guarantee that keeps "the graph compiled"
 meaning "the graph compiled against the owned node bodies".
 

@@ -2,7 +2,7 @@
 
 These functions were defined inside `tests/gates/fr_p5_unit.py` and ran only against
 hand-written fixtures, so `TEXT-READABILITY-BAND` and `TEXT-BLOOM-VERBS` never scored a
-generated unit. They live here so `runtime/checks.py` runs the same metric over real
+generated unit. They live here so `curriculum_factory/checks.py` runs the same metric over real
 rendered text that the gate runs over its fixtures — one implementation, not two.
 
 The gate bodies keep their harness dependencies injected through `bind_gate` rather than
@@ -139,7 +139,7 @@ def bind_gate(bindings: GateBindings) -> None:
 
 def _bound() -> GateBindings:
     if BINDINGS is None:
-        raise RuntimeError("runtime.readability gate bodies were called before bind_gate")
+        raise RuntimeError("curriculum_factory.readability gate bodies were called before bind_gate")
     return BINDINGS
 
 

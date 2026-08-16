@@ -80,7 +80,7 @@ TEXT_EXTENSIONS = {
 }
 
 
-def _prune_dirs(dirnames: list[str]) -> None:
+def _prune_dirs(dirnames: list[str], rel_dir: str, ignored_dirs: frozenset[str]) -> None:
     keep = []
     for name in dirnames:
         if name in EXCLUDED_DIR_NAMES:
@@ -89,12 +89,32 @@ def _prune_dirs(dirnames: list[str]) -> None:
             continue
         if any(name.endswith(s) for s in EXCLUDED_DIR_SUFFIXES):
             continue
+        candidate = name if rel_dir == "." else f"{rel_dir}/{name}"
+        if candidate in ignored_dirs:
+            continue
         keep.append(name)
     dirnames[:] = keep
 
 
+def _git_ignored_dirs(repo_root: Path) -> frozenset[str]:
+    """Top-level relative paths of every git-ignored directory.
+
+    A local venv, a package build, or any other tool's scratch directory is
+    never repository content -- and unlike the hand-maintained excluded-name
+    list above, this stays correct without editing this module every time a
+    new one shows up, because ``.gitignore`` already says so.
+    """
+    try:
+        out = _run_git(repo_root, "ls-files", "--others", "--ignored",
+                        "--exclude-standard", "--directory")
+    except CollectorUnavailable:
+        return frozenset()
+    return frozenset(line.rstrip("/") for line in out.splitlines() if line.strip())
+
+
 def iter_scan_files(repo_root: Path, extensions: set[str] = TEXT_EXTENSIONS) -> Iterable[Path]:
     """Yield live text files under ``repo_root``, applying the scan-scope policy above."""
+    ignored_dirs = _git_ignored_dirs(repo_root)
     for dirpath, dirnames, filenames in _walk(repo_root):
         rel_dir = Path(dirpath).relative_to(repo_root).as_posix()
         if rel_dir != "." and any(
@@ -102,7 +122,7 @@ def iter_scan_files(repo_root: Path, extensions: set[str] = TEXT_EXTENSIONS) -> 
         ):
             dirnames[:] = []
             continue
-        _prune_dirs(dirnames)
+        _prune_dirs(dirnames, rel_dir, ignored_dirs)
         for name in filenames:
             path = Path(dirpath) / name
             if path.suffix in extensions:

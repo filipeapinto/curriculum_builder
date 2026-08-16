@@ -1,9 +1,9 @@
 version: 1
 exceptions:
-  - locations: [schemas/**/*.json, curricula/**/*.json]
+  - locations: [schemas/**/*.json, curricula/**/*.json, tests/gates/gate_families.schema.v1.json]
     token: curriculum_builder
     consumer: JSON Schema identifier and reference resolution
-    rationale: Existing versioned contract identifiers are preserved, not rebranded.
+    rationale: Existing versioned contract identifiers are preserved, not rebranded (spec v8 section 3).
     removal_condition: A new schema version with an atomic consumer migration.
   - locations: [docs/deprecated/**, meta_prompt/deprecated/**, plans/**, research/**]
     token: legacy identities and runtime paths
@@ -15,3 +15,65 @@ exceptions:
     consumer: Test-domain label
     rationale: Retained as a non-production, non-top-level test namespace; production imports use curriculum_factory.
     removal_condition: Evidence shows a unit/integration/acceptance split improves ownership without weakening tests.
+  - locations: [plans_internal/**]
+    token: legacy identities and runtime paths
+    consumer: This refactor's own inventory, prompts, checkpoints, and exceptions records
+    rationale: >-
+      Frozen execution history of the refactor itself -- prompts already run, checkpoint
+      reports already filed, and this exceptions file's own worked examples. Per
+      EXECUTE_COMPLETE_REFACTOR.prompt.v1.md, prior P00-P10 material is historical
+      evidence, not live instructions, and is not rewritten to match later decisions.
+    removal_condition: The record is formally retired under its own retention policy.
+  - locations: [tests/gates/**]
+    token: curriculum_builder and runtime path literals
+    consumer: Gate detectors (FR-P0-*) and their own module docstrings
+    rationale: >-
+      A detector that hunts for a stale-path literal must contain that literal itself
+      (documented in fr_p0_structure.py's own module docstring, which is why harness
+      rule 7 already excludes tests/gates/** from the production scan root set); a few
+      plain prose comments in this same tree were genuinely stale and were corrected
+      directly rather than excepted.
+    removal_condition: The gate family the literal belongs to is retired.
+  - locations: [issues/**]
+    token: legacy identities and runtime paths
+    consumer: Point-in-time issue reports (file:line citations)
+    rationale: >-
+      Each issue cites the exact file and line range true when it was filed. Rewriting
+      the path after a later, unrelated move risks citing a line range the moved file
+      no longer has -- a wrong citation is worse than an old one.
+    removal_condition: The issue is resolved and closed, or its citation is refreshed by whoever resolves it.
+  - locations: [.claude/skills/**]
+    token: curriculum_builder
+    consumer: Claude Code skill docs and eval fixtures
+    rationale: >-
+      SKILL.md/reference prose uses the old name illustratively; eval fixtures embed
+      the literal, currently-real local checkout path
+      (/Users/filipepinto/Projects/curriculum_builder/...) and pre-refactor file
+      layout inside simulated user prompts, which the external checkout rename this
+      task does not perform would otherwise make this task incorrectly "fix" into a
+      path that does not yet exist on disk.
+    removal_condition: The local checkout rename in spec v8 section 11 is authorized and performed.
+  - locations: [docs/images/prompts/curriculum_pipeline_infographic.v2.prompt.md]
+    token: curriculum_builder
+    consumer: Image-generation prompt provenance for the shipped v2 infographic PNG
+    rationale: >-
+      Records the exact prompt that produced the already-shipped image; editing the
+      text would desynchronize the provenance record from the artifact it describes
+      without regenerating the artifact.
+    removal_condition: The infographic is regenerated under the new identity as a v3.
+  - locations: [src/curriculum_factory/curriculum_factory_graph.py, src/curriculum_factory/session_bridge.py]
+    token: runtime.<attribute>
+    consumer: A local variable/attribute literally named `runtime`, holding a `CurriculumRuntime` instance
+    rationale: >-
+      The inventory's lexical "Python package" collector matches any `runtime.<word>`
+      substring and cannot distinguish the retired top-level package from a variable
+      or `self.` attribute that merely happens to share its name (`self.runtime =
+      CurriculumRuntime(engine)`, then `self.runtime.resolve_curriculum(...)`).
+      Verified line-by-line: every match in both files is this pattern, not an import
+      of the retired package.
+    removal_condition: The inventory's collector becomes import-alias-aware (e.g. via the same AST pass P02 already runs) instead of purely lexical.
+  - locations: [tests/fixtures/planref_stale_pair.reject/**]
+    token: curriculum_builder
+    consumer: fr_p0_structure.py's PLANREF reject-fixture test
+    rationale: A negative fixture whose purpose is to contain the exact stale literal its gate detects.
+    removal_condition: The gate's target literal changes, and the fixture is regenerated to match.

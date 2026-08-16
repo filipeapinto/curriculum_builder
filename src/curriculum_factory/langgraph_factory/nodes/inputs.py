@@ -65,7 +65,7 @@ REQUIRED_CAPABILITIES: tuple[str, ...] = (
 )
 
 # The two model-CLI drivers spec 7.1/7.2 pin (`policy/routing/model_registry.v1.yaml`,
-# `runtime/langgraph_factory/config/model_jobs.v1.yaml`); D03 requires a real,
+# `curriculum_factory/langgraph_factory/config/model_jobs.v1.yaml`); D03 requires a real,
 # differentiated capability proof for each before any of the eight jobs may dispatch.
 MANDATORY_DRIVER_CLIS: tuple[str, ...] = ("claude", "codex")
 
@@ -1190,7 +1190,7 @@ def D03_PROVE_CAPABILITIES(projection: dict[str, Any], runtime_context: Any) -> 
     # egress-boundary check, live behind one more transport-registry field rather
     # than a single ready flag: `driver_capability_proof` is computed once, before
     # this episode's first transmission, by the production CLI
-    # (`runtime.run_curriculum._prove_driver_capabilities`) against every mandatory
+    # (`curriculum_factory.run_curriculum._prove_driver_capabilities`) against every mandatory
     # driver in `MANDATORY_DRIVER_CLIS`, using only N20-owned `transport.py`/
     # `egress.py` functions. D03 never re-executes a CLI itself (spec 6.2: a node
     # body never calls a model transport). The production CLI (`run_curriculum.py`)

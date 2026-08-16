@@ -507,7 +507,7 @@ def test_default_opener_identifies_the_retriever_with_a_stable_user_agent(
     assert isinstance(request, urllib.request.Request)
     assert request.full_url == "https://standards.example.org/source"
     assert request.get_method() == "GET"
-    assert request.get_header("User-agent") == "curriculum-builder/1.0"
+    assert request.get_header("User-agent") == "curriculum-factory/1.0"
     assert observed["timeout"] == 1.0
     assert response.body == b"ok"
 

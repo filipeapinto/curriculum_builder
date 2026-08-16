@@ -1,10 +1,10 @@
 #!/usr/bin/env python3
-"""`python3 -m runtime.run_curriculum` — the sole production entry to the compiled
+"""`python3 -m curriculum_factory.run_curriculum` — the sole production entry to the compiled
 Plan 26 LangGraph curriculum factory (spec section 16).
 
 This module parses and validates CLI syntax, canonicalizes paths, acquires the
 per-output-root execution lock, prepares one episode invocation, builds the one
-production graph (`runtime.langgraph_factory.graph.build_curriculum_factory_graph`),
+production graph (`curriculum_factory.langgraph_factory.graph.build_curriculum_factory_graph`),
 invokes it exactly once, projects its structured output into the one printed JSON
 object, and maps the result to an exit code. It runs no product step itself: it
 holds no node body, no guard, no join, no acceptance rule, and no frontier
@@ -13,7 +13,7 @@ thing here that ever decides what a run produced.
 
 Two narrow, pure, side-effect-free helpers are imported from the graph package
 rather than re-implemented: `_resolve_active_manifest` and `_frozen_input_records`
-(`runtime.langgraph_factory.nodes.inputs`) are the exact functions the graph's own
+(`curriculum_factory.langgraph_factory.nodes.inputs`) are the exact functions the graph's own
 input-freezing node uses to pick the active manifest and hash the frozen input
 set. This module calls them once, before the graph exists, purely to fix the
 identity seed and the authorization/transport digest a `RuntimeContext` needs
@@ -312,7 +312,7 @@ def _capability_forbidden_paths(engine_root: Path) -> list[Path]:
 # unproven field makes the whole driver -- and the whole proof -- not ready.
 #
 # This is the production CLI's own logic (not a node body, so it may call
-# `runtime.langgraph_factory.transport` directly, exactly as `_prove_live_capabilities`
+# `curriculum_factory.langgraph_factory.transport` directly, exactly as `_prove_live_capabilities`
 # already does): it never reimplements N20's provider allowlist or data-class mapping,
 # consuming `egress.PROVIDERS`/`egress.PROVIDER_DATA_CLASSES` read-only for the
 # `approved_data_boundary` field, and it wires N20's tool/MCP-closure check (spec 7.1 class five,
