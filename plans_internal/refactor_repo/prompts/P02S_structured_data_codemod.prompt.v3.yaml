@@ -62,13 +62,16 @@ tests:
   - description: Resolved manifest grants exact non-overlapping mutation ownership
     check: >-
       Load prompts/resolved/prompt_manifest.resolved.v1.yaml, verify it activates this
-      exact prompt version, expand its path plus structured-key, symbol, transformation-
-      class, move-operation, or external-target selectors, and compare those units with
-      the planned and final diff/action journal plus every other active prompt's units.
+      exact prompt version, expand its structured-key and transformation-class selectors,
+      and compare its codemod implementation, fixture, diagnostic, dry-run, and rehearsal
+      units with the planned and final diff/action journal. Separately map every live
+      structured-file mutation unit to exactly one downstream owner authorized to apply
+      this codemod; P02S must not own or perform those live mutations.
     expected: >-
-      Every intended and actual mutation unit is owned by this prompt exactly once; no
-      unit is unowned, shared, borrowed from a successor, or merely covered by a broader
-      authorized path.
+      P02S exclusively owns every codemod asset and write-free rehearsal unit, while each
+      live structured-file mutation is exclusively owned by one downstream applying
+      prompt. The linkage is complete and non-overlapping; no unit is unowned, shared,
+      borrowed, or justified only by a broader authorized path.
 
   - description: Format-specific fixture matrix covers required syntax and semantics
     check: >-
