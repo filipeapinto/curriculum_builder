@@ -1,0 +1,157 @@
+{
+  "opened_at": "2026-08-16T12-55-36.426600+00-00",
+  "artifact_original": "/Users/filipepinto/Projects/curriculum_builder_wt/refactor-curriculum-factory-repository/plans_internal/refactor_repo/checkpoints/P00A/P00A_execution_checkpoint.v1.md",
+  "artifact_current": "/Users/filipepinto/Projects/curriculum_builder_wt/refactor-curriculum-factory-repository/plans_internal/refactor_repo/checkpoints/P00A/P00A_execution_checkpoint.v4.md",
+  "session_id": "01a00aa4-5981-7c32-9999-46e9b132ee5d",
+  "chain": "8cc53de18c131be4d4fa6c4aec4be96df10247b970525b2c702aca91907654e2",
+  "rounds_completed": 5,
+  "rounds": [
+    {
+      "round": 1,
+      "timestamp": "2026-08-16T12:56:52.674167+00:00",
+      "verdict": "FAIL",
+      "artifact_path": "/Users/filipepinto/Projects/curriculum_builder_wt/refactor-curriculum-factory-repository/plans_internal/refactor_repo/checkpoints/P00A/P00A_execution_checkpoint.v1.md",
+      "artifact_sha256": "c4d4dac87e315d6aadf9726ebba78c34e7b4040dc36711e1ba1db8f03ff9f504",
+      "findings_at_threshold": [
+        {
+          "id": "P00A-B01",
+          "title": "Resolved manifest does not activate or resolve the claimed 13 prompts",
+          "severity": "blocker",
+          "criterion_ref": "Criterion 2: “Resolved manifest exists, contains exactly 13 activated prompts (P00, P00A, P01–P10)”"
+        },
+        {
+          "id": "P00A-B02",
+          "title": "P02S does not own the live structured-file edits",
+          "severity": "blocker",
+          "criterion_ref": "Criterion 4 pass condition: “P02S owns all structured file edits”"
+        }
+      ],
+      "observations_count": 2,
+      "chain": "507087118d4a66e6239874ad7393306534f0be53a6445d43e2e4046023126893"
+    },
+    {
+      "round": 2,
+      "timestamp": "2026-08-16T12:58:58.804979+00:00",
+      "verdict": "FAIL",
+      "artifact_path": "/Users/filipepinto/Projects/curriculum_builder_wt/refactor-curriculum-factory-repository/plans_internal/refactor_repo/checkpoints/P00A/P00A_execution_checkpoint.v2.md",
+      "artifact_sha256": "d5d9fa24bbfe22ae1a582fc3e97951af03a027327bbe78eb708fce98d7a0d0e7",
+      "findings_at_threshold": [
+        {
+          "id": "P00A-B01",
+          "title": "Resolved manifest still does not contain the required 13 activated prompts",
+          "severity": "blocker",
+          "criterion_ref": "Criterion 2: “Resolved manifest exists, contains exactly 13 activated prompts (P00, P00A, P01–P10)” and its prescribed manifest path `prompt_manifest.resolved.v1.yaml`."
+        },
+        {
+          "id": "P00A-B02",
+          "title": "P02S still does not own all live structured-file edits",
+          "severity": "blocker",
+          "criterion_ref": "Criterion 4 pass condition: “P02S owns all structured file edits,” with verification that “no other prompt owns structured-file transformation units.”"
+        }
+      ],
+      "observations_count": 3,
+      "chain": "0be0f4823e1f1ae7d738291abad764a810db3e0a73a95fd203bf45581e6603f0"
+    },
+    {
+      "round": 3,
+      "timestamp": "2026-08-16T13:00:54.670770+00:00",
+      "verdict": "FAIL",
+      "artifact_path": "/Users/filipepinto/Projects/curriculum_builder_wt/refactor-curriculum-factory-repository/plans_internal/refactor_repo/checkpoints/P00A/P00A_execution_checkpoint.v3.md",
+      "artifact_sha256": "e53d4e9e443669b857af702ef098c32d53d078e8be78c21df4634a6ca38d9994",
+      "findings_at_threshold": [
+        {
+          "id": "P00A-B02",
+          "title": "Structured-file edits remain owned and executed outside P02S",
+          "severity": "blocker",
+          "criterion_ref": "Criterion 4: “P02S owns all structured file edits” and “no other prompt owns structured-file transformation units.”"
+        },
+        {
+          "id": "P00A-B03",
+          "title": "The existing v1 manifest was replaced instead of preserving a new version",
+          "severity": "blocker",
+          "criterion_ref": "Criterion 7: “Confirm no existing artifacts overwritten with new versions” and pass condition requiring “prior artifacts unchanged.”"
+        }
+      ],
+      "observations_count": 4,
+      "chain": "af7993d5f95d08f5f11318116f16af85a2072762ed30d463a82bef959b646c6e"
+    },
+    {
+      "round": 4,
+      "timestamp": "2026-08-16T13:01:51.805124+00:00",
+      "verdict": "FAIL",
+      "artifact_path": "/Users/filipepinto/Projects/curriculum_builder_wt/refactor-curriculum-factory-repository/plans_internal/refactor_repo/checkpoints/P00A/P00A_execution_checkpoint.v3.md",
+      "artifact_sha256": "e53d4e9e443669b857af702ef098c32d53d078e8be78c21df4634a6ca38d9994",
+      "findings_at_threshold": [
+        {
+          "id": "P00A-B02",
+          "title": "Structured-file edits remain owned and executed outside P02S",
+          "severity": "blocker",
+          "criterion_ref": "Criterion 4: “P02S owns all structured file edits” and “no other prompt owns structured-file transformation units.”"
+        },
+        {
+          "id": "P00A-B03",
+          "title": "The existing v1 manifest was replaced instead of preserving a new version",
+          "severity": "blocker",
+          "criterion_ref": "Criterion 7: “Confirm no existing artifacts overwritten with new versions” and the requirement that prior artifacts remain unchanged."
+        }
+      ],
+      "observations_count": 3,
+      "chain": "c0770e6bda4c84119ba9a0af2992478f209468076af622d9fcbf1a2066ffc229"
+    },
+    {
+      "round": 5,
+      "timestamp": "2026-08-16T13:03:36.069491+00:00",
+      "verdict": "FAIL",
+      "artifact_path": "/Users/filipepinto/Projects/curriculum_builder_wt/refactor-curriculum-factory-repository/plans_internal/refactor_repo/checkpoints/P00A/P00A_execution_checkpoint.v4.md",
+      "artifact_sha256": "0f4ef5aedba400204184204b0af7b5389fcf5d5fd0e6ff3d547604875359c21a",
+      "findings_at_threshold": [
+        {
+          "id": "P00A-B01",
+          "title": "The required v1 manifest is again unresolved",
+          "severity": "blocker",
+          "criterion_ref": "Criterion 2 requires `prompts/resolved/prompt_manifest.resolved.v1.yaml` to contain exactly 13 activated prompts with valid inventory-derived boundaries."
+        },
+        {
+          "id": "P00A-B02",
+          "title": "P02S still forbids the live structured-file edits assigned to it",
+          "severity": "blocker",
+          "criterion_ref": "Criterion 4 requires P02S to be “assigned responsibility for all TOML/JSON/YAML edits” and to own all structured-file edits."
+        }
+      ],
+      "observations_count": 3,
+      "chain": "8cc53de18c131be4d4fa6c4aec4be96df10247b970525b2c702aca91907654e2"
+    }
+  ],
+  "stall_count": 0,
+  "last_fingerprint": "3323ff87c64e819c039b42e1c293d62e72ac6665f0d7c4846cb448037af15313",
+  "exec_copied": [],
+  "terminal": {
+    "state": "QA_FAILED",
+    "reason": "MAX_ITERATIONS_EXHAUSTED",
+    "detail": "2 finding(s) still at threshold after 5 rounds",
+    "artifact": "/Users/filipepinto/Projects/curriculum_builder_wt/refactor-curriculum-factory-repository/plans_internal/refactor_repo/checkpoints/P00A/P00A_execution_checkpoint.v4.md",
+    "rounds_completed": 5,
+    "max_iterations": 5,
+    "session_id": "01a00aa4-5981-7c32-9999-46e9b132ee5d",
+    "thread_id": "01a00aa4-5981-7c32-9999-46e9b132ee5d",
+    "transport": "exec",
+    "rollout_file": "/Users/filipepinto/.codex/sessions/2026/08/16/rollout-2026-08-16T08-55-38-01a00aa4-5981-7c32-9999-46e9b132ee5d.jsonl",
+    "chain": "8cc53de18c131be4d4fa6c4aec4be96df10247b970525b2c702aca91907654e2",
+    "qa_dir": "/Users/filipepinto/Projects/curriculum_builder_wt/refactor-curriculum-factory-repository/plans_internal/refactor_repo/checkpoints/P00A/QA",
+    "finalized_at": "2026-08-16T13:03:36.080565+00:00"
+  },
+  "config": {
+    "criteria": "# P00A Checkpoint QA Criteria\n\nThis document defines the observable, verifiable conditions for P00A checkpoint acceptance.\n\n## Criterion 1: P00 Evidence Completeness and Currency\n\n**Observable condition**: P00 has witnessed QA_PASSED verdict, inventory is flagged complete, baseline digests are stable and match prior values.\n\n**How to verify**:\n- Check P00 QA verdict file: `plans_internal/refactor_repo/checkpoints/P00/QA_repaired/verdict.json` contains `\"state\": \"QA_PASSED\"`\n- Check P00 inventory: `provenance.complete` is `true`\n- Verify inventory and baseline SHA256 digests match expected values\n- Confirm no modifications to P00 evidence files\n\n**Pass condition**: P00 verdict is QA_PASSED, inventory flagged complete, all digests stable.\n\n---\n\n## Criterion 2: Prompt Count and Boundaries Are Inventory-Derived\n\n**Observable condition**: Resolved manifest exists, contains exactly 13 activated prompts (P00, P00A, P01–P10), each with inventory-derived mutation units, no gaps or overlaps.\n\n**How to verify**:\n- Check manifest file exists: `plans_internal/refactor_repo/prompts/resolved/prompt_manifest.resolved.v1.yaml`\n- Load manifest and count prompts: should be 13\n- Verify each prompt has a non-empty `owns` list\n- Verify no mutation unit appears in multiple prompts' `owns` lists\n- Confirm prompt list matches specification §8 phase structure\n\n**Pass condition**: 13 prompts present, all have disjoint ownership, no gaps in cluster coverage.\n\n---\n\n## Criterion 3: Mutation Ownership Is Complete and Non-Overlapping\n\n**Observable condition**: Every mutation unit is owned by exactly one prompt, with zero duplicates or conflicts.\n\n**How to verify**:\n- Extract all units from all prompts' `owns` lists\n- Count total units and unique units: must be equal\n- Check for any unit appearing in multiple `owns` lists\n- Verify at least 20+ units (full decomposition scope)\n\n**Pass condition**: Total units = unique units, zero conflicts, at least 20 units total.\n\n---\n\n## Criterion 4: Structured-File Transformations Have Full Codemod Controls\n\n**Observable condition**: P02S (structured data codemod) is assigned responsibility for all TOML/JSON/YAML edits, with parser-based transformation controls defined in prompt.\n\n**How to verify**:\n- Check manifest: P02S has `toml_json_yaml_codemod_tooling` in its `owns` list\n- Verify no other prompt owns structured-file transformation units\n- Check P02S prompt v3 file contains parser-based codemod specification, dry-run, idempotence, fixture controls\n\n**Pass condition**: P02S owns all structured file edits, no regex-based edits in other prompts.\n\n---\n\n## Criterion 5: Acceptance Criteria Traceability\n\n**Observable condition**: All 20 specification acceptance criteria are assigned to exactly one primary prompt owner, with CLI completeness (Criterion 20) assigned to P08.\n\n**How to verify**:\n- Map each criterion 1–20 to its owning prompt (per specification §2–11)\n- Check that every criterion has exactly one owner\n- Verify Criterion 20 (CLI completeness post-repair) is owned by P08 (clean_room_release)\n- Confirm P08 runs the full end-to-end interface test\n\n**Pass condition**: 20 criteria mapped, each with exactly one owner, Criterion 20 owned by P08.\n\n---\n\n## Criterion 6: Schema Validation and Independent Gating\n\n**Observable condition**: P00A prompt validates against schema, no validation errors, ready for Codex QA verification.\n\n**How to verify**:\n- Run schema validator: `python3 schemas/validate_instance.py --schema schemas/prompt.schema.v4.json --instance plans_internal/refactor_repo/prompts/P00A_post_inventory_decomposition.prompt.v3.yaml`\n- Verify exit code is 0 (no validation errors)\n- Confirm P01–P10 templates are pre-existing v3 (no modifications)\n\n**Pass condition**: P00A validates, downstream templates unmodified, no schema errors.\n\n---\n\n## Criterion 7: Versioning and Authorized Paths\n\n**Observable condition**: No source code or non-authorized files modified; only P00A planning artifacts created within authorized paths.\n\n**How to verify**:\n- Run git diff: no changes to files outside `plans_internal/refactor_repo/`\n- Check untracked files: all are within authorized paths:\n  - `plans_internal/refactor_repo/prompts/resolved/`\n  - `plans_internal/refactor_repo/prompts/generated/`\n  - `plans_internal/refactor_repo/checkpoints/P00A/`\n  - `plans_internal/refactor_repo/execution/P00A/`\n- Verify P00 checkpoints, inventory, baseline are byte-for-byte unchanged\n- Confirm no existing artifacts overwritten with new versions\n\n**Pass condition**: Zero unauthorized file changes, all new artifacts within authorized paths, prior artifacts unchanged.\n\n---\n\n## Summary\n\n**Checkpoint acceptable when all 7 criteria pass.**\n\nEach criterion is independently verifiable without consulting the artifact's own claims; the artifact is the evidence for checking them, not the judge.\n\n**Blocker threshold**: Any criterion failing blocks completion.  \n**Repair authority**: P00A implementation (prompts, manifest, checkpoint logic); does not extend to P01–P10 prompt modifications.  \n**Non-targets**: Source code refactoring, P00 changes, CI/environment setup.\n",
+    "focus": "",
+    "threshold": "blocker",
+    "max_iterations": 5,
+    "timeout_seconds": 900,
+    "retries": 2,
+    "model": null,
+    "effort": null,
+    "transport": "exec",
+    "allow_execution": false,
+    "grounding": []
+  },
+  "thread_id": "01a00aa4-5981-7c32-9999-46e9b132ee5d"
+}

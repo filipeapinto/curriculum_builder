@@ -1,0 +1,138 @@
+manifest_version: '1'
+kind: inventory_resolved_execution_manifest
+specification_version: '8'
+specification_path: plans_internal/refactor_repo/refactor_repository.spec.v8.html
+prompt_schema: schemas/prompt.schema.v4.json
+entrypoint: RUN_repository_refactor
+generated_timestamp: '2026-08-16T15:00:00Z'
+prompts:
+  P00:
+    title: Inventory Baseline and Behavioral Capture
+    version: '3'
+    path: plans_internal/refactor_repo/prompts/P00_inventory_baseline.prompt.v3.yaml
+    status: completed
+    depends_on: []
+    owns:
+    - inventory_baseline_and_behavioral_capture
+  P00A:
+    title: Derive the Execution Plan and Prompt Set from Inventory
+    version: '3'
+    path: plans_internal/refactor_repo/prompts/P00A_post_inventory_decomposition.prompt.v3.yaml
+    status: active
+    depends_on:
+    - P00
+    owns:
+    - prompt_manifest_and_execution_plan
+  P01:
+    title: Create pyproject.toml and packaging skeleton
+    version: '3'
+    path: plans_internal/refactor_repo/prompts/P01_packaging_skeleton.prompt.v3.yaml
+    status: active
+    depends_on:
+    - P00A
+    owns:
+    - packaging_skeleton_structure
+  P02:
+    title: Mechanical Python import and qualified name updates
+    version: '3'
+    path: plans_internal/refactor_repo/prompts/P02_import_codemod.prompt.v3.yaml
+    status: active
+    depends_on:
+    - P01
+    owns:
+    - python_import_and_qualified_name_codemod_tooling
+  P02S:
+    title: Parser-based TOML/JSON/YAML codemod
+    version: '4'
+    path: plans_internal/refactor_repo/prompts/generated/P02S_structured_data_codemod.prompt.v4.yaml
+    status: active
+    depends_on:
+    - P02
+    owns:
+    - toml_json_yaml_codemod_tooling
+    - structured_file_transformations_all_formats
+    - pyproject_toml_identity_updates
+    - requirements_file_updates
+    - ci_workflow_yaml_updates
+  P03:
+    title: Source directory layout and semantics
+    version: '3'
+    path: plans_internal/refactor_repo/prompts/P03_source_move.prompt.v3.yaml
+    status: active
+    depends_on:
+    - P02S
+    owns:
+    - runtime_to_src_relocation
+    - import_application_in_relocated_tree
+  P04:
+    title: Package resource loading and output semantics
+    version: '3'
+    path: plans_internal/refactor_repo/prompts/P04_resource_root_repair.prompt.v3.yaml
+    status: active
+    depends_on:
+    - P03
+    owns:
+    - package_resource_loader_semantics
+    - output_containment_and_namespace
+    - root_semantics
+  P05:
+    title: Fixture migration and output consumer changes
+    version: '3'
+    path: plans_internal/refactor_repo/prompts/P05_fixture_output_migration.prompt.v3.yaml
+    status: active
+    depends_on:
+    - P04
+    owns:
+    - inventory_resolved_output_consumer_changes
+    - fixture_relative_path_closure
+    - fixture_module_identity
+  P06:
+    title: Schema identifier compatibility and reference closure
+    version: '3'
+    path: plans_internal/refactor_repo/prompts/P06_schema_compatibility.prompt.v3.yaml
+    status: active
+    depends_on:
+    - P05
+    owns:
+    - schema_decision_ledger_and_resolution_tests
+    - schema_reference_closure_verification
+  P07:
+    title: Live markdown, HTML, and identity prose updates
+    version: '3'
+    path: plans_internal/refactor_repo/prompts/P07_identity_documentation.prompt.v3.yaml
+    status: active
+    depends_on:
+    - P06
+    owns:
+    - live_markdown_html_and_prose_identity_changes
+  P08:
+    title: Release harness, rollback, and CLI acceptance
+    version: '3'
+    path: plans_internal/refactor_repo/prompts/P08_clean_room_release.prompt.v3.yaml
+    status: active
+    depends_on:
+    - P07
+    owns:
+    - release_harness
+    - rollback_procedures
+    - cli_smoke_test_and_acceptance_verification
+    - final_verification_and_gate
+  P09:
+    title: Test tree reorganization and CI workflow
+    version: '3'
+    path: plans_internal/refactor_repo/prompts/P09_test_tree_organization.prompt.v3.yaml
+    status: active
+    depends_on:
+    - P08
+    owns:
+    - test_path_moves
+    - test_fixture_owner_registration
+  P10:
+    title: External repository rename and authorization
+    version: '3'
+    path: plans_internal/refactor_repo/prompts/P10_external_rename.prompt.v3.yaml
+    status: active
+    depends_on:
+    - P09
+    owns:
+    - authorized_external_repository_and_checkout_rename
