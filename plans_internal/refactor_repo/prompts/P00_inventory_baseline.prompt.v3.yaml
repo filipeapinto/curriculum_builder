@@ -11,6 +11,7 @@ authorized_paths:
   - plans_internal/refactor_repo/execution/P00/execution_log.jsonl
   - plans_internal/refactor_repo/execution/P00/.execution_log.counter.json
   - plans_internal/refactor_repo/execution/P00/.execution_log.lock
+  - failed_execution_evidence/
 
 model: sonnet
 
