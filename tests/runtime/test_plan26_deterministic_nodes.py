@@ -46,7 +46,12 @@ from curriculum_factory.langgraph_factory.egress import (
 
 PACKAGE_ROOT = Path(node_pkg.__file__).resolve().parent
 FACTORY_ROOT = PACKAGE_ROOT.parent
-REPO_ROOT = FACTORY_ROOT.parents[1]
+# The repository data root is the checkout this test file lives in. It is emphatically
+# NOT derived from the installed package's location: once curriculum_factory is really
+# pip-installed, FACTORY_ROOT.parents[1] is site-packages, where curricula/, schemas/
+# and policy/ have never existed. That inference is the defect P04 exists to remove,
+# and reproducing it here would just hide it from the suite.
+REPO_ROOT = Path(__file__).resolve().parents[2]
 CURRICULA_ROOT = REPO_ROOT / "curricula"
 NODE_MODULES = (inputs, sources, domain, content, visuals, render, review, terminal)
 

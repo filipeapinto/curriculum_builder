@@ -396,7 +396,10 @@ def finalize(engine: Path, output: Path, *, reentry_reason: str | None = None,
 def main() -> int:
     parser = argparse.ArgumentParser()
     parser.add_argument("action", choices=["prepare", "finalize"])
-    parser.add_argument("--engine", type=Path, default=Path(__file__).resolve().parents[1])
+    # No default: the repository root is the operator's, not the distribution's.
+    parser.add_argument("--engine", type=Path, default=None,
+                        help="repository data root; required unless "
+                             "CURRICULUM_FACTORY_REPOSITORY_ROOT is set")
     parser.add_argument("--curriculum", type=Path, default=Path("curricula/arduino_kit"))
     parser.add_argument("--lab-id", default="L01")
     parser.add_argument("--output-root", type=Path, required=True)

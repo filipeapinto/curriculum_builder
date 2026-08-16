@@ -22,6 +22,7 @@ import jsonschema
 import yaml
 
 from . import pdf_inspect, run_state
+from . import roots
 from .checks import (CheckFailure, bloom_report, check_claim_entailment, check_derivation,
                      check_receipts, pdf_page_count, rasterize_and_check_nonblank,
                      readability_problems, required_checks_for, validate_unit)
@@ -265,7 +266,8 @@ class CurriculumFactoryGraph:
                  reviewer: Worker | None = None,
                  fetcher: Callable[[str], bytes] = _default_fetch,
                  capabilities: Any | None = None):
-        self.engine = Path(engine or Path(__file__).resolve().parents[1]).resolve()
+        # Repository-owned data root: supplied, never inferred (see roots).
+        self.engine = roots.repository_root(engine)
         self.runtime = CurriculumRuntime(self.engine)
         self.author = author or CodexWorker(self.engine)
         self.reviewer = reviewer or GeminiReviewer(self.engine)

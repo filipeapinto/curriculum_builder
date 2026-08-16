@@ -169,7 +169,10 @@ def main() -> int:
     parser = argparse.ArgumentParser()
     parser.add_argument("action", choices=["prepare", "live"])
     parser.add_argument("--task-root", type=Path, required=True)
-    parser.add_argument("--engine", type=Path, default=Path(__file__).resolve().parents[1])
+    # No default: the repository root is the operator's, not the distribution's.
+    parser.add_argument("--engine", type=Path, default=None,
+                        help="repository data root; required unless "
+                             "CURRICULUM_FACTORY_REPOSITORY_ROOT is set")
     parser.add_argument("--curriculum", type=Path, default=Path("curricula/arduino_kit"))
     parser.add_argument("--model", default="gemini-3-pro-preview")
     args = parser.parse_args()

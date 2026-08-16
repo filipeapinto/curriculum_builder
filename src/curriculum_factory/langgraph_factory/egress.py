@@ -24,7 +24,8 @@ from urllib.parse import urlparse
 import jsonschema
 import yaml
 
-SCHEMA_DIR = Path(__file__).resolve().parent / "schemas"
+from curriculum_factory import resources as package_resources
+from curriculum_factory import roots
 
 PROVIDERS: tuple[str, ...] = ("anthropic", "openai", "primary_source_hosts")
 
@@ -87,7 +88,13 @@ def canonical_digest(obj: Any) -> str:
 
 
 def _load_schema(name: str) -> dict[str, Any]:
-    return json.loads((SCHEMA_DIR / name).read_text(encoding="utf-8"))
+    """One package-owned schema, read through importlib.resources.
+
+    These schemas ship inside the distribution and are versioned with the code, so
+    they are addressed as package resources rather than as a directory beside this
+    module's __file__ -- that form assumes the distribution is an unpacked tree.
+    """
+    return package_resources.package_schema(name)
 
 
 @dataclass(frozen=True)
@@ -373,8 +380,19 @@ class RetrievalPolicy:
     })
 
 
-REPO_ROOT = Path(__file__).resolve().parents[2]
-DEFAULT_RETRIEVAL_HOSTS_PATH = REPO_ROOT / "policy" / "retrieval_hosts.v1.yaml"
+#: Where the retrieval host policy sits *relative to the repository data root*.
+#: The root itself is always supplied by the caller; see curriculum_factory.roots.
+RETRIEVAL_HOSTS_RELATIVE_PATH = Path("policy") / "retrieval_hosts.v1.yaml"
+
+
+def default_retrieval_hosts_path(repository_root: Path | str | None = None) -> Path:
+    """The retrieval host policy, under an explicitly supplied repository root.
+
+    This replaces a module-level constant derived from this file's own location.
+    That constant resolved into site-packages once the package was really installed,
+    which is how a policy file the operator owns silently became unreadable.
+    """
+    return roots.repository_root(repository_root) / RETRIEVAL_HOSTS_RELATIVE_PATH
 
 
 class RetrievalHostProfileError(EgressError):
@@ -383,6 +401,7 @@ class RetrievalHostProfileError(EgressError):
 
 def load_retrieval_host_profile(
     profile_name: str, *, path: Path | None = None,
+    repository_root: Path | str | None = None,
 ) -> tuple[tuple[str, ...], str]:
     """Return `(hosts, policy_digest)` for one named profile (N30V7-F07, spec decision).
 
@@ -393,7 +412,11 @@ def load_retrieval_host_profile(
     checks on top of whatever this returns; this function only guards the *shape* of
     the declared allowlist itself, before it ever reaches that enforcement.
     """
-    document_path = path or DEFAULT_RETRIEVAL_HOSTS_PATH
+    # Either an exact file, or the repository root the policy lives under. There is
+    # no third option: nothing here infers the root from where this module is
+    # installed, because the caller owns policy/, not the distribution.
+    document_path = Path(path) if path is not None \
+        else default_retrieval_hosts_path(repository_root)
     try:
         raw = document_path.read_text(encoding="utf-8")
     except OSError as error:

@@ -31,6 +31,8 @@ import jsonschema
 import yaml
 
 from .. import checks, pdf_inspect, visual_maps
+from .. import resources as package_resources
+from .. import roots
 from ..pdf_inspect import MIN_POINT_SIZE
 from .artifacts import UNIT_SCOPE, ArtifactStore, ArtifactStream, canonical_digest
 from .egress import (
@@ -43,11 +45,18 @@ from .egress import (
     utc_now,
 )
 
-PACKAGE_ROOT = Path(__file__).resolve().parent
-REGISTRY_PATH = PACKAGE_ROOT / "config" / "model_jobs.v1.yaml"
-SCHEMA_DIR = PACKAGE_ROOT / "schemas"
-PROMPT_DIR = PACKAGE_ROOT / "prompts"
-REPO_ROOT = PACKAGE_ROOT.parents[1]
+# Package-owned resources, addressed through importlib.resources rather than through
+# this module's own __file__. On an ordinary unpacked wheel these are Paths and behave
+# exactly as before; on a zipped or otherwise non-filesystem distribution they are
+# Traversables, and every read below goes through an API that accepts one.
+PACKAGE_ROOT = package_resources.package_root()
+REGISTRY_PATH = package_resources.config_dir() / "model_jobs.v1.yaml"
+SCHEMA_DIR = package_resources.schema_dir()
+PROMPT_DIR = package_resources.prompt_dir()
+
+# There is deliberately no REPO_ROOT here. It used to be PACKAGE_ROOT.parents[1], which
+# is site-packages once this package is really installed. Repository-owned data is
+# reached through curriculum_factory.roots, from a root the caller supplies.
 
 AUTHORING_FAMILY = "anthropic"
 REVIEW_FAMILY = "openai"
@@ -123,8 +132,21 @@ def sha256_file(path: Path) -> str:
     return hashlib.sha256(Path(path).read_bytes()).hexdigest()
 
 
-def _load_json(path: Path) -> dict[str, Any]:
-    return json.loads(Path(path).read_text(encoding="utf-8"))
+def _read_resource_text(source: Any) -> str:
+    """Read a package resource or a filesystem path, whichever the caller has.
+
+    A Traversable and a Path both answer ``read_text``; only a Path can be handed to
+    ``Path()``. Preferring the shared method is what lets the same code work when the
+    distribution is not an unpacked directory.
+    """
+    reader = getattr(source, "read_text", None)
+    if reader is None:
+        return Path(source).read_text(encoding="utf-8")
+    return reader(encoding="utf-8")
+
+
+def _load_json(path: Any) -> dict[str, Any]:
+    return json.loads(_read_resource_text(path))
 
 
 # --------------------------------------------------------------------------- registry
@@ -151,14 +173,21 @@ class JobRoute:
         return self.family == REVIEW_FAMILY
 
 
-_REGISTRY_CACHE: dict[Path, Mapping[str, JobRoute]] = {}
+_REGISTRY_CACHE: dict[str, Mapping[str, JobRoute]] = {}
 
 
-def load_job_registry(path: Path | str = REGISTRY_PATH) -> Mapping[str, JobRoute]:
-    resolved = Path(path).resolve()
-    if resolved in _REGISTRY_CACHE:
-        return _REGISTRY_CACHE[resolved]
-    document = yaml.safe_load(resolved.read_text(encoding="utf-8"))
+def load_job_registry(path: Any = None) -> Mapping[str, JobRoute]:
+    """The model job registry: the package's own by default, or an explicit file.
+
+    The default is read as a package resource, not as a path derived from this
+    module's location.
+    """
+    source = REGISTRY_PATH if path is None else path
+    resolved = source if hasattr(source, "read_text") else Path(source).resolve()
+    cache_key = str(resolved)
+    if cache_key in _REGISTRY_CACHE:
+        return _REGISTRY_CACHE[cache_key]
+    document = yaml.safe_load(_read_resource_text(resolved))
     entries = document.get("jobs") or []
     declared = int(document.get("job_count", 0))
     if declared != 8 or len(entries) != 8:
@@ -190,7 +219,7 @@ def load_job_registry(path: Path | str = REGISTRY_PATH) -> Mapping[str, JobRoute
         if route.job_id in routes:
             raise RouteRejected(f"duplicate job id {route.job_id}")
         routes[route.job_id] = route
-    _REGISTRY_CACHE[resolved] = routes
+    _REGISTRY_CACHE[cache_key] = routes
     return routes
 
 
@@ -202,23 +231,26 @@ def resolve_route(job_id: str, registry: Mapping[str, JobRoute] | None = None) -
         raise RouteRejected(f"unknown job id: {job_id!r}") from None
 
 
-def resolve_prompt_path(route: JobRoute) -> Path:
-    """Resolve the prompt relative to this package, never the process cwd."""
-    candidate = (PROMPT_DIR / route.prompt).resolve()
-    if candidate.parent != PROMPT_DIR:
-        raise RouteRejected(f"prompt escapes package prompt directory: {route.prompt!r}")
-    if not candidate.is_file():
-        raise RouteRejected(f"prompt does not resolve inside the package: {route.prompt!r}")
-    return candidate
+def _resolve_package_entry(directory: Any, name: str, label: str) -> Any:
+    """One entry inside a package resource directory, containment-checked.
+
+    The name must be bare. Rejecting a separator or a parent reference outright is
+    what keeps a route from addressing anything outside the shipped directory, and it
+    is a check that works on a Traversable, where there is no `.parent` to compare.
+    """
+    try:
+        return package_resources._child(directory, name, label)
+    except package_resources.ResourceError as error:
+        raise RouteRejected(str(error)) from None
 
 
-def resolve_schema_path(route: JobRoute) -> Path:
-    candidate = (SCHEMA_DIR / route.schema).resolve()
-    if candidate.parent != SCHEMA_DIR:
-        raise RouteRejected(f"schema escapes package schema directory: {route.schema!r}")
-    if not candidate.is_file():
-        raise RouteRejected(f"schema does not resolve inside the package: {route.schema!r}")
-    return candidate
+def resolve_prompt_path(route: JobRoute) -> Any:
+    """The route's prompt, as a package resource -- never relative to the cwd."""
+    return _resolve_package_entry(PROMPT_DIR, route.prompt, "prompt")
+
+
+def resolve_schema_path(route: JobRoute) -> Any:
+    return _resolve_package_entry(SCHEMA_DIR, route.schema, "schema")
 
 
 def load_output_schema(route: JobRoute) -> dict[str, Any]:
@@ -1530,8 +1562,10 @@ def stage_workspace(
     payload = {"projection": dict(projection), "authorization_receipt": dict(authorization_receipt)}
     input_path = root / "authorized_input.json"
     input_path.write_text(canonical_json(payload), encoding="utf-8")
-    shutil.copyfile(schema_source, root / "output.schema.json")
-    shutil.copyfile(prompt_source, root / route.prompt)
+    # materialize(), not copyfile(): the source is a package resource, which is only
+    # guaranteed to be a real file on an unpacked distribution.
+    package_resources.materialize(schema_source, root / "output.schema.json")
+    package_resources.materialize(prompt_source, root / route.prompt)
 
     cli_schema_sha256: str | None = None
     if cli_schema_projection is not None:
@@ -2045,9 +2079,13 @@ class CliTransport:
         env_passthrough: Sequence[str] = (),
         keep_workspaces: bool = False,
         executables: Mapping[str, ExecutableIdentity] | None = None,
-        engine_root: Path | str = REPO_ROOT,
+        engine_root: Path | str | None = None,
     ) -> None:
-        self.engine_root = Path(engine_root).resolve()
+        # The engine root is repository-owned data, so it is supplied, not inferred.
+        # It used to default to this module's install location's grandparent, which is
+        # site-packages once installed; roots.repository_root() raises an actionable
+        # error instead of silently pointing there.
+        self.engine_root = roots.repository_root(engine_root)
         self.output_root = Path(output_root).resolve()
         self.run_id = run_id
         self.curriculum_digest = curriculum_digest
@@ -2778,7 +2816,13 @@ class FakeCliTransport:
         if not root.is_relative_to(temp_root):
             raise TransportError(
                 f"fake transport root must live under {temp_root}, got {root}")
-        if root == REPO_ROOT or REPO_ROOT in root.parents or root.is_relative_to(REPO_ROOT):
+        # The tempdir check above is the load-bearing one. This second clause used to
+        # compare against a REPO_ROOT inferred from this module's install location,
+        # which pointed at site-packages and so guarded nothing; it now compares
+        # against the repository root only when the caller has actually configured one.
+        product_root = roots.configured_repository_root()
+        if product_root is not None and (
+                root == product_root or root.is_relative_to(product_root)):
             raise TransportError("fake transport must not address a product root")
         self.sandbox_root = root
         self.responses = {job: dict(payload) for job, payload in responses.items()}

@@ -342,13 +342,16 @@ DIRECTORY_CLASSIFICATION: dict[str, dict[str, Any]] = {
         evidence=["grep hit: runtime/model_worker.py."],
     ),
     "runtime": dict(
-        owner_or_reader="The production Python package itself; imported and executed "
-        "repository-wide (69 tracked files at collection time).",
+        owner_or_reader="Legacy production Python package before the source-layout migration.",
         lifecycle_class="production_source",
-        proposed_disposition="Move beneath src/curriculum_factory/ in the source-move phase "
-        "(spec v8 section 4); out of scope for P00, which is read-only.",
-        evidence=["spec v8 section 4 target tree: 'src/curriculum_factory/ ... remaining "
-                  "current runtime modules'."],
+        proposed_disposition="Move beneath src/curriculum_factory/; absent after the source move.",
+        evidence=["spec v8 section 4 defines src/curriculum_factory/ as the target tree."],
+    ),
+    "src": dict(
+        owner_or_reader="Python packaging tools and every consumer of the installed curriculum_factory package.",
+        lifecycle_class="production_source",
+        proposed_disposition="Retain as the sole production Python source root.",
+        evidence=["pyproject.toml limits package discovery to src/; production modules reside in src/curriculum_factory/."],
     ),
     "schemas": dict(
         owner_or_reader="runtime/run_state.py, runtime/lesson_render.py, runtime/controller.py, "

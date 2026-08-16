@@ -1,8 +1,10 @@
-usage: python3 -m runtime.run_curriculum [-h] --engine-root PATH
-                                         --curriculum PATH --output-root PATH
-                                         (--preflight | --unit UNIT_ID |
-                                         --all | --resume)
-                                         [--authorization PATH]
+usage: python3 -m curriculum_factory.run_curriculum [-h] --engine-root PATH
+                                                    --curriculum PATH
+                                                    --output-root PATH
+                                                    (--preflight |
+                                                    --unit UNIT_ID | --all |
+                                                    --resume)
+                                                    [--authorization PATH]
 
 Sole production CLI entry to the compiled Plan 26 curriculum factory.
 

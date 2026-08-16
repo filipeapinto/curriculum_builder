@@ -9,6 +9,7 @@ from typing import Any, Callable
 
 import jsonschema
 import yaml
+from . import roots
 
 from .checkpoint import CheckpointError, Checkpoints
 from .io import atomic_json, canonical, canonical_hash, require_internal_output, require_within, sha256_file
@@ -25,7 +26,9 @@ class RuntimeFailure(RuntimeError):
 
 class CurriculumRuntime:
     def __init__(self, engine: Path | None = None):
-        self.engine = canonical(engine or Path(__file__).resolve().parents[1])
+        # Repository-owned data root: supplied, never inferred from this module's
+        # install location (which is site-packages once the package is installed).
+        self.engine = canonical(roots.repository_root(engine))
         self.prompt = self.engine / "meta_prompt/curriculum.prompt.v1.md"
         self.controller_policy = yaml.safe_load((self.engine / "policy/controller.v1.yaml").read_text())
         self.limit_policy = yaml.safe_load((self.engine / "policy/limits.v1.yaml").read_text())

@@ -32,6 +32,11 @@ from curriculum_factory.langgraph_factory.egress import (
     load_retrieval_host_profile,
 )
 
+# The repository data root is the checkout this test file lives in, computed from the
+# test file's own location -- never from the installed package's location, which is
+# site-packages once curriculum_factory is really installed.
+REPO_ROOT = Path(__file__).resolve().parents[2]
+
 CURRICULUM_DIGEST = "a" * 64
 OTHER_DIGEST = "b" * 64
 RUN_ID = "run-plan26-egress"
@@ -510,9 +515,10 @@ def test_default_opener_identifies_the_retriever_with_a_stable_user_agent(
 def test_load_retrieval_host_profile_returns_the_declared_electronics_profile(tmp_path: Path):
     """N30V7-F07: a curriculum selects a profile by name; it never supplies hosts."""
 
-    from curriculum_factory.langgraph_factory.egress import DEFAULT_RETRIEVAL_HOSTS_PATH
+    from curriculum_factory.langgraph_factory.egress import default_retrieval_hosts_path
 
-    hosts, digest = load_retrieval_host_profile("electronics")
+    # The repository root is supplied explicitly; the package never infers it.
+    hosts, digest = load_retrieval_host_profile("electronics", repository_root=REPO_ROOT)
     assert hosts == (
         "docs.arduino.cc", "learn.adafruit.com", "learn.sparkfun.com",
         "support.microbit.org", "www.allaboutcircuits.com", "www.arduino.cc",
@@ -521,13 +527,13 @@ def test_load_retrieval_host_profile_returns_the_declared_electronics_profile(tm
     assert len(digest) == 64
     # Same file, same bytes, same digest -- a deterministic binding, not a random one.
     _, digest2 = load_retrieval_host_profile(
-        "electronics", path=DEFAULT_RETRIEVAL_HOSTS_PATH)
+        "electronics", path=default_retrieval_hosts_path(REPO_ROOT))
     assert digest == digest2
 
 
 def test_load_retrieval_host_profile_rejects_an_unknown_profile_name():
     with pytest.raises(RetrievalHostProfileError, match="not declared"):
-        load_retrieval_host_profile("does-not-exist")
+        load_retrieval_host_profile("does-not-exist", repository_root=REPO_ROOT)
 
 
 def test_load_retrieval_host_profile_rejects_a_wildcard_host(tmp_path: Path):

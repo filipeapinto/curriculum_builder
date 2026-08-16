@@ -1,0 +1,17 @@
+version: 1
+exceptions:
+  - locations: [schemas/**/*.json, curricula/**/*.json]
+    token: curriculum_builder
+    consumer: JSON Schema identifier and reference resolution
+    rationale: Existing versioned contract identifiers are preserved, not rebranded.
+    removal_condition: A new schema version with an atomic consumer migration.
+  - locations: [docs/deprecated/**, meta_prompt/deprecated/**, plans/**, research/**]
+    token: legacy identities and runtime paths
+    consumer: Historical and deprecated records
+    rationale: These files record the repository state and commands that existed when written.
+    removal_condition: The record is formally retired under its own retention policy.
+  - locations: [tests/runtime/**]
+    token: runtime
+    consumer: Test-domain label
+    rationale: Retained as a non-production, non-top-level test namespace; production imports use curriculum_factory.
+    removal_condition: Evidence shows a unit/integration/acceptance split improves ownership without weakening tests.

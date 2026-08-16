@@ -119,12 +119,10 @@ def test_directories_cover_every_top_level_directory(inventory_document):
         assert len(entry["evidence"]) >= 1
 
 
-def test_python_surface_finds_real_runtime_imports(inventory_document):
+def test_python_surface_confirms_runtime_import_migration(inventory_document):
     ps = inventory_document["python_surface"]
-    assert len(ps["runtime_imports"]) > 0
-    sample = ps["runtime_imports"][0]
-    assert (REPO_ROOT / sample["source_file"]).exists()
-    assert "runtime" in sample["statement"]
+    assert ps["runtime_imports"] == []
+    assert (REPO_ROOT / "src/curriculum_factory/__init__.py").is_file()
     # No hardcoded absolute checkout paths were found in production Python at
     # collection time; this is a positive finding, not an omission.
     assert isinstance(ps["absolute_checkout_paths"], list)
@@ -142,7 +140,7 @@ def test_structured_configuration_covers_packaging_and_ci(inventory_document):
     assert "pyproject.toml" in paths
     assert ".github/workflows/plan26-lock-drift.yml" in paths
     pyproject = next(c for c in inventory_document["structured_configuration"] if c["path"] == "pyproject.toml")
-    assert pyproject["present"] is False  # packaging skeleton (P01) has not run yet
+    assert pyproject["present"] is True
 
 
 def test_test_subtrees_cover_every_tests_subdirectory(inventory_document):
