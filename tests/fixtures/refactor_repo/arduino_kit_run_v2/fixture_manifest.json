@@ -1,0 +1,15 @@
+{
+  "version": 1,
+  "source_run": "outputs/arduino_kit_run_v2",
+  "migration_date": "2026-08-16",
+  "files": [
+    {"path": "L01/lab.json", "sha256": "89e4cc3de2339e3f7a24fafcd4387d9638da612645bb0b431906fca6e67b020f", "consumer": "tests/runtime/unit_fixture.py and test_curriculum_factory_graph.py", "requirement": "exact accepted L01 domain/content baseline", "exact_bytes": true},
+    {"path": "L02/lab.json", "sha256": "9d32acec67ad65ff8111a194de07e71c06f43fb5a2f1a37b88d51740325eb135", "consumer": "tests/runtime/unit_fixture.py, test_acceptance_gate.py, and test_poe_semantics.py", "requirement": "exact accepted L02 behavior baseline", "exact_bytes": true},
+    {"path": "L03/lab.json", "sha256": "65eb5b3ca89656353c407f5f1e73e54637008ecc46eba2aef50e569f7068aefb", "consumer": "tests/runtime/unit_fixture.py, test_claim_entailment.py, and test_poe_semantics.py", "requirement": "exact accepted L03 claim and POE baseline", "exact_bytes": true},
+    {"path": "L04/lab.json", "sha256": "1b6a53c9b9b4a64bc8efb77a61a41bed7488bc786330b1e4f1c8601bd2c38dd0", "consumer": "tests/runtime/unit_fixture.py, test_claim_entailment.py, and test_poe_semantics.py", "requirement": "exact accepted L04 claim and POE baseline", "exact_bytes": true},
+    {"path": "L01/sources/source_01.html", "sha256": "7a415c555ad2b050dea114285fa77aa479ebaef6f09ddbb2e5c008c54c5619e9", "consumer": "tests/runtime/unit_fixture.py", "requirement": "source-entailment baseline for regenerated L01 checks", "exact_bytes": true},
+    {"path": "L02/sources/source_01.html", "sha256": "a76dcec60337cb36191bcde6f50ad56222a12607c4693334987751e3844d029f", "consumer": "tests/runtime/unit_fixture.py and test_acceptance_gate.py", "requirement": "source-entailment baseline for regenerated L02 checks", "exact_bytes": true},
+    {"path": "L03/sources/source_01.html", "sha256": "2785dd51d0012f53dcfa8005acccd2c67349c46ee41bab0cf2504609847a3681", "consumer": "tests/runtime/unit_fixture.py", "requirement": "source-entailment baseline for regenerated L03 checks", "exact_bytes": true},
+    {"path": "L04/sources/source_01.html", "sha256": "72cb756a7a9fd3efe8d06ed24da9300889757e10924098a4c20ceec6cac846f8", "consumer": "tests/runtime/unit_fixture.py", "requirement": "source-entailment baseline for regenerated L04 checks", "exact_bytes": true}
+  ]
+}

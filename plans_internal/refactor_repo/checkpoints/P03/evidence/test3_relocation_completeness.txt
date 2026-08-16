@@ -1,0 +1,38 @@
+=== Test 3: source relocation preserves the complete production tree (recovery worktree) ===
+$ git ls-files runtime/ | wc -l
+       0
+$ git diff --cached --name-only HEAD -- src/curriculum_factory/ | wc -l
+      69
+$ find runtime -type f -not -path '*__pycache__*'
+bfs: error: runtime: No such file or directory.
+$ find src/curriculum_factory -type f -not -path '*__pycache__*' | wc -l
+      69
+
+--- 1:1 destination mapping: every t0 runtime/ file has exactly one src/curriculum_factory/ destination ---
+t0 runtime/ files: 69
+destinations present: 69   missing: 0
+byte-identical after move: 61
+content-changed (authorized import token rewrite only): 8
+    runtime/capability_cycle.py  ->  src/curriculum_factory/capability_cycle.py
+    runtime/curriculum_factory_graph.py  ->  src/curriculum_factory/curriculum_factory_graph.py
+    runtime/finalize_evidence.py  ->  src/curriculum_factory/finalize_evidence.py
+    runtime/langgraph_factory/evidence.py  ->  src/curriculum_factory/langgraph_factory/evidence.py
+    runtime/langgraph_factory/graph.py  ->  src/curriculum_factory/langgraph_factory/graph.py
+    runtime/langgraph_factory/persistence.py  ->  src/curriculum_factory/langgraph_factory/persistence.py
+    runtime/run_curriculum.py  ->  src/curriculum_factory/run_curriculum.py
+    runtime/session_bridge.py  ->  src/curriculum_factory/session_bridge.py
+files in src/curriculum_factory not traceable to a t0 runtime/ file: 0
+
+--- file modes: git-tracked mode for every moved file ---
+  68 :000000 100644
+   1 :100644 100644
+  (:100644 100644 means mode unchanged 0644 on both sides)
+
+--- rename-aware mode check (git diff --cached --raw --find-renames) ---
+   4 :000000 100644
+   1 :100644 000000
+ 101 :100644 100644
+  every moved file: old mode 100644 -> new mode 100644 (no mode changed)
+
+--- deleted side: runtime/ modes at HEAD ---
+  69 100644

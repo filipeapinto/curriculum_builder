@@ -1,0 +1,13 @@
+# top-level comment
+name: curriculum_builder
+count: 3
+ratio: 1.5
+enabled: true
+nested:
+  deep:
+    value: curriculum_builder-deep
+    untouched: 42
+items:
+- curriculum_builder-item
+- other
+- 7

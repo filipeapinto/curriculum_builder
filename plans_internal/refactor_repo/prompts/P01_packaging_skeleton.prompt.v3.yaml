@@ -3,6 +3,7 @@ title: P01 — Add the Buildable Src-Layout Packaging Skeleton
 
 authorized_paths:
   - pyproject.toml
+  - MANIFEST.in
   - src/curriculum_factory/__init__.py
   - tests/refactor_repo/test_packaging_skeleton.py
   - plans_internal/refactor_repo/checkpoints/P01/
@@ -44,12 +45,14 @@ operations:
     require_authorized_paths_only: true
 
 goal: >-
-  After P00A activates this prompt in the inventory-resolved manifest, add pyproject.toml and the minimal src/curriculum_factory package
+  After P00A activates this prompt in the inventory-resolved manifest, add pyproject.toml, MANIFEST.in, and the minimal src/curriculum_factory package
   skeleton for distribution curriculum-factory. Declare a build backend, Python and
   dependency metadata derived from the inventory, src-only discovery, final package-
   data declarations, test discovery defaults, and explicit console entry-point metadata
-  for the production commands identified by P00. P01 is the sole owner of every
-  pyproject.toml key; later prompts must verify it but may not edit it. Prove
+  for the production commands identified by P00. Add MANIFEST.in with exclusion rules
+  to prevent setuptools from including unrelated repository-root tests in sdist artifacts.
+  P01 is the sole owner of every pyproject.toml key and the sdist exclusion configuration;
+  later prompts must verify it but may not edit it. Prove
   wheel and sdist construction before moving runtime/. Do not move production files,
   rewrite imports, repair resources, rename tests, change schema identifiers, or claim
   installed behavioral parity in this checkpoint. Stop if P00/P00A evidence is absent or stale, resolved ownership does not assign

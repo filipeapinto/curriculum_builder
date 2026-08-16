@@ -15,9 +15,9 @@ import jsonschema
 import pytest
 import yaml
 
-from runtime.checks import CheckFailure, required_checks_for
-from runtime.logger import LogError
-from runtime.session_bridge import finalize
+from curriculum_factory.checks import CheckFailure, required_checks_for
+from curriculum_factory.logger import LogError
+from curriculum_factory.session_bridge import finalize
 from tests.runtime import unit_fixture
 
 ENGINE = unit_fixture.ENGINE
@@ -104,7 +104,7 @@ def test_every_required_check_gets_one_explicit_result(tmp_path):
 
 def test_a_field_with_no_template_branch_is_rejected_through_the_gate(tmp_path):
     """The route by which raw JSON used to reach the page is closed at both ends."""
-    from runtime.lesson_render import RendererError
+    from curriculum_factory.lesson_render import RendererError
     lab = unit_fixture.lab_from_run("L02")
     lab["sequence"]["explain"]["serialized_leftovers"] = '{"what_you_saw": "raw json"}'
     _, unit_root = unit_fixture.build_run(tmp_path, unit_id="L02", lab=lab)
@@ -128,7 +128,7 @@ def test_an_irrelevant_image_is_rejected_by_pdf_asset_resolves(tmp_path):
     """An asset swapped after the PDF shipped: the receipt names a picture the PDF lacks."""
     import hashlib
     from PIL import Image
-    from runtime import pdf_inspect
+    from curriculum_factory import pdf_inspect
     lab = unit_fixture.lab_from_run("L02")
     _, unit_root = unit_fixture.build_run(tmp_path, unit_id="L02", lab=lab)
     finalize(ENGINE, unit_root, curriculum=CURRICULUM)
@@ -167,8 +167,8 @@ def test_a_receipt_that_stops_resolving_aborts_before_acceptance(tmp_path):
 
 def test_undersized_text_is_rejected_by_pdf_text_legible(tmp_path):
     """A visual whose labels are too small once the page scales it down."""
-    import runtime.visual_maps as visual_maps
-    from runtime import pdf_inspect
+    import curriculum_factory.visual_maps as visual_maps
+    from curriculum_factory import pdf_inspect
     lab = unit_fixture.lab_from_run("L02")
     _, unit_root = unit_fixture.build_run(tmp_path, unit_id="L02", lab=lab, regenerate=False)
     original = visual_maps.BODY, visual_maps.LABEL, visual_maps.SMALL, visual_maps.SUB
@@ -224,7 +224,7 @@ def test_a_failed_reviewer_criterion_blocks(tmp_path):
 # --- (e) a cross-family bypass cannot coexist with ACCEPTED ---------------------------
 
 def test_a_cross_family_bypass_forces_a_non_accepted_terminal_state(tmp_path):
-    from runtime.lesson_render import derived_records
+    from curriculum_factory.lesson_render import derived_records
     _, unit_root = _accepted_unit(tmp_path)
     finalize(ENGINE, unit_root, curriculum=CURRICULUM)
     unit_fixture.fill_visual_review(unit_root)

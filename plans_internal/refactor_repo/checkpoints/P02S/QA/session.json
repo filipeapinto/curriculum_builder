@@ -1,0 +1,86 @@
+{
+  "opened_at": "2026-08-16T15-26-10.060510+00-00",
+  "artifact_original": "/Users/filipepinto/Projects/curriculum_builder_wt/refactor-curriculum-factory-repository/plans_internal/refactor_repo/checkpoints/P02S/P02S_checkpoint_report.v1.md",
+  "artifact_current": "/Users/filipepinto/Projects/curriculum_builder_wt/refactor-curriculum-factory-repository/plans_internal/refactor_repo/checkpoints/P02S/P02S_checkpoint_report.v2.md",
+  "session_id": "01a00b2e-315e-7133-9806-f925e1768962",
+  "chain": "fa425e03f40eaa8a29fd766903aa8b7d88056c1d3c1f53064bafce5ea10e75f1",
+  "rounds_completed": 2,
+  "rounds": [
+    {
+      "round": 1,
+      "timestamp": "2026-08-16T15:26:57.799471+00:00",
+      "verdict": "FAIL",
+      "artifact_path": "/Users/filipepinto/Projects/curriculum_builder_wt/refactor-curriculum-factory-repository/plans_internal/refactor_repo/checkpoints/P02S/P02S_checkpoint_report.v1.md",
+      "artifact_sha256": "f6364a8c54c20760be68bf6724efb1b41581ecdb35e0b37b17b5c32d1665e72e",
+      "findings_at_threshold": [
+        {
+          "id": "P02S-PARSER-VERSION-ENFORCEMENT",
+          "title": "TOML parser availability and versions are not enforced at import time",
+          "severity": "blocker",
+          "criterion_ref": "Criteria 1 and 8: all required parsers must be importable and exactly version-pinned; missing parsers or version mismatches must raise RuntimeError at import time."
+        },
+        {
+          "id": "P02S-EXACT-FIXTURE-COMPARISON",
+          "title": "Fixture tests do not verify byte-exact expected output",
+          "severity": "blocker",
+          "criterion_ref": "Criterion 2: fixture tests must verify exact output match."
+        },
+        {
+          "id": "P02S-DETERMINISM-DIAGNOSTICS",
+          "title": "Determinism test does not compare diagnostics for equality",
+          "severity": "blocker",
+          "criterion_ref": "Criterion 3: the diagnostics list must be identical across repeated runs."
+        }
+      ],
+      "observations_count": 3,
+      "chain": "75f661897af478275ea0af907fb8175871717dd3a2f16ecae971cd8ee2a9e09a"
+    },
+    {
+      "round": 2,
+      "timestamp": "2026-08-16T15:29:12.724504+00:00",
+      "verdict": "FAIL",
+      "artifact_path": "/Users/filipepinto/Projects/curriculum_builder_wt/refactor-curriculum-factory-repository/plans_internal/refactor_repo/checkpoints/P02S/P02S_checkpoint_report.v2.md",
+      "artifact_sha256": "263b8a7752ebd52067243c68f680e70923afaf0886cd6dff7da6b3643654c3bf",
+      "findings_at_threshold": [
+        {
+          "id": "P02S-PARSER-VERSION-ENFORCEMENT",
+          "title": "Current implementation uses different parsers than the mandated pinned parsers",
+          "severity": "blocker",
+          "criterion_ref": "Criteria 1 and 8 require tomli==2.4.1, tomli_w==1.2.0, and PyYAML==6.0.3, including import-time exact-version enforcement."
+        },
+        {
+          "id": "P02S-TEST-SUITE-API-MISMATCH",
+          "title": "Required fixture suite fails during test collection",
+          "severity": "blocker",
+          "criterion_ref": "Criterion 2 requires all fixtures to pass transformation testing with exact output or diagnostics."
+        },
+        {
+          "id": "P02S-KEY-PATH-SCOPE",
+          "title": "Implementation does not support key-path-scoped transformations",
+          "severity": "blocker",
+          "criterion_ref": "Criterion 7 requires transformations to apply only when both file format and key path match."
+        }
+      ],
+      "observations_count": 3,
+      "chain": "fa425e03f40eaa8a29fd766903aa8b7d88056c1d3c1f53064bafce5ea10e75f1"
+    }
+  ],
+  "stall_count": 0,
+  "last_fingerprint": "c265fdb998f622448c55ae8efd4cf5dc24433bdd55d95a83b5e53a758f966ba2",
+  "exec_copied": [],
+  "terminal": null,
+  "config": {
+    "criteria": "# P02S Checkpoint QA Criteria v1\n\n## Acceptance Criteria for P02S Structured Data Codemod\n\n### Criterion 1: Format-Specific Implementation\n\n**Observable condition:** The codemod tool must implement separate, format-specific parsers for TOML, JSON, and YAML that preserve semantic round-trip fidelity to the degree supported by each format's parser library.\n\n**Check:**\n- TOML: tomli (read) and tomli_w (write) implementations exist and are used\n- JSON: stdlib json implementation used\n- YAML: PyYAML safe_load/dump implementations used\n- Each parser is importable at tool load time; tool fails if not available\n\n**Pass criteria:**\n- Tool imports all 3 required parsers without errors\n- Each parser is explicitly version-pinned (PyYAML==6.0.3, tomli==2.4.1, tomli_w==1.2.0)\n- Version mismatch raises RuntimeError at import time\n\n### Criterion 2: Test Coverage and Fixture Matrix\n\n**Observable condition:** Comprehensive fixtures must cover required syntax, semantics, and error cases for all three formats, demonstrating that transformations work correctly across format-specific differences.\n\n**Check:**\n- At least 3 fixtures per format (TOML, JSON, YAML) demonstrating:\n  - Simple key-value transformation\n  - Nested key transformation\n  - No-change case (value mismatch or missing key)\n  - At least 1 error case (malformed input)\n- Fixtures have .before and .after files with exact expected outputs\n- Test suite parameterizes all fixtures and verifies exact output match\n\n**Pass criteria:**\n- 10 or more total fixtures covering all 3 formats\n- All fixtures pass transformation test (exact output or exact diagnostic)\n- Unrelated keys and structure remain unchanged after transformation\n\n### Criterion 3: Determinism and Exact Commands\n\n**Observable condition:** Transformations must produce identical output across repeated runs on the same input, verifiable by byte-exact comparison.\n\n**Check:**\n- Run transform_file() twice on identical input with identical configuration\n- Compare result.content byte-for-byte across both runs\n- Verify diagnostics list is identical\n\n**Pass criteria:**\n- No randomness or timestamp injection in output\n- Byte-identical content produced on repeated runs\n- Test explicitly compares content strings for equality\n\n### Criterion 4: Idempotence\n\n**Observable condition:** Applying a transformation twice must result in no changes on the second application, proving the transformation is single-run.\n\n**Check:**\n- Apply transformation to file, write result.content back to disk\n- Re-apply transformation to the updated file\n- Verify result.changed == False on second application\n- Test covers all 3 formats\n\n**Pass criteria:**\n- Second application reports changed=False for all formats\n- No further modifications occur after first application\n- Idempotence holds across TOML, JSON, and YAML\n\n### Criterion 5: Unsafe Input Handling\n\n**Observable condition:** Files with malformed syntax, type mismatches, or unsafe constructs must fail closed with actionable diagnostic messages, without modifying the input file.\n\n**Check:**\n- Malformed JSON (invalid syntax) → parse_error diagnostic, file unchanged\n- Malformed YAML (invalid syntax) → parse_error diagnostic, file unchanged\n- Missing target key → no change, no diagnostic (safe)\n- Type mismatch (e.g., transforming int as string) → no change (safe)\n- Tool raises no unhandled exceptions; all errors caught as diagnostics\n\n**Pass criteria:**\n- All malformed inputs produce error diagnostics or silent no-op\n- No file is modified when an error diagnostic is present\n- result.has_unsafe() returns True only when file is not modified\n\n### Criterion 6: Diagnostic Clarity\n\n**Observable condition:** Diagnostics must be actionable and format-specific, identifying the file, key, transformation, and severity level.\n\n**Check:**\n- Each diagnostic contains: kind (toml_key_rewritten, json_key_rewritten, etc.), severity (info/warning/error), message, file_path\n- Messages state the key path, old value, and new value\n- Diagnostic kinds are specific to the format (not generic)\n\n**Pass criteria:**\n- Every transformation success includes a diagnostic with kind like \"toml_key_rewritten\"\n- Every error includes severity=error\n- Messages are human-readable and quote values\n\n### Criterion 7: Scope and Ownership\n\n**Observable condition:** Transformations must respect format boundaries (TOML/JSON/YAML) and only apply transformations that match both the file format and key path.\n\n**Check:**\n- A YAML transformation applied to a TOML file should not match\n- A JSON transformation applied to a YAML file should not match\n- Only transformations where file_format matches the actual format are applied\n- Authorized paths in resolved manifest match deliverables\n\n**Pass criteria:**\n- Format mismatch results in no change and no diagnostic (format ignored)\n- All delivered files within authorized P02S paths\n- No transformation crosses format boundaries\n\n### Criterion 8: Parser Version Stability\n\n**Observable condition:** The tool must assert exact parser versions at import time and fail closed if versions don't match, ensuring reproducibility across environments.\n\n**Check:**\n- Tool asserts PyYAML==6.0.3 at module import\n- Tool asserts tomli and tomli_w versions\n- Version mismatch raises RuntimeError with actionable message\n- importlib.metadata.version() used to query installed versions\n\n**Pass criteria:**\n- Tool imports raise RuntimeError if any required parser version is missing\n- Version numbers match the pinned versions exactly\n- Error message explains what version was expected vs. found\n\n### Criterion 9: No Write Side Effects in Dry-Run\n\n**Observable condition:** Calling transform_file() with a file path must not modify the file, even though it computes and returns the transformed content.\n\n**Check:**\n- Copy fixture file to temp location\n- Call transform_file() on it\n- Verify file on disk is unchanged (byte-identical to before)\n- Verify result.content contains the transformed content (not None)\n\n**Pass criteria:**\n- File on disk remains unchanged after transform_file() call\n- result.content is not None when changed=True\n- No files written, only reads and in-memory computation\n\n## Grounding Sources\n\n- P02S Prompt: `plans_internal/refactor_repo/prompts/generated/P02S_structured_data_codemod.prompt.v4.yaml`\n- P02S Specification Section: `plans_internal/refactor_repo/refactor_repository.spec.v8.html` (section on structured transformations)\n- Resolved Manifest: `plans_internal/refactor_repo/prompts/resolved/prompt_manifest.resolved.v2.yaml` (P02S owns: toml_json_yaml_codemod_tooling, structured_file_transformations_all_formats)\n\n## Non-Criteria Observations\n\nThe following are outside the scope of these criteria and will be recorded as observations if Codex notices them:\n\n- Code style, naming conventions, docstring format\n- Comments and inline documentation quality\n- Whether diagnostic kinds could be extended for additional cases\n- Performance characteristics or optimization opportunities\n- Typing or type hints completeness\n",
+    "focus": "P02S structured codemod tool, fixtures, determinism, idempotence, unsafe cases",
+    "threshold": "blocker",
+    "max_iterations": 5,
+    "timeout_seconds": 900,
+    "retries": 2,
+    "model": null,
+    "effort": null,
+    "transport": "exec",
+    "allow_execution": false,
+    "grounding": []
+  },
+  "thread_id": "01a00b2e-315e-7133-9806-f925e1768962"
+}

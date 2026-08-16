@@ -15,20 +15,22 @@ import jsonschema
 import pytest
 import yaml
 
-from runtime.langgraph_factory import transport as tp
-from runtime.langgraph_factory.artifacts import (
+from curriculum_factory.langgraph_factory import transport as tp
+from curriculum_factory.langgraph_factory.artifacts import (
     UNIT_SCOPE,
     ArtifactStore,
     ArtifactStream,
     canonical_json_bytes,
 )
-from runtime.langgraph_factory.egress import (
+from curriculum_factory.langgraph_factory.egress import (
     PROVIDER_DATA_CLASSES,
     AuthorizationDenied,
     AuthorizationRecord,
     EgressGuard,
     ReceiptLog,
 )
+
+REPO_ROOT = Path(__file__).resolve().parents[2]
 
 CURRICULUM_DIGEST = "c" * 64
 RUN_ID = "run-plan26-transport"
@@ -192,7 +194,8 @@ def make_transport(tmp_path: Path, runner: FakeRunner, *, record="default",
         authorization=authorization(output_root) if record == "default" else record,
         receipts=receipts, guard=guard, ledger=ledger,
         capability_proof=capability_proof() if proof is None else proof,
-        runner=runner, executables=FAKE_EXECUTABLES, keep_workspaces=keep_workspaces)
+        runner=runner, executables=FAKE_EXECUTABLES, keep_workspaces=keep_workspaces,
+        engine_root=REPO_ROOT)
     transport.test_ledger = ledger  # type: ignore[attr-defined]
     transport.test_receipts = receipts  # type: ignore[attr-defined]
     return transport
@@ -402,7 +405,7 @@ def test_sandboxed_worker_cannot_read_repository_output_or_secrets(tmp_path: Pat
     parent.write_text("previous attempts\n", encoding="utf-8")
     secret = home.parent / "credentials.env"
     secret.write_text("OPENAI_API_KEY=sk-not-a-real-key\n", encoding="utf-8")
-    repo_file = tp.REPO_ROOT / "runtime" / "langgraph_factory" / "transport.py"
+    repo_file = REPO_ROOT / "src" / "curriculum_factory" / "langgraph_factory" / "transport.py"
 
     proof = tp.prove_workspace_isolation(
         workspace=workspace, home=home,
@@ -420,7 +423,7 @@ def test_capability_proof_is_satisfied_on_this_host(tmp_path: Path):
     try:
         proof = tp.prove_transport_capabilities(
             guard=guard, probe_root=tmp_path / "probe",
-            forbidden_paths=[tp.REPO_ROOT / "pyproject.toml", tp.REPO_ROOT / "runtime"],
+            forbidden_paths=[REPO_ROOT / "pyproject.toml", REPO_ROOT / "src" / "curriculum_factory"],
             identity_help={"codex": "--json", "claude": "--json-schema"})
     finally:
         guard.uninstall()
@@ -461,7 +464,7 @@ def test_the_real_cli_starts_sandboxed_yet_cannot_read_outside_the_workspace(
         cwd=workspace, env=environment, timeout_seconds=120)
     assert started.returncode == 0, started.stderr
 
-    for forbidden in (secret, tp.REPO_ROOT / "runtime" / "model_worker.py"):
+    for forbidden in (secret, REPO_ROOT / "src" / "curriculum_factory" / "model_worker.py"):
         blocked = tp.run_process(
             tp.build_sandboxed_argv(["/bin/cat", str(forbidden)], profile_path=profile),
             cwd=workspace, env=environment, timeout_seconds=60)
@@ -480,7 +483,7 @@ def test_sandbox_profile_confines_reads_and_writes_to_the_workspace(tmp_path: Pa
     assert "(deny default)" in profile
     assert "(deny network*)" in profile
     assert str(tmp_path / "ws") in profile
-    assert str(tp.REPO_ROOT) not in profile
+    assert str(REPO_ROOT) not in profile
 
 
 def test_domain_verifier_workspace_is_outside_an_engine_nested_output(tmp_path: Path):
@@ -1124,7 +1127,7 @@ def test_launch_is_refused_when_no_host_sandbox_exists(tmp_path: Path, monkeypat
     with pytest.raises(tp.CapabilityProofFailed):
         tp.build_sandboxed_argv(["codex"], profile_path=tmp_path / "p.sb")
     unproven = tp.prove_workspace_isolation(
-        workspace=tmp_path, home=tmp_path, forbidden_paths=[tp.REPO_ROOT])
+        workspace=tmp_path, home=tmp_path, forbidden_paths=[REPO_ROOT])
     assert unproven["enforced"] is False
 
 
@@ -1522,9 +1525,9 @@ def test_workspace_is_destroyed_after_the_activation(tmp_path: Path):
 
 def test_fake_transport_refuses_a_product_root(tmp_path: Path):
     with pytest.raises(tp.TransportError):
-        tp.FakeCliTransport(sandbox_root=tp.REPO_ROOT, responses={})
+        tp.FakeCliTransport(sandbox_root=REPO_ROOT, responses={})
     with pytest.raises(tp.TransportError):
-        tp.FakeCliTransport(sandbox_root=tp.REPO_ROOT / "output", responses={})
+        tp.FakeCliTransport(sandbox_root=REPO_ROOT / "output", responses={})
 
 
 def test_fake_transport_cannot_emit_a_terminal(tmp_path: Path):
@@ -1576,7 +1579,8 @@ def capability_transport(tmp_path: Path) -> tp.CliTransport:
     return tp.CliTransport(
         output_root=output_root, run_id=RUN_ID, curriculum_digest=CURRICULUM_DIGEST,
         authorization=authorization(output_root), receipts=receipts,
-        guard=EgressGuard(receipts), ledger=tp.AttemptLedger(), capability_proof=None)
+        guard=EgressGuard(receipts), ledger=tp.AttemptLedger(), capability_proof=None,
+        engine_root=REPO_ROOT)
 
 
 UNIT_CONTENT = {
@@ -1611,7 +1615,7 @@ def test_the_production_transport_exposes_the_capability_surface_the_nodes_call(
 
 
 def test_every_required_capability_has_exactly_one_local_probe():
-    from runtime.langgraph_factory.nodes.inputs import REQUIRED_CAPABILITIES
+    from curriculum_factory.langgraph_factory.nodes.inputs import REQUIRED_CAPABILITIES
 
     assert set(tp.CAPABILITY_PROBES) == set(REQUIRED_CAPABILITIES)
 
@@ -2033,7 +2037,7 @@ def test_a_blank_page_is_a_finding_on_that_page_not_a_transport_fault(tmp_path: 
 
 def test_every_authoritative_visual_kind_has_a_deterministic_renderer():
     """D10 sends exactly these kinds to D11, so a kind with no renderer is unrenderable."""
-    from runtime.langgraph_factory.nodes.visuals import AUTHORITATIVE_VISUAL_KINDS
+    from curriculum_factory.langgraph_factory.nodes.visuals import AUTHORITATIVE_VISUAL_KINDS
 
     assert set(tp.DETERMINISTIC_VISUAL_RENDERERS) == set(AUTHORITATIVE_VISUAL_KINDS)
 

@@ -1,0 +1,2357 @@
+{
+  "authorized_clauses": [
+    "runtime/",
+    "src/curriculum_factory/",
+    "tests/runtime/",
+    "tests/gates/fr_p5_unit.py",
+    "tests/check_meta_prompt.py",
+    "tests/meta_prompt_source.py",
+    "plans_internal/refactor_repo/exceptions/source_move.v1.yaml",
+    "plans_internal/refactor_repo/checkpoints/P03/",
+    "plans_internal/refactor_repo/execution/P03/execution_log.jsonl",
+    "plans_internal/refactor_repo/execution/P03/.execution_log.counter.json",
+    "plans_internal/refactor_repo/execution/P03/.execution_log.lock",
+    "tests/refactor_repo/test_packaging_skeleton.py",
+    "tests/refactor_repo/codemod/test_rewrite_runtime_imports.py",
+    "tools/refactor_repo/baseline.py",
+    "plans/26_langgraph_curriculum_factory/results/v3/N11_STATE_REDUCERS.receipt.v1.json",
+    "plans/26_langgraph_curriculum_factory/results/v3/N12_EVIDENCE_ARTIFACTS.receipt.v1.json",
+    "plans/26_langgraph_curriculum_factory/results/v3/N13_TRANSPORT_AUTH.receipt.v1.json",
+    "plans/26_langgraph_curriculum_factory/results/v3/receipt_history/N11_STATE_REDUCERS/",
+    "plans/26_langgraph_curriculum_factory/results/v3/receipt_history/N12_EVIDENCE_ARTIFACTS/",
+    "plans/26_langgraph_curriculum_factory/results/v3/receipt_history/N13_TRANSPORT_AUTH/",
+    "plans_internal/refactor_repo/prompts/resolved/prompt_manifest.resolved.v1.yaml",
+    "plans_internal/refactor_repo/prompts/P03_source_move.prompt.v3.yaml",
+    "plans_internal/refactor_repo/prompts/checkpoint_qa_criteria.v1.md"
+  ],
+  "baseline_commit": "ccacad34ef5a11cf7d05dea3c62612893a60cf7d",
+  "counts_by_status": {
+    "A": 141,
+    "D": 1,
+    "M": 40,
+    "R": 68
+  },
+  "paths": [
+    {
+      "authorized_by": "plans/26_langgraph_curriculum_factory/results/v3/N11_STATE_REDUCERS.receipt.v1.json",
+      "path": "plans/26_langgraph_curriculum_factory/results/v3/N11_STATE_REDUCERS.receipt.v1.json",
+      "rename_source": null,
+      "sha256_at_HEAD": "adaaaeb7d3122d8c03a5c97fbe2bdc05fdc8c3c7f24d9cfa35a7826eacd884ad",
+      "sha256_now": "ac47a56e5ce970110ab4f32af4fa96a95c7194c8b071da2bfd9223e9e1a5cf03",
+      "sha256_now_published_in": null,
+      "status": "M"
+    },
+    {
+      "authorized_by": "plans/26_langgraph_curriculum_factory/results/v3/N12_EVIDENCE_ARTIFACTS.receipt.v1.json",
+      "path": "plans/26_langgraph_curriculum_factory/results/v3/N12_EVIDENCE_ARTIFACTS.receipt.v1.json",
+      "rename_source": null,
+      "sha256_at_HEAD": "f283be560757dc4655d55a2ca8b318e1d40041589f06f028b76bb5a393c3c44e",
+      "sha256_now": "83b4904839c1ea5a3909ab63578117cc070107ebc8821467e8f24c1e254fa3f7",
+      "sha256_now_published_in": null,
+      "status": "M"
+    },
+    {
+      "authorized_by": "plans/26_langgraph_curriculum_factory/results/v3/N13_TRANSPORT_AUTH.receipt.v1.json",
+      "path": "plans/26_langgraph_curriculum_factory/results/v3/N13_TRANSPORT_AUTH.receipt.v1.json",
+      "rename_source": null,
+      "sha256_at_HEAD": "3a739b6712498c1cff382e65d90b5d1eb125f4a57c97375defe294b032c6414c",
+      "sha256_now": "62387c4a56df4955aac76d0f709678dd90de53b824c907a35ecb543b027b4fbc",
+      "sha256_now_published_in": null,
+      "status": "M"
+    },
+    {
+      "authorized_by": "plans/26_langgraph_curriculum_factory/results/v3/receipt_history/N11_STATE_REDUCERS/",
+      "path": "plans/26_langgraph_curriculum_factory/results/v3/receipt_history/N11_STATE_REDUCERS/188838ad31bd6e30830073abe53bdd31f60972b23aea985e9da9a5c201e51679.receipt.v1.json",
+      "rename_source": null,
+      "sha256_at_HEAD": null,
+      "sha256_now": "188838ad31bd6e30830073abe53bdd31f60972b23aea985e9da9a5c201e51679",
+      "sha256_now_published_in": null,
+      "status": "A"
+    },
+    {
+      "authorized_by": "plans/26_langgraph_curriculum_factory/results/v3/receipt_history/N11_STATE_REDUCERS/",
+      "path": "plans/26_langgraph_curriculum_factory/results/v3/receipt_history/N11_STATE_REDUCERS/adaaaeb7d3122d8c03a5c97fbe2bdc05fdc8c3c7f24d9cfa35a7826eacd884ad.receipt.v1.json",
+      "rename_source": null,
+      "sha256_at_HEAD": null,
+      "sha256_now": "adaaaeb7d3122d8c03a5c97fbe2bdc05fdc8c3c7f24d9cfa35a7826eacd884ad",
+      "sha256_now_published_in": null,
+      "status": "A"
+    },
+    {
+      "authorized_by": "plans/26_langgraph_curriculum_factory/results/v3/receipt_history/N12_EVIDENCE_ARTIFACTS/",
+      "path": "plans/26_langgraph_curriculum_factory/results/v3/receipt_history/N12_EVIDENCE_ARTIFACTS/f283be560757dc4655d55a2ca8b318e1d40041589f06f028b76bb5a393c3c44e.receipt.v1.json",
+      "rename_source": null,
+      "sha256_at_HEAD": null,
+      "sha256_now": "f283be560757dc4655d55a2ca8b318e1d40041589f06f028b76bb5a393c3c44e",
+      "sha256_now_published_in": null,
+      "status": "A"
+    },
+    {
+      "authorized_by": "plans/26_langgraph_curriculum_factory/results/v3/receipt_history/N13_TRANSPORT_AUTH/",
+      "path": "plans/26_langgraph_curriculum_factory/results/v3/receipt_history/N13_TRANSPORT_AUTH/3a739b6712498c1cff382e65d90b5d1eb125f4a57c97375defe294b032c6414c.receipt.v1.json",
+      "rename_source": null,
+      "sha256_at_HEAD": null,
+      "sha256_now": "3a739b6712498c1cff382e65d90b5d1eb125f4a57c97375defe294b032c6414c",
+      "sha256_now_published_in": null,
+      "status": "A"
+    },
+    {
+      "authorized_by": "plans_internal/refactor_repo/checkpoints/P03/",
+      "path": "plans_internal/refactor_repo/checkpoints/P03/P03_recovery_checkpoint.v5.md",
+      "rename_source": null,
+      "sha256_at_HEAD": null,
+      "sha256_now": null,
+      "sha256_now_published_in": "evidence/report_digest.txt",
+      "status": "A"
+    },
+    {
+      "authorized_by": "plans_internal/refactor_repo/checkpoints/P03/",
+      "path": "plans_internal/refactor_repo/checkpoints/P03/QA/rounds/round-01.events.jsonl",
+      "rename_source": null,
+      "sha256_at_HEAD": null,
+      "sha256_now": "bb30466b351b74463c18c59b7784e6f2d78328c67e5e8d2d9556fd6bac1668db",
+      "sha256_now_published_in": null,
+      "status": "A"
+    },
+    {
+      "authorized_by": "plans_internal/refactor_repo/checkpoints/P03/",
+      "path": "plans_internal/refactor_repo/checkpoints/P03/QA/rounds/round-01.meta.json",
+      "rename_source": null,
+      "sha256_at_HEAD": null,
+      "sha256_now": "492728bdb7568b6687d03083b9af32301a41b924d0be00e68d772e5e68a7216e",
+      "sha256_now_published_in": null,
+      "status": "A"
+    },
+    {
+      "authorized_by": "plans_internal/refactor_repo/checkpoints/P03/",
+      "path": "plans_internal/refactor_repo/checkpoints/P03/QA/rounds/round-01.request.md",
+      "rename_source": null,
+      "sha256_at_HEAD": null,
+      "sha256_now": "89ad216c98dbfa2713982117007cc6c4dae427bd7c5260bf110bef23f4342b2a",
+      "sha256_now_published_in": null,
+      "status": "A"
+    },
+    {
+      "authorized_by": "plans_internal/refactor_repo/checkpoints/P03/",
+      "path": "plans_internal/refactor_repo/checkpoints/P03/QA/rounds/round-01.response.json",
+      "rename_source": null,
+      "sha256_at_HEAD": null,
+      "sha256_now": "7b0c61568f7e1502df4a0b009f762015aeaac567b7d77c6b103f83ca5605e67e",
+      "sha256_now_published_in": null,
+      "status": "A"
+    },
+    {
+      "authorized_by": "plans_internal/refactor_repo/checkpoints/P03/",
+      "path": "plans_internal/refactor_repo/checkpoints/P03/QA/rounds/round-01.stderr.txt",
+      "rename_source": null,
+      "sha256_at_HEAD": null,
+      "sha256_now": "1aa26269eb1cc57f86b235a03cda53c004edb5b1e9fc99d4da4f00843293d721",
+      "sha256_now_published_in": null,
+      "status": "A"
+    },
+    {
+      "authorized_by": "plans_internal/refactor_repo/checkpoints/P03/",
+      "path": "plans_internal/refactor_repo/checkpoints/P03/QA/rounds/round-02.events.jsonl",
+      "rename_source": null,
+      "sha256_at_HEAD": null,
+      "sha256_now": "ae52023bfdd2f6e9224676de9256721e5afb5eafcebfc5b4be5d8db110916289",
+      "sha256_now_published_in": null,
+      "status": "A"
+    },
+    {
+      "authorized_by": "plans_internal/refactor_repo/checkpoints/P03/",
+      "path": "plans_internal/refactor_repo/checkpoints/P03/QA/rounds/round-02.meta.json",
+      "rename_source": null,
+      "sha256_at_HEAD": null,
+      "sha256_now": "23e1a547c0e1c764056d34662141873969cc13bdbcd8d4bb324745d0e4c3bf1d",
+      "sha256_now_published_in": null,
+      "status": "A"
+    },
+    {
+      "authorized_by": "plans_internal/refactor_repo/checkpoints/P03/",
+      "path": "plans_internal/refactor_repo/checkpoints/P03/QA/rounds/round-02.request.md",
+      "rename_source": null,
+      "sha256_at_HEAD": null,
+      "sha256_now": "136368ad194a1e93dabb5faab4f76d02a7dcb91fca80693db23ee74351cf9650",
+      "sha256_now_published_in": null,
+      "status": "A"
+    },
+    {
+      "authorized_by": "plans_internal/refactor_repo/checkpoints/P03/",
+      "path": "plans_internal/refactor_repo/checkpoints/P03/QA/rounds/round-02.response.json",
+      "rename_source": null,
+      "sha256_at_HEAD": null,
+      "sha256_now": "dc8f77fa777582b88d8ee129922d64785b77a2546b847a3d0ff7eeb393529eba",
+      "sha256_now_published_in": null,
+      "status": "A"
+    },
+    {
+      "authorized_by": "plans_internal/refactor_repo/checkpoints/P03/",
+      "path": "plans_internal/refactor_repo/checkpoints/P03/QA/rounds/round-02.stderr.txt",
+      "rename_source": null,
+      "sha256_at_HEAD": null,
+      "sha256_now": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "sha256_now_published_in": null,
+      "status": "A"
+    },
+    {
+      "authorized_by": "plans_internal/refactor_repo/checkpoints/P03/",
+      "path": "plans_internal/refactor_repo/checkpoints/P03/QA/session.json",
+      "rename_source": null,
+      "sha256_at_HEAD": null,
+      "sha256_now": "a9f30eeb8e94196808afaf2f885f0f13cb0c32a671c65439dcdd2b41bd77c496",
+      "sha256_now_published_in": null,
+      "status": "A"
+    },
+    {
+      "authorized_by": "plans_internal/refactor_repo/checkpoints/P03/",
+      "path": "plans_internal/refactor_repo/checkpoints/P03/baseline/t0/behavioral_baseline.P03_t0.20260816T155653Z.json",
+      "rename_source": null,
+      "sha256_at_HEAD": null,
+      "sha256_now": "a7eb572e0e2ba2a520c59ccf849c87a897cc26090edcb6e092b2509626d4fcda",
+      "sha256_now_published_in": null,
+      "status": "A"
+    },
+    {
+      "authorized_by": "plans_internal/refactor_repo/checkpoints/P03/",
+      "path": "plans_internal/refactor_repo/checkpoints/P03/baseline/t0/pytest_full_t0.20260816T155653Z.log",
+      "rename_source": null,
+      "sha256_at_HEAD": null,
+      "sha256_now": "1f45e5a0cac3eab90ac3531a8a347ac4029f4816a78c52b15d6313aeaf4d23b4",
+      "sha256_now_published_in": null,
+      "status": "A"
+    },
+    {
+      "authorized_by": "plans_internal/refactor_repo/checkpoints/P03/",
+      "path": "plans_internal/refactor_repo/checkpoints/P03/baseline/t0/pytest_t0_failed_and_error_ids.txt",
+      "rename_source": null,
+      "sha256_at_HEAD": null,
+      "sha256_now": "8a246a6c769bd3a38d191858d10914661832f5743cb786132b96eac12e630832",
+      "sha256_now_published_in": null,
+      "status": "A"
+    },
+    {
+      "authorized_by": "plans_internal/refactor_repo/checkpoints/P03/",
+      "path": "plans_internal/refactor_repo/checkpoints/P03/baseline/t0/runtime_tree_sha256_t0.txt",
+      "rename_source": null,
+      "sha256_at_HEAD": null,
+      "sha256_now": "8097bbdb431df78cc25f1b9b7db7157fec5f67b0535826a147c517497bb92c95",
+      "sha256_now_published_in": null,
+      "status": "A"
+    },
+    {
+      "authorized_by": "plans_internal/refactor_repo/checkpoints/P03/",
+      "path": "plans_internal/refactor_repo/checkpoints/P03/deprecated/P03_recovery_checkpoint.v1.md",
+      "rename_source": null,
+      "sha256_at_HEAD": null,
+      "sha256_now": "5ae37bf8906ba914a58cb2c59558924e03c2ca676272eae8f63468c224d30bec",
+      "sha256_now_published_in": null,
+      "status": "A"
+    },
+    {
+      "authorized_by": "plans_internal/refactor_repo/checkpoints/P03/",
+      "path": "plans_internal/refactor_repo/checkpoints/P03/deprecated/P03_recovery_checkpoint.v2.md",
+      "rename_source": null,
+      "sha256_at_HEAD": null,
+      "sha256_now": "2116cb003886c320e9ce5b20c7b6ad24558e23b04bce44eb0b9e96847966981d",
+      "sha256_now_published_in": null,
+      "status": "A"
+    },
+    {
+      "authorized_by": "plans_internal/refactor_repo/checkpoints/P03/",
+      "path": "plans_internal/refactor_repo/checkpoints/P03/deprecated/P03_recovery_checkpoint.v3.md",
+      "rename_source": null,
+      "sha256_at_HEAD": null,
+      "sha256_now": "197d6418be07d79f1e6475105e2cb2e14de7a9cf84a9310a3e510cd1360cce67",
+      "sha256_now_published_in": null,
+      "status": "A"
+    },
+    {
+      "authorized_by": "plans_internal/refactor_repo/checkpoints/P03/",
+      "path": "plans_internal/refactor_repo/checkpoints/P03/deprecated/P03_recovery_checkpoint.v4.md",
+      "rename_source": null,
+      "sha256_at_HEAD": null,
+      "sha256_now": "cab7aceecf0ae62e0e7eafaefa97f959d68396b9cdf215c1485b03bf33744de1",
+      "sha256_now_published_in": null,
+      "status": "A"
+    },
+    {
+      "authorized_by": "plans_internal/refactor_repo/checkpoints/P03/",
+      "path": "plans_internal/refactor_repo/checkpoints/P03/evidence/criteria_amendment/checkpoint_qa_criteria.v1.PRE_AMENDMENT.md",
+      "rename_source": null,
+      "sha256_at_HEAD": null,
+      "sha256_now": "bfd035a29b675df9718dc694a945ff1a4e901f2b3d8e653541a2b98b2cc48a42",
+      "sha256_now_published_in": null,
+      "status": "A"
+    },
+    {
+      "authorized_by": "plans_internal/refactor_repo/checkpoints/P03/",
+      "path": "plans_internal/refactor_repo/checkpoints/P03/evidence/criteria_amendment/criteria_1_to_6_unchanged.diff",
+      "rename_source": null,
+      "sha256_at_HEAD": null,
+      "sha256_now": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "sha256_now_published_in": null,
+      "status": "A"
+    },
+    {
+      "authorized_by": "plans_internal/refactor_repo/checkpoints/P03/",
+      "path": "plans_internal/refactor_repo/checkpoints/P03/evidence/criteria_amendment/criteria_amendment.diff",
+      "rename_source": null,
+      "sha256_at_HEAD": null,
+      "sha256_now": "7cb897e70de8e0cd075da828916d8ea988c4ca4756856f9a80e7fac69c5a90b9",
+      "sha256_now_published_in": null,
+      "status": "A"
+    },
+    {
+      "authorized_by": "plans_internal/refactor_repo/checkpoints/P03/",
+      "path": "plans_internal/refactor_repo/checkpoints/P03/evidence/criteria_amendment/criteria_digests.txt",
+      "rename_source": null,
+      "sha256_at_HEAD": null,
+      "sha256_now": "809f064f01b2fd12e268a11fa2ff41f45fc055f185a6f1e380457a9a3942fc98",
+      "sha256_now_published_in": null,
+      "status": "A"
+    },
+    {
+      "authorized_by": "plans_internal/refactor_repo/checkpoints/P03/",
+      "path": "plans_internal/refactor_repo/checkpoints/P03/evidence/digest_manifest.json",
+      "rename_source": null,
+      "sha256_at_HEAD": null,
+      "sha256_now": null,
+      "sha256_now_published_in": "the checkpoint report, section 2.4",
+      "status": "A"
+    },
+    {
+      "authorized_by": "plans_internal/refactor_repo/checkpoints/P03/",
+      "path": "plans_internal/refactor_repo/checkpoints/P03/evidence/ledger/delta_name_status_complete.txt",
+      "rename_source": null,
+      "sha256_at_HEAD": null,
+      "sha256_now": null,
+      "sha256_now_published_in": "evidence/digest_manifest.json",
+      "status": "A"
+    },
+    {
+      "authorized_by": "plans_internal/refactor_repo/checkpoints/P03/",
+      "path": "plans_internal/refactor_repo/checkpoints/P03/evidence/ledger/delta_raw_with_blob_shas.txt",
+      "rename_source": null,
+      "sha256_at_HEAD": null,
+      "sha256_now": null,
+      "sha256_now_published_in": "evidence/digest_manifest.json",
+      "status": "A"
+    },
+    {
+      "authorized_by": "plans_internal/refactor_repo/checkpoints/P03/",
+      "path": "plans_internal/refactor_repo/checkpoints/P03/evidence/ledger/git_status_porcelain_current.txt",
+      "rename_source": null,
+      "sha256_at_HEAD": null,
+      "sha256_now": null,
+      "sha256_now_published_in": "evidence/digest_manifest.json",
+      "status": "A"
+    },
+    {
+      "authorized_by": "plans_internal/refactor_repo/checkpoints/P03/",
+      "path": "plans_internal/refactor_repo/checkpoints/P03/evidence/ledger/path_ledger_complete.json",
+      "rename_source": null,
+      "sha256_at_HEAD": null,
+      "sha256_now": null,
+      "sha256_now_published_in": "evidence/digest_manifest.json",
+      "status": "A"
+    },
+    {
+      "authorized_by": "plans_internal/refactor_repo/checkpoints/P03/",
+      "path": "plans_internal/refactor_repo/checkpoints/P03/evidence/move_execution/apply_pass1.json",
+      "rename_source": null,
+      "sha256_at_HEAD": null,
+      "sha256_now": "e846a851deaad24eaff43c40f50c5cd52016073381b4b30aaa1b89e1ff526106",
+      "sha256_now_published_in": null,
+      "status": "A"
+    },
+    {
+      "authorized_by": "plans_internal/refactor_repo/checkpoints/P03/",
+      "path": "plans_internal/refactor_repo/checkpoints/P03/evidence/move_execution/apply_pass2.json",
+      "rename_source": null,
+      "sha256_at_HEAD": null,
+      "sha256_now": "a9bd45d63136b1241fee5bb958620eafef77b25b3cf0ac90f20e6b486444dcb4",
+      "sha256_now_published_in": null,
+      "status": "A"
+    },
+    {
+      "authorized_by": "plans_internal/refactor_repo/checkpoints/P03/",
+      "path": "plans_internal/refactor_repo/checkpoints/P03/evidence/move_execution/equivalence_to_reviewed_delta.txt",
+      "rename_source": null,
+      "sha256_at_HEAD": null,
+      "sha256_now": "74c5155b8f717b1a07d5dc53da8aa00399d14bb092ffadc1a11f261d7f88897f",
+      "sha256_now_published_in": null,
+      "status": "A"
+    },
+    {
+      "authorized_by": "plans_internal/refactor_repo/checkpoints/P03/",
+      "path": "plans_internal/refactor_repo/checkpoints/P03/evidence/move_execution/reviewed_transformations_applied.txt",
+      "rename_source": null,
+      "sha256_at_HEAD": null,
+      "sha256_now": "922bf3aaff8255c7ac4458253e64be6380883202ff57b6ab2c232b3c968a72ed",
+      "sha256_now_published_in": null,
+      "status": "A"
+    },
+    {
+      "authorized_by": "plans_internal/refactor_repo/checkpoints/P03/",
+      "path": "plans_internal/refactor_repo/checkpoints/P03/evidence/premove_inspection/p02_candidates.txt",
+      "rename_source": null,
+      "sha256_at_HEAD": null,
+      "sha256_now": "16fb72bfc18671cb0b7a8a285928dfaebfd26b1e7e7841b30f143fdf06f490cc",
+      "sha256_now_published_in": null,
+      "status": "A"
+    },
+    {
+      "authorized_by": "plans_internal/refactor_repo/checkpoints/P03/",
+      "path": "plans_internal/refactor_repo/checkpoints/P03/evidence/premove_inspection/p02_live_dryrun_rederived.diff",
+      "rename_source": null,
+      "sha256_at_HEAD": null,
+      "sha256_now": "36bdb7a54820ae487de26440e2d07e8ba573853a8e21253813f6e43d10778d33",
+      "sha256_now_published_in": null,
+      "status": "A"
+    },
+    {
+      "authorized_by": "plans_internal/refactor_repo/checkpoints/P03/",
+      "path": "plans_internal/refactor_repo/checkpoints/P03/evidence/premove_inspection/p02_live_dryrun_rederived.json",
+      "rename_source": null,
+      "sha256_at_HEAD": null,
+      "sha256_now": "6fb670ad186828627dc14a3d900535e8d678fd28689005ded64539b94d9b36f4",
+      "sha256_now_published_in": null,
+      "status": "A"
+    },
+    {
+      "authorized_by": "plans_internal/refactor_repo/checkpoints/P03/",
+      "path": "plans_internal/refactor_repo/checkpoints/P03/evidence/premove_inspection/p03_candidates.txt",
+      "rename_source": null,
+      "sha256_at_HEAD": null,
+      "sha256_now": "f897de00a22b8488b0f50d0a2c1e02cfe3bf14baf888239876f7552201a76e03",
+      "sha256_now_published_in": null,
+      "status": "A"
+    },
+    {
+      "authorized_by": "plans_internal/refactor_repo/checkpoints/P03/",
+      "path": "plans_internal/refactor_repo/checkpoints/P03/evidence/premove_inspection/p03_premove_dryrun.diff",
+      "rename_source": null,
+      "sha256_at_HEAD": null,
+      "sha256_now": "0e056e16693821db970468be3a7a705d371dde207101682da6f02d0653821099",
+      "sha256_now_published_in": null,
+      "status": "A"
+    },
+    {
+      "authorized_by": "plans_internal/refactor_repo/checkpoints/P03/",
+      "path": "plans_internal/refactor_repo/checkpoints/P03/evidence/premove_inspection/p03_premove_dryrun.json",
+      "rename_source": null,
+      "sha256_at_HEAD": null,
+      "sha256_now": "aed329e8dd34f6ed55c9a9e2aa0a7b57e05f35fbdfca13cc03cad58a3ce1b64b",
+      "sha256_now_published_in": null,
+      "status": "A"
+    },
+    {
+      "authorized_by": "plans_internal/refactor_repo/checkpoints/P03/",
+      "path": "plans_internal/refactor_repo/checkpoints/P03/evidence/premove_inspection/premove_inspection.txt",
+      "rename_source": null,
+      "sha256_at_HEAD": null,
+      "sha256_now": "5ac5a61e09385903dae9caf6eaa9d50d0b464abfc68242cfaca5ae1c4256f151",
+      "sha256_now_published_in": null,
+      "status": "A"
+    },
+    {
+      "authorized_by": "plans_internal/refactor_repo/checkpoints/P03/",
+      "path": "plans_internal/refactor_repo/checkpoints/P03/evidence/report_digest.txt",
+      "rename_source": null,
+      "sha256_at_HEAD": null,
+      "sha256_now": null,
+      "sha256_now_published_in": "nowhere, and needs nowhere: this file's entire content is the sha256 of the checkpoint report, so its correctness is established by recomputation, not by trusting a further digest",
+      "status": "A"
+    },
+    {
+      "authorized_by": "plans_internal/refactor_repo/checkpoints/P03/",
+      "path": "plans_internal/refactor_repo/checkpoints/P03/evidence/test1_ownership_overlap_scan.v2.txt",
+      "rename_source": null,
+      "sha256_at_HEAD": null,
+      "sha256_now": "ff1a1627c15f2a0238243a1ed6c19bacbe83065127f3f12d8eb735beaf0029ef",
+      "sha256_now_published_in": null,
+      "status": "A"
+    },
+    {
+      "authorized_by": "plans_internal/refactor_repo/checkpoints/P03/",
+      "path": "plans_internal/refactor_repo/checkpoints/P03/evidence/test3_relocation_completeness.txt",
+      "rename_source": null,
+      "sha256_at_HEAD": null,
+      "sha256_now": "ee772847b55923c47c8fa0275ccd2e8f6e1a1f58cdbb6b2745d7421d7afc2828",
+      "sha256_now_published_in": null,
+      "status": "A"
+    },
+    {
+      "authorized_by": "plans_internal/refactor_repo/checkpoints/P03/",
+      "path": "plans_internal/refactor_repo/checkpoints/P03/evidence/test4_postcondition_scan_repo_wide.json",
+      "rename_source": null,
+      "sha256_at_HEAD": null,
+      "sha256_now": "fca77c2402ff663eed33c7f49731b924b373863eeb7d52914d556c19392492c5",
+      "sha256_now_published_in": null,
+      "status": "A"
+    },
+    {
+      "authorized_by": "plans_internal/refactor_repo/checkpoints/P03/",
+      "path": "plans_internal/refactor_repo/checkpoints/P03/evidence/test4_postmove_idempotency_dryrun.json",
+      "rename_source": null,
+      "sha256_at_HEAD": null,
+      "sha256_now": "0bd5aff65cd08a62018185104a6ac3f888dea5d129a0049c0c833b0661ab0b40",
+      "sha256_now_published_in": null,
+      "status": "A"
+    },
+    {
+      "authorized_by": "plans_internal/refactor_repo/checkpoints/P03/",
+      "path": "plans_internal/refactor_repo/checkpoints/P03/evidence/test4_residual_classification.txt",
+      "rename_source": null,
+      "sha256_at_HEAD": null,
+      "sha256_now": "fad499d8dd7c9fe005fd33bea9ce49ac1261662d3c4908e69bb73144287b7a19",
+      "sha256_now_published_in": null,
+      "status": "A"
+    },
+    {
+      "authorized_by": "plans_internal/refactor_repo/checkpoints/P03/",
+      "path": "plans_internal/refactor_repo/checkpoints/P03/evidence/test5_installed_import_origins.txt",
+      "rename_source": null,
+      "sha256_at_HEAD": null,
+      "sha256_now": "b728ec089bf4fc969f619561399dccef624d26cdae6e225cc93fd3c2dabf65f8",
+      "sha256_now_published_in": null,
+      "status": "A"
+    },
+    {
+      "authorized_by": "plans_internal/refactor_repo/checkpoints/P03/",
+      "path": "plans_internal/refactor_repo/checkpoints/P03/evidence/test6_cli_boundary.txt",
+      "rename_source": null,
+      "sha256_at_HEAD": null,
+      "sha256_now": "5d6580db1f664283f69359b1eb8f567808ef1b36a3e97192021ab72004d9863d",
+      "sha256_now_published_in": null,
+      "status": "A"
+    },
+    {
+      "authorized_by": "plans_internal/refactor_repo/checkpoints/P03/",
+      "path": "plans_internal/refactor_repo/checkpoints/P03/evidence/test6_preflight_no_mutation.txt",
+      "rename_source": null,
+      "sha256_at_HEAD": null,
+      "sha256_now": "ac80e71cc35c4492986e5a0719d1581b69f3f45e5559481b0c012e8c3225cfeb",
+      "sha256_now_published_in": null,
+      "status": "A"
+    },
+    {
+      "authorized_by": "plans_internal/refactor_repo/checkpoints/P03/",
+      "path": "plans_internal/refactor_repo/checkpoints/P03/evidence/test6_preflight_stdout.json",
+      "rename_source": null,
+      "sha256_at_HEAD": null,
+      "sha256_now": "0797154d8911b344420fde64cf5249b28ba6620b273e672700eb184f3605d554",
+      "sha256_now_published_in": null,
+      "status": "A"
+    },
+    {
+      "authorized_by": "plans_internal/refactor_repo/checkpoints/P03/",
+      "path": "plans_internal/refactor_repo/checkpoints/P03/evidence/verification/checkpoint_docs_are_test_inert.txt",
+      "rename_source": null,
+      "sha256_at_HEAD": null,
+      "sha256_now": "3986ca58e781344d382e3ba3ca66184ee89bb2cb81660185f828075943d2e678",
+      "sha256_now_published_in": null,
+      "status": "A"
+    },
+    {
+      "authorized_by": "plans_internal/refactor_repo/checkpoints/P03/",
+      "path": "plans_internal/refactor_repo/checkpoints/P03/evidence/verification/test_environment_freeze.txt",
+      "rename_source": null,
+      "sha256_at_HEAD": null,
+      "sha256_now": "3107adc8f1abc180dbf6d668cceefb3888c47443beebd3a72b08242646f63037",
+      "sha256_now_published_in": null,
+      "status": "A"
+    },
+    {
+      "authorized_by": "plans_internal/refactor_repo/checkpoints/P03/",
+      "path": "plans_internal/refactor_repo/checkpoints/P03/evidence/verification/tested_tree_vs_submitted_tree.txt",
+      "rename_source": null,
+      "sha256_at_HEAD": null,
+      "sha256_now": "4501ab46c0c1cd2d6849b8be24b2ba1e73a3c6132e3f5f16cc805c29bf6f0756",
+      "sha256_now_published_in": null,
+      "status": "A"
+    },
+    {
+      "authorized_by": "plans_internal/refactor_repo/checkpoints/P03/",
+      "path": "plans_internal/refactor_repo/checkpoints/P03/prior_runs/README.md",
+      "rename_source": null,
+      "sha256_at_HEAD": null,
+      "sha256_now": "b4def71acc56d3973b9a75c6074f66df0acca75707c58cdd66013a6bed969d9a",
+      "sha256_now_published_in": null,
+      "status": "A"
+    },
+    {
+      "authorized_by": "plans_internal/refactor_repo/checkpoints/P03/",
+      "path": "plans_internal/refactor_repo/checkpoints/P03/prior_runs/t1/fixed_since_t0.txt",
+      "rename_source": null,
+      "sha256_at_HEAD": null,
+      "sha256_now": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "sha256_now_published_in": null,
+      "status": "A"
+    },
+    {
+      "authorized_by": "plans_internal/refactor_repo/checkpoints/P03/",
+      "path": "plans_internal/refactor_repo/checkpoints/P03/prior_runs/t1/new_failures_vs_t0.txt",
+      "rename_source": null,
+      "sha256_at_HEAD": null,
+      "sha256_now": "007c44f7f2908b68583e58f226814c096f7f6dc25c525728831079fa78e19b64",
+      "sha256_now_published_in": null,
+      "status": "A"
+    },
+    {
+      "authorized_by": "plans_internal/refactor_repo/checkpoints/P03/",
+      "path": "plans_internal/refactor_repo/checkpoints/P03/prior_runs/t1/pytest_full_t1.log",
+      "rename_source": null,
+      "sha256_at_HEAD": null,
+      "sha256_now": "6e49e01ec464dbd1c3974a0896e4937782c25eadd57bf57233dab9982791afc1",
+      "sha256_now_published_in": null,
+      "status": "A"
+    },
+    {
+      "authorized_by": "plans_internal/refactor_repo/checkpoints/P03/",
+      "path": "plans_internal/refactor_repo/checkpoints/P03/prior_runs/t1/pytest_t1_failed_and_error_ids.txt",
+      "rename_source": null,
+      "sha256_at_HEAD": null,
+      "sha256_now": "b00ed38d8144bc73eb153d4e294615cd0d846bba36c8dc11d74133fff80e9008",
+      "sha256_now_published_in": null,
+      "status": "A"
+    },
+    {
+      "authorized_by": "plans_internal/refactor_repo/checkpoints/P03/",
+      "path": "plans_internal/refactor_repo/checkpoints/P03/prior_runs/t2_post_compatibility_correction/p04_handoff_29_ids.txt",
+      "rename_source": null,
+      "sha256_at_HEAD": null,
+      "sha256_now": "351e58c98684b09d5419df1dc15e9d304c52dc855f132c4256656df84aa9fad5",
+      "sha256_now_published_in": null,
+      "status": "A"
+    },
+    {
+      "authorized_by": "plans_internal/refactor_repo/checkpoints/P03/",
+      "path": "plans_internal/refactor_repo/checkpoints/P03/prior_runs/t2_post_compatibility_correction/pytest_full_t2.log",
+      "rename_source": null,
+      "sha256_at_HEAD": null,
+      "sha256_now": "91d7723bd4a305481eaafffd442b64de7b26f2032acb7992fbc35a64be7e4748",
+      "sha256_now_published_in": null,
+      "status": "A"
+    },
+    {
+      "authorized_by": "plans_internal/refactor_repo/checkpoints/P03/",
+      "path": "plans_internal/refactor_repo/checkpoints/P03/prior_runs/t2_post_compatibility_correction/pytest_t2_failed_and_error_ids.txt",
+      "rename_source": null,
+      "sha256_at_HEAD": null,
+      "sha256_now": "671b082e67b752e539d243b884140514b5ffddf17fc54a8766b95b8701befd7e",
+      "sha256_now_published_in": null,
+      "status": "A"
+    },
+    {
+      "authorized_by": "plans_internal/refactor_repo/checkpoints/P03/",
+      "path": "plans_internal/refactor_repo/checkpoints/P03/prior_runs/t4_recovery/fixed_since_t0.txt",
+      "rename_source": null,
+      "sha256_at_HEAD": null,
+      "sha256_now": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "sha256_now_published_in": null,
+      "status": "A"
+    },
+    {
+      "authorized_by": "plans_internal/refactor_repo/checkpoints/P03/",
+      "path": "plans_internal/refactor_repo/checkpoints/P03/prior_runs/t4_recovery/new_failures_ids_only.txt",
+      "rename_source": null,
+      "sha256_at_HEAD": null,
+      "sha256_now": "e3be8d56e8d8e3903e6d4e60c37427e8e8937bb7c772a974e5c3eca2bf0a4bc2",
+      "sha256_now_published_in": null,
+      "status": "A"
+    },
+    {
+      "authorized_by": "plans_internal/refactor_repo/checkpoints/P03/",
+      "path": "plans_internal/refactor_repo/checkpoints/P03/prior_runs/t4_recovery/new_failures_vs_t0.txt",
+      "rename_source": null,
+      "sha256_at_HEAD": null,
+      "sha256_now": "351e58c98684b09d5419df1dc15e9d304c52dc855f132c4256656df84aa9fad5",
+      "sha256_now_published_in": null,
+      "status": "A"
+    },
+    {
+      "authorized_by": "plans_internal/refactor_repo/checkpoints/P03/",
+      "path": "plans_internal/refactor_repo/checkpoints/P03/prior_runs/t4_recovery/p04_handoff_allowlist_ids.txt",
+      "rename_source": null,
+      "sha256_at_HEAD": null,
+      "sha256_now": "e3be8d56e8d8e3903e6d4e60c37427e8e8937bb7c772a974e5c3eca2bf0a4bc2",
+      "sha256_now_published_in": null,
+      "status": "A"
+    },
+    {
+      "authorized_by": "plans_internal/refactor_repo/checkpoints/P03/",
+      "path": "plans_internal/refactor_repo/checkpoints/P03/prior_runs/t4_recovery/pytest_full_t4.log",
+      "rename_source": null,
+      "sha256_at_HEAD": null,
+      "sha256_now": "c737643a1479725dfc33ca2910ea4c0fb4188a20ad848d5f03a79a5da0a9ec9e",
+      "sha256_now_published_in": null,
+      "status": "A"
+    },
+    {
+      "authorized_by": "plans_internal/refactor_repo/checkpoints/P03/",
+      "path": "plans_internal/refactor_repo/checkpoints/P03/prior_runs/t4_recovery/pytest_t4_failed_and_error_ids.txt",
+      "rename_source": null,
+      "sha256_at_HEAD": null,
+      "sha256_now": "6e21bff12705656e1f4b7d15ca718d38fa43e7aad25b720e3f3dbee3f6d2ec35",
+      "sha256_now_published_in": null,
+      "status": "A"
+    },
+    {
+      "authorized_by": "plans_internal/refactor_repo/checkpoints/P03/",
+      "path": "plans_internal/refactor_repo/checkpoints/P03/superseded_sessions/QA-2026-08-16-exhausted/README.md",
+      "rename_source": null,
+      "sha256_at_HEAD": null,
+      "sha256_now": "3c94ad28a5498b8f2e882039a15c03191c33f13e09943d8b98f2ae29387f71c7",
+      "sha256_now_published_in": null,
+      "status": "A"
+    },
+    {
+      "authorized_by": "plans_internal/refactor_repo/checkpoints/P03/",
+      "path": "plans_internal/refactor_repo/checkpoints/P03/superseded_sessions/QA-2026-08-16-exhausted/evidence_from_ee8922a/codemod_diag_apply.src.json",
+      "rename_source": null,
+      "sha256_at_HEAD": null,
+      "sha256_now": "dab1d287ce5db72c3107fd7850010ec571464edf42d81192ea97e58965155e30",
+      "sha256_now_published_in": null,
+      "status": "A"
+    },
+    {
+      "authorized_by": "plans_internal/refactor_repo/checkpoints/P03/",
+      "path": "plans_internal/refactor_repo/checkpoints/P03/superseded_sessions/QA-2026-08-16-exhausted/evidence_from_ee8922a/codemod_diag_apply.tests.json",
+      "rename_source": null,
+      "sha256_at_HEAD": null,
+      "sha256_now": "f1e5b613eb48f629f6201712fd64a318ee96a14e97681da5099576d06e30782d",
+      "sha256_now_published_in": null,
+      "status": "A"
+    },
+    {
+      "authorized_by": "plans_internal/refactor_repo/checkpoints/P03/",
+      "path": "plans_internal/refactor_repo/checkpoints/P03/superseded_sessions/QA-2026-08-16-exhausted/evidence_from_ee8922a/codemod_diag_idempotent_second_pass.json",
+      "rename_source": null,
+      "sha256_at_HEAD": null,
+      "sha256_now": "9a6f0a24e731765b82435839ad144166e32a320f01d350ee3e7a701d8f8b1658",
+      "sha256_now_published_in": null,
+      "status": "A"
+    },
+    {
+      "authorized_by": "plans_internal/refactor_repo/checkpoints/P03/",
+      "path": "plans_internal/refactor_repo/checkpoints/P03/superseded_sessions/QA-2026-08-16-exhausted/evidence_from_ee8922a/codemod_postcondition_scan_repo_wide.json",
+      "rename_source": null,
+      "sha256_at_HEAD": null,
+      "sha256_now": "3f261402778c7d2dc215aa01f40fd1208658a55cf8b7dcba0b7f03592ae4f44d",
+      "sha256_now_published_in": null,
+      "status": "A"
+    },
+    {
+      "authorized_by": "plans_internal/refactor_repo/checkpoints/P03/",
+      "path": "plans_internal/refactor_repo/checkpoints/P03/superseded_sessions/QA-2026-08-16-exhausted/evidence_from_ee8922a/git_diff_stat_final.txt",
+      "rename_source": null,
+      "sha256_at_HEAD": null,
+      "sha256_now": "9acb4791ffa50186eccd955ee52d26b49c12b13e95b90f26fbc1ec4c90034428",
+      "sha256_now_published_in": null,
+      "status": "A"
+    },
+    {
+      "authorized_by": "plans_internal/refactor_repo/checkpoints/P03/",
+      "path": "plans_internal/refactor_repo/checkpoints/P03/superseded_sessions/QA-2026-08-16-exhausted/evidence_from_ee8922a/git_diff_stat_v3.txt",
+      "rename_source": null,
+      "sha256_at_HEAD": null,
+      "sha256_now": "7e4e5e869bc715b7ec341d733be6135408815b5ac581701d526ee1d2c8629e0d",
+      "sha256_now_published_in": null,
+      "status": "A"
+    },
+    {
+      "authorized_by": "plans_internal/refactor_repo/checkpoints/P03/",
+      "path": "plans_internal/refactor_repo/checkpoints/P03/superseded_sessions/QA-2026-08-16-exhausted/evidence_from_ee8922a/git_status_porcelain_final.txt",
+      "rename_source": null,
+      "sha256_at_HEAD": null,
+      "sha256_now": "d7a3d3a64d5ec4d7905f58898d939ad7e7fa71a3fc03b4ea8038da1b526ae6af",
+      "sha256_now_published_in": null,
+      "status": "A"
+    },
+    {
+      "authorized_by": "plans_internal/refactor_repo/checkpoints/P03/",
+      "path": "plans_internal/refactor_repo/checkpoints/P03/superseded_sessions/QA-2026-08-16-exhausted/evidence_from_ee8922a/git_status_porcelain_v3.txt",
+      "rename_source": null,
+      "sha256_at_HEAD": null,
+      "sha256_now": "ebca1c009db9f36e8a27036d52269745e28b41b7016ebc2f893eeaa0afac8a13",
+      "sha256_now_published_in": null,
+      "status": "A"
+    },
+    {
+      "authorized_by": "plans_internal/refactor_repo/checkpoints/P03/",
+      "path": "plans_internal/refactor_repo/checkpoints/P03/superseded_sessions/QA-2026-08-16-exhausted/evidence_from_ee8922a/src_curriculum_factory_sha256_final.txt",
+      "rename_source": null,
+      "sha256_at_HEAD": null,
+      "sha256_now": "077db9b70d6331273755672babf056619e473afcb20c0a96fbb7c22688f17b0f",
+      "sha256_now_published_in": null,
+      "status": "A"
+    },
+    {
+      "authorized_by": "plans_internal/refactor_repo/checkpoints/P03/",
+      "path": "plans_internal/refactor_repo/checkpoints/P03/superseded_sessions/QA-2026-08-16-exhausted/evidence_from_ee8922a/tests_runtime_sha256_final.txt",
+      "rename_source": null,
+      "sha256_at_HEAD": null,
+      "sha256_now": "7ac2d815f3a16948775da0829dbeae00c7315c3cba204f36edc08ea163e887ac",
+      "sha256_now_published_in": null,
+      "status": "A"
+    },
+    {
+      "authorized_by": "plans_internal/refactor_repo/checkpoints/P03/",
+      "path": "plans_internal/refactor_repo/checkpoints/P03/superseded_sessions/QA-2026-08-16-exhausted/postmortem.events.jsonl",
+      "rename_source": null,
+      "sha256_at_HEAD": null,
+      "sha256_now": "560abaa3a2a194443507eea5d04355f4697981d4b54c10fc5d74830b176f23d4",
+      "sha256_now_published_in": null,
+      "status": "A"
+    },
+    {
+      "authorized_by": "plans_internal/refactor_repo/checkpoints/P03/",
+      "path": "plans_internal/refactor_repo/checkpoints/P03/superseded_sessions/QA-2026-08-16-exhausted/postmortem.json",
+      "rename_source": null,
+      "sha256_at_HEAD": null,
+      "sha256_now": "24e02c7c145c606187611e7126d7c7753cac03d0b21b7aacbf35572943f79d5f",
+      "sha256_now_published_in": null,
+      "status": "A"
+    },
+    {
+      "authorized_by": "plans_internal/refactor_repo/checkpoints/P03/",
+      "path": "plans_internal/refactor_repo/checkpoints/P03/superseded_sessions/QA-2026-08-16-exhausted/postmortem.md",
+      "rename_source": null,
+      "sha256_at_HEAD": null,
+      "sha256_now": "f7915663feddc0c4bcfe48ca3c95df35b5539d83a779332e64b34ed9ea7e55b5",
+      "sha256_now_published_in": null,
+      "status": "A"
+    },
+    {
+      "authorized_by": "plans_internal/refactor_repo/checkpoints/P03/",
+      "path": "plans_internal/refactor_repo/checkpoints/P03/superseded_sessions/QA-2026-08-16-exhausted/postmortem.request.md",
+      "rename_source": null,
+      "sha256_at_HEAD": null,
+      "sha256_now": "90013b71c4c2d86aa303a95aa6e0a30f4e2789e5e28df4d1a2a22a5a1af6ad89",
+      "sha256_now_published_in": null,
+      "status": "A"
+    },
+    {
+      "authorized_by": "plans_internal/refactor_repo/checkpoints/P03/",
+      "path": "plans_internal/refactor_repo/checkpoints/P03/superseded_sessions/QA-2026-08-16-exhausted/postmortem.response.json",
+      "rename_source": null,
+      "sha256_at_HEAD": null,
+      "sha256_now": "8dc952d999081243cc8fec0216a9a01dceb3c208757475838d86197b9fc8a0cd",
+      "sha256_now_published_in": null,
+      "status": "A"
+    },
+    {
+      "authorized_by": "plans_internal/refactor_repo/checkpoints/P03/",
+      "path": "plans_internal/refactor_repo/checkpoints/P03/superseded_sessions/QA-2026-08-16-exhausted/postmortem.stderr.txt",
+      "rename_source": null,
+      "sha256_at_HEAD": null,
+      "sha256_now": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "sha256_now_published_in": null,
+      "status": "A"
+    },
+    {
+      "authorized_by": "plans_internal/refactor_repo/checkpoints/P03/",
+      "path": "plans_internal/refactor_repo/checkpoints/P03/superseded_sessions/QA-2026-08-16-exhausted/reports/P03_checkpoint_report.v1.md",
+      "rename_source": null,
+      "sha256_at_HEAD": null,
+      "sha256_now": "bbef7879fcb250ed1f0a71b0b90093a15303e21d693fb4ab380f9d357a8b7bb8",
+      "sha256_now_published_in": null,
+      "status": "A"
+    },
+    {
+      "authorized_by": "plans_internal/refactor_repo/checkpoints/P03/",
+      "path": "plans_internal/refactor_repo/checkpoints/P03/superseded_sessions/QA-2026-08-16-exhausted/reports/P03_checkpoint_report.v2.md",
+      "rename_source": null,
+      "sha256_at_HEAD": null,
+      "sha256_now": "4a723eb8b926ed346ba6c96ef5aa52b2f7e3f8f47b3dc4ff306c2f0c9cdfa74b",
+      "sha256_now_published_in": null,
+      "status": "A"
+    },
+    {
+      "authorized_by": "plans_internal/refactor_repo/checkpoints/P03/",
+      "path": "plans_internal/refactor_repo/checkpoints/P03/superseded_sessions/QA-2026-08-16-exhausted/reports/P03_checkpoint_report.v3.md",
+      "rename_source": null,
+      "sha256_at_HEAD": null,
+      "sha256_now": "6c2bc636d1cce4eef1807ae4b789384cf3ee376bb9752036463e7b3e227b22eb",
+      "sha256_now_published_in": null,
+      "status": "A"
+    },
+    {
+      "authorized_by": "plans_internal/refactor_repo/checkpoints/P03/",
+      "path": "plans_internal/refactor_repo/checkpoints/P03/superseded_sessions/QA-2026-08-16-exhausted/reports/P03_checkpoint_report.v4.md",
+      "rename_source": null,
+      "sha256_at_HEAD": null,
+      "sha256_now": "6adeabc3e3cab9fd670ae0c4ac379d7e4b9676754b82904f52e88ca4c6d5a61a",
+      "sha256_now_published_in": null,
+      "status": "A"
+    },
+    {
+      "authorized_by": "plans_internal/refactor_repo/checkpoints/P03/",
+      "path": "plans_internal/refactor_repo/checkpoints/P03/superseded_sessions/QA-2026-08-16-exhausted/reports/P03_checkpoint_report.v5.md",
+      "rename_source": null,
+      "sha256_at_HEAD": null,
+      "sha256_now": "3a947073e58d6aa764ac581deb85aef031352890611187b577127fd627954970",
+      "sha256_now_published_in": null,
+      "status": "A"
+    },
+    {
+      "authorized_by": "plans_internal/refactor_repo/checkpoints/P03/",
+      "path": "plans_internal/refactor_repo/checkpoints/P03/superseded_sessions/QA-2026-08-16-exhausted/rounds/round-01.events.jsonl",
+      "rename_source": null,
+      "sha256_at_HEAD": null,
+      "sha256_now": "7a1e6816d873b78efa38f39764572e8b576cd3682124e63ba56e260e4885495e",
+      "sha256_now_published_in": null,
+      "status": "A"
+    },
+    {
+      "authorized_by": "plans_internal/refactor_repo/checkpoints/P03/",
+      "path": "plans_internal/refactor_repo/checkpoints/P03/superseded_sessions/QA-2026-08-16-exhausted/rounds/round-01.meta.json",
+      "rename_source": null,
+      "sha256_at_HEAD": null,
+      "sha256_now": "e070f2ccdf7d6a6dc8752f645d869e48d51a49ac673adb4fc384aa05fa5fc998",
+      "sha256_now_published_in": null,
+      "status": "A"
+    },
+    {
+      "authorized_by": "plans_internal/refactor_repo/checkpoints/P03/",
+      "path": "plans_internal/refactor_repo/checkpoints/P03/superseded_sessions/QA-2026-08-16-exhausted/rounds/round-01.request.md",
+      "rename_source": null,
+      "sha256_at_HEAD": null,
+      "sha256_now": "e1f35a557565c683ced02eb2807a96c7af7dd1ba3d50f4a46f91c43d4ebfa2ab",
+      "sha256_now_published_in": null,
+      "status": "A"
+    },
+    {
+      "authorized_by": "plans_internal/refactor_repo/checkpoints/P03/",
+      "path": "plans_internal/refactor_repo/checkpoints/P03/superseded_sessions/QA-2026-08-16-exhausted/rounds/round-01.response.json",
+      "rename_source": null,
+      "sha256_at_HEAD": null,
+      "sha256_now": "c50b4f3113c6b068c788b2809f555d0f8da248901e248f7e2da69eada99057e2",
+      "sha256_now_published_in": null,
+      "status": "A"
+    },
+    {
+      "authorized_by": "plans_internal/refactor_repo/checkpoints/P03/",
+      "path": "plans_internal/refactor_repo/checkpoints/P03/superseded_sessions/QA-2026-08-16-exhausted/rounds/round-01.stderr.txt",
+      "rename_source": null,
+      "sha256_at_HEAD": null,
+      "sha256_now": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "sha256_now_published_in": null,
+      "status": "A"
+    },
+    {
+      "authorized_by": "plans_internal/refactor_repo/checkpoints/P03/",
+      "path": "plans_internal/refactor_repo/checkpoints/P03/superseded_sessions/QA-2026-08-16-exhausted/rounds/round-02.events.jsonl",
+      "rename_source": null,
+      "sha256_at_HEAD": null,
+      "sha256_now": "8ca0921e1f4aa883568af74ddb94637374f88adea405c630f78d572b7fb272c6",
+      "sha256_now_published_in": null,
+      "status": "A"
+    },
+    {
+      "authorized_by": "plans_internal/refactor_repo/checkpoints/P03/",
+      "path": "plans_internal/refactor_repo/checkpoints/P03/superseded_sessions/QA-2026-08-16-exhausted/rounds/round-02.meta.json",
+      "rename_source": null,
+      "sha256_at_HEAD": null,
+      "sha256_now": "c10725fe991fc6d450c9cf4b8e6c24cade09ca186b9e5cfbd00bb90099ad92dd",
+      "sha256_now_published_in": null,
+      "status": "A"
+    },
+    {
+      "authorized_by": "plans_internal/refactor_repo/checkpoints/P03/",
+      "path": "plans_internal/refactor_repo/checkpoints/P03/superseded_sessions/QA-2026-08-16-exhausted/rounds/round-02.request.md",
+      "rename_source": null,
+      "sha256_at_HEAD": null,
+      "sha256_now": "ecff6ecf1a4597c2a1b5a79e66693c7bddafce59a7ad374a751b51dd1494526c",
+      "sha256_now_published_in": null,
+      "status": "A"
+    },
+    {
+      "authorized_by": "plans_internal/refactor_repo/checkpoints/P03/",
+      "path": "plans_internal/refactor_repo/checkpoints/P03/superseded_sessions/QA-2026-08-16-exhausted/rounds/round-02.response.json",
+      "rename_source": null,
+      "sha256_at_HEAD": null,
+      "sha256_now": "8b5eb1a3e984bcd12926dbd768ee477d081ee296ec0ae48c5abd9101f14b4ed6",
+      "sha256_now_published_in": null,
+      "status": "A"
+    },
+    {
+      "authorized_by": "plans_internal/refactor_repo/checkpoints/P03/",
+      "path": "plans_internal/refactor_repo/checkpoints/P03/superseded_sessions/QA-2026-08-16-exhausted/rounds/round-02.stderr.txt",
+      "rename_source": null,
+      "sha256_at_HEAD": null,
+      "sha256_now": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "sha256_now_published_in": null,
+      "status": "A"
+    },
+    {
+      "authorized_by": "plans_internal/refactor_repo/checkpoints/P03/",
+      "path": "plans_internal/refactor_repo/checkpoints/P03/superseded_sessions/QA-2026-08-16-exhausted/rounds/round-03.events.jsonl",
+      "rename_source": null,
+      "sha256_at_HEAD": null,
+      "sha256_now": "153b0d7a8ec8cec0d8f5b339d81ea9c031f715c805d1d862b757b3d28322fe04",
+      "sha256_now_published_in": null,
+      "status": "A"
+    },
+    {
+      "authorized_by": "plans_internal/refactor_repo/checkpoints/P03/",
+      "path": "plans_internal/refactor_repo/checkpoints/P03/superseded_sessions/QA-2026-08-16-exhausted/rounds/round-03.meta.json",
+      "rename_source": null,
+      "sha256_at_HEAD": null,
+      "sha256_now": "8241cf4b6bda06f07970012e85a23fd931e11505a5b79b77132d0cbe4bbd76bb",
+      "sha256_now_published_in": null,
+      "status": "A"
+    },
+    {
+      "authorized_by": "plans_internal/refactor_repo/checkpoints/P03/",
+      "path": "plans_internal/refactor_repo/checkpoints/P03/superseded_sessions/QA-2026-08-16-exhausted/rounds/round-03.request.md",
+      "rename_source": null,
+      "sha256_at_HEAD": null,
+      "sha256_now": "be3427800c8d310b199f038b0389c371b22d826a3965a0043cd5f8fcce6b0c89",
+      "sha256_now_published_in": null,
+      "status": "A"
+    },
+    {
+      "authorized_by": "plans_internal/refactor_repo/checkpoints/P03/",
+      "path": "plans_internal/refactor_repo/checkpoints/P03/superseded_sessions/QA-2026-08-16-exhausted/rounds/round-03.response.json",
+      "rename_source": null,
+      "sha256_at_HEAD": null,
+      "sha256_now": "8e5c74f456aa3bc8c0fa8ee20916d80d71d7cb1d2f6c0fe520751f91d7729b09",
+      "sha256_now_published_in": null,
+      "status": "A"
+    },
+    {
+      "authorized_by": "plans_internal/refactor_repo/checkpoints/P03/",
+      "path": "plans_internal/refactor_repo/checkpoints/P03/superseded_sessions/QA-2026-08-16-exhausted/rounds/round-03.stderr.txt",
+      "rename_source": null,
+      "sha256_at_HEAD": null,
+      "sha256_now": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "sha256_now_published_in": null,
+      "status": "A"
+    },
+    {
+      "authorized_by": "plans_internal/refactor_repo/checkpoints/P03/",
+      "path": "plans_internal/refactor_repo/checkpoints/P03/superseded_sessions/QA-2026-08-16-exhausted/rounds/round-04.events.jsonl",
+      "rename_source": null,
+      "sha256_at_HEAD": null,
+      "sha256_now": "b2139de82889c2fa05813c9e5fca9314e482a6e038a758efce0276caa9c078f9",
+      "sha256_now_published_in": null,
+      "status": "A"
+    },
+    {
+      "authorized_by": "plans_internal/refactor_repo/checkpoints/P03/",
+      "path": "plans_internal/refactor_repo/checkpoints/P03/superseded_sessions/QA-2026-08-16-exhausted/rounds/round-04.meta.json",
+      "rename_source": null,
+      "sha256_at_HEAD": null,
+      "sha256_now": "451cb2e2b972bfeca20a756669e8b591c4d71413d05f14ef748e55500ceefda9",
+      "sha256_now_published_in": null,
+      "status": "A"
+    },
+    {
+      "authorized_by": "plans_internal/refactor_repo/checkpoints/P03/",
+      "path": "plans_internal/refactor_repo/checkpoints/P03/superseded_sessions/QA-2026-08-16-exhausted/rounds/round-04.request.md",
+      "rename_source": null,
+      "sha256_at_HEAD": null,
+      "sha256_now": "fa78d3b3b62930a59ab6a18419428184bf9ca634cb1e3306ed5128a4b81bce87",
+      "sha256_now_published_in": null,
+      "status": "A"
+    },
+    {
+      "authorized_by": "plans_internal/refactor_repo/checkpoints/P03/",
+      "path": "plans_internal/refactor_repo/checkpoints/P03/superseded_sessions/QA-2026-08-16-exhausted/rounds/round-04.response.json",
+      "rename_source": null,
+      "sha256_at_HEAD": null,
+      "sha256_now": "8b4d57f17a21ab810ae76412dcd9f215e5cae4f23d49fdcc9890272f34382c22",
+      "sha256_now_published_in": null,
+      "status": "A"
+    },
+    {
+      "authorized_by": "plans_internal/refactor_repo/checkpoints/P03/",
+      "path": "plans_internal/refactor_repo/checkpoints/P03/superseded_sessions/QA-2026-08-16-exhausted/rounds/round-04.stderr.txt",
+      "rename_source": null,
+      "sha256_at_HEAD": null,
+      "sha256_now": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "sha256_now_published_in": null,
+      "status": "A"
+    },
+    {
+      "authorized_by": "plans_internal/refactor_repo/checkpoints/P03/",
+      "path": "plans_internal/refactor_repo/checkpoints/P03/superseded_sessions/QA-2026-08-16-exhausted/rounds/round-05.events.jsonl",
+      "rename_source": null,
+      "sha256_at_HEAD": null,
+      "sha256_now": "5c6ceaf09acdc9ffb7abbe2c7e8a255a9398495a2fcad6a45b8e3edab94a57a2",
+      "sha256_now_published_in": null,
+      "status": "A"
+    },
+    {
+      "authorized_by": "plans_internal/refactor_repo/checkpoints/P03/",
+      "path": "plans_internal/refactor_repo/checkpoints/P03/superseded_sessions/QA-2026-08-16-exhausted/rounds/round-05.meta.json",
+      "rename_source": null,
+      "sha256_at_HEAD": null,
+      "sha256_now": "1865257bc131cd1077b8f3dca777b5edcd2e8870cd40fcdc673159111679d940",
+      "sha256_now_published_in": null,
+      "status": "A"
+    },
+    {
+      "authorized_by": "plans_internal/refactor_repo/checkpoints/P03/",
+      "path": "plans_internal/refactor_repo/checkpoints/P03/superseded_sessions/QA-2026-08-16-exhausted/rounds/round-05.request.md",
+      "rename_source": null,
+      "sha256_at_HEAD": null,
+      "sha256_now": "602812b2cd64a729265d9e4e743b4528039d5d4b95affbae238dea0b4704467d",
+      "sha256_now_published_in": null,
+      "status": "A"
+    },
+    {
+      "authorized_by": "plans_internal/refactor_repo/checkpoints/P03/",
+      "path": "plans_internal/refactor_repo/checkpoints/P03/superseded_sessions/QA-2026-08-16-exhausted/rounds/round-05.response.json",
+      "rename_source": null,
+      "sha256_at_HEAD": null,
+      "sha256_now": "8dea4363163579ea44d5dd7b3f75467d73e3390d9435b9cb20c0c633bcffb973",
+      "sha256_now_published_in": null,
+      "status": "A"
+    },
+    {
+      "authorized_by": "plans_internal/refactor_repo/checkpoints/P03/",
+      "path": "plans_internal/refactor_repo/checkpoints/P03/superseded_sessions/QA-2026-08-16-exhausted/rounds/round-05.stderr.txt",
+      "rename_source": null,
+      "sha256_at_HEAD": null,
+      "sha256_now": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "sha256_now_published_in": null,
+      "status": "A"
+    },
+    {
+      "authorized_by": "plans_internal/refactor_repo/checkpoints/P03/",
+      "path": "plans_internal/refactor_repo/checkpoints/P03/superseded_sessions/QA-2026-08-16-exhausted/session.json",
+      "rename_source": null,
+      "sha256_at_HEAD": null,
+      "sha256_now": "238e7026b0b8608bd46bca5a6ef662ce6d99ff6895592f306bf5651fb8029dfd",
+      "sha256_now_published_in": null,
+      "status": "A"
+    },
+    {
+      "authorized_by": "plans_internal/refactor_repo/checkpoints/P03/",
+      "path": "plans_internal/refactor_repo/checkpoints/P03/superseded_sessions/QA-2026-08-16-exhausted/verdict.json",
+      "rename_source": null,
+      "sha256_at_HEAD": null,
+      "sha256_now": "b7cc4e7adccd503009eb606a565799b35caaba2796cbd11032e7728366bccc59",
+      "sha256_now_published_in": null,
+      "status": "A"
+    },
+    {
+      "authorized_by": "plans_internal/refactor_repo/checkpoints/P03/",
+      "path": "plans_internal/refactor_repo/checkpoints/P03/superseded_sessions/QA-2026-08-16-session2-retired/README.md",
+      "rename_source": null,
+      "sha256_at_HEAD": null,
+      "sha256_now": "e3dadaa409b9283bfb0e6c82aebfe6efff204aa5d0033b3ea291dce557a3bfb4",
+      "sha256_now_published_in": null,
+      "status": "A"
+    },
+    {
+      "authorized_by": "plans_internal/refactor_repo/checkpoints/P03/",
+      "path": "plans_internal/refactor_repo/checkpoints/P03/superseded_sessions/QA-2026-08-16-session2-retired/rounds/round-01.events.jsonl",
+      "rename_source": null,
+      "sha256_at_HEAD": null,
+      "sha256_now": "e748ef7415a51ec56ca159b6a6edefc7361411235024d4e0f0f86e74cc8acbf4",
+      "sha256_now_published_in": null,
+      "status": "A"
+    },
+    {
+      "authorized_by": "plans_internal/refactor_repo/checkpoints/P03/",
+      "path": "plans_internal/refactor_repo/checkpoints/P03/superseded_sessions/QA-2026-08-16-session2-retired/rounds/round-01.meta.json",
+      "rename_source": null,
+      "sha256_at_HEAD": null,
+      "sha256_now": "08cf4ae6fc8f77727cbb9867a9d4cace4a32ba22dc4a77ed0752fceef8f82e64",
+      "sha256_now_published_in": null,
+      "status": "A"
+    },
+    {
+      "authorized_by": "plans_internal/refactor_repo/checkpoints/P03/",
+      "path": "plans_internal/refactor_repo/checkpoints/P03/superseded_sessions/QA-2026-08-16-session2-retired/rounds/round-01.request.md",
+      "rename_source": null,
+      "sha256_at_HEAD": null,
+      "sha256_now": "0a1615fd5c2a6422cb84cf1f5c9894064cd06d521e11ee23db05d493e632c32a",
+      "sha256_now_published_in": null,
+      "status": "A"
+    },
+    {
+      "authorized_by": "plans_internal/refactor_repo/checkpoints/P03/",
+      "path": "plans_internal/refactor_repo/checkpoints/P03/superseded_sessions/QA-2026-08-16-session2-retired/rounds/round-01.response.json",
+      "rename_source": null,
+      "sha256_at_HEAD": null,
+      "sha256_now": "0e9265c42e9b4a7295fc2eb43ce741cba6c36ad5d4523b9a670ab1dced3f10f2",
+      "sha256_now_published_in": null,
+      "status": "A"
+    },
+    {
+      "authorized_by": "plans_internal/refactor_repo/checkpoints/P03/",
+      "path": "plans_internal/refactor_repo/checkpoints/P03/superseded_sessions/QA-2026-08-16-session2-retired/rounds/round-01.stderr.txt",
+      "rename_source": null,
+      "sha256_at_HEAD": null,
+      "sha256_now": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "sha256_now_published_in": null,
+      "status": "A"
+    },
+    {
+      "authorized_by": "plans_internal/refactor_repo/checkpoints/P03/",
+      "path": "plans_internal/refactor_repo/checkpoints/P03/superseded_sessions/QA-2026-08-16-session2-retired/rounds/round-02.events.jsonl",
+      "rename_source": null,
+      "sha256_at_HEAD": null,
+      "sha256_now": "0d1eacdb8515ae278a96aa14c7ba280f24dfebdb8e72026b2d5efe71da68c371",
+      "sha256_now_published_in": null,
+      "status": "A"
+    },
+    {
+      "authorized_by": "plans_internal/refactor_repo/checkpoints/P03/",
+      "path": "plans_internal/refactor_repo/checkpoints/P03/superseded_sessions/QA-2026-08-16-session2-retired/rounds/round-02.meta.json",
+      "rename_source": null,
+      "sha256_at_HEAD": null,
+      "sha256_now": "94e617a9dffdf29ea32685e6a2c7c13bfd1d5b026c3e3a5ab274daaf5f3a729a",
+      "sha256_now_published_in": null,
+      "status": "A"
+    },
+    {
+      "authorized_by": "plans_internal/refactor_repo/checkpoints/P03/",
+      "path": "plans_internal/refactor_repo/checkpoints/P03/superseded_sessions/QA-2026-08-16-session2-retired/rounds/round-02.request.md",
+      "rename_source": null,
+      "sha256_at_HEAD": null,
+      "sha256_now": "978b8875a533537d8766eb3b2d1e5379f138c3e39ab2eae8936083c3e5884985",
+      "sha256_now_published_in": null,
+      "status": "A"
+    },
+    {
+      "authorized_by": "plans_internal/refactor_repo/checkpoints/P03/",
+      "path": "plans_internal/refactor_repo/checkpoints/P03/superseded_sessions/QA-2026-08-16-session2-retired/rounds/round-02.response.json",
+      "rename_source": null,
+      "sha256_at_HEAD": null,
+      "sha256_now": "d1c9e7d6476dbca3c95c9a141372864f1175ea1bfba591f4cd560c43539ccb90",
+      "sha256_now_published_in": null,
+      "status": "A"
+    },
+    {
+      "authorized_by": "plans_internal/refactor_repo/checkpoints/P03/",
+      "path": "plans_internal/refactor_repo/checkpoints/P03/superseded_sessions/QA-2026-08-16-session2-retired/rounds/round-02.stderr.txt",
+      "rename_source": null,
+      "sha256_at_HEAD": null,
+      "sha256_now": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "sha256_now_published_in": null,
+      "status": "A"
+    },
+    {
+      "authorized_by": "plans_internal/refactor_repo/checkpoints/P03/",
+      "path": "plans_internal/refactor_repo/checkpoints/P03/superseded_sessions/QA-2026-08-16-session2-retired/session.json",
+      "rename_source": null,
+      "sha256_at_HEAD": null,
+      "sha256_now": "a1bd8adf6aee1de95407bd1fd9ee03620419bbb50125c9f1a49e470a00382581",
+      "sha256_now_published_in": null,
+      "status": "A"
+    },
+    {
+      "authorized_by": "plans_internal/refactor_repo/checkpoints/P03/",
+      "path": "plans_internal/refactor_repo/checkpoints/P03/t5_final_tree/fixed_since_t0.txt",
+      "rename_source": null,
+      "sha256_at_HEAD": null,
+      "sha256_now": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "sha256_now_published_in": null,
+      "status": "A"
+    },
+    {
+      "authorized_by": "plans_internal/refactor_repo/checkpoints/P03/",
+      "path": "plans_internal/refactor_repo/checkpoints/P03/t5_final_tree/new_failures_ids_only.txt",
+      "rename_source": null,
+      "sha256_at_HEAD": null,
+      "sha256_now": "e3be8d56e8d8e3903e6d4e60c37427e8e8937bb7c772a974e5c3eca2bf0a4bc2",
+      "sha256_now_published_in": null,
+      "status": "A"
+    },
+    {
+      "authorized_by": "plans_internal/refactor_repo/checkpoints/P03/",
+      "path": "plans_internal/refactor_repo/checkpoints/P03/t5_final_tree/new_failures_vs_t0.txt",
+      "rename_source": null,
+      "sha256_at_HEAD": null,
+      "sha256_now": "351e58c98684b09d5419df1dc15e9d304c52dc855f132c4256656df84aa9fad5",
+      "sha256_now_published_in": null,
+      "status": "A"
+    },
+    {
+      "authorized_by": "plans_internal/refactor_repo/checkpoints/P03/",
+      "path": "plans_internal/refactor_repo/checkpoints/P03/t5_final_tree/p04_handoff_allowlist_ids.txt",
+      "rename_source": null,
+      "sha256_at_HEAD": null,
+      "sha256_now": "e3be8d56e8d8e3903e6d4e60c37427e8e8937bb7c772a974e5c3eca2bf0a4bc2",
+      "sha256_now_published_in": null,
+      "status": "A"
+    },
+    {
+      "authorized_by": "plans_internal/refactor_repo/checkpoints/P03/",
+      "path": "plans_internal/refactor_repo/checkpoints/P03/t5_final_tree/pytest_full_t5.log",
+      "rename_source": null,
+      "sha256_at_HEAD": null,
+      "sha256_now": "c824c1824b106fd2ba2a5705d658643aec6302428f0f891900728e53011143b6",
+      "sha256_now_published_in": null,
+      "status": "A"
+    },
+    {
+      "authorized_by": "plans_internal/refactor_repo/checkpoints/P03/",
+      "path": "plans_internal/refactor_repo/checkpoints/P03/t5_final_tree/pytest_t5_failed_and_error_ids.txt",
+      "rename_source": null,
+      "sha256_at_HEAD": null,
+      "sha256_now": "6e21bff12705656e1f4b7d15ca718d38fa43e7aad25b720e3f3dbee3f6d2ec35",
+      "sha256_now_published_in": null,
+      "status": "A"
+    },
+    {
+      "authorized_by": "plans_internal/refactor_repo/exceptions/source_move.v1.yaml",
+      "path": "plans_internal/refactor_repo/exceptions/source_move.v1.yaml",
+      "rename_source": null,
+      "sha256_at_HEAD": null,
+      "sha256_now": "2d47c852bff2725b2edc6d1094d59bb9a3bd48162d306e64c2684bb402d26542",
+      "sha256_now_published_in": null,
+      "status": "A"
+    },
+    {
+      "authorized_by": "plans_internal/refactor_repo/execution/P03/.execution_log.counter.json",
+      "path": "plans_internal/refactor_repo/execution/P03/.execution_log.counter.json",
+      "rename_source": null,
+      "sha256_at_HEAD": null,
+      "sha256_now": "76bb1457b3122994ab79b996cea51470bbe12cb682a1122e7ec4b21d5fae30d1",
+      "sha256_now_published_in": null,
+      "status": "A"
+    },
+    {
+      "authorized_by": "plans_internal/refactor_repo/execution/P03/execution_log.jsonl",
+      "path": "plans_internal/refactor_repo/execution/P03/execution_log.jsonl",
+      "rename_source": null,
+      "sha256_at_HEAD": null,
+      "sha256_now": "96ca5bfa5663de46849d1eb1e5196a4a7e333d2057a94b5ee4cac01a549ecc06",
+      "sha256_now_published_in": null,
+      "status": "A"
+    },
+    {
+      "authorized_by": "plans_internal/refactor_repo/prompts/P03_source_move.prompt.v3.yaml",
+      "path": "plans_internal/refactor_repo/prompts/P03_source_move.prompt.v3.yaml",
+      "rename_source": null,
+      "sha256_at_HEAD": "c575d21eb455e1818f6977bf96e8537c776972bb520b05f1c02cd2300dd02793",
+      "sha256_now": "0f2b94c4064eb2ea9a750e2e813919b4f64470158459697aa9b8ea0a62489334",
+      "sha256_now_published_in": null,
+      "status": "M"
+    },
+    {
+      "authorized_by": "plans_internal/refactor_repo/prompts/checkpoint_qa_criteria.v1.md",
+      "path": "plans_internal/refactor_repo/prompts/checkpoint_qa_criteria.v1.md",
+      "rename_source": null,
+      "sha256_at_HEAD": "bfd035a29b675df9718dc694a945ff1a4e901f2b3d8e653541a2b98b2cc48a42",
+      "sha256_now": "8963b43f143290c2cf2e32c7aa97523d829657aeec9a2224b1aa3040a3c53f7e",
+      "sha256_now_published_in": null,
+      "status": "M"
+    },
+    {
+      "authorized_by": "plans_internal/refactor_repo/prompts/resolved/prompt_manifest.resolved.v1.yaml",
+      "path": "plans_internal/refactor_repo/prompts/resolved/prompt_manifest.resolved.v1.yaml",
+      "rename_source": null,
+      "sha256_at_HEAD": "c60a649f5b58900bb7d05609910f1b8b72c7b5565b61a6705286d874a0a2a5bd",
+      "sha256_now": "b550f83c8e6679329238d44b5c3044cd2e716f664ee49b7fba92af9d8c2eaa30",
+      "sha256_now_published_in": null,
+      "status": "M"
+    },
+    {
+      "authorized_by": "runtime/",
+      "path": "runtime/__init__.py",
+      "rename_source": null,
+      "sha256_at_HEAD": "e6f31734391e92562393182fe00b403b2e138610025699e089601dd823bf7f81",
+      "sha256_now": null,
+      "sha256_now_published_in": null,
+      "status": "D"
+    },
+    {
+      "authorized_by": "src/curriculum_factory/",
+      "path": "src/curriculum_factory/__init__.py",
+      "rename_source": null,
+      "sha256_at_HEAD": "373ca38365f43cb6cc6d90767f48c61a7b2ab38a8693094d2f32a7deafe12404",
+      "sha256_now": "e6f31734391e92562393182fe00b403b2e138610025699e089601dd823bf7f81",
+      "sha256_now_published_in": null,
+      "status": "M"
+    },
+    {
+      "authorized_by": "src/curriculum_factory/",
+      "path": "src/curriculum_factory/capabilities.py",
+      "rename_source": "runtime/capabilities.py",
+      "rename_source_authorized_by": "runtime/",
+      "sha256_at_HEAD": "e1654b9eb84f567f49d2e3cc4f2ccd80306ef842b8711b9069b9d704a5d5f4ef",
+      "sha256_now": "e1654b9eb84f567f49d2e3cc4f2ccd80306ef842b8711b9069b9d704a5d5f4ef",
+      "sha256_now_published_in": null,
+      "status": "R100"
+    },
+    {
+      "authorized_by": "src/curriculum_factory/",
+      "path": "src/curriculum_factory/capability_cycle.py",
+      "rename_source": "runtime/capability_cycle.py",
+      "rename_source_authorized_by": "runtime/",
+      "sha256_at_HEAD": "ddf5d11599f46dbcd99177a15cf5aca91b1bbc2f79a3c33f53f0940bd150791f",
+      "sha256_now": "4832aaa8944ced1558d5d2b71a9646c8f2e2d55e3d127ea84544d4219981d95f",
+      "sha256_now_published_in": null,
+      "status": "R098"
+    },
+    {
+      "authorized_by": "src/curriculum_factory/",
+      "path": "src/curriculum_factory/checkpoint.py",
+      "rename_source": "runtime/checkpoint.py",
+      "rename_source_authorized_by": "runtime/",
+      "sha256_at_HEAD": "dbaa75419fd16ef77ec0b77283a3cbb329d9575c45aefcb5025dbbd94eaeb572",
+      "sha256_now": "dbaa75419fd16ef77ec0b77283a3cbb329d9575c45aefcb5025dbbd94eaeb572",
+      "sha256_now_published_in": null,
+      "status": "R100"
+    },
+    {
+      "authorized_by": "src/curriculum_factory/",
+      "path": "src/curriculum_factory/checks.py",
+      "rename_source": "runtime/checks.py",
+      "rename_source_authorized_by": "runtime/",
+      "sha256_at_HEAD": "735fb1f7c2a9d147e2c87e3aa0b6636c1ca36b9a54b6f9af8c7c230a53ef3585",
+      "sha256_now": "735fb1f7c2a9d147e2c87e3aa0b6636c1ca36b9a54b6f9af8c7c230a53ef3585",
+      "sha256_now_published_in": null,
+      "status": "R100"
+    },
+    {
+      "authorized_by": "src/curriculum_factory/",
+      "path": "src/curriculum_factory/controller.py",
+      "rename_source": "runtime/controller.py",
+      "rename_source_authorized_by": "runtime/",
+      "sha256_at_HEAD": "ddb38dad72b1738cf5711eab820a80b1c59d1fa785b9c0e6a5e9a248c8de8fd7",
+      "sha256_now": "ddb38dad72b1738cf5711eab820a80b1c59d1fa785b9c0e6a5e9a248c8de8fd7",
+      "sha256_now_published_in": null,
+      "status": "R100"
+    },
+    {
+      "authorized_by": "src/curriculum_factory/",
+      "path": "src/curriculum_factory/curriculum_factory_graph.py",
+      "rename_source": "runtime/curriculum_factory_graph.py",
+      "rename_source_authorized_by": "runtime/",
+      "sha256_at_HEAD": "bae01aab329839abd6ab1dffb2451980d93be1cc3d5ed6f489999561b91b265f",
+      "sha256_now": "1c1c1cac343632bb9ec7999b6cb2a49d00b7d229b1e93dd4aa86fe60ae9adee9",
+      "sha256_now_published_in": null,
+      "status": "R099"
+    },
+    {
+      "authorized_by": "src/curriculum_factory/",
+      "path": "src/curriculum_factory/factory_state.py",
+      "rename_source": "runtime/factory_state.py",
+      "rename_source_authorized_by": "runtime/",
+      "sha256_at_HEAD": "4a51b219798300c82a01298f5e149922db3b249a359a0dfc83d49cbd2cd553d0",
+      "sha256_now": "4a51b219798300c82a01298f5e149922db3b249a359a0dfc83d49cbd2cd553d0",
+      "sha256_now_published_in": null,
+      "status": "R100"
+    },
+    {
+      "authorized_by": "src/curriculum_factory/",
+      "path": "src/curriculum_factory/finalize_evidence.py",
+      "rename_source": "runtime/finalize_evidence.py",
+      "rename_source_authorized_by": "runtime/",
+      "sha256_at_HEAD": "c59cfbcbd4d5bf970caa2212abada4dd881a6f12571713b2167b5f8cd29876dd",
+      "sha256_now": "fbffc9703fc0b02279c99b2a2252bd7c37550d53d2c5fe19a6308a4e27fe1f8f",
+      "sha256_now_published_in": null,
+      "status": "R090"
+    },
+    {
+      "authorized_by": "src/curriculum_factory/",
+      "path": "src/curriculum_factory/gemini.py",
+      "rename_source": "runtime/gemini.py",
+      "rename_source_authorized_by": "runtime/",
+      "sha256_at_HEAD": "d1bb06062092cd28f6f2a4498e3b803ce428d29e592bc90cd27ed0c9a7295d3c",
+      "sha256_now": "d1bb06062092cd28f6f2a4498e3b803ce428d29e592bc90cd27ed0c9a7295d3c",
+      "sha256_now_published_in": null,
+      "status": "R100"
+    },
+    {
+      "authorized_by": "src/curriculum_factory/",
+      "path": "src/curriculum_factory/io.py",
+      "rename_source": "runtime/io.py",
+      "rename_source_authorized_by": "runtime/",
+      "sha256_at_HEAD": "2673f1f322009a42dcadbd2b8d40db9d93bcc002cd0bc0cdb03c037ec5361cbc",
+      "sha256_now": "2673f1f322009a42dcadbd2b8d40db9d93bcc002cd0bc0cdb03c037ec5361cbc",
+      "sha256_now_published_in": null,
+      "status": "R100"
+    },
+    {
+      "authorized_by": "src/curriculum_factory/",
+      "path": "src/curriculum_factory/langgraph_factory/__init__.py",
+      "rename_source": "runtime/langgraph_factory/__init__.py",
+      "rename_source_authorized_by": "runtime/",
+      "sha256_at_HEAD": "c314b9c501bc6fe4dd0da84555ec3343e5c58ac30ee9fcfd1f188001376a6c20",
+      "sha256_now": "c314b9c501bc6fe4dd0da84555ec3343e5c58ac30ee9fcfd1f188001376a6c20",
+      "sha256_now_published_in": null,
+      "status": "R100"
+    },
+    {
+      "authorized_by": "src/curriculum_factory/",
+      "path": "src/curriculum_factory/langgraph_factory/acceptance.py",
+      "rename_source": "runtime/langgraph_factory/acceptance.py",
+      "rename_source_authorized_by": "runtime/",
+      "sha256_at_HEAD": "9752736b326e0d58c42affd2166177c42cc0db74626e2b4d83783c8024be1bed",
+      "sha256_now": "9752736b326e0d58c42affd2166177c42cc0db74626e2b4d83783c8024be1bed",
+      "sha256_now_published_in": null,
+      "status": "R100"
+    },
+    {
+      "authorized_by": "src/curriculum_factory/",
+      "path": "src/curriculum_factory/langgraph_factory/artifacts.py",
+      "rename_source": "runtime/langgraph_factory/artifacts.py",
+      "rename_source_authorized_by": "runtime/",
+      "sha256_at_HEAD": "dfb1efa93c0c267b0ae282c9687d769ef043b31c363526871e7212e2890b86cf",
+      "sha256_now": "dfb1efa93c0c267b0ae282c9687d769ef043b31c363526871e7212e2890b86cf",
+      "sha256_now_published_in": null,
+      "status": "R100"
+    },
+    {
+      "authorized_by": "src/curriculum_factory/",
+      "path": "src/curriculum_factory/langgraph_factory/config/model_jobs.v1.yaml",
+      "rename_source": "runtime/langgraph_factory/config/model_jobs.v1.yaml",
+      "rename_source_authorized_by": "runtime/",
+      "sha256_at_HEAD": "62c9c9c33a164bd5e02a0008ea289c83e5cae34ab1c951f32c9dec22c8236c3d",
+      "sha256_now": "62c9c9c33a164bd5e02a0008ea289c83e5cae34ab1c951f32c9dec22c8236c3d",
+      "sha256_now_published_in": null,
+      "status": "R100"
+    },
+    {
+      "authorized_by": "src/curriculum_factory/",
+      "path": "src/curriculum_factory/langgraph_factory/egress.py",
+      "rename_source": "runtime/langgraph_factory/egress.py",
+      "rename_source_authorized_by": "runtime/",
+      "sha256_at_HEAD": "d48869dc37df95bc4f861f7ac1c4ae5043ecb417e4b9df6c0e29929c3f7bba4d",
+      "sha256_now": "d48869dc37df95bc4f861f7ac1c4ae5043ecb417e4b9df6c0e29929c3f7bba4d",
+      "sha256_now_published_in": null,
+      "status": "R100"
+    },
+    {
+      "authorized_by": "src/curriculum_factory/",
+      "path": "src/curriculum_factory/langgraph_factory/evidence.py",
+      "rename_source": "runtime/langgraph_factory/evidence.py",
+      "rename_source_authorized_by": "runtime/",
+      "sha256_at_HEAD": "95ddef6f9e1e5e7031f223d88b285b2b0ffbdd604c70181ae87ad8a21220c199",
+      "sha256_now": "c45fff3ebdfeb13f7a6250ede9cde61c1a471b2b8b136f9eb8139e26616e550d",
+      "sha256_now_published_in": null,
+      "status": "R099"
+    },
+    {
+      "authorized_by": "src/curriculum_factory/",
+      "path": "src/curriculum_factory/langgraph_factory/graph.py",
+      "rename_source": "runtime/langgraph_factory/graph.py",
+      "rename_source_authorized_by": "runtime/",
+      "sha256_at_HEAD": "78c8d9fd07f40aab93bdb9d39826433f277f3c368e59bfcc7df6fbbf9ea7b8ca",
+      "sha256_now": "39fbbdcdfbc0c79fd404dd9df5e23f50d5b1e5331a04e75ec3eeb7f311ae0321",
+      "sha256_now_published_in": null,
+      "status": "R099"
+    },
+    {
+      "authorized_by": "src/curriculum_factory/",
+      "path": "src/curriculum_factory/langgraph_factory/model_nodes.py",
+      "rename_source": "runtime/langgraph_factory/model_nodes.py",
+      "rename_source_authorized_by": "runtime/",
+      "sha256_at_HEAD": "0a8479b3b2650980d88b596277a3ed0ee2eca85ac4e64e57f4bbdc9eb51055ce",
+      "sha256_now": "0a8479b3b2650980d88b596277a3ed0ee2eca85ac4e64e57f4bbdc9eb51055ce",
+      "sha256_now_published_in": null,
+      "status": "R100"
+    },
+    {
+      "authorized_by": "src/curriculum_factory/",
+      "path": "src/curriculum_factory/langgraph_factory/nodes/__init__.py",
+      "rename_source": "runtime/langgraph_factory/nodes/__init__.py",
+      "rename_source_authorized_by": "runtime/",
+      "sha256_at_HEAD": "a480e479fccff4ce11e4e15eec364b9a5d85c157dd7083bbfa55423170c200c4",
+      "sha256_now": "a480e479fccff4ce11e4e15eec364b9a5d85c157dd7083bbfa55423170c200c4",
+      "sha256_now_published_in": null,
+      "status": "R100"
+    },
+    {
+      "authorized_by": "src/curriculum_factory/",
+      "path": "src/curriculum_factory/langgraph_factory/nodes/content.py",
+      "rename_source": "runtime/langgraph_factory/nodes/content.py",
+      "rename_source_authorized_by": "runtime/",
+      "sha256_at_HEAD": "c10e37133539eb7c51280b22c37e400a7fa70ea3295c07443d2e9b4b420ed412",
+      "sha256_now": "c10e37133539eb7c51280b22c37e400a7fa70ea3295c07443d2e9b4b420ed412",
+      "sha256_now_published_in": null,
+      "status": "R100"
+    },
+    {
+      "authorized_by": "src/curriculum_factory/",
+      "path": "src/curriculum_factory/langgraph_factory/nodes/domain.py",
+      "rename_source": "runtime/langgraph_factory/nodes/domain.py",
+      "rename_source_authorized_by": "runtime/",
+      "sha256_at_HEAD": "b1cf8d1366f92200e78e6e7584d97a86296a9e53f31e856a5c7f2dc6b632c1d0",
+      "sha256_now": "b1cf8d1366f92200e78e6e7584d97a86296a9e53f31e856a5c7f2dc6b632c1d0",
+      "sha256_now_published_in": null,
+      "status": "R100"
+    },
+    {
+      "authorized_by": "src/curriculum_factory/",
+      "path": "src/curriculum_factory/langgraph_factory/nodes/inputs.py",
+      "rename_source": "runtime/langgraph_factory/nodes/inputs.py",
+      "rename_source_authorized_by": "runtime/",
+      "sha256_at_HEAD": "23b932bfbf66c3fd2d0f35fa369fe45707a1a164484dc7e56a1835c34f533b7a",
+      "sha256_now": "23b932bfbf66c3fd2d0f35fa369fe45707a1a164484dc7e56a1835c34f533b7a",
+      "sha256_now_published_in": null,
+      "status": "R100"
+    },
+    {
+      "authorized_by": "src/curriculum_factory/",
+      "path": "src/curriculum_factory/langgraph_factory/nodes/render.py",
+      "rename_source": "runtime/langgraph_factory/nodes/render.py",
+      "rename_source_authorized_by": "runtime/",
+      "sha256_at_HEAD": "76fa183ad8fc26c054a33901d42c3635e3cb5c0094bca70b9f797517e19152b4",
+      "sha256_now": "76fa183ad8fc26c054a33901d42c3635e3cb5c0094bca70b9f797517e19152b4",
+      "sha256_now_published_in": null,
+      "status": "R100"
+    },
+    {
+      "authorized_by": "src/curriculum_factory/",
+      "path": "src/curriculum_factory/langgraph_factory/nodes/review.py",
+      "rename_source": "runtime/langgraph_factory/nodes/review.py",
+      "rename_source_authorized_by": "runtime/",
+      "sha256_at_HEAD": "7b030939f97d03e503fad39e9f181ef273855e712b2c5780a284cfe24308a8b6",
+      "sha256_now": "7b030939f97d03e503fad39e9f181ef273855e712b2c5780a284cfe24308a8b6",
+      "sha256_now_published_in": null,
+      "status": "R100"
+    },
+    {
+      "authorized_by": "src/curriculum_factory/",
+      "path": "src/curriculum_factory/langgraph_factory/nodes/sources.py",
+      "rename_source": "runtime/langgraph_factory/nodes/sources.py",
+      "rename_source_authorized_by": "runtime/",
+      "sha256_at_HEAD": "7b177e918916e9792f9dabfe1272cd753f98237fc7d86a8b4b0f88872a6a89b0",
+      "sha256_now": "7b177e918916e9792f9dabfe1272cd753f98237fc7d86a8b4b0f88872a6a89b0",
+      "sha256_now_published_in": null,
+      "status": "R100"
+    },
+    {
+      "authorized_by": "src/curriculum_factory/",
+      "path": "src/curriculum_factory/langgraph_factory/nodes/terminal.py",
+      "rename_source": "runtime/langgraph_factory/nodes/terminal.py",
+      "rename_source_authorized_by": "runtime/",
+      "sha256_at_HEAD": "66e7b92752d8ab8e0a93e00fc50114331f74f34538358b9b2938a6f02c17f28d",
+      "sha256_now": "66e7b92752d8ab8e0a93e00fc50114331f74f34538358b9b2938a6f02c17f28d",
+      "sha256_now_published_in": null,
+      "status": "R100"
+    },
+    {
+      "authorized_by": "src/curriculum_factory/",
+      "path": "src/curriculum_factory/langgraph_factory/nodes/visuals.py",
+      "rename_source": "runtime/langgraph_factory/nodes/visuals.py",
+      "rename_source_authorized_by": "runtime/",
+      "sha256_at_HEAD": "4ab67d2c6a0f60afa1da97c5abae19f26210863e975710ab2417d2785be671c7",
+      "sha256_now": "4ab67d2c6a0f60afa1da97c5abae19f26210863e975710ab2417d2785be671c7",
+      "sha256_now_published_in": null,
+      "status": "R100"
+    },
+    {
+      "authorized_by": "src/curriculum_factory/",
+      "path": "src/curriculum_factory/langgraph_factory/persistence.py",
+      "rename_source": "runtime/langgraph_factory/persistence.py",
+      "rename_source_authorized_by": "runtime/",
+      "sha256_at_HEAD": "c2b3eb236d2ea7bb6ca7f0ff5d6258c8bd1fdec8cf36d9520c2b2ddb9298b289",
+      "sha256_now": "2ca0f8dc9a086cbc77458c6b07dc2f51cfc2e0cdf6ff8fffe805eb7d5f151563",
+      "sha256_now_published_in": null,
+      "status": "R099"
+    },
+    {
+      "authorized_by": "src/curriculum_factory/",
+      "path": "src/curriculum_factory/langgraph_factory/prompts/M01_research_unit_sources.prompt.md",
+      "rename_source": "runtime/langgraph_factory/prompts/M01_research_unit_sources.prompt.md",
+      "rename_source_authorized_by": "runtime/",
+      "sha256_at_HEAD": "60c4f945ad52b53583ff155b42518c6c5eb72a816136d73b522de66f4362900e",
+      "sha256_now": "60c4f945ad52b53583ff155b42518c6c5eb72a816136d73b522de66f4362900e",
+      "sha256_now_published_in": null,
+      "status": "R100"
+    },
+    {
+      "authorized_by": "src/curriculum_factory/",
+      "path": "src/curriculum_factory/langgraph_factory/prompts/M02_create_unit_domain_data.prompt.md",
+      "rename_source": "runtime/langgraph_factory/prompts/M02_create_unit_domain_data.prompt.md",
+      "rename_source_authorized_by": "runtime/",
+      "sha256_at_HEAD": "7e586f599f864db8012612c68bbdc8f3b20ef16f9e198c5382b111dbc8944ae4",
+      "sha256_now": "7e586f599f864db8012612c68bbdc8f3b20ef16f9e198c5382b111dbc8944ae4",
+      "sha256_now_published_in": null,
+      "status": "R100"
+    },
+    {
+      "authorized_by": "src/curriculum_factory/",
+      "path": "src/curriculum_factory/langgraph_factory/prompts/M03_write_unit_content.prompt.md",
+      "rename_source": "runtime/langgraph_factory/prompts/M03_write_unit_content.prompt.md",
+      "rename_source_authorized_by": "runtime/",
+      "sha256_at_HEAD": "dfded39069111263b5cc9930c00d0362d900dd8731a2d8d013f6714d015c5d85",
+      "sha256_now": "dfded39069111263b5cc9930c00d0362d900dd8731a2d8d013f6714d015c5d85",
+      "sha256_now_published_in": null,
+      "status": "R100"
+    },
+    {
+      "authorized_by": "src/curriculum_factory/",
+      "path": "src/curriculum_factory/langgraph_factory/prompts/M04_create_unit_visuals.prompt.md",
+      "rename_source": "runtime/langgraph_factory/prompts/M04_create_unit_visuals.prompt.md",
+      "rename_source_authorized_by": "runtime/",
+      "sha256_at_HEAD": "964a3d793ed7f98276ca6d8ad7818ad30a74643fc95367d5dcc0d8dba8ec0186",
+      "sha256_now": "964a3d793ed7f98276ca6d8ad7818ad30a74643fc95367d5dcc0d8dba8ec0186",
+      "sha256_now_published_in": null,
+      "status": "R100"
+    },
+    {
+      "authorized_by": "src/curriculum_factory/",
+      "path": "src/curriculum_factory/langgraph_factory/prompts/M05_review_actual_unit.prompt.md",
+      "rename_source": "runtime/langgraph_factory/prompts/M05_review_actual_unit.prompt.md",
+      "rename_source_authorized_by": "runtime/",
+      "sha256_at_HEAD": "013e1d5404311f642b799bc5ee6d71f8c1e7a82ed61ed7ee9532f0dafbd9766d",
+      "sha256_now": "013e1d5404311f642b799bc5ee6d71f8c1e7a82ed61ed7ee9532f0dafbd9766d",
+      "sha256_now_published_in": null,
+      "status": "R100"
+    },
+    {
+      "authorized_by": "src/curriculum_factory/",
+      "path": "src/curriculum_factory/langgraph_factory/prompts/M06_repair_named_unit_artifact.prompt.md",
+      "rename_source": "runtime/langgraph_factory/prompts/M06_repair_named_unit_artifact.prompt.md",
+      "rename_source_authorized_by": "runtime/",
+      "sha256_at_HEAD": "a02a21c9c63013e3007e49aabf0406fbbc6ab3e8624c309195c6bc2517c8517e",
+      "sha256_now": "a02a21c9c63013e3007e49aabf0406fbbc6ab3e8624c309195c6bc2517c8517e",
+      "sha256_now_published_in": null,
+      "status": "R100"
+    },
+    {
+      "authorized_by": "src/curriculum_factory/",
+      "path": "src/curriculum_factory/langgraph_factory/prompts/M07_review_actual_workbook.prompt.md",
+      "rename_source": "runtime/langgraph_factory/prompts/M07_review_actual_workbook.prompt.md",
+      "rename_source_authorized_by": "runtime/",
+      "sha256_at_HEAD": "6c2c84591b8abd7a5dd6a037092ddc924048ee33ab927663a7a1d9663c8f34bd",
+      "sha256_now": "6c2c84591b8abd7a5dd6a037092ddc924048ee33ab927663a7a1d9663c8f34bd",
+      "sha256_now_published_in": null,
+      "status": "R100"
+    },
+    {
+      "authorized_by": "src/curriculum_factory/",
+      "path": "src/curriculum_factory/langgraph_factory/prompts/M08_repair_named_workbook_defect.prompt.md",
+      "rename_source": "runtime/langgraph_factory/prompts/M08_repair_named_workbook_defect.prompt.md",
+      "rename_source_authorized_by": "runtime/",
+      "sha256_at_HEAD": "d182c8d80e80f98b6fbb5deff8cb7da573ec452d9c93314881d202432b3213ab",
+      "sha256_now": "d182c8d80e80f98b6fbb5deff8cb7da573ec452d9c93314881d202432b3213ab",
+      "sha256_now_published_in": null,
+      "status": "R100"
+    },
+    {
+      "authorized_by": "src/curriculum_factory/",
+      "path": "src/curriculum_factory/langgraph_factory/reducers.py",
+      "rename_source": "runtime/langgraph_factory/reducers.py",
+      "rename_source_authorized_by": "runtime/",
+      "sha256_at_HEAD": "05dc3632dd378946ddc1aee1ca725f99f0be7e1c69b516c00061aee336fb26cf",
+      "sha256_now": "05dc3632dd378946ddc1aee1ca725f99f0be7e1c69b516c00061aee336fb26cf",
+      "sha256_now_published_in": null,
+      "status": "R100"
+    },
+    {
+      "authorized_by": "src/curriculum_factory/",
+      "path": "src/curriculum_factory/langgraph_factory/repair.py",
+      "rename_source": "runtime/langgraph_factory/repair.py",
+      "rename_source_authorized_by": "runtime/",
+      "sha256_at_HEAD": "fd4150e838efc211a9cf627db8a12e65b56fdba8b93f2411595acde45d7d3d09",
+      "sha256_now": "fd4150e838efc211a9cf627db8a12e65b56fdba8b93f2411595acde45d7d3d09",
+      "sha256_now_published_in": null,
+      "status": "R100"
+    },
+    {
+      "authorized_by": "src/curriculum_factory/",
+      "path": "src/curriculum_factory/langgraph_factory/routing.py",
+      "rename_source": "runtime/langgraph_factory/routing.py",
+      "rename_source_authorized_by": "runtime/",
+      "sha256_at_HEAD": "6be93bf8bd951ae9984f74dc9dbe91c709a41edca0a1a6ff6d72be52cd998079",
+      "sha256_now": "6be93bf8bd951ae9984f74dc9dbe91c709a41edca0a1a6ff6d72be52cd998079",
+      "sha256_now_published_in": null,
+      "status": "R100"
+    },
+    {
+      "authorized_by": "src/curriculum_factory/",
+      "path": "src/curriculum_factory/langgraph_factory/schemas/M01_research_unit_sources.schema.json",
+      "rename_source": "runtime/langgraph_factory/schemas/M01_research_unit_sources.schema.json",
+      "rename_source_authorized_by": "runtime/",
+      "sha256_at_HEAD": "b0b959d79c4a167a5b95ad8244bb01cc398f3c043ec975247ee497fbdb339910",
+      "sha256_now": "b0b959d79c4a167a5b95ad8244bb01cc398f3c043ec975247ee497fbdb339910",
+      "sha256_now_published_in": null,
+      "status": "R100"
+    },
+    {
+      "authorized_by": "src/curriculum_factory/",
+      "path": "src/curriculum_factory/langgraph_factory/schemas/M02_create_unit_domain_data.schema.json",
+      "rename_source": "runtime/langgraph_factory/schemas/M02_create_unit_domain_data.schema.json",
+      "rename_source_authorized_by": "runtime/",
+      "sha256_at_HEAD": "311b48b3b85c4fcc2e549a2becfe7b3879a38ec4be59c2ff3e39a3522a5e2232",
+      "sha256_now": "311b48b3b85c4fcc2e549a2becfe7b3879a38ec4be59c2ff3e39a3522a5e2232",
+      "sha256_now_published_in": null,
+      "status": "R100"
+    },
+    {
+      "authorized_by": "src/curriculum_factory/",
+      "path": "src/curriculum_factory/langgraph_factory/schemas/M03_write_unit_content.schema.json",
+      "rename_source": "runtime/langgraph_factory/schemas/M03_write_unit_content.schema.json",
+      "rename_source_authorized_by": "runtime/",
+      "sha256_at_HEAD": "f5773a2c54271778abf71a15a7b2cd41440f010ab2bf8c7bdcfc11d64e7912eb",
+      "sha256_now": "f5773a2c54271778abf71a15a7b2cd41440f010ab2bf8c7bdcfc11d64e7912eb",
+      "sha256_now_published_in": null,
+      "status": "R100"
+    },
+    {
+      "authorized_by": "src/curriculum_factory/",
+      "path": "src/curriculum_factory/langgraph_factory/schemas/M04_create_unit_visuals.schema.json",
+      "rename_source": "runtime/langgraph_factory/schemas/M04_create_unit_visuals.schema.json",
+      "rename_source_authorized_by": "runtime/",
+      "sha256_at_HEAD": "6be7ad65b6ad2f9c1db7ac49cd80939e80b0c9a52c522e1a29a4d33aa534026e",
+      "sha256_now": "6be7ad65b6ad2f9c1db7ac49cd80939e80b0c9a52c522e1a29a4d33aa534026e",
+      "sha256_now_published_in": null,
+      "status": "R100"
+    },
+    {
+      "authorized_by": "src/curriculum_factory/",
+      "path": "src/curriculum_factory/langgraph_factory/schemas/M05_review_actual_unit.schema.json",
+      "rename_source": "runtime/langgraph_factory/schemas/M05_review_actual_unit.schema.json",
+      "rename_source_authorized_by": "runtime/",
+      "sha256_at_HEAD": "fe7618d77e94d09f6de7ecc5da64bd354032396a2ebe1a19895413e29f743b51",
+      "sha256_now": "fe7618d77e94d09f6de7ecc5da64bd354032396a2ebe1a19895413e29f743b51",
+      "sha256_now_published_in": null,
+      "status": "R100"
+    },
+    {
+      "authorized_by": "src/curriculum_factory/",
+      "path": "src/curriculum_factory/langgraph_factory/schemas/M06_repair_named_unit_artifact.schema.json",
+      "rename_source": "runtime/langgraph_factory/schemas/M06_repair_named_unit_artifact.schema.json",
+      "rename_source_authorized_by": "runtime/",
+      "sha256_at_HEAD": "8ec0f76dff14cc09e87f618086c44d5e5da6f3858886f75e61c9b9e822ed9a49",
+      "sha256_now": "8ec0f76dff14cc09e87f618086c44d5e5da6f3858886f75e61c9b9e822ed9a49",
+      "sha256_now_published_in": null,
+      "status": "R100"
+    },
+    {
+      "authorized_by": "src/curriculum_factory/",
+      "path": "src/curriculum_factory/langgraph_factory/schemas/M07_review_actual_workbook.schema.json",
+      "rename_source": "runtime/langgraph_factory/schemas/M07_review_actual_workbook.schema.json",
+      "rename_source_authorized_by": "runtime/",
+      "sha256_at_HEAD": "5bd32065f188659176b7558044547f58e5f7ac21884d4df14e17e0172c2e1b7c",
+      "sha256_now": "5bd32065f188659176b7558044547f58e5f7ac21884d4df14e17e0172c2e1b7c",
+      "sha256_now_published_in": null,
+      "status": "R100"
+    },
+    {
+      "authorized_by": "src/curriculum_factory/",
+      "path": "src/curriculum_factory/langgraph_factory/schemas/M08_repair_named_workbook_defect.schema.json",
+      "rename_source": "runtime/langgraph_factory/schemas/M08_repair_named_workbook_defect.schema.json",
+      "rename_source_authorized_by": "runtime/",
+      "sha256_at_HEAD": "d43e442f8c41731cc3e0d32782eb2d34e4c259580a817a7cc126dbf4c8bedef6",
+      "sha256_now": "d43e442f8c41731cc3e0d32782eb2d34e4c259580a817a7cc126dbf4c8bedef6",
+      "sha256_now_published_in": null,
+      "status": "R100"
+    },
+    {
+      "authorized_by": "src/curriculum_factory/",
+      "path": "src/curriculum_factory/langgraph_factory/schemas/internal_authorization_receipt.schema.json",
+      "rename_source": "runtime/langgraph_factory/schemas/internal_authorization_receipt.schema.json",
+      "rename_source_authorized_by": "runtime/",
+      "sha256_at_HEAD": "3983ede1b0ca25fdcd194e561cdc272d066d13c21434be94098a824a9f3a1e84",
+      "sha256_now": "3983ede1b0ca25fdcd194e561cdc272d066d13c21434be94098a824a9f3a1e84",
+      "sha256_now_published_in": null,
+      "status": "R100"
+    },
+    {
+      "authorized_by": "src/curriculum_factory/",
+      "path": "src/curriculum_factory/langgraph_factory/schemas/internal_capability_proof.schema.json",
+      "rename_source": "runtime/langgraph_factory/schemas/internal_capability_proof.schema.json",
+      "rename_source_authorized_by": "runtime/",
+      "sha256_at_HEAD": "9fa636cd87792ae3e9dcd68fc46b09c3ce3d73a5657a92762b1dabe439102640",
+      "sha256_now": "9fa636cd87792ae3e9dcd68fc46b09c3ce3d73a5657a92762b1dabe439102640",
+      "sha256_now_published_in": null,
+      "status": "R100"
+    },
+    {
+      "authorized_by": "src/curriculum_factory/",
+      "path": "src/curriculum_factory/langgraph_factory/schemas/internal_egress_receipt.schema.json",
+      "rename_source": "runtime/langgraph_factory/schemas/internal_egress_receipt.schema.json",
+      "rename_source_authorized_by": "runtime/",
+      "sha256_at_HEAD": "fa75436422de72d7a7749dcc92741f87459e30b8f5245d7fb5fab6e93aece01d",
+      "sha256_now": "fa75436422de72d7a7749dcc92741f87459e30b8f5245d7fb5fab6e93aece01d",
+      "sha256_now_published_in": null,
+      "status": "R100"
+    },
+    {
+      "authorized_by": "src/curriculum_factory/",
+      "path": "src/curriculum_factory/langgraph_factory/schemas/internal_execution_receipt.schema.json",
+      "rename_source": "runtime/langgraph_factory/schemas/internal_execution_receipt.schema.json",
+      "rename_source_authorized_by": "runtime/",
+      "sha256_at_HEAD": "dc94a205908b5f0eb6e7bef2c00ea7aac4b9cdd72efdf9c61b43845d404e79e1",
+      "sha256_now": "dc94a205908b5f0eb6e7bef2c00ea7aac4b9cdd72efdf9c61b43845d404e79e1",
+      "sha256_now_published_in": null,
+      "status": "R100"
+    },
+    {
+      "authorized_by": "src/curriculum_factory/",
+      "path": "src/curriculum_factory/langgraph_factory/state.py",
+      "rename_source": "runtime/langgraph_factory/state.py",
+      "rename_source_authorized_by": "runtime/",
+      "sha256_at_HEAD": "428c78edd53b73fd3458d469b36e1bb528dea37d4565f3b37995d63e4a075167",
+      "sha256_now": "428c78edd53b73fd3458d469b36e1bb528dea37d4565f3b37995d63e4a075167",
+      "sha256_now_published_in": null,
+      "status": "R100"
+    },
+    {
+      "authorized_by": "src/curriculum_factory/",
+      "path": "src/curriculum_factory/langgraph_factory/transport.py",
+      "rename_source": "runtime/langgraph_factory/transport.py",
+      "rename_source_authorized_by": "runtime/",
+      "sha256_at_HEAD": "1512dba21864af7884e60dd5150aabeb1bddffeb9627f56a751631c01e2e1c9f",
+      "sha256_now": "1512dba21864af7884e60dd5150aabeb1bddffeb9627f56a751631c01e2e1c9f",
+      "sha256_now_published_in": null,
+      "status": "R100"
+    },
+    {
+      "authorized_by": "src/curriculum_factory/",
+      "path": "src/curriculum_factory/langgraph_factory/unit_graph.py",
+      "rename_source": "runtime/langgraph_factory/unit_graph.py",
+      "rename_source_authorized_by": "runtime/",
+      "sha256_at_HEAD": "286995f398826be63bc2263ea5148f87b23ee7683973e4245c4ee3687a6f309c",
+      "sha256_now": "286995f398826be63bc2263ea5148f87b23ee7683973e4245c4ee3687a6f309c",
+      "sha256_now_published_in": null,
+      "status": "R100"
+    },
+    {
+      "authorized_by": "src/curriculum_factory/",
+      "path": "src/curriculum_factory/langgraph_factory/workbook.py",
+      "rename_source": "runtime/langgraph_factory/workbook.py",
+      "rename_source_authorized_by": "runtime/",
+      "sha256_at_HEAD": "903abda0f4df3b01dd91d1c8d515721c91db4df78da36a55b803a4e14b422439",
+      "sha256_now": "903abda0f4df3b01dd91d1c8d515721c91db4df78da36a55b803a4e14b422439",
+      "sha256_now_published_in": null,
+      "status": "R100"
+    },
+    {
+      "authorized_by": "src/curriculum_factory/",
+      "path": "src/curriculum_factory/lesson_render.py",
+      "rename_source": "runtime/lesson_render.py",
+      "rename_source_authorized_by": "runtime/",
+      "sha256_at_HEAD": "6a2a9753696e9fa6adbf5cc2ae55eff18f6aa28cb2dfaa54ffe7c90ab94e8ccb",
+      "sha256_now": "6a2a9753696e9fa6adbf5cc2ae55eff18f6aa28cb2dfaa54ffe7c90ab94e8ccb",
+      "sha256_now_published_in": null,
+      "status": "R100"
+    },
+    {
+      "authorized_by": "src/curriculum_factory/",
+      "path": "src/curriculum_factory/logger.py",
+      "rename_source": "runtime/logger.py",
+      "rename_source_authorized_by": "runtime/",
+      "sha256_at_HEAD": "78386f6f32a7ea4d38a74e08f508a3716f63a7b2926e6f3e8ec3efaf3ab60376",
+      "sha256_now": "78386f6f32a7ea4d38a74e08f508a3716f63a7b2926e6f3e8ec3efaf3ab60376",
+      "sha256_now_published_in": null,
+      "status": "R100"
+    },
+    {
+      "authorized_by": "src/curriculum_factory/",
+      "path": "src/curriculum_factory/model_worker.py",
+      "rename_source": "runtime/model_worker.py",
+      "rename_source_authorized_by": "runtime/",
+      "sha256_at_HEAD": "3605f0287c4eb4de1d54ce9da1135d5d7e13e595c2b67e270b33f2676306ac36",
+      "sha256_now": "3605f0287c4eb4de1d54ce9da1135d5d7e13e595c2b67e270b33f2676306ac36",
+      "sha256_now_published_in": null,
+      "status": "R100"
+    },
+    {
+      "authorized_by": "src/curriculum_factory/",
+      "path": "src/curriculum_factory/pdf_inspect.py",
+      "rename_source": "runtime/pdf_inspect.py",
+      "rename_source_authorized_by": "runtime/",
+      "sha256_at_HEAD": "ba2beb4ec489b9c94178c26d9afb05932cc56adada4e1eba1f15d610a63fc98e",
+      "sha256_now": "ba2beb4ec489b9c94178c26d9afb05932cc56adada4e1eba1f15d610a63fc98e",
+      "sha256_now_published_in": null,
+      "status": "R100"
+    },
+    {
+      "authorized_by": "src/curriculum_factory/",
+      "path": "src/curriculum_factory/readability.py",
+      "rename_source": "runtime/readability.py",
+      "rename_source_authorized_by": "runtime/",
+      "sha256_at_HEAD": "0f46a37f8489de85b944fe33ea6ca1b09ab51db2e2275a7aadf1e88628264ef9",
+      "sha256_now": "0f46a37f8489de85b944fe33ea6ca1b09ab51db2e2275a7aadf1e88628264ef9",
+      "sha256_now_published_in": null,
+      "status": "R100"
+    },
+    {
+      "authorized_by": "src/curriculum_factory/",
+      "path": "src/curriculum_factory/resolve_gemini_settings.mjs",
+      "rename_source": "runtime/resolve_gemini_settings.mjs",
+      "rename_source_authorized_by": "runtime/",
+      "sha256_at_HEAD": "f6eb99587194701a4dbe0e7e0ea25d0199d76ce08339f6bc18839b423771c49c",
+      "sha256_now": "f6eb99587194701a4dbe0e7e0ea25d0199d76ce08339f6bc18839b423771c49c",
+      "sha256_now_published_in": null,
+      "status": "R100"
+    },
+    {
+      "authorized_by": "src/curriculum_factory/",
+      "path": "src/curriculum_factory/retry.py",
+      "rename_source": "runtime/retry.py",
+      "rename_source_authorized_by": "runtime/",
+      "sha256_at_HEAD": "d046c8d92108b68271e726ce0a883368cab221e2475e4d07dbad099fe3b1c77d",
+      "sha256_now": "d046c8d92108b68271e726ce0a883368cab221e2475e4d07dbad099fe3b1c77d",
+      "sha256_now_published_in": null,
+      "status": "R100"
+    },
+    {
+      "authorized_by": "src/curriculum_factory/",
+      "path": "src/curriculum_factory/routing.py",
+      "rename_source": "runtime/routing.py",
+      "rename_source_authorized_by": "runtime/",
+      "sha256_at_HEAD": "448de1ffe5543e002a8c4a03f07a4036cf6957c914649aa7d988c4ca6a6a31c5",
+      "sha256_now": "448de1ffe5543e002a8c4a03f07a4036cf6957c914649aa7d988c4ca6a6a31c5",
+      "sha256_now_published_in": null,
+      "status": "R100"
+    },
+    {
+      "authorized_by": "src/curriculum_factory/",
+      "path": "src/curriculum_factory/run_curriculum.py",
+      "rename_source": "runtime/run_curriculum.py",
+      "rename_source_authorized_by": "runtime/",
+      "sha256_at_HEAD": "10236810e66ff4afb064635b77082a840c4f7bf8ba107970ba80d6e80a8d1e8b",
+      "sha256_now": "f803f8e559640be84e0aee645983f32fe1655b9411f60e82b20487edd639c651",
+      "sha256_now_published_in": null,
+      "status": "R098"
+    },
+    {
+      "authorized_by": "src/curriculum_factory/",
+      "path": "src/curriculum_factory/run_state.py",
+      "rename_source": "runtime/run_state.py",
+      "rename_source_authorized_by": "runtime/",
+      "sha256_at_HEAD": "c5c478d12feb6429d4e5bfa420f9af8602d2a04ea48d568f618fba595b3be80d",
+      "sha256_now": "c5c478d12feb6429d4e5bfa420f9af8602d2a04ea48d568f618fba595b3be80d",
+      "sha256_now_published_in": null,
+      "status": "R100"
+    },
+    {
+      "authorized_by": "src/curriculum_factory/",
+      "path": "src/curriculum_factory/session_bridge.py",
+      "rename_source": "runtime/session_bridge.py",
+      "rename_source_authorized_by": "runtime/",
+      "sha256_at_HEAD": "7cc41ce05eaa96e705c8fd77b4bca41a03f411bee8d648479365a983fe4b7acd",
+      "sha256_now": "7966b6bdb5763c1976386172fdc2993a110549457c6c8ef5e1039b17b713d2dc",
+      "sha256_now_published_in": null,
+      "status": "R099"
+    },
+    {
+      "authorized_by": "src/curriculum_factory/",
+      "path": "src/curriculum_factory/visual_maps.py",
+      "rename_source": "runtime/visual_maps.py",
+      "rename_source_authorized_by": "runtime/",
+      "sha256_at_HEAD": "ba0437b78097a8512e28d5352deadd2968a21f22ae0cb3d7c3e9d637671f4cf9",
+      "sha256_now": "ba0437b78097a8512e28d5352deadd2968a21f22ae0cb3d7c3e9d637671f4cf9",
+      "sha256_now_published_in": null,
+      "status": "R100"
+    },
+    {
+      "authorized_by": "src/curriculum_factory/",
+      "path": "src/curriculum_factory/workbook.py",
+      "rename_source": "runtime/workbook.py",
+      "rename_source_authorized_by": "runtime/",
+      "sha256_at_HEAD": "0f719e87151dbba03dccf6ea16346812d2235b086bd4a908bf50def686e4e241",
+      "sha256_now": "0f719e87151dbba03dccf6ea16346812d2235b086bd4a908bf50def686e4e241",
+      "sha256_now_published_in": null,
+      "status": "R100"
+    },
+    {
+      "authorized_by": "tests/gates/fr_p5_unit.py",
+      "path": "tests/gates/fr_p5_unit.py",
+      "rename_source": null,
+      "sha256_at_HEAD": "3e697b779938982a42b42d9fdaf33ad5caa23ec21fb801df532a34ab03116c8a",
+      "sha256_now": "67c5fd9a1a82e8b570d354baf51b86ac196414bf11769da8ad2ebfd38c7f0d41",
+      "sha256_now_published_in": null,
+      "status": "M"
+    },
+    {
+      "authorized_by": "tests/refactor_repo/codemod/test_rewrite_runtime_imports.py",
+      "path": "tests/refactor_repo/codemod/test_rewrite_runtime_imports.py",
+      "rename_source": null,
+      "sha256_at_HEAD": "b2ec73dcfe55562fbf367c37e9ae49f0f3e51066983e570ddaa79fb4ec69e82c",
+      "sha256_now": "db9298390790f8a86d02a643eb3a287494e788e2ffe78513e5089ed0c0339ed9",
+      "sha256_now_published_in": null,
+      "status": "M"
+    },
+    {
+      "authorized_by": "tests/refactor_repo/test_packaging_skeleton.py",
+      "path": "tests/refactor_repo/test_packaging_skeleton.py",
+      "rename_source": null,
+      "sha256_at_HEAD": "0ea463de2c5a2d5675196b62015e511f0cc5ff456226cb82eb198f4586d1e9b7",
+      "sha256_now": "df0c674b5e079830f2974b630ef58e5a55adbad259b5b979fda3c5e70823d48e",
+      "sha256_now_published_in": null,
+      "status": "M"
+    },
+    {
+      "authorized_by": "tests/runtime/",
+      "path": "tests/runtime/test_acceptance_gate.py",
+      "rename_source": null,
+      "sha256_at_HEAD": "1d35d0e7c4f86a66aadbf1601d8c563e408d2d80565eedaac875a8c02b503a07",
+      "sha256_now": "b23c2e9105b56bed49e20b938a0380d904db46a12cc2033924dec778b70177b9",
+      "sha256_now_published_in": null,
+      "status": "M"
+    },
+    {
+      "authorized_by": "tests/runtime/",
+      "path": "tests/runtime/test_capabilities.py",
+      "rename_source": null,
+      "sha256_at_HEAD": "8f11b907c3fd4473f27970e10c552f7e3e03373256ea1e458c1251db6c0bd13c",
+      "sha256_now": "bcbd110e735b86c858653717d0fa8e434b3ec61add51e1c6d262ce0852226361",
+      "sha256_now_published_in": null,
+      "status": "M"
+    },
+    {
+      "authorized_by": "tests/runtime/",
+      "path": "tests/runtime/test_checks.py",
+      "rename_source": null,
+      "sha256_at_HEAD": "23cb11038d67d464fbe6859e3fd24c5173dbb0998bfb985614fd0b6808057819",
+      "sha256_now": "d1087ed42d86a3729be240f8ff8d8bb3365c968ca2518c52bdc9f1249cd5a5c8",
+      "sha256_now_published_in": null,
+      "status": "M"
+    },
+    {
+      "authorized_by": "tests/runtime/",
+      "path": "tests/runtime/test_claim_entailment.py",
+      "rename_source": null,
+      "sha256_at_HEAD": "182d163b34e2d7a9fa0e2bfbe52c17e90941ee2ffc61fbd042ef0331e50b6885",
+      "sha256_now": "0fbef434036a0f6d730a1cb368ebf4cec664f4c79b5a986f9841970fb80bc1c0",
+      "sha256_now_published_in": null,
+      "status": "M"
+    },
+    {
+      "authorized_by": "tests/runtime/",
+      "path": "tests/runtime/test_controller.py",
+      "rename_source": null,
+      "sha256_at_HEAD": "d6481a233c0b20ec195cd29dbd1f7b93ce08079006d12632e081fb8df114d66d",
+      "sha256_now": "a3622daa82c0b71738116a66da1358ece0dfe9b7e5e13b879cc338756c9f6e33",
+      "sha256_now_published_in": null,
+      "status": "M"
+    },
+    {
+      "authorized_by": "tests/runtime/",
+      "path": "tests/runtime/test_curriculum_factory_graph.py",
+      "rename_source": null,
+      "sha256_at_HEAD": "337c1cd34122988f6b3a2c05c70ebd0d3a4a31bc9a5e8129ec2e91ad9a015790",
+      "sha256_now": "48ad8dde82151a89a48b1b338166dcf6a749c2fab2ccaa8955b2c7d5b69d7f59",
+      "sha256_now_published_in": null,
+      "status": "M"
+    },
+    {
+      "authorized_by": "tests/runtime/",
+      "path": "tests/runtime/test_gemini.py",
+      "rename_source": null,
+      "sha256_at_HEAD": "e1d993091a4c2365cab3f85643aadd59b66c677da89387fab3cef5513c591899",
+      "sha256_now": "c5f7e16ee659da33d96c095ae4b22dfe5e908441455ceeb9f754f8897fb1174a",
+      "sha256_now_published_in": null,
+      "status": "M"
+    },
+    {
+      "authorized_by": "tests/runtime/",
+      "path": "tests/runtime/test_lesson_render.py",
+      "rename_source": null,
+      "sha256_at_HEAD": "56238fd0b64f2958e15d12f3ad98ea5b043d3039189d004f172b4afd46152bb3",
+      "sha256_now": "b2f982aaed854958a8b9011fd191e170b872f8907a52d88a5d4a24e50f7f6cd2",
+      "sha256_now_published_in": null,
+      "status": "M"
+    },
+    {
+      "authorized_by": "tests/runtime/",
+      "path": "tests/runtime/test_logger.py",
+      "rename_source": null,
+      "sha256_at_HEAD": "cf4b66236edc297887cb736c94f9b5129f1ef1cd7b8cd6610734c500b6f5dc22",
+      "sha256_now": "f779b130bd69b8639a02a2eff87dbaa8df73e4aa9d5f0cb2f987f0d937236e48",
+      "sha256_now_published_in": null,
+      "status": "M"
+    },
+    {
+      "authorized_by": "tests/runtime/",
+      "path": "tests/runtime/test_plan26_adversarial.py",
+      "rename_source": null,
+      "sha256_at_HEAD": "498e95f6012cbea37b40c35e45161c1ba6270e9401c4ef3b92aba32265fea256",
+      "sha256_now": "209942b06768ee06a523368d1c7c6f97056347575883038a09bf21db1324eb63",
+      "sha256_now_published_in": null,
+      "status": "M"
+    },
+    {
+      "authorized_by": "tests/runtime/",
+      "path": "tests/runtime/test_plan26_cli.py",
+      "rename_source": null,
+      "sha256_at_HEAD": "ef5ef6f817cf16c542d1abb1da0a4b5acc2b1df8c79c5563cee22179310bcbe2",
+      "sha256_now": "24d050fe97e1880954e3a3d868f761d4a2b43c5ba9e3c33ae931be2e5ca79909",
+      "sha256_now_published_in": null,
+      "status": "M"
+    },
+    {
+      "authorized_by": "tests/runtime/",
+      "path": "tests/runtime/test_plan26_deterministic_nodes.py",
+      "rename_source": null,
+      "sha256_at_HEAD": "602070adeba0921f6cf5b5ac313f10fe9328c8f78500db1e7a4f7889ed9da0b4",
+      "sha256_now": "334f4e0961041ac18a4290c6566e5a00653a18788f3eda29449c2130f3c1c78c",
+      "sha256_now_published_in": null,
+      "status": "M"
+    },
+    {
+      "authorized_by": "tests/runtime/",
+      "path": "tests/runtime/test_plan26_egress.py",
+      "rename_source": null,
+      "sha256_at_HEAD": "687c557531b1ba528413bd8d36f2e26a94018b07a681f6f1e12263bfa1655816",
+      "sha256_now": "50edaf81ce255814557892a07d8ea388b8b63a9dd9c91e37187b259a64671559",
+      "sha256_now_published_in": null,
+      "status": "M"
+    },
+    {
+      "authorized_by": "tests/runtime/",
+      "path": "tests/runtime/test_plan26_evidence.py",
+      "rename_source": null,
+      "sha256_at_HEAD": "229aabeae0bde9795f3f11e820d9f50f915aa0d715ed2ae32dbf643e83068345",
+      "sha256_now": "d05affe07f0dac82ffbdf3fed5f75233045d6c83dd3b682cbe2c35f35bbe6f12",
+      "sha256_now_published_in": null,
+      "status": "M"
+    },
+    {
+      "authorized_by": "tests/runtime/",
+      "path": "tests/runtime/test_plan26_model_nodes.py",
+      "rename_source": null,
+      "sha256_at_HEAD": "8a05e9273adc38103b608f6a565cd9e9b3ab815219edfa2b340f849193df8e28",
+      "sha256_now": "4fd6b5a9ba8d1d6152a2f767b2655a174a3f1f63b6e4147bd2927c189f6f101b",
+      "sha256_now_published_in": null,
+      "status": "M"
+    },
+    {
+      "authorized_by": "tests/runtime/",
+      "path": "tests/runtime/test_plan26_persistence.py",
+      "rename_source": null,
+      "sha256_at_HEAD": "4d113741e346be44815d2c640110a60a1ffadd11496d0db5a77f52cf028d9dcc",
+      "sha256_now": "22dee5850ed07793bbcb02edf94ccd08e1d56cc78fa4c7391683bb65a5b5c49b",
+      "sha256_now_published_in": null,
+      "status": "M"
+    },
+    {
+      "authorized_by": "tests/runtime/",
+      "path": "tests/runtime/test_plan26_repair_acceptance.py",
+      "rename_source": null,
+      "sha256_at_HEAD": "1a44f4d66de7ec18b3a5436d9501f56614fad00b7b32286d7c27d50f503f21f1",
+      "sha256_now": "63038fbd359c7b57867df5bf48ebe33cb8ab953e71f5e5cf97ade3564ae345ba",
+      "sha256_now_published_in": null,
+      "status": "M"
+    },
+    {
+      "authorized_by": "tests/runtime/",
+      "path": "tests/runtime/test_plan26_state_reducers.py",
+      "rename_source": null,
+      "sha256_at_HEAD": "b10f89014c2e17e6e751f38b978a4af4e69be36f55f1c95791699b7f217f51bd",
+      "sha256_now": "f004f588708103b94e6a2825cbf4bd65cde3ed24f9d618e6b13ee547bd35d2d0",
+      "sha256_now_published_in": null,
+      "status": "M"
+    },
+    {
+      "authorized_by": "tests/runtime/",
+      "path": "tests/runtime/test_plan26_topology.py",
+      "rename_source": null,
+      "sha256_at_HEAD": "dbc435c439b6ddb9a327ec560c0b5d6bf32dbb8716d207d8c8146fb7e038502a",
+      "sha256_now": "01d4a00c2e7b768e05da49a8ee107abdcce594189cf3e9e7765fad6bda8fd4d8",
+      "sha256_now_published_in": null,
+      "status": "M"
+    },
+    {
+      "authorized_by": "tests/runtime/",
+      "path": "tests/runtime/test_plan26_transport.py",
+      "rename_source": null,
+      "sha256_at_HEAD": "9641a1cc94a111b2c5cc0fd6f4293458af6d1fd78541bc849080a4c78d5b500e",
+      "sha256_now": "296fa6475bb10364e3035ab1e03cfa16a760f0ec6ab19d452b70adbac4ab939e",
+      "sha256_now_published_in": null,
+      "status": "M"
+    },
+    {
+      "authorized_by": "tests/runtime/",
+      "path": "tests/runtime/test_plan26_unit_graph.py",
+      "rename_source": null,
+      "sha256_at_HEAD": "7ba23266038b36bb3f0340b8288428126f3c788051125750773624ab709a82e4",
+      "sha256_now": "49da87c213a0d12e0fbc1d435acc8a2819487f74290a6217389873932cda4c9e",
+      "sha256_now_published_in": null,
+      "status": "M"
+    },
+    {
+      "authorized_by": "tests/runtime/",
+      "path": "tests/runtime/test_plan26_workbook.py",
+      "rename_source": null,
+      "sha256_at_HEAD": "42ab0d5a2f75e0ea71949d9d5c8dc5bc260d567034a6ad19571c90883a889132",
+      "sha256_now": "a953d9294291d547039a572af33b6455ee363b8681d4c1f293884dbf2a7eb736",
+      "sha256_now_published_in": null,
+      "status": "M"
+    },
+    {
+      "authorized_by": "tests/runtime/",
+      "path": "tests/runtime/test_plan27_adversarial.py",
+      "rename_source": null,
+      "sha256_at_HEAD": "52fe193f23b8e5b0cbb6dfa5efcdc30195dddcc1772684e82a9382b6ded43d43",
+      "sha256_now": "4e2b800e0a9890b490dd113061e8ab06b6d28591c3a254d6d27fb5d492ca23a3",
+      "sha256_now_published_in": null,
+      "status": "M"
+    },
+    {
+      "authorized_by": "tests/runtime/",
+      "path": "tests/runtime/test_retry.py",
+      "rename_source": null,
+      "sha256_at_HEAD": "3fafc123321e5a91d80c5387a71a5a963ac5217b20887c4d2809346e8b055bab",
+      "sha256_now": "f4aac10afe1bcf040aceee315c79479984e07d112f8b38d9ef2146bd0d96c3c5",
+      "sha256_now_published_in": null,
+      "status": "M"
+    },
+    {
+      "authorized_by": "tests/runtime/",
+      "path": "tests/runtime/test_routing.py",
+      "rename_source": null,
+      "sha256_at_HEAD": "8bb6943e8f980724e19a03e10ca244985e5d2508de29eb5a806afb7d6a28e179",
+      "sha256_now": "b0229dc69f6a587463e275afab53509aa5550fec5f30b54ac50570acafbd7ed7",
+      "sha256_now_published_in": null,
+      "status": "M"
+    },
+    {
+      "authorized_by": "tests/runtime/",
+      "path": "tests/runtime/test_run_curriculum.py",
+      "rename_source": null,
+      "sha256_at_HEAD": "914bb9e61b7d52de563ef814e5c4e106f2cbe96c32926c26b54ab8a9c2d744a7",
+      "sha256_now": "3d7df34a3d9dd708457ef19c1b4be0a7827fd5ab0832165f10f8c14e883c7014",
+      "sha256_now_published_in": null,
+      "status": "M"
+    },
+    {
+      "authorized_by": "tests/runtime/",
+      "path": "tests/runtime/test_run_state.py",
+      "rename_source": null,
+      "sha256_at_HEAD": "02731a01665ed109d817d090590f476ec86de2139588cf21b44df0c6cf5f5d0c",
+      "sha256_now": "75c596862bb7b018ec8596c8821151de4b691fc135a31b4e4d35a6eee7dfdb6a",
+      "sha256_now_published_in": null,
+      "status": "M"
+    },
+    {
+      "authorized_by": "tests/runtime/",
+      "path": "tests/runtime/test_visual_maps.py",
+      "rename_source": null,
+      "sha256_at_HEAD": "fdcff7a539650f492b4d1262838e29fc40b7449d61971a996b554e3902766636",
+      "sha256_now": "d8b2db141cfb6fd343e3485c8cdfa0af3667090a791ae86ce924efe0e3805a9b",
+      "sha256_now_published_in": null,
+      "status": "M"
+    },
+    {
+      "authorized_by": "tests/runtime/",
+      "path": "tests/runtime/unit_fixture.py",
+      "rename_source": null,
+      "sha256_at_HEAD": "0efdd37ec1bde4a811d31e55f59090193891489bb72e19ecf857753628295816",
+      "sha256_now": "2aa868621a729877437905e65c23a418dc60d461bf6d7eaf1d048dbe63d836f3",
+      "sha256_now_published_in": null,
+      "status": "M"
+    },
+    {
+      "authorized_by": "tools/refactor_repo/baseline.py",
+      "path": "tools/refactor_repo/baseline.py",
+      "rename_source": null,
+      "sha256_at_HEAD": "33c737f98116d1ac604b15e81d1da5de75504f9d2c22a37e9679d996625bfee9",
+      "sha256_now": "a1a7875a74f6789889eaae2726cb9a680501b8bc2b026c27ff9764742f6764ef",
+      "sha256_now_published_in": null,
+      "status": "M"
+    }
+  ],
+  "prompt": "plans_internal/refactor_repo/prompts/P03_source_move.prompt.v3.yaml",
+  "total_paths_in_delta": 250,
+  "unauthorized_paths": []
+}

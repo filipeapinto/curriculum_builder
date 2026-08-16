@@ -1,0 +1,32 @@
+=== Does the test suite read anything under plans_internal/refactor_repo/checkpoints/ ? ===
+
+--- 1. any Python file under the checkpoint directory (would be collected or imported)? ---
+$ find plans_internal/refactor_repo/checkpoints -name '*.py' | wc -l
+       0
+
+--- 2. any test referencing 'checkpoints' or 'plans_internal' by path ---
+$ grep -rn "plans_internal\|refactor_repo/checkpoints" tests/ | grep -v Binary
+tests/refactor_repo/codemod/test_rewrite_runtime_imports.py:331:    inventory_dir = REPO_ROOT / "plans_internal/refactor_repo/inventory/20260816_074507"
+
+--- 3. pytest testpaths (pyproject.toml) ---
+[tool.pytest.ini_options]
+testpaths = ["tests"]
+
+--- 4. repo-wide postcondition scan input surface ---
+the scan walks .py files only; count under the checkpoint directory:
+       0
+
+CONCLUSION: no test collects, imports, or reads any path under
+plans_internal/refactor_repo/ at all, except the single P00 inventory directory noted in
+section 5 below, which this delta does not touch. The checkpoint directory contains zero
+.py files, so nothing under it is collected by pytest or walked by the codemod's
+postcondition scan. Adding or editing checkpoint documentation, the execution journal, or
+the exceptions ledger therefore cannot change any test outcome.
+
+--- 5. the single plans_internal reference, examined ---
+tests/refactor_repo/codemod/test_rewrite_runtime_imports.py:331 reads
+  REPO_ROOT / "plans_internal/refactor_repo/inventory/20260816_074507"
+That is the P00 inventory directory, not the checkpoint directory. P03's delta contains
+no path under plans_internal/refactor_repo/inventory/ (see the complete path ledger), so
+that file is byte-unchanged by this checkpoint. No test reads
+plans_internal/refactor_repo/checkpoints/ at all.

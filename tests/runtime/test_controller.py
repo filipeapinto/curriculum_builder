@@ -6,9 +6,9 @@ import shutil
 import tempfile
 import unittest
 
-from runtime.checkpoint import CheckpointError
-from runtime.controller import CurriculumRuntime, RuntimeFailure
-from runtime.io import BoundaryError, sha256_file
+from curriculum_factory.checkpoint import CheckpointError
+from curriculum_factory.controller import CurriculumRuntime, RuntimeFailure
+from curriculum_factory.io import BoundaryError, sha256_file
 
 
 ENGINE = Path(__file__).resolve().parents[2]

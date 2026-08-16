@@ -19,6 +19,48 @@ The gated checkpoint report must satisfy every condition below.
 6. It includes the post-change git status and a reviewable diff or immutable digest
    for every deliverable, plus the verification result at the rollback checkpoint.
 7. It does not claim completion when evidence is missing, collection is incomplete,
-   commands failed, the QA transport is unavailable, or the independent gate has
-   not produced a witnessed and verified `QA_PASSED` result.
+   commands failed, or the QA transport is unavailable. Completion additionally
+   requires a witnessed and verified `QA_PASSED` result, which is established by the
+   gate rather than asserted inside the artifact the gate is judging:
 
+   7.1 The checkpoint submitted for review must identify itself as `QA_PENDING`.
+   7.2 It must not claim completion and must not claim `QA_PASSED`. Asserting either
+       inside the submitted checkpoint is itself a defect under this criterion.
+   7.3 It must publish an immutable final digest (sha256) of the exact submitted
+       checkpoint and of every deliverable it relies on. The independent QA gate
+       evaluates that digest-identified checkpoint and nothing else.
+   7.4 `QA_PASSED` is recorded only in a separate, gate-generated verdict and
+       verification receipt produced by the sanctioned gate channel. The executing
+       agent never writes that verdict, and no part of it is written into the
+       submitted checkpoint.
+   7.5 That external verified receipt, bound to the checkpoint's immutable digest,
+       satisfies the completion gate on its own. Satisfying the completion gate must
+       not require modifying, re-versioning, or re-submitting the reviewed checkpoint.
+       A submitted checkpoint is therefore never required to contain the result of the
+       review it is undergoing.
+   7.6 Any post-verdict completion summary, commit message, ledger entry, or status
+       report must reference the immutable checkpoint digest and the QA receipt, and
+       must not replace, mutate, or supersede the reviewed artifact.
+
+   Criterion 7 is not waived by this clarification. Independent QA remains mandatory,
+   a checkpoint asserting completion before a witnessed verified `QA_PASSED` receipt
+   exists is still defective, and a missing, unwitnessed, unverifiable, or
+   digest-mismatched receipt still blocks completion.
+
+---
+
+Amendment provenance (2026-08-16): criteria 1-6 are unchanged from the original v1
+text, whose sha256 is `bfd035a29b675df9718dc694a945ff1a4e901f2b3d8e653541a2b98b2cc48a42`
+and whose literal content is preserved at
+`plans_internal/refactor_repo/checkpoints/P03/evidence/criteria_amendment/checkpoint_qa_criteria.v1.PRE_AMENDMENT.md`.
+Criterion 7 was clarified under explicit operator authorization after the P03 QA
+session `01a00b6a-8a98-7e30-a456-d574b9f40355` terminated `QA_FAILED /
+MAX_ITERATIONS_EXHAUSTED` and an independent postmortem session
+(`01a00be9-9be1-7480-afc5-5ddc6cec54d1`) classified the failure
+`SPECIFICATION_DEFICIENT`: the original wording required the artifact under review to
+already contain the successful result of that same review, so every revision produced
+a new unverified artifact and the gate could never converge. That postmortem is
+preserved at
+`plans_internal/refactor_repo/checkpoints/P03/superseded_sessions/QA-2026-08-16-exhausted/postmortem.md`.
+Verdicts issued against the pre-amendment text (P00, P00A, P02S and the superseded P03
+session) remain interpretable against the preserved pre-amendment file.

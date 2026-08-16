@@ -1,0 +1,134 @@
+{
+  "manifest_version": "1",
+  "description": "P02 import codemod fixture matrix. Every required transformation class from the P02 prompt's tests 2 and 5 has at least one named case here, each with an explicit expected outcome (changed/unsafe/diagnostic kinds).",
+  "cases": [
+    {
+      "name": "simple_import",
+      "classes": ["import", "module_qualified_name"],
+      "description": "Bare 'import runtime' plus a module-qualified usage runtime.pdf_inspect.something().",
+      "expect_changed": true,
+      "expect_unsafe": false,
+      "expect_diagnostic_kinds": ["rewrite_import", "rewrite_reference"]
+    },
+    {
+      "name": "aliased_import",
+      "classes": ["aliased_import"],
+      "description": "'import runtime as rt'; alias usage (rt.pdf_inspect...) is untouched, only the import target changes.",
+      "expect_changed": true,
+      "expect_unsafe": false,
+      "expect_diagnostic_kinds": ["rewrite_import"]
+    },
+    {
+      "name": "dotted_submodule_import",
+      "classes": ["import", "module_qualified_name"],
+      "description": "'import runtime.pdf_inspect' plus qualified usage runtime.pdf_inspect.something().",
+      "expect_changed": true,
+      "expect_unsafe": false,
+      "expect_diagnostic_kinds": ["rewrite_import", "rewrite_reference"]
+    },
+    {
+      "name": "multiline_from_import",
+      "classes": ["multiline_import", "from_import", "preserved_comments_formatting"],
+      "description": "Parenthesized multi-name from-import with a trailing inline comment; only the module path changes, parens/trailing comma/comment/indentation preserved verbatim.",
+      "expect_changed": true,
+      "expect_unsafe": false,
+      "expect_diagnostic_kinds": ["rewrite_import"]
+    },
+    {
+      "name": "from_import_aliased_module",
+      "classes": ["from_import", "aliased_import"],
+      "description": "'from runtime.langgraph_factory import persistence as P'; only the from-import module path changes, P usage untouched.",
+      "expect_changed": true,
+      "expect_unsafe": false,
+      "expect_diagnostic_kinds": ["rewrite_import"]
+    },
+    {
+      "name": "string_literal_non_target",
+      "classes": ["strings"],
+      "description": "Ordinary string literals mentioning 'runtime' (prose and a path-shaped string) are never rewritten; only the real import statement changes.",
+      "expect_changed": true,
+      "expect_unsafe": false,
+      "expect_diagnostic_kinds": ["rewrite_import"]
+    },
+    {
+      "name": "comment_non_target",
+      "classes": ["preserved_comments_formatting"],
+      "description": "A comment mentioning 'runtime.pdf_inspect' is preserved verbatim; only the import and the real code usage change.",
+      "expect_changed": true,
+      "expect_unsafe": false,
+      "expect_diagnostic_kinds": ["rewrite_import", "rewrite_reference"]
+    },
+    {
+      "name": "dynamic_import_literal",
+      "classes": ["dynamic_imports"],
+      "description": "importlib.import_module('runtime.pdf_inspect') with a literal string argument: flagged as an actionable diagnostic, never rewritten (string content is not mutated).",
+      "expect_changed": false,
+      "expect_unsafe": false,
+      "expect_diagnostic_kinds": ["dynamic_import_literal"]
+    },
+    {
+      "name": "dynamic_import_computed",
+      "classes": ["dynamic_imports", "ambiguous_references"],
+      "description": "importlib.import_module(name) with a computed (non-literal) argument: cannot be classified safely, unsafe diagnostic, file left unmodified (fail closed).",
+      "expect_changed": false,
+      "expect_unsafe": true,
+      "expect_diagnostic_kinds": ["dynamic_import_unresolvable"]
+    },
+    {
+      "name": "ambiguous_shadowed_param",
+      "classes": ["ambiguous_references"],
+      "description": "A function parameter literally named 'runtime' with no package import in the file: explicit non-target, reported, untouched.",
+      "expect_changed": false,
+      "expect_unsafe": false,
+      "expect_diagnostic_kinds": ["non_target_shadowed"]
+    },
+    {
+      "name": "ambiguous_shadowed_reassign",
+      "classes": ["ambiguous_references"],
+      "description": "'import runtime' at module scope, then a local reassignment 'runtime = 5' inside a function shadows it; the import statement is rewritten but the shadowed local body is explicit non-target and untouched.",
+      "expect_changed": true,
+      "expect_unsafe": false,
+      "expect_diagnostic_kinds": ["rewrite_import", "non_target_shadowed"]
+    },
+    {
+      "name": "already_migrated",
+      "classes": ["already_migrated"],
+      "description": "Input already fully using curriculum_factory: zero diagnostics, zero changes (also exercises the no-op/idempotent path directly).",
+      "expect_changed": false,
+      "expect_unsafe": false,
+      "expect_diagnostic_kinds": []
+    },
+    {
+      "name": "malformed_python",
+      "classes": ["malformed_input"],
+      "description": "Syntactically invalid Python: parse_error diagnostic, file skipped, no crash, unsafe (fails closed).",
+      "expect_changed": false,
+      "expect_unsafe": true,
+      "expect_diagnostic_kinds": ["parse_error"]
+    },
+    {
+      "name": "mixed_old_new",
+      "classes": ["mixed_old_new_qualified_names"],
+      "description": "'import runtime' and 'import curriculum_factory' both already present in one file referencing different symbols; after rewrite both target curriculum_factory, flagged as a duplicate-import warning for manual cleanup (semantically harmless, not blocked).",
+      "expect_changed": true,
+      "expect_unsafe": false,
+      "expect_diagnostic_kinds": ["rewrite_import", "rewrite_reference", "duplicate_import_after_rewrite"]
+    },
+    {
+      "name": "relative_import_non_target",
+      "classes": ["explicit_non_target"],
+      "description": "'from . import sibling' and 'from .runtime import helper' are both relative imports (never referencing the absolute production root); explicit non-targets, left untouched, zero diagnostics.",
+      "expect_changed": false,
+      "expect_unsafe": false,
+      "expect_diagnostic_kinds": []
+    },
+    {
+      "name": "unexpected_new_reference",
+      "classes": ["unexpected_new_reference"],
+      "description": "A file with an unexpected curriculum_factory reference not created by rewrite (checked only when check_unexpected_new_root is enabled in scan_residuals).",
+      "expect_changed": false,
+      "expect_unsafe": false,
+      "expect_diagnostic_kinds": []
+    }
+  ]
+}

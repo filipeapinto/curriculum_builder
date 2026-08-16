@@ -37,13 +37,13 @@ from pathlib import Path
 from types import SimpleNamespace
 from unittest import mock
 
-from runtime.langgraph_factory import persistence as P
-from runtime.langgraph_factory import transport as tp
+from curriculum_factory.langgraph_factory import persistence as P
+from curriculum_factory.langgraph_factory import transport as tp
 
-import runtime.run_curriculum as R
+import curriculum_factory.run_curriculum as R
 
 REPO_ROOT = Path(__file__).resolve().parents[2]
-CLI_SOURCE_PATH = REPO_ROOT / "runtime" / "run_curriculum.py"
+CLI_SOURCE_PATH = REPO_ROOT / "src" / "curriculum_factory" / "run_curriculum.py"
 CLI_SOURCE = CLI_SOURCE_PATH.read_text(encoding="utf-8")
 CLI_AST = ast.parse(CLI_SOURCE, filename=str(CLI_SOURCE_PATH))
 
@@ -115,13 +115,13 @@ class ImportGraphAuditTests(unittest.TestCase):
 
     def test_no_plan25_or_legacy_runtime_modules_are_imported(self):
         forbidden_modules = {
-            "runtime.controller",
-            "runtime.curriculum_factory_graph",
-            "runtime.model_worker",
-            "runtime.session_bridge",
-            "runtime.checks",
-            "runtime.checkpoint",
-            "runtime.capability_cycle",
+            "curriculum_factory.controller",
+            "curriculum_factory.curriculum_factory_graph",
+            "curriculum_factory.model_worker",
+            "curriculum_factory.session_bridge",
+            "curriculum_factory.checks",
+            "curriculum_factory.checkpoint",
+            "curriculum_factory.capability_cycle",
         }
         forbidden_names = {"CurriculumFactoryGraph", "CodexWorker", "CurriculumRuntime"}
         for module, name in self._imported_names():
@@ -153,11 +153,11 @@ class ImportGraphAuditTests(unittest.TestCase):
             "routing", "workbook", "unit_graph", "model_nodes", "repair",
         )
         for module, _name in self._imported_names():
-            if module.endswith("nodes.inputs") or module in ("runtime.langgraph_factory.graph",):
+            if module.endswith("nodes.inputs") or module in ("curriculum_factory.langgraph_factory.graph",):
                 continue
             for suffix in forbidden_module_suffixes:
                 self.assertFalse(
-                    module == f"runtime.langgraph_factory.{suffix}" or module.endswith(f".{suffix}"),
+                    module == f"curriculum_factory.langgraph_factory.{suffix}" or module.endswith(f".{suffix}"),
                     f"unexpected node/topology import: {module}",
                 )
 
@@ -515,7 +515,7 @@ class OutputProjectionTests(unittest.TestCase):
             self.assertEqual(R._exit_code_for(payload), exit_code, kind)
 
     def test_evidence_index_hash_is_a_digest_over_the_entries(self):
-        from runtime.langgraph_factory.artifacts import canonical_digest
+        from curriculum_factory.langgraph_factory.artifacts import canonical_digest
         entries = [{"key": "a"}, {"key": "b"}]
         output = {"terminal": {"kind": "INTERRUPTED"}, "evidence_index_entries": entries, "checkpoint_metadata": []}
         payload = R._project_result(output)

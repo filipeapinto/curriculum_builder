@@ -1,0 +1,52 @@
+{
+  "attempt": 1,
+  "exit_code": 0,
+  "duration_seconds": 59.88,
+  "transport": "app-server",
+  "session_id": "01a00c05-c34c-7c72-b3c8-ce82757de10c",
+  "thread_id": "01a00c05-c34c-7c72-b3c8-ce82757de10c",
+  "turn_id": "01a00c18-7468-70f2-9b44-afca88643f07",
+  "usage": {},
+  "model": null,
+  "effort": null,
+  "plugin_version": "1.0.4",
+  "plugin_lib_path": "/Users/filipepinto/.claude/plugins/cache/openai-codex/codex/1.0.4/scripts/lib/codex.mjs",
+  "argv": [
+    "node",
+    "/Users/filipepinto/Projects/curriculum_builder_wt/p03-recovery/.claude/skills/qa-gate-codex-run/scripts/codex_bridge.mjs",
+    "<request on stdin>"
+  ],
+  "started_at": "2026-08-16T19:42:04.285544+00:00",
+  "response_sha256": "d1c9e7d6476dbca3c95c9a141372864f1175ea1bfba591f4cd560c43539ccb90",
+  "request_sha256": "978b8875a533537d8766eb3b2d1e5379f138c3e39ab2eae8936083c3e5884985",
+  "round": 2,
+  "cwd": "/Users/filipepinto/Projects/curriculum_builder_wt/p03-recovery/plans_internal/refactor_repo/checkpoints/P03",
+  "artifact_path": "/Users/filipepinto/Projects/curriculum_builder_wt/p03-recovery/plans_internal/refactor_repo/checkpoints/P03/P03_recovery_checkpoint.v2.md",
+  "artifact_sha256": "2116cb003886c320e9ce5b20c7b6ad24558e23b04bce44eb0b9e96847966981d",
+  "grounding": [
+    {
+      "path": "/Users/filipepinto/Projects/curriculum_builder_wt/p03-recovery/plans_internal/refactor_repo/prompts/P03_source_move.prompt.v3.yaml",
+      "sha256": "0f2b94c4064eb2ea9a750e2e813919b4f64470158459697aa9b8ea0a62489334"
+    },
+    {
+      "path": "/Users/filipepinto/Projects/curriculum_builder_wt/p03-recovery/plans_internal/refactor_repo/exceptions/source_move.v1.yaml",
+      "sha256": "2d47c852bff2725b2edc6d1094d59bb9a3bd48162d306e64c2684bb402d26542"
+    },
+    {
+      "path": "/Users/filipepinto/Projects/curriculum_builder_wt/p03-recovery/plans_internal/refactor_repo/prompts/resolved/prompt_manifest.resolved.v1.yaml",
+      "sha256": "b550f83c8e6679329238d44b5c3044cd2e716f664ee49b7fba92af9d8c2eaa30"
+    },
+    {
+      "path": "/Users/filipepinto/Projects/curriculum_builder_wt/p03-recovery/plans_internal/refactor_repo/checkpoints/P03/evidence/digest_manifest.json",
+      "sha256": "435cf1b0ed4c3f8fd0af14c863ba300ba0ef1069b986e8d8dd4b65f9af4219aa"
+    },
+    {
+      "path": "/Users/filipepinto/Projects/curriculum_builder_wt/p03-recovery/plans_internal/refactor_repo/checkpoints/P03/superseded_sessions/QA-2026-08-16-exhausted/postmortem.md",
+      "sha256": "f7915663feddc0c4bcfe48ca3c95df35b5539d83a779332e64b34ed9ea7e55b5"
+    }
+  ],
+  "chain_prev": "42b02af65ab709d5c2866f26862f73cfd4054c4f8b04f0e01db26216ec798b89",
+  "chain": "b068021a9f1258c2ef3f94fbf67649150e67d647548c38539d8975398156a51f",
+  "rollout_file": "/Users/filipepinto/.codex/sessions/2026/08/16/rollout-2026-08-16T15-21-39-01a00c05-c34c-7c72-b3c8-ce82757de10c.jsonl",
+  "timestamp": "2026-08-16T19:43:04.221785+00:00"
+}

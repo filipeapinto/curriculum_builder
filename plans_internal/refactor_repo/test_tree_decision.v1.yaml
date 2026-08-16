@@ -1,0 +1,23 @@
+version: 1
+decision_date: 2026-08-16
+selected_layout: retain_tests_runtime
+rationale: >-
+  runtime remains an accurate domain label for tests of orchestration, persistence,
+  rendering, routing, and execution behavior. The directory is nested beneath the
+  tests package and cannot shadow the top-level curriculum_factory package. Moving 34
+  tightly coupled modules would add path churn without improving ownership or CI lanes.
+classification:
+  root: tests/runtime/
+  scope: mixed unit, integration, contract, and adversarial runtime behavior
+  shared_fixtures: [tests/runtime/unit_fixture.py]
+  execution_cost: fast local tests plus explicitly guarded external-tool checks
+  environment: Python 3.13; some tests conditionally require PDF tooling
+  ci_lane: full pytest suite; focused Plan 26 lock-drift lane
+  direct_references:
+    - .github/workflows/plan26-lock-drift.yml
+    - tests/runtime/*.py
+shadowing_contract:
+  forbidden_path: tests/curriculum_factory/
+  production_package: curriculum_factory
+  legacy_production_package: runtime
+  expected_legacy_import: absent

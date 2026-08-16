@@ -1,0 +1,14 @@
+[project]
+name = "curriculum_factory"          # basic string, comment kept
+version = "0.1.0"
+enabled = true
+count = 3
+ratio = 1.5
+
+[[tool.entries]]
+id = "curriculum_factory-1"
+weight = 1
+
+[[tool.entries]]
+id = "other"
+weight = 2

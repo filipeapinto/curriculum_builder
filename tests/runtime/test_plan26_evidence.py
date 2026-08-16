@@ -9,7 +9,7 @@ import stat
 import tempfile
 import unittest
 
-from runtime.langgraph_factory.artifacts import (
+from curriculum_factory.langgraph_factory.artifacts import (
     AcceptedImmutable,
     ArtifactConflict,
     ArtifactStore,
@@ -21,7 +21,7 @@ from runtime.langgraph_factory.artifacts import (
     canonical_json_bytes,
     file_digest,
 )
-from runtime.langgraph_factory.evidence import (
+from curriculum_factory.langgraph_factory.evidence import (
     GENESIS_HASH,
     LOG_NAMES,
     EvidenceCorrupt,

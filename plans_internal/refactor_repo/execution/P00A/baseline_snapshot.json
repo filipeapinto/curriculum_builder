@@ -1,0 +1,27 @@
+{
+  "timestamp": "2026-08-16T12:52:18.fZ",
+  "commit": "93c07ba (P00 repair and Codex QA_PASSED)",
+  "git_status_porcelain": "?? plans_internal/refactor_repo/execution/P00A/\n?? plans_internal/refactor_repo/scripts/\n",
+  "p00_evidence_digests": {
+    "checkpoint_repaired": {
+      "path": "plans_internal/refactor_repo/checkpoints/P00/P00_checkpoint_repaired.v2.json",
+      "size_bytes": 2223,
+      "sha256": "509044656f1b0e227d41fdd79d352e5496e10be0f96a176f5eb64012950cca79"
+    },
+    "qa_verdict": {
+      "path": "plans_internal/refactor_repo/checkpoints/P00/QA_repaired/verdict.json",
+      "size_bytes": 900,
+      "sha256": "a755fd84390e3703547baa4e499a9090264c99835824316c39e2f57499300f14"
+    },
+    "inventory": {
+      "path": "plans_internal/refactor_repo/inventory/20260816_074507/repository_refactor_inventory.20260816T114511Z.v1.json",
+      "size_bytes": 448929,
+      "sha256": "28ae20d5671358e0777d1dc5e3e73df43a8aa5dcd1e4e30dd0333f9ced897314"
+    },
+    "baseline": {
+      "path": "plans_internal/refactor_repo/baseline/20260816_074511/behavioral_baseline.capture.20260816T114514Z.json",
+      "size_bytes": 9428,
+      "sha256": "1b0c07037bce14c19cf02a47b216d462716d76b863cc4d49ea1fd5de8f0e73a3"
+    }
+  }
+}

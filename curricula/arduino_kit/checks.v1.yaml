@@ -92,7 +92,7 @@ curriculum:
   asserts: every visual role the manifest declares for a generated unit resolved to a shipped, receipted
     asset — the unit's content.unresolved_visual_roles is empty. CUR-VISUAL-ROLES asks whether the manifest
     declares roles; this asks whether a generated unit covered them, which is a different subject and a
-    different artifact. Executed inside runtime/session_bridge.py's finalize() against the unit's own
+    different artifact. Executed inside curriculum_factory/session_bridge.py's finalize() against the unit's own
     workers/lab.json, where a non-empty list forces terminal_state BLOCKED; the deferred id records that
     no registered gate in tests/gates/registry.py verifies this entry yet.
   stage: deterministic
@@ -133,7 +133,7 @@ lab_document:
   artifact: curricula/arduino_kit/domain.schema.v1.json
   verified_by: FR-P5-VERIFIER-REQUIRED
   asserts: this curriculum's own deterministic verifier accepts a generated unit's workers/domain.json.
-    Executed as a subprocess inside runtime/session_bridge.py's finalize(), against the run-local copy
+    Executed as a subprocess inside curriculum_factory/session_bridge.py's finalize(), against the run-local copy
     at inputs/verify_domain.py, before the unit is rendered; a non-zero exit aborts the unit. The gate
     named here verifies that this curriculum declares a verifier at all — the subprocess call site is
     what runs it, and a file path is not a legal verified_by value.

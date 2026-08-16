@@ -89,7 +89,7 @@ routes:
         $schema-bearing form (both rejected live by the installed CLI).
       decided_model:
         flag: --model
-        supplied_by: the routing decision's decided_model, per runtime/langgraph_factory/config/model_jobs.v1.yaml
+        supplied_by: the routing decision's decided_model, per curriculum_factory/langgraph_factory/config/model_jobs.v1.yaml
       decided_effort:
         flag: --effort
         supplied_by: the routing decision's reasoning_effort
@@ -120,7 +120,7 @@ routes:
       - Instruction and authorized_input_projection are delivered on stdin, never as a positional argument, because --tools "" leaves the worker no file-reading tool.
       - --json-schema takes the CLI-schema projection inline as JSON text, never a file path; the unmodified canonical schema remains the sole post-execution jsonschema admission authority.
       - Executed identity MUST be read from the stream-json per-turn assistant event's message.model field (parent_tool_use_id null), never from the final envelope's aggregate modelUsage map, which a live probe proved can carry more than one model.
-      - --setting-sources "" does not by itself prove MCP isolation; D03 inspects the stream-json init event's tool and MCP-server lists directly (runtime/langgraph_factory/transport.py prove_claude_tool_closure).
+      - --setting-sources "" does not by itself prove MCP isolation; D03 inspects the stream-json init event's tool and MCP-server lists directly (curriculum_factory/langgraph_factory/transport.py prove_claude_tool_closure).
       - This proof is a trivial bounded, content-free-of-curriculum probe (spec 7.1 class 4), not a live proof of a real M01-M04/M06/M08 curriculum job; that live proof is N70/N80's responsibility.
 
   - id: pdf

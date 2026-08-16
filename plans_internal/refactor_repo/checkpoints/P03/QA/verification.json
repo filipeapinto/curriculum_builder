@@ -1,0 +1,12 @@
+{
+  "state": "QA_PASSED",
+  "reason": "CONVERGED",
+  "chain_valid": true,
+  "rounds_claimed": 3,
+  "rounds_witnessed_by_codex": 3,
+  "session_id": "01a00c21-97f5-77e3-98fc-83aa27047877",
+  "rollout_file": "/Users/filipepinto/.codex/sessions/2026/08/16/rollout-2026-08-16T15-52-03-01a00c21-97f5-77e3-98fc-83aa27047877.jsonl",
+  "problems": [],
+  "artifact": "/Users/filipepinto/Projects/curriculum_builder_wt/p03-recovery/plans_internal/refactor_repo/checkpoints/P03/P03_recovery_checkpoint.v5.md",
+  "qa_dir": "/Users/filipepinto/Projects/curriculum_builder_wt/p03-recovery/plans_internal/refactor_repo/checkpoints/P03/QA"
+}

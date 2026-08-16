@@ -15,7 +15,7 @@ import pytest
 from tests.runtime import unit_fixture
 
 ENGINE = unit_fixture.ENGINE
-RUN = ENGINE / "outputs/arduino_kit_run_v2"
+RUN = unit_fixture.RUN_FIXTURE
 
 # The named event each unit's whole POE cycle has to be about, as words that must appear
 # together across the prediction, the observation, the evidence fields and the explanation.
@@ -27,7 +27,7 @@ SHARED_EVENT = {
 
 
 def _unit(unit_id):
-    return json.loads((RUN / unit_id / "workers/lab.json").read_text())
+    return json.loads((RUN / unit_id / "lab.json").read_text())
 
 
 def poe_violations(lab: dict) -> list[str]:

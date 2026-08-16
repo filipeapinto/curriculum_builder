@@ -1,0 +1,422 @@
+{
+  "diagnostics": [
+    {
+      "column": 0,
+      "detail": "from-import statement still targets 'runtime.langgraph_factory'",
+      "file": "plans/26_langgraph_curriculum_factory/results/evidence/N20_GRAPH_COMPILER/deferred_victim_simulation_gen9.py",
+      "kind": "residual_old_reference",
+      "line": 10,
+      "severity": "blocker"
+    },
+    {
+      "column": 0,
+      "detail": "from-import statement still targets 'runtime.langgraph_factory'",
+      "file": "plans/26_langgraph_curriculum_factory/results/evidence/N20_GRAPH_COMPILER/widening_simulation_gen9.py",
+      "kind": "residual_old_reference",
+      "line": 13,
+      "severity": "blocker"
+    },
+    {
+      "column": 0,
+      "detail": "from-import statement still targets 'runtime.langgraph_factory.state'",
+      "file": "plans/26_langgraph_curriculum_factory/results/evidence/N20_GRAPH_COMPILER/widening_simulation_gen9.py",
+      "kind": "residual_old_reference",
+      "line": 14,
+      "severity": "blocker"
+    },
+    {
+      "column": 0,
+      "detail": "from-import statement still targets 'runtime.langgraph_factory.persistence'",
+      "file": "plans/26_langgraph_curriculum_factory/results/evidence/N20_GRAPH_COMPILER/widening_simulation_gen9.py",
+      "kind": "residual_old_reference",
+      "line": 30,
+      "severity": "blocker"
+    },
+    {
+      "column": 0,
+      "detail": "from-import statement still targets 'runtime.langgraph_factory.nodes'",
+      "file": "plans/27_langgraph_curriculum_factory_remediation/execution_package_v2/release_candidate/rc13/QA/exec/rc13_content_revalidation_repro.py",
+      "kind": "residual_old_reference",
+      "line": 5,
+      "severity": "blocker"
+    },
+    {
+      "column": 0,
+      "detail": "from-import statement still targets 'runtime.langgraph_factory.nodes.content'",
+      "file": "plans/27_langgraph_curriculum_factory_remediation/execution_package_v2/release_candidate/rc13/QA/exec/rc13_content_revalidation_repro.py",
+      "kind": "residual_old_reference",
+      "line": 6,
+      "severity": "blocker"
+    },
+    {
+      "column": 0,
+      "detail": "from-import statement still targets 'runtime.langgraph_factory.repair'",
+      "file": "plans/27_langgraph_curriculum_factory_remediation/execution_package_v2/release_candidate/rc13/QA/exec/rc13_content_revalidation_repro.py",
+      "kind": "residual_old_reference",
+      "line": 7,
+      "severity": "blocker"
+    },
+    {
+      "column": 0,
+      "detail": "from-import statement still targets 'runtime.langgraph_factory'",
+      "file": "plans/27_langgraph_curriculum_factory_remediation/execution_package_v2/release_candidate/rc13/QA/exec/rc13_cross_node_replay_repro.py",
+      "kind": "residual_old_reference",
+      "line": 5,
+      "severity": "blocker"
+    },
+    {
+      "column": 0,
+      "detail": "from-import statement still targets 'runtime.langgraph_factory.artifacts'",
+      "file": "plans/27_langgraph_curriculum_factory_remediation/execution_package_v2/release_candidate/rc13/QA/exec/rc13_cross_node_replay_repro.py",
+      "kind": "residual_old_reference",
+      "line": 6,
+      "severity": "blocker"
+    },
+    {
+      "column": 0,
+      "detail": "from-import statement still targets 'runtime.langgraph_factory.nodes.inputs'",
+      "file": "plans/27_langgraph_curriculum_factory_remediation/execution_package_v2/release_candidate/rc13/QA/exec/rc13_d02_incomplete_contract_repro.py",
+      "kind": "residual_old_reference",
+      "line": 7,
+      "severity": "blocker"
+    },
+    {
+      "column": 0,
+      "detail": "from-import statement still targets 'runtime.langgraph_factory.nodes'",
+      "file": "plans/27_langgraph_curriculum_factory_remediation/execution_package_v2/release_candidate/rc13/QA/exec/rc13_d08_schema_drift_repro.py",
+      "kind": "residual_old_reference",
+      "line": 7,
+      "severity": "blocker"
+    },
+    {
+      "column": 0,
+      "detail": "from-import statement still targets 'runtime.langgraph_factory.nodes.domain'",
+      "file": "plans/27_langgraph_curriculum_factory_remediation/execution_package_v2/release_candidate/rc13/QA/exec/rc13_d08_schema_drift_repro.py",
+      "kind": "residual_old_reference",
+      "line": 8,
+      "severity": "blocker"
+    },
+    {
+      "column": 0,
+      "detail": "from-import statement still targets 'runtime.langgraph_factory.nodes'",
+      "file": "plans/27_langgraph_curriculum_factory_remediation/execution_package_v2/release_candidate/rc13/QA/exec/rc13_visual_revalidation_repro.py",
+      "kind": "residual_old_reference",
+      "line": 1,
+      "severity": "blocker"
+    },
+    {
+      "column": 0,
+      "detail": "from-import statement still targets 'runtime.langgraph_factory.nodes.visuals'",
+      "file": "plans/27_langgraph_curriculum_factory_remediation/execution_package_v2/release_candidate/rc13/QA/exec/rc13_visual_revalidation_repro.py",
+      "kind": "residual_old_reference",
+      "line": 2,
+      "severity": "blocker"
+    },
+    {
+      "column": 0,
+      "detail": "from-import statement still targets 'runtime.langgraph_factory.artifacts'",
+      "file": "plans/27_langgraph_curriculum_factory_remediation/execution_package_v2/release_candidate/rc14/QA/exec/rc14_unfrozen_verifier_dependency_repro.py",
+      "kind": "residual_old_reference",
+      "line": 11,
+      "severity": "blocker"
+    },
+    {
+      "column": 0,
+      "detail": "from-import statement still targets 'runtime.langgraph_factory.nodes'",
+      "file": "plans/27_langgraph_curriculum_factory_remediation/execution_package_v2/release_candidate/rc14/QA/exec/rc14_unfrozen_verifier_dependency_repro.py",
+      "kind": "residual_old_reference",
+      "line": 12,
+      "severity": "blocker"
+    },
+    {
+      "column": 0,
+      "detail": "from-import statement still targets 'runtime.langgraph_factory.transport'",
+      "file": "plans/27_langgraph_curriculum_factory_remediation/execution_package_v2/release_candidate/rc14/QA/exec/rc14_unfrozen_verifier_dependency_repro.py",
+      "kind": "residual_old_reference",
+      "line": 13,
+      "severity": "blocker"
+    },
+    {
+      "column": 0,
+      "detail": "from-import statement still targets 'runtime.langgraph_factory'",
+      "file": "plans/27_langgraph_curriculum_factory_remediation/execution_package_v2/release_candidate/rc15/QA/exec/test_rc15_sandbox_probe.py",
+      "kind": "residual_old_reference",
+      "line": 3,
+      "severity": "blocker"
+    },
+    {
+      "column": 0,
+      "detail": "from-import statement still targets 'runtime.langgraph_factory.artifacts'",
+      "file": "plans/27_langgraph_curriculum_factory_remediation/execution_package_v2/release_candidate/rc15/QA/exec/test_rc15_sandbox_probe.py",
+      "kind": "residual_old_reference",
+      "line": 4,
+      "severity": "blocker"
+    },
+    {
+      "column": 0,
+      "detail": "from-import statement still targets 'runtime.langgraph_factory.nodes'",
+      "file": "plans/27_langgraph_curriculum_factory_remediation/execution_package_v2/release_candidate/rc15/QA/exec/test_rc15_sandbox_probe.py",
+      "kind": "residual_old_reference",
+      "line": 5,
+      "severity": "blocker"
+    },
+    {
+      "column": 0,
+      "detail": "from-import statement still targets 'runtime.langgraph_factory'",
+      "file": "plans/27_langgraph_curriculum_factory_remediation/execution_package_v2/release_candidate/rc16/QA/exec/rc16_ancestor_metadata_repro.py",
+      "kind": "residual_old_reference",
+      "line": 10,
+      "severity": "blocker"
+    },
+    {
+      "column": 0,
+      "detail": "from-import statement still targets 'runtime.langgraph_factory'",
+      "file": "plans/27_langgraph_curriculum_factory_remediation/execution_package_v2/release_candidate/rc18/QA/exec/rc18_staged_candidate_mutation_repro.py",
+      "kind": "residual_old_reference",
+      "line": 8,
+      "severity": "blocker"
+    },
+    {
+      "column": 0,
+      "detail": "from-import statement still targets 'runtime.langgraph_factory'",
+      "file": "plans/27_langgraph_curriculum_factory_remediation/execution_package_v2/release_candidate/rc19/QA/exec/qa_rc19_candidate_mutation_probe.py",
+      "kind": "residual_old_reference",
+      "line": 8,
+      "severity": "blocker"
+    },
+    {
+      "column": 0,
+      "detail": "from-import statement still targets 'runtime.langgraph_factory.nodes'",
+      "file": "plans/27_langgraph_curriculum_factory_remediation/execution_package_v2/release_candidate/rc19/QA/exec/qa_rc19_d02_boundary_probe.py",
+      "kind": "residual_old_reference",
+      "line": 12,
+      "severity": "blocker"
+    },
+    {
+      "column": 0,
+      "detail": "from-import statement still targets 'runtime.langgraph_factory'",
+      "file": "plans/27_langgraph_curriculum_factory_remediation/execution_package_v2/release_candidate/rc19/QA/exec/qa_rc19_full_replay_invariance_probe.py",
+      "kind": "residual_old_reference",
+      "line": 9,
+      "severity": "blocker"
+    },
+    {
+      "column": 0,
+      "detail": "from-import statement still targets 'runtime.langgraph_factory.nodes'",
+      "file": "plans/27_langgraph_curriculum_factory_remediation/execution_package_v2/release_candidate/rc19/QA/exec/qa_rc19_full_replay_invariance_probe.py",
+      "kind": "residual_old_reference",
+      "line": 10,
+      "severity": "blocker"
+    },
+    {
+      "column": 0,
+      "detail": "from-import statement still targets 'runtime.langgraph_factory'",
+      "file": "plans/27_langgraph_curriculum_factory_remediation/execution_package_v2/release_candidate/rc19/QA/exec/rc19_required_verifier_probes.py",
+      "kind": "residual_old_reference",
+      "line": 8,
+      "severity": "blocker"
+    },
+    {
+      "column": 0,
+      "detail": "from-import statement still targets 'runtime.langgraph_factory'",
+      "file": "plans/27_langgraph_curriculum_factory_remediation/execution_package_v2/release_candidate/rc21/QA/exec/qa_rc21_adversarial_probe.py",
+      "kind": "residual_old_reference",
+      "line": 10,
+      "severity": "blocker"
+    },
+    {
+      "column": 0,
+      "detail": "from-import statement still targets 'runtime.langgraph_factory.nodes'",
+      "file": "plans/27_langgraph_curriculum_factory_remediation/execution_package_v2/release_candidate/rc21/QA/exec/qa_rc21_adversarial_probe.py",
+      "kind": "residual_old_reference",
+      "line": 11,
+      "severity": "blocker"
+    },
+    {
+      "column": 0,
+      "detail": "from-import statement still targets 'runtime.langgraph_factory'",
+      "file": "plans/27_langgraph_curriculum_factory_remediation/execution_package_v2/release_candidate/rc22/QA/exec/qa_rc22_adversarial_probe.py",
+      "kind": "residual_old_reference",
+      "line": 10,
+      "severity": "blocker"
+    },
+    {
+      "column": 0,
+      "detail": "from-import statement still targets 'runtime.langgraph_factory.nodes'",
+      "file": "plans/27_langgraph_curriculum_factory_remediation/execution_package_v2/release_candidate/rc22/QA/exec/qa_rc22_adversarial_probe.py",
+      "kind": "residual_old_reference",
+      "line": 11,
+      "severity": "blocker"
+    },
+    {
+      "column": 0,
+      "detail": "from-import statement still targets 'runtime.langgraph_factory'",
+      "file": "plans/27_langgraph_curriculum_factory_remediation/execution_package_v2/release_candidate/rc22/QA/exec/qa_rc22_round2_probe.py",
+      "kind": "residual_old_reference",
+      "line": 9,
+      "severity": "blocker"
+    },
+    {
+      "column": 0,
+      "detail": "from-import statement still targets 'runtime.langgraph_factory'",
+      "file": "plans/27_langgraph_curriculum_factory_remediation/execution_package_v2/release_candidate/rc28/QA/exec/qa_identity_sandbox_plugin.py",
+      "kind": "residual_old_reference",
+      "line": 7,
+      "severity": "blocker"
+    },
+    {
+      "column": 0,
+      "detail": "from-import statement still targets 'runtime.langgraph_factory'",
+      "file": "plans/27_langgraph_curriculum_factory_remediation/execution_package_v2/release_candidate/rc28/QA/exec/qa_rc28_adversarial_probe.py",
+      "kind": "residual_old_reference",
+      "line": 11,
+      "severity": "blocker"
+    },
+    {
+      "column": 0,
+      "detail": "from-import statement still targets 'runtime.langgraph_factory.nodes'",
+      "file": "plans/27_langgraph_curriculum_factory_remediation/execution_package_v2/release_candidate/rc28/QA/exec/qa_rc28_adversarial_probe.py",
+      "kind": "residual_old_reference",
+      "line": 12,
+      "severity": "blocker"
+    },
+    {
+      "column": 0,
+      "detail": "from-import statement still targets 'runtime.logger'",
+      "file": "plans_internal/refactor_repo/deprecated/phrase_rebrand_v1/assets/run_rebrand_with_log.py",
+      "kind": "residual_old_reference",
+      "line": 18,
+      "severity": "blocker"
+    },
+    {
+      "column": 7,
+      "detail": "import statement still targets 'runtime'",
+      "file": "tests/refactor_repo/codemod/fixtures/aliased_import/before.py",
+      "kind": "residual_old_reference",
+      "line": 1,
+      "severity": "blocker"
+    },
+    {
+      "column": 7,
+      "detail": "import statement still targets 'runtime'",
+      "file": "tests/refactor_repo/codemod/fixtures/ambiguous_shadowed_reassign/before.py",
+      "kind": "residual_old_reference",
+      "line": 1,
+      "severity": "blocker"
+    },
+    {
+      "column": 7,
+      "detail": "import statement still targets 'runtime'",
+      "file": "tests/refactor_repo/codemod/fixtures/comment_non_target/before.py",
+      "kind": "residual_old_reference",
+      "line": 1,
+      "severity": "blocker"
+    },
+    {
+      "column": 6,
+      "detail": "'runtime' reference still import-bound after rewrite pass",
+      "file": "tests/refactor_repo/codemod/fixtures/comment_non_target/before.py",
+      "kind": "residual_old_reference",
+      "line": 4,
+      "severity": "blocker"
+    },
+    {
+      "column": 7,
+      "detail": "import statement still targets 'runtime.pdf_inspect'",
+      "file": "tests/refactor_repo/codemod/fixtures/dotted_submodule_import/before.py",
+      "kind": "residual_old_reference",
+      "line": 1,
+      "severity": "blocker"
+    },
+    {
+      "column": 11,
+      "detail": "'runtime' reference still import-bound after rewrite pass",
+      "file": "tests/refactor_repo/codemod/fixtures/dotted_submodule_import/before.py",
+      "kind": "residual_old_reference",
+      "line": 5,
+      "severity": "blocker"
+    },
+    {
+      "column": 0,
+      "detail": "from-import statement still targets 'runtime.langgraph_factory'",
+      "file": "tests/refactor_repo/codemod/fixtures/from_import_aliased_module/before.py",
+      "kind": "residual_old_reference",
+      "line": 1,
+      "severity": "blocker"
+    },
+    {
+      "column": 0,
+      "detail": "malformed Python: Syntax Error @ 5:1.\nparser error: error at 5:4: expected one of ), *, **, NAME\n\n    return runtime.x()\n^",
+      "file": "tests/refactor_repo/codemod/fixtures/malformed_python/after.py",
+      "kind": "parse_error",
+      "line": 5,
+      "severity": "unsafe"
+    },
+    {
+      "column": 0,
+      "detail": "malformed Python: Syntax Error @ 5:1.\nparser error: error at 5:4: expected one of ), *, **, NAME\n\n    return runtime.x()\n^",
+      "file": "tests/refactor_repo/codemod/fixtures/malformed_python/before.py",
+      "kind": "parse_error",
+      "line": 5,
+      "severity": "unsafe"
+    },
+    {
+      "column": 7,
+      "detail": "import statement still targets 'runtime'",
+      "file": "tests/refactor_repo/codemod/fixtures/mixed_old_new/before.py",
+      "kind": "residual_old_reference",
+      "line": 1,
+      "severity": "blocker"
+    },
+    {
+      "column": 11,
+      "detail": "'runtime' reference still import-bound after rewrite pass",
+      "file": "tests/refactor_repo/codemod/fixtures/mixed_old_new/before.py",
+      "kind": "residual_old_reference",
+      "line": 6,
+      "severity": "blocker"
+    },
+    {
+      "column": 0,
+      "detail": "from-import statement still targets 'runtime.langgraph_factory.artifacts'",
+      "file": "tests/refactor_repo/codemod/fixtures/multiline_from_import/before.py",
+      "kind": "residual_old_reference",
+      "line": 1,
+      "severity": "blocker"
+    },
+    {
+      "column": 7,
+      "detail": "import statement still targets 'runtime'",
+      "file": "tests/refactor_repo/codemod/fixtures/simple_import/before.py",
+      "kind": "residual_old_reference",
+      "line": 1,
+      "severity": "blocker"
+    },
+    {
+      "column": 11,
+      "detail": "'runtime' reference still import-bound after rewrite pass",
+      "file": "tests/refactor_repo/codemod/fixtures/simple_import/before.py",
+      "kind": "residual_old_reference",
+      "line": 5,
+      "severity": "blocker"
+    },
+    {
+      "column": 7,
+      "detail": "import statement still targets 'runtime'",
+      "file": "tests/refactor_repo/codemod/fixtures/string_literal_non_target/before.py",
+      "kind": "residual_old_reference",
+      "line": 1,
+      "severity": "blocker"
+    }
+  ],
+  "libcst_version": "1.8.2",
+  "mode": "postcondition-scan",
+  "new_root": "curriculum_factory",
+  "old_root": "runtime",
+  "summary": {
+    "files_scanned": 263,
+    "files_with_residuals": 32,
+    "residual_count": 51
+  },
+  "tool": "tools/refactor_repo/rewrite_runtime_imports.py"
+}

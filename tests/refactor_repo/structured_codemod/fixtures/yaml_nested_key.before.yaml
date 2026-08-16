@@ -1,0 +1,4 @@
+workflow:
+  name: curriculum_builder_tests
+  version: 1.0
+  enabled: true

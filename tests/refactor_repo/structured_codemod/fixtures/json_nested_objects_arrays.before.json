@@ -1,0 +1,18 @@
+{
+  "name": "curriculum_builder-thing",
+  "count": 3,
+  "ratio": 1.5,
+  "enabled": true,
+  "missing": null,
+  "nested": {
+    "deep": {
+      "value": "curriculum_builder-deep",
+      "untouched": 42
+    }
+  },
+  "items": [
+    "curriculum_builder-item",
+    "other",
+    7
+  ]
+}

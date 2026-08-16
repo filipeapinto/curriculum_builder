@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
 <meta charset="UTF-8">
-<title>curriculum_builder — Repo Governance v3</title>
+<title>curriculum_factory — Repo Governance v3</title>
 <style>
   :root {
     --ink: #1b1e24;
@@ -89,7 +89,7 @@
 
 <h1>Repo Governance</h1>
 <p class="subtitle">
-  What every first-class artifact in <code>curriculum_builder</code> is, how
+  What every first-class artifact in <code>curriculum_factory</code> is, how
   it's versioned, what governs it, and how it relates to the others.
   Document version 3 — additive successor to v2
   (<code>deprecated/governance.v2.html</code>, retained byte-unchanged; v1
@@ -227,12 +227,12 @@
   </tr>
   <tr>
     <td><strong>Runtime code</strong></td>
-    <td><code>runtime/*.py</code></td>
+    <td><code>curriculum_factory/*.py</code></td>
     <td>Git history; no artifact-level version suffix.</td>
     <td><code>tests/</code> (unit tests + gate scripts), not a schema.</td>
     <td>Implements what <strong>Policy</strong>, <strong>Schema</strong>
       and <strong>Meta-prompt</strong> declare; writes
-      <strong>execution logs</strong> via <code>runtime.logger</code>.</td>
+      <strong>execution logs</strong> via <code>curriculum_factory.logger</code>.</td>
   </tr>
   <tr>
     <td><strong>Issue</strong></td>
@@ -265,7 +265,7 @@
     <td>N/A — a log instance, not a versioned document; its schema is
       versioned instead.</td>
     <td><code>schemas/execution_log.schema.v2.json</code>, written through
-      <code>runtime.logger.ExecutionLogger</code>.</td>
+      <code>curriculum_factory.logger.ExecutionLogger</code>.</td>
     <td>Produced by <strong>Meta-prompt</strong> runs and by
       <strong>Prompt</strong> runs alike; is the restart/resume substrate
       for both (§Restart).</td>
@@ -395,7 +395,7 @@
 <h3 id="restart">2.4 Restart and resumability</h3>
 <p>
   Every Prompt run through
-  <code>runtime.logger.ExecutionLogger</code> gets an append-only,
+  <code>curriculum_factory.logger.ExecutionLogger</code> gets an append-only,
   schema-validated <code>execution_log.jsonl</code> (§1's
   <strong>execution log</strong> row): one record per <code>.start()</code>
   (status <code>started</code>, result <code>pending</code>) and one per

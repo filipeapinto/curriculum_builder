@@ -1,0 +1,40 @@
+{
+  "attempt": 1,
+  "exit_code": 0,
+  "duration_seconds": 53.89,
+  "transport": "app-server",
+  "session_id": "01a00b6a-8a98-7e30-a456-d574b9f40355",
+  "thread_id": "01a00b6a-8a98-7e30-a456-d574b9f40355",
+  "turn_id": "01a00b6a-91aa-79f1-9a6c-1bbbd9cff5c0",
+  "usage": {},
+  "model": null,
+  "effort": null,
+  "plugin_version": "1.0.4",
+  "plugin_lib_path": "/Users/filipepinto/.claude/plugins/cache/openai-codex/codex/1.0.4/scripts/lib/codex.mjs",
+  "argv": [
+    "node",
+    "/Users/filipepinto/Projects/curriculum_builder/.claude/skills/qa-gate-codex-run/scripts/codex_bridge.mjs",
+    "<request on stdin>"
+  ],
+  "started_at": "2026-08-16T16:32:04.903801+00:00",
+  "response_sha256": "c50b4f3113c6b068c788b2809f555d0f8da248901e248f7e2da69eada99057e2",
+  "request_sha256": "e1f35a557565c683ced02eb2807a96c7af7dd1ba3d50f4a46f91c43d4ebfa2ab",
+  "round": 1,
+  "cwd": "/Users/filipepinto/Projects/curriculum_builder_wt/refactor-p03-p10-direct/plans_internal/refactor_repo/checkpoints/P03",
+  "artifact_path": "/Users/filipepinto/Projects/curriculum_builder_wt/refactor-p03-p10-direct/plans_internal/refactor_repo/checkpoints/P03/P03_checkpoint_report.v1.md",
+  "artifact_sha256": "bbef7879fcb250ed1f0a71b0b90093a15303e21d693fb4ab380f9d357a8b7bb8",
+  "grounding": [
+    {
+      "path": "/Users/filipepinto/Projects/curriculum_builder_wt/refactor-p03-p10-direct/plans_internal/refactor_repo/prompts/P03_source_move.prompt.v3.yaml",
+      "sha256": "c575d21eb455e1818f6977bf96e8537c776972bb520b05f1c02cd2300dd02793"
+    },
+    {
+      "path": "/Users/filipepinto/Projects/curriculum_builder_wt/refactor-p03-p10-direct/plans_internal/refactor_repo/exceptions/source_move.v1.yaml",
+      "sha256": "22f5c95ec9d78eddb61d85932521275303abbf65328839b8dcb17a7fd48cfc77"
+    }
+  ],
+  "chain_prev": "GENESIS",
+  "chain": "0c134ce02c58cd974029827fbac6722d402e2a6b66c4c12b205aa3f130206057",
+  "rollout_file": "/Users/filipepinto/.codex/sessions/2026/08/16/rollout-2026-08-16T12-32-06-01a00b6a-8a98-7e30-a456-d574b9f40355.jsonl",
+  "timestamp": "2026-08-16T16:32:58.943400+00:00"
+}

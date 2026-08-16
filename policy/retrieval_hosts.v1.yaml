@@ -1,6 +1,6 @@
 # External-data retrieval host allowlist (N30V7-F07, N20V7-F13's WebSearch decision).
 #
-# `SourceRetriever` (runtime/langgraph_factory/egress.py) is the only path that ever
+# `SourceRetriever` (curriculum_factory/langgraph_factory/egress.py) is the only path that ever
 # fetches source bytes, and it denies any host not named here -- exact match only,
 # never a wildcard or suffix match, and never a host a model proposed for itself.
 # A curriculum selects exactly one named profile by name (`retrieval_host_profile` in

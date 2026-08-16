@@ -1,0 +1,5 @@
+plain: curriculum_builder-plain
+double: "curriculum_builder-double"
+single: 'curriculum_builder-single'
+untouched_plain: no reference here
+untouched_double: "no reference here either"

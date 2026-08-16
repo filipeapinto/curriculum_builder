@@ -1,0 +1,69 @@
+{
+  "opened_at": "2026-08-16T12-29-22.813329+00-00",
+  "artifact_original": "/Users/filipepinto/Projects/curriculum_builder_wt/refactor-curriculum-factory-repository/plans_internal/refactor_repo/checkpoints/P00/P00_checkpoint_repaired.v1.json",
+  "artifact_current": "/Users/filipepinto/Projects/curriculum_builder_wt/refactor-curriculum-factory-repository/plans_internal/refactor_repo/checkpoints/P00/P00_checkpoint_repaired.v2.json",
+  "session_id": "01a00a8c-567b-7482-ac45-bca62e11d17b",
+  "chain": "9684878b721340af5e15d26fc2a93c7d7235e9b7c8fe0e375889f9a2bb597262",
+  "rounds_completed": 2,
+  "rounds": [
+    {
+      "round": 1,
+      "timestamp": "2026-08-16T12:30:12.552478+00:00",
+      "verdict": "FAIL",
+      "artifact_path": "/Users/filipepinto/Projects/curriculum_builder_wt/refactor-curriculum-factory-repository/plans_internal/refactor_repo/checkpoints/P00/P00_checkpoint_repaired.v1.json",
+      "artifact_sha256": "3b892bcba76088bbbbcd70c54ee093c98950b104e6a8ca9c1af91c044160574b",
+      "findings_at_threshold": [
+        {
+          "id": "P00-AUTH-001",
+          "title": "Git status contains unauthorized untracked paths",
+          "severity": "blocker",
+          "criterion_ref": "Critical Criterion 1, “Authorization Boundary Respected”: git status must show only authorized untracked files; execution/P00 permits specific files only."
+        }
+      ],
+      "observations_count": 2,
+      "chain": "7c615626ea9faed466a50312a9d3f2389a6e6091a243e10c449c634c6dfa1c6f"
+    },
+    {
+      "round": 2,
+      "timestamp": "2026-08-16T12:34:42.663739+00:00",
+      "verdict": "PASS",
+      "artifact_path": "/Users/filipepinto/Projects/curriculum_builder_wt/refactor-curriculum-factory-repository/plans_internal/refactor_repo/checkpoints/P00/P00_checkpoint_repaired.v2.json",
+      "artifact_sha256": "509044656f1b0e227d41fdd79d352e5496e10be0f96a176f5eb64012950cca79",
+      "findings_at_threshold": [],
+      "observations_count": 1,
+      "chain": "9684878b721340af5e15d26fc2a93c7d7235e9b7c8fe0e375889f9a2bb597262"
+    }
+  ],
+  "stall_count": 0,
+  "last_fingerprint": "6c0bf4c68d7c6edb534970daf218b0abf5eaca9a3aa31d718b0aec898b99b78f",
+  "exec_copied": [],
+  "terminal": {
+    "state": "QA_PASSED",
+    "reason": "CONVERGED",
+    "detail": "Codex passed the artifact at round 2",
+    "artifact": "/Users/filipepinto/Projects/curriculum_builder_wt/refactor-curriculum-factory-repository/plans_internal/refactor_repo/checkpoints/P00/P00_checkpoint_repaired.v2.json",
+    "rounds_completed": 2,
+    "max_iterations": 5,
+    "session_id": "01a00a8c-567b-7482-ac45-bca62e11d17b",
+    "thread_id": "01a00a8c-567b-7482-ac45-bca62e11d17b",
+    "transport": "exec",
+    "rollout_file": "/Users/filipepinto/.codex/sessions/2026/08/16/rollout-2026-08-16T08-29-24-01a00a8c-567b-7482-ac45-bca62e11d17b.jsonl",
+    "chain": "9684878b721340af5e15d26fc2a93c7d7235e9b7c8fe0e375889f9a2bb597262",
+    "qa_dir": "/Users/filipepinto/Projects/curriculum_builder_wt/refactor-curriculum-factory-repository/plans_internal/refactor_repo/checkpoints/P00/QA_repaired",
+    "finalized_at": "2026-08-16T12:34:42.678740+00:00"
+  },
+  "config": {
+    "criteria": "# P00 QA Criteria: Inventory Baseline and Behavioral Capture\n\n## Goal\nVerify that P00 has created a reproducible, schema-compliant repository inventory and behavioral baseline.\n\n## Critical (Blocker) Criteria\n\n1. **Authorization Boundary Respected**\n   - Zero unauthorized paths written outside of:\n     - `tools/refactor_repo/`\n     - `schemas/repository_refactor_inventory.schema.v1.json`\n     - `tests/refactor_repo/test_inventory.py`\n     - `plans_internal/refactor_repo/inventory/`\n     - `plans_internal/refactor_repo/baseline/`\n     - `plans_internal/refactor_repo/checkpoints/P00/`\n     - `plans_internal/refactor_repo/execution/P00/` (specific files only)\n     - `failed_execution_evidence/`\n   - **NO** `plans_internal/plans_internal/` nested paths.\n   - git status must show only authorized untracked files.\n\n2. **All Tests Pass**\n   - All 16 tests in `tests/refactor_repo/test_inventory.py` must exit code 0.\n   - Tests include: inventory read-only verification, schema validation, machine/human report equivalence, baseline capture/compare, fault injection.\n\n3. **Inventory Completeness**\n   - Inventory JSON must validate against `schemas/repository_refactor_inventory.schema.v1.json`.\n   - `complete` field must be `true`.\n   - `omissions` array must be empty.\n   - `collection_failures` array must be empty.\n   - Covers all top-level directories, Python imports, structured config, test subtrees, schema identifiers.\n\n4. **Baseline Capture Success**\n   - Baseline capture must exit code 0.\n   - Output file must exist and be valid JSON.\n   - `existing_failures` array must be empty.\n   - Baseline must be re-executable (Test 14: baseline_capture_and_compare_are_equivalent_on_unchanged_repo passes).\n\n5. **Checkpoint Integrity**\n   - Checkpoint JSON must include: `phase`, `title`, `timestamp`, `inventory`, `baseline`, `tests`, `completion_gates`.\n   - `completion_gates` object must show all gates passing:\n     - `valid_journal: true`\n     - `zero_unclosed_starts: true`\n     - `all_tests_pass: true`\n     - `authorized_paths_only: true`\n\n## Major Criteria\n\n6. **Inventory-Baseline Consistency**\n   - Baseline was captured from the same git commit as inventory.\n   - Baseline contains the same repository state as inventory describes.\n\n7. **Rollback Capability**\n   - All authorized outputs can be deleted without corrupting the repository.\n   - `git reset --hard` returns repo to clean state at the same commit.\n\n## Success Condition\nAll blocker criteria must pass (exit 0). One major criterion failure is acceptable (exit 0 if all blockers pass).\n",
+    "focus": "Authorization boundary (no nested plans_internal/), all tests pass (16/16), inventory complete, baseline valid",
+    "threshold": "blocker",
+    "max_iterations": 5,
+    "timeout_seconds": 900,
+    "retries": 2,
+    "model": null,
+    "effort": null,
+    "transport": "exec",
+    "allow_execution": false,
+    "grounding": []
+  },
+  "thread_id": "01a00a8c-567b-7482-ac45-bca62e11d17b"
+}

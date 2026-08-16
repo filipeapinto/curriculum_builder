@@ -1,0 +1,491 @@
+{
+  "identity": {
+    "unit_id": "L02",
+    "slug": "breadboard",
+    "kind": "foundation",
+    "title": "Breadboard: The Hidden Metal Paths",
+    "subject_job_sentence": "A breadboard joins selected holes with hidden metal clips so circuits can be built without soldering."
+  },
+  "pedagogy": {
+    "learning_objectives": [
+      {
+        "statement": "Identify a five-hole terminal-strip group and the centre trench on the breadboard.",
+        "bloom_level": "remember",
+        "success_criterion": "I can point to a five-hole group and the centre trench."
+      },
+      {
+        "statement": "Predict which holes share a hidden clip before checking.",
+        "bloom_level": "understand",
+        "success_criterion": "I can explain why two holes in the same short row are joined and two across the trench are not."
+      },
+      {
+        "statement": "Verify a prediction about breadboard connectivity while unpowered.",
+        "bloom_level": "apply",
+        "success_criterion": "I can trace the connectivity map and complete the evidence card."
+      }
+    ],
+    "prior_knowledge": {
+      "prerequisite_labs": [
+        "L01"
+      ],
+      "assumed_ideas": [
+        "Power stays disconnected while building."
+      ],
+      "retrieval_prompt": "What did you check before touching parts in the last lab?"
+    },
+    "misconceptions": [
+      {
+        "misconception": "Every hole on the breadboard is joined to every other hole.",
+        "why_it_is_common": "The dense hole grid looks uniform even though only short row segments share a clip.",
+        "confronted_by": "The connectivity map shows the five-hole group boundary and the isolating centre trench."
+      }
+    ],
+    "vocabulary": [
+      {
+        "term": "terminal strip",
+        "child_definition": "A short row of five holes joined by one hidden metal clip.",
+        "introduced_in": "explore"
+      },
+      {
+        "term": "centre trench",
+        "child_definition": "The gap down the middle of the board that keeps its two sides separate.",
+        "introduced_in": "explain"
+      }
+    ],
+    "scaffolding": {
+      "adult_does": [
+        "Keep the board disconnected from any power source.",
+        "Verify the child's traced connectivity map before the evidence card is signed."
+      ],
+      "child_does": [
+        "Predict which holes are joined.",
+        "Trace the five-hole group and the trench on the map.",
+        "Tick each evidence-card item after checking it."
+      ],
+      "fading_note": "The adult still confirms the safety state; the child now leads the connectivity prediction."
+    },
+    "cognitive_load": {
+      "segments": [
+        "Notice the hole grid",
+        "Predict grouping",
+        "Trace five-hole group",
+        "Trace trench",
+        "Trace rail segment",
+        "Complete evidence card"
+      ],
+      "concrete_before_abstract": "The child points to physical holes before meeting the word terminal strip.",
+      "worked_example": "The adult points to one five-hole group and shows that a pin in any of its five holes reaches the same clip."
+    }
+  },
+  "sequence": {
+    "engage": {
+      "hook": "A grid of identical-looking holes hides two different kinds of connection underneath.",
+      "eliciting_question": "Do you think every hole on the board is connected to every other hole?"
+    },
+    "explore": {
+      "predict": {
+        "question": "Which holes do you think share a hidden clip with this hole?",
+        "options": [
+          "the four holes beside it in the same short row",
+          "every hole in the same column",
+          "every hole on the board"
+        ],
+        "recorded_before_observing": true
+      },
+      "observe": {
+        "what_to_observe": "Which holes the cutaway diagram shows sharing one hidden metal clip, and which holes it shows the centre trench keeping apart.",
+        "record_method": "tick_or_circle",
+        "evidence_fields": [
+          "my prediction, written down first",
+          "the five holes the cutaway shows on one clip",
+          "the two holes across the trench the cutaway shows on separate clips",
+          "the rail segment, and whether the cutaway shows a break in it",
+          "board still disconnected"
+        ]
+      },
+      "steps": [
+        {
+          "number": 1,
+          "action": "Check with the adult that the board is not connected to any power source."
+        },
+        {
+          "number": 2,
+          "action": "Circle your prediction for which holes share a clip."
+        },
+        {
+          "number": 3,
+          "action": "Find one five-hole terminal-strip group on the real board."
+        },
+        {
+          "number": 4,
+          "action": "Find the centre trench and confirm no clip crosses it."
+        },
+        {
+          "number": 5,
+          "action": "Find one power rail segment and look for a visible break."
+        },
+        {
+          "number": 6,
+          "action": "Trace the three locations on the connectivity map with a finger."
+        },
+        {
+          "number": 7,
+          "action": "Tick each place found and ask the adult to verify the card."
+        }
+      ],
+      "expected_observation": "The cutaway shows five holes in one short row on a single clip, and no clip crossing the trench.",
+      "not_yet_outcome": {
+        "symptom": "The child cannot tell which five holes belong to one group.",
+        "first_check": "Recount the holes in one row segment on the map, stopping at the trench or the rail."
+      }
+    },
+    "explain": {
+      "what_you_saw": "In the cutaway you saw one metal clip under five holes in a short row. You saw no clip at all crossing the centre trench. You found one rail segment and checked it for a break. The board was still disconnected.",
+      "why_it_happened": "A standard breadboard hides short internal metal clips under each row segment; five holes in the same segment share one clip. The centre trench is built to separate the two sides so parts with legs on both sides do not get shorted. Power rails run the long way along the edges and can be physically split partway, so a rail must be checked rather than assumed continuous.",
+      "self_explanation_prompt": "Tell the adult why two holes on opposite sides of the trench are never joined by the same clip."
+    },
+    "elaborate": {
+      "near_transfer": [
+        "Trace a different five-hole group on the same board and predict its boundary before checking."
+      ],
+      "far_transfer": [
+        "A muffin tin has separate cups the way a breadboard has separate terminal-strip groups.",
+        "An ice-cube tray joins water within each separate compartment the way a terminal-strip group joins only its own five holes."
+      ]
+    },
+    "evaluate": {
+      "success_criteria_checklist": [
+        "I can point to a five-hole group and the centre trench.",
+        "I can explain why two holes in the same short row are joined and two across the trench are not.",
+        "I can trace the connectivity map and complete the evidence card."
+      ],
+      "hinge_question": {
+        "question": "If you plug one leg of a part into the trench itself, is it joined to anything?",
+        "reveals": "Whether the learner understands the trench is a gap, not a connection."
+      },
+      "next_lab_link": "L03 uses this same connectivity picture to place jumper wires and an expansion board correctly."
+    }
+  },
+  "content": {
+    "identification": {
+      "child_name": "breadboard",
+      "technical_name": "solderless breadboard",
+      "distinguishing_features": "A rectangular board of holes in short row groups either side of a centre trench, with longer rail rows along the top and bottom edges.",
+      "orientation_cue": "Do not assume rail continuity from colour alone; an adult verifies the map against the physical board.",
+      "parts": [
+        {
+          "label": "terminal strip five-hole group",
+          "role": "The basic joined unit a component leg connects into."
+        },
+        {
+          "label": "centre trench",
+          "role": "The gap that keeps the board's two sides electrically separate."
+        },
+        {
+          "label": "power rail segment",
+          "role": "A long edge row that may be split and must be verified."
+        }
+      ]
+    },
+    "troubleshooting": [
+      {
+        "what_you_notice": "A part seems to connect to holes you did not expect.",
+        "likely_reason": "The part's legs may span more than one five-hole group.",
+        "safe_first_check": "With the board unpowered, recount which five-hole group each leg sits in."
+      },
+      {
+        "what_you_notice": "You cannot tell if the rail is continuous across the board.",
+        "likely_reason": "Some breadboards physically split their rails partway.",
+        "safe_first_check": "Look for a visible gap in the rail line and ask the adult to confirm before relying on it."
+      }
+    ],
+    "sourced_claims": [
+      {
+        "claim": "Each row of 5 holes has internal spring contacts joining those 5 holes electrically.",
+        "source_locator": {
+          "path": "sources/source_01.html",
+          "section_or_line": "each of the rows of 5 holes has internal spring contacts that connect the 5 holes electrically"
+        },
+        "subject_scope": {
+          "model_independent": true,
+          "justification": "The cited guide describes the standard solderless-breadboard construction generally, not one manufacturer's board."
+        },
+        "evidence_scope": "Establishes the five-hole grouping only; it states nothing about rail continuity."
+      },
+      {
+        "claim": "Contact current on a good-quality breadboard is generally limited to around 2 A.",
+        "source_locator": {
+          "path": "sources/source_01.html",
+          "section_or_line": "current is generally limited to around 2a with a good quality breadboard"
+        },
+        "subject_scope": {
+          "model_independent": true,
+          "justification": "The cited figure is stated for a good-quality breadboard in general and is not attributed to any particular product."
+        },
+        "evidence_scope": "A general contact-current ceiling for breadboard terminal strips. Nothing in this unit is energized, so it is stated as background, not as a working limit."
+      }
+    ],
+    "unresolved_visual_roles": [],
+    "derived": [
+      {
+        "domain_pointer": "/build_map/placement_steps/0",
+        "rendered_value": "Find one five-hole terminal-strip group and count its five holes."
+      },
+      {
+        "domain_pointer": "/build_map/placement_steps/1",
+        "rendered_value": "Find the centre trench and check that no clip crosses it."
+      },
+      {
+        "domain_pointer": "/build_map/placement_steps/2",
+        "rendered_value": "Find one power rail segment and look along it for a visible break."
+      },
+      {
+        "domain_pointer": "/build_map/labelled_features/0",
+        "rendered_value": "rows"
+      },
+      {
+        "domain_pointer": "/build_map/labelled_features/1",
+        "rendered_value": "columns"
+      },
+      {
+        "domain_pointer": "/build_map/labelled_features/2",
+        "rendered_value": "rails"
+      },
+      {
+        "domain_pointer": "/build_map/labelled_features/3",
+        "rendered_value": "centre_trench"
+      },
+      {
+        "domain_pointer": "/build_map/labelled_features/4",
+        "rendered_value": "rail_breaks"
+      },
+      {
+        "domain_pointer": "/build_map/safety_inset/shows",
+        "rendered_value": "The board stays disconnected from every power source for the whole activity."
+      },
+      {
+        "domain_pointer": "/build_map/evidence_card/prompt",
+        "rendered_value": "With the board unpowered, use the cutaway diagram to find which holes share one metal clip, and tick each place you can identify."
+      },
+      {
+        "domain_pointer": "/build_map/evidence_card/child_records/0",
+        "rendered_value": "five holes counted in one terminal-strip group"
+      },
+      {
+        "domain_pointer": "/build_map/evidence_card/child_records/1",
+        "rendered_value": "centre trench found, with no clip crossing it"
+      },
+      {
+        "domain_pointer": "/build_map/evidence_card/child_records/2",
+        "rendered_value": "one rail segment found and checked for a break"
+      },
+      {
+        "domain_pointer": "/build_map/evidence_card/child_records/3",
+        "rendered_value": "board still disconnected"
+      },
+      {
+        "domain_pointer": "/electrical/behaviour/child_level",
+        "rendered_value": "Five holes in the same short row share one hidden metal clip, but holes across the centre trench never share a clip."
+      }
+    ]
+  },
+  "safety": {
+    "hazard_mode": "fully disconnected low-voltage identification",
+    "adult_verification": {
+      "variant": "ELEGOO UNO R3 Super Starter Kit breadboard represented by the frozen official reference",
+      "marking": "Standard solderless breadboard included in the kit",
+      "verified_configuration": "Board not connected to any power source; connectivity map used for identification only.",
+      "limits": "No energized work, no measurement, no permanent marking of the board in this lab.",
+      "endpoint_check": "Adult confirms all three traced locations and that the board remains disconnected before signing the evidence card.",
+      "signoff_required": true
+    }
+  },
+  "visuals": [
+    {
+      "role": "subject_identification",
+      "source_kind": "verified_photograph",
+      "supports_section": "identification",
+      "carries_exact_domain_fact": true,
+      "provenance": {
+        "publisher": "ELEGOO",
+        "item_or_family": "UNO R3 Super Starter Kit",
+        "access_date": "2026-08-08",
+        "file_hash": "8a714a50ff65769412e01af0cee531154ffe09eae0bddd041baacd35367fb546",
+        "embedded_as": "assets/photo_breadboard.jpg",
+        "crop_transform_history": [
+          "Cropped from official_kit_photo.jpg to the region containing the breadboard (pixels 0,640 to 1045,985).",
+          "Full-size solderless breadboard, legible: both power rails with their + and - markings, the centre trench, numbered columns 1-60 and lettered rows a-e / f-j.",
+          "Verified by direct visual inspection, plans/runtime_integrity_remediation RIR-T01, 2026-08-08."
+        ],
+        "url": "https://www.elegoo.com/en-gb/products/elegoo-uno-r3-super-starter-kit"
+      },
+      "omission_finding": "The photograph shows what the subject looks like and shows no wiring or connection."
+    },
+    {
+      "role": "orientation_and_parts",
+      "source_kind": "deterministic_render",
+      "supports_section": "identification",
+      "carries_exact_domain_fact": true,
+      "provenance": {
+        "publisher": "curriculum runtime deterministic renderer",
+        "item_or_family": "L02 cutaway clip illustration",
+        "access_date": "2026-08-08",
+        "file_hash": "9b90be2b93d2601575aa8163b68d0ff0acd58d03ce888ea307610f490dc6a146",
+        "embedded_as": "assets/cutaway_clip_illustration.svg",
+        "crop_transform_history": [
+          "Rendered from this unit's own named parts."
+        ]
+      },
+      "omission_finding": "The diagram names parts only; it shows no powered or connected configuration."
+    },
+    {
+      "role": "assembly_or_path_map",
+      "source_kind": "deterministic_render",
+      "supports_section": "assembly",
+      "carries_exact_domain_fact": true,
+      "provenance": {
+        "publisher": "curriculum runtime deterministic renderer",
+        "item_or_family": "L02 deterministic connectivity map",
+        "access_date": "2026-08-08",
+        "file_hash": "196c139286089e137aeb3d6faec6ba5c7a6237e9b9aa8007d8fea8b62a0b8790",
+        "embedded_as": "assets/path_map.svg",
+        "crop_transform_history": [
+          "Rendered from this unit's own build map data: breadboard."
+        ]
+      },
+      "omission_finding": "The map shows only what can be traced with everything disconnected and unpowered."
+    },
+    {
+      "role": "safety_or_troubleshooting",
+      "source_kind": "deterministic_render",
+      "supports_section": "troubleshooting",
+      "carries_exact_domain_fact": true,
+      "provenance": {
+        "publisher": "curriculum runtime deterministic renderer",
+        "item_or_family": "L02 rail-break warning",
+        "access_date": "2026-08-08",
+        "file_hash": "c76e83547469cfed286cd66b885173afa0bfb5e87666dd06d1fa460924a83006",
+        "embedded_as": "assets/rail_break_warning.svg",
+        "crop_transform_history": [
+          "Rendered from this unit's own recorded failure mode."
+        ]
+      },
+      "omission_finding": "The picture shows what to avoid and shows no permitted live configuration."
+    },
+    {
+      "role": "expected_result",
+      "source_kind": "deterministic_render",
+      "supports_section": "evaluate",
+      "carries_exact_domain_fact": true,
+      "provenance": {
+        "publisher": "curriculum runtime deterministic renderer",
+        "item_or_family": "L02 child evidence card",
+        "access_date": "2026-08-08",
+        "file_hash": "1d94c55818dd2f8cf35be523b5c573ac8c79e10ada43e890b8cb24353b4ba5eb",
+        "embedded_as": "assets/evidence_card.svg",
+        "crop_transform_history": [
+          "Rendered from this unit's own evidence-card records."
+        ]
+      },
+      "omission_finding": "The card records what was found and grants no permission to energize anything."
+    }
+  ],
+  "domain": {
+    "electrical": {
+      "component_spec": {
+        "part_family": "solderless breadboard",
+        "designator_prefix": "BB",
+        "parameters": [
+          {
+            "name": "terminal strip group size",
+            "value": "5",
+            "unit": "none",
+            "condition": "Each row segment on a standard breadboard is joined by one internal spring clip.",
+            "source": "sources/source_01.html, SHA-256 a76dcec60337cb36191bcde6f50ad56222a12607c4693334987751e3844d029f"
+          },
+          {
+            "name": "centre trench isolation",
+            "value": "isolated",
+            "unit": "none",
+            "condition": "The centre trench separates the two terminal-strip halves; no clip spans it.",
+            "source": "sources/source_01.html, SHA-256 a76dcec60337cb36191bcde6f50ad56222a12607c4693334987751e3844d029f"
+          }
+        ]
+      },
+      "quantities_taught": [
+        {
+          "quantity": "continuity",
+          "depth": "observe",
+          "child_facing_meaning": "Holes joined by the same hidden metal clip would let electricity pass between them if a circuit were built; today nothing is powered."
+        }
+      ],
+      "circuit": {
+        "status": "not_designed"
+      },
+      "behaviour": {
+        "child_level": "Five holes in the same short row share one hidden metal clip, but holes across the centre trench never share a clip.",
+        "adult_level": "Standard breadboard terminal strips join five holes per row segment on each side of the centre channel; power rails run the long way and may be physically split, so continuity must be verified rather than assumed from rail colour.",
+        "relationship": "none",
+        "simplification_check": "The child account keeps the five-hole grouping and the trench break, the two facts this lab's evidence card checks, and omits manufacturing-tolerance detail that does not change either."
+      },
+      "ratings_and_limits": [
+        {
+          "parameter": "terminal-strip contact current rating for a good-quality breadboard",
+          "absolute_max": "2",
+          "unit": "A",
+          "source": "Generic breadboard guide, current generally limited to around 2 A with a good-quality breadboard; sources/source_01.html, SHA-256 a76dcec60337cb36191bcde6f50ad56222a12607c4693334987751e3844d029f"
+        }
+      ],
+      "failure_modes": [
+        {
+          "wrong_action": "Assume a power rail is continuous end-to-end without checking for a rail break.",
+          "consequence": "A part wired to the far half of a split rail would not receive the same connection as one wired to the near half.",
+          "prevented_by": "Trace the rail on the disconnected board and mark any visible break before relying on it.",
+          "reversible": true
+        }
+      ]
+    },
+    "build_map": {
+      "map_kind": "breadboard",
+      "orientation": "Rails run the long way along the top and bottom edges; the centre trench runs the length of the board between its two halves.",
+      "labelled_features": [
+        "rows",
+        "columns",
+        "rails",
+        "centre_trench",
+        "rail_breaks"
+      ],
+      "wire_endpoints": [
+        {
+          "from": "one hole in a five-hole terminal-strip group",
+          "to": "another hole in the same five-hole group",
+          "net": "one internal spring clip"
+        },
+        {
+          "from": "a hole on one side of the centre trench",
+          "to": "the facing hole on the other side",
+          "net": "no clip — the trench separates them"
+        }
+      ],
+      "placement_steps": [
+        "Find one five-hole terminal-strip group and count its five holes.",
+        "Find the centre trench and check that no clip crosses it.",
+        "Find one power rail segment and look along it for a visible break."
+      ],
+      "schematic_included": true,
+      "safety_inset": {
+        "shows": "The board stays disconnected from every power source for the whole activity.",
+        "derived_from_circuit_data": true
+      },
+      "evidence_card": {
+        "prompt": "With the board unpowered, use the cutaway diagram to find which holes share one metal clip, and tick each place you can identify.",
+        "child_records": [
+          "five holes counted in one terminal-strip group",
+          "centre trench found, with no clip crossing it",
+          "one rail segment found and checked for a break",
+          "board still disconnected"
+        ]
+      }
+    }
+  }
+}

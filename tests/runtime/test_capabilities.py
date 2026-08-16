@@ -5,9 +5,9 @@ import unittest
 
 import yaml
 
-from runtime.capabilities import (CapabilityError, remove_unavailable_route,
+from curriculum_factory.capabilities import (CapabilityError, remove_unavailable_route,
                                   route_required_by_unit, validate_cross_family_proof)
-from runtime.gemini import max_effort_settings, resolve_alias
+from curriculum_factory.gemini import max_effort_settings, resolve_alias
 
 
 ENGINE = Path(__file__).resolve().parents[2]

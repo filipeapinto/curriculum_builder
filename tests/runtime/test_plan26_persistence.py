@@ -39,14 +39,14 @@ except ModuleNotFoundError as exc:  # pragma: no cover
 
 from langgraph.graph import END, START, StateGraph
 
-from runtime.langgraph_factory import persistence as P
-from runtime.langgraph_factory.evidence import EvidenceStore
-from runtime.langgraph_factory.nodes import project as project_for_node
-from runtime.langgraph_factory.nodes import terminal as D98
-from runtime.langgraph_factory.state import RuntimeContext
+from curriculum_factory.langgraph_factory import persistence as P
+from curriculum_factory.langgraph_factory.evidence import EvidenceStore
+from curriculum_factory.langgraph_factory.nodes import project as project_for_node
+from curriculum_factory.langgraph_factory.nodes import terminal as D98
+from curriculum_factory.langgraph_factory.state import RuntimeContext
 
 REPO_ROOT = Path(__file__).resolve().parents[2]
-PERSISTENCE_SOURCE = REPO_ROOT / "runtime" / "langgraph_factory" / "persistence.py"
+PERSISTENCE_SOURCE = REPO_ROOT / "src" / "curriculum_factory" / "langgraph_factory" / "persistence.py"
 
 IDENTITY_SEED = {
     "contract_version": "plan26.v1",
@@ -90,7 +90,7 @@ def _run_child(script: str, *args: str) -> subprocess.CompletedProcess:
         child_path = handle.name
     try:
         return subprocess.run(
-            [sys.executable, child_path, str(REPO_ROOT), *args],
+            [sys.executable, child_path, str(REPO_ROOT / "src"), *args],
             capture_output=True,
             text=True,
             timeout=180,
@@ -105,7 +105,7 @@ CRASH_CHILD = """
     from typing import Annotated, TypedDict
 
     sys.path.insert(0, sys.argv[1])
-    from runtime.langgraph_factory import persistence as P
+    from curriculum_factory.langgraph_factory import persistence as P
     from langgraph.graph import END, START, StateGraph
 
     output_root = Path(sys.argv[2])
@@ -144,7 +144,7 @@ LOCK_CHILD = """
     from pathlib import Path
 
     sys.path.insert(0, sys.argv[1])
-    from runtime.langgraph_factory import persistence as P
+    from curriculum_factory.langgraph_factory import persistence as P
 
     try:
         P.ExecutionLock(Path(sys.argv[2])).acquire()
@@ -161,7 +161,7 @@ ORPHAN_CHILD = """
     from typing import Annotated, TypedDict
 
     sys.path.insert(0, sys.argv[1])
-    from runtime.langgraph_factory import persistence as P
+    from curriculum_factory.langgraph_factory import persistence as P
     from langgraph.graph import END, START, StateGraph
 
     output_root = Path(sys.argv[2])
@@ -963,11 +963,11 @@ class TestOrphanRecovery(unittest.TestCase):
             elif isinstance(node, ast.ImportFrom) and node.module:
                 imported.add(node.module)
         forbidden_prefixes = (
-            "runtime.langgraph_factory.transport",
-            "runtime.langgraph_factory.egress",
-            "runtime.langgraph_factory.model_nodes",
-            "runtime.langgraph_factory.nodes",
-            "runtime.langgraph_factory.workbook",
+            "curriculum_factory.langgraph_factory.transport",
+            "curriculum_factory.langgraph_factory.egress",
+            "curriculum_factory.langgraph_factory.model_nodes",
+            "curriculum_factory.langgraph_factory.nodes",
+            "curriculum_factory.langgraph_factory.workbook",
             "langchain",
             "openai",
             "httpx",
@@ -1242,7 +1242,7 @@ class TestEpisodeLifecycle(PersistenceTestCase):
             )
 
     def test_episode_state_update_matches_the_frozen_state_fields(self) -> None:
-        from runtime.langgraph_factory.state import FACTORY_STATE_FIELDS
+        from curriculum_factory.langgraph_factory.state import FACTORY_STATE_FIELDS
 
         update = self.fresh_invocation().as_state_update()
         for field in update:

@@ -6,15 +6,15 @@ import tempfile
 import unittest
 from unittest import mock
 
-from runtime.curriculum_factory_graph import (CurriculumFactoryGraph, FactoryGraphFailure,
+from curriculum_factory.curriculum_factory_graph import (CurriculumFactoryGraph, FactoryGraphFailure,
                                               NODE_IDS, PROMPT_FILES)
-from runtime.factory_state import FactoryStateError, FactoryStateStore
-from runtime.io import sha256_file
+from curriculum_factory.factory_state import FactoryStateError, FactoryStateStore
+from curriculum_factory.io import sha256_file
 
 
 ENGINE = Path(__file__).resolve().parents[2]
 MANIFEST = ENGINE / "curricula/arduino_kit/arduino_kit_curriculum.v5.yaml"
-SHIPPED_L01 = ENGINE / "outputs/arduino_kit_run_v2/L01"
+SHIPPED_L01 = ENGINE / "tests/fixtures/refactor_repo/arduino_kit_run_v2/L01"
 
 
 class FakeCapabilities:
@@ -61,9 +61,9 @@ class FakeWorker:
                     "claim_scope": "kit inventory only",
                 }], "unresolved": []}
         elif job == "create_unit_domain_data":
-            result = json.loads((SHIPPED_L01 / "workers/lab.json").read_text())["domain"]
+            result = json.loads((SHIPPED_L01 / "lab.json").read_text())["domain"]
         elif job == "write_unit_content":
-            result = json.loads((SHIPPED_L01 / "workers/lab.json").read_text())
+            result = json.loads((SHIPPED_L01 / "lab.json").read_text())
         elif job == "create_unit_visuals":
             result = {
                 "filename": "safe_disconnected_setup.svg",
@@ -136,7 +136,7 @@ class FactoryPackageTests(unittest.TestCase):
         for node in NODE_IDS:
             with self.subTest(node=node):
                 self.assertIn(node, graph_text)
-        runtime_text = (ENGINE / "runtime/curriculum_factory_graph.py").read_text()
+        runtime_text = (ENGINE / "src/curriculum_factory/curriculum_factory_graph.py").read_text()
         for forbidden in ("arduino_kit", '"L01"', "35"):
             self.assertNotIn(forbidden, runtime_text)
 
@@ -168,7 +168,7 @@ class FactoryOneUnitIntegrationTests(unittest.TestCase):
             graph = CurriculumFactoryGraph(
                 ENGINE, author=FakeWorker("openai"), reviewer=FakeWorker("azure"),
                 fetcher=lambda _url: source_bytes, capabilities=FakeCapabilities())
-            with mock.patch("runtime.curriculum_factory_graph.readability_problems",
+            with mock.patch("curriculum_factory.curriculum_factory_graph.readability_problems",
                             return_value=[]):
                 result = graph.run(curriculum=MANIFEST, output_root=output, lab_id="L01")
             self.assertEqual("UNIT_ACCEPTED", result["terminal"], result)
@@ -192,7 +192,7 @@ class FactoryOneUnitIntegrationTests(unittest.TestCase):
             interrupted = CurriculumFactoryGraph(
                 ENGINE, author=FakeWorker("openai"), reviewer=InterruptingReviewer("azure"),
                 fetcher=lambda _url: source_bytes, capabilities=FakeCapabilities())
-            with mock.patch("runtime.curriculum_factory_graph.readability_problems",
+            with mock.patch("curriculum_factory.curriculum_factory_graph.readability_problems",
                             return_value=[]):
                 first = interrupted.run(curriculum=MANIFEST, output_root=output, lab_id="L01")
             self.assertEqual("INTERRUPTED", first["terminal"])
@@ -204,7 +204,7 @@ class FactoryOneUnitIntegrationTests(unittest.TestCase):
             resumed = CurriculumFactoryGraph(
                 ENGINE, author=FakeWorker("openai"), reviewer=FakeWorker("azure"),
                 fetcher=lambda _url: source_bytes, capabilities=FakeCapabilities())
-            with mock.patch("runtime.curriculum_factory_graph.readability_problems",
+            with mock.patch("curriculum_factory.curriculum_factory_graph.readability_problems",
                             return_value=[]):
                 second = resumed.run(curriculum=MANIFEST, output_root=output, resume=True)
             self.assertEqual("UNIT_ACCEPTED", second["terminal"], second)

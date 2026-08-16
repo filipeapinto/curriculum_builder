@@ -1,0 +1,56 @@
+{
+  "attempt": 1,
+  "exit_code": 0,
+  "duration_seconds": 84.59,
+  "transport": "exec",
+  "session_id": "01a00c21-97f5-77e3-98fc-83aa27047877",
+  "thread_id": "01a00c21-97f5-77e3-98fc-83aa27047877",
+  "turn_id": null,
+  "usage": {
+    "input_tokens": 388364,
+    "cached_input_tokens": 326400,
+    "cache_write_input_tokens": 0,
+    "output_tokens": 3045,
+    "reasoning_output_tokens": 975
+  },
+  "model": null,
+  "effort": null,
+  "plugin_version": null,
+  "plugin_lib_path": null,
+  "argv": [
+    "codex",
+    "exec",
+    "--json",
+    "--skip-git-repo-check",
+    "--output-schema",
+    "/Users/filipepinto/Projects/curriculum_builder_wt/p03-recovery/.claude/skills/qa-gate-codex-run/scripts/verdict.schema.json",
+    "-o",
+    "/Users/filipepinto/Projects/curriculum_builder_wt/p03-recovery/plans_internal/refactor_repo/checkpoints/P03/QA/rounds/round-01.response.json",
+    "-s",
+    "read-only",
+    "-C",
+    "/Users/filipepinto/Projects/curriculum_builder_wt/p03-recovery/plans_internal/refactor_repo/checkpoints/P03",
+    "<prompt>"
+  ],
+  "started_at": "2026-08-16T19:52:01.534277+00:00",
+  "response_sha256": "7b0c61568f7e1502df4a0b009f762015aeaac567b7d77c6b103f83ca5605e67e",
+  "request_sha256": "89ad216c98dbfa2713982117007cc6c4dae427bd7c5260bf110bef23f4342b2a",
+  "round": 1,
+  "cwd": "/Users/filipepinto/Projects/curriculum_builder_wt/p03-recovery/plans_internal/refactor_repo/checkpoints/P03",
+  "artifact_path": "/Users/filipepinto/Projects/curriculum_builder_wt/p03-recovery/plans_internal/refactor_repo/checkpoints/P03/P03_recovery_checkpoint.v3.md",
+  "artifact_sha256": "197d6418be07d79f1e6475105e2cb2e14de7a9cf84a9310a3e510cd1360cce67",
+  "grounding": [
+    {
+      "path": "/Users/filipepinto/Projects/curriculum_builder_wt/p03-recovery/plans_internal/refactor_repo/prompts/P03_source_move.prompt.v3.yaml",
+      "sha256": "0f2b94c4064eb2ea9a750e2e813919b4f64470158459697aa9b8ea0a62489334"
+    },
+    {
+      "path": "/Users/filipepinto/Projects/curriculum_builder_wt/p03-recovery/plans_internal/refactor_repo/checkpoints/P03/superseded_sessions/QA-2026-08-16-exhausted/postmortem.md",
+      "sha256": "f7915663feddc0c4bcfe48ca3c95df35b5539d83a779332e64b34ed9ea7e55b5"
+    }
+  ],
+  "chain_prev": "GENESIS",
+  "chain": "4a364e9d0052bd50e28cd52f1d9e03fa770f8eb75296ff75f174537c4e4cd603",
+  "rollout_file": "/Users/filipepinto/.codex/sessions/2026/08/16/rollout-2026-08-16T15-52-03-01a00c21-97f5-77e3-98fc-83aa27047877.jsonl",
+  "timestamp": "2026-08-16T19:53:26.187306+00:00"
+}

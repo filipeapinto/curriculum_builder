@@ -7,16 +7,16 @@ import tempfile
 from pathlib import Path
 from unittest import mock
 
-from runtime.controller import CurriculumRuntime
-from runtime.langgraph_factory import egress as eg
-from runtime.langgraph_factory import transport as tp
-import runtime.run_curriculum as run_curriculum_module
-import runtime.run_curriculum as R
+from curriculum_factory.controller import CurriculumRuntime
+from curriculum_factory.langgraph_factory import egress as eg
+from curriculum_factory.langgraph_factory import transport as tp
+import curriculum_factory.run_curriculum as run_curriculum_module
+import curriculum_factory.run_curriculum as R
 
 
 ENGINE = Path(__file__).resolve().parents[2]
 CURRICULUM = ENGINE / "curricula/arduino_kit"
-RUN_CURRICULUM_SOURCE_PATH = ENGINE / "runtime" / "run_curriculum.py"
+RUN_CURRICULUM_SOURCE_PATH = ENGINE / "src" / "curriculum_factory" / "run_curriculum.py"
 RUN_CURRICULUM_SOURCE = RUN_CURRICULUM_SOURCE_PATH.read_text(encoding="utf-8")
 RUN_CURRICULUM_AST = ast.parse(RUN_CURRICULUM_SOURCE, filename=str(RUN_CURRICULUM_SOURCE_PATH))
 
@@ -42,7 +42,7 @@ class RunCurriculumMigrationContractTests(unittest.TestCase):
     def test_parser_for_is_absent_from_the_module(self):
         self.assertFalse(hasattr(run_curriculum_module, "parser_for"))
         with self.assertRaises(ImportError):
-            from runtime.run_curriculum import parser_for  # noqa: F401
+            from curriculum_factory.run_curriculum import parser_for  # noqa: F401
 
     def test_legacy_flags_are_rejected_by_the_current_parser(self):
         for flag in LEGACY_CLI_FLAGS:
@@ -78,10 +78,10 @@ class RunCurriculumMigrationContractTests(unittest.TestCase):
             for alias in node.names
         }
         forbidden_modules = {
-            "runtime.controller",
-            "runtime.session_bridge",
-            "runtime.curriculum_factory_graph",
-            "runtime.model_worker",
+            "curriculum_factory.controller",
+            "curriculum_factory.session_bridge",
+            "curriculum_factory.curriculum_factory_graph",
+            "curriculum_factory.model_worker",
         }
         for module in forbidden_modules:
             with self.subTest(module=module):
@@ -103,7 +103,7 @@ class RunCurriculumElapsedTimeTests(unittest.TestCase):
         monotonic_times = [0.0, 901.0, 5401.0, 36001.0]
         monotonic_times.extend(36002.0 + index for index in range(len(self.runtime.states) - 3))
         output = self.base / "thresholds"
-        with mock.patch("runtime.controller.time.monotonic", side_effect=monotonic_times):
+        with mock.patch("curriculum_factory.controller.time.monotonic", side_effect=monotonic_times):
             result = self.runtime.simulate(CURRICULUM, output, lab_id="L01")
 
         self.assertEqual(result["terminal_state"], "ACCEPTED")

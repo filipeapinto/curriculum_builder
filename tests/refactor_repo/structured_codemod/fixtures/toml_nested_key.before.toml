@@ -1,0 +1,4 @@
+[project]
+name = "example"
+description = "old-description"
+version = "1.0.0"

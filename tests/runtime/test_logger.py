@@ -8,7 +8,7 @@ import unittest
 
 import jsonschema
 
-from runtime.logger import ExecutionLogger, LogError
+from curriculum_factory.logger import ExecutionLogger, LogError
 
 
 ENGINE = Path(__file__).resolve().parents[2]

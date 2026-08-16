@@ -1,0 +1,250 @@
+M	plans/26_langgraph_curriculum_factory/results/v3/N11_STATE_REDUCERS.receipt.v1.json
+M	plans/26_langgraph_curriculum_factory/results/v3/N12_EVIDENCE_ARTIFACTS.receipt.v1.json
+M	plans/26_langgraph_curriculum_factory/results/v3/N13_TRANSPORT_AUTH.receipt.v1.json
+A	plans/26_langgraph_curriculum_factory/results/v3/receipt_history/N11_STATE_REDUCERS/188838ad31bd6e30830073abe53bdd31f60972b23aea985e9da9a5c201e51679.receipt.v1.json
+A	plans/26_langgraph_curriculum_factory/results/v3/receipt_history/N11_STATE_REDUCERS/adaaaeb7d3122d8c03a5c97fbe2bdc05fdc8c3c7f24d9cfa35a7826eacd884ad.receipt.v1.json
+A	plans/26_langgraph_curriculum_factory/results/v3/receipt_history/N12_EVIDENCE_ARTIFACTS/f283be560757dc4655d55a2ca8b318e1d40041589f06f028b76bb5a393c3c44e.receipt.v1.json
+A	plans/26_langgraph_curriculum_factory/results/v3/receipt_history/N13_TRANSPORT_AUTH/3a739b6712498c1cff382e65d90b5d1eb125f4a57c97375defe294b032c6414c.receipt.v1.json
+A	plans_internal/refactor_repo/checkpoints/P03/P03_recovery_checkpoint.v5.md
+A	plans_internal/refactor_repo/checkpoints/P03/QA/rounds/round-01.events.jsonl
+A	plans_internal/refactor_repo/checkpoints/P03/QA/rounds/round-01.meta.json
+A	plans_internal/refactor_repo/checkpoints/P03/QA/rounds/round-01.request.md
+A	plans_internal/refactor_repo/checkpoints/P03/QA/rounds/round-01.response.json
+A	plans_internal/refactor_repo/checkpoints/P03/QA/rounds/round-01.stderr.txt
+A	plans_internal/refactor_repo/checkpoints/P03/QA/rounds/round-02.events.jsonl
+A	plans_internal/refactor_repo/checkpoints/P03/QA/rounds/round-02.meta.json
+A	plans_internal/refactor_repo/checkpoints/P03/QA/rounds/round-02.request.md
+A	plans_internal/refactor_repo/checkpoints/P03/QA/rounds/round-02.response.json
+A	plans_internal/refactor_repo/checkpoints/P03/QA/rounds/round-02.stderr.txt
+A	plans_internal/refactor_repo/checkpoints/P03/QA/session.json
+A	plans_internal/refactor_repo/checkpoints/P03/baseline/t0/behavioral_baseline.P03_t0.20260816T155653Z.json
+A	plans_internal/refactor_repo/checkpoints/P03/baseline/t0/pytest_full_t0.20260816T155653Z.log
+A	plans_internal/refactor_repo/checkpoints/P03/baseline/t0/pytest_t0_failed_and_error_ids.txt
+A	plans_internal/refactor_repo/checkpoints/P03/baseline/t0/runtime_tree_sha256_t0.txt
+A	plans_internal/refactor_repo/checkpoints/P03/deprecated/P03_recovery_checkpoint.v1.md
+A	plans_internal/refactor_repo/checkpoints/P03/deprecated/P03_recovery_checkpoint.v2.md
+A	plans_internal/refactor_repo/checkpoints/P03/deprecated/P03_recovery_checkpoint.v3.md
+A	plans_internal/refactor_repo/checkpoints/P03/deprecated/P03_recovery_checkpoint.v4.md
+A	plans_internal/refactor_repo/checkpoints/P03/evidence/criteria_amendment/checkpoint_qa_criteria.v1.PRE_AMENDMENT.md
+A	plans_internal/refactor_repo/checkpoints/P03/evidence/criteria_amendment/criteria_1_to_6_unchanged.diff
+A	plans_internal/refactor_repo/checkpoints/P03/evidence/criteria_amendment/criteria_amendment.diff
+A	plans_internal/refactor_repo/checkpoints/P03/evidence/criteria_amendment/criteria_digests.txt
+A	plans_internal/refactor_repo/checkpoints/P03/evidence/digest_manifest.json
+A	plans_internal/refactor_repo/checkpoints/P03/evidence/ledger/delta_name_status_complete.txt
+A	plans_internal/refactor_repo/checkpoints/P03/evidence/ledger/delta_raw_with_blob_shas.txt
+A	plans_internal/refactor_repo/checkpoints/P03/evidence/ledger/git_status_porcelain_current.txt
+A	plans_internal/refactor_repo/checkpoints/P03/evidence/ledger/path_ledger_complete.json
+A	plans_internal/refactor_repo/checkpoints/P03/evidence/move_execution/apply_pass1.json
+A	plans_internal/refactor_repo/checkpoints/P03/evidence/move_execution/apply_pass2.json
+A	plans_internal/refactor_repo/checkpoints/P03/evidence/move_execution/equivalence_to_reviewed_delta.txt
+A	plans_internal/refactor_repo/checkpoints/P03/evidence/move_execution/reviewed_transformations_applied.txt
+A	plans_internal/refactor_repo/checkpoints/P03/evidence/premove_inspection/p02_candidates.txt
+A	plans_internal/refactor_repo/checkpoints/P03/evidence/premove_inspection/p02_live_dryrun_rederived.diff
+A	plans_internal/refactor_repo/checkpoints/P03/evidence/premove_inspection/p02_live_dryrun_rederived.json
+A	plans_internal/refactor_repo/checkpoints/P03/evidence/premove_inspection/p03_candidates.txt
+A	plans_internal/refactor_repo/checkpoints/P03/evidence/premove_inspection/p03_premove_dryrun.diff
+A	plans_internal/refactor_repo/checkpoints/P03/evidence/premove_inspection/p03_premove_dryrun.json
+A	plans_internal/refactor_repo/checkpoints/P03/evidence/premove_inspection/premove_inspection.txt
+A	plans_internal/refactor_repo/checkpoints/P03/evidence/report_digest.txt
+A	plans_internal/refactor_repo/checkpoints/P03/evidence/test1_ownership_overlap_scan.v2.txt
+A	plans_internal/refactor_repo/checkpoints/P03/evidence/test3_relocation_completeness.txt
+A	plans_internal/refactor_repo/checkpoints/P03/evidence/test4_postcondition_scan_repo_wide.json
+A	plans_internal/refactor_repo/checkpoints/P03/evidence/test4_postmove_idempotency_dryrun.json
+A	plans_internal/refactor_repo/checkpoints/P03/evidence/test4_residual_classification.txt
+A	plans_internal/refactor_repo/checkpoints/P03/evidence/test5_installed_import_origins.txt
+A	plans_internal/refactor_repo/checkpoints/P03/evidence/test6_cli_boundary.txt
+A	plans_internal/refactor_repo/checkpoints/P03/evidence/test6_preflight_no_mutation.txt
+A	plans_internal/refactor_repo/checkpoints/P03/evidence/test6_preflight_stdout.json
+A	plans_internal/refactor_repo/checkpoints/P03/evidence/verification/checkpoint_docs_are_test_inert.txt
+A	plans_internal/refactor_repo/checkpoints/P03/evidence/verification/test_environment_freeze.txt
+A	plans_internal/refactor_repo/checkpoints/P03/evidence/verification/tested_tree_vs_submitted_tree.txt
+A	plans_internal/refactor_repo/checkpoints/P03/prior_runs/README.md
+A	plans_internal/refactor_repo/checkpoints/P03/prior_runs/t1/fixed_since_t0.txt
+A	plans_internal/refactor_repo/checkpoints/P03/prior_runs/t1/new_failures_vs_t0.txt
+A	plans_internal/refactor_repo/checkpoints/P03/prior_runs/t1/pytest_full_t1.log
+A	plans_internal/refactor_repo/checkpoints/P03/prior_runs/t1/pytest_t1_failed_and_error_ids.txt
+A	plans_internal/refactor_repo/checkpoints/P03/prior_runs/t2_post_compatibility_correction/p04_handoff_29_ids.txt
+A	plans_internal/refactor_repo/checkpoints/P03/prior_runs/t2_post_compatibility_correction/pytest_full_t2.log
+A	plans_internal/refactor_repo/checkpoints/P03/prior_runs/t2_post_compatibility_correction/pytest_t2_failed_and_error_ids.txt
+A	plans_internal/refactor_repo/checkpoints/P03/prior_runs/t4_recovery/fixed_since_t0.txt
+A	plans_internal/refactor_repo/checkpoints/P03/prior_runs/t4_recovery/new_failures_ids_only.txt
+A	plans_internal/refactor_repo/checkpoints/P03/prior_runs/t4_recovery/new_failures_vs_t0.txt
+A	plans_internal/refactor_repo/checkpoints/P03/prior_runs/t4_recovery/p04_handoff_allowlist_ids.txt
+A	plans_internal/refactor_repo/checkpoints/P03/prior_runs/t4_recovery/pytest_full_t4.log
+A	plans_internal/refactor_repo/checkpoints/P03/prior_runs/t4_recovery/pytest_t4_failed_and_error_ids.txt
+A	plans_internal/refactor_repo/checkpoints/P03/superseded_sessions/QA-2026-08-16-exhausted/README.md
+A	plans_internal/refactor_repo/checkpoints/P03/superseded_sessions/QA-2026-08-16-exhausted/evidence_from_ee8922a/codemod_diag_apply.src.json
+A	plans_internal/refactor_repo/checkpoints/P03/superseded_sessions/QA-2026-08-16-exhausted/evidence_from_ee8922a/codemod_diag_apply.tests.json
+A	plans_internal/refactor_repo/checkpoints/P03/superseded_sessions/QA-2026-08-16-exhausted/evidence_from_ee8922a/codemod_diag_idempotent_second_pass.json
+A	plans_internal/refactor_repo/checkpoints/P03/superseded_sessions/QA-2026-08-16-exhausted/evidence_from_ee8922a/codemod_postcondition_scan_repo_wide.json
+A	plans_internal/refactor_repo/checkpoints/P03/superseded_sessions/QA-2026-08-16-exhausted/evidence_from_ee8922a/git_diff_stat_final.txt
+A	plans_internal/refactor_repo/checkpoints/P03/superseded_sessions/QA-2026-08-16-exhausted/evidence_from_ee8922a/git_diff_stat_v3.txt
+A	plans_internal/refactor_repo/checkpoints/P03/superseded_sessions/QA-2026-08-16-exhausted/evidence_from_ee8922a/git_status_porcelain_final.txt
+A	plans_internal/refactor_repo/checkpoints/P03/superseded_sessions/QA-2026-08-16-exhausted/evidence_from_ee8922a/git_status_porcelain_v3.txt
+A	plans_internal/refactor_repo/checkpoints/P03/superseded_sessions/QA-2026-08-16-exhausted/evidence_from_ee8922a/src_curriculum_factory_sha256_final.txt
+A	plans_internal/refactor_repo/checkpoints/P03/superseded_sessions/QA-2026-08-16-exhausted/evidence_from_ee8922a/tests_runtime_sha256_final.txt
+A	plans_internal/refactor_repo/checkpoints/P03/superseded_sessions/QA-2026-08-16-exhausted/postmortem.events.jsonl
+A	plans_internal/refactor_repo/checkpoints/P03/superseded_sessions/QA-2026-08-16-exhausted/postmortem.json
+A	plans_internal/refactor_repo/checkpoints/P03/superseded_sessions/QA-2026-08-16-exhausted/postmortem.md
+A	plans_internal/refactor_repo/checkpoints/P03/superseded_sessions/QA-2026-08-16-exhausted/postmortem.request.md
+A	plans_internal/refactor_repo/checkpoints/P03/superseded_sessions/QA-2026-08-16-exhausted/postmortem.response.json
+A	plans_internal/refactor_repo/checkpoints/P03/superseded_sessions/QA-2026-08-16-exhausted/postmortem.stderr.txt
+A	plans_internal/refactor_repo/checkpoints/P03/superseded_sessions/QA-2026-08-16-exhausted/reports/P03_checkpoint_report.v1.md
+A	plans_internal/refactor_repo/checkpoints/P03/superseded_sessions/QA-2026-08-16-exhausted/reports/P03_checkpoint_report.v2.md
+A	plans_internal/refactor_repo/checkpoints/P03/superseded_sessions/QA-2026-08-16-exhausted/reports/P03_checkpoint_report.v3.md
+A	plans_internal/refactor_repo/checkpoints/P03/superseded_sessions/QA-2026-08-16-exhausted/reports/P03_checkpoint_report.v4.md
+A	plans_internal/refactor_repo/checkpoints/P03/superseded_sessions/QA-2026-08-16-exhausted/reports/P03_checkpoint_report.v5.md
+A	plans_internal/refactor_repo/checkpoints/P03/superseded_sessions/QA-2026-08-16-exhausted/rounds/round-01.events.jsonl
+A	plans_internal/refactor_repo/checkpoints/P03/superseded_sessions/QA-2026-08-16-exhausted/rounds/round-01.meta.json
+A	plans_internal/refactor_repo/checkpoints/P03/superseded_sessions/QA-2026-08-16-exhausted/rounds/round-01.request.md
+A	plans_internal/refactor_repo/checkpoints/P03/superseded_sessions/QA-2026-08-16-exhausted/rounds/round-01.response.json
+A	plans_internal/refactor_repo/checkpoints/P03/superseded_sessions/QA-2026-08-16-exhausted/rounds/round-01.stderr.txt
+A	plans_internal/refactor_repo/checkpoints/P03/superseded_sessions/QA-2026-08-16-exhausted/rounds/round-02.events.jsonl
+A	plans_internal/refactor_repo/checkpoints/P03/superseded_sessions/QA-2026-08-16-exhausted/rounds/round-02.meta.json
+A	plans_internal/refactor_repo/checkpoints/P03/superseded_sessions/QA-2026-08-16-exhausted/rounds/round-02.request.md
+A	plans_internal/refactor_repo/checkpoints/P03/superseded_sessions/QA-2026-08-16-exhausted/rounds/round-02.response.json
+A	plans_internal/refactor_repo/checkpoints/P03/superseded_sessions/QA-2026-08-16-exhausted/rounds/round-02.stderr.txt
+A	plans_internal/refactor_repo/checkpoints/P03/superseded_sessions/QA-2026-08-16-exhausted/rounds/round-03.events.jsonl
+A	plans_internal/refactor_repo/checkpoints/P03/superseded_sessions/QA-2026-08-16-exhausted/rounds/round-03.meta.json
+A	plans_internal/refactor_repo/checkpoints/P03/superseded_sessions/QA-2026-08-16-exhausted/rounds/round-03.request.md
+A	plans_internal/refactor_repo/checkpoints/P03/superseded_sessions/QA-2026-08-16-exhausted/rounds/round-03.response.json
+A	plans_internal/refactor_repo/checkpoints/P03/superseded_sessions/QA-2026-08-16-exhausted/rounds/round-03.stderr.txt
+A	plans_internal/refactor_repo/checkpoints/P03/superseded_sessions/QA-2026-08-16-exhausted/rounds/round-04.events.jsonl
+A	plans_internal/refactor_repo/checkpoints/P03/superseded_sessions/QA-2026-08-16-exhausted/rounds/round-04.meta.json
+A	plans_internal/refactor_repo/checkpoints/P03/superseded_sessions/QA-2026-08-16-exhausted/rounds/round-04.request.md
+A	plans_internal/refactor_repo/checkpoints/P03/superseded_sessions/QA-2026-08-16-exhausted/rounds/round-04.response.json
+A	plans_internal/refactor_repo/checkpoints/P03/superseded_sessions/QA-2026-08-16-exhausted/rounds/round-04.stderr.txt
+A	plans_internal/refactor_repo/checkpoints/P03/superseded_sessions/QA-2026-08-16-exhausted/rounds/round-05.events.jsonl
+A	plans_internal/refactor_repo/checkpoints/P03/superseded_sessions/QA-2026-08-16-exhausted/rounds/round-05.meta.json
+A	plans_internal/refactor_repo/checkpoints/P03/superseded_sessions/QA-2026-08-16-exhausted/rounds/round-05.request.md
+A	plans_internal/refactor_repo/checkpoints/P03/superseded_sessions/QA-2026-08-16-exhausted/rounds/round-05.response.json
+A	plans_internal/refactor_repo/checkpoints/P03/superseded_sessions/QA-2026-08-16-exhausted/rounds/round-05.stderr.txt
+A	plans_internal/refactor_repo/checkpoints/P03/superseded_sessions/QA-2026-08-16-exhausted/session.json
+A	plans_internal/refactor_repo/checkpoints/P03/superseded_sessions/QA-2026-08-16-exhausted/verdict.json
+A	plans_internal/refactor_repo/checkpoints/P03/superseded_sessions/QA-2026-08-16-session2-retired/README.md
+A	plans_internal/refactor_repo/checkpoints/P03/superseded_sessions/QA-2026-08-16-session2-retired/rounds/round-01.events.jsonl
+A	plans_internal/refactor_repo/checkpoints/P03/superseded_sessions/QA-2026-08-16-session2-retired/rounds/round-01.meta.json
+A	plans_internal/refactor_repo/checkpoints/P03/superseded_sessions/QA-2026-08-16-session2-retired/rounds/round-01.request.md
+A	plans_internal/refactor_repo/checkpoints/P03/superseded_sessions/QA-2026-08-16-session2-retired/rounds/round-01.response.json
+A	plans_internal/refactor_repo/checkpoints/P03/superseded_sessions/QA-2026-08-16-session2-retired/rounds/round-01.stderr.txt
+A	plans_internal/refactor_repo/checkpoints/P03/superseded_sessions/QA-2026-08-16-session2-retired/rounds/round-02.events.jsonl
+A	plans_internal/refactor_repo/checkpoints/P03/superseded_sessions/QA-2026-08-16-session2-retired/rounds/round-02.meta.json
+A	plans_internal/refactor_repo/checkpoints/P03/superseded_sessions/QA-2026-08-16-session2-retired/rounds/round-02.request.md
+A	plans_internal/refactor_repo/checkpoints/P03/superseded_sessions/QA-2026-08-16-session2-retired/rounds/round-02.response.json
+A	plans_internal/refactor_repo/checkpoints/P03/superseded_sessions/QA-2026-08-16-session2-retired/rounds/round-02.stderr.txt
+A	plans_internal/refactor_repo/checkpoints/P03/superseded_sessions/QA-2026-08-16-session2-retired/session.json
+A	plans_internal/refactor_repo/checkpoints/P03/t5_final_tree/fixed_since_t0.txt
+A	plans_internal/refactor_repo/checkpoints/P03/t5_final_tree/new_failures_ids_only.txt
+A	plans_internal/refactor_repo/checkpoints/P03/t5_final_tree/new_failures_vs_t0.txt
+A	plans_internal/refactor_repo/checkpoints/P03/t5_final_tree/p04_handoff_allowlist_ids.txt
+A	plans_internal/refactor_repo/checkpoints/P03/t5_final_tree/pytest_full_t5.log
+A	plans_internal/refactor_repo/checkpoints/P03/t5_final_tree/pytest_t5_failed_and_error_ids.txt
+A	plans_internal/refactor_repo/exceptions/source_move.v1.yaml
+A	plans_internal/refactor_repo/execution/P03/.execution_log.counter.json
+A	plans_internal/refactor_repo/execution/P03/execution_log.jsonl
+M	plans_internal/refactor_repo/prompts/P03_source_move.prompt.v3.yaml
+M	plans_internal/refactor_repo/prompts/checkpoint_qa_criteria.v1.md
+M	plans_internal/refactor_repo/prompts/resolved/prompt_manifest.resolved.v1.yaml
+D	runtime/__init__.py
+M	src/curriculum_factory/__init__.py
+R100	runtime/capabilities.py	src/curriculum_factory/capabilities.py
+R098	runtime/capability_cycle.py	src/curriculum_factory/capability_cycle.py
+R100	runtime/checkpoint.py	src/curriculum_factory/checkpoint.py
+R100	runtime/checks.py	src/curriculum_factory/checks.py
+R100	runtime/controller.py	src/curriculum_factory/controller.py
+R099	runtime/curriculum_factory_graph.py	src/curriculum_factory/curriculum_factory_graph.py
+R100	runtime/factory_state.py	src/curriculum_factory/factory_state.py
+R090	runtime/finalize_evidence.py	src/curriculum_factory/finalize_evidence.py
+R100	runtime/gemini.py	src/curriculum_factory/gemini.py
+R100	runtime/io.py	src/curriculum_factory/io.py
+R100	runtime/langgraph_factory/__init__.py	src/curriculum_factory/langgraph_factory/__init__.py
+R100	runtime/langgraph_factory/acceptance.py	src/curriculum_factory/langgraph_factory/acceptance.py
+R100	runtime/langgraph_factory/artifacts.py	src/curriculum_factory/langgraph_factory/artifacts.py
+R100	runtime/langgraph_factory/config/model_jobs.v1.yaml	src/curriculum_factory/langgraph_factory/config/model_jobs.v1.yaml
+R100	runtime/langgraph_factory/egress.py	src/curriculum_factory/langgraph_factory/egress.py
+R099	runtime/langgraph_factory/evidence.py	src/curriculum_factory/langgraph_factory/evidence.py
+R099	runtime/langgraph_factory/graph.py	src/curriculum_factory/langgraph_factory/graph.py
+R100	runtime/langgraph_factory/model_nodes.py	src/curriculum_factory/langgraph_factory/model_nodes.py
+R100	runtime/langgraph_factory/nodes/__init__.py	src/curriculum_factory/langgraph_factory/nodes/__init__.py
+R100	runtime/langgraph_factory/nodes/content.py	src/curriculum_factory/langgraph_factory/nodes/content.py
+R100	runtime/langgraph_factory/nodes/domain.py	src/curriculum_factory/langgraph_factory/nodes/domain.py
+R100	runtime/langgraph_factory/nodes/inputs.py	src/curriculum_factory/langgraph_factory/nodes/inputs.py
+R100	runtime/langgraph_factory/nodes/render.py	src/curriculum_factory/langgraph_factory/nodes/render.py
+R100	runtime/langgraph_factory/nodes/review.py	src/curriculum_factory/langgraph_factory/nodes/review.py
+R100	runtime/langgraph_factory/nodes/sources.py	src/curriculum_factory/langgraph_factory/nodes/sources.py
+R100	runtime/langgraph_factory/nodes/terminal.py	src/curriculum_factory/langgraph_factory/nodes/terminal.py
+R100	runtime/langgraph_factory/nodes/visuals.py	src/curriculum_factory/langgraph_factory/nodes/visuals.py
+R099	runtime/langgraph_factory/persistence.py	src/curriculum_factory/langgraph_factory/persistence.py
+R100	runtime/langgraph_factory/prompts/M01_research_unit_sources.prompt.md	src/curriculum_factory/langgraph_factory/prompts/M01_research_unit_sources.prompt.md
+R100	runtime/langgraph_factory/prompts/M02_create_unit_domain_data.prompt.md	src/curriculum_factory/langgraph_factory/prompts/M02_create_unit_domain_data.prompt.md
+R100	runtime/langgraph_factory/prompts/M03_write_unit_content.prompt.md	src/curriculum_factory/langgraph_factory/prompts/M03_write_unit_content.prompt.md
+R100	runtime/langgraph_factory/prompts/M04_create_unit_visuals.prompt.md	src/curriculum_factory/langgraph_factory/prompts/M04_create_unit_visuals.prompt.md
+R100	runtime/langgraph_factory/prompts/M05_review_actual_unit.prompt.md	src/curriculum_factory/langgraph_factory/prompts/M05_review_actual_unit.prompt.md
+R100	runtime/langgraph_factory/prompts/M06_repair_named_unit_artifact.prompt.md	src/curriculum_factory/langgraph_factory/prompts/M06_repair_named_unit_artifact.prompt.md
+R100	runtime/langgraph_factory/prompts/M07_review_actual_workbook.prompt.md	src/curriculum_factory/langgraph_factory/prompts/M07_review_actual_workbook.prompt.md
+R100	runtime/langgraph_factory/prompts/M08_repair_named_workbook_defect.prompt.md	src/curriculum_factory/langgraph_factory/prompts/M08_repair_named_workbook_defect.prompt.md
+R100	runtime/langgraph_factory/reducers.py	src/curriculum_factory/langgraph_factory/reducers.py
+R100	runtime/langgraph_factory/repair.py	src/curriculum_factory/langgraph_factory/repair.py
+R100	runtime/langgraph_factory/routing.py	src/curriculum_factory/langgraph_factory/routing.py
+R100	runtime/langgraph_factory/schemas/M01_research_unit_sources.schema.json	src/curriculum_factory/langgraph_factory/schemas/M01_research_unit_sources.schema.json
+R100	runtime/langgraph_factory/schemas/M02_create_unit_domain_data.schema.json	src/curriculum_factory/langgraph_factory/schemas/M02_create_unit_domain_data.schema.json
+R100	runtime/langgraph_factory/schemas/M03_write_unit_content.schema.json	src/curriculum_factory/langgraph_factory/schemas/M03_write_unit_content.schema.json
+R100	runtime/langgraph_factory/schemas/M04_create_unit_visuals.schema.json	src/curriculum_factory/langgraph_factory/schemas/M04_create_unit_visuals.schema.json
+R100	runtime/langgraph_factory/schemas/M05_review_actual_unit.schema.json	src/curriculum_factory/langgraph_factory/schemas/M05_review_actual_unit.schema.json
+R100	runtime/langgraph_factory/schemas/M06_repair_named_unit_artifact.schema.json	src/curriculum_factory/langgraph_factory/schemas/M06_repair_named_unit_artifact.schema.json
+R100	runtime/langgraph_factory/schemas/M07_review_actual_workbook.schema.json	src/curriculum_factory/langgraph_factory/schemas/M07_review_actual_workbook.schema.json
+R100	runtime/langgraph_factory/schemas/M08_repair_named_workbook_defect.schema.json	src/curriculum_factory/langgraph_factory/schemas/M08_repair_named_workbook_defect.schema.json
+R100	runtime/langgraph_factory/schemas/internal_authorization_receipt.schema.json	src/curriculum_factory/langgraph_factory/schemas/internal_authorization_receipt.schema.json
+R100	runtime/langgraph_factory/schemas/internal_capability_proof.schema.json	src/curriculum_factory/langgraph_factory/schemas/internal_capability_proof.schema.json
+R100	runtime/langgraph_factory/schemas/internal_egress_receipt.schema.json	src/curriculum_factory/langgraph_factory/schemas/internal_egress_receipt.schema.json
+R100	runtime/langgraph_factory/schemas/internal_execution_receipt.schema.json	src/curriculum_factory/langgraph_factory/schemas/internal_execution_receipt.schema.json
+R100	runtime/langgraph_factory/state.py	src/curriculum_factory/langgraph_factory/state.py
+R100	runtime/langgraph_factory/transport.py	src/curriculum_factory/langgraph_factory/transport.py
+R100	runtime/langgraph_factory/unit_graph.py	src/curriculum_factory/langgraph_factory/unit_graph.py
+R100	runtime/langgraph_factory/workbook.py	src/curriculum_factory/langgraph_factory/workbook.py
+R100	runtime/lesson_render.py	src/curriculum_factory/lesson_render.py
+R100	runtime/logger.py	src/curriculum_factory/logger.py
+R100	runtime/model_worker.py	src/curriculum_factory/model_worker.py
+R100	runtime/pdf_inspect.py	src/curriculum_factory/pdf_inspect.py
+R100	runtime/readability.py	src/curriculum_factory/readability.py
+R100	runtime/resolve_gemini_settings.mjs	src/curriculum_factory/resolve_gemini_settings.mjs
+R100	runtime/retry.py	src/curriculum_factory/retry.py
+R100	runtime/routing.py	src/curriculum_factory/routing.py
+R098	runtime/run_curriculum.py	src/curriculum_factory/run_curriculum.py
+R100	runtime/run_state.py	src/curriculum_factory/run_state.py
+R099	runtime/session_bridge.py	src/curriculum_factory/session_bridge.py
+R100	runtime/visual_maps.py	src/curriculum_factory/visual_maps.py
+R100	runtime/workbook.py	src/curriculum_factory/workbook.py
+M	tests/gates/fr_p5_unit.py
+M	tests/refactor_repo/codemod/test_rewrite_runtime_imports.py
+M	tests/refactor_repo/test_packaging_skeleton.py
+M	tests/runtime/test_acceptance_gate.py
+M	tests/runtime/test_capabilities.py
+M	tests/runtime/test_checks.py
+M	tests/runtime/test_claim_entailment.py
+M	tests/runtime/test_controller.py
+M	tests/runtime/test_curriculum_factory_graph.py
+M	tests/runtime/test_gemini.py
+M	tests/runtime/test_lesson_render.py
+M	tests/runtime/test_logger.py
+M	tests/runtime/test_plan26_adversarial.py
+M	tests/runtime/test_plan26_cli.py
+M	tests/runtime/test_plan26_deterministic_nodes.py
+M	tests/runtime/test_plan26_egress.py
+M	tests/runtime/test_plan26_evidence.py
+M	tests/runtime/test_plan26_model_nodes.py
+M	tests/runtime/test_plan26_persistence.py
+M	tests/runtime/test_plan26_repair_acceptance.py
+M	tests/runtime/test_plan26_state_reducers.py
+M	tests/runtime/test_plan26_topology.py
+M	tests/runtime/test_plan26_transport.py
+M	tests/runtime/test_plan26_unit_graph.py
+M	tests/runtime/test_plan26_workbook.py
+M	tests/runtime/test_plan27_adversarial.py
+M	tests/runtime/test_retry.py
+M	tests/runtime/test_routing.py
+M	tests/runtime/test_run_curriculum.py
+M	tests/runtime/test_run_state.py
+M	tests/runtime/test_visual_maps.py
+M	tests/runtime/unit_fixture.py
+M	tools/refactor_repo/baseline.py

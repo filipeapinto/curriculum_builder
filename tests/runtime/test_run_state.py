@@ -12,9 +12,9 @@ from pathlib import Path
 import jsonschema
 import pytest
 
-from runtime import run_state, workbook
-from runtime.run_state import RunStateError
-from runtime.workbook import WorkbookError
+from curriculum_factory import run_state, workbook
+from curriculum_factory.run_state import RunStateError
+from curriculum_factory.workbook import WorkbookError
 from tests.runtime import unit_fixture
 
 ENGINE = unit_fixture.ENGINE
@@ -165,7 +165,7 @@ def test_assert_resumable_refuses_a_run_with_no_lifecycle_record(tmp_path):
 
 def test_finalize_records_the_transition_without_a_separate_call(tmp_path):
     """Section 3's wiring: the run record updates as part of the production path."""
-    from runtime.session_bridge import finalize
+    from curriculum_factory.session_bridge import finalize
     lab = unit_fixture.lab_from_run("L02")
     run_root, unit_root = unit_fixture.build_run(
         tmp_path, unit_id="L02", lab=lab, manifest_unit_ids=["L01", "L02", "L03"])

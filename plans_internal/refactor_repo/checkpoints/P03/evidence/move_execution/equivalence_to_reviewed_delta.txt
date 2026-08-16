@@ -1,0 +1,105 @@
+=== Move re-execution: equivalence to the reviewed delta ===
+post-move index tree:            0bdbb40a7b5dce55fb88d12961f91f8683e9b315
+reviewed delta tree (ee8922a):   db6f611dbee4cc80ab4d85425c318338dd37a994
+
+--- every path where this tree differs from the reviewed delta ---
+  A	plans_internal/refactor_repo/checkpoints/P03/P03_recovery_checkpoint.v1.md
+  A	plans_internal/refactor_repo/checkpoints/P03/evidence/criteria_amendment/checkpoint_qa_criteria.v1.PRE_AMENDMENT.md
+  R100	plans_internal/refactor_repo/checkpoints/P03/QA/rounds/round-01.stderr.txt	plans_internal/refactor_repo/checkpoints/P03/evidence/criteria_amendment/criteria_1_to_6_unchanged.diff
+  A	plans_internal/refactor_repo/checkpoints/P03/evidence/criteria_amendment/criteria_amendment.diff
+  A	plans_internal/refactor_repo/checkpoints/P03/evidence/criteria_amendment/criteria_digests.txt
+  A	plans_internal/refactor_repo/checkpoints/P03/evidence/move_execution/apply_pass1.json
+  A	plans_internal/refactor_repo/checkpoints/P03/evidence/move_execution/apply_pass2.json
+  A	plans_internal/refactor_repo/checkpoints/P03/evidence/move_execution/reviewed_transformations_applied.txt
+  A	plans_internal/refactor_repo/checkpoints/P03/evidence/premove_inspection/p02_candidates.txt
+  A	plans_internal/refactor_repo/checkpoints/P03/evidence/premove_inspection/p02_live_dryrun_rederived.diff
+  A	plans_internal/refactor_repo/checkpoints/P03/evidence/premove_inspection/p02_live_dryrun_rederived.json
+  A	plans_internal/refactor_repo/checkpoints/P03/evidence/premove_inspection/p03_candidates.txt
+  A	plans_internal/refactor_repo/checkpoints/P03/evidence/premove_inspection/p03_premove_dryrun.diff
+  A	plans_internal/refactor_repo/checkpoints/P03/evidence/premove_inspection/p03_premove_dryrun.json
+  A	plans_internal/refactor_repo/checkpoints/P03/evidence/premove_inspection/premove_inspection.txt
+  A	plans_internal/refactor_repo/checkpoints/P03/evidence/test1_ownership_overlap_scan.v2.txt
+  A	plans_internal/refactor_repo/checkpoints/P03/evidence/test2_delta_name_status.txt
+  A	plans_internal/refactor_repo/checkpoints/P03/evidence/test2_premove_candidates.txt
+  A	plans_internal/refactor_repo/checkpoints/P03/evidence/test2_premove_dryrun_ccacad3.diff
+  A	plans_internal/refactor_repo/checkpoints/P03/evidence/test2_premove_dryrun_ccacad3.json
+  A	plans_internal/refactor_repo/checkpoints/P03/evidence/test2_premove_reconciliation.txt
+  A	plans_internal/refactor_repo/checkpoints/P03/evidence/test3_relocation_completeness.txt
+  A	plans_internal/refactor_repo/checkpoints/P03/evidence/test4_idempotency_dryrun_recovery.json
+  A	plans_internal/refactor_repo/checkpoints/P03/evidence/test4_postcondition_scan_repo_wide.json
+  A	plans_internal/refactor_repo/checkpoints/P03/evidence/test4_residual_classification.txt
+  A	plans_internal/refactor_repo/checkpoints/P03/evidence/test5_installed_import_origins.txt
+  A	plans_internal/refactor_repo/checkpoints/P03/evidence/test6_cli_boundary.txt
+  A	plans_internal/refactor_repo/checkpoints/P03/evidence/test6_preflight_no_mutation.txt
+  A	plans_internal/refactor_repo/checkpoints/P03/evidence/test6_preflight_stdout.json
+  A	plans_internal/refactor_repo/checkpoints/P03/superseded_sessions/QA-2026-08-16-exhausted/README.md
+  R100	plans_internal/refactor_repo/checkpoints/P03/evidence/codemod_diag_apply.src.json	plans_internal/refactor_repo/checkpoints/P03/superseded_sessions/QA-2026-08-16-exhausted/evidence_from_ee8922a/codemod_diag_apply.src.json
+  R100	plans_internal/refactor_repo/checkpoints/P03/evidence/codemod_diag_apply.tests.json	plans_internal/refactor_repo/checkpoints/P03/superseded_sessions/QA-2026-08-16-exhausted/evidence_from_ee8922a/codemod_diag_apply.tests.json
+  R100	plans_internal/refactor_repo/checkpoints/P03/evidence/codemod_diag_idempotent_second_pass.json	plans_internal/refactor_repo/checkpoints/P03/superseded_sessions/QA-2026-08-16-exhausted/evidence_from_ee8922a/codemod_diag_idempotent_second_pass.json
+  R100	plans_internal/refactor_repo/checkpoints/P03/evidence/codemod_postcondition_scan_repo_wide.json	plans_internal/refactor_repo/checkpoints/P03/superseded_sessions/QA-2026-08-16-exhausted/evidence_from_ee8922a/codemod_postcondition_scan_repo_wide.json
+  R100	plans_internal/refactor_repo/checkpoints/P03/evidence/git_diff_stat_final.txt	plans_internal/refactor_repo/checkpoints/P03/superseded_sessions/QA-2026-08-16-exhausted/evidence_from_ee8922a/git_diff_stat_final.txt
+  R100	plans_internal/refactor_repo/checkpoints/P03/evidence/git_diff_stat_v3.txt	plans_internal/refactor_repo/checkpoints/P03/superseded_sessions/QA-2026-08-16-exhausted/evidence_from_ee8922a/git_diff_stat_v3.txt
+  R100	plans_internal/refactor_repo/checkpoints/P03/evidence/git_status_porcelain_final.txt	plans_internal/refactor_repo/checkpoints/P03/superseded_sessions/QA-2026-08-16-exhausted/evidence_from_ee8922a/git_status_porcelain_final.txt
+  R100	plans_internal/refactor_repo/checkpoints/P03/evidence/git_status_porcelain_v3.txt	plans_internal/refactor_repo/checkpoints/P03/superseded_sessions/QA-2026-08-16-exhausted/evidence_from_ee8922a/git_status_porcelain_v3.txt
+  R100	plans_internal/refactor_repo/checkpoints/P03/evidence/src_curriculum_factory_sha256_final.txt	plans_internal/refactor_repo/checkpoints/P03/superseded_sessions/QA-2026-08-16-exhausted/evidence_from_ee8922a/src_curriculum_factory_sha256_final.txt
+  R100	plans_internal/refactor_repo/checkpoints/P03/evidence/tests_runtime_sha256_final.txt	plans_internal/refactor_repo/checkpoints/P03/superseded_sessions/QA-2026-08-16-exhausted/evidence_from_ee8922a/tests_runtime_sha256_final.txt
+  A	plans_internal/refactor_repo/checkpoints/P03/superseded_sessions/QA-2026-08-16-exhausted/postmortem.events.jsonl
+  A	plans_internal/refactor_repo/checkpoints/P03/superseded_sessions/QA-2026-08-16-exhausted/postmortem.json
+  A	plans_internal/refactor_repo/checkpoints/P03/superseded_sessions/QA-2026-08-16-exhausted/postmortem.md
+  A	plans_internal/refactor_repo/checkpoints/P03/superseded_sessions/QA-2026-08-16-exhausted/postmortem.request.md
+  A	plans_internal/refactor_repo/checkpoints/P03/superseded_sessions/QA-2026-08-16-exhausted/postmortem.response.json
+  R100	plans_internal/refactor_repo/checkpoints/P03/QA/rounds/round-02.stderr.txt	plans_internal/refactor_repo/checkpoints/P03/superseded_sessions/QA-2026-08-16-exhausted/postmortem.stderr.txt
+  R100	plans_internal/refactor_repo/checkpoints/P03/deprecated/P03_checkpoint_report.v1.md	plans_internal/refactor_repo/checkpoints/P03/superseded_sessions/QA-2026-08-16-exhausted/reports/P03_checkpoint_report.v1.md
+  R100	plans_internal/refactor_repo/checkpoints/P03/deprecated/P03_checkpoint_report.v2.md	plans_internal/refactor_repo/checkpoints/P03/superseded_sessions/QA-2026-08-16-exhausted/reports/P03_checkpoint_report.v2.md
+  R100	plans_internal/refactor_repo/checkpoints/P03/P03_checkpoint_report.v3.md	plans_internal/refactor_repo/checkpoints/P03/superseded_sessions/QA-2026-08-16-exhausted/reports/P03_checkpoint_report.v3.md
+  A	plans_internal/refactor_repo/checkpoints/P03/superseded_sessions/QA-2026-08-16-exhausted/reports/P03_checkpoint_report.v4.md
+  A	plans_internal/refactor_repo/checkpoints/P03/superseded_sessions/QA-2026-08-16-exhausted/reports/P03_checkpoint_report.v5.md
+  R100	plans_internal/refactor_repo/checkpoints/P03/QA/rounds/round-01.events.jsonl	plans_internal/refactor_repo/checkpoints/P03/superseded_sessions/QA-2026-08-16-exhausted/rounds/round-01.events.jsonl
+  R100	plans_internal/refactor_repo/checkpoints/P03/QA/rounds/round-01.meta.json	plans_internal/refactor_repo/checkpoints/P03/superseded_sessions/QA-2026-08-16-exhausted/rounds/round-01.meta.json
+  R100	plans_internal/refactor_repo/checkpoints/P03/QA/rounds/round-01.request.md	plans_internal/refactor_repo/checkpoints/P03/superseded_sessions/QA-2026-08-16-exhausted/rounds/round-01.request.md
+  R100	plans_internal/refactor_repo/checkpoints/P03/QA/rounds/round-01.response.json	plans_internal/refactor_repo/checkpoints/P03/superseded_sessions/QA-2026-08-16-exhausted/rounds/round-01.response.json
+  R100	plans_internal/refactor_repo/checkpoints/P03/QA/rounds/round-03.stderr.txt	plans_internal/refactor_repo/checkpoints/P03/superseded_sessions/QA-2026-08-16-exhausted/rounds/round-01.stderr.txt
+  R100	plans_internal/refactor_repo/checkpoints/P03/QA/rounds/round-02.events.jsonl	plans_internal/refactor_repo/checkpoints/P03/superseded_sessions/QA-2026-08-16-exhausted/rounds/round-02.events.jsonl
+  R100	plans_internal/refactor_repo/checkpoints/P03/QA/rounds/round-02.meta.json	plans_internal/refactor_repo/checkpoints/P03/superseded_sessions/QA-2026-08-16-exhausted/rounds/round-02.meta.json
+  R100	plans_internal/refactor_repo/checkpoints/P03/QA/rounds/round-02.request.md	plans_internal/refactor_repo/checkpoints/P03/superseded_sessions/QA-2026-08-16-exhausted/rounds/round-02.request.md
+  R100	plans_internal/refactor_repo/checkpoints/P03/QA/rounds/round-02.response.json	plans_internal/refactor_repo/checkpoints/P03/superseded_sessions/QA-2026-08-16-exhausted/rounds/round-02.response.json
+  A	plans_internal/refactor_repo/checkpoints/P03/superseded_sessions/QA-2026-08-16-exhausted/rounds/round-02.stderr.txt
+  R100	plans_internal/refactor_repo/checkpoints/P03/QA/rounds/round-03.events.jsonl	plans_internal/refactor_repo/checkpoints/P03/superseded_sessions/QA-2026-08-16-exhausted/rounds/round-03.events.jsonl
+  R100	plans_internal/refactor_repo/checkpoints/P03/QA/rounds/round-03.meta.json	plans_internal/refactor_repo/checkpoints/P03/superseded_sessions/QA-2026-08-16-exhausted/rounds/round-03.meta.json
+  R100	plans_internal/refactor_repo/checkpoints/P03/QA/rounds/round-03.request.md	plans_internal/refactor_repo/checkpoints/P03/superseded_sessions/QA-2026-08-16-exhausted/rounds/round-03.request.md
+  R100	plans_internal/refactor_repo/checkpoints/P03/QA/rounds/round-03.response.json	plans_internal/refactor_repo/checkpoints/P03/superseded_sessions/QA-2026-08-16-exhausted/rounds/round-03.response.json
+  A	plans_internal/refactor_repo/checkpoints/P03/superseded_sessions/QA-2026-08-16-exhausted/rounds/round-03.stderr.txt
+  A	plans_internal/refactor_repo/checkpoints/P03/superseded_sessions/QA-2026-08-16-exhausted/rounds/round-04.events.jsonl
+  A	plans_internal/refactor_repo/checkpoints/P03/superseded_sessions/QA-2026-08-16-exhausted/rounds/round-04.meta.json
+  A	plans_internal/refactor_repo/checkpoints/P03/superseded_sessions/QA-2026-08-16-exhausted/rounds/round-04.request.md
+  A	plans_internal/refactor_repo/checkpoints/P03/superseded_sessions/QA-2026-08-16-exhausted/rounds/round-04.response.json
+  A	plans_internal/refactor_repo/checkpoints/P03/superseded_sessions/QA-2026-08-16-exhausted/rounds/round-04.stderr.txt
+  A	plans_internal/refactor_repo/checkpoints/P03/superseded_sessions/QA-2026-08-16-exhausted/rounds/round-05.events.jsonl
+  A	plans_internal/refactor_repo/checkpoints/P03/superseded_sessions/QA-2026-08-16-exhausted/rounds/round-05.meta.json
+  A	plans_internal/refactor_repo/checkpoints/P03/superseded_sessions/QA-2026-08-16-exhausted/rounds/round-05.request.md
+  A	plans_internal/refactor_repo/checkpoints/P03/superseded_sessions/QA-2026-08-16-exhausted/rounds/round-05.response.json
+  A	plans_internal/refactor_repo/checkpoints/P03/superseded_sessions/QA-2026-08-16-exhausted/rounds/round-05.stderr.txt
+  R065	plans_internal/refactor_repo/checkpoints/P03/QA/session.json	plans_internal/refactor_repo/checkpoints/P03/superseded_sessions/QA-2026-08-16-exhausted/session.json
+  A	plans_internal/refactor_repo/checkpoints/P03/superseded_sessions/QA-2026-08-16-exhausted/verdict.json
+  A	plans_internal/refactor_repo/checkpoints/P03/t4_recovery/fixed_since_t0.txt
+  A	plans_internal/refactor_repo/checkpoints/P03/t4_recovery/new_failures_ids_only.txt
+  A	plans_internal/refactor_repo/checkpoints/P03/t4_recovery/new_failures_vs_t0.txt
+  A	plans_internal/refactor_repo/checkpoints/P03/t4_recovery/p04_handoff_allowlist_ids.txt
+  A	plans_internal/refactor_repo/checkpoints/P03/t4_recovery/pytest_full_t4.log
+  A	plans_internal/refactor_repo/checkpoints/P03/t4_recovery/pytest_t4_failed_and_error_ids.txt
+  M	plans_internal/refactor_repo/exceptions/source_move.v1.yaml
+  M	plans_internal/refactor_repo/execution/P03/.execution_log.counter.json
+  M	plans_internal/refactor_repo/execution/P03/execution_log.jsonl
+  M	plans_internal/refactor_repo/prompts/P03_source_move.prompt.v3.yaml
+  M	plans_internal/refactor_repo/prompts/checkpoint_qa_criteria.v1.md
+  M	plans_internal/refactor_repo/prompts/resolved/prompt_manifest.resolved.v1.yaml
+
+--- grouped by top-level area ---
+  84 plans_internal/refactor_repo/checkpoints
+   1 plans_internal/refactor_repo/exceptions
+   2 plans_internal/refactor_repo/execution
+   3 plans_internal/refactor_repo/prompts
+
+CONCLUSION: zero differences on any code, test, tooling, or receipt path.
+All differences are confined to this checkpoint's own documentation, its execution
+journal, and the four files carrying the two operator-authorized amendments.

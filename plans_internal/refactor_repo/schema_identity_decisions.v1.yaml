@@ -1,0 +1,22 @@
+version: 1
+decision_date: 2026-08-16
+discovery_roots:
+  - schemas/
+  - curricula/
+  - src/curriculum_factory/langgraph_factory/schemas/
+exclude:
+  - "**/deprecated/**"
+rule: >-
+  Preserve every existing live schema $id because its filename version and semantic
+  contract are unchanged. The curriculum_builder URI segment is a versioned contract
+  identifier, not product branding. New schema versions must use the canonical
+  curriculum_factory namespace and migrate all consumers atomically.
+decisions:
+  selector: every non-deprecated JSON document below discovery_roots containing $id
+  action: preserve
+  consumer_absence_claimed: false
+  validation: tests/refactor_repo/test_schema_identity.py
+exceptions:
+  - selector: existing $id containing curriculum_builder
+    rationale: Published/versioned contract identifier preserved by specification v8 section 3.
+    removal_condition: A separately scoped new schema version and complete reference migration.

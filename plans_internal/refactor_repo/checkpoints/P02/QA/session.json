@@ -1,0 +1,102 @@
+{
+  "opened_at": "2026-08-16T15-00-55.703263+00-00",
+  "artifact_original": "/Users/filipepinto/Projects/curriculum_builder_wt/refactor-curriculum-factory-repository/plans_internal/refactor_repo/checkpoints/P02/P02_checkpoint_report.v2.md",
+  "artifact_current": "/Users/filipepinto/Projects/curriculum_builder_wt/refactor-curriculum-factory-repository/plans_internal/refactor_repo/checkpoints/P02/P02_checkpoint_report.v4.md",
+  "session_id": "01a00b17-1594-7e12-b082-775bd5e87ba5",
+  "chain": "6a6d99b551b1ecc74606eb510dd83d63687e65d239fefc62d5f2b6415ea51c50",
+  "rounds_completed": 3,
+  "rounds": [
+    {
+      "round": 1,
+      "timestamp": "2026-08-16T15:01:51.428233+00:00",
+      "verdict": "FAIL",
+      "artifact_path": "/Users/filipepinto/Projects/curriculum_builder_wt/refactor-curriculum-factory-repository/plans_internal/refactor_repo/checkpoints/P02/P02_checkpoint_report.v2.md",
+      "artifact_sha256": "56fc6bef8707d4236857bcf3cc8678ecb9a691bc2b0517ee5f286bf370f5b96c",
+      "findings_at_threshold": [
+        {
+          "id": "P02-DELTA-OWNERSHIP-001",
+          "title": "Checkpoint adopts unattributed mid-run mutations without proving preservation of pre-existing user changes",
+          "severity": "blocker",
+          "criterion_ref": "Criterion 2: “It lists every changed, created, moved, and deleted path and demonstrates that each change is within the prompt's authorized mutation boundary. Pre-existing user changes remain byte-for-byte outside the checkpoint delta.”"
+        },
+        {
+          "id": "P02-TEST-EVIDENCE-001",
+          "title": "Several prompt tests lack recorded exit statuses and Test 1 lacks reproducible result evidence",
+          "severity": "blocker",
+          "criterion_ref": "Criterion 3: “It records every prompt TEST with its exact command or inspection procedure, exit status, material output, and a PASS or FAIL conclusion supported by that evidence. A skipped, unavailable, or inconclusive check is not PASS.”"
+        },
+        {
+          "id": "P02-DELIVERABLE-DIGEST-001",
+          "title": "No reviewable diff or immutable digest is provided for every deliverable",
+          "severity": "blocker",
+          "criterion_ref": "Criterion 6: “It includes the post-change git status and a reviewable diff or immutable digest for every deliverable, plus the verification result at the rollback checkpoint.”"
+        }
+      ],
+      "observations_count": 2,
+      "chain": "292daee5afd36d915c2409bd478e38a4208dcad27d52e6f4a65d1704b1467a3e"
+    },
+    {
+      "round": 2,
+      "timestamp": "2026-08-16T15:09:35.027677+00:00",
+      "verdict": "FAIL",
+      "artifact_path": "/Users/filipepinto/Projects/curriculum_builder_wt/refactor-curriculum-factory-repository/plans_internal/refactor_repo/checkpoints/P02/P02_checkpoint_report.v3.md",
+      "artifact_sha256": "381d3cf61ef82de89441b963e69db0b588fcdc6b34b39784e8ddc8325cec5f69",
+      "findings_at_threshold": [
+        {
+          "id": "P02-TEST-EVIDENCE-001",
+          "title": "Test 1 still lacks the claimed material output and reproducible ownership comparison",
+          "severity": "blocker",
+          "criterion_ref": "Criterion 3: “It records every prompt TEST with its exact command or inspection procedure, exit status, material output, and a PASS or FAIL conclusion supported by that evidence.”"
+        }
+      ],
+      "observations_count": 3,
+      "chain": "7828d84691da5047c5c7d40ac424bead0f4d7c75e02706fc10eddb5a32a961df"
+    },
+    {
+      "round": 3,
+      "timestamp": "2026-08-16T15:14:00.403829+00:00",
+      "verdict": "PASS",
+      "artifact_path": "/Users/filipepinto/Projects/curriculum_builder_wt/refactor-curriculum-factory-repository/plans_internal/refactor_repo/checkpoints/P02/P02_checkpoint_report.v4.md",
+      "artifact_sha256": "4d049facd6499f6ffa8b8e34d3217fd69765b2a2a75573cea86cca934852893a",
+      "findings_at_threshold": [],
+      "observations_count": 2,
+      "chain": "6a6d99b551b1ecc74606eb510dd83d63687e65d239fefc62d5f2b6415ea51c50"
+    }
+  ],
+  "stall_count": 0,
+  "last_fingerprint": "f9bde68f2cd052dc61ff862bab190953c6df3a2bdf183c57a176c2e0263e7b50",
+  "exec_copied": [],
+  "terminal": {
+    "state": "QA_PASSED",
+    "reason": "CONVERGED",
+    "detail": "Codex passed the artifact at round 3",
+    "artifact": "/Users/filipepinto/Projects/curriculum_builder_wt/refactor-curriculum-factory-repository/plans_internal/refactor_repo/checkpoints/P02/P02_checkpoint_report.v4.md",
+    "rounds_completed": 3,
+    "max_iterations": 5,
+    "session_id": "01a00b17-1594-7e12-b082-775bd5e87ba5",
+    "thread_id": "01a00b17-1594-7e12-b082-775bd5e87ba5",
+    "transport": "exec",
+    "rollout_file": "/Users/filipepinto/.codex/sessions/2026/08/16/rollout-2026-08-16T11-00-57-01a00b17-1594-7e12-b082-775bd5e87ba5.jsonl",
+    "chain": "6a6d99b551b1ecc74606eb510dd83d63687e65d239fefc62d5f2b6415ea51c50",
+    "qa_dir": "/Users/filipepinto/Projects/curriculum_builder_wt/refactor-curriculum-factory-repository/plans_internal/refactor_repo/checkpoints/P02/QA",
+    "finalized_at": "2026-08-16T15:14:00.413552+00:00"
+  },
+  "config": {
+    "criteria": "# Refactor checkpoint QA criteria v1\n\nThe gated checkpoint report must satisfy every condition below.\n\n1. It identifies the executing prompt, the specification version, the baseline\n   commit, the starting dirty state, and the exact artifact version being judged.\n2. It lists every changed, created, moved, and deleted path and demonstrates that\n   each change is within the prompt's authorized mutation boundary. Pre-existing\n   user changes remain byte-for-byte outside the checkpoint delta.\n3. It records every prompt TEST with its exact command or inspection procedure,\n   exit status, material output, and a PASS or FAIL conclusion supported by that\n   evidence. A skipped, unavailable, or inconclusive check is not PASS.\n4. It demonstrates the prompt's prerequisites, explicit non-targets, stop\n   conditions, and rollback procedure were honored. No successor prompt's mutation\n   authority may be borrowed by the current checkpoint.\n5. It identifies residual old identities, paths, imports, output consumers, schema\n   references, or failures relevant to the prompt and classifies each as resolved,\n   a recorded exception, pre-existing, or a blocker. Silent residuals are defects.\n6. It includes the post-change git status and a reviewable diff or immutable digest\n   for every deliverable, plus the verification result at the rollback checkpoint.\n7. It does not claim completion when evidence is missing, collection is incomplete,\n   commands failed, the QA transport is unavailable, or the independent gate has\n   not produced a witnessed and verified `QA_PASSED` result.\n\n",
+    "focus": "Blockers only: exact test evidence with commands/exit statuses, bounded mutation ownership matching authorized_paths, honored stop/rollback/successor semantics, honest residuals including the discovered pre-existing P00/P01 inventory.py defect and the mid-run discovery in §9, and explicit qa-gate-codex-run binding.",
+    "threshold": "blocker",
+    "max_iterations": 5,
+    "timeout_seconds": 900,
+    "retries": 2,
+    "model": null,
+    "effort": null,
+    "transport": "exec",
+    "allow_execution": false,
+    "grounding": [
+      "/Users/filipepinto/Projects/curriculum_builder_wt/refactor-curriculum-factory-repository/plans_internal/refactor_repo/prompts/P02_import_codemod.prompt.v3.yaml",
+      "/Users/filipepinto/Projects/curriculum_builder_wt/refactor-curriculum-factory-repository/plans_internal/refactor_repo/inventory/20260816_074507/repository_refactor_inventory.20260816T114511Z.v1.json",
+      "/Users/filipepinto/Projects/curriculum_builder_wt/refactor-curriculum-factory-repository/plans_internal/refactor_repo/refactor_repository.spec.v8.html"
+    ]
+  },
+  "thread_id": "01a00b17-1594-7e12-b082-775bd5e87ba5"
+}

@@ -13,6 +13,34 @@ authorized_paths:
   - plans_internal/refactor_repo/execution/P03/execution_log.jsonl
   - plans_internal/refactor_repo/execution/P03/.execution_log.counter.json
   - plans_internal/refactor_repo/execution/P03/.execution_log.lock
+  # --- narrow operator-authorized compatibility-correction amendment (2026-08-16) ---
+  # Granted after QA round 2 found 6 non-P04 regressions P03 could not lawfully
+  # resolve without this grant. Scope: update these exact files only, to follow
+  # the completed runtime/ -> src/curriculum_factory/ move, preserving their
+  # original behavioral assertions rather than disabling any test. Not a
+  # general grant over their parent directories/prompts (tests/refactor_repo/,
+  # tools/refactor_repo/, and plans/26_langgraph_curriculum_factory/ remain
+  # otherwise unauthorized to P03).
+  - tests/refactor_repo/test_packaging_skeleton.py
+  - tests/refactor_repo/codemod/test_rewrite_runtime_imports.py
+  - tools/refactor_repo/baseline.py
+  - plans/26_langgraph_curriculum_factory/results/v3/N11_STATE_REDUCERS.receipt.v1.json
+  - plans/26_langgraph_curriculum_factory/results/v3/N12_EVIDENCE_ARTIFACTS.receipt.v1.json
+  - plans/26_langgraph_curriculum_factory/results/v3/N13_TRANSPORT_AUTH.receipt.v1.json
+  - plans/26_langgraph_curriculum_factory/results/v3/receipt_history/N11_STATE_REDUCERS/
+  - plans/26_langgraph_curriculum_factory/results/v3/receipt_history/N12_EVIDENCE_ARTIFACTS/
+  - plans/26_langgraph_curriculum_factory/results/v3/receipt_history/N13_TRANSPORT_AUTH/
+  - plans_internal/refactor_repo/prompts/resolved/prompt_manifest.resolved.v1.yaml
+  - plans_internal/refactor_repo/prompts/P03_source_move.prompt.v3.yaml
+  # --- narrow operator-authorized QA-protocol-clarification amendment (2026-08-16) ---
+  # Granted after the P03 QA session terminated QA_FAILED / MAX_ITERATIONS_EXHAUSTED
+  # and an independent Codex postmortem classified the failure SPECIFICATION_DEFICIENT
+  # (criterion 7 required the artifact under review to already contain the result of
+  # that same review). Scope: clarify criterion 7 of the shared checkpoint criteria into
+  # a gate-action form only; criteria 1-6 stay byte-identical and independent QA is not
+  # waived. The pre-amendment text is preserved under this checkpoint's evidence/.
+  # Not a general grant over plans_internal/refactor_repo/prompts/.
+  - plans_internal/refactor_repo/prompts/checkpoint_qa_criteria.v1.md
 
 model: sonnet
 
@@ -125,8 +153,16 @@ tests:
       Run the full existing test and gate baseline in an installed-distribution
       environment and compare failures with P00 plus the before-move P04 handoff list.
     expected: >-
-      No test is weakened; all non-root/resource tests pass, and any failing case is
-      predeclared, causally demonstrated, and owned by an exact P04 test/path.
+      No test is weakened. Exactly the 29 test IDs individually enumerated with root
+      cause and P04 ownership in plans_internal/refactor_repo/exceptions/source_move.v1.yaml
+      section "p04_handoff_allowlist" (all traced to resource/root path computation
+      breaking only under a true installed distribution, per curriculum_factory.langgraph_factory.nodes.sources.D07_CORRELATE_AND_ADMIT_SOURCES
+      succeeding with a real engine_root and failing only when REPO_ROOT/CURRICULA_ROOT
+      is computed from the installed package's own __file__) may fail. No unnamed or
+      additional failure is permitted; every other test must pass. This amended
+      2026-08-16 by explicit operator authorization after the original 6 non-P04
+      failures were resolved by the narrow compatibility-correction amendment to this
+      prompt's authorized_paths (see that block's comment for scope and provenance).
 
   - description: Independent Codex QA accepts the P03 checkpoint
     check: >-

@@ -28,17 +28,17 @@ except ModuleNotFoundError as exc:  # pragma: no cover
 
 import pytest
 
-from runtime.langgraph_factory import acceptance, repair
-from runtime.langgraph_factory import graph as G
-from runtime.langgraph_factory import unit_graph as U
-from runtime.langgraph_factory.nodes import terminal
-from runtime.langgraph_factory.nodes import domain as domain_nodes
-from runtime.langgraph_factory.nodes import content as content_nodes
-from runtime.langgraph_factory.nodes.domain import DOMAIN_CHECK_IDS
-from runtime.langgraph_factory.nodes.content import CONTENT_CHECK_IDS
-from runtime.langgraph_factory.nodes import SystemFailure, canonical_digest, stream_id
-from runtime.langgraph_factory.state import FIELD_REDUCERS
-from runtime.langgraph_factory import reducers as red
+from curriculum_factory.langgraph_factory import acceptance, repair
+from curriculum_factory.langgraph_factory import graph as G
+from curriculum_factory.langgraph_factory import unit_graph as U
+from curriculum_factory.langgraph_factory.nodes import terminal
+from curriculum_factory.langgraph_factory.nodes import domain as domain_nodes
+from curriculum_factory.langgraph_factory.nodes import content as content_nodes
+from curriculum_factory.langgraph_factory.nodes.domain import DOMAIN_CHECK_IDS
+from curriculum_factory.langgraph_factory.nodes.content import CONTENT_CHECK_IDS
+from curriculum_factory.langgraph_factory.nodes import SystemFailure, canonical_digest, stream_id
+from curriculum_factory.langgraph_factory.state import FIELD_REDUCERS
+from curriculum_factory.langgraph_factory import reducers as red
 from tests.runtime import test_plan26_unit_graph as UG
 
 REPO_ROOT = Path(__file__).resolve().parents[2]
@@ -834,7 +834,7 @@ def test_coverage_proof_rejects_missing_extra_reordered_and_wrong_hash() -> None
 
 
 def _d98_projection(state: dict[str, Any]) -> dict[str, Any]:
-    from runtime.langgraph_factory.nodes import project
+    from curriculum_factory.langgraph_factory.nodes import project
 
     full = {
         **state,
@@ -853,7 +853,7 @@ def _d98_projection(state: dict[str, Any]) -> dict[str, Any]:
 
 
 def test_a_unit_accepted_candidate_traverses_the_real_d98_and_is_accepted() -> None:
-    assert terminal.write_terminal.__module__ == "runtime.langgraph_factory.nodes.terminal"
+    assert terminal.write_terminal.__module__ == "curriculum_factory.langgraph_factory.nodes.terminal"
 
     state = _passing_state()
     state = _apply(state, acceptance.D22_ACCEPT_UNIT(state, None))

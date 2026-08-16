@@ -17,8 +17,8 @@ from typing import Any
 import pytest
 import yaml
 
-from runtime.langgraph_factory import nodes as node_pkg
-from runtime.langgraph_factory.nodes import (
+from curriculum_factory.langgraph_factory import nodes as node_pkg
+from curriculum_factory.langgraph_factory.nodes import (
     NODE_CATALOGUE,
     ConvergenceExhausted,
     PrerequisitePause,
@@ -35,8 +35,8 @@ from runtime.langgraph_factory.nodes import (
     terminal,
     visuals,
 )
-from runtime.langgraph_factory.state import FIELD_REDUCER_CLASSES
-from runtime.langgraph_factory.egress import (
+from curriculum_factory.langgraph_factory.state import FIELD_REDUCER_CLASSES
+from curriculum_factory.langgraph_factory.egress import (
     EgressGuard,
     ReceiptLog,
     RetrievalPolicy,
@@ -46,7 +46,12 @@ from runtime.langgraph_factory.egress import (
 
 PACKAGE_ROOT = Path(node_pkg.__file__).resolve().parent
 FACTORY_ROOT = PACKAGE_ROOT.parent
-REPO_ROOT = FACTORY_ROOT.parents[1]
+# The repository data root is the checkout this test file lives in. It is emphatically
+# NOT derived from the installed package's location: once curriculum_factory is really
+# pip-installed, FACTORY_ROOT.parents[1] is site-packages, where curricula/, schemas/
+# and policy/ have never existed. That inference is the defect P04 exists to remove,
+# and reproducing it here would just hide it from the suite.
+REPO_ROOT = Path(__file__).resolve().parents[2]
 CURRICULA_ROOT = REPO_ROOT / "curricula"
 NODE_MODULES = (inputs, sources, domain, content, visuals, render, review, terminal)
 
@@ -233,7 +238,7 @@ def test_every_owned_node_has_exactly_one_implementation() -> None:
                 definitions.setdefault(name, []).append(module.__name__)
     assert sorted(definitions) == sorted(OWNED_NODE_IDS)
     for node_id, modules in definitions.items():
-        assert modules == [f"runtime.langgraph_factory.nodes.{NODE_CATALOGUE[node_id].module}"], node_id
+        assert modules == [f"curriculum_factory.langgraph_factory.nodes.{NODE_CATALOGUE[node_id].module}"], node_id
 
 
 def test_terminal_module_is_the_sole_terminal_writer() -> None:
@@ -1972,7 +1977,7 @@ def test_a_second_terminal_write_is_refused() -> None:
 
 
 def test_the_write_once_reducer_refuses_a_differing_second_terminal() -> None:
-    from runtime.langgraph_factory.reducers import TerminalConflict, write_episode_terminal_once
+    from curriculum_factory.langgraph_factory.reducers import TerminalConflict, write_episode_terminal_once
 
     candidate, state = _valid_unit_accepted_state()
     first = terminal.D98_WRITE_TERMINAL(state, _Context())["terminal"]
@@ -3185,7 +3190,7 @@ def _staged_members(update: dict[str, Any], destination: str) -> list[dict[str, 
 
 
 def test_a_staged_discovery_packet_is_an_admissible_m01_discovery_projection() -> None:
-    from runtime.langgraph_factory import model_nodes as mn
+    from curriculum_factory.langgraph_factory import model_nodes as mn
 
     unit = {"id": "U001", "title": "t", "required_explanation": ["a"], "safety_focus": ["b"]}
     update = sources.D06_COMPILE_SOURCE_REQUESTS(
@@ -3211,7 +3216,7 @@ def test_a_staged_discovery_packet_is_an_admissible_m01_discovery_projection() -
 def test_a_staged_interpretation_packet_carries_only_its_own_retrieval_group(
     tmp_path: Path,
 ) -> None:
-    from runtime.langgraph_factory import model_nodes as mn
+    from curriculum_factory.langgraph_factory import model_nodes as mn
 
     body = b"a"
     digest = hashlib.sha256(body).hexdigest()
@@ -3277,7 +3282,7 @@ def test_a_staged_interpretation_packet_carries_only_its_own_retrieval_group(
 
 
 def test_a_staged_domain_packet_is_an_admissible_m02_projection(tmp_path: Path) -> None:
-    from runtime.langgraph_factory import model_nodes as mn
+    from curriculum_factory.langgraph_factory import model_nodes as mn
 
     digest = "a" * 64
     (tmp_path / "schemas").mkdir()
@@ -3323,7 +3328,7 @@ def test_a_staged_domain_packet_is_an_admissible_m02_projection(tmp_path: Path) 
 
 
 def test_a_staged_content_packet_is_an_admissible_m03_projection(tmp_path: Path) -> None:
-    from runtime.langgraph_factory import model_nodes as mn
+    from curriculum_factory.langgraph_factory import model_nodes as mn
 
     update = domain.D08_VALIDATE_DOMAIN(_domain_admission_state(tmp_path), _Context())
     assert update["pending_guard"]["value"] == "domain_admitted"
@@ -3426,7 +3431,7 @@ def test_an_empty_deterministic_subset_stages_no_packet() -> None:
 
 
 def test_a_staged_visual_packet_is_an_admissible_m04_projection() -> None:
-    from runtime.langgraph_factory import model_nodes as mn
+    from curriculum_factory.langgraph_factory import model_nodes as mn
 
     head = "c" * 64
     update = visuals.D12_VISUAL_BARRIER_AND_JOIN(
@@ -3471,14 +3476,14 @@ def test_a_staged_visual_packet_is_an_admissible_m04_projection() -> None:
 def test_a_kind_m04_would_refuse_is_classified_deterministic() -> None:
     """M04's refusal list and D10's split are the same boundary, not two."""
 
-    from runtime.langgraph_factory import model_nodes as mn
+    from curriculum_factory.langgraph_factory import model_nodes as mn
 
     for klass in mn.AUTHORITATIVE_VISUAL_CLASSES:
         assert visuals.classify_visual_brief({"kind": klass}) == "deterministic"
 
 
 def test_a_staged_review_packet_is_an_admissible_m05_projection(tmp_path: Path) -> None:
-    from runtime.langgraph_factory import model_nodes as mn
+    from curriculum_factory.langgraph_factory import model_nodes as mn
 
     assets = tmp_path / "meta_prompt" / "assets"
     assets.mkdir(parents=True)
@@ -3564,7 +3569,7 @@ def _model_update(
 
     import tempfile
 
-    from runtime.langgraph_factory import model_nodes as mn
+    from curriculum_factory.langgraph_factory import model_nodes as mn
 
     registry = mn.tp.load_job_registry()
     sandbox = Path(tempfile.mkdtemp(prefix="plan26-n22-b7-"))
@@ -3777,7 +3782,7 @@ def test_d09_admits_a_real_m03_candidate_against_the_admitted_domain_head(tmp_pa
 def test_d06b_reads_locators_from_the_discovery_candidates_payload(tmp_path: Path) -> None:
     """The join field M01 emits lives under `payload`, not on the record."""
 
-    from runtime.langgraph_factory.nodes import candidate_field
+    from curriculum_factory.langgraph_factory.nodes import candidate_field
 
     packet = {
         "request": {"request_id": "U001/f1", "question": "q", "scope": "required_explanation"},
@@ -3885,8 +3890,8 @@ def test_a_model_visual_candidate_joins_under_its_brief_key(tmp_path: Path) -> N
 def test_no_node_reads_an_admission_field_off_a_model_candidate() -> None:
     """Version, hash, and parent are minted here; a node never reads one from a model."""
 
-    from runtime.langgraph_factory import model_nodes as mn
-    from runtime.langgraph_factory.nodes import mint_version
+    from curriculum_factory.langgraph_factory import model_nodes as mn
+    from curriculum_factory.langgraph_factory.nodes import mint_version
 
     minted = mint_version({"key": "candidate:x"}, {}, "units/U001/domain", body={"a": 1})
     assert set(mn.ADMISSION_OWNED_CANDIDATE_FIELDS) <= set(minted)

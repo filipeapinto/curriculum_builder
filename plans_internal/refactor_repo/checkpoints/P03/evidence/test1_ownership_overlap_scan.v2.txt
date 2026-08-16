@@ -1,0 +1,177 @@
+=== declared authorized_paths per prompt (non-delegated) ===
+
+[P00] status=completed n=10
+    failed_execution_evidence/
+    plans_internal/refactor_repo/baseline/
+    plans_internal/refactor_repo/checkpoints/P00/
+    plans_internal/refactor_repo/execution/P00/.execution_log.counter.json
+    plans_internal/refactor_repo/execution/P00/.execution_log.lock
+    plans_internal/refactor_repo/execution/P00/execution_log.jsonl
+    plans_internal/refactor_repo/inventory/
+    schemas/repository_refactor_inventory.schema.v1.json
+    tests/refactor_repo/test_inventory.py
+    tools/refactor_repo/
+
+[P00A] status=active n=6
+    plans_internal/refactor_repo/checkpoints/P00A/
+    plans_internal/refactor_repo/execution/P00A/.execution_log.counter.json
+    plans_internal/refactor_repo/execution/P00A/.execution_log.lock
+    plans_internal/refactor_repo/execution/P00A/execution_log.jsonl
+    plans_internal/refactor_repo/prompts/generated/
+    plans_internal/refactor_repo/prompts/resolved/
+
+[P01] status=active n=8
+    MANIFEST.in
+    plans_internal/refactor_repo/checkpoints/P01/
+    plans_internal/refactor_repo/execution/P01/.execution_log.counter.json
+    plans_internal/refactor_repo/execution/P01/.execution_log.lock
+    plans_internal/refactor_repo/execution/P01/execution_log.jsonl
+    pyproject.toml
+    src/curriculum_factory/__init__.py
+    tests/refactor_repo/test_packaging_skeleton.py
+
+[P02] status=active n=6
+    plans_internal/refactor_repo/checkpoints/P02/
+    plans_internal/refactor_repo/execution/P02/.execution_log.counter.json
+    plans_internal/refactor_repo/execution/P02/.execution_log.lock
+    plans_internal/refactor_repo/execution/P02/execution_log.jsonl
+    tests/refactor_repo/codemod/
+    tools/refactor_repo/rewrite_runtime_imports.py
+
+[P02S] status=active n=12
+    *.json
+    *.yaml
+    *.yml
+    *requirements*.txt
+    .github/workflows/**/*.yaml
+    .github/workflows/**/*.yml
+    plans_internal/refactor_repo/checkpoints/P02S/
+    plans_internal/refactor_repo/execution/P02S/.execution_log.counter.json
+    plans_internal/refactor_repo/execution/P02S/.execution_log.lock
+    plans_internal/refactor_repo/execution/P02S/execution_log.jsonl
+    tests/refactor_repo/structured_codemod/
+    tools/refactor_repo/rewrite_structured_references.py
+
+[P03] status=active n=23
+    plans/26_langgraph_curriculum_factory/results/v3/N11_STATE_REDUCERS.receipt.v1.json
+    plans/26_langgraph_curriculum_factory/results/v3/N12_EVIDENCE_ARTIFACTS.receipt.v1.json
+    plans/26_langgraph_curriculum_factory/results/v3/N13_TRANSPORT_AUTH.receipt.v1.json
+    plans/26_langgraph_curriculum_factory/results/v3/receipt_history/N11_STATE_REDUCERS/
+    plans/26_langgraph_curriculum_factory/results/v3/receipt_history/N12_EVIDENCE_ARTIFACTS/
+    plans/26_langgraph_curriculum_factory/results/v3/receipt_history/N13_TRANSPORT_AUTH/
+    plans_internal/refactor_repo/checkpoints/P03/
+    plans_internal/refactor_repo/exceptions/source_move.v1.yaml
+    plans_internal/refactor_repo/execution/P03/.execution_log.counter.json
+    plans_internal/refactor_repo/execution/P03/.execution_log.lock
+    plans_internal/refactor_repo/execution/P03/execution_log.jsonl
+    plans_internal/refactor_repo/prompts/P03_source_move.prompt.v3.yaml
+    plans_internal/refactor_repo/prompts/checkpoint_qa_criteria.v1.md
+    plans_internal/refactor_repo/prompts/resolved/prompt_manifest.resolved.v1.yaml
+    runtime/
+    src/curriculum_factory/
+    tests/check_meta_prompt.py
+    tests/gates/fr_p5_unit.py
+    tests/meta_prompt_source.py
+    tests/refactor_repo/codemod/test_rewrite_runtime_imports.py
+    tests/refactor_repo/test_packaging_skeleton.py
+    tests/runtime/
+    tools/refactor_repo/baseline.py
+
+[P04] status=active n=6
+    plans_internal/refactor_repo/checkpoints/P04/
+    plans_internal/refactor_repo/execution/P04/.execution_log.counter.json
+    plans_internal/refactor_repo/execution/P04/.execution_log.lock
+    plans_internal/refactor_repo/execution/P04/execution_log.jsonl
+    src/curriculum_factory/
+    tests/
+
+[P05] status=active n=11
+    .gitignore
+    outputs/
+    plans_internal/refactor_repo/checkpoints/P05/
+    plans_internal/refactor_repo/execution/P05/.execution_log.counter.json
+    plans_internal/refactor_repo/execution/P05/.execution_log.lock
+    plans_internal/refactor_repo/execution/P05/execution_log.jsonl
+    plans_internal/refactor_repo/fixture_dispositions.v1.yaml
+    plans_internal/refactor_repo/retained_evidence/
+    tests/
+    tests/fixtures/refactor_repo/
+    tests/refactor_repo/test_fixture_closure.py
+
+[P06] status=active n=7
+    plans_internal/refactor_repo/checkpoints/P06/
+    plans_internal/refactor_repo/exceptions/schema_identity.v1.yaml
+    plans_internal/refactor_repo/execution/P06/.execution_log.counter.json
+    plans_internal/refactor_repo/execution/P06/.execution_log.lock
+    plans_internal/refactor_repo/execution/P06/execution_log.jsonl
+    plans_internal/refactor_repo/schema_identity_decisions.v1.yaml
+    tests/refactor_repo/test_schema_identity.py
+
+[P07] status=active n=10
+    docs/
+    meta_prompt/docs/
+    plans_internal/refactor_repo/checkpoints/P07/
+    plans_internal/refactor_repo/exceptions/identity_and_paths.v1.yaml
+    plans_internal/refactor_repo/execution/P07/.execution_log.counter.json
+    plans_internal/refactor_repo/execution/P07/.execution_log.lock
+    plans_internal/refactor_repo/execution/P07/execution_log.jsonl
+    readme.md
+    tests/refactor_repo/test_documented_commands.py
+    tests/refactor_repo/test_reference_integrity.py
+
+[P08] status=active n=9
+    plans_internal/refactor_repo/checkpoints/P08/
+    plans_internal/refactor_repo/execution/P08/.execution_log.counter.json
+    plans_internal/refactor_repo/execution/P08/.execution_log.lock
+    plans_internal/refactor_repo/execution/P08/execution_log.jsonl
+    plans_internal/refactor_repo/migration_report.v1.md
+    plans_internal/refactor_repo/release_evidence/
+    plans_internal/refactor_repo/rollback_map.v1.md
+    tests/refactor_repo/release/
+    tools/refactor_repo/verify_release.py
+
+[P09] status=active n=13
+    .github/workflows/plan26-lock-drift.yml
+    plans_internal/refactor_repo/checkpoints/P09/
+    plans_internal/refactor_repo/execution/P09/.execution_log.counter.json
+    plans_internal/refactor_repo/execution/P09/.execution_log.lock
+    plans_internal/refactor_repo/execution/P09/execution_log.jsonl
+    plans_internal/refactor_repo/migration_report.P09.addendum.v1.md
+    plans_internal/refactor_repo/test_tree_decision.v1.yaml
+    tests/acceptance/
+    tests/conftest.py
+    tests/integration/
+    tests/run_gates.sh
+    tests/runtime/
+    tests/unit/
+
+[P10] status=active n=6
+    plans_internal/refactor_repo/checkpoints/P10/
+    plans_internal/refactor_repo/execution/P10/.execution_log.counter.json
+    plans_internal/refactor_repo/execution/P10/.execution_log.lock
+    plans_internal/refactor_repo/execution/P10/execution_log.jsonl
+    plans_internal/refactor_repo/external_inventory.v1.yaml
+    plans_internal/refactor_repo/migration_report.P10.addendum.v1.md
+
+=== overlap matrix vs P03 (exact + directory-prefix containment, both directions) ===
+P00   OTHER_COVERS_P03  other='tools/refactor_repo/' p03='tools/refactor_repo/baseline.py'
+P00A  OTHER_COVERS_P03  other='plans_internal/refactor_repo/prompts/resolved/' p03='plans_internal/refactor_repo/prompts/resolved/prompt_manifest.resolved.v1.yaml'
+P01   P03_COVERS_OTHER  other='src/curriculum_factory/__init__.py' p03='src/curriculum_factory/'
+P01   EXACT             other='tests/refactor_repo/test_packaging_skeleton.py' p03='tests/refactor_repo/test_packaging_skeleton.py'
+P02   OTHER_COVERS_P03  other='tests/refactor_repo/codemod/' p03='tests/refactor_repo/codemod/test_rewrite_runtime_imports.py'
+P04   EXACT             other='src/curriculum_factory/' p03='src/curriculum_factory/'
+P04   OTHER_COVERS_P03  other='tests/' p03='tests/check_meta_prompt.py'
+P04   OTHER_COVERS_P03  other='tests/' p03='tests/gates/fr_p5_unit.py'
+P04   OTHER_COVERS_P03  other='tests/' p03='tests/meta_prompt_source.py'
+P04   OTHER_COVERS_P03  other='tests/' p03='tests/refactor_repo/codemod/test_rewrite_runtime_imports.py'
+P04   OTHER_COVERS_P03  other='tests/' p03='tests/refactor_repo/test_packaging_skeleton.py'
+P04   OTHER_COVERS_P03  other='tests/' p03='tests/runtime/'
+P05   OTHER_COVERS_P03  other='tests/' p03='tests/check_meta_prompt.py'
+P05   OTHER_COVERS_P03  other='tests/' p03='tests/gates/fr_p5_unit.py'
+P05   OTHER_COVERS_P03  other='tests/' p03='tests/meta_prompt_source.py'
+P05   OTHER_COVERS_P03  other='tests/' p03='tests/refactor_repo/codemod/test_rewrite_runtime_imports.py'
+P05   OTHER_COVERS_P03  other='tests/' p03='tests/refactor_repo/test_packaging_skeleton.py'
+P05   OTHER_COVERS_P03  other='tests/' p03='tests/runtime/'
+P09   EXACT             other='tests/runtime/' p03='tests/runtime/'
+
+total overlapping declarations: 19

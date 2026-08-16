@@ -1,0 +1,18 @@
+version: 1
+inventory_date: 2026-08-16
+outputs_boundary: outputs/
+inventory:
+  children: [arduino_kit_run_v2]
+  tracked_consumers: [tests/runtime]
+  untracked_consumers: []
+decision: >-
+  Active runtime tests consumed four accepted lab documents from arduino_kit_run_v2.
+  Those exact bytes were migrated; all other run files are generated or historical and
+  have no active test consumer. outputs/ remains ignored and disposable.
+fixture_roots:
+  - path: tests/fixtures/refactor_repo/
+    run_derived_files: [L01/lab.json, L01/sources/source_01.html, L02/lab.json, L02/sources/source_01.html, L03/lab.json, L03/sources/source_01.html, L04/lab.json, L04/sources/source_01.html]
+    manifest: tests/fixtures/refactor_repo/arduino_kit_run_v2/fixture_manifest.json
+recovery:
+  required: false
+  reason: The source run remains recoverable in the original checkout; no source byte was deleted.

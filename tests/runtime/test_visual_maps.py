@@ -12,7 +12,7 @@ from pathlib import Path
 
 import pytest
 
-from runtime.visual_maps import (VisualMapError, classify_role, load_photo_regions,
+from curriculum_factory.visual_maps import (VisualMapError, classify_role, load_photo_regions,
                                  match_photo_subject, regenerate_assets, render_breadboard,
                                  render_enumeration, render_evidence_card, render_map,
                                  render_parts_diagram, render_power_path, render_same_wire)
@@ -203,7 +203,7 @@ def test_an_unresolvable_role_writes_a_blocked_acceptance_rather_than_raising(tm
     """The graceful path: finalize() reaches its acceptance.json write and records BLOCKED."""
     lab = unit_fixture.lab_from_run("L04")
     _, unit_root = unit_fixture.build_run(tmp_path, unit_id="L04", lab=lab)
-    from runtime.session_bridge import finalize
+    from curriculum_factory.session_bridge import finalize
     summary = finalize(ENGINE, unit_root, curriculum=CURRICULUM)
 
     assert summary["terminal_state"] == "BLOCKED"

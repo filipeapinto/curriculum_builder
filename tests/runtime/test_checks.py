@@ -8,7 +8,7 @@ import subprocess
 import tempfile
 import unittest
 
-from runtime.checks import (CheckFailure, check_derivation, check_receipts, pdf_page_count,
+from curriculum_factory.checks import (CheckFailure, check_derivation, check_receipts, pdf_page_count,
                             rasterize_and_check_nonblank)
 
 

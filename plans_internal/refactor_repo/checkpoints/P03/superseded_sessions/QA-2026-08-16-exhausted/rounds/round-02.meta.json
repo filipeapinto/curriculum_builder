@@ -1,0 +1,40 @@
+{
+  "attempt": 1,
+  "exit_code": 0,
+  "duration_seconds": 51.43,
+  "transport": "app-server",
+  "session_id": "01a00b6a-8a98-7e30-a456-d574b9f40355",
+  "thread_id": "01a00b6a-8a98-7e30-a456-d574b9f40355",
+  "turn_id": "01a00b6d-edb0-7d81-9a47-b75c6fa07c33",
+  "usage": {},
+  "model": null,
+  "effort": null,
+  "plugin_version": "1.0.4",
+  "plugin_lib_path": "/Users/filipepinto/.claude/plugins/cache/openai-codex/codex/1.0.4/scripts/lib/codex.mjs",
+  "argv": [
+    "node",
+    "/Users/filipepinto/Projects/curriculum_builder/.claude/skills/qa-gate-codex-run/scripts/codex_bridge.mjs",
+    "<request on stdin>"
+  ],
+  "started_at": "2026-08-16T16:35:48.675650+00:00",
+  "response_sha256": "8b5eb1a3e984bcd12926dbd768ee477d081ee296ec0ae48c5abd9101f14b4ed6",
+  "request_sha256": "ecff6ecf1a4597c2a1b5a79e66693c7bddafce59a7ad374a751b51dd1494526c",
+  "round": 2,
+  "cwd": "/Users/filipepinto/Projects/curriculum_builder_wt/refactor-p03-p10-direct/plans_internal/refactor_repo/checkpoints/P03",
+  "artifact_path": "/Users/filipepinto/Projects/curriculum_builder_wt/refactor-p03-p10-direct/plans_internal/refactor_repo/checkpoints/P03/P03_checkpoint_report.v2.md",
+  "artifact_sha256": "4a723eb8b926ed346ba6c96ef5aa52b2f7e3f8f47b3dc4ff306c2f0c9cdfa74b",
+  "grounding": [
+    {
+      "path": "/Users/filipepinto/Projects/curriculum_builder_wt/refactor-p03-p10-direct/plans_internal/refactor_repo/prompts/P03_source_move.prompt.v3.yaml",
+      "sha256": "c575d21eb455e1818f6977bf96e8537c776972bb520b05f1c02cd2300dd02793"
+    },
+    {
+      "path": "/Users/filipepinto/Projects/curriculum_builder_wt/refactor-p03-p10-direct/plans_internal/refactor_repo/exceptions/source_move.v1.yaml",
+      "sha256": "22f5c95ec9d78eddb61d85932521275303abbf65328839b8dcb17a7fd48cfc77"
+    }
+  ],
+  "chain_prev": "0c134ce02c58cd974029827fbac6722d402e2a6b66c4c12b205aa3f130206057",
+  "chain": "ef83964baa2fd2bb506b67160912b1666199ce301ce7cfe37680f2db91d9241f",
+  "rollout_file": "/Users/filipepinto/.codex/sessions/2026/08/16/rollout-2026-08-16T12-32-06-01a00b6a-8a98-7e30-a456-d574b9f40355.jsonl",
+  "timestamp": "2026-08-16T16:36:40.160730+00:00"
+}

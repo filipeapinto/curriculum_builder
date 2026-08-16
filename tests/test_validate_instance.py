@@ -134,6 +134,6 @@ def test_real_migrated_prompt_validates_against_v4() -> None:
     actual repo schema, run through the same code path the CLI uses."""
     schema_path = REPO_ROOT / "schemas" / "prompt.schema.v4.json"
     instance_path = (
-        REPO_ROOT / "prompts" / "create_system_doc" / "create_system_doc.prompt.v2.yaml"
+        REPO_ROOT / "plans_internal" / "create_system_doc" / "create_system_doc.prompt.v2.yaml"
     )
     validate_instance(schema_path, instance_path)  # must not raise

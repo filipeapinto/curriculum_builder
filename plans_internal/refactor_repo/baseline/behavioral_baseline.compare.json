@@ -1,0 +1,25 @@
+{
+  "differences": [],
+  "differing_count": 0,
+  "equivalent_count": 17,
+  "equivalent_fields": [
+    "repository_commit",
+    "tests_and_gates.pytest_collect.exit_code",
+    "tests_and_gates.gate_harness_selftest.exit_code",
+    "import_origin.origin (root-stripped)",
+    "cli_help_and_invalid_input[0].exit_code",
+    "cli_help_and_invalid_input[0].stdout_sha256",
+    "cli_help_and_invalid_input[0].stderr_sha256",
+    "cli_help_and_invalid_input[1].exit_code",
+    "cli_help_and_invalid_input[1].stdout_sha256",
+    "cli_help_and_invalid_input[1].stderr_sha256",
+    "cli_help_and_invalid_input[2].exit_code",
+    "cli_help_and_invalid_input[2].stdout_sha256",
+    "cli_help_and_invalid_input[2].stderr_sha256",
+    "schema_resolution (path->resolves map)",
+    "output_containment.accepted_case.raised",
+    "output_containment.rejected_case.raised",
+    "representative_artifacts (path->sha256 map)"
+  ],
+  "verdict": "EQUIVALENT"
+}

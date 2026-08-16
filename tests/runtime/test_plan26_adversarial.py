@@ -49,16 +49,16 @@ import pytest
 import yaml
 from langgraph.graph import END, START, StateGraph
 
-import runtime.run_curriculum as RC
-from runtime.langgraph_factory import acceptance, repair, workbook
-from runtime.langgraph_factory import graph as G
-from runtime.langgraph_factory import model_nodes as mn
-from runtime.langgraph_factory import persistence as P
-from runtime.langgraph_factory import routing as R
-from runtime.langgraph_factory import transport as tp
-from runtime.langgraph_factory import unit_graph as U
-from runtime.langgraph_factory.artifacts import ArtifactStore
-from runtime.langgraph_factory.egress import (
+import curriculum_factory.run_curriculum as RC
+from curriculum_factory.langgraph_factory import acceptance, repair, workbook
+from curriculum_factory.langgraph_factory import graph as G
+from curriculum_factory.langgraph_factory import model_nodes as mn
+from curriculum_factory.langgraph_factory import persistence as P
+from curriculum_factory.langgraph_factory import routing as R
+from curriculum_factory.langgraph_factory import transport as tp
+from curriculum_factory.langgraph_factory import unit_graph as U
+from curriculum_factory.langgraph_factory.artifacts import ArtifactStore
+from curriculum_factory.langgraph_factory.egress import (
     AuthorizationDenied,
     AuthorizationRecord,
     EgressDenied,
@@ -66,8 +66,8 @@ from runtime.langgraph_factory.egress import (
     ReceiptLog,
     authorize_transmission,
 )
-from runtime.langgraph_factory.evidence import EvidenceStore
-from runtime.langgraph_factory.nodes import (
+from curriculum_factory.langgraph_factory.evidence import EvidenceStore
+from curriculum_factory.langgraph_factory.nodes import (
     NODE_CATALOGUE,
     SystemFailure,
     canonical_digest,
@@ -77,9 +77,9 @@ from runtime.langgraph_factory.nodes import (
     stream_id,
     visuals,
 )
-from runtime.langgraph_factory.nodes.content import CONTENT_CHECK_IDS
-from runtime.langgraph_factory.nodes.domain import DOMAIN_CHECK_IDS
-from runtime.langgraph_factory.state import FIELD_REDUCERS, RuntimeContext
+from curriculum_factory.langgraph_factory.nodes.content import CONTENT_CHECK_IDS
+from curriculum_factory.langgraph_factory.nodes.domain import DOMAIN_CHECK_IDS
+from curriculum_factory.langgraph_factory.state import FIELD_REDUCERS, RuntimeContext
 
 REPO_ROOT = Path(__file__).resolve().parents[2]
 
@@ -663,10 +663,11 @@ ORPHAN_GRAPH_CHILD = """
     from pathlib import Path
 
     sys.path.insert(0, sys.argv[1])
+    sys.path.insert(0, sys.argv[1] + "/src")
     from tests.runtime.test_plan26_adversarial import (
         _build_episode_fixture, _prepare_episode, _HarnessContext, _scripted_model_context,
     )
-    from runtime.langgraph_factory import graph as G
+    from curriculum_factory.langgraph_factory import graph as G
 
     tmp_path = Path(sys.argv[2])
     fixture = _build_episode_fixture(tmp_path)
@@ -977,8 +978,8 @@ LOCK_CHILD = """
     import sys
     from pathlib import Path
 
-    sys.path.insert(0, sys.argv[1])
-    from runtime.langgraph_factory import persistence as P
+    sys.path.insert(0, sys.argv[1] + "/src")
+    from curriculum_factory.langgraph_factory import persistence as P
 
     try:
         P.ExecutionLock(Path(sys.argv[2])).acquire()
@@ -1019,7 +1020,7 @@ def test_no_nonproduct_success(tmp_path: Path) -> None:
         spec = NODE_CATALOGUE.get(source)
         if spec is None:
             continue
-        body = (REPO_ROOT / "runtime" / "langgraph_factory" / "nodes" / f"{spec.module}.py").read_text(encoding="utf-8")
+        body = (REPO_ROOT / "src" / "curriculum_factory" / "langgraph_factory" / "nodes" / f"{spec.module}.py").read_text(encoding="utf-8")
         for terminal_kind in product_terminals:
             assert not re.search(rf"\b{terminal_kind}\b", body), f"{source} names {terminal_kind}"
 
@@ -1562,7 +1563,7 @@ def test_workbook_repair_cannot_change_unit(tmp_path: Path) -> None:
 
 
 def test_no_second_production_factory() -> None:
-    cli_source_path = REPO_ROOT / "runtime" / "run_curriculum.py"
+    cli_source_path = REPO_ROOT / "src" / "curriculum_factory" / "run_curriculum.py"
     source = cli_source_path.read_text(encoding="utf-8")
     tree = ast.parse(source, filename=str(cli_source_path))
 
@@ -1577,8 +1578,8 @@ def test_no_second_production_factory() -> None:
                 imported.append((alias.name, ""))
 
     forbidden_modules = {
-        "runtime.controller", "runtime.curriculum_factory_graph", "runtime.model_worker",
-        "runtime.session_bridge", "runtime.checks", "runtime.checkpoint", "runtime.capability_cycle",
+        "curriculum_factory.controller", "curriculum_factory.curriculum_factory_graph", "curriculum_factory.model_worker",
+        "curriculum_factory.session_bridge", "curriculum_factory.checks", "curriculum_factory.checkpoint", "curriculum_factory.capability_cycle",
     }
     # A retired-provider legacy Plan 25 arduino_kit worker class name, unrelated to
     # this migration, is checked redundantly by tests/runtime/test_plan26_cli.py and
@@ -1881,8 +1882,8 @@ def test_checkpoint_thread_and_namespace_contract() -> None:
     # than a fabricated rejection: every "configurable" dict either persistence.py
     # or unit_graph.py builds is built inside `invoke_config` alone.
     for source_path in (
-        REPO_ROOT / "runtime" / "langgraph_factory" / "persistence.py",
-        REPO_ROOT / "runtime" / "langgraph_factory" / "unit_graph.py",
+        REPO_ROOT / "src" / "curriculum_factory" / "langgraph_factory" / "persistence.py",
+        REPO_ROOT / "src" / "curriculum_factory" / "langgraph_factory" / "unit_graph.py",
     ):
         tree = ast.parse(source_path.read_text(encoding="utf-8"), filename=str(source_path))
         for node in ast.walk(tree):
