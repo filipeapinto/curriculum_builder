@@ -1,0 +1,51 @@
+{
+  "phase": "P00",
+  "title": "Inventory Baseline and Behavioral Capture",
+  "timestamp": "2026-08-16T12:28:50.914355+00:00",
+  "specification": "refactor_repository.spec.v8.html",
+  "prompt_version": "v3",
+  "repair_metadata": {
+    "nested_violation_removed": true,
+    "nested_paths_found": 0,
+    "regenerated_evidence": true,
+    "repair_timestamp": "2026-08-16T12:28:50.914562+00:00",
+    "execution_p00_unauthorized_removed": [
+      "plans_internal/refactor_repo/execution/P00/p00_execution.log",
+      "plans_internal/refactor_repo/execution/P00/run_p00.py"
+    ],
+    "orchestration_unauthorized_removed": "plans_internal/refactor_repo/orchestration/routing_decisions.jsonl",
+    "auth_cleanup_timestamp": "2026-08-16T12:35:00Z"
+  },
+  "inventory": {
+    "complete": true,
+    "omissions": [],
+    "collection_failures": [],
+    "counts": {
+      "identities": 5,
+      "directories": 17,
+      "old_identity_references": 1638,
+      "structured_configuration": 11,
+      "outputs_children": 0,
+      "test_subtrees": 6,
+      "schema_identifiers": 26
+    }
+  },
+  "baseline": {
+    "output": "/Users/filipepinto/Projects/curriculum_builder_wt/refactor-curriculum-factory-repository/plans_internal/refactor_repo/baseline/repair_20260816_120500/behavioral_baseline.capture.20260816T122835Z.json",
+    "existing_failures": []
+  },
+  "tests": {
+    "count": 16,
+    "passed": 16,
+    "failed": 0,
+    "output_preview": "============================= test session starts ==============================\nplatform darwin -- Python 3.13.1, pytest-9.0.3, pluggy-1.6.0 -- /opt/homebrew/opt/python@3.13/bin/python3.13\ncachedir: .pytest_cache\nrootdir: /Users/filipepinto/Projects/curriculum_builder_wt/refactor-curriculum-factory-repository\nplugins: anyio-4.14.2, langsmith-0.10.17\ncollecting ... collected 16 items\n\ntests/refactor_repo/test_inventory.py::test_machine_report_validates_against_schema PASSED [  6%]\ntests/refactor",
+    "full_output_hash": "be8ae0676473ebdb6ac2d728f2b7b24d3761dd48b771f4002a87c33b4906fa16"
+  },
+  "completion_gates": {
+    "valid_journal": true,
+    "zero_unclosed_starts": true,
+    "all_tests_pass": true,
+    "authorized_paths_only": true,
+    "unauthorized_paths_found": []
+  }
+}

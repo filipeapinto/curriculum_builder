@@ -1,0 +1,23 @@
+{
+  "complete": false,
+  "omissions": [
+    {
+      "collector": "schema_identifiers",
+      "reason": "fault injected via --fail-collector for test-1 fault-injection verification"
+    }
+  ],
+  "collection_failures": [],
+  "json_report": "/private/tmp/p00_final_evidence/run_fault/repository_refactor_inventory.20260816T010702Z.v1.json",
+  "human_report": "/private/tmp/p00_final_evidence/run_fault/repository_refactor_inventory.20260816T010702Z.v1.md",
+  "counts": {
+    "inventory_version": null,
+    "schema": null,
+    "identities": 5,
+    "directories": 15,
+    "old_identity_references": 1638,
+    "structured_configuration": 11,
+    "outputs_children": 0,
+    "test_subtrees": 5,
+    "schema_identifiers": 0
+  }
+}

@@ -1,0 +1,63 @@
+{
+  "opened_at": "2026-08-16T11-54-09.328697+00-00",
+  "artifact_original": "/Users/filipepinto/Projects/curriculum_builder_wt/refactor-curriculum-factory-repository/plans_internal/refactor_repo/checkpoints/P00/P00_QA_SUBMISSION.v1.md",
+  "artifact_current": "/Users/filipepinto/Projects/curriculum_builder_wt/refactor-curriculum-factory-repository/plans_internal/refactor_repo/checkpoints/P00/P00_QA_SUBMISSION.v1.md",
+  "session_id": "01a00a6c-1459-7f62-9556-a643f6dd352e",
+  "chain": "a3835ed7d3c4a86bb6e09c3398c02c03b8ec1184d0d6f37b050ad75ade4f3ea8",
+  "rounds_completed": 1,
+  "rounds": [
+    {
+      "round": 1,
+      "timestamp": "2026-08-16T11:55:09.622867+00:00",
+      "verdict": "FAIL",
+      "artifact_path": "/Users/filipepinto/Projects/curriculum_builder_wt/refactor-curriculum-factory-repository/plans_internal/refactor_repo/checkpoints/P00/P00_QA_SUBMISSION.v1.md",
+      "artifact_sha256": "ed9957805a25269d4ee2e371fb475b2d7f44f6d7cd0a13ee2357724dd802e617",
+      "findings_at_threshold": [
+        {
+          "id": "P00-B001",
+          "title": "Checkpoint delta and preservation of pre-existing changes are not demonstrated",
+          "severity": "blocker",
+          "criterion_ref": "Criterion 2: “lists every changed, created, moved, and deleted path” and demonstrates that “Pre-existing user changes remain byte-for-byte outside the checkpoint delta.”"
+        },
+        {
+          "id": "P00-B002",
+          "title": "Required prompt tests lack complete per-command evidence and some were not completed",
+          "severity": "blocker",
+          "criterion_ref": "Criterion 3: every prompt TEST must have its exact command or inspection procedure, exit status, material output, and an evidence-supported PASS; skipped or inconclusive checks are not PASS."
+        },
+        {
+          "id": "P00-B003",
+          "title": "Rollback checkpoint verification was not performed",
+          "severity": "blocker",
+          "criterion_ref": "Criterion 6 requires “the verification result at the rollback checkpoint.”"
+        },
+        {
+          "id": "P00-B004",
+          "title": "The report claims all criteria and tests passed while the independent gate is pending",
+          "severity": "blocker",
+          "criterion_ref": "Criterion 7: the report “does not claim completion when evidence is missing … or the independent gate has not produced a witnessed and verified `QA_PASSED` result.”"
+        }
+      ],
+      "observations_count": 0,
+      "chain": "a3835ed7d3c4a86bb6e09c3398c02c03b8ec1184d0d6f37b050ad75ade4f3ea8"
+    }
+  ],
+  "stall_count": 0,
+  "last_fingerprint": "154f3b582476d138c3182946b43729495399708a39ef8416a1c4fcd10edb2b98",
+  "exec_copied": [],
+  "terminal": null,
+  "config": {
+    "criteria": "# Refactor checkpoint QA criteria v1\n\nThe gated checkpoint report must satisfy every condition below.\n\n1. It identifies the executing prompt, the specification version, the baseline\n   commit, the starting dirty state, and the exact artifact version being judged.\n2. It lists every changed, created, moved, and deleted path and demonstrates that\n   each change is within the prompt's authorized mutation boundary. Pre-existing\n   user changes remain byte-for-byte outside the checkpoint delta.\n3. It records every prompt TEST with its exact command or inspection procedure,\n   exit status, material output, and a PASS or FAIL conclusion supported by that\n   evidence. A skipped, unavailable, or inconclusive check is not PASS.\n4. It demonstrates the prompt's prerequisites, explicit non-targets, stop\n   conditions, and rollback procedure were honored. No successor prompt's mutation\n   authority may be borrowed by the current checkpoint.\n5. It identifies residual old identities, paths, imports, output consumers, schema\n   references, or failures relevant to the prompt and classifies each as resolved,\n   a recorded exception, pre-existing, or a blocker. Silent residuals are defects.\n6. It includes the post-change git status and a reviewable diff or immutable digest\n   for every deliverable, plus the verification result at the rollback checkpoint.\n7. It does not claim completion when evidence is missing, collection is incomplete,\n   commands failed, the QA transport is unavailable, or the independent gate has\n   not produced a witnessed and verified `QA_PASSED` result.\n\n",
+    "focus": "",
+    "threshold": "blocker",
+    "max_iterations": 5,
+    "timeout_seconds": 900,
+    "retries": 2,
+    "model": null,
+    "effort": null,
+    "transport": "exec",
+    "allow_execution": false,
+    "grounding": []
+  },
+  "thread_id": "01a00a6c-1459-7f62-9556-a643f6dd352e"
+}
