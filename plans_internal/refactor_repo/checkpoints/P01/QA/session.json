@@ -1,0 +1,125 @@
+{
+  "opened_at": "2026-08-16T14-06-41.147685+00-00",
+  "artifact_original": "/Users/filipepinto/Projects/curriculum_builder_wt/refactor-curriculum-factory-repository/plans_internal/refactor_repo/checkpoints/P01/P01_checkpoint_report.v1.md",
+  "artifact_current": "/Users/filipepinto/Projects/curriculum_builder_wt/refactor-curriculum-factory-repository/plans_internal/refactor_repo/checkpoints/P01/P01_checkpoint_report.v4.md",
+  "session_id": "01a00ae5-6b75-7ed0-8f2d-c46bdda2ea76",
+  "chain": "f5d4cc4b27fd999ebab54e3620e53c14a72443c3474af963cf02ad13d99f9f56",
+  "rounds_completed": 4,
+  "rounds": [
+    {
+      "round": 1,
+      "timestamp": "2026-08-16T14:07:31.975182+00:00",
+      "verdict": "FAIL",
+      "artifact_path": "/Users/filipepinto/Projects/curriculum_builder_wt/refactor-curriculum-factory-repository/plans_internal/refactor_repo/checkpoints/P01/P01_checkpoint_report.v1.md",
+      "artifact_sha256": "8114e92e7575696e91ab91b30540224840c7daa841b10d0181a94396d07e4c13",
+      "findings_at_threshold": [
+        {
+          "id": "P01-QA-001",
+          "title": "Prompt tests lack reproducible command and exit-status records",
+          "severity": "blocker",
+          "criterion_ref": "Criterion 3: “It records every prompt TEST with its exact command or inspection procedure, exit status, material output, and a PASS or FAIL conclusion supported by that evidence.”"
+        },
+        {
+          "id": "P01-QA-002",
+          "title": "Rollback checkpoint was not verified using the specified rollback procedure",
+          "severity": "blocker",
+          "criterion_ref": "Criteria 4 and 6 require demonstration that the rollback procedure was honored and “the verification result at the rollback checkpoint.”"
+        },
+        {
+          "id": "P01-QA-003",
+          "title": "Post-change status and immutable evidence are incomplete",
+          "severity": "blocker",
+          "criterion_ref": "Criterion 6: “It includes the post-change git status and a reviewable diff or immutable digest for every deliverable.”"
+        }
+      ],
+      "observations_count": 1,
+      "chain": "07338f04ed1356e0249f810b6cbd1fa6f2eeba17299c8354fdc6e913a7599620"
+    },
+    {
+      "round": 2,
+      "timestamp": "2026-08-16T14:13:36.049303+00:00",
+      "verdict": "FAIL",
+      "artifact_path": "/Users/filipepinto/Projects/curriculum_builder_wt/refactor-curriculum-factory-repository/plans_internal/refactor_repo/checkpoints/P01/P01_checkpoint_report.v2.md",
+      "artifact_sha256": "5e0562806d79a32504137d3e5a403f205be134a90708c1b592a1958fd71e142e",
+      "findings_at_threshold": [
+        {
+          "id": "P01-QA-001",
+          "title": "Several recorded test and rollback commands are still not exact",
+          "severity": "blocker",
+          "criterion_ref": "Criterion 3: “It records every prompt TEST with its exact command or inspection procedure, exit status, material output, and a PASS or FAIL conclusion supported by that evidence.”"
+        },
+        {
+          "id": "P01-QA-003",
+          "title": "The checkpoint path inventory and post-change status remain non-exhaustive",
+          "severity": "blocker",
+          "criterion_ref": "Criteria 2 and 6 require every changed, created, moved, and deleted path to be listed, and require the post-change git status plus reviewable evidence for every deliverable."
+        }
+      ],
+      "observations_count": 3,
+      "chain": "d6ec6607ebf833179cd6d3cb227afd171bea938ec69facda8ee253b8e2ca85d0"
+    },
+    {
+      "round": 3,
+      "timestamp": "2026-08-16T14:18:52.836909+00:00",
+      "verdict": "FAIL",
+      "artifact_path": "/Users/filipepinto/Projects/curriculum_builder_wt/refactor-curriculum-factory-repository/plans_internal/refactor_repo/checkpoints/P01/P01_checkpoint_report.v3.md",
+      "artifact_sha256": "ddcbd2d40ae237d8f6c256a61e56faaab4c06fd9c978345ed4efebcad2347d8a",
+      "findings_at_threshold": [
+        {
+          "id": "P01-QA-003",
+          "title": "The reported git status is not the post-change status of the judged artifact",
+          "severity": "blocker",
+          "criterion_ref": "Criterion 6: “It includes the post-change git status.”"
+        }
+      ],
+      "observations_count": 4,
+      "chain": "3fc8175392e20c791287f6b611c4487b770e737c7dcb73944b695dc61ef702c6"
+    },
+    {
+      "round": 4,
+      "timestamp": "2026-08-16T14:21:47.189532+00:00",
+      "verdict": "PASS",
+      "artifact_path": "/Users/filipepinto/Projects/curriculum_builder_wt/refactor-curriculum-factory-repository/plans_internal/refactor_repo/checkpoints/P01/P01_checkpoint_report.v4.md",
+      "artifact_sha256": "75168732d2a05db7de32285b6cea4a92dd7d3dd4ff56ebdc69982a137bcb6b69",
+      "findings_at_threshold": [],
+      "observations_count": 3,
+      "chain": "f5d4cc4b27fd999ebab54e3620e53c14a72443c3474af963cf02ad13d99f9f56"
+    }
+  ],
+  "stall_count": 0,
+  "last_fingerprint": "84326de762bff413d8076d40e0a6a3d1a2ab320f93ff2f480aee19e16b7af5e0",
+  "exec_copied": [],
+  "terminal": {
+    "state": "QA_PASSED",
+    "reason": "CONVERGED",
+    "detail": "Codex passed the artifact at round 4",
+    "artifact": "/Users/filipepinto/Projects/curriculum_builder_wt/refactor-curriculum-factory-repository/plans_internal/refactor_repo/checkpoints/P01/P01_checkpoint_report.v4.md",
+    "rounds_completed": 4,
+    "max_iterations": 5,
+    "session_id": "01a00ae5-6b75-7ed0-8f2d-c46bdda2ea76",
+    "thread_id": "01a00ae5-6b75-7ed0-8f2d-c46bdda2ea76",
+    "transport": "exec",
+    "rollout_file": "/Users/filipepinto/.codex/sessions/2026/08/16/rollout-2026-08-16T10-06-42-01a00ae5-6b75-7ed0-8f2d-c46bdda2ea76.jsonl",
+    "chain": "f5d4cc4b27fd999ebab54e3620e53c14a72443c3474af963cf02ad13d99f9f56",
+    "qa_dir": "/Users/filipepinto/Projects/curriculum_builder_wt/refactor-curriculum-factory-repository/plans_internal/refactor_repo/checkpoints/P01/QA",
+    "finalized_at": "2026-08-16T14:21:47.204600+00:00"
+  },
+  "config": {
+    "criteria": "# Refactor checkpoint QA criteria v1\n\nThe gated checkpoint report must satisfy every condition below.\n\n1. It identifies the executing prompt, the specification version, the baseline\n   commit, the starting dirty state, and the exact artifact version being judged.\n2. It lists every changed, created, moved, and deleted path and demonstrates that\n   each change is within the prompt's authorized mutation boundary. Pre-existing\n   user changes remain byte-for-byte outside the checkpoint delta.\n3. It records every prompt TEST with its exact command or inspection procedure,\n   exit status, material output, and a PASS or FAIL conclusion supported by that\n   evidence. A skipped, unavailable, or inconclusive check is not PASS.\n4. It demonstrates the prompt's prerequisites, explicit non-targets, stop\n   conditions, and rollback procedure were honored. No successor prompt's mutation\n   authority may be borrowed by the current checkpoint.\n5. It identifies residual old identities, paths, imports, output consumers, schema\n   references, or failures relevant to the prompt and classifies each as resolved,\n   a recorded exception, pre-existing, or a blocker. Silent residuals are defects.\n6. It includes the post-change git status and a reviewable diff or immutable digest\n   for every deliverable, plus the verification result at the rollback checkpoint.\n7. It does not claim completion when evidence is missing, collection is incomplete,\n   commands failed, the QA transport is unavailable, or the independent gate has\n   not produced a witnessed and verified `QA_PASSED` result.\n\n",
+    "focus": "",
+    "threshold": "blocker",
+    "max_iterations": 5,
+    "timeout_seconds": 900,
+    "retries": 2,
+    "model": null,
+    "effort": null,
+    "transport": "exec",
+    "allow_execution": false,
+    "grounding": [
+      "/Users/filipepinto/Projects/curriculum_builder_wt/refactor-curriculum-factory-repository/plans_internal/refactor_repo/prompts/P01_packaging_skeleton.prompt.v3.yaml",
+      "/Users/filipepinto/Projects/curriculum_builder_wt/refactor-curriculum-factory-repository/plans_internal/refactor_repo/inventory/repair_20260816_120500/repository_refactor_inventory.20260816T122829Z.v1.json",
+      "/Users/filipepinto/Projects/curriculum_builder_wt/refactor-curriculum-factory-repository/plans_internal/refactor_repo/refactor_repository.spec.v8.html"
+    ]
+  },
+  "thread_id": "01a00ae5-6b75-7ed0-8f2d-c46bdda2ea76"
+}

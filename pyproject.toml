@@ -1,0 +1,38 @@
+[build-system]
+requires = ["setuptools>=68", "wheel>=0.42"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "curriculum-factory"
+version = "0.1.0"
+description = "A contract-first, curriculum-neutral pipeline for producing curriculum units from a supplied manifest and curriculum-owned domain rules."
+readme = "readme.md"
+requires-python = ">=3.13,<3.14"
+dependencies = [
+    "langgraph==1.2.9",
+    "langgraph-checkpoint-sqlite==3.1.0",
+    "jsonschema==4.26.0",
+    "PyYAML==6.0.3",
+    "Pillow==12.2.0",
+]
+
+[project.optional-dependencies]
+dev = [
+    "pytest==9.0.3",
+]
+
+[project.scripts]
+curriculum-factory-run-curriculum = "curriculum_factory.run_curriculum:main"
+curriculum-factory-session-bridge = "curriculum_factory.session_bridge:main"
+curriculum-factory-capability-cycle = "curriculum_factory.capability_cycle:main"
+curriculum-factory-finalize-evidence = "curriculum_factory.finalize_evidence:main"
+
+[tool.setuptools.packages.find]
+where = ["src"]
+include = ["curriculum_factory*"]
+
+[tool.setuptools.package-data]
+"*" = ["*.json", "*.md", "*.yaml", "*.mjs"]
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]
