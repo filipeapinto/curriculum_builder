@@ -5,6 +5,134 @@ specification_path: plans_internal/refactor_repo/refactor_repository.spec.v8.htm
 prompt_schema: schemas/prompt.schema.v4.json
 entrypoint: RUN_repository_refactor
 generated_timestamp: '2026-08-16T15:00:00Z'
+
+# --- formal ownership contract, amended 2026-08-16 under explicit operator authorization ---
+# Added during P03 recovery after an independent QA postmortem recommended that the
+# ownership-overlap contract be resolved or formally amended rather than explained away
+# inside a checkpoint report. This block is the authoritative definition; a checkpoint's
+# Test 1 must be evaluated against it.
+path_ownership_model:
+  definition: >-
+    A prompt's authorized_paths entry is a TEXTUAL CEILING: the maximum surface that
+    prompt may ever touch. It is not, by itself, a claim of ownership. ACTIVE MUTATION
+    OWNERSHIP of a concrete path belongs, at any point in the deterministic topological
+    order, to exactly one prompt: the unique prompt whose ceiling covers that path and
+    whose status is in-flight at that point. Ceilings may therefore overlap; active
+    ownership may not.
+  invariants:
+  - Exactly one prompt is in-flight at a time; the orchestrator never parallelizes
+    mutation prompts, so two prompts can never hold active ownership simultaneously.
+  - A prompt may not mutate a path whose active owner is a prompt that has not yet run
+    (that is the "borrowing successor authority" prohibition, and it remains absolute).
+  - A prompt may mutate a path inside a completed predecessor's ceiling only under an
+    explicit, narrowly scoped, separately recorded operator grant, enumerated file by
+    file. Two such grants exist and are listed in resolved_path_overlaps below.
+  - Every actual mutation must still fall inside the mutating prompt's own ceiling. A
+    ceiling overlap never widens what a prompt may change.
+  test1_evaluation_rule: >-
+    Test 1's "owned by this prompt exactly once ... no unit shared, borrowed from a
+    successor, or merely covered by a broader authorized path" is evaluated against
+    ACTIVE ownership, not against ceiling text. A ceiling overlap is conforming when it
+    is enumerated in resolved_path_overlaps with its adjudication; an unenumerated
+    overlap, or any actual mutation of a path actively owned by another prompt, is a
+    defect.
+  resolved_path_overlaps:
+    scan_evidence: plans_internal/refactor_repo/checkpoints/P03/evidence/test1_ownership_overlap_scan.v2.txt
+    scan_method: >-
+      Exact-equality plus directory-prefix containment in both directions, across every
+      prompt in this manifest. Supersedes the earlier exact-string-only scan, which
+      reported 3 overlaps where the containment-aware scan reports 19.
+    total_overlapping_declarations_vs_p03: 19
+    entries:
+    - paths: [tools/refactor_repo/baseline.py]
+      other_prompt: P00
+      other_ceiling: tools/refactor_repo/
+      relation: predecessor_ceiling_covers_p03_grant
+      adjudication: >-
+        P00 is completed and frozen. P03 holds a narrow 2026-08-16 operator grant over
+        this single file to follow the completed move. Active owner during P03: P03.
+    - paths: [plans_internal/refactor_repo/prompts/resolved/prompt_manifest.resolved.v1.yaml]
+      other_prompt: P00A
+      other_ceiling: plans_internal/refactor_repo/prompts/resolved/
+      relation: predecessor_ceiling_covers_p03_grant
+      adjudication: >-
+        P00A generated this manifest and is not in flight. Every downstream prompt is
+        declared able to record its own resolved ownership/exception entries here; P03
+        writes only its own entries and this shared ownership block. Active owner
+        during P03: P03.
+    - paths: [src/curriculum_factory/__init__.py]
+      other_prompt: P01
+      other_ceiling: src/curriculum_factory/__init__.py
+      relation: p03_ceiling_covers_completed_predecessor_file
+      adjudication: >-
+        P01 is completed. P03's own ceiling src/curriculum_factory/ covers this file and
+        P03 must write the relocated package's __init__. Active owner during P03: P03.
+    - paths: [tests/refactor_repo/test_packaging_skeleton.py]
+      other_prompt: P01
+      other_ceiling: tests/refactor_repo/test_packaging_skeleton.py
+      relation: exact_predecessor_overlap_under_operator_grant
+      adjudication: >-
+        P01 is completed and frozen. P03 holds the narrow 2026-08-16 operator grant over
+        exactly this file (see compatibility_correction_note). Active owner during P03: P03.
+    - paths: [tests/refactor_repo/codemod/test_rewrite_runtime_imports.py]
+      other_prompt: P02
+      other_ceiling: tests/refactor_repo/codemod/
+      relation: predecessor_ceiling_covers_p03_grant
+      adjudication: >-
+        P02 is completed. P03 holds the narrow 2026-08-16 operator grant over exactly
+        this file. Active owner during P03: P03.
+    - paths: [src/curriculum_factory/]
+      other_prompt: P04
+      other_ceiling: src/curriculum_factory/
+      relation: successor_ceiling_declared_for_later_phase
+      adjudication: >-
+        P04 has not started (depends_on P03) and holds no active ownership yet. Its
+        ceiling is declared for its own later resource-loading work. P03 is the sole
+        active mutator now, and P03 borrows nothing from P04: every P03 change here is
+        the mechanical relocation, and all 29 resource/root defects are handed to P04
+        untouched via exceptions/source_move.v1.yaml. Active owner during P03: P03.
+    - paths:
+      - tests/check_meta_prompt.py
+      - tests/gates/fr_p5_unit.py
+      - tests/meta_prompt_source.py
+      - tests/refactor_repo/codemod/test_rewrite_runtime_imports.py
+      - tests/refactor_repo/test_packaging_skeleton.py
+      - tests/runtime/
+      other_prompt: P04
+      other_ceiling: tests/
+      relation: successor_blanket_ceiling
+      adjudication: >-
+        P04's blanket tests/ ceiling has not activated (P04 has not started). P03's
+        narrower, explicitly enumerated test paths are the active ownership now.
+        Active owner during P03: P03.
+    - paths:
+      - tests/check_meta_prompt.py
+      - tests/gates/fr_p5_unit.py
+      - tests/meta_prompt_source.py
+      - tests/refactor_repo/codemod/test_rewrite_runtime_imports.py
+      - tests/refactor_repo/test_packaging_skeleton.py
+      - tests/runtime/
+      other_prompt: P05
+      other_ceiling: tests/
+      relation: successor_blanket_ceiling
+      adjudication: >-
+        Identical in kind to the P04 blanket ceiling above; P05 is two phases downstream
+        and not in flight. Active owner during P03: P03.
+    - paths: [tests/runtime/]
+      other_prompt: P09
+      other_ceiling: tests/runtime/
+      relation: successor_ceiling_declared_for_later_phase
+      adjudication: >-
+        P09 (test tree reorganization) declares this directory to move it later and has
+        not started. P03 rewrites imports inside it now and moves nothing.
+        Active owner during P03: P03.
+    unoverlapped_p03_grant:
+      path: plans_internal/refactor_repo/prompts/checkpoint_qa_criteria.v1.md
+      note: >-
+        P03's 2026-08-16 QA-protocol-clarification grant. No other prompt in this
+        manifest declares a ceiling covering it (P00A owns only prompts/generated/ and
+        prompts/resolved/), so it introduces no new overlap.
+
 prompts:
   P00:
     title: Inventory Baseline and Behavioral Capture
@@ -64,6 +192,26 @@ prompts:
     owns:
     - runtime_to_src_relocation
     - import_application_in_relocated_tree
+    - p00_p01_p02_checkpoint_compatibility_correction
+    compatibility_correction_note: >-
+      2026-08-16, explicit operator authorization: a narrow amendment to P03's
+      authorized_paths (see P03_source_move.prompt.v3.yaml's amendment comment)
+      granted exactly 6 files otherwise owned by P00/P01/P02 or unowned
+      archival evidence (tests/refactor_repo/test_packaging_skeleton.py,
+      tests/refactor_repo/codemod/test_rewrite_runtime_imports.py,
+      tools/refactor_repo/baseline.py, and three receipt files under
+      plans/26_langgraph_curriculum_factory/results/v3/), solely to update
+      each to follow the completed runtime/ -> src/curriculum_factory/ move
+      while preserving original behavioral assertions. Full detail, root
+      causes, and verification: plans_internal/refactor_repo/exceptions/source_move.v1.yaml.
+    p04_handoff_test_count: 29
+    p04_handoff_reference: >-
+      plans_internal/refactor_repo/exceptions/source_move.v1.yaml, residual id
+      p04_handoff_allowlist — the complete, exhaustive, exact-test-ID
+      enumeration of every test P04 must resolve, grouped by root cause
+      (installed-package-relative REPO_ROOT/CURRICULA_ROOT computation, and
+      the same pattern inside D07/D08/D09's engine_root-relative resource
+      lookups, and production egress.py's own policy-file resolution).
   P04:
     title: Package resource loading and output semantics
     version: '3'

@@ -1,6 +1,6 @@
 import unittest
 
-from runtime.retry import RetryLimit, RetryTracker
+from curriculum_factory.retry import RetryLimit, RetryTracker
 
 
 class RetryTests(unittest.TestCase):

@@ -41,7 +41,7 @@ sys.path.insert(0, str(REPO_ROOT))
 # TEXT-READABILITY-BAND and TEXT-BLOOM-VERBS are one implementation, shared with
 # runtime/checks.py so the metric that scores a fixture is the metric that scores a
 # generated unit. This gate supplies the harness pieces; it defines none of the six.
-from runtime.readability import (GateBindings, bind_gate, bloom_flags,  # noqa: E402
+from curriculum_factory.readability import (GateBindings, bind_gate, bloom_flags,  # noqa: E402
                                  check_bloom_verbs, check_readability, grade_level,
                                  readability_violations, syllables)
 

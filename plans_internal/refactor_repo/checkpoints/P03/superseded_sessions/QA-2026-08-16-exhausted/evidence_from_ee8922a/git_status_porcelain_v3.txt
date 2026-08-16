@@ -1,0 +1,138 @@
+ M plans/26_langgraph_curriculum_factory/results/v3/N11_STATE_REDUCERS.receipt.v1.json
+ M plans/26_langgraph_curriculum_factory/results/v3/N12_EVIDENCE_ARTIFACTS.receipt.v1.json
+ M plans/26_langgraph_curriculum_factory/results/v3/N13_TRANSPORT_AUTH.receipt.v1.json
+ M plans_internal/refactor_repo/prompts/P03_source_move.prompt.v3.yaml
+ M plans_internal/refactor_repo/prompts/resolved/prompt_manifest.resolved.v1.yaml
+ D runtime/__init__.py
+ D runtime/capabilities.py
+ D runtime/capability_cycle.py
+ D runtime/checkpoint.py
+ D runtime/checks.py
+ D runtime/controller.py
+ D runtime/curriculum_factory_graph.py
+ D runtime/factory_state.py
+ D runtime/finalize_evidence.py
+ D runtime/gemini.py
+ D runtime/io.py
+ D runtime/langgraph_factory/__init__.py
+ D runtime/langgraph_factory/acceptance.py
+ D runtime/langgraph_factory/artifacts.py
+ D runtime/langgraph_factory/config/model_jobs.v1.yaml
+ D runtime/langgraph_factory/egress.py
+ D runtime/langgraph_factory/evidence.py
+ D runtime/langgraph_factory/graph.py
+ D runtime/langgraph_factory/model_nodes.py
+ D runtime/langgraph_factory/nodes/__init__.py
+ D runtime/langgraph_factory/nodes/content.py
+ D runtime/langgraph_factory/nodes/domain.py
+ D runtime/langgraph_factory/nodes/inputs.py
+ D runtime/langgraph_factory/nodes/render.py
+ D runtime/langgraph_factory/nodes/review.py
+ D runtime/langgraph_factory/nodes/sources.py
+ D runtime/langgraph_factory/nodes/terminal.py
+ D runtime/langgraph_factory/nodes/visuals.py
+ D runtime/langgraph_factory/persistence.py
+ D runtime/langgraph_factory/prompts/M01_research_unit_sources.prompt.md
+ D runtime/langgraph_factory/prompts/M02_create_unit_domain_data.prompt.md
+ D runtime/langgraph_factory/prompts/M03_write_unit_content.prompt.md
+ D runtime/langgraph_factory/prompts/M04_create_unit_visuals.prompt.md
+ D runtime/langgraph_factory/prompts/M05_review_actual_unit.prompt.md
+ D runtime/langgraph_factory/prompts/M06_repair_named_unit_artifact.prompt.md
+ D runtime/langgraph_factory/prompts/M07_review_actual_workbook.prompt.md
+ D runtime/langgraph_factory/prompts/M08_repair_named_workbook_defect.prompt.md
+ D runtime/langgraph_factory/reducers.py
+ D runtime/langgraph_factory/repair.py
+ D runtime/langgraph_factory/routing.py
+ D runtime/langgraph_factory/schemas/M01_research_unit_sources.schema.json
+ D runtime/langgraph_factory/schemas/M02_create_unit_domain_data.schema.json
+ D runtime/langgraph_factory/schemas/M03_write_unit_content.schema.json
+ D runtime/langgraph_factory/schemas/M04_create_unit_visuals.schema.json
+ D runtime/langgraph_factory/schemas/M05_review_actual_unit.schema.json
+ D runtime/langgraph_factory/schemas/M06_repair_named_unit_artifact.schema.json
+ D runtime/langgraph_factory/schemas/M07_review_actual_workbook.schema.json
+ D runtime/langgraph_factory/schemas/M08_repair_named_workbook_defect.schema.json
+ D runtime/langgraph_factory/schemas/internal_authorization_receipt.schema.json
+ D runtime/langgraph_factory/schemas/internal_capability_proof.schema.json
+ D runtime/langgraph_factory/schemas/internal_egress_receipt.schema.json
+ D runtime/langgraph_factory/schemas/internal_execution_receipt.schema.json
+ D runtime/langgraph_factory/state.py
+ D runtime/langgraph_factory/transport.py
+ D runtime/langgraph_factory/unit_graph.py
+ D runtime/langgraph_factory/workbook.py
+ D runtime/lesson_render.py
+ D runtime/logger.py
+ D runtime/model_worker.py
+ D runtime/pdf_inspect.py
+ D runtime/readability.py
+ D runtime/resolve_gemini_settings.mjs
+ D runtime/retry.py
+ D runtime/routing.py
+ D runtime/run_curriculum.py
+ D runtime/run_state.py
+ D runtime/session_bridge.py
+ D runtime/visual_maps.py
+ D runtime/workbook.py
+ M src/curriculum_factory/__init__.py
+ M tests/gates/fr_p5_unit.py
+ M tests/refactor_repo/codemod/test_rewrite_runtime_imports.py
+ M tests/refactor_repo/test_packaging_skeleton.py
+ M tests/runtime/test_acceptance_gate.py
+ M tests/runtime/test_capabilities.py
+ M tests/runtime/test_checks.py
+ M tests/runtime/test_claim_entailment.py
+ M tests/runtime/test_controller.py
+ M tests/runtime/test_curriculum_factory_graph.py
+ M tests/runtime/test_gemini.py
+ M tests/runtime/test_lesson_render.py
+ M tests/runtime/test_logger.py
+ M tests/runtime/test_plan26_adversarial.py
+ M tests/runtime/test_plan26_cli.py
+ M tests/runtime/test_plan26_deterministic_nodes.py
+ M tests/runtime/test_plan26_egress.py
+ M tests/runtime/test_plan26_evidence.py
+ M tests/runtime/test_plan26_model_nodes.py
+ M tests/runtime/test_plan26_persistence.py
+ M tests/runtime/test_plan26_repair_acceptance.py
+ M tests/runtime/test_plan26_state_reducers.py
+ M tests/runtime/test_plan26_topology.py
+ M tests/runtime/test_plan26_transport.py
+ M tests/runtime/test_plan26_unit_graph.py
+ M tests/runtime/test_plan26_workbook.py
+ M tests/runtime/test_plan27_adversarial.py
+ M tests/runtime/test_retry.py
+ M tests/runtime/test_routing.py
+ M tests/runtime/test_run_curriculum.py
+ M tests/runtime/test_run_state.py
+ M tests/runtime/test_visual_maps.py
+ M tests/runtime/unit_fixture.py
+ M tools/refactor_repo/baseline.py
+?? plans/26_langgraph_curriculum_factory/results/v3/receipt_history/N11_STATE_REDUCERS/
+?? plans/26_langgraph_curriculum_factory/results/v3/receipt_history/N12_EVIDENCE_ARTIFACTS/f283be560757dc4655d55a2ca8b318e1d40041589f06f028b76bb5a393c3c44e.receipt.v1.json
+?? plans/26_langgraph_curriculum_factory/results/v3/receipt_history/N13_TRANSPORT_AUTH/3a739b6712498c1cff382e65d90b5d1eb125f4a57c97375defe294b032c6414c.receipt.v1.json
+?? plans_internal/refactor_repo/checkpoints/P03/
+?? plans_internal/refactor_repo/exceptions/
+?? plans_internal/refactor_repo/execution/P03/
+?? src/curriculum_factory/capabilities.py
+?? src/curriculum_factory/capability_cycle.py
+?? src/curriculum_factory/checkpoint.py
+?? src/curriculum_factory/checks.py
+?? src/curriculum_factory/controller.py
+?? src/curriculum_factory/curriculum_factory_graph.py
+?? src/curriculum_factory/factory_state.py
+?? src/curriculum_factory/finalize_evidence.py
+?? src/curriculum_factory/gemini.py
+?? src/curriculum_factory/io.py
+?? src/curriculum_factory/langgraph_factory/
+?? src/curriculum_factory/lesson_render.py
+?? src/curriculum_factory/logger.py
+?? src/curriculum_factory/model_worker.py
+?? src/curriculum_factory/pdf_inspect.py
+?? src/curriculum_factory/readability.py
+?? src/curriculum_factory/resolve_gemini_settings.mjs
+?? src/curriculum_factory/retry.py
+?? src/curriculum_factory/routing.py
+?? src/curriculum_factory/run_curriculum.py
+?? src/curriculum_factory/run_state.py
+?? src/curriculum_factory/session_bridge.py
+?? src/curriculum_factory/visual_maps.py
+?? src/curriculum_factory/workbook.py

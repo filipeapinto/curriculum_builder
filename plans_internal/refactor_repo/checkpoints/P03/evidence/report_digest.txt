@@ -1,0 +1,4 @@
+# sha256 of the exact submitted P03 checkpoint report, published before review.
+# This file carries no original information: verify it by recomputing
+#   shasum -a 256 plans_internal/refactor_repo/checkpoints/P03/P03_recovery_checkpoint.v5.md
+fb9ca3801c880777ea28add3a8e030cb5830eea74fdd9ca9e02da9637b1ef1c1  plans_internal/refactor_repo/checkpoints/P03/P03_recovery_checkpoint.v5.md

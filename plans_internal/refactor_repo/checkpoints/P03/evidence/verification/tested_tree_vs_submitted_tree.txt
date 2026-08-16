@@ -1,0 +1,65 @@
+# Paths present in the FINAL SUBMITTED checkpoint tree but absent from the tree the
+# full test suite was run against (a3234a67dcafebca06656241b633c36afa11e34d), in both
+# directions, plus content differences on paths present in both.
+# A tree cannot contain the log of the test run over itself; this file is the exact,
+# complete statement of that difference. See checkpoint_docs_are_test_inert.txt for
+# the proof that no test reads any of these paths.
+ONLY_IN_SUBMITTED  plans_internal/refactor_repo/checkpoints/P03/P03_recovery_checkpoint.v3.md
+ONLY_IN_SUBMITTED  plans_internal/refactor_repo/checkpoints/P03/QA/rounds/round-01.events.jsonl
+ONLY_IN_SUBMITTED  plans_internal/refactor_repo/checkpoints/P03/QA/rounds/round-01.meta.json
+ONLY_IN_SUBMITTED  plans_internal/refactor_repo/checkpoints/P03/QA/rounds/round-01.request.md
+ONLY_IN_SUBMITTED  plans_internal/refactor_repo/checkpoints/P03/QA/rounds/round-01.response.json
+ONLY_IN_SUBMITTED  plans_internal/refactor_repo/checkpoints/P03/QA/rounds/round-01.stderr.txt
+ONLY_IN_SUBMITTED  plans_internal/refactor_repo/checkpoints/P03/QA/rounds/round-02.events.jsonl
+ONLY_IN_SUBMITTED  plans_internal/refactor_repo/checkpoints/P03/QA/rounds/round-02.meta.json
+ONLY_IN_SUBMITTED  plans_internal/refactor_repo/checkpoints/P03/QA/rounds/round-02.request.md
+ONLY_IN_SUBMITTED  plans_internal/refactor_repo/checkpoints/P03/QA/rounds/round-02.response.json
+ONLY_IN_SUBMITTED  plans_internal/refactor_repo/checkpoints/P03/QA/rounds/round-02.stderr.txt
+ONLY_IN_SUBMITTED  plans_internal/refactor_repo/checkpoints/P03/QA/session.json
+ONLY_IN_SUBMITTED  plans_internal/refactor_repo/checkpoints/P03/deprecated/P03_recovery_checkpoint.v1.md
+ONLY_IN_SUBMITTED  plans_internal/refactor_repo/checkpoints/P03/deprecated/P03_recovery_checkpoint.v2.md
+ONLY_IN_SUBMITTED  plans_internal/refactor_repo/checkpoints/P03/evidence/digest_manifest.json
+ONLY_IN_SUBMITTED  plans_internal/refactor_repo/checkpoints/P03/evidence/ledger/delta_name_status_complete.txt
+ONLY_IN_SUBMITTED  plans_internal/refactor_repo/checkpoints/P03/evidence/ledger/delta_raw_with_blob_shas.txt
+ONLY_IN_SUBMITTED  plans_internal/refactor_repo/checkpoints/P03/evidence/ledger/git_status_porcelain_current.txt
+ONLY_IN_SUBMITTED  plans_internal/refactor_repo/checkpoints/P03/evidence/ledger/path_ledger_complete.json
+ONLY_IN_SUBMITTED  plans_internal/refactor_repo/checkpoints/P03/evidence/verification/checkpoint_docs_are_test_inert.txt
+ONLY_IN_SUBMITTED  plans_internal/refactor_repo/checkpoints/P03/evidence/verification/test_environment_freeze.txt
+ONLY_IN_SUBMITTED  plans_internal/refactor_repo/checkpoints/P03/evidence/verification/tested_tree_vs_submitted_tree.txt
+ONLY_IN_SUBMITTED  plans_internal/refactor_repo/checkpoints/P03/prior_runs/README.md
+ONLY_IN_SUBMITTED  plans_internal/refactor_repo/checkpoints/P03/prior_runs/t1/fixed_since_t0.txt
+ONLY_IN_SUBMITTED  plans_internal/refactor_repo/checkpoints/P03/prior_runs/t1/new_failures_vs_t0.txt
+ONLY_IN_SUBMITTED  plans_internal/refactor_repo/checkpoints/P03/prior_runs/t1/pytest_full_t1.log
+ONLY_IN_SUBMITTED  plans_internal/refactor_repo/checkpoints/P03/prior_runs/t1/pytest_t1_failed_and_error_ids.txt
+ONLY_IN_SUBMITTED  plans_internal/refactor_repo/checkpoints/P03/prior_runs/t2_post_compatibility_correction/p04_handoff_29_ids.txt
+ONLY_IN_SUBMITTED  plans_internal/refactor_repo/checkpoints/P03/prior_runs/t2_post_compatibility_correction/pytest_full_t2.log
+ONLY_IN_SUBMITTED  plans_internal/refactor_repo/checkpoints/P03/prior_runs/t2_post_compatibility_correction/pytest_t2_failed_and_error_ids.txt
+ONLY_IN_SUBMITTED  plans_internal/refactor_repo/checkpoints/P03/prior_runs/t4_recovery/fixed_since_t0.txt
+ONLY_IN_SUBMITTED  plans_internal/refactor_repo/checkpoints/P03/prior_runs/t4_recovery/new_failures_ids_only.txt
+ONLY_IN_SUBMITTED  plans_internal/refactor_repo/checkpoints/P03/prior_runs/t4_recovery/new_failures_vs_t0.txt
+ONLY_IN_SUBMITTED  plans_internal/refactor_repo/checkpoints/P03/prior_runs/t4_recovery/p04_handoff_allowlist_ids.txt
+ONLY_IN_SUBMITTED  plans_internal/refactor_repo/checkpoints/P03/prior_runs/t4_recovery/pytest_full_t4.log
+ONLY_IN_SUBMITTED  plans_internal/refactor_repo/checkpoints/P03/prior_runs/t4_recovery/pytest_t4_failed_and_error_ids.txt
+ONLY_IN_SUBMITTED  plans_internal/refactor_repo/checkpoints/P03/t5_final_tree/fixed_since_t0.txt
+ONLY_IN_SUBMITTED  plans_internal/refactor_repo/checkpoints/P03/t5_final_tree/new_failures_ids_only.txt
+ONLY_IN_SUBMITTED  plans_internal/refactor_repo/checkpoints/P03/t5_final_tree/new_failures_vs_t0.txt
+ONLY_IN_SUBMITTED  plans_internal/refactor_repo/checkpoints/P03/t5_final_tree/p04_handoff_allowlist_ids.txt
+ONLY_IN_SUBMITTED  plans_internal/refactor_repo/checkpoints/P03/t5_final_tree/pytest_full_t5.log
+ONLY_IN_SUBMITTED  plans_internal/refactor_repo/checkpoints/P03/t5_final_tree/pytest_t5_failed_and_error_ids.txt
+ONLY_IN_TESTED     plans_internal/refactor_repo/checkpoints/P03/P03_recovery_checkpoint.v1.md
+ONLY_IN_TESTED     plans_internal/refactor_repo/checkpoints/P03/t1/fixed_since_t0.txt
+ONLY_IN_TESTED     plans_internal/refactor_repo/checkpoints/P03/t1/new_failures_vs_t0.txt
+ONLY_IN_TESTED     plans_internal/refactor_repo/checkpoints/P03/t1/pytest_full_t1.log
+ONLY_IN_TESTED     plans_internal/refactor_repo/checkpoints/P03/t1/pytest_t1_failed_and_error_ids.txt
+ONLY_IN_TESTED     plans_internal/refactor_repo/checkpoints/P03/t2_post_compatibility_correction/p04_handoff_29_ids.txt
+ONLY_IN_TESTED     plans_internal/refactor_repo/checkpoints/P03/t2_post_compatibility_correction/pytest_full_t2.log
+ONLY_IN_TESTED     plans_internal/refactor_repo/checkpoints/P03/t2_post_compatibility_correction/pytest_t2_failed_and_error_ids.txt
+ONLY_IN_TESTED     plans_internal/refactor_repo/checkpoints/P03/t4_recovery/fixed_since_t0.txt
+ONLY_IN_TESTED     plans_internal/refactor_repo/checkpoints/P03/t4_recovery/new_failures_ids_only.txt
+ONLY_IN_TESTED     plans_internal/refactor_repo/checkpoints/P03/t4_recovery/new_failures_vs_t0.txt
+ONLY_IN_TESTED     plans_internal/refactor_repo/checkpoints/P03/t4_recovery/p04_handoff_allowlist_ids.txt
+ONLY_IN_TESTED     plans_internal/refactor_repo/checkpoints/P03/t4_recovery/pytest_full_t4.log
+ONLY_IN_TESTED     plans_internal/refactor_repo/checkpoints/P03/t4_recovery/pytest_t4_failed_and_error_ids.txt
+CHANGED_IN_BOTH    plans_internal/refactor_repo/exceptions/source_move.v1.yaml
+CHANGED_IN_BOTH    plans_internal/refactor_repo/execution/P03/.execution_log.counter.json
+CHANGED_IN_BOTH    plans_internal/refactor_repo/execution/P03/execution_log.jsonl

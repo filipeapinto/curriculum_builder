@@ -1,0 +1,63 @@
+=== P03 Test 2 — PRE-MOVE INSPECTION, performed before the first move of this re-execution ===
+timestamp_utc: 2026-08-16T19:24:25Z
+HEAD: ccacad34ef5a11cf7d05dea3c62612893a60cf7d
+worktree tracked status (excluding untracked docs):        3 lines
+
+--- 0. proof that no move has occurred yet ---
+$ git ls-files runtime/ | wc -l
+      69
+$ find runtime -type f -not -path '*__pycache__*' | wc -l
+      69
+$ find src/curriculum_factory -type f -not -path '*__pycache__*'
+src/curriculum_factory/__init__.py
+
+--- 1. prerequisites: P01 and P02 witnessed passes are ancestors of HEAD ---
+967d702 ancestor of HEAD: yes
+    967d702 refactor(repo): complete P01 packaging skeleton
+d35aea3 ancestor of HEAD: yes
+    d35aea3 plans_internal/refactor_repo: P02 import codemod (Codex QA_PASSED, delta ownership and test evidence complete)
+
+--- 2. present runtime/ tree vs the P00 t0 source map and digests ---
+present files:       69;  t0 recorded:       69
+$ diff <t0 digests> <present digests>
+  (empty) -> INPUTS UNCHANGED: 69/69 byte-identical to the P00 baseline
+
+--- 3. P02 live dry-run inventory, re-derived at this exact pre-move state ---
+$ python3 -m tools.refactor_repo.rewrite_runtime_imports dry-run --root runtime --root tests/runtime --root tests/gates --repo-root . ...
+exit=0
+summary: {"files_parse_error": 0, "files_scanned": 94, "files_unsafe": 0, "files_would_change": 33}
+diagnostic kinds: {'rewrite_import': 163, 'non_target_shadowed': 10}
+P02 checkpoint recorded: files_scanned=94 files_would_change=33 files_unsafe=0 files_parse_error=0,
+                         rewrite_import=163 non_target_shadowed=10
+P02 candidate files:       33
+
+--- 4. P03 live dry-run over P03's OWN authorized surface, at this pre-move state ---
+$ python3 tools/refactor_repo/rewrite_runtime_imports.py --root runtime --root tests/runtime \
+    --root tests/gates/fr_p5_unit.py --root tests/check_meta_prompt.py --root tests/meta_prompt_source.py \
+    --root tests/refactor_repo/test_packaging_skeleton.py \
+    --root tests/refactor_repo/codemod/test_rewrite_runtime_imports.py --root tools/refactor_repo/baseline.py \
+    --repo-root . --old-root runtime --new-root curriculum_factory --diagnostics-out ... --diff-out ... dry-run
+exit=0
+summary: {"files_parse_error": 0, "files_scanned": 87, "files_unsafe": 0, "files_would_change": 34}
+diagnostic kinds: {'rewrite_import': 164, 'non_target_shadowed': 10}
+
+STOP-CONDITION EVALUATION, made here and now, before any move:
+  files_unsafe      = 0 -> zero ambiguous transformations
+  files_parse_error = 0 -> every candidate parsed and classified
+  decision: candidate coverage reconciles and no ambiguity exists, so the prompt stop
+            condition ("stop before applying if candidate coverage does not reconcile,
+            or on any ambiguous transform") does NOT fire. Proceeding to the move.
+P03 candidate files:       34
+
+--- 5. reconciliation: P03 candidate set vs the re-derived P02 candidate set ---
+in P03 but not in P02 (expected: exactly the operator-granted compatibility files):
+    tools/refactor_repo/baseline.py
+in P02 but not in P03 (expected: none):
+  ^ empty means P03's set is a strict superset of P02's, differing only by the granted files.
+
+--- 6. reconciliation: candidates vs the current AST inventory ---
+Every candidate is a file the LibCST pass parsed successfully (files_parse_error=0) and
+classified as safe (files_unsafe=0). The scanned surface and the candidate subset:
+  files_scanned      = 87   (the current AST inventory of P03 authorized roots)
+  files_would_change = 34   (candidates)
+  unchanged          = 53   (parsed, inspected, no runtime reference)

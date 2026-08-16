@@ -1,0 +1,238 @@
+{
+  "opened_at": "2026-08-16T16-32-04.902596+00-00",
+  "artifact_original": "/Users/filipepinto/Projects/curriculum_builder_wt/refactor-p03-p10-direct/plans_internal/refactor_repo/checkpoints/P03/P03_checkpoint_report.v1.md",
+  "artifact_current": "/Users/filipepinto/Projects/curriculum_builder_wt/refactor-p03-p10-direct/plans_internal/refactor_repo/checkpoints/P03/P03_checkpoint_report.v5.md",
+  "session_id": "01a00b6a-8a98-7e30-a456-d574b9f40355",
+  "chain": "dea53c1a119a8091c45e3a3d70db3f8a762a515a626b1d0238a3626cfbc6e7dd",
+  "rounds_completed": 5,
+  "rounds": [
+    {
+      "round": 1,
+      "timestamp": "2026-08-16T16:32:58.943400+00:00",
+      "verdict": "FAIL",
+      "artifact_path": "/Users/filipepinto/Projects/curriculum_builder_wt/refactor-p03-p10-direct/plans_internal/refactor_repo/checkpoints/P03/P03_checkpoint_report.v1.md",
+      "artifact_sha256": "bbef7879fcb250ed1f0a71b0b90093a15303e21d693fb4ab380f9d357a8b7bb8",
+      "findings_at_threshold": [
+        {
+          "id": "P03-QA-001",
+          "title": "Regression gate failed outside the permitted P04 handoff boundary",
+          "severity": "blocker",
+          "criterion_ref": "Criterion 3 requires every prompt TEST to have a supported PASS/FAIL conclusion; criterion 4 requires stop conditions and successor-prompt boundaries to be honored."
+        },
+        {
+          "id": "P03-QA-002",
+          "title": "Independent QA test is incomplete",
+          "severity": "blocker",
+          "criterion_ref": "Criterion 3 states that a skipped, unavailable, or inconclusive check is not PASS; criterion 7 forbids completion when the independent gate has not produced verified QA_PASSED."
+        },
+        {
+          "id": "P03-QA-003",
+          "title": "Required checkpoint identity fields are missing",
+          "severity": "blocker",
+          "criterion_ref": "Criterion 1 requires the executing prompt, specification version, baseline commit, starting dirty state, and exact artifact version being judged."
+        },
+        {
+          "id": "P03-QA-004",
+          "title": "Prompt tests lack exact reproducible procedures and statuses",
+          "severity": "blocker",
+          "criterion_ref": "Criterion 3 requires every prompt TEST’s exact command or inspection procedure, exit status, material output, and supported PASS/FAIL conclusion."
+        },
+        {
+          "id": "P03-QA-005",
+          "title": "The checkpoint lacks an exact path ledger and reviewable deliverable diff/digests",
+          "severity": "blocker",
+          "criterion_ref": "Criterion 2 requires every changed, created, moved, and deleted path plus byte-for-byte preservation of pre-existing user changes; criterion 6 requires post-change git status and a reviewable diff or immutable digest for every deliverable."
+        }
+      ],
+      "observations_count": 0,
+      "chain": "0c134ce02c58cd974029827fbac6722d402e2a6b66c4c12b205aa3f130206057"
+    },
+    {
+      "round": 2,
+      "timestamp": "2026-08-16T16:36:40.160730+00:00",
+      "verdict": "FAIL",
+      "artifact_path": "/Users/filipepinto/Projects/curriculum_builder_wt/refactor-p03-p10-direct/plans_internal/refactor_repo/checkpoints/P03/P03_checkpoint_report.v2.md",
+      "artifact_sha256": "4a723eb8b926ed346ba6c96ef5aa52b2f7e3f8f47b3dc4ff306c2f0c9cdfa74b",
+      "findings_at_threshold": [
+        {
+          "id": "P03-QA-001",
+          "title": "Regression test is labeled PASS despite failures outside its permitted boundary",
+          "severity": "blocker",
+          "criterion_ref": "Criterion 3 requires a PASS/FAIL conclusion supported by evidence; criterion 4 requires stop conditions and successor authority boundaries to be honored; criterion 5 requires relevant failures to be classified honestly."
+        },
+        {
+          "id": "P03-QA-002",
+          "title": "Independent QA test remains incomplete",
+          "severity": "blocker",
+          "criterion_ref": "Criterion 3 says an unavailable or inconclusive check is not PASS; criterion 7 requires a witnessed and verified `QA_PASSED` result before completion."
+        },
+        {
+          "id": "P03-QA-004",
+          "title": "Several prompt tests still lack exact reproducible commands or statuses",
+          "severity": "blocker",
+          "criterion_ref": "Criterion 3 requires every prompt TEST’s exact command or inspection procedure, exit status, material output, and supported conclusion."
+        },
+        {
+          "id": "P03-QA-005",
+          "title": "The final path ledger and deliverable integrity record remain incomplete",
+          "severity": "blocker",
+          "criterion_ref": "Criterion 2 requires every changed, created, moved, and deleted path; criterion 6 requires post-change status and a reviewable diff or immutable digest for every deliverable."
+        }
+      ],
+      "observations_count": 2,
+      "chain": "ef83964baa2fd2bb506b67160912b1666199ce301ce7cfe37680f2db91d9241f"
+    },
+    {
+      "round": 3,
+      "timestamp": "2026-08-16T18:37:55.318279+00:00",
+      "verdict": "FAIL",
+      "artifact_path": "/Users/filipepinto/Projects/curriculum_builder_wt/refactor-p03-p10-direct/plans_internal/refactor_repo/checkpoints/P03/P03_checkpoint_report.v3.md",
+      "artifact_sha256": "6c2bc636d1cce4eef1807ae4b789384cf3ee376bb9752036463e7b3e227b22eb",
+      "findings_at_threshold": [
+        {
+          "id": "P03-QA-001",
+          "title": "Regression test still has an additional non-P04 failure",
+          "severity": "blocker",
+          "criterion_ref": "Criterion 3 requires conclusions supported by evidence; criterion 4 requires the prompt’s stop conditions to be honored."
+        },
+        {
+          "id": "P03-QA-002",
+          "title": "Independent QA test remains incomplete",
+          "severity": "blocker",
+          "criterion_ref": "Criterion 3 says an unavailable or inconclusive check is not PASS; criterion 7 requires witnessed and verified `QA_PASSED` before completion."
+        },
+        {
+          "id": "P03-QA-004",
+          "title": "The current report still lacks exact evidence for Tests 1–6",
+          "severity": "blocker",
+          "criterion_ref": "Criterion 3 requires the gated report to record every prompt test’s exact command or inspection procedure, exit status, material output, and supported conclusion."
+        },
+        {
+          "id": "P03-QA-005",
+          "title": "The final delta includes a path not authorized by the amended prompt",
+          "severity": "blocker",
+          "criterion_ref": "Criterion 2 requires every mutation to fall within the prompt’s authorized boundary; criterion 4 forbids borrowing mutation authority."
+        },
+        {
+          "id": "P03-QA-006",
+          "title": "Per-deliverable diff or digest coverage is still incomplete",
+          "severity": "blocker",
+          "criterion_ref": "Criterion 6 requires a reviewable diff or immutable digest for every deliverable."
+        }
+      ],
+      "observations_count": 3,
+      "chain": "a52bb0ec0887255d74b9afc401bdc067aca1f22c1021dd18eeeca917486c1180"
+    },
+    {
+      "round": 4,
+      "timestamp": "2026-08-16T18:46:34.481244+00:00",
+      "verdict": "FAIL",
+      "artifact_path": "/Users/filipepinto/Projects/curriculum_builder_wt/refactor-p03-p10-direct/plans_internal/refactor_repo/checkpoints/P03/P03_checkpoint_report.v4.md",
+      "artifact_sha256": "6adeabc3e3cab9fd670ae0c4ac379d7e4b9676754b82904f52e88ca4c6d5a61a",
+      "findings_at_threshold": [
+        {
+          "id": "P03-QA-002",
+          "title": "The checkpoint claims completion before independent QA passes",
+          "severity": "blocker",
+          "criterion_ref": "Criterion 7 forbids claiming completion when the independent gate has not produced a witnessed and verified `QA_PASSED` result; criterion 3 says an inconclusive check is not PASS."
+        },
+        {
+          "id": "P03-QA-004",
+          "title": "Required procedures within Tests 1–6 remain unrecorded",
+          "severity": "blocker",
+          "criterion_ref": "Criterion 3 requires every prompt test’s exact command or inspection procedure, exit status, material output, and supported conclusion."
+        },
+        {
+          "id": "P03-QA-005",
+          "title": "The purported final path ledger omits the current post-commit checkpoint delta",
+          "severity": "blocker",
+          "criterion_ref": "Criterion 2 requires every changed, created, moved, and deleted path and proof of authorization; criterion 6 requires post-change git status."
+        },
+        {
+          "id": "P03-QA-006",
+          "title": "Immutable digest coverage does not include the artifact and evidence being judged",
+          "severity": "blocker",
+          "criterion_ref": "Criterion 6 requires a reviewable diff or immutable digest for every deliverable."
+        }
+      ],
+      "observations_count": 3,
+      "chain": "9d628400d07b37603b8ed7a01a7635b805500842740389610128e777dc9c947a"
+    },
+    {
+      "round": 5,
+      "timestamp": "2026-08-16T18:50:48.117531+00:00",
+      "verdict": "FAIL",
+      "artifact_path": "/Users/filipepinto/Projects/curriculum_builder_wt/refactor-p03-p10-direct/plans_internal/refactor_repo/checkpoints/P03/P03_checkpoint_report.v5.md",
+      "artifact_sha256": "3a947073e58d6aa764ac581deb85aef031352890611187b577127fd627954970",
+      "findings_at_threshold": [
+        {
+          "id": "P03-QA-002",
+          "title": "Independent QA test remains incomplete",
+          "severity": "blocker",
+          "criterion_ref": "Criterion 3 states that an unavailable or inconclusive check is not PASS."
+        },
+        {
+          "id": "P03-QA-007",
+          "title": "Ownership evidence contradicts Test 1’s required result",
+          "severity": "blocker",
+          "criterion_ref": "Criterion 3 requires a supported PASS conclusion; criterion 4 forbids borrowing another prompt’s mutation authority."
+        },
+        {
+          "id": "P03-QA-004",
+          "title": "The required pre-move dry-run reconciliation was never recorded",
+          "severity": "blocker",
+          "criterion_ref": "Criterion 3 requires the exact procedure and evidence for every prompt test; criterion 4 requires prerequisites and stop conditions to be demonstrated."
+        },
+        {
+          "id": "P03-QA-005",
+          "title": "The current checkpoint path ledger is descriptive rather than complete",
+          "severity": "blocker",
+          "criterion_ref": "Criterion 2 requires every changed, created, moved, and deleted path; criterion 6 requires the post-change git status."
+        },
+        {
+          "id": "P03-QA-006",
+          "title": "Current documentation deliverables still lack immutable digest coverage",
+          "severity": "blocker",
+          "criterion_ref": "Criterion 6 requires a reviewable diff or immutable digest for every deliverable."
+        }
+      ],
+      "observations_count": 4,
+      "chain": "dea53c1a119a8091c45e3a3d70db3f8a762a515a626b1d0238a3626cfbc6e7dd"
+    }
+  ],
+  "stall_count": 0,
+  "last_fingerprint": "7a491aad440b3b2392a0bfdb949b6fa17ba45d3806032e74bd40812c690c4f51",
+  "exec_copied": [],
+  "terminal": {
+    "state": "QA_FAILED",
+    "reason": "MAX_ITERATIONS_EXHAUSTED",
+    "detail": "5 finding(s) still at threshold after 5 rounds",
+    "artifact": "/Users/filipepinto/Projects/curriculum_builder_wt/refactor-p03-p10-direct/plans_internal/refactor_repo/checkpoints/P03/P03_checkpoint_report.v5.md",
+    "rounds_completed": 5,
+    "max_iterations": 5,
+    "session_id": "01a00b6a-8a98-7e30-a456-d574b9f40355",
+    "thread_id": "01a00b6a-8a98-7e30-a456-d574b9f40355",
+    "transport": "app-server",
+    "rollout_file": "/Users/filipepinto/.codex/sessions/2026/08/16/rollout-2026-08-16T12-32-06-01a00b6a-8a98-7e30-a456-d574b9f40355.jsonl",
+    "chain": "dea53c1a119a8091c45e3a3d70db3f8a762a515a626b1d0238a3626cfbc6e7dd",
+    "qa_dir": "/Users/filipepinto/Projects/curriculum_builder_wt/refactor-p03-p10-direct/plans_internal/refactor_repo/checkpoints/P03/QA",
+    "finalized_at": "2026-08-16T18:50:48.125877+00:00"
+  },
+  "config": {
+    "criteria": "# Refactor checkpoint QA criteria v1\n\nThe gated checkpoint report must satisfy every condition below.\n\n1. It identifies the executing prompt, the specification version, the baseline\n   commit, the starting dirty state, and the exact artifact version being judged.\n2. It lists every changed, created, moved, and deleted path and demonstrates that\n   each change is within the prompt's authorized mutation boundary. Pre-existing\n   user changes remain byte-for-byte outside the checkpoint delta.\n3. It records every prompt TEST with its exact command or inspection procedure,\n   exit status, material output, and a PASS or FAIL conclusion supported by that\n   evidence. A skipped, unavailable, or inconclusive check is not PASS.\n4. It demonstrates the prompt's prerequisites, explicit non-targets, stop\n   conditions, and rollback procedure were honored. No successor prompt's mutation\n   authority may be borrowed by the current checkpoint.\n5. It identifies residual old identities, paths, imports, output consumers, schema\n   references, or failures relevant to the prompt and classifies each as resolved,\n   a recorded exception, pre-existing, or a blocker. Silent residuals are defects.\n6. It includes the post-change git status and a reviewable diff or immutable digest\n   for every deliverable, plus the verification result at the rollback checkpoint.\n7. It does not claim completion when evidence is missing, collection is incomplete,\n   commands failed, the QA transport is unavailable, or the independent gate has\n   not produced a witnessed and verified `QA_PASSED` result.\n\n",
+    "focus": "Independently verify all 7 P03 prompt tests against literal evidence under checkpoints/P03/ and execution/P03/execution_log.jsonl, and especially that every one of the 35 new-vs-t0 pytest failures is honestly and correctly classified (no P03-caused regression hidden among the P04-handoff / checkpoint-obsolescence / frozen-archive classes).",
+    "threshold": "blocker",
+    "max_iterations": 5,
+    "timeout_seconds": 900,
+    "retries": 2,
+    "model": null,
+    "effort": null,
+    "transport": "app-server",
+    "allow_execution": false,
+    "grounding": [
+      "/Users/filipepinto/Projects/curriculum_builder_wt/refactor-p03-p10-direct/plans_internal/refactor_repo/prompts/P03_source_move.prompt.v3.yaml",
+      "/Users/filipepinto/Projects/curriculum_builder_wt/refactor-p03-p10-direct/plans_internal/refactor_repo/exceptions/source_move.v1.yaml"
+    ]
+  },
+  "thread_id": "01a00b6a-8a98-7e30-a456-d574b9f40355"
+}

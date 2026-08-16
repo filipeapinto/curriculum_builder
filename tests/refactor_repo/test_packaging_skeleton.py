@@ -119,20 +119,36 @@ def test_pyproject_declares_no_other_top_level_project_dependency_groups():
 
 
 def test_src_curriculum_factory_package_exists_and_is_minimal():
+    """P03 (spec v8 section 4) has since moved the complete production tree
+    into src/curriculum_factory/; verify every Python file under src/ belongs
+    to exactly the curriculum_factory package (no foreign/extraneous file)
+    and the package is the moved production module, not P01's pre-move empty
+    placeholder skeleton.
+    """
     assert PACKAGE_ROOT.is_dir()
     init_file = PACKAGE_ROOT / "__init__.py"
     assert init_file.is_file()
     python_files = sorted(p.relative_to(SRC_ROOT) for p in SRC_ROOT.rglob("*.py"))
-    assert python_files == [Path("curriculum_factory/__init__.py")], (
-        "P01 must not move runtime/ into src/curriculum_factory/; only the "
-        "skeleton __init__.py may exist at this checkpoint"
+    assert python_files, "src/curriculum_factory must contain the moved production package"
+    assert all(p.parts[0] == "curriculum_factory" for p in python_files), (
+        "every Python file under src/ must live inside the curriculum_factory package: "
+        f"{[str(p) for p in python_files if p.parts[0] != 'curriculum_factory']}"
+    )
+    assert "__all__: list[str] = []" not in init_file.read_text(encoding="utf-8"), (
+        "src/curriculum_factory/__init__.py must be P03's moved production module, "
+        "not P01's pre-move empty placeholder skeleton"
     )
 
 
 def test_runtime_directory_is_unchanged_by_this_checkpoint():
-    """P01 declares packaging metadata only; runtime/ stays byte-identical to P00."""
+    """P03 (spec v8 section 4) moves the complete production tree out of
+    runtime/ into src/curriculum_factory/; verify runtime/ contains no live
+    production package after that move.
+    """
     runtime_dir = REPO_ROOT / "runtime"
-    assert runtime_dir.is_dir(), "runtime/ must still exist; P01 does not move production source"
+    assert not runtime_dir.exists(), (
+        "runtime/ must not exist after P03; production source moved to src/curriculum_factory/"
+    )
 
 
 def test_src_curriculum_factory_is_importable_without_installation():
@@ -140,7 +156,7 @@ def test_src_curriculum_factory_is_importable_without_installation():
     try:
         import curriculum_factory  # noqa: F401
 
-        assert curriculum_factory.__all__ == []
+        assert curriculum_factory.__all__ == ["CurriculumRuntime", "RuntimeFailure"]
     finally:
         sys.path.remove(str(SRC_ROOT))
         sys.modules.pop("curriculum_factory", None)

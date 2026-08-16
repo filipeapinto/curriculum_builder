@@ -1,0 +1,34 @@
+=== Test 5: installed imports and module origins (venv /tmp/p03_venv, wheel built from tree db6f611dbee4cc80ab4d85425c318338dd37a994) ===
+--- pip show ---
+Name: curriculum-factory
+Version: 0.1.0
+Summary: A contract-first, curriculum-neutral pipeline for producing curriculum units from a supplied manifest and curriculum-owned domain rules.
+Home-page: 
+Author: 
+Author-email: 
+--- cwd=/tmp/p03_evidence_tree ---
+curriculum_factory -> /private/tmp/p03_venv/lib/python3.13/site-packages/curriculum_factory/__init__.py
+curriculum_factory.run_curriculum -> /private/tmp/p03_venv/lib/python3.13/site-packages/curriculum_factory/run_curriculum.py
+curriculum_factory.langgraph_factory.graph -> /private/tmp/p03_venv/lib/python3.13/site-packages/curriculum_factory/langgraph_factory/graph.py
+curriculum_factory.io -> /private/tmp/p03_venv/lib/python3.13/site-packages/curriculum_factory/io.py
+  exit=0
+import runtime -> ModuleNotFoundError: No module named 'runtime'
+--- cwd=/tmp/p03_evidence_tree/tests/runtime ---
+curriculum_factory -> /private/tmp/p03_venv/lib/python3.13/site-packages/curriculum_factory/__init__.py
+curriculum_factory.run_curriculum -> /private/tmp/p03_venv/lib/python3.13/site-packages/curriculum_factory/run_curriculum.py
+curriculum_factory.langgraph_factory.graph -> /private/tmp/p03_venv/lib/python3.13/site-packages/curriculum_factory/langgraph_factory/graph.py
+curriculum_factory.io -> /private/tmp/p03_venv/lib/python3.13/site-packages/curriculum_factory/io.py
+  exit=0
+import runtime -> ModuleNotFoundError: No module named 'runtime'
+--- cwd=/tmp ---
+curriculum_factory -> /private/tmp/p03_venv/lib/python3.13/site-packages/curriculum_factory/__init__.py
+curriculum_factory.run_curriculum -> /private/tmp/p03_venv/lib/python3.13/site-packages/curriculum_factory/run_curriculum.py
+curriculum_factory.langgraph_factory.graph -> /private/tmp/p03_venv/lib/python3.13/site-packages/curriculum_factory/langgraph_factory/graph.py
+curriculum_factory.io -> /private/tmp/p03_venv/lib/python3.13/site-packages/curriculum_factory/io.py
+  exit=0
+import runtime -> ModuleNotFoundError: No module named 'runtime'
+--- console scripts ---
+curriculum-factory-capability-cycle
+curriculum-factory-finalize-evidence
+curriculum-factory-run-curriculum
+curriculum-factory-session-bridge

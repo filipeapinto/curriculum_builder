@@ -3,7 +3,7 @@ from __future__ import annotations
 from pathlib import Path
 import unittest
 
-from runtime.routing import RoutingError, Selector
+from curriculum_factory.routing import RoutingError, Selector
 
 
 ENGINE = Path(__file__).resolve().parents[2]

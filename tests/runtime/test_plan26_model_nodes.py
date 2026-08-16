@@ -9,10 +9,10 @@ from typing import Any
 import jsonschema
 import pytest
 
-from runtime.langgraph_factory import model_nodes as mn
-from runtime.langgraph_factory import transport as tp
-from runtime.langgraph_factory.nodes import terminal as nt
-from runtime.langgraph_factory.reducers import (
+from curriculum_factory.langgraph_factory import model_nodes as mn
+from curriculum_factory.langgraph_factory import transport as tp
+from curriculum_factory.langgraph_factory.nodes import terminal as nt
+from curriculum_factory.langgraph_factory.reducers import (
     DuplicateConflict,
     HeadAdvanceError,
     advance_head,
@@ -20,7 +20,7 @@ from runtime.langgraph_factory.reducers import (
     monotonic_max,
     union_disjoint,
 )
-from runtime.langgraph_factory.state import (
+from curriculum_factory.langgraph_factory.state import (
     FACTORY_STATE_FIELDS,
     FIELD_REDUCER_CLASSES,
     RuntimeContext,
@@ -1482,7 +1482,7 @@ def test_the_real_m01_dispatchers_reserve_against_distinct_counters():
     phase is the only thing that may separate the two attempt budgets.
     """
 
-    from runtime.langgraph_factory.nodes import sources
+    from curriculum_factory.langgraph_factory.nodes import sources
 
     state = {
         "run_id": RUN_ID,
@@ -1540,7 +1540,7 @@ def test_d90_refuses_to_reserve_for_an_unstaged_dispatch():
 
 
 def test_d90_guard_routes_through_the_frozen_guard_table():
-    from runtime.langgraph_factory import routing
+    from curriculum_factory.langgraph_factory import routing
 
     job_id = "M01_RESEARCH_UNIT_SOURCES"
     at_limit = {"pending_packet": staged(job_id, "req-1"),
@@ -1552,7 +1552,7 @@ def test_d90_guard_routes_through_the_frozen_guard_table():
 
 def test_an_authorized_reservation_dispatches_one_worker_per_restaged_member():
     pytest.importorskip("langgraph")  # an authorized fan-out is a real `Send` list
-    from runtime.langgraph_factory import routing
+    from curriculum_factory.langgraph_factory import routing
 
     job_id = "M01_RESEARCH_UNIT_SOURCES"
     authorized = mn.D90_RESERVE_MODEL_ATTEMPT(
@@ -1567,7 +1567,7 @@ def test_an_authorized_reservation_dispatches_one_worker_per_restaged_member():
 
 
 def test_d91_classifies_the_pending_failure_against_the_committed_counter():
-    from runtime.langgraph_factory import routing
+    from curriculum_factory.langgraph_factory import routing
 
     job_id = "M03_WRITE_UNIT_CONTENT"
     key = mn.attempt_counter_key(job_id, "u01")
@@ -1583,7 +1583,7 @@ def test_d91_classifies_the_pending_failure_against_the_committed_counter():
 
 
 def test_d91_at_the_committed_limit_exhausts_rather_than_retrying():
-    from runtime.langgraph_factory import routing
+    from curriculum_factory.langgraph_factory import routing
 
     job_id = "M03_WRITE_UNIT_CONTENT"
     key = mn.attempt_counter_key(job_id, "u01")
@@ -1603,7 +1603,7 @@ def test_d91_at_the_committed_limit_exhausts_rather_than_retrying():
 
 
 def test_d91_repair_destination_resolves_through_the_dynamic_guard():
-    from runtime.langgraph_factory import routing
+    from curriculum_factory.langgraph_factory import routing
 
     job_id = "M05_REVIEW_ACTUAL_UNIT"
     key = mn.attempt_counter_key(job_id, "u01")
@@ -1629,7 +1629,7 @@ def test_d91_repair_leaves_the_classified_pending_failure_for_d17_to_consume():
     findings list") the moment a real M01 discovery sub-request failed content
     policy and D91 routed it to D17 for repair.
     """
-    from runtime.langgraph_factory import repair, routing
+    from curriculum_factory.langgraph_factory import repair, routing
 
     job_id = "M01_RESEARCH_UNIT_SOURCES"
     key = mn.attempt_counter_key(job_id, "u01")
@@ -1689,7 +1689,7 @@ def test_the_bookkeeping_nodes_have_the_node_body_calling_convention(node_id):
 
     body = mn.MODEL_BOOKKEEPING_NODES[node_id]
     assert body.__name__ == node_id
-    assert body.__module__ == "runtime.langgraph_factory.model_nodes"
+    assert body.__module__ == "curriculum_factory.langgraph_factory.model_nodes"
     parameters = list(inspect.signature(body).parameters.values())
     assert len(parameters) == 2
     assert [p.kind for p in parameters] == [inspect.Parameter.POSITIONAL_OR_KEYWORD] * 2
@@ -1700,16 +1700,16 @@ def test_the_bookkeeping_nodes_register_on_a_real_state_graph():
     """The proof B-3 asked for: a real `add_node` of the exported callables."""
 
     pytest.importorskip("langgraph")
-    from runtime.langgraph_factory import graph as G
+    from curriculum_factory.langgraph_factory import graph as G
 
     bindings = {**G.binding_inventory(), **mn.MODEL_BOOKKEEPING_NODES}
     inventory = G.validate_bindings(bindings, required=tuple(mn.MODEL_BOOKKEEPING_NODES))
     for node_id in mn.MODEL_BOOKKEEPING_NODES:
-        assert inventory[node_id]["module"] == "runtime.langgraph_factory.model_nodes"
+        assert inventory[node_id]["module"] == "curriculum_factory.langgraph_factory.model_nodes"
 
     from langgraph.graph import StateGraph
 
-    from runtime.langgraph_factory.state import FactoryState
+    from curriculum_factory.langgraph_factory.state import FactoryState
 
     builder = StateGraph(FactoryState)
     for node_id, body in mn.MODEL_BOOKKEEPING_NODES.items():

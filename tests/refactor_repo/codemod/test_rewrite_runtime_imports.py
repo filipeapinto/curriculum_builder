@@ -334,13 +334,23 @@ def _load_p00_runtime_import_inventory() -> dict:
 
 
 def test_live_dry_run_rehearsal_reconciles_with_p00_and_writes_nothing(tmp_path):
+    """P03 (spec v8 section 4) has since moved the production tree from
+    ``runtime/`` to ``src/curriculum_factory/`` and applied this codemod to it.
+    A live dry-run rehearsal against the current authorized surface must now
+    find zero remaining ``rewrite_import`` candidates, because every one of
+    P00's originally-identified ``runtime_imports`` sites was relocated and
+    rewritten by P03; P02's own pre-move rehearsal (163 candidates reconciling
+    exactly with P00's inventory) remains recorded, unedited, in the P02
+    checkpoint report. This is the post-move completeness check, not a repeat
+    of the pre-move one.
+    """
     before_diff_count = _git_tracked_diff_count(REPO_ROOT)
 
     diagnostics_out = tmp_path / "live_diagnostics.json"
     diff_out = tmp_path / "live.diff"
     result = subprocess.run(
         [sys.executable, "-m", TOOL_MODULE, "dry-run",
-         "--root", "runtime", "--root", "tests/runtime", "--root", "tests/gates",
+         "--root", "src/curriculum_factory", "--root", "tests/runtime", "--root", "tests/gates",
          "--repo-root", str(REPO_ROOT),
          "--diagnostics-out", str(diagnostics_out), "--diff-out", str(diff_out)],
         cwd=REPO_ROOT, check=False, capture_output=True, text=True, timeout=180,
@@ -366,17 +376,12 @@ def test_live_dry_run_rehearsal_reconciles_with_p00_and_writes_nothing(tmp_path)
 
     p00 = _load_p00_runtime_import_inventory()
     p00_import_statements = len(p00["python_surface"]["runtime_imports"])
-    p00_files = {entry["source_file"] for entry in p00["python_surface"]["runtime_imports"]}
 
-    assert kinds.get("rewrite_import", 0) == p00_import_statements, (
-        f"rewrite_import candidate count {kinds.get('rewrite_import', 0)} does not "
-        f"reconcile with P00's runtime_imports count {p00_import_statements}"
-    )
-    changed_files = {d["file"] for d in diagnostics if d["kind"] in ("rewrite_import", "rewrite_reference")}
-    assert changed_files == p00_files, (
-        f"candidate file set does not reconcile with P00: "
-        f"only-in-codemod={sorted(changed_files - p00_files)}, "
-        f"only-in-P00={sorted(p00_files - changed_files)}"
+    assert kinds.get("rewrite_import", 0) == 0, (
+        f"expected zero remaining rewrite_import candidates now that P03 has "
+        f"moved and rewritten every one of P00's {p00_import_statements} "
+        f"originally-identified runtime_imports sites; found "
+        f"{kinds.get('rewrite_import', 0)}: {diagnostics}"
     )
 
 

@@ -1,0 +1,89 @@
+{
+  "opened_at": "2026-08-16T19-52-01.532765+00-00",
+  "artifact_original": "/Users/filipepinto/Projects/curriculum_builder_wt/p03-recovery/plans_internal/refactor_repo/checkpoints/P03/P03_recovery_checkpoint.v3.md",
+  "artifact_current": "/Users/filipepinto/Projects/curriculum_builder_wt/p03-recovery/plans_internal/refactor_repo/checkpoints/P03/P03_recovery_checkpoint.v5.md",
+  "session_id": "01a00c21-97f5-77e3-98fc-83aa27047877",
+  "chain": "fe16ce576755d3e09506a16af9beea09f5ecf5c92884245a74ce976c8733f17b",
+  "rounds_completed": 3,
+  "rounds": [
+    {
+      "round": 1,
+      "timestamp": "2026-08-16T19:53:26.187306+00:00",
+      "verdict": "FAIL",
+      "artifact_path": "/Users/filipepinto/Projects/curriculum_builder_wt/p03-recovery/plans_internal/refactor_repo/checkpoints/P03/P03_recovery_checkpoint.v3.md",
+      "artifact_sha256": "197d6418be07d79f1e6475105e2cb2e14de7a9cf84a9310a3e510cd1360cce67",
+      "findings_at_threshold": [
+        {
+          "id": "P03-QA-UNDIGESTED-DELIVERABLES",
+          "title": "Six relied-on deliverables lack the required immutable SHA-256 digest",
+          "severity": "blocker",
+          "criterion_ref": "Criteria 6 and 7.3: the checkpoint must provide an immutable digest for every deliverable it relies on, specifically a final sha256 under criterion 7.3."
+        }
+      ],
+      "observations_count": 2,
+      "chain": "4a364e9d0052bd50e28cd52f1d9e03fa770f8eb75296ff75f174537c4e4cd603"
+    },
+    {
+      "round": 2,
+      "timestamp": "2026-08-16T19:58:54.836153+00:00",
+      "verdict": "FAIL",
+      "artifact_path": "/Users/filipepinto/Projects/curriculum_builder_wt/p03-recovery/plans_internal/refactor_repo/checkpoints/P03/P03_recovery_checkpoint.v4.md",
+      "artifact_sha256": "cab7aceecf0ae62e0e7eafaefa97f959d68396b9cdf215c1485b03bf33744de1",
+      "findings_at_threshold": [
+        {
+          "id": "P03-QA-UNDIGESTED-DELIVERABLES",
+          "title": "The submitted checkpoint still does not publish its own required SHA-256 digest",
+          "severity": "blocker",
+          "criterion_ref": "Criterion 7.3: “It must publish an immutable final digest (sha256) of the exact submitted checkpoint and of every deliverable it relies on.”"
+        }
+      ],
+      "observations_count": 3,
+      "chain": "886471774b5331d87b57b75fc2fb186c79d2c35326a6b3a34291e697ceededba"
+    },
+    {
+      "round": 3,
+      "timestamp": "2026-08-16T20:01:44.329807+00:00",
+      "verdict": "PASS",
+      "artifact_path": "/Users/filipepinto/Projects/curriculum_builder_wt/p03-recovery/plans_internal/refactor_repo/checkpoints/P03/P03_recovery_checkpoint.v5.md",
+      "artifact_sha256": "fb9ca3801c880777ea28add3a8e030cb5830eea74fdd9ca9e02da9637b1ef1c1",
+      "findings_at_threshold": [],
+      "observations_count": 3,
+      "chain": "fe16ce576755d3e09506a16af9beea09f5ecf5c92884245a74ce976c8733f17b"
+    }
+  ],
+  "stall_count": 0,
+  "last_fingerprint": "f97168b307fe0bc21428a4abc8fcac95eb8ea8e6e7f2be1d690f2c1b1fed2a5b",
+  "exec_copied": [],
+  "terminal": {
+    "state": "QA_PASSED",
+    "reason": "CONVERGED",
+    "detail": "Codex passed the artifact at round 3",
+    "artifact": "/Users/filipepinto/Projects/curriculum_builder_wt/p03-recovery/plans_internal/refactor_repo/checkpoints/P03/P03_recovery_checkpoint.v5.md",
+    "rounds_completed": 3,
+    "max_iterations": 5,
+    "session_id": "01a00c21-97f5-77e3-98fc-83aa27047877",
+    "thread_id": "01a00c21-97f5-77e3-98fc-83aa27047877",
+    "transport": "exec",
+    "rollout_file": "/Users/filipepinto/.codex/sessions/2026/08/16/rollout-2026-08-16T15-52-03-01a00c21-97f5-77e3-98fc-83aa27047877.jsonl",
+    "chain": "fe16ce576755d3e09506a16af9beea09f5ecf5c92884245a74ce976c8733f17b",
+    "qa_dir": "/Users/filipepinto/Projects/curriculum_builder_wt/p03-recovery/plans_internal/refactor_repo/checkpoints/P03/QA",
+    "finalized_at": "2026-08-16T20:01:44.341129+00:00"
+  },
+  "config": {
+    "criteria": "# Refactor checkpoint QA criteria v1\n\nThe gated checkpoint report must satisfy every condition below.\n\n1. It identifies the executing prompt, the specification version, the baseline\n   commit, the starting dirty state, and the exact artifact version being judged.\n2. It lists every changed, created, moved, and deleted path and demonstrates that\n   each change is within the prompt's authorized mutation boundary. Pre-existing\n   user changes remain byte-for-byte outside the checkpoint delta.\n3. It records every prompt TEST with its exact command or inspection procedure,\n   exit status, material output, and a PASS or FAIL conclusion supported by that\n   evidence. A skipped, unavailable, or inconclusive check is not PASS.\n4. It demonstrates the prompt's prerequisites, explicit non-targets, stop\n   conditions, and rollback procedure were honored. No successor prompt's mutation\n   authority may be borrowed by the current checkpoint.\n5. It identifies residual old identities, paths, imports, output consumers, schema\n   references, or failures relevant to the prompt and classifies each as resolved,\n   a recorded exception, pre-existing, or a blocker. Silent residuals are defects.\n6. It includes the post-change git status and a reviewable diff or immutable digest\n   for every deliverable, plus the verification result at the rollback checkpoint.\n7. It does not claim completion when evidence is missing, collection is incomplete,\n   commands failed, or the QA transport is unavailable. Completion additionally\n   requires a witnessed and verified `QA_PASSED` result, which is established by the\n   gate rather than asserted inside the artifact the gate is judging:\n\n   7.1 The checkpoint submitted for review must identify itself as `QA_PENDING`.\n   7.2 It must not claim completion and must not claim `QA_PASSED`. Asserting either\n       inside the submitted checkpoint is itself a defect under this criterion.\n   7.3 It must publish an immutable final digest (sha256) of the exact submitted\n       checkpoint and of every deliverable it relies on. The independent QA gate\n       evaluates that digest-identified checkpoint and nothing else.\n   7.4 `QA_PASSED` is recorded only in a separate, gate-generated verdict and\n       verification receipt produced by the sanctioned gate channel. The executing\n       agent never writes that verdict, and no part of it is written into the\n       submitted checkpoint.\n   7.5 That external verified receipt, bound to the checkpoint's immutable digest,\n       satisfies the completion gate on its own. Satisfying the completion gate must\n       not require modifying, re-versioning, or re-submitting the reviewed checkpoint.\n       A submitted checkpoint is therefore never required to contain the result of the\n       review it is undergoing.\n   7.6 Any post-verdict completion summary, commit message, ledger entry, or status\n       report must reference the immutable checkpoint digest and the QA receipt, and\n       must not replace, mutate, or supersede the reviewed artifact.\n\n   Criterion 7 is not waived by this clarification. Independent QA remains mandatory,\n   a checkpoint asserting completion before a witnessed verified `QA_PASSED` receipt\n   exists is still defective, and a missing, unwitnessed, unverifiable, or\n   digest-mismatched receipt still blocks completion.\n\n---\n\nAmendment provenance (2026-08-16): criteria 1-6 are unchanged from the original v1\ntext, whose sha256 is `bfd035a29b675df9718dc694a945ff1a4e901f2b3d8e653541a2b98b2cc48a42`\nand whose literal content is preserved at\n`plans_internal/refactor_repo/checkpoints/P03/evidence/criteria_amendment/checkpoint_qa_criteria.v1.PRE_AMENDMENT.md`.\nCriterion 7 was clarified under explicit operator authorization after the P03 QA\nsession `01a00b6a-8a98-7e30-a456-d574b9f40355` terminated `QA_FAILED /\nMAX_ITERATIONS_EXHAUSTED` and an independent postmortem session\n(`01a00be9-9be1-7480-afc5-5ddc6cec54d1`) classified the failure\n`SPECIFICATION_DEFICIENT`: the original wording required the artifact under review to\nalready contain the successful result of that same review, so every revision produced\na new unverified artifact and the gate could never converge. That postmortem is\npreserved at\n`plans_internal/refactor_repo/checkpoints/P03/superseded_sessions/QA-2026-08-16-exhausted/postmortem.md`.\nVerdicts issued against the pre-amendment text (P00, P00A, P02S and the superseded P03\nsession) remain interpretable against the preserved pre-amendment file.\n",
+    "focus": "SESSION CONTEXT, disclosed in full. This is the third QA session for P03, and it runs on the exec transport because the app-server transport returned QA_ERROR twice with zero rounds completed. Session 1 (01a00b6a) terminated QA_FAILED/MAX_ITERATIONS_EXHAUSTED and its independent postmortem (grounded here) classified it SPECIFICATION_DEFICIENT because criterion 7 required the artifact under review to already contain the result of that same review; criterion 7 was then clarified into a gate-action form, sub-clauses 7.1-7.6, with criteria 1-6 byte-unchanged. Session 2 (01a00c05) ran 2 rounds; its round-2 verdict RETIRED both of its round-1 findings, and it was then retired deliberately for two configuration defects it could not escape: qa_gate.py fixes --focus at start so every round re-published superseded digests, and two of its grounding sources necessarily change between rounds so verify would always report GROUNDING_CHANGED. Both prior sessions and all their rounds are preserved under checkpoints/P03/superseded_sessions/ and are cited in the checkpoint's sections 1.1, 1.2 and 1.3. No finding from either session was discarded; treat this as a fresh, independent assessment and hold nothing back because an earlier session retired something. DIGEST BINDING: do not rely on this focus text for digests. Read plans_internal/refactor_repo/checkpoints/P03/evidence/checkpoint_digest.json, which is written after every other deliverable is frozen and publishes the sha256 of the submitted report and of evidence/digest_manifest.json; verify both by re-hashing those files yourself. Under clarified criterion 7 the submitted checkpoint MUST declare QA_PENDING and MUST NOT contain a QA_PASSED result: do not treat the absence of a passing verdict inside the artifact as a defect, and do not require the artifact to be revised in order to record your verdict. Your verdict is the separate receipt. WHERE TO SPEND ATTENTION: whether the literal evidence under plans_internal/refactor_repo/checkpoints/P03/ actually supports each PASS conclusion. Specifically (a) that the Test 2 pre-move inspection genuinely preceded the first move, checked against execution journal ordering ACT-039/040 before ACT-041/042 and against evidence/premove_inspection/; (b) that the re-executed move really is equivalent to the reviewed delta, per evidence/move_execution/; (c) that the 237-path ledger and the 230-file digest manifest are complete and accurate for the current worktree state, including the gate-owned QA/ and deprecated/ paths the checkpoint discloses in section 2.4; (d) that the 29 new-vs-t0 failures in t5_final_tree/ really are exactly the p04_handoff_allowlist with no P03-caused regression hidden among them; and (e) that the ownership adjudication in the resolved manifest's path_ownership_model actually covers all 19 overlaps the scan reports.",
+    "threshold": "blocker",
+    "max_iterations": 5,
+    "timeout_seconds": 900,
+    "retries": 2,
+    "model": null,
+    "effort": null,
+    "transport": "exec",
+    "allow_execution": false,
+    "grounding": [
+      "/Users/filipepinto/Projects/curriculum_builder_wt/p03-recovery/plans_internal/refactor_repo/prompts/P03_source_move.prompt.v3.yaml",
+      "/Users/filipepinto/Projects/curriculum_builder_wt/p03-recovery/plans_internal/refactor_repo/checkpoints/P03/superseded_sessions/QA-2026-08-16-exhausted/postmortem.md"
+    ]
+  },
+  "thread_id": "01a00c21-97f5-77e3-98fc-83aa27047877"
+}

@@ -12,7 +12,7 @@ from pathlib import Path
 
 import pytest
 
-from runtime.checks import CheckFailure, check_claim_entailment
+from curriculum_factory.checks import CheckFailure, check_claim_entailment
 from tests.runtime import unit_fixture
 
 ENGINE = unit_fixture.ENGINE

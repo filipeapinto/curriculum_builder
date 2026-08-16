@@ -46,12 +46,12 @@ from langgraph.graph import END, START, StateGraph
 from langgraph.graph.state import CompiledStateGraph
 from langgraph.types import Send
 
-from runtime.langgraph_factory import graph as G
-from runtime.langgraph_factory import model_nodes as mn
-from runtime.langgraph_factory import routing as R
-from runtime.langgraph_factory import transport as tp
-from runtime.langgraph_factory.nodes import NODE_CATALOGUE, node_registry
-from runtime.langgraph_factory.state import (
+from curriculum_factory.langgraph_factory import graph as G
+from curriculum_factory.langgraph_factory import model_nodes as mn
+from curriculum_factory.langgraph_factory import routing as R
+from curriculum_factory.langgraph_factory import transport as tp
+from curriculum_factory.langgraph_factory.nodes import NODE_CATALOGUE, node_registry
+from curriculum_factory.langgraph_factory.state import (
     FACTORY_STATE_FIELDS,
     FactoryInput,
     FactoryOutput,
@@ -60,8 +60,8 @@ from runtime.langgraph_factory.state import (
 )
 
 REPO_ROOT = Path(__file__).resolve().parents[2]
-GRAPH_PY = REPO_ROOT / "runtime" / "langgraph_factory" / "graph.py"
-ROUTING_PY = REPO_ROOT / "runtime" / "langgraph_factory" / "routing.py"
+GRAPH_PY = REPO_ROOT / "src" / "curriculum_factory" / "langgraph_factory" / "graph.py"
+ROUTING_PY = REPO_ROOT / "src" / "curriculum_factory" / "langgraph_factory" / "routing.py"
 
 # Spec 8.1: "There is no edge from a model directly to acceptance, terminal,
 # checkpoint initialization, unit selection, workbook assembly, or release",
@@ -205,7 +205,7 @@ def test_the_available_catalogue_compiles_against_real_node_callables(compiled):
 
     for node_id, body in bindings.items():
         module = G._binding_record(node_id, body)["module"]
-        assert module.startswith("runtime.langgraph_factory."), (node_id, module)
+        assert module.startswith("curriculum_factory.langgraph_factory."), (node_id, module)
 
 
 def test_start_has_exactly_one_edge_and_d98_is_the_only_registered_end_edge(compiled):
@@ -221,7 +221,7 @@ def test_start_has_exactly_one_edge_and_d98_is_the_only_registered_end_edge(comp
     # D98's body is the real N22-owned terminal writer, not a local shim.
     d98 = node_registry()["D98_WRITE_TERMINAL"]
     assert G._binding_record("D98_WRITE_TERMINAL", d98)["module"] == (
-        "runtime.langgraph_factory.nodes.terminal"
+        "curriculum_factory.langgraph_factory.nodes.terminal"
     )
 
     # LangGraph draws a dead-end node as reaching END. In this skeleton the only
@@ -863,10 +863,10 @@ def test_production_graph_imports_contain_no_fallback_controller():
             imported.update(f"{node.module or ''}.{alias.name}" for alias in node.names)
 
     for forbidden in (
-        "runtime.curriculum_factory_graph",
+        "curriculum_factory.curriculum_factory_graph",
         "curriculum_factory_graph",
         "CurriculumFactoryGraph",
-        "runtime.session_bridge",
+        "curriculum_factory.session_bridge",
     ):
         assert not any(forbidden in name for name in imported), forbidden
 
@@ -946,7 +946,7 @@ def test_the_node_boundary_classifies_an_unexpected_exception_as_a_system_failur
     reached this exact boundary and was swallowed this way).
     """
 
-    from runtime.langgraph_factory.nodes import terminal as nt
+    from curriculum_factory.langgraph_factory.nodes import terminal as nt
 
     def body(state, context):
         raise ValueError("unexpected")
@@ -984,8 +984,8 @@ def test_deterministic_nodes_own_expected_failure_catch_also_builds_a_terminal_c
     a JSON object" rejection this whole finding lineage keeps tracing back to.
     """
 
-    from runtime.langgraph_factory import nodes as node_pkg
-    from runtime.langgraph_factory.nodes import terminal as nt2
+    from curriculum_factory.langgraph_factory import nodes as node_pkg
+    from curriculum_factory.langgraph_factory.nodes import terminal as nt2
 
     @node_pkg.deterministic_node("D05_SELECT_NEXT_UNIT")
     def body(projection, context):

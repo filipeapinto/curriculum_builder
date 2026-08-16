@@ -15,14 +15,14 @@ import jsonschema
 import pytest
 import yaml
 
-from runtime.langgraph_factory import transport as tp
-from runtime.langgraph_factory.artifacts import (
+from curriculum_factory.langgraph_factory import transport as tp
+from curriculum_factory.langgraph_factory.artifacts import (
     UNIT_SCOPE,
     ArtifactStore,
     ArtifactStream,
     canonical_json_bytes,
 )
-from runtime.langgraph_factory.egress import (
+from curriculum_factory.langgraph_factory.egress import (
     PROVIDER_DATA_CLASSES,
     AuthorizationDenied,
     AuthorizationRecord,
@@ -402,7 +402,7 @@ def test_sandboxed_worker_cannot_read_repository_output_or_secrets(tmp_path: Pat
     parent.write_text("previous attempts\n", encoding="utf-8")
     secret = home.parent / "credentials.env"
     secret.write_text("OPENAI_API_KEY=sk-not-a-real-key\n", encoding="utf-8")
-    repo_file = tp.REPO_ROOT / "runtime" / "langgraph_factory" / "transport.py"
+    repo_file = tp.REPO_ROOT / "src" / "curriculum_factory" / "langgraph_factory" / "transport.py"
 
     proof = tp.prove_workspace_isolation(
         workspace=workspace, home=home,
@@ -420,7 +420,7 @@ def test_capability_proof_is_satisfied_on_this_host(tmp_path: Path):
     try:
         proof = tp.prove_transport_capabilities(
             guard=guard, probe_root=tmp_path / "probe",
-            forbidden_paths=[tp.REPO_ROOT / "pyproject.toml", tp.REPO_ROOT / "runtime"],
+            forbidden_paths=[tp.REPO_ROOT / "pyproject.toml", tp.REPO_ROOT / "src" / "curriculum_factory"],
             identity_help={"codex": "--json", "claude": "--json-schema"})
     finally:
         guard.uninstall()
@@ -461,7 +461,7 @@ def test_the_real_cli_starts_sandboxed_yet_cannot_read_outside_the_workspace(
         cwd=workspace, env=environment, timeout_seconds=120)
     assert started.returncode == 0, started.stderr
 
-    for forbidden in (secret, tp.REPO_ROOT / "runtime" / "model_worker.py"):
+    for forbidden in (secret, tp.REPO_ROOT / "src" / "curriculum_factory" / "model_worker.py"):
         blocked = tp.run_process(
             tp.build_sandboxed_argv(["/bin/cat", str(forbidden)], profile_path=profile),
             cwd=workspace, env=environment, timeout_seconds=60)
@@ -1611,7 +1611,7 @@ def test_the_production_transport_exposes_the_capability_surface_the_nodes_call(
 
 
 def test_every_required_capability_has_exactly_one_local_probe():
-    from runtime.langgraph_factory.nodes.inputs import REQUIRED_CAPABILITIES
+    from curriculum_factory.langgraph_factory.nodes.inputs import REQUIRED_CAPABILITIES
 
     assert set(tp.CAPABILITY_PROBES) == set(REQUIRED_CAPABILITIES)
 
@@ -2033,7 +2033,7 @@ def test_a_blank_page_is_a_finding_on_that_page_not_a_transport_fault(tmp_path: 
 
 def test_every_authoritative_visual_kind_has_a_deterministic_renderer():
     """D10 sends exactly these kinds to D11, so a kind with no renderer is unrenderable."""
-    from runtime.langgraph_factory.nodes.visuals import AUTHORITATIVE_VISUAL_KINDS
+    from curriculum_factory.langgraph_factory.nodes.visuals import AUTHORITATIVE_VISUAL_KINDS
 
     assert set(tp.DETERMINISTIC_VISUAL_RENDERERS) == set(AUTHORITATIVE_VISUAL_KINDS)
 

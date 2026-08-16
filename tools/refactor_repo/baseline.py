@@ -82,14 +82,14 @@ def capture_tests_and_gates(repo_root: Path) -> dict:
 
 def capture_documented_commands(repo_root: Path) -> list[dict]:
     return [
-        run([sys.executable, "-m", "runtime.run_curriculum", "--help"], cwd=repo_root),
+        run([sys.executable, "-m", "curriculum_factory.run_curriculum", "--help"], cwd=repo_root / "src"),
     ]
 
 
 def capture_import_origin(repo_root: Path) -> dict:
-    code = "import sys; sys.path.insert(0, '.'); import runtime; print(runtime.__file__)"
+    code = "import sys; sys.path.insert(0, '.'); import curriculum_factory; print(curriculum_factory.__file__)"
     result = subprocess.run(
-        [sys.executable, "-c", code], cwd=repo_root, capture_output=True, text=True, timeout=30,
+        [sys.executable, "-c", code], cwd=repo_root / "src", capture_output=True, text=True, timeout=30,
     )
     origin = result.stdout.strip()
     relative = None
@@ -107,9 +107,9 @@ def capture_import_origin(repo_root: Path) -> dict:
 
 def capture_cli_help_and_invalid_input(repo_root: Path) -> list[dict]:
     return [
-        run([sys.executable, "-m", "runtime.run_curriculum", "--help"], cwd=repo_root),
-        run([sys.executable, "-m", "runtime.run_curriculum"], cwd=repo_root),  # missing required args
-        run([sys.executable, "-m", "runtime.run_curriculum", "--engine-root", "x"], cwd=repo_root),  # partial args
+        run([sys.executable, "-m", "curriculum_factory.run_curriculum", "--help"], cwd=repo_root / "src"),
+        run([sys.executable, "-m", "curriculum_factory.run_curriculum"], cwd=repo_root / "src"),  # missing required args
+        run([sys.executable, "-m", "curriculum_factory.run_curriculum", "--engine-root", "x"], cwd=repo_root / "src"),  # partial args
     ]
 
 
@@ -133,8 +133,8 @@ def capture_schema_resolution(repo_root: Path) -> list[dict]:
 
 
 def capture_output_containment(repo_root: Path) -> dict:
-    sys.path.insert(0, str(repo_root))
-    from runtime.io import require_internal_output, BoundaryError  # noqa: E402
+    sys.path.insert(0, str(repo_root / "src"))
+    from curriculum_factory.io import require_internal_output, BoundaryError  # noqa: E402
 
     accepted = {"raised": False, "case": "engine/outputs/run1"}
     try:

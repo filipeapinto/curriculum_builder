@@ -8,7 +8,7 @@ import subprocess
 import tempfile
 import unittest
 
-from runtime.gemini import (GeminiSettingsError, audit_stream_events, max_effort_settings,
+from curriculum_factory.gemini import (GeminiSettingsError, audit_stream_events, max_effort_settings,
                             resolve_alias, write_run_local_settings)
 
 
@@ -65,7 +65,7 @@ class GeminiSettingsTests(unittest.TestCase):
             before = user_settings.read_bytes() if user_settings.exists() else None
             environment = dict(os.environ)
             environment["GEMINI_CLI_SYSTEM_SETTINGS_PATH"] = str(settings_path)
-            result = subprocess.run(["node", str(Path(__file__).resolve().parents[2] / "runtime/resolve_gemini_settings.mjs"),
+            result = subprocess.run(["node", str(Path(__file__).resolve().parents[2] / "src/curriculum_factory/resolve_gemini_settings.mjs"),
                                      str(cli_root), self.MODEL], cwd=root, env=environment,
                                     capture_output=True, text=True)
             self.assertEqual(result.returncode, 0, result.stderr)

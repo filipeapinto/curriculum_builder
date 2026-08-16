@@ -27,9 +27,9 @@
   "node_id": "N11_STATE_REDUCERS",
   "outputs": {
     "plans/26_langgraph_curriculum_factory/results/N11_STATE_REDUCERS.result.v1.md": "9633ac27f94f1fa97ebf50c0119eb76124f233c3f75311b07697b3281818a0e9",
-    "runtime/langgraph_factory/reducers.py": "05dc3632dd378946ddc1aee1ca725f99f0be7e1c69b516c00061aee336fb26cf",
-    "runtime/langgraph_factory/state.py": "428c78edd53b73fd3458d469b36e1bb528dea37d4565f3b37995d63e4a075167",
-    "tests/runtime/test_plan26_state_reducers.py": "b10f89014c2e17e6e751f38b978a4af4e69be36f55f1c95791699b7f217f51bd"
+    "src/curriculum_factory/langgraph_factory/reducers.py": "05dc3632dd378946ddc1aee1ca725f99f0be7e1c69b516c00061aee336fb26cf",
+    "src/curriculum_factory/langgraph_factory/state.py": "428c78edd53b73fd3458d469b36e1bb528dea37d4565f3b37995d63e4a075167",
+    "tests/runtime/test_plan26_state_reducers.py": "f004f588708103b94e6a2825cbf4bd65cde3ed24f9d618e6b13ee547bd35d2d0"
   },
   "prompt_sha256": "9a04739d02833f7381c7f3441c8d16ae38329bcd0e092c1ab1d9c13936e0f4d3",
   "schema_version": 1,

@@ -9,8 +9,8 @@ import re
 import unittest
 from pathlib import Path
 
-from runtime.langgraph_factory import reducers as R
-from runtime.langgraph_factory.state import (
+from curriculum_factory.langgraph_factory import reducers as R
+from curriculum_factory.langgraph_factory.state import (
     FACTORY_INPUT_FIELDS,
     FACTORY_OUTPUT_FIELDS,
     FACTORY_STATE_FIELDS,
@@ -620,7 +620,7 @@ class FailClosedContractTests(unittest.TestCase):
 
     def test_no_langgraph_import_in_state_or_reducers(self):
         for module in ("state.py", "reducers.py"):
-            source = (REPO_ROOT / "runtime/langgraph_factory" / module).read_text(encoding="utf-8")
+            source = (REPO_ROOT / "src/curriculum_factory/langgraph_factory" / module).read_text(encoding="utf-8")
             self.assertNotIn("langgraph", source.replace("langgraph_factory", ""))
 
 

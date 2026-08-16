@@ -1,0 +1,67 @@
+repo-wide postcondition scan: {'files_scanned': 263, 'files_with_residuals': 32, 'residual_count': 51}
+distinct files with residuals: 32   total residual diagnostics: 51
+
+exception ledger patterns:
+    plans/26_langgraph_curriculum_factory/results/evidence/N20_GRAPH_COMPILER/deferred_victim_simulation_gen9.py   [archived-plan-evidence-runtime-references]
+    plans/26_langgraph_curriculum_factory/results/evidence/N20_GRAPH_COMPILER/widening_simulation_gen9.py   [archived-plan-evidence-runtime-references]
+    plans/27_langgraph_curriculum_factory_remediation/execution_package_v2/release_candidate/rc13/QA/exec/*.py   [archived-plan-evidence-runtime-references]
+    plans/27_langgraph_curriculum_factory_remediation/execution_package_v2/release_candidate/rc14/QA/exec/rc14_unfrozen_verifier_dependency_repro.py   [archived-plan-evidence-runtime-references]
+    plans/27_langgraph_curriculum_factory_remediation/execution_package_v2/release_candidate/rc15/QA/exec/test_rc15_sandbox_probe.py   [archived-plan-evidence-runtime-references]
+    plans/27_langgraph_curriculum_factory_remediation/execution_package_v2/release_candidate/rc16/QA/exec/rc16_ancestor_metadata_repro.py   [archived-plan-evidence-runtime-references]
+    plans/27_langgraph_curriculum_factory_remediation/execution_package_v2/release_candidate/rc18/QA/exec/rc18_staged_candidate_mutation_repro.py   [archived-plan-evidence-runtime-references]
+    plans/27_langgraph_curriculum_factory_remediation/execution_package_v2/release_candidate/rc19/QA/exec/*.py   [archived-plan-evidence-runtime-references]
+    plans/27_langgraph_curriculum_factory_remediation/execution_package_v2/release_candidate/rc21/QA/exec/qa_rc21_adversarial_probe.py   [archived-plan-evidence-runtime-references]
+    plans/27_langgraph_curriculum_factory_remediation/execution_package_v2/release_candidate/rc22/QA/exec/*.py   [archived-plan-evidence-runtime-references]
+    plans/27_langgraph_curriculum_factory_remediation/execution_package_v2/release_candidate/rc28/QA/exec/*.py   [archived-plan-evidence-runtime-references]
+    plans_internal/refactor_repo/deprecated/phrase_rebrand_v1/assets/run_rebrand_with_log.py   [deprecated-rebrand-asset]
+    tests/refactor_repo/codemod/fixtures/aliased_import/before.py   [codemod-fixture-before-files]
+    tests/refactor_repo/codemod/fixtures/ambiguous_shadowed_reassign/before.py   [codemod-fixture-before-files]
+    tests/refactor_repo/codemod/fixtures/comment_non_target/before.py   [codemod-fixture-before-files]
+    tests/refactor_repo/codemod/fixtures/dotted_submodule_import/before.py   [codemod-fixture-before-files]
+    tests/refactor_repo/codemod/fixtures/from_import_aliased_module/before.py   [codemod-fixture-before-files]
+    tests/refactor_repo/codemod/fixtures/malformed_python/after.py   [codemod-fixture-malformed-python]
+    tests/refactor_repo/codemod/fixtures/malformed_python/before.py   [codemod-fixture-malformed-python]
+    tests/refactor_repo/codemod/fixtures/mixed_old_new/before.py   [codemod-fixture-before-files]
+    tests/refactor_repo/codemod/fixtures/multiline_from_import/before.py   [codemod-fixture-before-files]
+    tests/refactor_repo/codemod/fixtures/simple_import/before.py   [codemod-fixture-before-files]
+    tests/refactor_repo/codemod/fixtures/string_literal_non_target/before.py   [codemod-fixture-before-files]
+    tests/refactor_repo/codemod/test_rewrite_runtime_imports.py::test_live_dry_run_rehearsal_reconciles_with_p00_and_writes_nothing   [checkpoint-scoped-predecessor-self-tests-superseded-by-p03-RESOLVED]
+    tests/refactor_repo/test_packaging_skeleton.py::test_runtime_directory_is_unchanged_by_this_checkpoint   [checkpoint-scoped-predecessor-self-tests-superseded-by-p03-RESOLVED]
+    tests/refactor_repo/test_packaging_skeleton.py::test_src_curriculum_factory_is_importable_without_installation   [checkpoint-scoped-predecessor-self-tests-superseded-by-p03-RESOLVED]
+    tests/refactor_repo/test_packaging_skeleton.py::test_src_curriculum_factory_package_exists_and_is_minimal   [checkpoint-scoped-predecessor-self-tests-superseded-by-p03-RESOLVED]
+    tools/refactor_repo/baseline.py   [tooling-live-import-runtime-io-RESOLVED]
+
+OK           ( 1) plans/26_langgraph_curriculum_factory/results/evidence/N20_GRAPH_COMPILER/deferred_victim_simulation_gen9.py  <- archived-plan-evidence-runtime-references
+OK           ( 3) plans/26_langgraph_curriculum_factory/results/evidence/N20_GRAPH_COMPILER/widening_simulation_gen9.py  <- archived-plan-evidence-runtime-references
+OK           ( 3) plans/27_langgraph_curriculum_factory_remediation/execution_package_v2/release_candidate/rc13/QA/exec/rc13_content_revalidation_repro.py  <- archived-plan-evidence-runtime-references
+OK           ( 2) plans/27_langgraph_curriculum_factory_remediation/execution_package_v2/release_candidate/rc13/QA/exec/rc13_cross_node_replay_repro.py  <- archived-plan-evidence-runtime-references
+OK           ( 1) plans/27_langgraph_curriculum_factory_remediation/execution_package_v2/release_candidate/rc13/QA/exec/rc13_d02_incomplete_contract_repro.py  <- archived-plan-evidence-runtime-references
+OK           ( 2) plans/27_langgraph_curriculum_factory_remediation/execution_package_v2/release_candidate/rc13/QA/exec/rc13_d08_schema_drift_repro.py  <- archived-plan-evidence-runtime-references
+OK           ( 2) plans/27_langgraph_curriculum_factory_remediation/execution_package_v2/release_candidate/rc13/QA/exec/rc13_visual_revalidation_repro.py  <- archived-plan-evidence-runtime-references
+OK           ( 3) plans/27_langgraph_curriculum_factory_remediation/execution_package_v2/release_candidate/rc14/QA/exec/rc14_unfrozen_verifier_dependency_repro.py  <- archived-plan-evidence-runtime-references
+OK           ( 3) plans/27_langgraph_curriculum_factory_remediation/execution_package_v2/release_candidate/rc15/QA/exec/test_rc15_sandbox_probe.py  <- archived-plan-evidence-runtime-references
+OK           ( 1) plans/27_langgraph_curriculum_factory_remediation/execution_package_v2/release_candidate/rc16/QA/exec/rc16_ancestor_metadata_repro.py  <- archived-plan-evidence-runtime-references
+OK           ( 1) plans/27_langgraph_curriculum_factory_remediation/execution_package_v2/release_candidate/rc18/QA/exec/rc18_staged_candidate_mutation_repro.py  <- archived-plan-evidence-runtime-references
+OK           ( 1) plans/27_langgraph_curriculum_factory_remediation/execution_package_v2/release_candidate/rc19/QA/exec/qa_rc19_candidate_mutation_probe.py  <- archived-plan-evidence-runtime-references
+OK           ( 1) plans/27_langgraph_curriculum_factory_remediation/execution_package_v2/release_candidate/rc19/QA/exec/qa_rc19_d02_boundary_probe.py  <- archived-plan-evidence-runtime-references
+OK           ( 2) plans/27_langgraph_curriculum_factory_remediation/execution_package_v2/release_candidate/rc19/QA/exec/qa_rc19_full_replay_invariance_probe.py  <- archived-plan-evidence-runtime-references
+OK           ( 1) plans/27_langgraph_curriculum_factory_remediation/execution_package_v2/release_candidate/rc19/QA/exec/rc19_required_verifier_probes.py  <- archived-plan-evidence-runtime-references
+OK           ( 2) plans/27_langgraph_curriculum_factory_remediation/execution_package_v2/release_candidate/rc21/QA/exec/qa_rc21_adversarial_probe.py  <- archived-plan-evidence-runtime-references
+OK           ( 2) plans/27_langgraph_curriculum_factory_remediation/execution_package_v2/release_candidate/rc22/QA/exec/qa_rc22_adversarial_probe.py  <- archived-plan-evidence-runtime-references
+OK           ( 1) plans/27_langgraph_curriculum_factory_remediation/execution_package_v2/release_candidate/rc22/QA/exec/qa_rc22_round2_probe.py  <- archived-plan-evidence-runtime-references
+OK           ( 1) plans/27_langgraph_curriculum_factory_remediation/execution_package_v2/release_candidate/rc28/QA/exec/qa_identity_sandbox_plugin.py  <- archived-plan-evidence-runtime-references
+OK           ( 2) plans/27_langgraph_curriculum_factory_remediation/execution_package_v2/release_candidate/rc28/QA/exec/qa_rc28_adversarial_probe.py  <- archived-plan-evidence-runtime-references
+OK           ( 1) plans_internal/refactor_repo/deprecated/phrase_rebrand_v1/assets/run_rebrand_with_log.py  <- deprecated-rebrand-asset
+OK           ( 1) tests/refactor_repo/codemod/fixtures/aliased_import/before.py  <- codemod-fixture-before-files
+OK           ( 1) tests/refactor_repo/codemod/fixtures/ambiguous_shadowed_reassign/before.py  <- codemod-fixture-before-files
+OK           ( 2) tests/refactor_repo/codemod/fixtures/comment_non_target/before.py  <- codemod-fixture-before-files
+OK           ( 2) tests/refactor_repo/codemod/fixtures/dotted_submodule_import/before.py  <- codemod-fixture-before-files
+OK           ( 1) tests/refactor_repo/codemod/fixtures/from_import_aliased_module/before.py  <- codemod-fixture-before-files
+OK           ( 1) tests/refactor_repo/codemod/fixtures/malformed_python/after.py  <- codemod-fixture-malformed-python
+OK           ( 1) tests/refactor_repo/codemod/fixtures/malformed_python/before.py  <- codemod-fixture-malformed-python
+OK           ( 2) tests/refactor_repo/codemod/fixtures/mixed_old_new/before.py  <- codemod-fixture-before-files
+OK           ( 1) tests/refactor_repo/codemod/fixtures/multiline_from_import/before.py  <- codemod-fixture-before-files
+OK           ( 2) tests/refactor_repo/codemod/fixtures/simple_import/before.py  <- codemod-fixture-before-files
+OK           ( 1) tests/refactor_repo/codemod/fixtures/string_literal_non_target/before.py  <- codemod-fixture-before-files
+
+unclassified residual files: 0

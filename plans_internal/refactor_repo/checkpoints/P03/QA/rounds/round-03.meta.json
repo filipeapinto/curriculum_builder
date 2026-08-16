@@ -1,0 +1,54 @@
+{
+  "attempt": 1,
+  "exit_code": 0,
+  "duration_seconds": 46.22,
+  "transport": "exec",
+  "session_id": "01a00c21-97f5-77e3-98fc-83aa27047877",
+  "thread_id": "01a00c21-97f5-77e3-98fc-83aa27047877",
+  "turn_id": null,
+  "usage": {
+    "input_tokens": 813733,
+    "cached_input_tokens": 725248,
+    "cache_write_input_tokens": 0,
+    "output_tokens": 6383,
+    "reasoning_output_tokens": 2329
+  },
+  "model": null,
+  "effort": null,
+  "plugin_version": null,
+  "plugin_lib_path": null,
+  "argv": [
+    "codex",
+    "exec",
+    "resume",
+    "--json",
+    "--skip-git-repo-check",
+    "--output-schema",
+    "/Users/filipepinto/Projects/curriculum_builder_wt/p03-recovery/.claude/skills/qa-gate-codex-run/scripts/verdict.schema.json",
+    "-o",
+    "/Users/filipepinto/Projects/curriculum_builder_wt/p03-recovery/plans_internal/refactor_repo/checkpoints/P03/QA/rounds/round-03.response.json",
+    "01a00c21-97f5-77e3-98fc-83aa27047877",
+    "<prompt>"
+  ],
+  "started_at": "2026-08-16T20:00:58.098143+00:00",
+  "response_sha256": "658ef1797fabd8e21b61786be860db56e43af0f8ca5c637163b37ada61b5cb8f",
+  "request_sha256": "f521c00a490d34cd978194215a5468165817066125adedaf32603648be172769",
+  "round": 3,
+  "cwd": "/Users/filipepinto/Projects/curriculum_builder_wt/p03-recovery/plans_internal/refactor_repo/checkpoints/P03",
+  "artifact_path": "/Users/filipepinto/Projects/curriculum_builder_wt/p03-recovery/plans_internal/refactor_repo/checkpoints/P03/P03_recovery_checkpoint.v5.md",
+  "artifact_sha256": "fb9ca3801c880777ea28add3a8e030cb5830eea74fdd9ca9e02da9637b1ef1c1",
+  "grounding": [
+    {
+      "path": "/Users/filipepinto/Projects/curriculum_builder_wt/p03-recovery/plans_internal/refactor_repo/prompts/P03_source_move.prompt.v3.yaml",
+      "sha256": "0f2b94c4064eb2ea9a750e2e813919b4f64470158459697aa9b8ea0a62489334"
+    },
+    {
+      "path": "/Users/filipepinto/Projects/curriculum_builder_wt/p03-recovery/plans_internal/refactor_repo/checkpoints/P03/superseded_sessions/QA-2026-08-16-exhausted/postmortem.md",
+      "sha256": "f7915663feddc0c4bcfe48ca3c95df35b5539d83a779332e64b34ed9ea7e55b5"
+    }
+  ],
+  "chain_prev": "886471774b5331d87b57b75fc2fb186c79d2c35326a6b3a34291e697ceededba",
+  "chain": "fe16ce576755d3e09506a16af9beea09f5ecf5c92884245a74ce976c8733f17b",
+  "rollout_file": "/Users/filipepinto/.codex/sessions/2026/08/16/rollout-2026-08-16T15-52-03-01a00c21-97f5-77e3-98fc-83aa27047877.jsonl",
+  "timestamp": "2026-08-16T20:01:44.329807+00:00"
+}

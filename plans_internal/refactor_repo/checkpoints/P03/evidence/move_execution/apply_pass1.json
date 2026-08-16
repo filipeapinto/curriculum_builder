@@ -1,0 +1,1407 @@
+{
+  "diagnostics": [
+    {
+      "column": 0,
+      "detail": "from-import module 'runtime.langgraph_factory.artifacts' -> 'curriculum_factory.langgraph_factory.artifacts'",
+      "file": "src/curriculum_factory/langgraph_factory/evidence.py",
+      "kind": "rewrite_import",
+      "line": 20,
+      "severity": "info"
+    },
+    {
+      "column": 39,
+      "detail": "identifier 'runtime' resolves to a non-import binding (['LOCAL']); left untouched (ambiguous/shadowed, not the production import root)",
+      "file": "src/curriculum_factory/langgraph_factory/graph.py",
+      "kind": "non_target_shadowed",
+      "line": 375,
+      "severity": "info"
+    },
+    {
+      "column": 26,
+      "detail": "identifier 'runtime' resolves to a non-import binding (['LOCAL']); left untouched (ambiguous/shadowed, not the production import root)",
+      "file": "src/curriculum_factory/langgraph_factory/graph.py",
+      "kind": "non_target_shadowed",
+      "line": 376,
+      "severity": "info"
+    },
+    {
+      "column": 0,
+      "detail": "from-import module 'runtime.langgraph_factory.artifacts' -> 'curriculum_factory.langgraph_factory.artifacts'",
+      "file": "src/curriculum_factory/langgraph_factory/persistence.py",
+      "kind": "rewrite_import",
+      "line": 38,
+      "severity": "info"
+    },
+    {
+      "column": 0,
+      "detail": "from-import module 'runtime.langgraph_factory' -> 'curriculum_factory.langgraph_factory'",
+      "file": "src/curriculum_factory/run_curriculum.py",
+      "kind": "rewrite_import",
+      "line": 42,
+      "severity": "info"
+    },
+    {
+      "column": 0,
+      "detail": "from-import module 'runtime.langgraph_factory' -> 'curriculum_factory.langgraph_factory'",
+      "file": "src/curriculum_factory/run_curriculum.py",
+      "kind": "rewrite_import",
+      "line": 43,
+      "severity": "info"
+    },
+    {
+      "column": 0,
+      "detail": "from-import module 'runtime.langgraph_factory.artifacts' -> 'curriculum_factory.langgraph_factory.artifacts'",
+      "file": "src/curriculum_factory/run_curriculum.py",
+      "kind": "rewrite_import",
+      "line": 44,
+      "severity": "info"
+    },
+    {
+      "column": 0,
+      "detail": "from-import module 'runtime.langgraph_factory.egress' -> 'curriculum_factory.langgraph_factory.egress'",
+      "file": "src/curriculum_factory/run_curriculum.py",
+      "kind": "rewrite_import",
+      "line": 45,
+      "severity": "info"
+    },
+    {
+      "column": 0,
+      "detail": "from-import module 'runtime.langgraph_factory.graph' -> 'curriculum_factory.langgraph_factory.graph'",
+      "file": "src/curriculum_factory/run_curriculum.py",
+      "kind": "rewrite_import",
+      "line": 54,
+      "severity": "info"
+    },
+    {
+      "column": 0,
+      "detail": "from-import module 'runtime.langgraph_factory.nodes.inputs' -> 'curriculum_factory.langgraph_factory.nodes.inputs'",
+      "file": "src/curriculum_factory/run_curriculum.py",
+      "kind": "rewrite_import",
+      "line": 55,
+      "severity": "info"
+    },
+    {
+      "column": 4,
+      "detail": "identifier 'runtime' resolves to a non-import binding (['LOCAL']); left untouched (ambiguous/shadowed, not the production import root)",
+      "file": "src/curriculum_factory/session_bridge.py",
+      "kind": "non_target_shadowed",
+      "line": 54,
+      "severity": "info"
+    },
+    {
+      "column": 17,
+      "detail": "identifier 'runtime' resolves to a non-import binding (['LOCAL']); left untouched (ambiguous/shadowed, not the production import root)",
+      "file": "src/curriculum_factory/session_bridge.py",
+      "kind": "non_target_shadowed",
+      "line": 55,
+      "severity": "info"
+    },
+    {
+      "column": 4,
+      "detail": "identifier 'runtime' resolves to a non-import binding (['LOCAL']); left untouched (ambiguous/shadowed, not the production import root)",
+      "file": "src/curriculum_factory/session_bridge.py",
+      "kind": "non_target_shadowed",
+      "line": 56,
+      "severity": "info"
+    },
+    {
+      "column": 30,
+      "detail": "identifier 'runtime' resolves to a non-import binding (['LOCAL']); left untouched (ambiguous/shadowed, not the production import root)",
+      "file": "src/curriculum_factory/session_bridge.py",
+      "kind": "non_target_shadowed",
+      "line": 57,
+      "severity": "info"
+    },
+    {
+      "column": 4,
+      "detail": "identifier 'runtime' resolves to a non-import binding (['LOCAL']); left untouched (ambiguous/shadowed, not the production import root)",
+      "file": "src/curriculum_factory/session_bridge.py",
+      "kind": "non_target_shadowed",
+      "line": 58,
+      "severity": "info"
+    },
+    {
+      "column": 18,
+      "detail": "identifier 'runtime' resolves to a non-import binding (['LOCAL']); left untouched (ambiguous/shadowed, not the production import root)",
+      "file": "src/curriculum_factory/session_bridge.py",
+      "kind": "non_target_shadowed",
+      "line": 68,
+      "severity": "info"
+    },
+    {
+      "column": 9,
+      "detail": "identifier 'runtime' resolves to a non-import binding (['LOCAL']); left untouched (ambiguous/shadowed, not the production import root)",
+      "file": "src/curriculum_factory/session_bridge.py",
+      "kind": "non_target_shadowed",
+      "line": 78,
+      "severity": "info"
+    },
+    {
+      "column": 0,
+      "detail": "from-import module 'runtime.readability' -> 'curriculum_factory.readability'",
+      "file": "tests/gates/fr_p5_unit.py",
+      "kind": "rewrite_import",
+      "line": 44,
+      "severity": "info"
+    },
+    {
+      "column": 0,
+      "detail": "from-import module 'runtime.checks' -> 'curriculum_factory.checks'",
+      "file": "tests/runtime/test_acceptance_gate.py",
+      "kind": "rewrite_import",
+      "line": 18,
+      "severity": "info"
+    },
+    {
+      "column": 0,
+      "detail": "from-import module 'runtime.logger' -> 'curriculum_factory.logger'",
+      "file": "tests/runtime/test_acceptance_gate.py",
+      "kind": "rewrite_import",
+      "line": 19,
+      "severity": "info"
+    },
+    {
+      "column": 0,
+      "detail": "from-import module 'runtime.session_bridge' -> 'curriculum_factory.session_bridge'",
+      "file": "tests/runtime/test_acceptance_gate.py",
+      "kind": "rewrite_import",
+      "line": 20,
+      "severity": "info"
+    },
+    {
+      "column": 4,
+      "detail": "from-import module 'runtime.lesson_render' -> 'curriculum_factory.lesson_render'",
+      "file": "tests/runtime/test_acceptance_gate.py",
+      "kind": "rewrite_import",
+      "line": 107,
+      "severity": "info"
+    },
+    {
+      "column": 4,
+      "detail": "from-import module 'runtime' -> 'curriculum_factory'",
+      "file": "tests/runtime/test_acceptance_gate.py",
+      "kind": "rewrite_import",
+      "line": 131,
+      "severity": "info"
+    },
+    {
+      "column": 11,
+      "detail": "import target 'runtime.visual_maps' -> 'curriculum_factory.visual_maps'",
+      "file": "tests/runtime/test_acceptance_gate.py",
+      "kind": "rewrite_import",
+      "line": 170,
+      "severity": "info"
+    },
+    {
+      "column": 4,
+      "detail": "from-import module 'runtime' -> 'curriculum_factory'",
+      "file": "tests/runtime/test_acceptance_gate.py",
+      "kind": "rewrite_import",
+      "line": 171,
+      "severity": "info"
+    },
+    {
+      "column": 4,
+      "detail": "from-import module 'runtime.lesson_render' -> 'curriculum_factory.lesson_render'",
+      "file": "tests/runtime/test_acceptance_gate.py",
+      "kind": "rewrite_import",
+      "line": 227,
+      "severity": "info"
+    },
+    {
+      "column": 0,
+      "detail": "from-import module 'runtime.capabilities' -> 'curriculum_factory.capabilities'",
+      "file": "tests/runtime/test_capabilities.py",
+      "kind": "rewrite_import",
+      "line": 8,
+      "severity": "info"
+    },
+    {
+      "column": 0,
+      "detail": "from-import module 'runtime.gemini' -> 'curriculum_factory.gemini'",
+      "file": "tests/runtime/test_capabilities.py",
+      "kind": "rewrite_import",
+      "line": 10,
+      "severity": "info"
+    },
+    {
+      "column": 0,
+      "detail": "from-import module 'runtime.checks' -> 'curriculum_factory.checks'",
+      "file": "tests/runtime/test_checks.py",
+      "kind": "rewrite_import",
+      "line": 11,
+      "severity": "info"
+    },
+    {
+      "column": 0,
+      "detail": "from-import module 'runtime.checks' -> 'curriculum_factory.checks'",
+      "file": "tests/runtime/test_claim_entailment.py",
+      "kind": "rewrite_import",
+      "line": 15,
+      "severity": "info"
+    },
+    {
+      "column": 0,
+      "detail": "from-import module 'runtime.checkpoint' -> 'curriculum_factory.checkpoint'",
+      "file": "tests/runtime/test_controller.py",
+      "kind": "rewrite_import",
+      "line": 9,
+      "severity": "info"
+    },
+    {
+      "column": 0,
+      "detail": "from-import module 'runtime.controller' -> 'curriculum_factory.controller'",
+      "file": "tests/runtime/test_controller.py",
+      "kind": "rewrite_import",
+      "line": 10,
+      "severity": "info"
+    },
+    {
+      "column": 0,
+      "detail": "from-import module 'runtime.io' -> 'curriculum_factory.io'",
+      "file": "tests/runtime/test_controller.py",
+      "kind": "rewrite_import",
+      "line": 11,
+      "severity": "info"
+    },
+    {
+      "column": 0,
+      "detail": "from-import module 'runtime.curriculum_factory_graph' -> 'curriculum_factory.curriculum_factory_graph'",
+      "file": "tests/runtime/test_curriculum_factory_graph.py",
+      "kind": "rewrite_import",
+      "line": 9,
+      "severity": "info"
+    },
+    {
+      "column": 0,
+      "detail": "from-import module 'runtime.factory_state' -> 'curriculum_factory.factory_state'",
+      "file": "tests/runtime/test_curriculum_factory_graph.py",
+      "kind": "rewrite_import",
+      "line": 11,
+      "severity": "info"
+    },
+    {
+      "column": 0,
+      "detail": "from-import module 'runtime.io' -> 'curriculum_factory.io'",
+      "file": "tests/runtime/test_curriculum_factory_graph.py",
+      "kind": "rewrite_import",
+      "line": 12,
+      "severity": "info"
+    },
+    {
+      "column": 0,
+      "detail": "from-import module 'runtime.gemini' -> 'curriculum_factory.gemini'",
+      "file": "tests/runtime/test_gemini.py",
+      "kind": "rewrite_import",
+      "line": 11,
+      "severity": "info"
+    },
+    {
+      "column": 0,
+      "detail": "from-import module 'runtime.lesson_render' -> 'curriculum_factory.lesson_render'",
+      "file": "tests/runtime/test_lesson_render.py",
+      "kind": "rewrite_import",
+      "line": 15,
+      "severity": "info"
+    },
+    {
+      "column": 0,
+      "detail": "from-import module 'runtime.session_bridge' -> 'curriculum_factory.session_bridge'",
+      "file": "tests/runtime/test_lesson_render.py",
+      "kind": "rewrite_import",
+      "line": 21,
+      "severity": "info"
+    },
+    {
+      "column": 4,
+      "detail": "from-import module 'runtime.lesson_render' -> 'curriculum_factory.lesson_render'",
+      "file": "tests/runtime/test_lesson_render.py",
+      "kind": "rewrite_import",
+      "line": 186,
+      "severity": "info"
+    },
+    {
+      "column": 4,
+      "detail": "from-import module 'runtime.checks' -> 'curriculum_factory.checks'",
+      "file": "tests/runtime/test_lesson_render.py",
+      "kind": "rewrite_import",
+      "line": 338,
+      "severity": "info"
+    },
+    {
+      "column": 4,
+      "detail": "from-import module 'runtime.checks' -> 'curriculum_factory.checks'",
+      "file": "tests/runtime/test_lesson_render.py",
+      "kind": "rewrite_import",
+      "line": 372,
+      "severity": "info"
+    },
+    {
+      "column": 0,
+      "detail": "from-import module 'runtime.logger' -> 'curriculum_factory.logger'",
+      "file": "tests/runtime/test_logger.py",
+      "kind": "rewrite_import",
+      "line": 11,
+      "severity": "info"
+    },
+    {
+      "column": 7,
+      "detail": "import target 'runtime.run_curriculum' -> 'curriculum_factory.run_curriculum'",
+      "file": "tests/runtime/test_plan26_adversarial.py",
+      "kind": "rewrite_import",
+      "line": 52,
+      "severity": "info"
+    },
+    {
+      "column": 0,
+      "detail": "from-import module 'runtime.langgraph_factory' -> 'curriculum_factory.langgraph_factory'",
+      "file": "tests/runtime/test_plan26_adversarial.py",
+      "kind": "rewrite_import",
+      "line": 53,
+      "severity": "info"
+    },
+    {
+      "column": 0,
+      "detail": "from-import module 'runtime.langgraph_factory' -> 'curriculum_factory.langgraph_factory'",
+      "file": "tests/runtime/test_plan26_adversarial.py",
+      "kind": "rewrite_import",
+      "line": 54,
+      "severity": "info"
+    },
+    {
+      "column": 0,
+      "detail": "from-import module 'runtime.langgraph_factory' -> 'curriculum_factory.langgraph_factory'",
+      "file": "tests/runtime/test_plan26_adversarial.py",
+      "kind": "rewrite_import",
+      "line": 55,
+      "severity": "info"
+    },
+    {
+      "column": 0,
+      "detail": "from-import module 'runtime.langgraph_factory' -> 'curriculum_factory.langgraph_factory'",
+      "file": "tests/runtime/test_plan26_adversarial.py",
+      "kind": "rewrite_import",
+      "line": 56,
+      "severity": "info"
+    },
+    {
+      "column": 0,
+      "detail": "from-import module 'runtime.langgraph_factory' -> 'curriculum_factory.langgraph_factory'",
+      "file": "tests/runtime/test_plan26_adversarial.py",
+      "kind": "rewrite_import",
+      "line": 57,
+      "severity": "info"
+    },
+    {
+      "column": 0,
+      "detail": "from-import module 'runtime.langgraph_factory' -> 'curriculum_factory.langgraph_factory'",
+      "file": "tests/runtime/test_plan26_adversarial.py",
+      "kind": "rewrite_import",
+      "line": 58,
+      "severity": "info"
+    },
+    {
+      "column": 0,
+      "detail": "from-import module 'runtime.langgraph_factory' -> 'curriculum_factory.langgraph_factory'",
+      "file": "tests/runtime/test_plan26_adversarial.py",
+      "kind": "rewrite_import",
+      "line": 59,
+      "severity": "info"
+    },
+    {
+      "column": 0,
+      "detail": "from-import module 'runtime.langgraph_factory.artifacts' -> 'curriculum_factory.langgraph_factory.artifacts'",
+      "file": "tests/runtime/test_plan26_adversarial.py",
+      "kind": "rewrite_import",
+      "line": 60,
+      "severity": "info"
+    },
+    {
+      "column": 0,
+      "detail": "from-import module 'runtime.langgraph_factory.egress' -> 'curriculum_factory.langgraph_factory.egress'",
+      "file": "tests/runtime/test_plan26_adversarial.py",
+      "kind": "rewrite_import",
+      "line": 61,
+      "severity": "info"
+    },
+    {
+      "column": 0,
+      "detail": "from-import module 'runtime.langgraph_factory.evidence' -> 'curriculum_factory.langgraph_factory.evidence'",
+      "file": "tests/runtime/test_plan26_adversarial.py",
+      "kind": "rewrite_import",
+      "line": 69,
+      "severity": "info"
+    },
+    {
+      "column": 0,
+      "detail": "from-import module 'runtime.langgraph_factory.nodes' -> 'curriculum_factory.langgraph_factory.nodes'",
+      "file": "tests/runtime/test_plan26_adversarial.py",
+      "kind": "rewrite_import",
+      "line": 70,
+      "severity": "info"
+    },
+    {
+      "column": 0,
+      "detail": "from-import module 'runtime.langgraph_factory.nodes.content' -> 'curriculum_factory.langgraph_factory.nodes.content'",
+      "file": "tests/runtime/test_plan26_adversarial.py",
+      "kind": "rewrite_import",
+      "line": 80,
+      "severity": "info"
+    },
+    {
+      "column": 0,
+      "detail": "from-import module 'runtime.langgraph_factory.nodes.domain' -> 'curriculum_factory.langgraph_factory.nodes.domain'",
+      "file": "tests/runtime/test_plan26_adversarial.py",
+      "kind": "rewrite_import",
+      "line": 81,
+      "severity": "info"
+    },
+    {
+      "column": 0,
+      "detail": "from-import module 'runtime.langgraph_factory.state' -> 'curriculum_factory.langgraph_factory.state'",
+      "file": "tests/runtime/test_plan26_adversarial.py",
+      "kind": "rewrite_import",
+      "line": 82,
+      "severity": "info"
+    },
+    {
+      "column": 0,
+      "detail": "from-import module 'runtime.langgraph_factory' -> 'curriculum_factory.langgraph_factory'",
+      "file": "tests/runtime/test_plan26_cli.py",
+      "kind": "rewrite_import",
+      "line": 40,
+      "severity": "info"
+    },
+    {
+      "column": 0,
+      "detail": "from-import module 'runtime.langgraph_factory' -> 'curriculum_factory.langgraph_factory'",
+      "file": "tests/runtime/test_plan26_cli.py",
+      "kind": "rewrite_import",
+      "line": 41,
+      "severity": "info"
+    },
+    {
+      "column": 7,
+      "detail": "import target 'runtime.run_curriculum' -> 'curriculum_factory.run_curriculum'",
+      "file": "tests/runtime/test_plan26_cli.py",
+      "kind": "rewrite_import",
+      "line": 43,
+      "severity": "info"
+    },
+    {
+      "column": 8,
+      "detail": "from-import module 'runtime.langgraph_factory.artifacts' -> 'curriculum_factory.langgraph_factory.artifacts'",
+      "file": "tests/runtime/test_plan26_cli.py",
+      "kind": "rewrite_import",
+      "line": 518,
+      "severity": "info"
+    },
+    {
+      "column": 0,
+      "detail": "from-import module 'runtime.langgraph_factory' -> 'curriculum_factory.langgraph_factory'",
+      "file": "tests/runtime/test_plan26_deterministic_nodes.py",
+      "kind": "rewrite_import",
+      "line": 20,
+      "severity": "info"
+    },
+    {
+      "column": 0,
+      "detail": "from-import module 'runtime.langgraph_factory.nodes' -> 'curriculum_factory.langgraph_factory.nodes'",
+      "file": "tests/runtime/test_plan26_deterministic_nodes.py",
+      "kind": "rewrite_import",
+      "line": 21,
+      "severity": "info"
+    },
+    {
+      "column": 0,
+      "detail": "from-import module 'runtime.langgraph_factory.state' -> 'curriculum_factory.langgraph_factory.state'",
+      "file": "tests/runtime/test_plan26_deterministic_nodes.py",
+      "kind": "rewrite_import",
+      "line": 38,
+      "severity": "info"
+    },
+    {
+      "column": 0,
+      "detail": "from-import module 'runtime.langgraph_factory.egress' -> 'curriculum_factory.langgraph_factory.egress'",
+      "file": "tests/runtime/test_plan26_deterministic_nodes.py",
+      "kind": "rewrite_import",
+      "line": 39,
+      "severity": "info"
+    },
+    {
+      "column": 4,
+      "detail": "from-import module 'runtime.langgraph_factory.reducers' -> 'curriculum_factory.langgraph_factory.reducers'",
+      "file": "tests/runtime/test_plan26_deterministic_nodes.py",
+      "kind": "rewrite_import",
+      "line": 1975,
+      "severity": "info"
+    },
+    {
+      "column": 4,
+      "detail": "from-import module 'runtime.langgraph_factory' -> 'curriculum_factory.langgraph_factory'",
+      "file": "tests/runtime/test_plan26_deterministic_nodes.py",
+      "kind": "rewrite_import",
+      "line": 3188,
+      "severity": "info"
+    },
+    {
+      "column": 4,
+      "detail": "from-import module 'runtime.langgraph_factory' -> 'curriculum_factory.langgraph_factory'",
+      "file": "tests/runtime/test_plan26_deterministic_nodes.py",
+      "kind": "rewrite_import",
+      "line": 3214,
+      "severity": "info"
+    },
+    {
+      "column": 4,
+      "detail": "from-import module 'runtime.langgraph_factory' -> 'curriculum_factory.langgraph_factory'",
+      "file": "tests/runtime/test_plan26_deterministic_nodes.py",
+      "kind": "rewrite_import",
+      "line": 3280,
+      "severity": "info"
+    },
+    {
+      "column": 4,
+      "detail": "from-import module 'runtime.langgraph_factory' -> 'curriculum_factory.langgraph_factory'",
+      "file": "tests/runtime/test_plan26_deterministic_nodes.py",
+      "kind": "rewrite_import",
+      "line": 3326,
+      "severity": "info"
+    },
+    {
+      "column": 4,
+      "detail": "from-import module 'runtime.langgraph_factory' -> 'curriculum_factory.langgraph_factory'",
+      "file": "tests/runtime/test_plan26_deterministic_nodes.py",
+      "kind": "rewrite_import",
+      "line": 3429,
+      "severity": "info"
+    },
+    {
+      "column": 4,
+      "detail": "from-import module 'runtime.langgraph_factory' -> 'curriculum_factory.langgraph_factory'",
+      "file": "tests/runtime/test_plan26_deterministic_nodes.py",
+      "kind": "rewrite_import",
+      "line": 3474,
+      "severity": "info"
+    },
+    {
+      "column": 4,
+      "detail": "from-import module 'runtime.langgraph_factory' -> 'curriculum_factory.langgraph_factory'",
+      "file": "tests/runtime/test_plan26_deterministic_nodes.py",
+      "kind": "rewrite_import",
+      "line": 3481,
+      "severity": "info"
+    },
+    {
+      "column": 4,
+      "detail": "from-import module 'runtime.langgraph_factory' -> 'curriculum_factory.langgraph_factory'",
+      "file": "tests/runtime/test_plan26_deterministic_nodes.py",
+      "kind": "rewrite_import",
+      "line": 3567,
+      "severity": "info"
+    },
+    {
+      "column": 4,
+      "detail": "from-import module 'runtime.langgraph_factory.nodes' -> 'curriculum_factory.langgraph_factory.nodes'",
+      "file": "tests/runtime/test_plan26_deterministic_nodes.py",
+      "kind": "rewrite_import",
+      "line": 3780,
+      "severity": "info"
+    },
+    {
+      "column": 4,
+      "detail": "from-import module 'runtime.langgraph_factory' -> 'curriculum_factory.langgraph_factory'",
+      "file": "tests/runtime/test_plan26_deterministic_nodes.py",
+      "kind": "rewrite_import",
+      "line": 3888,
+      "severity": "info"
+    },
+    {
+      "column": 4,
+      "detail": "from-import module 'runtime.langgraph_factory.nodes' -> 'curriculum_factory.langgraph_factory.nodes'",
+      "file": "tests/runtime/test_plan26_deterministic_nodes.py",
+      "kind": "rewrite_import",
+      "line": 3889,
+      "severity": "info"
+    },
+    {
+      "column": 0,
+      "detail": "from-import module 'runtime.langgraph_factory.egress' -> 'curriculum_factory.langgraph_factory.egress'",
+      "file": "tests/runtime/test_plan26_egress.py",
+      "kind": "rewrite_import",
+      "line": 16,
+      "severity": "info"
+    },
+    {
+      "column": 4,
+      "detail": "from-import module 'runtime.langgraph_factory.egress' -> 'curriculum_factory.langgraph_factory.egress'",
+      "file": "tests/runtime/test_plan26_egress.py",
+      "kind": "rewrite_import",
+      "line": 513,
+      "severity": "info"
+    },
+    {
+      "column": 0,
+      "detail": "from-import module 'runtime.langgraph_factory.artifacts' -> 'curriculum_factory.langgraph_factory.artifacts'",
+      "file": "tests/runtime/test_plan26_evidence.py",
+      "kind": "rewrite_import",
+      "line": 12,
+      "severity": "info"
+    },
+    {
+      "column": 0,
+      "detail": "from-import module 'runtime.langgraph_factory.evidence' -> 'curriculum_factory.langgraph_factory.evidence'",
+      "file": "tests/runtime/test_plan26_evidence.py",
+      "kind": "rewrite_import",
+      "line": 24,
+      "severity": "info"
+    },
+    {
+      "column": 0,
+      "detail": "from-import module 'runtime.langgraph_factory' -> 'curriculum_factory.langgraph_factory'",
+      "file": "tests/runtime/test_plan26_model_nodes.py",
+      "kind": "rewrite_import",
+      "line": 12,
+      "severity": "info"
+    },
+    {
+      "column": 0,
+      "detail": "from-import module 'runtime.langgraph_factory' -> 'curriculum_factory.langgraph_factory'",
+      "file": "tests/runtime/test_plan26_model_nodes.py",
+      "kind": "rewrite_import",
+      "line": 13,
+      "severity": "info"
+    },
+    {
+      "column": 0,
+      "detail": "from-import module 'runtime.langgraph_factory.nodes' -> 'curriculum_factory.langgraph_factory.nodes'",
+      "file": "tests/runtime/test_plan26_model_nodes.py",
+      "kind": "rewrite_import",
+      "line": 14,
+      "severity": "info"
+    },
+    {
+      "column": 0,
+      "detail": "from-import module 'runtime.langgraph_factory.reducers' -> 'curriculum_factory.langgraph_factory.reducers'",
+      "file": "tests/runtime/test_plan26_model_nodes.py",
+      "kind": "rewrite_import",
+      "line": 15,
+      "severity": "info"
+    },
+    {
+      "column": 0,
+      "detail": "from-import module 'runtime.langgraph_factory.state' -> 'curriculum_factory.langgraph_factory.state'",
+      "file": "tests/runtime/test_plan26_model_nodes.py",
+      "kind": "rewrite_import",
+      "line": 23,
+      "severity": "info"
+    },
+    {
+      "column": 4,
+      "detail": "from-import module 'runtime.langgraph_factory.nodes' -> 'curriculum_factory.langgraph_factory.nodes'",
+      "file": "tests/runtime/test_plan26_model_nodes.py",
+      "kind": "rewrite_import",
+      "line": 1485,
+      "severity": "info"
+    },
+    {
+      "column": 4,
+      "detail": "from-import module 'runtime.langgraph_factory' -> 'curriculum_factory.langgraph_factory'",
+      "file": "tests/runtime/test_plan26_model_nodes.py",
+      "kind": "rewrite_import",
+      "line": 1543,
+      "severity": "info"
+    },
+    {
+      "column": 4,
+      "detail": "from-import module 'runtime.langgraph_factory' -> 'curriculum_factory.langgraph_factory'",
+      "file": "tests/runtime/test_plan26_model_nodes.py",
+      "kind": "rewrite_import",
+      "line": 1555,
+      "severity": "info"
+    },
+    {
+      "column": 4,
+      "detail": "from-import module 'runtime.langgraph_factory' -> 'curriculum_factory.langgraph_factory'",
+      "file": "tests/runtime/test_plan26_model_nodes.py",
+      "kind": "rewrite_import",
+      "line": 1570,
+      "severity": "info"
+    },
+    {
+      "column": 4,
+      "detail": "from-import module 'runtime.langgraph_factory' -> 'curriculum_factory.langgraph_factory'",
+      "file": "tests/runtime/test_plan26_model_nodes.py",
+      "kind": "rewrite_import",
+      "line": 1586,
+      "severity": "info"
+    },
+    {
+      "column": 4,
+      "detail": "from-import module 'runtime.langgraph_factory' -> 'curriculum_factory.langgraph_factory'",
+      "file": "tests/runtime/test_plan26_model_nodes.py",
+      "kind": "rewrite_import",
+      "line": 1606,
+      "severity": "info"
+    },
+    {
+      "column": 4,
+      "detail": "from-import module 'runtime.langgraph_factory' -> 'curriculum_factory.langgraph_factory'",
+      "file": "tests/runtime/test_plan26_model_nodes.py",
+      "kind": "rewrite_import",
+      "line": 1632,
+      "severity": "info"
+    },
+    {
+      "column": 4,
+      "detail": "from-import module 'runtime.langgraph_factory' -> 'curriculum_factory.langgraph_factory'",
+      "file": "tests/runtime/test_plan26_model_nodes.py",
+      "kind": "rewrite_import",
+      "line": 1703,
+      "severity": "info"
+    },
+    {
+      "column": 4,
+      "detail": "from-import module 'runtime.langgraph_factory.state' -> 'curriculum_factory.langgraph_factory.state'",
+      "file": "tests/runtime/test_plan26_model_nodes.py",
+      "kind": "rewrite_import",
+      "line": 1712,
+      "severity": "info"
+    },
+    {
+      "column": 0,
+      "detail": "from-import module 'runtime.langgraph_factory' -> 'curriculum_factory.langgraph_factory'",
+      "file": "tests/runtime/test_plan26_persistence.py",
+      "kind": "rewrite_import",
+      "line": 42,
+      "severity": "info"
+    },
+    {
+      "column": 0,
+      "detail": "from-import module 'runtime.langgraph_factory.evidence' -> 'curriculum_factory.langgraph_factory.evidence'",
+      "file": "tests/runtime/test_plan26_persistence.py",
+      "kind": "rewrite_import",
+      "line": 43,
+      "severity": "info"
+    },
+    {
+      "column": 0,
+      "detail": "from-import module 'runtime.langgraph_factory.nodes' -> 'curriculum_factory.langgraph_factory.nodes'",
+      "file": "tests/runtime/test_plan26_persistence.py",
+      "kind": "rewrite_import",
+      "line": 44,
+      "severity": "info"
+    },
+    {
+      "column": 0,
+      "detail": "from-import module 'runtime.langgraph_factory.nodes' -> 'curriculum_factory.langgraph_factory.nodes'",
+      "file": "tests/runtime/test_plan26_persistence.py",
+      "kind": "rewrite_import",
+      "line": 45,
+      "severity": "info"
+    },
+    {
+      "column": 0,
+      "detail": "from-import module 'runtime.langgraph_factory.state' -> 'curriculum_factory.langgraph_factory.state'",
+      "file": "tests/runtime/test_plan26_persistence.py",
+      "kind": "rewrite_import",
+      "line": 46,
+      "severity": "info"
+    },
+    {
+      "column": 8,
+      "detail": "from-import module 'runtime.langgraph_factory.state' -> 'curriculum_factory.langgraph_factory.state'",
+      "file": "tests/runtime/test_plan26_persistence.py",
+      "kind": "rewrite_import",
+      "line": 1245,
+      "severity": "info"
+    },
+    {
+      "column": 0,
+      "detail": "from-import module 'runtime.langgraph_factory' -> 'curriculum_factory.langgraph_factory'",
+      "file": "tests/runtime/test_plan26_repair_acceptance.py",
+      "kind": "rewrite_import",
+      "line": 31,
+      "severity": "info"
+    },
+    {
+      "column": 0,
+      "detail": "from-import module 'runtime.langgraph_factory' -> 'curriculum_factory.langgraph_factory'",
+      "file": "tests/runtime/test_plan26_repair_acceptance.py",
+      "kind": "rewrite_import",
+      "line": 32,
+      "severity": "info"
+    },
+    {
+      "column": 0,
+      "detail": "from-import module 'runtime.langgraph_factory' -> 'curriculum_factory.langgraph_factory'",
+      "file": "tests/runtime/test_plan26_repair_acceptance.py",
+      "kind": "rewrite_import",
+      "line": 33,
+      "severity": "info"
+    },
+    {
+      "column": 0,
+      "detail": "from-import module 'runtime.langgraph_factory.nodes' -> 'curriculum_factory.langgraph_factory.nodes'",
+      "file": "tests/runtime/test_plan26_repair_acceptance.py",
+      "kind": "rewrite_import",
+      "line": 34,
+      "severity": "info"
+    },
+    {
+      "column": 0,
+      "detail": "from-import module 'runtime.langgraph_factory.nodes' -> 'curriculum_factory.langgraph_factory.nodes'",
+      "file": "tests/runtime/test_plan26_repair_acceptance.py",
+      "kind": "rewrite_import",
+      "line": 35,
+      "severity": "info"
+    },
+    {
+      "column": 0,
+      "detail": "from-import module 'runtime.langgraph_factory.nodes' -> 'curriculum_factory.langgraph_factory.nodes'",
+      "file": "tests/runtime/test_plan26_repair_acceptance.py",
+      "kind": "rewrite_import",
+      "line": 36,
+      "severity": "info"
+    },
+    {
+      "column": 0,
+      "detail": "from-import module 'runtime.langgraph_factory.nodes.domain' -> 'curriculum_factory.langgraph_factory.nodes.domain'",
+      "file": "tests/runtime/test_plan26_repair_acceptance.py",
+      "kind": "rewrite_import",
+      "line": 37,
+      "severity": "info"
+    },
+    {
+      "column": 0,
+      "detail": "from-import module 'runtime.langgraph_factory.nodes.content' -> 'curriculum_factory.langgraph_factory.nodes.content'",
+      "file": "tests/runtime/test_plan26_repair_acceptance.py",
+      "kind": "rewrite_import",
+      "line": 38,
+      "severity": "info"
+    },
+    {
+      "column": 0,
+      "detail": "from-import module 'runtime.langgraph_factory.nodes' -> 'curriculum_factory.langgraph_factory.nodes'",
+      "file": "tests/runtime/test_plan26_repair_acceptance.py",
+      "kind": "rewrite_import",
+      "line": 39,
+      "severity": "info"
+    },
+    {
+      "column": 0,
+      "detail": "from-import module 'runtime.langgraph_factory.state' -> 'curriculum_factory.langgraph_factory.state'",
+      "file": "tests/runtime/test_plan26_repair_acceptance.py",
+      "kind": "rewrite_import",
+      "line": 40,
+      "severity": "info"
+    },
+    {
+      "column": 0,
+      "detail": "from-import module 'runtime.langgraph_factory' -> 'curriculum_factory.langgraph_factory'",
+      "file": "tests/runtime/test_plan26_repair_acceptance.py",
+      "kind": "rewrite_import",
+      "line": 41,
+      "severity": "info"
+    },
+    {
+      "column": 4,
+      "detail": "from-import module 'runtime.langgraph_factory.nodes' -> 'curriculum_factory.langgraph_factory.nodes'",
+      "file": "tests/runtime/test_plan26_repair_acceptance.py",
+      "kind": "rewrite_import",
+      "line": 837,
+      "severity": "info"
+    },
+    {
+      "column": 0,
+      "detail": "from-import module 'runtime.langgraph_factory' -> 'curriculum_factory.langgraph_factory'",
+      "file": "tests/runtime/test_plan26_state_reducers.py",
+      "kind": "rewrite_import",
+      "line": 12,
+      "severity": "info"
+    },
+    {
+      "column": 0,
+      "detail": "from-import module 'runtime.langgraph_factory.state' -> 'curriculum_factory.langgraph_factory.state'",
+      "file": "tests/runtime/test_plan26_state_reducers.py",
+      "kind": "rewrite_import",
+      "line": 13,
+      "severity": "info"
+    },
+    {
+      "column": 0,
+      "detail": "from-import module 'runtime.langgraph_factory' -> 'curriculum_factory.langgraph_factory'",
+      "file": "tests/runtime/test_plan26_topology.py",
+      "kind": "rewrite_import",
+      "line": 49,
+      "severity": "info"
+    },
+    {
+      "column": 0,
+      "detail": "from-import module 'runtime.langgraph_factory' -> 'curriculum_factory.langgraph_factory'",
+      "file": "tests/runtime/test_plan26_topology.py",
+      "kind": "rewrite_import",
+      "line": 50,
+      "severity": "info"
+    },
+    {
+      "column": 0,
+      "detail": "from-import module 'runtime.langgraph_factory' -> 'curriculum_factory.langgraph_factory'",
+      "file": "tests/runtime/test_plan26_topology.py",
+      "kind": "rewrite_import",
+      "line": 51,
+      "severity": "info"
+    },
+    {
+      "column": 0,
+      "detail": "from-import module 'runtime.langgraph_factory' -> 'curriculum_factory.langgraph_factory'",
+      "file": "tests/runtime/test_plan26_topology.py",
+      "kind": "rewrite_import",
+      "line": 52,
+      "severity": "info"
+    },
+    {
+      "column": 0,
+      "detail": "from-import module 'runtime.langgraph_factory.nodes' -> 'curriculum_factory.langgraph_factory.nodes'",
+      "file": "tests/runtime/test_plan26_topology.py",
+      "kind": "rewrite_import",
+      "line": 53,
+      "severity": "info"
+    },
+    {
+      "column": 0,
+      "detail": "from-import module 'runtime.langgraph_factory.state' -> 'curriculum_factory.langgraph_factory.state'",
+      "file": "tests/runtime/test_plan26_topology.py",
+      "kind": "rewrite_import",
+      "line": 54,
+      "severity": "info"
+    },
+    {
+      "column": 29,
+      "detail": "identifier 'runtime' resolves to a non-import binding (['LOCAL']); left untouched (ambiguous/shadowed, not the production import root)",
+      "file": "tests/runtime/test_plan26_topology.py",
+      "kind": "non_target_shadowed",
+      "line": 265,
+      "severity": "info"
+    },
+    {
+      "column": 4,
+      "detail": "from-import module 'runtime.langgraph_factory.nodes' -> 'curriculum_factory.langgraph_factory.nodes'",
+      "file": "tests/runtime/test_plan26_topology.py",
+      "kind": "rewrite_import",
+      "line": 949,
+      "severity": "info"
+    },
+    {
+      "column": 4,
+      "detail": "from-import module 'runtime.langgraph_factory' -> 'curriculum_factory.langgraph_factory'",
+      "file": "tests/runtime/test_plan26_topology.py",
+      "kind": "rewrite_import",
+      "line": 987,
+      "severity": "info"
+    },
+    {
+      "column": 4,
+      "detail": "from-import module 'runtime.langgraph_factory.nodes' -> 'curriculum_factory.langgraph_factory.nodes'",
+      "file": "tests/runtime/test_plan26_topology.py",
+      "kind": "rewrite_import",
+      "line": 988,
+      "severity": "info"
+    },
+    {
+      "column": 0,
+      "detail": "from-import module 'runtime.langgraph_factory' -> 'curriculum_factory.langgraph_factory'",
+      "file": "tests/runtime/test_plan26_transport.py",
+      "kind": "rewrite_import",
+      "line": 18,
+      "severity": "info"
+    },
+    {
+      "column": 0,
+      "detail": "from-import module 'runtime.langgraph_factory.artifacts' -> 'curriculum_factory.langgraph_factory.artifacts'",
+      "file": "tests/runtime/test_plan26_transport.py",
+      "kind": "rewrite_import",
+      "line": 19,
+      "severity": "info"
+    },
+    {
+      "column": 0,
+      "detail": "from-import module 'runtime.langgraph_factory.egress' -> 'curriculum_factory.langgraph_factory.egress'",
+      "file": "tests/runtime/test_plan26_transport.py",
+      "kind": "rewrite_import",
+      "line": 25,
+      "severity": "info"
+    },
+    {
+      "column": 4,
+      "detail": "from-import module 'runtime.langgraph_factory.nodes.inputs' -> 'curriculum_factory.langgraph_factory.nodes.inputs'",
+      "file": "tests/runtime/test_plan26_transport.py",
+      "kind": "rewrite_import",
+      "line": 1614,
+      "severity": "info"
+    },
+    {
+      "column": 4,
+      "detail": "from-import module 'runtime.langgraph_factory.nodes.visuals' -> 'curriculum_factory.langgraph_factory.nodes.visuals'",
+      "file": "tests/runtime/test_plan26_transport.py",
+      "kind": "rewrite_import",
+      "line": 2036,
+      "severity": "info"
+    },
+    {
+      "column": 0,
+      "detail": "from-import module 'runtime.langgraph_factory' -> 'curriculum_factory.langgraph_factory'",
+      "file": "tests/runtime/test_plan26_unit_graph.py",
+      "kind": "rewrite_import",
+      "line": 58,
+      "severity": "info"
+    },
+    {
+      "column": 0,
+      "detail": "from-import module 'runtime.langgraph_factory' -> 'curriculum_factory.langgraph_factory'",
+      "file": "tests/runtime/test_plan26_unit_graph.py",
+      "kind": "rewrite_import",
+      "line": 59,
+      "severity": "info"
+    },
+    {
+      "column": 0,
+      "detail": "from-import module 'runtime.langgraph_factory' -> 'curriculum_factory.langgraph_factory'",
+      "file": "tests/runtime/test_plan26_unit_graph.py",
+      "kind": "rewrite_import",
+      "line": 60,
+      "severity": "info"
+    },
+    {
+      "column": 0,
+      "detail": "from-import module 'runtime.langgraph_factory' -> 'curriculum_factory.langgraph_factory'",
+      "file": "tests/runtime/test_plan26_unit_graph.py",
+      "kind": "rewrite_import",
+      "line": 61,
+      "severity": "info"
+    },
+    {
+      "column": 0,
+      "detail": "from-import module 'runtime.langgraph_factory' -> 'curriculum_factory.langgraph_factory'",
+      "file": "tests/runtime/test_plan26_unit_graph.py",
+      "kind": "rewrite_import",
+      "line": 62,
+      "severity": "info"
+    },
+    {
+      "column": 0,
+      "detail": "from-import module 'runtime.langgraph_factory.nodes' -> 'curriculum_factory.langgraph_factory.nodes'",
+      "file": "tests/runtime/test_plan26_unit_graph.py",
+      "kind": "rewrite_import",
+      "line": 63,
+      "severity": "info"
+    },
+    {
+      "column": 0,
+      "detail": "from-import module 'runtime.langgraph_factory.reducers' -> 'curriculum_factory.langgraph_factory.reducers'",
+      "file": "tests/runtime/test_plan26_unit_graph.py",
+      "kind": "rewrite_import",
+      "line": 73,
+      "severity": "info"
+    },
+    {
+      "column": 0,
+      "detail": "from-import module 'runtime.langgraph_factory.state' -> 'curriculum_factory.langgraph_factory.state'",
+      "file": "tests/runtime/test_plan26_unit_graph.py",
+      "kind": "rewrite_import",
+      "line": 74,
+      "severity": "info"
+    },
+    {
+      "column": 8,
+      "detail": "from-import module 'runtime.langgraph_factory.artifacts' -> 'curriculum_factory.langgraph_factory.artifacts'",
+      "file": "tests/runtime/test_plan26_unit_graph.py",
+      "kind": "rewrite_import",
+      "line": 413,
+      "severity": "info"
+    },
+    {
+      "column": 8,
+      "detail": "from-import module 'runtime.langgraph_factory.evidence' -> 'curriculum_factory.langgraph_factory.evidence'",
+      "file": "tests/runtime/test_plan26_unit_graph.py",
+      "kind": "rewrite_import",
+      "line": 414,
+      "severity": "info"
+    },
+    {
+      "column": 4,
+      "detail": "from-import module 'runtime.langgraph_factory.reducers' -> 'curriculum_factory.langgraph_factory.reducers'",
+      "file": "tests/runtime/test_plan26_unit_graph.py",
+      "kind": "rewrite_import",
+      "line": 1284,
+      "severity": "info"
+    },
+    {
+      "column": 4,
+      "detail": "from-import module 'runtime.langgraph_factory.artifacts' -> 'curriculum_factory.langgraph_factory.artifacts'",
+      "file": "tests/runtime/test_plan26_unit_graph.py",
+      "kind": "rewrite_import",
+      "line": 2800,
+      "severity": "info"
+    },
+    {
+      "column": 0,
+      "detail": "from-import module 'runtime.langgraph_factory' -> 'curriculum_factory.langgraph_factory'",
+      "file": "tests/runtime/test_plan26_workbook.py",
+      "kind": "rewrite_import",
+      "line": 32,
+      "severity": "info"
+    },
+    {
+      "column": 0,
+      "detail": "from-import module 'runtime.langgraph_factory' -> 'curriculum_factory.langgraph_factory'",
+      "file": "tests/runtime/test_plan26_workbook.py",
+      "kind": "rewrite_import",
+      "line": 33,
+      "severity": "info"
+    },
+    {
+      "column": 0,
+      "detail": "from-import module 'runtime.langgraph_factory' -> 'curriculum_factory.langgraph_factory'",
+      "file": "tests/runtime/test_plan26_workbook.py",
+      "kind": "rewrite_import",
+      "line": 34,
+      "severity": "info"
+    },
+    {
+      "column": 0,
+      "detail": "from-import module 'runtime.langgraph_factory' -> 'curriculum_factory.langgraph_factory'",
+      "file": "tests/runtime/test_plan26_workbook.py",
+      "kind": "rewrite_import",
+      "line": 35,
+      "severity": "info"
+    },
+    {
+      "column": 0,
+      "detail": "from-import module 'runtime.langgraph_factory' -> 'curriculum_factory.langgraph_factory'",
+      "file": "tests/runtime/test_plan26_workbook.py",
+      "kind": "rewrite_import",
+      "line": 36,
+      "severity": "info"
+    },
+    {
+      "column": 0,
+      "detail": "from-import module 'runtime.langgraph_factory.nodes' -> 'curriculum_factory.langgraph_factory.nodes'",
+      "file": "tests/runtime/test_plan26_workbook.py",
+      "kind": "rewrite_import",
+      "line": 37,
+      "severity": "info"
+    },
+    {
+      "column": 0,
+      "detail": "from-import module 'runtime.langgraph_factory.state' -> 'curriculum_factory.langgraph_factory.state'",
+      "file": "tests/runtime/test_plan26_workbook.py",
+      "kind": "rewrite_import",
+      "line": 38,
+      "severity": "info"
+    },
+    {
+      "column": 4,
+      "detail": "from-import module 'runtime.langgraph_factory.nodes' -> 'curriculum_factory.langgraph_factory.nodes'",
+      "file": "tests/runtime/test_plan26_workbook.py",
+      "kind": "rewrite_import",
+      "line": 543,
+      "severity": "info"
+    },
+    {
+      "column": 4,
+      "detail": "from-import module 'runtime.langgraph_factory.state' -> 'curriculum_factory.langgraph_factory.state'",
+      "file": "tests/runtime/test_plan26_workbook.py",
+      "kind": "rewrite_import",
+      "line": 775,
+      "severity": "info"
+    },
+    {
+      "column": 8,
+      "detail": "from-import module 'runtime.langgraph_factory.artifacts' -> 'curriculum_factory.langgraph_factory.artifacts'",
+      "file": "tests/runtime/test_plan26_workbook.py",
+      "kind": "rewrite_import",
+      "line": 1010,
+      "severity": "info"
+    },
+    {
+      "column": 8,
+      "detail": "from-import module 'runtime.langgraph_factory.evidence' -> 'curriculum_factory.langgraph_factory.evidence'",
+      "file": "tests/runtime/test_plan26_workbook.py",
+      "kind": "rewrite_import",
+      "line": 1011,
+      "severity": "info"
+    },
+    {
+      "column": 0,
+      "detail": "from-import module 'runtime.langgraph_factory' -> 'curriculum_factory.langgraph_factory'",
+      "file": "tests/runtime/test_plan27_adversarial.py",
+      "kind": "rewrite_import",
+      "line": 20,
+      "severity": "info"
+    },
+    {
+      "column": 4,
+      "detail": "from-import module 'runtime.langgraph_factory' -> 'curriculum_factory.langgraph_factory'",
+      "file": "tests/runtime/test_plan27_adversarial.py",
+      "kind": "rewrite_import",
+      "line": 109,
+      "severity": "info"
+    },
+    {
+      "column": 0,
+      "detail": "from-import module 'runtime.retry' -> 'curriculum_factory.retry'",
+      "file": "tests/runtime/test_retry.py",
+      "kind": "rewrite_import",
+      "line": 3,
+      "severity": "info"
+    },
+    {
+      "column": 0,
+      "detail": "from-import module 'runtime.routing' -> 'curriculum_factory.routing'",
+      "file": "tests/runtime/test_routing.py",
+      "kind": "rewrite_import",
+      "line": 6,
+      "severity": "info"
+    },
+    {
+      "column": 0,
+      "detail": "from-import module 'runtime.controller' -> 'curriculum_factory.controller'",
+      "file": "tests/runtime/test_run_curriculum.py",
+      "kind": "rewrite_import",
+      "line": 10,
+      "severity": "info"
+    },
+    {
+      "column": 0,
+      "detail": "from-import module 'runtime.langgraph_factory' -> 'curriculum_factory.langgraph_factory'",
+      "file": "tests/runtime/test_run_curriculum.py",
+      "kind": "rewrite_import",
+      "line": 11,
+      "severity": "info"
+    },
+    {
+      "column": 0,
+      "detail": "from-import module 'runtime.langgraph_factory' -> 'curriculum_factory.langgraph_factory'",
+      "file": "tests/runtime/test_run_curriculum.py",
+      "kind": "rewrite_import",
+      "line": 12,
+      "severity": "info"
+    },
+    {
+      "column": 7,
+      "detail": "import target 'runtime.run_curriculum' -> 'curriculum_factory.run_curriculum'",
+      "file": "tests/runtime/test_run_curriculum.py",
+      "kind": "rewrite_import",
+      "line": 13,
+      "severity": "info"
+    },
+    {
+      "column": 7,
+      "detail": "import target 'runtime.run_curriculum' -> 'curriculum_factory.run_curriculum'",
+      "file": "tests/runtime/test_run_curriculum.py",
+      "kind": "rewrite_import",
+      "line": 14,
+      "severity": "info"
+    },
+    {
+      "column": 12,
+      "detail": "from-import module 'runtime.run_curriculum' -> 'curriculum_factory.run_curriculum'",
+      "file": "tests/runtime/test_run_curriculum.py",
+      "kind": "rewrite_import",
+      "line": 45,
+      "severity": "info"
+    },
+    {
+      "column": 0,
+      "detail": "from-import module 'runtime' -> 'curriculum_factory'",
+      "file": "tests/runtime/test_run_state.py",
+      "kind": "rewrite_import",
+      "line": 15,
+      "severity": "info"
+    },
+    {
+      "column": 0,
+      "detail": "from-import module 'runtime.run_state' -> 'curriculum_factory.run_state'",
+      "file": "tests/runtime/test_run_state.py",
+      "kind": "rewrite_import",
+      "line": 16,
+      "severity": "info"
+    },
+    {
+      "column": 0,
+      "detail": "from-import module 'runtime.workbook' -> 'curriculum_factory.workbook'",
+      "file": "tests/runtime/test_run_state.py",
+      "kind": "rewrite_import",
+      "line": 17,
+      "severity": "info"
+    },
+    {
+      "column": 4,
+      "detail": "from-import module 'runtime.session_bridge' -> 'curriculum_factory.session_bridge'",
+      "file": "tests/runtime/test_run_state.py",
+      "kind": "rewrite_import",
+      "line": 168,
+      "severity": "info"
+    },
+    {
+      "column": 0,
+      "detail": "from-import module 'runtime.visual_maps' -> 'curriculum_factory.visual_maps'",
+      "file": "tests/runtime/test_visual_maps.py",
+      "kind": "rewrite_import",
+      "line": 15,
+      "severity": "info"
+    },
+    {
+      "column": 4,
+      "detail": "from-import module 'runtime.session_bridge' -> 'curriculum_factory.session_bridge'",
+      "file": "tests/runtime/test_visual_maps.py",
+      "kind": "rewrite_import",
+      "line": 206,
+      "severity": "info"
+    },
+    {
+      "column": 0,
+      "detail": "from-import module 'runtime.io' -> 'curriculum_factory.io'",
+      "file": "tests/runtime/unit_fixture.py",
+      "kind": "rewrite_import",
+      "line": 14,
+      "severity": "info"
+    },
+    {
+      "column": 0,
+      "detail": "from-import module 'runtime.logger' -> 'curriculum_factory.logger'",
+      "file": "tests/runtime/unit_fixture.py",
+      "kind": "rewrite_import",
+      "line": 15,
+      "severity": "info"
+    },
+    {
+      "column": 0,
+      "detail": "from-import module 'runtime.visual_maps' -> 'curriculum_factory.visual_maps'",
+      "file": "tests/runtime/unit_fixture.py",
+      "kind": "rewrite_import",
+      "line": 16,
+      "severity": "info"
+    },
+    {
+      "column": 4,
+      "detail": "from-import module 'runtime.io' -> 'curriculum_factory.io'",
+      "file": "tools/refactor_repo/baseline.py",
+      "kind": "rewrite_import",
+      "line": 137,
+      "severity": "info"
+    }
+  ],
+  "libcst_version": "1.8.2",
+  "mode": "apply",
+  "new_root": "curriculum_factory",
+  "old_root": "runtime",
+  "summary": {
+    "files_changed": 34,
+    "files_parse_error": 0,
+    "files_scanned": 87,
+    "files_unsafe": 0
+  },
+  "tool": "tools/refactor_repo/rewrite_runtime_imports.py"
+}

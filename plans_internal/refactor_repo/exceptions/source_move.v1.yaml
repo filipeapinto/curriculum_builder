@@ -1,0 +1,420 @@
+# yaml-language-server: $schema=n/a
+title: P03 source-move codemod residuals
+description: >-
+  Every syntax-aware `runtime` -> `curriculum_factory` residual reported by
+  `tools/refactor_repo/rewrite_runtime_imports.py postcondition-scan --root .`
+  after P03 applied the codemod to its authorized live Python surface
+  (src/curriculum_factory/, tests/runtime/, tests/gates/fr_p5_unit.py,
+  tests/check_meta_prompt.py, tests/meta_prompt_source.py). Each entry below
+  is a diagnostic id, an exact list of files/lines it covers, the consumer
+  that owns the residual, why it is intentionally left untouched, and what
+  (if anything) would remove it. No entry authorizes P03 to edit outside its
+  authorized_paths; entries owned by another prompt/party are handoffs, not
+  P03 completions.
+generated_from:
+  tool: tools/refactor_repo/rewrite_runtime_imports.py
+  command: >-
+    postcondition-scan --root . --repo-root . --old-root runtime
+    --new-root curriculum_factory
+  scan_summary:
+    files_scanned: 263
+    files_with_residuals: 32
+    residual_count: 51
+  scan_summary_note: >-
+    Corrected 2026-08-16 during recovery. This block previously recorded 33 files / 52
+    residuals, taken from a scan run in the provisional worktree while that worktree
+    still held an extra untracked copy of a codemod fixture. The figures above are the
+    current, reproducible scan against the checkpoint tree under review, and they match
+    the checkpoint report and
+    plans_internal/refactor_repo/checkpoints/P03/evidence/test4_postcondition_scan_repo_wide.json
+    exactly. Every one of the 51 residuals across the 32 files is classified by an entry
+    below; see evidence/test4_residual_classification.txt for the file-by-file mapping.
+residuals:
+  - id: tooling-live-import-runtime-io-RESOLVED
+    status: RESOLVED (2026-08-16, operator-authorized narrow compatibility correction)
+    resolution: >-
+      P03's authorized_paths was amended to grant exactly
+      tools/refactor_repo/baseline.py. Fixed line 137's import plus the three
+      other functions (capture_documented_commands, capture_import_origin,
+      capture_cli_help_and_invalid_input) that invoked `-m runtime.run_curriculum`
+      or `import runtime` with cwd/sys.path pointed at repo_root; all repointed
+      to curriculum_factory / repo_root/"src". Verified end-to-end: `python3
+      tools/refactor_repo/baseline.py capture --repo-root <worktree> --output-dir
+      ...` now exits 0 with existing_failures=[], import_origin resolves to
+      src/curriculum_factory/__init__.py, and all three CLI captures return the
+      correct exit codes (0, 2, 2).
+    kind: rewrite_import (would-be) / functional
+    consumer: tools/refactor_repo/baseline.py (owned by P00; tools/refactor_repo/ is
+      not in P03's authorized_paths)
+    files:
+      - path: tools/refactor_repo/baseline.py
+        line: 137
+        detail: "capture_output_containment() executes `from runtime.io import
+          require_internal_output, BoundaryError` at call time; this now
+          raises ModuleNotFoundError because runtime/ no longer exists."
+    rationale: >-
+      This is a real, live functional break caused by P03's move, but the
+      file is owned by P00 (closed grant per the P02 checkpoint's disclosed
+      tools/refactor_repo/ ownership) and is outside P03's authorized_paths,
+      so P03 cannot edit it without an unauthorized write. It is not exercised
+      by the pytest suite (grep across tests/ shows no test imports
+      capture_output_containment or tools.refactor_repo.baseline), so it does
+      not appear as a pytest regression in P03 Test 6's full-suite comparison.
+      It was exercised successfully once, at t=0, before this move
+      (plans_internal/refactor_repo/checkpoints/P03/baseline/t0/), which is
+      why that capture is valid pre-move evidence and cannot be repeated
+      identically post-move without a follow-up fix.
+    removal: >-
+      A future prompt authorized to edit tools/refactor_repo/ (or an explicit
+      P00/P00A-line follow-up) must change line 137 to
+      `from curriculum_factory.io import require_internal_output, BoundaryError`.
+      Recorded here as the exact handoff; not owned or claimed by P03.
+    owner_of_fix: unassigned (outside P00-P10 resolved manifest's granted P03 scope)
+
+  - id: codemod-fixture-before-files
+    kind: rewrite_import / non_target_shadowed (intentional test input)
+    consumer: tests/refactor_repo/codemod/ (P02's codemod test suite; owned by P02,
+      not P03)
+    files:
+      - tests/refactor_repo/codemod/fixtures/aliased_import/before.py
+      - tests/refactor_repo/codemod/fixtures/ambiguous_shadowed_reassign/before.py
+      - tests/refactor_repo/codemod/fixtures/comment_non_target/before.py
+      - tests/refactor_repo/codemod/fixtures/dotted_submodule_import/before.py
+      - tests/refactor_repo/codemod/fixtures/from_import_aliased_module/before.py
+      - tests/refactor_repo/codemod/fixtures/mixed_old_new/before.py
+      - tests/refactor_repo/codemod/fixtures/multiline_from_import/before.py
+      - tests/refactor_repo/codemod/fixtures/simple_import/before.py
+      - tests/refactor_repo/codemod/fixtures/string_literal_non_target/before.py
+    rationale: >-
+      These `before.py` fixtures are the codemod tool's own unit-test input:
+      they must literally still say `runtime` pre-rewrite so the paired
+      `after.py` fixture can assert what the tool produces. Rewriting them
+      would break tests/refactor_repo/structured_codemod and
+      tests/refactor_repo/codemod coverage of the tool itself, not the
+      production package P03 moves. Not in P03's authorized_paths (owned by
+      P02's tooling-test fixtures).
+    removal: N/A — permanent, intentional fixture content.
+    owner_of_fix: P02 (fixture owner); no action required.
+
+  - id: codemod-fixture-malformed-python
+    kind: parse_error (unsafe, intentional)
+    consumer: tests/refactor_repo/codemod/fixtures/malformed_python/ (P02's codemod
+      fail-closed test)
+    files:
+      - tests/refactor_repo/codemod/fixtures/malformed_python/before.py
+      - tests/refactor_repo/codemod/fixtures/malformed_python/after.py
+    rationale: >-
+      Deliberately syntactically invalid Python used to prove the codemod's
+      fail-closed behavior on unparseable input. Not part of the production
+      package or a live import; not in P03's authorized_paths.
+    removal: N/A — permanent, intentional fixture content.
+    owner_of_fix: P02 (fixture owner); no action required.
+
+  - id: archived-plan-evidence-runtime-references
+    kind: residual_old_reference (blocker, in frozen historical evidence)
+    consumer: >-
+      plans/26_langgraph_curriculum_factory/results/evidence/N20_GRAPH_COMPILER/
+      and
+      plans/27_langgraph_curriculum_factory_remediation/execution_package_v2/release_candidate/rc13,rc14,rc15,rc16,rc18,rc19,rc21,rc22,rc28/QA/exec/
+      (39 residual references across 21 files)
+    files_glob:
+      - plans/26_langgraph_curriculum_factory/results/evidence/N20_GRAPH_COMPILER/deferred_victim_simulation_gen9.py
+      - plans/26_langgraph_curriculum_factory/results/evidence/N20_GRAPH_COMPILER/widening_simulation_gen9.py
+      - plans/27_langgraph_curriculum_factory_remediation/execution_package_v2/release_candidate/rc13/QA/exec/*.py
+      - plans/27_langgraph_curriculum_factory_remediation/execution_package_v2/release_candidate/rc14/QA/exec/rc14_unfrozen_verifier_dependency_repro.py
+      - plans/27_langgraph_curriculum_factory_remediation/execution_package_v2/release_candidate/rc15/QA/exec/test_rc15_sandbox_probe.py
+      - plans/27_langgraph_curriculum_factory_remediation/execution_package_v2/release_candidate/rc16/QA/exec/rc16_ancestor_metadata_repro.py
+      - plans/27_langgraph_curriculum_factory_remediation/execution_package_v2/release_candidate/rc18/QA/exec/rc18_staged_candidate_mutation_repro.py
+      - plans/27_langgraph_curriculum_factory_remediation/execution_package_v2/release_candidate/rc19/QA/exec/*.py
+      - plans/27_langgraph_curriculum_factory_remediation/execution_package_v2/release_candidate/rc21/QA/exec/qa_rc21_adversarial_probe.py
+      - plans/27_langgraph_curriculum_factory_remediation/execution_package_v2/release_candidate/rc22/QA/exec/*.py
+      - plans/27_langgraph_curriculum_factory_remediation/execution_package_v2/release_candidate/rc28/QA/exec/*.py
+    rationale: >-
+      These are point-in-time reproduction/probe scripts frozen as evidence
+      for already-closed plans 26 and 27. They are not part of the live
+      production package, are not collected or run by the pytest suite under
+      tests/, and are not in P03's authorized_paths (`plans/` is never
+      granted to P03). Rewriting archived evidence would falsify the
+      historical record of what those plans actually ran; they are
+      intentionally left referencing the pre-move `runtime` root.
+    removal: N/A — historical evidence must not be mutated.
+    owner_of_fix: none; permanent archival residual.
+
+  - id: checkpoint-scoped-predecessor-self-tests-superseded-by-p03-RESOLVED
+    status: RESOLVED (2026-08-16, operator-authorized narrow compatibility correction)
+    resolution: >-
+      P03's authorized_paths was amended (see P03_source_move.prompt.v3.yaml's
+      "narrow operator-authorized compatibility-correction amendment" comment)
+      to grant exactly tests/refactor_repo/test_packaging_skeleton.py and
+      tests/refactor_repo/codemod/test_rewrite_runtime_imports.py. All 4 tests
+      below were rewritten to assert the post-move state while preserving each
+      test's original behavioral intent (package-minimality boundary check,
+      runtime/ absence check, __all__ contract check, and dry-run-completeness
+      check respectively) rather than disabled. All 4 verified passing.
+    files:
+      - tests/refactor_repo/test_packaging_skeleton.py::test_runtime_directory_is_unchanged_by_this_checkpoint
+      - tests/refactor_repo/test_packaging_skeleton.py::test_src_curriculum_factory_package_exists_and_is_minimal
+      - tests/refactor_repo/test_packaging_skeleton.py::test_src_curriculum_factory_is_importable_without_installation
+      - tests/refactor_repo/codemod/test_rewrite_runtime_imports.py::test_live_dry_run_rehearsal_reconciles_with_p00_and_writes_nothing
+    original_rationale: >-
+      Each assertion was explicitly checkpoint-scoped: e.g. "P01 does not move
+      production source... runtime/ must still exist" and "only the skeleton
+      __init__.py may exist at this checkpoint". These tests existed to prove
+      P01/P02 respected their own boundary as of their own checkpoint; P03's
+      declared goal necessarily and correctly falsified those "as of this
+      checkpoint" assertions once it ran. Not a regression in production
+      behavior, but a superseded predecessor assertion -- now updated in place
+      to assert the current (post-P03) correct state instead.
+
+  - id: p04_handoff_allowlist
+    kind: pytest regression (resource-loading semantics; P04's declared domain)
+    status: >-
+      OPEN — explicit P04 handoff per operator authorization (2026-08-16).
+      This is the complete, exhaustive, exact-test-ID enumeration required by
+      the amended Test 7 completion contract in P03_source_move.prompt.v3.yaml.
+      Exactly these 29 test IDs, and no others, may fail; every other test
+      must pass.
+    test_ids:
+      root_cause_A_test_helper_repo_root_from_installed_package:
+        description: >-
+          The test module computes `REPO_ROOT`/`CURRICULA_ROOT` as
+          `Path(<the installed curriculum_factory package>.__file__).resolve().parents[N]`,
+          which resolves inside venv site-packages once the package is truly
+          pip-installed (P03 Test 4/5's required environment) instead of the
+          repo checkout. `curricula/` never ships inside the wheel, so
+          `CURRICULA_ROOT.iterdir()` raises `FileNotFoundError`.
+        owner: P04
+        tests:
+          - tests/runtime/test_plan26_deterministic_nodes.py::test_no_curriculum_name_appears_in_production_source[__init__.py]
+          - tests/runtime/test_plan26_deterministic_nodes.py::test_no_curriculum_name_appears_in_production_source[content.py]
+          - tests/runtime/test_plan26_deterministic_nodes.py::test_no_curriculum_name_appears_in_production_source[domain.py]
+          - tests/runtime/test_plan26_deterministic_nodes.py::test_no_curriculum_name_appears_in_production_source[inputs.py]
+          - tests/runtime/test_plan26_deterministic_nodes.py::test_no_curriculum_name_appears_in_production_source[render.py]
+          - tests/runtime/test_plan26_deterministic_nodes.py::test_no_curriculum_name_appears_in_production_source[review.py]
+          - tests/runtime/test_plan26_deterministic_nodes.py::test_no_curriculum_name_appears_in_production_source[sources.py]
+          - tests/runtime/test_plan26_deterministic_nodes.py::test_no_curriculum_name_appears_in_production_source[terminal.py]
+          - tests/runtime/test_plan26_deterministic_nodes.py::test_no_curriculum_name_appears_in_production_source[visuals.py]
+          - tests/runtime/test_plan26_deterministic_nodes.py::test_no_hardcoded_unit_count_appears_in_production_source[__init__.py]
+          - tests/runtime/test_plan26_deterministic_nodes.py::test_no_hardcoded_unit_count_appears_in_production_source[content.py]
+          - tests/runtime/test_plan26_deterministic_nodes.py::test_no_hardcoded_unit_count_appears_in_production_source[domain.py]
+          - tests/runtime/test_plan26_deterministic_nodes.py::test_no_hardcoded_unit_count_appears_in_production_source[inputs.py]
+          - tests/runtime/test_plan26_deterministic_nodes.py::test_no_hardcoded_unit_count_appears_in_production_source[render.py]
+          - tests/runtime/test_plan26_deterministic_nodes.py::test_no_hardcoded_unit_count_appears_in_production_source[review.py]
+          - tests/runtime/test_plan26_deterministic_nodes.py::test_no_hardcoded_unit_count_appears_in_production_source[sources.py]
+          - tests/runtime/test_plan26_deterministic_nodes.py::test_no_hardcoded_unit_count_appears_in_production_source[terminal.py]
+          - tests/runtime/test_plan26_deterministic_nodes.py::test_no_hardcoded_unit_count_appears_in_production_source[visuals.py]
+      root_cause_B_D07_D08_D09_engine_root_resource_lookup:
+        description: >-
+          These tests pass `"engine_root": str(REPO_ROOT)` into node state,
+          where the test module's own `REPO_ROOT` is computed by the same
+          installed-package-relative formula as root cause A. The D07/D08/D09
+          node bodies then read `engine_root`-relative schema/contract files
+          (e.g. `schemas/manifest_domain.metaschema.v1.json`) that do not
+          exist under that computed root. Root-caused by direct, reproducible
+          invocation (not inference): calling
+          `curriculum_factory.langgraph_factory.nodes.sources.D07_CORRELATE_AND_ADMIT_SOURCES`
+          with `engine_root` set to the real checkout returns normally
+          (`pending_failure: None`); the identical call with `engine_root`
+          set to the venv site-packages path fails with
+          `"engine contract 'schemas/manifest_domain.metaschema.v1.json' is missing"`.
+        owner: P04
+        tests:
+          - tests/runtime/test_plan26_deterministic_nodes.py::test_d07_admits_a_complete_correlated_join
+          - tests/runtime/test_plan26_deterministic_nodes.py::test_d08_admits_a_real_m02_candidate_the_model_never_versioned
+          - tests/runtime/test_plan26_deterministic_nodes.py::test_d09_admits_a_real_m03_candidate_against_the_admitted_domain_head
+          - tests/runtime/test_plan26_deterministic_nodes.py::test_a_repairable_domain_stages_no_content_packet
+          - tests/runtime/test_plan26_deterministic_nodes.py::test_a_staged_content_packet_is_an_admissible_m03_projection
+          - tests/runtime/test_plan26_deterministic_nodes.py::test_an_admitted_domain_version_is_the_current_heads_successor
+          - tests/runtime/test_plan26_deterministic_nodes.py::test_the_contract_d09_validates_against_admits_every_legal_m03_body
+          - tests/runtime/test_plan26_deterministic_nodes.py::test_the_domain_body_is_held_to_the_contract_the_run_declares
+          - tests/runtime/test_plan26_deterministic_nodes.py::test_two_domain_candidates_differing_in_body_mint_different_hashes
+      root_cause_C_production_egress_policy_resource_path:
+        description: >-
+          Production code itself (not a test helper):
+          `src/curriculum_factory/langgraph_factory/egress.py`'s
+          `load_retrieval_host_profile` resolves `policy/retrieval_hosts.v1.yaml`
+          relative to the installed package location. Observed failure:
+          `"cannot read retrieval host policy: [Errno 2] No such file or
+          directory: '.../site-packages/policy/retrieval_hosts.v1.yaml'"`.
+        owner: P04
+        tests:
+          - tests/runtime/test_plan26_egress.py::test_load_retrieval_host_profile_returns_the_declared_electronics_profile
+          - tests/runtime/test_plan26_egress.py::test_load_retrieval_host_profile_rejects_an_unknown_profile_name
+    total_count: 29
+    rationale: >-
+      Root-caused by direct execution: these modules compute a "repository
+      root" as `Path(<the installed curriculum_factory package>.__file__).resolve().parents[N]`
+      (e.g. test_plan26_deterministic_nodes.py's `REPO_ROOT = FACTORY_ROOT.parents[1]`,
+      or production egress.py's own policy-file resolution), then locate
+      `curricula/`, `policy/`, and `schemas/` beneath it. Verified directly: when
+      that computed root is the checkout (as at t0, and as when engine_root is
+      passed explicitly, e.g. D07/D08/D09's `engine_root: str(REPO_ROOT)`
+      state field), resolution succeeds -- proven by invoking
+      curriculum_factory.langgraph_factory.nodes.sources.D07_CORRELATE_AND_ADMIT_SOURCES
+      directly with engine_root set to the real checkout root: it returns
+      normally with no pending_failure. When that same package is imported
+      from a true pip-installed distribution (P03 Test 4's required
+      environment: repository root, tests/runtime, and an external working
+      directory all resolving curriculum_factory's __file__ into venv
+      site-packages), `Path(__file__).resolve().parents[N]` instead lands
+      inside site-packages, which has no curricula/, policy/, or schemas/
+      directory -- e.g. observed failure:
+      "cannot read retrieval host policy: [Errno 2] No such file or
+      directory: '.../site-packages/policy/retrieval_hosts.v1.yaml'". This is
+      not caused by the `runtime` -> `curriculum_factory` rename (t0 never
+      ran in an installed environment to exercise it either); it is the
+      general "repository-root redesign"/"resource loading semantics"
+      question P03's own goal statement lists as an explicit non-target and
+      hands to P04 by name ("isolate semantic root/resource repair for P04").
+      Confirmed no fix is available within P03's authorized_paths: the
+      correct root is not derivable from the installed package location
+      alone (curricula/, policy/, schemas/ deliberately ship outside the
+      wheel).
+    removal: P04_resource_root_repair.prompt.v3.yaml owns the fix by design.
+    owner_of_fix: P04
+
+  - id: frozen-plan26-harness-receipts-inadmissible-RESOLVED
+    status: RESOLVED (2026-08-16, operator-authorized narrow compatibility correction)
+    resolution: >-
+      Corrected diagnosis: the actual cause was not implementation.graph.v3.yaml
+      (the manifest, never granted) but three PERSISTED RECEIPT files under
+      plans/26_langgraph_curriculum_factory/results/v3/ whose `outputs` dict
+      hardcodes pre-move relative-path keys and digests
+      (N11_STATE_REDUCERS.receipt.v1.json; and, once N11 was fixed and the
+      test's node loop continued, N12_EVIDENCE_ARTIFACTS.receipt.v1.json and
+      N13_TRANSPORT_AUTH.receipt.v1.json surfaced the identical class of
+      drift). P03's authorized_paths was amended to grant exactly these three
+      receipt files (plus their receipt_history/ archive subdirectories).
+      Updated each via the harness's own ReceiptStore.save() persistence
+      contract: schema-validated against scheduler_receipt.schema.v2.json,
+      canonically serialized, the prior version archived to
+      receipt_history/<node_id>/<old_sha256>.receipt.v1.json (nothing
+      destroyed), output keys renamed runtime/... -> src/curriculum_factory/...,
+      file digests reused unchanged where content was byte-identical (verified
+      directly: state.py, reducers.py, transport.py, egress.py) or recomputed
+      where content legitimately changed via P03's own codemod/fixes
+      (evidence.py; tests/runtime/test_plan26_{state_reducers,evidence,egress,transport}.py),
+      and directory digests (config/, prompts/, schemas/) recomputed fresh
+      with the harness's own path_digest() function, since that digest
+      embeds the relative path string and therefore cannot be reused verbatim
+      after a path rename even with unchanged file content. Verified:
+      tests/runtime/test_plan26_prompt_graph_controller.py 27 passed (was 1
+      failed, 26 passed).
+    original_finding: >-
+      tests/runtime/test_plan26_prompt_graph_controller.py::test_passed_nodes_remain_admissible_after_harness_or_predecessor_change
+      reported N11_STATE_REDUCERS (then N12, then N13) as no longer
+      admissible: the test's tolerant admissibility check reads a node's
+      *persisted receipt's* `outputs` dict directly (not the manifest), and
+      those receipts' keys and digests were frozen at pre-move paths/content.
+
+  - id: deprecated-rebrand-asset
+    kind: residual_old_reference (blocker, in deprecated asset)
+    consumer: plans_internal/refactor_repo/deprecated/phrase_rebrand_v1/assets/run_rebrand_with_log.py
+    files:
+      - path: plans_internal/refactor_repo/deprecated/phrase_rebrand_v1/assets/run_rebrand_with_log.py
+        line: 18
+        detail: "from-import statement still targets 'runtime.logger'"
+    rationale: >-
+      Asset of a deprecated, superseded plan package
+      (plans_internal/refactor_repo/deprecated/), not in P03's
+      authorized_paths and not executed by any test or tool in the active
+      pipeline.
+    removal: N/A — deprecated archival residual.
+    owner_of_fix: none; permanent archival residual.
+
+  - id: baseline-compare-test-commit-sequencing-artifact
+    status: >-
+      Explained, self-resolving on commit; not counted among the 29 P04
+      handoff failures and not a defect in any fix made by P03.
+    consumer: tests/refactor_repo/test_inventory.py::test_baseline_compare_detects_changed_behavior
+    rationale: >-
+      This test creates a disposable `git worktree add --detach <path> HEAD`
+      and runs (the now-fixed) tools/refactor_repo/baseline.py against it, to
+      prove capture/compare detects a real behavioral change. While P03's
+      delta remains uncommitted, `HEAD` still resolves to `ccacad3` (the
+      pre-move state), so the pristine worktree still has the old `runtime/`
+      layout while the fixed baseline.py now only looks for
+      `curriculum_factory`, producing a `ModuleNotFoundError` in that one
+      pristine capture. Verified directly: a temporary commit of the complete
+      P03 delta (immediately `git reset --soft` back to `ccacad3`, restoring
+      the exact uncommitted working state with zero content loss, confirmed
+      by file-count and `git status` comparison) made this test pass (1
+      passed). It will pass in the ordinary course of this workflow the
+      moment the real P03 commit lands (before P04 begins), and must be
+      reconfirmed passing in the full-suite rerun performed immediately after
+      that commit.
+    owner_of_fix: N/A — resolves automatically on commit; no code change needed.
+    resolution_2026_08_16_recovery: >-
+      RESOLVED BY DIRECT EVIDENCE, not by promise. The full suite was re-run in an
+      installed-distribution venv against a checkout whose HEAD is the preserved
+      provisional commit ee8922a, whose tree id db6f611dbee4cc80ab4d85425c318338dd37a994
+      is identical to the recovery worktree's own index tree — so the content tested is
+      byte-for-byte the content under review, while HEAD does reflect the move. In that
+      run test_baseline_compare_detects_changed_behavior does not appear in the
+      FAILED/ERROR set, and the 29 new-vs-t0 failures diff exactly against
+      p04_handoff_allowlist. Evidence:
+      plans_internal/refactor_repo/checkpoints/P03/t4_recovery/. The earlier
+      reverted-temporary-commit rehearsal described above is superseded by this and is
+      not relied on.
+
+  - id: premove-dryrun-reconciliation-not-recorded-contemporaneously
+    status: >-
+      RESOLVED (2026-08-16 recovery, second pass) BY RE-EXECUTION, not by argument.
+      This entry originally recorded the reconciliation as reconstructed-after-the-fact.
+      Independent QA round 1 held, correctly, that a reconstruction cannot be reported as
+      a PASS of a procedure the prompt requires to happen before the first move. The
+      worktree was therefore rolled back to ccacad3, the inspection was performed and
+      recorded with runtime/ still intact and src/curriculum_factory/ still empty, the
+      stop condition was evaluated at that point, and only then was the move performed.
+      The re-executed move is byte-identical to the reviewed delta on every code, test,
+      tooling and receipt path (git diff --name-only ee8922a over src, tests, tools,
+      runtime and plans/26_langgraph_curriculum_factory returns zero paths). Evidence:
+      plans_internal/refactor_repo/checkpoints/P03/evidence/premove_inspection/ and
+      .../evidence/move_execution/; journal ACT-039/040 (inspection, before any move) and
+      ACT-041/042 (the move). The original text is preserved below for traceability.
+    original_status: >-
+      RECORDED EXCEPTION (2026-08-16 recovery). Disclosed, not waived. Test 2's
+      required comparison was performed and reconciles exactly, but it was
+      reconstructed after the move rather than recorded before the first move.
+    consumer: >-
+      P03 prompt Test 2 ("compare P02 live dry-run candidates and diagnostics with
+      the current AST inventory before the first move") and the associated stop
+      condition ("stop before applying if candidate coverage does not reconcile").
+    rationale: >-
+      The original P03 execution recorded a t0 digest baseline of runtime/ before
+      mutating anything, but did not record the dry-run/AST reconciliation itself
+      before the first move; the version of it later placed in the checkpoint was a
+      post-move idempotency check (zero remaining candidates), which is a different
+      claim. Independent QA correctly identified this as unrecorded (finding
+      P03-QA-004). It cannot be made contemporaneous after the fact and is therefore
+      recorded here as an exception rather than reported as an unqualified PASS of
+      the literal procedure.
+    reconstruction: >-
+      The pre-move reconciliation was re-executed against a provably identical
+      pre-move tree. A disposable worktree was checked out at the authoritative
+      predecessor ccacad34ef5a11cf7d05dea3c62612893a60cf7d, and every one of its 69
+      runtime/ files was verified byte-identical to the digests recorded in
+      checkpoints/P03/baseline/t0/runtime_tree_sha256_t0.txt before any P03 mutation
+      (69/69 sha256 match, empty diff). The codemod dry-run was then run against that
+      tree over P03's authorized Python surface:
+      files_scanned=87, files_would_change=34, files_unsafe=0, files_parse_error=0.
+      All 34 candidates reconcile 1:1 with a content-changing entry at the expected
+      destination in the actual delta (34/34, zero unreconciled), and the 13
+      content-changing delta entries that were not codemod candidates are separately
+      enumerated and each falls inside P03's authorized paths.
+    evidence:
+      - plans_internal/refactor_repo/checkpoints/P03/evidence/test2_premove_dryrun_ccacad3.json
+      - plans_internal/refactor_repo/checkpoints/P03/evidence/test2_premove_dryrun_ccacad3.diff
+      - plans_internal/refactor_repo/checkpoints/P03/evidence/test2_premove_candidates.txt
+      - plans_internal/refactor_repo/checkpoints/P03/evidence/test2_premove_reconciliation.txt
+      - plans_internal/refactor_repo/checkpoints/P03/evidence/test2_delta_name_status.txt
+    residual_limitation: >-
+      What the reconstruction proves is that candidate coverage does reconcile and
+      that zero ambiguous transformations exist. What it cannot prove is that this
+      check was consulted before the first move, i.e. that the stop condition was
+      actively honored rather than retrospectively satisfied. That specific claim is
+      NOT made anywhere in the P03 checkpoint.
+    owner_of_fix: >-
+      Process, not code. P04 onwards must capture the pre-move/pre-mutation
+      reconciliation into the checkpoint evidence directory before the first mutating
+      action, not after.

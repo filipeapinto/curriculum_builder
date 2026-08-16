@@ -1,0 +1,151 @@
+{
+  "diagnostics": [
+    {
+      "column": 0,
+      "detail": "from-import module 'runtime.langgraph_factory.artifacts' -> 'curriculum_factory.langgraph_factory.artifacts'",
+      "file": "src/curriculum_factory/langgraph_factory/evidence.py",
+      "kind": "rewrite_import",
+      "line": 20,
+      "severity": "info"
+    },
+    {
+      "column": 39,
+      "detail": "identifier 'runtime' resolves to a non-import binding (['LOCAL']); left untouched (ambiguous/shadowed, not the production import root)",
+      "file": "src/curriculum_factory/langgraph_factory/graph.py",
+      "kind": "non_target_shadowed",
+      "line": 375,
+      "severity": "info"
+    },
+    {
+      "column": 26,
+      "detail": "identifier 'runtime' resolves to a non-import binding (['LOCAL']); left untouched (ambiguous/shadowed, not the production import root)",
+      "file": "src/curriculum_factory/langgraph_factory/graph.py",
+      "kind": "non_target_shadowed",
+      "line": 376,
+      "severity": "info"
+    },
+    {
+      "column": 0,
+      "detail": "from-import module 'runtime.langgraph_factory.artifacts' -> 'curriculum_factory.langgraph_factory.artifacts'",
+      "file": "src/curriculum_factory/langgraph_factory/persistence.py",
+      "kind": "rewrite_import",
+      "line": 38,
+      "severity": "info"
+    },
+    {
+      "column": 0,
+      "detail": "from-import module 'runtime.langgraph_factory' -> 'curriculum_factory.langgraph_factory'",
+      "file": "src/curriculum_factory/run_curriculum.py",
+      "kind": "rewrite_import",
+      "line": 42,
+      "severity": "info"
+    },
+    {
+      "column": 0,
+      "detail": "from-import module 'runtime.langgraph_factory' -> 'curriculum_factory.langgraph_factory'",
+      "file": "src/curriculum_factory/run_curriculum.py",
+      "kind": "rewrite_import",
+      "line": 43,
+      "severity": "info"
+    },
+    {
+      "column": 0,
+      "detail": "from-import module 'runtime.langgraph_factory.artifacts' -> 'curriculum_factory.langgraph_factory.artifacts'",
+      "file": "src/curriculum_factory/run_curriculum.py",
+      "kind": "rewrite_import",
+      "line": 44,
+      "severity": "info"
+    },
+    {
+      "column": 0,
+      "detail": "from-import module 'runtime.langgraph_factory.egress' -> 'curriculum_factory.langgraph_factory.egress'",
+      "file": "src/curriculum_factory/run_curriculum.py",
+      "kind": "rewrite_import",
+      "line": 45,
+      "severity": "info"
+    },
+    {
+      "column": 0,
+      "detail": "from-import module 'runtime.langgraph_factory.graph' -> 'curriculum_factory.langgraph_factory.graph'",
+      "file": "src/curriculum_factory/run_curriculum.py",
+      "kind": "rewrite_import",
+      "line": 54,
+      "severity": "info"
+    },
+    {
+      "column": 0,
+      "detail": "from-import module 'runtime.langgraph_factory.nodes.inputs' -> 'curriculum_factory.langgraph_factory.nodes.inputs'",
+      "file": "src/curriculum_factory/run_curriculum.py",
+      "kind": "rewrite_import",
+      "line": 55,
+      "severity": "info"
+    },
+    {
+      "column": 4,
+      "detail": "identifier 'runtime' resolves to a non-import binding (['LOCAL']); left untouched (ambiguous/shadowed, not the production import root)",
+      "file": "src/curriculum_factory/session_bridge.py",
+      "kind": "non_target_shadowed",
+      "line": 54,
+      "severity": "info"
+    },
+    {
+      "column": 17,
+      "detail": "identifier 'runtime' resolves to a non-import binding (['LOCAL']); left untouched (ambiguous/shadowed, not the production import root)",
+      "file": "src/curriculum_factory/session_bridge.py",
+      "kind": "non_target_shadowed",
+      "line": 55,
+      "severity": "info"
+    },
+    {
+      "column": 4,
+      "detail": "identifier 'runtime' resolves to a non-import binding (['LOCAL']); left untouched (ambiguous/shadowed, not the production import root)",
+      "file": "src/curriculum_factory/session_bridge.py",
+      "kind": "non_target_shadowed",
+      "line": 56,
+      "severity": "info"
+    },
+    {
+      "column": 30,
+      "detail": "identifier 'runtime' resolves to a non-import binding (['LOCAL']); left untouched (ambiguous/shadowed, not the production import root)",
+      "file": "src/curriculum_factory/session_bridge.py",
+      "kind": "non_target_shadowed",
+      "line": 57,
+      "severity": "info"
+    },
+    {
+      "column": 4,
+      "detail": "identifier 'runtime' resolves to a non-import binding (['LOCAL']); left untouched (ambiguous/shadowed, not the production import root)",
+      "file": "src/curriculum_factory/session_bridge.py",
+      "kind": "non_target_shadowed",
+      "line": 58,
+      "severity": "info"
+    },
+    {
+      "column": 18,
+      "detail": "identifier 'runtime' resolves to a non-import binding (['LOCAL']); left untouched (ambiguous/shadowed, not the production import root)",
+      "file": "src/curriculum_factory/session_bridge.py",
+      "kind": "non_target_shadowed",
+      "line": 68,
+      "severity": "info"
+    },
+    {
+      "column": 9,
+      "detail": "identifier 'runtime' resolves to a non-import binding (['LOCAL']); left untouched (ambiguous/shadowed, not the production import root)",
+      "file": "src/curriculum_factory/session_bridge.py",
+      "kind": "non_target_shadowed",
+      "line": 78,
+      "severity": "info"
+    }
+  ],
+  "libcst_version": "1.8.2",
+  "mode": "apply",
+  "new_root": "curriculum_factory",
+  "old_root": "runtime",
+  "summary": {
+    "files_changed": 3,
+    "files_parse_error": 0,
+    "files_scanned": 47,
+    "files_unsafe": 0
+  },
+  "tool": "tools/refactor_repo/rewrite_runtime_imports.py"
+}

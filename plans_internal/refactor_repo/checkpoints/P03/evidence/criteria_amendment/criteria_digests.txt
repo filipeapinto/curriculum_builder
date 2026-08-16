@@ -1,0 +1,2 @@
+bfd035a29b675df9718dc694a945ff1a4e901f2b3d8e653541a2b98b2cc48a42  plans_internal/refactor_repo/checkpoints/P03/evidence/criteria_amendment/checkpoint_qa_criteria.v1.PRE_AMENDMENT.md
+8963b43f143290c2cf2e32c7aa97523d829657aeec9a2224b1aa3040a3c53f7e  plans_internal/refactor_repo/prompts/checkpoint_qa_criteria.v1.md

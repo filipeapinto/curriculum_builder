@@ -29,17 +29,17 @@ from typing import Any
 
 import pytest
 
-from runtime.langgraph_factory import graph as G
-from runtime.langgraph_factory import model_nodes as mn
-from runtime.langgraph_factory import routing as R
-from runtime.langgraph_factory import unit_graph as U
-from runtime.langgraph_factory import workbook
-from runtime.langgraph_factory.nodes import SystemFailure, canonical_digest, stream_id, terminal
-from runtime.langgraph_factory.state import FIELD_REDUCERS
+from curriculum_factory.langgraph_factory import graph as G
+from curriculum_factory.langgraph_factory import model_nodes as mn
+from curriculum_factory.langgraph_factory import routing as R
+from curriculum_factory.langgraph_factory import unit_graph as U
+from curriculum_factory.langgraph_factory import workbook
+from curriculum_factory.langgraph_factory.nodes import SystemFailure, canonical_digest, stream_id, terminal
+from curriculum_factory.langgraph_factory.state import FIELD_REDUCERS
 from tests.runtime import test_plan26_unit_graph as UG
 
 REPO_ROOT = Path(__file__).resolve().parents[2]
-WORKBOOK_PY = REPO_ROOT / "runtime" / "langgraph_factory" / "workbook.py"
+WORKBOOK_PY = REPO_ROOT / "src" / "curriculum_factory" / "langgraph_factory" / "workbook.py"
 
 RUN = "run-n32"
 EPISODE = "ep-n32"
@@ -540,7 +540,7 @@ def test_d32_releases_when_the_denominator_currently_passes(tmp_path: Path) -> N
 
 
 def _d98_projection(state: dict[str, Any]) -> dict[str, Any]:
-    from runtime.langgraph_factory.nodes import project
+    from curriculum_factory.langgraph_factory.nodes import project
 
     full = {
         **state,
@@ -556,7 +556,7 @@ def _d98_projection(state: dict[str, Any]) -> dict[str, Any]:
 
 
 def test_a_complete_candidate_from_d32_traverses_the_real_d98(tmp_path: Path) -> None:
-    assert terminal.write_terminal.__module__ == "runtime.langgraph_factory.nodes.terminal"
+    assert terminal.write_terminal.__module__ == "curriculum_factory.langgraph_factory.nodes.terminal"
 
     sandbox = tmp_path / "sandbox"
     state = _assemble_and_review(tmp_path, sandbox)
@@ -772,7 +772,7 @@ def test_the_compiled_graph_really_registers_the_workbook_engine(tmp_path: Path)
 
     from langgraph.graph import StateGraph
 
-    from runtime.langgraph_factory.state import FactoryInput, FactoryOutput, FactoryState, RuntimeContext
+    from curriculum_factory.langgraph_factory.state import FactoryInput, FactoryOutput, FactoryState, RuntimeContext
 
     builder = StateGraph(
         FactoryState, context_schema=RuntimeContext, input_schema=FactoryInput, output_schema=FactoryOutput
@@ -1007,8 +1007,8 @@ class _FullWorkbookHarnessContext:
     parameterizable, and is not in this file's write set to change."""
 
     def __init__(self, engine_root: Path, output_root: Path, sandbox: Path) -> None:
-        from runtime.langgraph_factory.artifacts import ArtifactStore
-        from runtime.langgraph_factory.evidence import EvidenceStore
+        from curriculum_factory.langgraph_factory.artifacts import ArtifactStore
+        from curriculum_factory.langgraph_factory.evidence import EvidenceStore
 
         self.engine_root = engine_root
         self.output_root = output_root

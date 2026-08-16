@@ -55,12 +55,12 @@ from langgraph.graph import END, START, StateGraph
 from langgraph.types import Send
 from typing_extensions import Annotated, TypedDict
 
-from runtime.langgraph_factory import graph as G
-from runtime.langgraph_factory import model_nodes as mn
-from runtime.langgraph_factory import persistence as P
-from runtime.langgraph_factory import routing as R
-from runtime.langgraph_factory import unit_graph as U
-from runtime.langgraph_factory.nodes import (
+from curriculum_factory.langgraph_factory import graph as G
+from curriculum_factory.langgraph_factory import model_nodes as mn
+from curriculum_factory.langgraph_factory import persistence as P
+from curriculum_factory.langgraph_factory import routing as R
+from curriculum_factory.langgraph_factory import unit_graph as U
+from curriculum_factory.langgraph_factory.nodes import (
     NODE_CATALOGUE,
     canonical_digest,
     domain,
@@ -70,15 +70,15 @@ from runtime.langgraph_factory.nodes import (
     sources,
     visuals,
 )
-from runtime.langgraph_factory.reducers import WriteOnceConflict, write_once
-from runtime.langgraph_factory.state import (
+from curriculum_factory.langgraph_factory.reducers import WriteOnceConflict, write_once
+from curriculum_factory.langgraph_factory.state import (
     FACTORY_STATE_FIELDS,
     FIELD_REDUCER_CLASSES,
     FactoryState,
 )
 
 REPO_ROOT = Path(__file__).resolve().parents[2]
-UNIT_GRAPH_PY = REPO_ROOT / "runtime" / "langgraph_factory" / "unit_graph.py"
+UNIT_GRAPH_PY = REPO_ROOT / "src" / "curriculum_factory" / "langgraph_factory" / "unit_graph.py"
 
 MODEL_NODE_IDS = frozenset(mn.MODEL_NODE_ADAPTERS)
 
@@ -410,8 +410,8 @@ class _HarnessContext:
     """`RuntimeContext`-shaped test double. No product root, no real transport."""
 
     def __init__(self, engine_root: Path, output_root: Path, sandbox: Path) -> None:
-        from runtime.langgraph_factory.artifacts import ArtifactStore
-        from runtime.langgraph_factory.evidence import EvidenceStore
+        from curriculum_factory.langgraph_factory.artifacts import ArtifactStore
+        from curriculum_factory.langgraph_factory.evidence import EvidenceStore
 
         self.engine_root = engine_root
         self.output_root = output_root
@@ -954,7 +954,7 @@ def test_a_node_body_authored_in_the_unit_path_module_is_refused() -> None:
     def D90_RESERVE_MODEL_ATTEMPT(state: Any, context: Any) -> dict[str, Any]:
         return {}
 
-    D90_RESERVE_MODEL_ATTEMPT.__module__ = "runtime.langgraph_factory.unit_graph"
+    D90_RESERVE_MODEL_ATTEMPT.__module__ = "curriculum_factory.langgraph_factory.unit_graph"
     bindings = dict(G.binding_inventory())
     bindings["D90_RESERVE_MODEL_ATTEMPT"] = D90_RESERVE_MODEL_ATTEMPT
 
@@ -1281,7 +1281,7 @@ def test_the_source_join_refuses_a_denominator_that_is_not_exact(mutation: str) 
 def test_a_duplicate_fanout_member_with_a_different_body_is_an_integrity_failure() -> None:
     """Spec 10: duplicate equal replay is idempotent; a different duplicate is not."""
 
-    from runtime.langgraph_factory.reducers import UnionConflict, union_disjoint
+    from curriculum_factory.langgraph_factory.reducers import UnionConflict, union_disjoint
 
     key = "U001/visual/det-a"
     first = {key: _visual_result(key, "U001", "deterministic")}
@@ -1342,7 +1342,7 @@ def test_no_node_in_this_path_can_emit_a_product_success_terminal() -> None:
         spec = NODE_CATALOGUE.get(source)
         if spec is None:
             continue
-        module_path = REPO_ROOT / "runtime" / "langgraph_factory" / "nodes" / f"{spec.module}.py"
+        module_path = REPO_ROOT / "src" / "curriculum_factory" / "langgraph_factory" / "nodes" / f"{spec.module}.py"
         body = module_path.read_text(encoding="utf-8")
         for terminal in product_terminals:
             # Word-bounded: `INCOMPLETE` is a join verdict, not a terminal kind.
@@ -2255,7 +2255,7 @@ def test_d90_and_d91_are_registered_production_nodes(compiled, available) -> Non
         parameters = list(inspect.signature(body).parameters.values())
         assert len(parameters) == 2
         assert all(p.kind is inspect.Parameter.POSITIONAL_OR_KEYWORD for p in parameters)
-        assert body.__module__ == "runtime.langgraph_factory.model_nodes"
+        assert body.__module__ == "curriculum_factory.langgraph_factory.model_nodes"
     assert {"D90_RESERVE_MODEL_ATTEMPT", "D91_CLASSIFY_MODEL_FAILURE"} <= set(
         compiled.get_graph().nodes
     )
@@ -2483,7 +2483,7 @@ def test_the_unit_content_contract_admits_exactly_what_m03_may_write() -> None:
     m03 = json.loads(
         (
             REPO_ROOT
-            / "runtime"
+            / "src" / "curriculum_factory"
             / "langgraph_factory"
             / "schemas"
             / "M03_write_unit_content.schema.json"
@@ -2528,7 +2528,7 @@ def test_a_real_m03_content_head_declares_the_visual_denominator(
     m03 = json.loads(
         (
             REPO_ROOT
-            / "runtime"
+            / "src" / "curriculum_factory"
             / "langgraph_factory"
             / "schemas"
             / "M03_write_unit_content.schema.json"
@@ -2797,7 +2797,7 @@ def test_graph_admission_persists_every_head_body_before_downstream_rendering(
     resolve its head, and the stored canonical bytes hash to the state head.
     """
 
-    from runtime.langgraph_factory.artifacts import ArtifactStore, ArtifactStream, UNIT_SCOPE
+    from curriculum_factory.langgraph_factory.artifacts import ArtifactStore, ArtifactStream, UNIT_SCOPE
 
     fixture = _build_episode_fixture(tmp_path)
     result = _run_episode(monkeypatch, fixture)

@@ -12,13 +12,13 @@ import re
 
 import pytest
 
-from runtime.lesson_render import (HANDLED_FIELDS, RendererError, domain_fact_lines,
+from curriculum_factory.lesson_render import (HANDLED_FIELDS, RendererError, domain_fact_lines,
                                    derived_records, render_adult_verification,
                                    render_elaborate, render_engage, render_evaluate,
                                    render_explain, render_explore, render_identification,
                                    render_recording_block, render_troubleshooting,
                                    render_unit)
-from runtime.session_bridge import _markdown
+from curriculum_factory.session_bridge import _markdown
 
 ENGINE = Path(__file__).resolve().parents[2]
 LAB_SCHEMA = json.loads((ENGINE / "schemas/lab.schema.v4.json").read_text())
@@ -183,7 +183,7 @@ def test_predict_without_options_still_renders_the_question():
 
 
 def test_worked_example_present_and_absent():
-    from runtime.lesson_render import render_cognitive_load
+    from curriculum_factory.lesson_render import render_cognitive_load
     unit = _fixture_unit()
     absent = "\n".join(render_cognitive_load(unit["pedagogy"]["cognitive_load"]))
     assert "Worked example" not in absent
@@ -335,7 +335,7 @@ def test_unresolved_visual_role_is_stated_in_the_document():
 # --- derivation ----------------------------------------------------------------------
 
 def test_derived_records_resolve_against_the_unit_domain():
-    from runtime.checks import check_derivation
+    from curriculum_factory.checks import check_derivation
     unit = _fixture_unit()
     unit["derived"] = derived_records(unit)
     assert unit["derived"]
@@ -369,5 +369,5 @@ def test_breadboard_map_kind_renders_its_own_fields():
     assert "centre trench" in body and "centre_trench" not in body
     assert "The board stays disconnected throughout." in body
     unit["derived"] = derived
-    from runtime.checks import check_derivation
+    from curriculum_factory.checks import check_derivation
     assert check_derivation(unit)

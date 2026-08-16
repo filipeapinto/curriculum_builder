@@ -13,7 +13,7 @@ from pathlib import Path
 
 import pytest
 
-from runtime.langgraph_factory.egress import (
+from curriculum_factory.langgraph_factory.egress import (
     MODEL_API_HOSTS,
     PROVIDER_DATA_CLASSES,
     PROVIDERS,
@@ -510,7 +510,7 @@ def test_default_opener_identifies_the_retriever_with_a_stable_user_agent(
 def test_load_retrieval_host_profile_returns_the_declared_electronics_profile(tmp_path: Path):
     """N30V7-F07: a curriculum selects a profile by name; it never supplies hosts."""
 
-    from runtime.langgraph_factory.egress import DEFAULT_RETRIEVAL_HOSTS_PATH
+    from curriculum_factory.langgraph_factory.egress import DEFAULT_RETRIEVAL_HOSTS_PATH
 
     hosts, digest = load_retrieval_host_profile("electronics")
     assert hosts == (

@@ -11,9 +11,9 @@ from pathlib import Path
 import shutil
 from typing import Any
 
-from runtime.io import atomic_json, sha256_file
-from runtime.logger import ExecutionLogger
-from runtime.visual_maps import regenerate_assets
+from curriculum_factory.io import atomic_json, sha256_file
+from curriculum_factory.logger import ExecutionLogger
+from curriculum_factory.visual_maps import regenerate_assets
 
 ENGINE = Path(__file__).resolve().parents[2]
 CURRICULUM = ENGINE / "curricula/arduino_kit"

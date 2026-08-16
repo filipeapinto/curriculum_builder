@@ -17,7 +17,7 @@ from pathlib import Path
 
 import pytest
 
-from runtime.langgraph_factory import transport as tp
+from curriculum_factory.langgraph_factory import transport as tp
 
 requires_sandbox = pytest.mark.skipif(
     tp.sandbox_mechanism() == tp.SANDBOX_UNAVAILABLE,
@@ -106,7 +106,7 @@ def test_the_final_repaired_production_graph_registers_exactly_its_full_binding_
     was never really wired into the one production graph, or a stale
     registration nothing backs.
     """
-    from runtime.langgraph_factory import graph as G
+    from curriculum_factory.langgraph_factory import graph as G
 
     output_root = tmp_path / "graph_output"
     output_root.mkdir()

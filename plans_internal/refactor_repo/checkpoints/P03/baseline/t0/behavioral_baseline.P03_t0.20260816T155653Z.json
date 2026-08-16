@@ -1,0 +1,241 @@
+{
+  "captured_at_utc": "2026-08-16T15:56:53Z",
+  "cli_help_and_invalid_input": [
+    {
+      "command": "/opt/homebrew/opt/python@3.13/bin/python3.13 -m runtime.run_curriculum --help",
+      "exit_code": 0,
+      "stderr_len": 0,
+      "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "stdout_len": 917,
+      "stdout_sha256": "d73f476296cd4c855fa9b7b91f22976ab51955eed7253a058cb06c0c0601c390"
+    },
+    {
+      "command": "/opt/homebrew/opt/python@3.13/bin/python3.13 -m runtime.run_curriculum",
+      "exit_code": 2,
+      "stderr_len": 462,
+      "stderr_sha256": "b825e81e29a66f6786c305253ebbe06fe90ef661aefff5d9a170dc663190026a",
+      "stdout_len": 0,
+      "stdout_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "command": "/opt/homebrew/opt/python@3.13/bin/python3.13 -m runtime.run_curriculum --engine-root x",
+      "exit_code": 2,
+      "stderr_len": 447,
+      "stderr_sha256": "2f2518425d8b291429ea8ee790a4da6758830b8bf001cfc5194f0034678043a0",
+      "stdout_len": 0,
+      "stdout_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    }
+  ],
+  "documented_commands": [
+    {
+      "command": "/opt/homebrew/opt/python@3.13/bin/python3.13 -m runtime.run_curriculum --help",
+      "exit_code": 0,
+      "stderr_len": 0,
+      "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "stdout_len": 917,
+      "stdout_sha256": "d73f476296cd4c855fa9b7b91f22976ab51955eed7253a058cb06c0c0601c390"
+    }
+  ],
+  "existing_failures": [],
+  "import_origin": {
+    "exit_code": 0,
+    "mechanism": "repository-root sys.path injection (no installed distribution exists yet)",
+    "origin": "/Users/filipepinto/Projects/curriculum_builder_wt/refactor-p03-p10-direct/runtime/__init__.py",
+    "origin_relative_to_repo_root": "runtime/__init__.py"
+  },
+  "normalization_rules": [
+    "captured_at_utc: ignore literal value; both captures are expected to run at different times.",
+    "repository_commit: ignore literal value only if both captures were taken against the same checkout state as recorded by tests_and_gates.pytest_collect.exit_code and collected_count; a differing commit is reported, never silently dropped.",
+    "import_origin.origin: normalize by stripping any filesystem prefix up to and including the checkout root, so two different absolute checkout paths for the same relative module location compare equal.",
+    "cli_help_and_invalid_input[*].stdout_sha256/stderr_sha256: compared as literal digests; argparse output is deterministic for a fixed argv and program name, so no normalization is applied here \u2014 a changed digest is a real behavioral difference.",
+    "output_containment: compared by which case (accepted/rejected) raised and which did not, not by the literal resolved path (which embeds the checkout's absolute location)."
+  ],
+  "output_containment": {
+    "accepted_case": {
+      "case": "engine/outputs/run1",
+      "raised": false
+    },
+    "rejected_case": {
+      "case": "external /tmp path",
+      "error_type": "BoundaryError",
+      "raised": true
+    }
+  },
+  "repository_commit": "ccacad34ef5a11cf7d05dea3c62612893a60cf7d",
+  "representative_artifacts": [
+    {
+      "path": "curricula/arduino_kit/arduino_kit_curriculum.v5.yaml",
+      "present": true,
+      "sha256": "7c8efffb6ff6256bac215b7a541fa728ebe8768f95e65de338efd56b8143d2c6",
+      "size_bytes": 51787
+    },
+    {
+      "path": "policy/controller.v1.yaml",
+      "present": true,
+      "sha256": "76fc38e5c3c3e2224ad552825b4f43b6f2bc66851900aff1de7d09f4ef782dce",
+      "size_bytes": 6836
+    },
+    {
+      "path": "schemas/curriculum.schema.v5.json",
+      "present": true,
+      "sha256": "de29914c52a1ffece0a10a1d42670f961121e5ea1a9f00d7d7b57400b75a8aa2",
+      "size_bytes": 14067
+    },
+    {
+      "path": "meta_prompt/curriculum.prompt.v1.md",
+      "present": true,
+      "sha256": "46fc2670dcef5b2326b2f645049b1dd3f3732ce9fdd72d0cd35adbd2c3a02f60",
+      "size_bytes": 25710
+    }
+  ],
+  "schema_resolution": [
+    {
+      "id": "https://example.invalid/curriculum_builder/calibration.schema.v1.json",
+      "path": "schemas/calibration.schema.v1.json",
+      "resolves": true
+    },
+    {
+      "id": "https://example.invalid/curriculum_builder/checks.schema.v1.json",
+      "path": "schemas/checks.schema.v1.json",
+      "resolves": true
+    },
+    {
+      "id": "https://example.invalid/curriculum_builder/circuit_data.schema.v1.json",
+      "path": "schemas/circuit_data.schema.v1.json",
+      "resolves": true
+    },
+    {
+      "id": "https://example.invalid/curriculum_builder/controller.schema.v1.json",
+      "path": "schemas/controller.schema.v1.json",
+      "resolves": true
+    },
+    {
+      "id": "https://example.invalid/curriculum_builder/curriculum.schema.v5.json",
+      "path": "schemas/curriculum.schema.v5.json",
+      "resolves": true
+    },
+    {
+      "id": "curriculum_factory_production_loop_closure.schema.v1.json",
+      "path": "schemas/curriculum_factory_production_loop_closure.schema.v1.json",
+      "resolves": true
+    },
+    {
+      "id": "https://example.invalid/curriculum_builder/deferred.schema.v1.json",
+      "path": "schemas/deferred.schema.v1.json",
+      "resolves": true
+    },
+    {
+      "id": "https://example.invalid/curriculum_builder/execution_log.schema.v2.json",
+      "path": "schemas/execution_log.schema.v2.json",
+      "resolves": true
+    },
+    {
+      "id": "https://example.invalid/curriculum_builder/failures.schema.v1.json",
+      "path": "schemas/failures.schema.v1.json",
+      "resolves": true
+    },
+    {
+      "id": "https://example.invalid/curriculum_builder/kit_calibration.schema.v1.json",
+      "path": "schemas/kit_calibration.schema.v1.json",
+      "resolves": true
+    },
+    {
+      "id": "https://example.invalid/curriculum_builder/lab.schema.v4.json",
+      "path": "schemas/lab.schema.v4.json",
+      "resolves": true
+    },
+    {
+      "id": "https://example.invalid/curriculum_builder/limits.schema.v1.json",
+      "path": "schemas/limits.schema.v1.json",
+      "resolves": true
+    },
+    {
+      "id": "https://example.invalid/curriculum_builder/manifest_domain.metaschema.v1.json",
+      "path": "schemas/manifest_domain.metaschema.v1.json",
+      "resolves": true
+    },
+    {
+      "id": "https://example.invalid/curriculum_builder/model_registry.schema.v1.json",
+      "path": "schemas/model_registry.schema.v1.json",
+      "resolves": true
+    },
+    {
+      "id": "https://example.invalid/curriculum_builder/plan.schema.v1.json",
+      "path": "schemas/plan.schema.v1.json",
+      "resolves": true
+    },
+    {
+      "id": "https://example.invalid/curriculum_builder/prompt.schema.v3.json",
+      "path": "schemas/prompt.schema.v3.json",
+      "resolves": true
+    },
+    {
+      "id": "https://example.invalid/curriculum_builder/prompt.schema.v4.json",
+      "path": "schemas/prompt.schema.v4.json",
+      "resolves": true
+    },
+    {
+      "id": "https://example.invalid/curriculum_builder/quality_gates.schema.v1.json",
+      "path": "schemas/quality_gates.schema.v1.json",
+      "resolves": true
+    },
+    {
+      "id": "https://example.invalid/curriculum_builder/repository_refactor_inventory.schema.v1.json",
+      "path": "schemas/repository_refactor_inventory.schema.v1.json",
+      "resolves": true
+    },
+    {
+      "id": "https://example.invalid/curriculum_builder/routes.schema.v1.json",
+      "path": "schemas/routes.schema.v1.json",
+      "resolves": true
+    },
+    {
+      "id": "https://example.invalid/curriculum_builder/routing_decision.schema.v2.json",
+      "path": "schemas/routing_decision.schema.v2.json",
+      "resolves": true
+    },
+    {
+      "id": "https://example.invalid/curriculum_builder/routing_policy.schema.v1.json",
+      "path": "schemas/routing_policy.schema.v1.json",
+      "resolves": true
+    },
+    {
+      "id": "https://example.invalid/curriculum_builder/run_lifecycle.schema.v1.json",
+      "path": "schemas/run_lifecycle.schema.v1.json",
+      "resolves": true
+    },
+    {
+      "id": "https://example.invalid/curriculum_builder/spec.schema.v1.json",
+      "path": "schemas/spec.schema.v1.json",
+      "resolves": true
+    },
+    {
+      "id": "https://example.invalid/curriculum_builder/task_taxonomy.schema.v2.json",
+      "path": "schemas/task_taxonomy.schema.v2.json",
+      "resolves": true
+    },
+    {
+      "id": "https://example.invalid/curriculum_builder/unit_content.schema.v1.json",
+      "path": "schemas/unit_content.schema.v1.json",
+      "resolves": true
+    }
+  ],
+  "tests_and_gates": {
+    "gate_harness_selftest": {
+      "command": "/opt/homebrew/opt/python@3.13/bin/python3.13 tests/gates/selftest.py",
+      "exit_code": 0,
+      "stderr_len": 0,
+      "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "stdout_len": 262,
+      "stdout_sha256": "7b5cbdaba41e62acb39f17d90a93cfc8b868a27d24ad95315ff6d574a8b499b7"
+    },
+    "pytest_collect": {
+      "command": "/opt/homebrew/opt/python@3.13/bin/python3.13 -m pytest --collect-only -q tests/runtime tests/gates",
+      "exit_code": 0,
+      "stderr_len": 0,
+      "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "stdout_len": 150414,
+      "stdout_sha256": "8a1a9ba822282fae42e2192f95a32b7c89d08daf3a2a8f18b4ab30d7747fdbb7"
+    }
+  }
+}
