@@ -1,0 +1,4 @@
+basic = "curriculum_factory-basic"
+literal = 'curriculum_factory-literal'
+untouched_basic = "no reference here"
+untouched_literal = 'no reference here either'

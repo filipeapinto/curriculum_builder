@@ -1,0 +1,6 @@
+literal: |
+  line one curriculum_builder here
+  line two unaffected
+folded: >
+  folded curriculum_builder text
+  continues here

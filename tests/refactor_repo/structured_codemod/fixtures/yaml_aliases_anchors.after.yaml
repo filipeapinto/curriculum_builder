@@ -1,0 +1,4 @@
+anchor_val: &base
+  name: curriculum_factory
+  untouched: 1
+alias_val: *base

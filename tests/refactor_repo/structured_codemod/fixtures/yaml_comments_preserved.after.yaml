@@ -1,0 +1,4 @@
+# header comment describing the file
+name: curriculum_factory  # inline comment on the changed line
+other: unrelated value    # inline comment on an untouched line
+# trailing standalone comment

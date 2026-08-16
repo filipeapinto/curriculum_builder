@@ -1,0 +1,4 @@
+workflow:
+  name: curriculum_factory_tests
+  version: 1.0
+  enabled: true

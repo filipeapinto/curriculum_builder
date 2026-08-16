@@ -1,0 +1,5 @@
+literal: |
+  line one curriculum_factory here
+  line two unaffected
+folded: >
+  folded curriculum_factory text continues here

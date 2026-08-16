@@ -1,0 +1,5 @@
+plain: curriculum_factory-plain
+double: "curriculum_factory-double"
+single: 'curriculum_factory-single'
+untouched_plain: no reference here
+untouched_double: "no reference here either"

@@ -1,0 +1,206 @@
+{
+  "default_mapping": {"curriculum_builder": "curriculum_factory"},
+  "fixtures": [
+    {
+      "name": "toml_nested_tables_arrays",
+      "format": "toml",
+      "classes": ["nested_keys", "tables", "array_of_tables", "comments", "scalar_types", "old_new_references"],
+      "expect_safe": true,
+      "expect_changed": true,
+      "expect_diagnostic_kinds": ["rewrite_value"]
+    },
+    {
+      "name": "toml_quote_styles",
+      "format": "toml",
+      "classes": ["quote_styles", "old_new_references"],
+      "expect_safe": true,
+      "expect_changed": true,
+      "expect_diagnostic_kinds": ["rewrite_value"]
+    },
+    {
+      "name": "toml_multiline",
+      "format": "toml",
+      "classes": ["multiline_values", "old_new_references"],
+      "expect_safe": true,
+      "expect_changed": true,
+      "expect_diagnostic_kinds": ["rewrite_value"]
+    },
+    {
+      "name": "toml_already_migrated",
+      "format": "toml",
+      "classes": ["already_migrated"],
+      "expect_safe": true,
+      "expect_changed": false,
+      "expect_diagnostic_kinds": []
+    },
+    {
+      "name": "toml_malformed",
+      "format": "toml",
+      "classes": ["malformed_input"],
+      "expect_safe": false,
+      "expect_changed": false,
+      "expect_diagnostic_kinds": ["malformed_input"]
+    },
+    {
+      "name": "toml_duplicate_key",
+      "format": "toml",
+      "classes": ["malformed_input", "ambiguous_dynamic_values"],
+      "expect_safe": false,
+      "expect_changed": false,
+      "expect_diagnostic_kinds": ["malformed_input"]
+    },
+    {
+      "name": "toml_key_not_renamed",
+      "format": "toml",
+      "classes": ["ambiguous_dynamic_values", "explicit_non_target"],
+      "expect_safe": true,
+      "expect_changed": false,
+      "expect_diagnostic_kinds": ["residual_old_reference"]
+    },
+    {
+      "name": "yaml_nested_mappings_sequences",
+      "format": "yaml",
+      "classes": ["nested_keys", "arrays", "mappings", "scalar_types", "comments", "old_new_references"],
+      "expect_safe": true,
+      "expect_changed": true,
+      "expect_diagnostic_kinds": ["rewrite_value"]
+    },
+    {
+      "name": "yaml_aliases_anchors",
+      "format": "yaml",
+      "classes": ["aliases_anchors", "old_new_references"],
+      "expect_safe": true,
+      "expect_changed": true,
+      "expect_diagnostic_kinds": ["rewrite_value"]
+    },
+    {
+      "name": "yaml_quote_styles",
+      "format": "yaml",
+      "classes": ["quote_styles", "old_new_references"],
+      "expect_safe": true,
+      "expect_changed": true,
+      "expect_diagnostic_kinds": ["rewrite_value"]
+    },
+    {
+      "name": "yaml_block_scalars",
+      "format": "yaml",
+      "classes": ["multiline_values", "old_new_references"],
+      "expect_safe": true,
+      "expect_changed": true,
+      "expect_diagnostic_kinds": ["rewrite_value"]
+    },
+    {
+      "name": "yaml_comments_preserved",
+      "format": "yaml",
+      "classes": ["comments", "old_new_references"],
+      "expect_safe": true,
+      "expect_changed": true,
+      "expect_diagnostic_kinds": ["rewrite_value"]
+    },
+    {
+      "name": "yaml_already_migrated",
+      "format": "yaml",
+      "classes": ["already_migrated"],
+      "expect_safe": true,
+      "expect_changed": false,
+      "expect_diagnostic_kinds": []
+    },
+    {
+      "name": "yaml_malformed",
+      "format": "yaml",
+      "classes": ["malformed_input"],
+      "expect_safe": false,
+      "expect_changed": false,
+      "expect_diagnostic_kinds": ["malformed_input"]
+    },
+    {
+      "name": "yaml_duplicate_key",
+      "format": "yaml",
+      "classes": ["malformed_input", "ambiguous_dynamic_values"],
+      "expect_safe": false,
+      "expect_changed": false,
+      "expect_diagnostic_kinds": ["malformed_input"]
+    },
+    {
+      "name": "yaml_unsupported_tag",
+      "format": "yaml",
+      "classes": ["ambiguous_dynamic_values"],
+      "expect_safe": false,
+      "expect_changed": false,
+      "expect_diagnostic_kinds": ["unsupported_tag"]
+    },
+    {
+      "name": "yaml_ambiguous_type_safe",
+      "format": "yaml",
+      "classes": ["ambiguous_dynamic_values", "scalar_types", "old_new_references"],
+      "mapping": {"OLDFLAG": "true"},
+      "expect_safe": true,
+      "expect_changed": true,
+      "expect_diagnostic_kinds": ["rewrite_value"]
+    },
+    {
+      "name": "yaml_key_not_renamed",
+      "format": "yaml",
+      "classes": ["ambiguous_dynamic_values", "explicit_non_target"],
+      "expect_safe": true,
+      "expect_changed": false,
+      "expect_diagnostic_kinds": ["residual_old_reference"]
+    },
+    {
+      "name": "json_nested_objects_arrays",
+      "format": "json",
+      "classes": ["nested_keys", "arrays", "mappings", "scalar_types", "old_new_references"],
+      "expect_safe": true,
+      "expect_changed": true,
+      "expect_diagnostic_kinds": ["rewrite_value"]
+    },
+    {
+      "name": "json_multiline_escaped",
+      "format": "json",
+      "classes": ["multiline_values", "old_new_references"],
+      "expect_safe": true,
+      "expect_changed": true,
+      "expect_diagnostic_kinds": ["rewrite_value"]
+    },
+    {
+      "name": "json_already_migrated",
+      "format": "json",
+      "classes": ["already_migrated"],
+      "expect_safe": true,
+      "expect_changed": false,
+      "expect_diagnostic_kinds": []
+    },
+    {
+      "name": "json_malformed",
+      "format": "json",
+      "classes": ["malformed_input"],
+      "expect_safe": false,
+      "expect_changed": false,
+      "expect_diagnostic_kinds": ["malformed_input"]
+    },
+    {
+      "name": "json_duplicate_key",
+      "format": "json",
+      "classes": ["malformed_input", "ambiguous_dynamic_values"],
+      "expect_safe": false,
+      "expect_changed": false,
+      "expect_diagnostic_kinds": ["duplicate_key"]
+    },
+    {
+      "name": "json_non_canonical_formatting",
+      "format": "json",
+      "classes": ["ambiguous_dynamic_values", "malformed_input"],
+      "expect_safe": false,
+      "expect_changed": false,
+      "expect_diagnostic_kinds": ["round_trip_fidelity_unsupported"]
+    },
+    {
+      "name": "json_key_not_renamed",
+      "format": "json",
+      "classes": ["ambiguous_dynamic_values", "explicit_non_target"],
+      "expect_safe": true,
+      "expect_changed": false,
+      "expect_diagnostic_kinds": ["residual_old_reference"]
+    }
+  ]
+}
