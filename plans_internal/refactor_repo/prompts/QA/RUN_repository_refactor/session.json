@@ -1,0 +1,44 @@
+{
+  "opened_at": "2026-08-16T00-22-05.354601+00-00",
+  "artifact_original": "/Users/filipepinto/Projects/curriculum_builder/plans_internal/refactor_repo/prompts/RUN_repository_refactor.prompt.v1.yaml",
+  "artifact_current": "/Users/filipepinto/Projects/curriculum_builder/plans_internal/refactor_repo/prompts/RUN_repository_refactor.prompt.v1.yaml",
+  "session_id": null,
+  "chain": "GENESIS",
+  "rounds_completed": 0,
+  "rounds": [],
+  "stall_count": 0,
+  "last_fingerprint": null,
+  "exec_copied": [],
+  "terminal": {
+    "state": "QA_ERROR",
+    "reason": "CODEX_TURN_FAILED",
+    "detail": "codex app-server exited unexpectedly (exit 1).",
+    "artifact": "/Users/filipepinto/Projects/curriculum_builder/plans_internal/refactor_repo/prompts/RUN_repository_refactor.prompt.v1.yaml",
+    "rounds_completed": 0,
+    "max_iterations": 5,
+    "session_id": null,
+    "thread_id": null,
+    "transport": "app-server",
+    "rollout_file": "",
+    "chain": "GENESIS",
+    "qa_dir": "/Users/filipepinto/Projects/curriculum_builder/plans_internal/refactor_repo/prompts/QA/RUN_repository_refactor",
+    "finalized_at": "2026-08-16T00:22:11.787037+00:00"
+  },
+  "config": {
+    "criteria": "# Refactor checkpoint QA criteria v1\n\nThe gated checkpoint report must satisfy every condition below.\n\n1. It identifies the executing prompt, the specification version, the baseline\n   commit, the starting dirty state, and the exact artifact version being judged.\n2. It lists every changed, created, moved, and deleted path and demonstrates that\n   each change is within the prompt's authorized mutation boundary. Pre-existing\n   user changes remain byte-for-byte outside the checkpoint delta.\n3. It records every prompt TEST with its exact command or inspection procedure,\n   exit status, material output, and a PASS or FAIL conclusion supported by that\n   evidence. A skipped, unavailable, or inconclusive check is not PASS.\n4. It demonstrates the prompt's prerequisites, explicit non-targets, stop\n   conditions, and rollback procedure were honored. No successor prompt's mutation\n   authority may be borrowed by the current checkpoint.\n5. It identifies residual old identities, paths, imports, output consumers, schema\n   references, or failures relevant to the prompt and classifies each as resolved,\n   a recorded exception, pre-existing, or a blocker. Silent residuals are defects.\n6. It includes the post-change git status and a reviewable diff or immutable digest\n   for every deliverable, plus the verification result at the rollback checkpoint.\n7. It does not claim completion when evidence is missing, collection is incomplete,\n   commands failed, the QA transport is unavailable, or the independent gate has\n   not produced a witnessed and verified `QA_PASSED` result.\n\n",
+    "focus": "Block only if this controller cannot autonomously invoke every inventory-resolved prompt in dependency order, enforce all tests and witnessed QA before an exact-delta commit, non-force push and remote-SHA verification after each success, resume safely, or preserve P10 separate rename authorization.",
+    "threshold": "blocker",
+    "max_iterations": 5,
+    "timeout_seconds": 900,
+    "retries": 2,
+    "model": null,
+    "effort": null,
+    "transport": "app-server",
+    "allow_execution": false,
+    "grounding": [
+      "/Users/filipepinto/Projects/curriculum_builder/plans_internal/refactor_repo/refactor_repository.spec.v8.html",
+      "/Users/filipepinto/Projects/curriculum_builder/plans_internal/refactor_repo/prompts/prompt_manifest.v4.yaml",
+      "/Users/filipepinto/Projects/curriculum_builder/plans_internal/refactor_repo/prompts/execution_plan.v3.md"
+    ]
+  }
+}

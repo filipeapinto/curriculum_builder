@@ -1,0 +1,248 @@
+# yaml-language-server: $schema=../../../schemas/prompt.schema.v4.json
+title: RUN — Autonomously Execute Commit and Push the Repository Refactor
+
+authorized_paths:
+  - plans_internal/refactor_repo/orchestration/
+  - plans_internal/refactor_repo/checkpoints/RUN/
+  - plans_internal/refactor_repo/execution/RUN/execution_log.jsonl
+  - delegated:plans_internal/refactor_repo/prompts/resolved/prompt_manifest.resolved.v1.yaml#active_prompt_authorized_paths
+  - git:refs/heads/refactor/curriculum-factory-repository
+  - github:origin/refs/heads/refactor/curriculum-factory-repository
+
+model: sonnet
+
+agent:
+  execution_path: claude_code_direct
+  reasoning: >-
+    Model selection: sonnet is explicit because durable orchestration, child-verdict
+    interpretation, exact staging, recovery, and local/remote checkpoint reconciliation
+    require non-trivial judgment; this is not pure lookup work suitable for haiku.
+
+operations:
+  executor:
+    kind: agent_native
+    implementation: autonomous resolved-manifest prompt orchestrator
+  journal:
+    path: plans_internal/refactor_repo/execution/RUN/execution_log.jsonl
+    schema: schemas/execution_log.schema.v2.json
+    format: jsonl
+    write_mode: append_only
+  action_protocol:
+    before_action: append_act_started
+    after_success: append_act_completed_closing_start
+    after_failure: append_exec_closing_start
+  restart:
+    detection: compute_unclosed_starts
+    no_journal: fresh_start
+    closed_action: always_reverify
+    unclosed_action: require_operator_review
+  completion_gate:
+    require_valid_journal: true
+    require_zero_unclosed_starts: true
+    require_all_tests_pass: true
+    require_authorized_paths_only: true
+
+goal: >-
+  Autonomously execute the complete inventory-derived repository refactor in a clean
+  linked worktree on the dedicated branch refactor/curriculum-factory-repository. Begin
+  with P00_inventory_baseline.prompt.v3.yaml, then run
+  P00A_post_inventory_decomposition.prompt.v3.yaml, load the resulting
+  prompts/resolved/prompt_manifest.resolved.v1.yaml, and execute every active prompt in
+  its topologically sorted order. Invoke each child as a fresh Claude Code Agent call
+  with subagent_type: general-purpose and model: sonnet, supplying the exact prompt file
+  and requiring it to execute rather than summarize. Wait for that child to finish; do
+  not parallelize mutation prompts or borrow successor authority. A child succeeds only
+  when all of its tests pass, its execution journal validates with zero unclosed starts,
+  its actual delta matches its resolved authorized paths and mutation selectors, and
+  the sanctioned qa-gate-codex-run verify command produces witnessed QA_PASSED. After
+  each successful child, stage exactly that child's verified delta, create one local
+  checkpoint commit, push it without force to the same dedicated branch on GitHub
+  origin, and verify the remote branch SHA equals local HEAD before starting the next
+  child. This user instruction authorizes those local commits and non-force pushes; it
+  does not authorize unrelated branches, force pushes, pull requests, tags, releases,
+  secret access, or P10's remote-repository/local-checkout rename. Invoke P10 in order,
+  but honor its separate exact authorization gate before any rename/integration change.
+  On child, commit, push, remote-verification, authorization, or integrity failure, stop
+  immediately, preserve evidence in the isolated worktree, and do not execute later
+  prompts. Never modify or clean the user's original dirty worktree. Completion produces
+  an orchestration ledger mapping every prompt version and QA witness to its local commit
+  and verified GitHub SHA. After all child checkpoints pass, run the RUN-level independent
+  QA gate, close the tracked journal and ledger, then make one final RUN evidence commit,
+  non-force push it, and verify the remote SHA. Treat that last Git transaction as an
+  atomic publication boundary: emit its command results to the terminal/final response
+  and perform no tracked write afterward, avoiding an impossible self-referential commit
+  whose journal entry would itself require another commit.
+
+tests:
+  - description: Preflight proves an isolated clean and push-capable execution context
+    check: >-
+      Verify the orchestrator, v3 bootstrap prompts, manifest v4, and execution plan v3
+      are tracked at the selected baseline commit; record original-worktree status;
+      create/reuse a clean linked worktree on refactor/curriculum-factory-repository;
+      verify origin is the intended GitHub repository, authentication permits non-force
+      branch push, and the remote branch is absent or safely resumable from the ledger.
+    expected: >-
+      The isolated worktree is clean and at the recorded baseline, the user's original
+      worktree is unchanged, origin/branch are exact, and no divergent remote history,
+      missing authentication, or untracked prompt artifact remains.
+
+  - description: Bootstrap executes P00 then P00A before implementation
+    check: >-
+      Inspect invocation and completion records and verify P00 ran first, passed its full
+      tests and QA, was committed/pushed/remote-verified, then P00A consumed that exact
+      inventory commit and produced the resolved plan/manifest and any generated prompts.
+    expected: >-
+      No implementation prompt starts before current inventory and post-inventory
+      decomposition are independently passed and remotely checkpointed.
+
+  - description: Resolved manifest traversal is complete deterministic and dependency-safe
+    check: >-
+      Validate the resolved manifest, compute its dependency DAG and deterministic
+      topological order, compare activated prompt files/versions and ownership units with
+      filesystem/schema/QA evidence, and compare completed IDs with the orchestration ledger.
+    expected: >-
+      Every active prompt appears exactly once after all dependencies; no inactive template,
+      stale version, cycle, missing prompt, or un-gated generated prompt is executable.
+
+  - description: Every child is called as a fresh explicitly pinned execution agent
+    check: >-
+      Inspect each Agent invocation and verify subagent_type is general-purpose, model is
+      sonnet, the exact active prompt content/path and resolved ownership are supplied,
+      execution rather than review/summarization is requested, and the parent waits for
+      completion before invoking another mutation prompt.
+    expected: >-
+      One fresh explicitly pinned child executes at a time; zero prompt is skipped,
+      silently inlined, run concurrently, or delegated with an inherited/unspecified model.
+
+  - description: Child success requires tests journal scope and witnessed QA pass
+    check: >-
+      Before commit, independently inspect the child TEST results, exact commands/outputs,
+      execution-log-v2 validation and unclosed-start computation, resolved mutation-unit
+      diff, checkpoint artifact, qa-gate session/rounds, and sanctioned verify output.
+    expected: >-
+      Every required check passes and verify says QA_PASSED with a witnessed session;
+      skipped/inconclusive checks, QA_ERROR, QA_FAILED, scope drift, or open journal action
+      prevents both commit and successor execution.
+
+  - description: Staging contains exactly one successful child's verified delta
+    check: >-
+      Compare baseline HEAD, pre-existing isolated state, child start snapshot, resolved
+      authorized paths/selectors, working-tree diff, and staged index using NUL-safe path
+      handling; inspect staged content before commit.
+    expected: >-
+      The index contains all and only the successful child's changes plus its required
+      checkpoint/journal evidence; no unrelated, predecessor-uncommitted, successor,
+      ignored secret, credential, or original-worktree change is staged.
+
+  - description: Every successful child receives one traceable local checkpoint commit
+    check: >-
+      Inspect commit parent, tree, subject, and trailers for each ledger entry. Require
+      subject `refactor(repo): complete <prompt-id>` and trailers for Prompt-Path,
+      Prompt-Version, QA-Session, QA-Artifact, Tests-Evidence, and Previous-Checkpoint.
+    expected: >-
+      Exactly one ordered commit records each successful child, its tree matches the
+      verified staged delta, metadata links to evidence, and no amend, squash, history
+      rewrite, unrelated commit, or commit for a failed child occurs.
+
+  - description: Every checkpoint commit is non-force pushed and remotely verified
+    check: >-
+      For each child commit inspect the exact `git push origin
+      HEAD:refs/heads/refactor/curriculum-factory-repository` result without force flags,
+      then read the remote branch with git ls-remote or an authenticated GitHub API and
+      compare its SHA with local HEAD before the next child invocation.
+    expected: >-
+      Each push succeeds as a fast-forward or initial branch creation and remote SHA
+      equals local HEAD; rejection, mismatch, ambiguous remote, or unverifiable state
+      stops the run before any successor.
+
+  - description: Resume never repeats or skips a local and remote checkpoint
+    check: >-
+      Simulate interruption before child execution, after child success but before
+      commit, after local commit but before push, and after push but before successor;
+      resume from journal, ledger, Git history, QA witness, and remote SHA.
+    expected: >-
+      Resume revalidates evidence, finishes only the interrupted checkpoint transition,
+      never reruns a remotely verified child, never skips an unpushed commit, and stops
+      for operator review on ambiguous or divergent state.
+
+  - description: Failure is fail-closed and preserves inspectable evidence
+    check: >-
+      Exercise disposable failures for child test, open journal action, scope violation,
+      QA_ERROR/QA_FAILED, commit hook, push rejection, remote mismatch, and missing P10
+      rename authorization; inspect subsequent invocations and Git/GitHub state.
+    expected: >-
+      No failed child is committed or pushed, no successor runs, no force/rewrite/reset
+      hides the failure, the last verified remote checkpoint remains intact, and the
+      isolated failure delta/evidence is retained for diagnosis.
+
+  - description: P10 preserves its distinct external rename authorization boundary
+    check: >-
+      Confirm the orchestrator invokes P10 only after all repository prompts and pushes
+      pass, distinguishes this message's commit/push authority from rename authority,
+      and compares any later approval with P10's frozen target inventory before mutation.
+    expected: >-
+      Without exact rename authorization P10 stops pending authorization with no rename;
+      with it, only named targets change and the final successful P10 delta is committed,
+      pushed, and remotely verified like every other prompt.
+
+  - description: Independent Codex QA accepts the autonomous orchestration checkpoint
+    check: >-
+      Gate a versioned RUN checkpoint report with qa-gate-codex-run using shared criteria
+      and this prompt, resolved manifest/plan, full child ledger, test/journal/QA evidence,
+      commit graph, push outputs, remote-SHA observations, failure/resume rehearsals, and
+      specification v8 as grounding; threshold blocker, at most five iterations, then
+      verify. After witnessed QA_PASSED, close the tracked RUN journal/ledger, stage only
+      RUN evidence, commit it as `refactor(repo): complete RUN_repository_refactor`, push
+      without force, verify remote SHA equals local HEAD, and make no later tracked write.
+    expected: >-
+      The sanctioned verify command exits 0 with witnessed QA_PASSED and identifies the
+      passing artifact, rounds, session, and evidence directory; the final RUN evidence
+      commit is the verified remote branch tip and the isolated worktree remains clean.
+    verifier:
+      execution_path: codex_plugin
+      invokes:
+        type: skill
+        skill: qa-gate-codex-run
+      reasoning: The orchestrator cannot self-certify autonomous execution and publication.
+
+loop:
+  steps:
+    - Apply restart handling and reconcile ledger, isolated branch, local HEAD, and GitHub branch SHA before any child invocation.
+    - Prove the original worktree remains untouched and the exact prompt/manifest/plan versions are tracked at baseline.
+    - Invoke P00 through a fresh general-purpose subagent pinned to sonnet; wait and apply the full child success gate.
+    - Stage exactly P00's verified delta, commit with evidence trailers, non-force push, and verify the remote SHA.
+    - Invoke P00A the same way against the committed P00 inventory; commit, push, and verify its resolved plan/manifest checkpoint.
+    - Load and validate the resolved manifest; compute the deterministic topological order of every active downstream prompt.
+    - For each active prompt, invoke one fresh sonnet general-purpose subagent, wait, apply every child gate, commit only its exact delta, push without force, and verify remote SHA before continuing.
+    - Invoke P10 in order but stop at its separate rename authorization gate unless exact approval exists; never reinterpret commit/push authority as rename authority.
+    - On any failure, close the journal failure record, preserve isolated evidence, and stop without commit/push or successor execution.
+    - After the last successful child, write the complete prompt-to-QA-to-commit-to-remote ledger and run independent RUN QA against the complete closeout package.
+    - After RUN QA passes, close the tracked journal/ledger, stage only RUN evidence, create its final checkpoint commit, non-force push, verify the remote SHA read-only, and perform no subsequent tracked write.
+    - Apply every completion gate and report the branch, ordered commits, QA sessions, final local/remote SHA, and any pending P10 authorization.
+  stopping_condition: >-
+    Stop successfully only when all twelve tests pass, P00/P00A and every resolved active
+    prompt have witnessed QA_PASSED results and one remotely verified checkpoint commit,
+    the final RUN evidence commit is pushed, local and GitHub branch SHAs match, the
+    isolated worktree is clean, the journal has zero unclosed starts, and only resolved
+    delegated/orchestrator targets changed. A P10 pending-authorization state is a safe
+    pause, not completion.
+  resume_check: >-
+    Before every action, recompute unclosed starts and compare the orchestration ledger,
+    child journals/QA witnesses, commit parent/tree/trailers, local branch HEAD, and
+    GitHub branch SHA. Resume only the unique incomplete transition; ambiguous/divergent
+    state requires operator review and forbids further mutation or push.
+  escalation: >-
+    Stop immediately on dirty/untracked baseline, missing prompt, stale inventory,
+    dependency cycle, failed child gate, ownership drift, secret exposure, commit-hook
+    failure, non-fast-forward push, remote mismatch, missing GitHub authentication, or
+    absent P10 rename authority. Report the exact last verified commit and smallest
+    operator action needed; never force push, reset, amend, or bypass a gate.
+  retry_policy:
+    auto_retry:
+      - tool-error
+      - partial-run
+    requires_fix:
+      - missing-input
+      - bad-input
+      - wrong-output
+      - other

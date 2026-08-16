@@ -1,0 +1,15 @@
+{
+  "state": "QA_ERROR",
+  "reason": "CODEX_TURN_FAILED",
+  "detail": "codex app-server exited unexpectedly (exit 1).",
+  "artifact": "/Users/filipepinto/Projects/curriculum_builder/plans_internal/refactor_repo/prompts/RUN_repository_refactor.prompt.v1.yaml",
+  "rounds_completed": 0,
+  "max_iterations": 5,
+  "session_id": null,
+  "thread_id": null,
+  "transport": "app-server",
+  "rollout_file": "",
+  "chain": "GENESIS",
+  "qa_dir": "/Users/filipepinto/Projects/curriculum_builder/plans_internal/refactor_repo/prompts/QA/RUN_repository_refactor",
+  "finalized_at": "2026-08-16T00:22:11.787037+00:00"
+}
