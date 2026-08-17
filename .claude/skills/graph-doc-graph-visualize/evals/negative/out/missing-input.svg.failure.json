@@ -1,0 +1,6 @@
+{
+  "status": "failed",
+  "stage": "input",
+  "reason": "manifest not found: /Users/filipepinto/Projects/akwrk/dos/work-lib/.claude/skills/graph-doc-graph-visualize/evals/negative/does-not-exist.json",
+  "output_path": "/Users/filipepinto/Projects/akwrk/dos/work-lib/.claude/skills/graph-doc-graph-visualize/evals/negative/out/missing-input.svg"
+}

@@ -1,0 +1,15 @@
+{
+  "svg": "/Users/filipepinto/Projects/curriculum_factory/.claude/skills/graph-doc-graph-visualize/evals/fixtures/minimal/out/graph.svg",
+  "status": "clean",
+  "metrics": {
+    "width": 867.0,
+    "height": 1102.0,
+    "aspect": 0.787,
+    "text_runs": 86,
+    "text_overlaps": 0,
+    "cards": 13,
+    "truncated_runs": 0,
+    "clean": true
+  },
+  "defects": []
+}

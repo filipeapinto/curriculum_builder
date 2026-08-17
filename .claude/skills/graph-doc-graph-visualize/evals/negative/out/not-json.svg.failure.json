@@ -1,0 +1,6 @@
+{
+  "status": "failed",
+  "stage": "input",
+  "reason": "manifest is not a readable workflow manifest: Expecting property name enclosed in double quotes: line 1 column 3 (char 2)",
+  "output_path": "/Users/filipepinto/Projects/akwrk/dos/work-lib/.claude/skills/graph-doc-graph-visualize/evals/negative/out/not-json.svg"
+}

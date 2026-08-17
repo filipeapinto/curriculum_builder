@@ -1,0 +1,9 @@
+{
+  "schema_version": "1.0.0",
+  "cases": [
+    {"id": "complete", "inputs": {"source_state": "current", "conflicts": [], "disclosure": "approved", "required_gates": "pass"}, "expected": {"status": "complete", "issues": [], "publication_decision": "publish"}},
+    {"id": "conflicting-evidence", "inputs": {"source_state": "current", "conflicts": ["two authoritative sources disagree on route target"], "disclosure": "approved"}, "expected": {"status": "complete_with_gaps", "required_issue": {"severity": "blocking", "owner_stage": "graph-system-documentation-evidence-adjudicate"}, "publication_decision": "block"}},
+    {"id": "stale-source", "inputs": {"source_state": "stale", "conflicts": [], "disclosure": "approved"}, "expected": {"status": "complete_with_gaps", "freshness_status": "stale", "required_issue": {"severity": "blocking", "owner_stage": "graph-system-documentation-evidence-inventory"}, "publication_decision": "block"}},
+    {"id": "disclosure-blocked", "inputs": {"source_state": "current", "conflicts": [], "disclosure": "denied"}, "expected": {"status": "blocked", "required_issue": {"severity": "blocking", "owner_stage": "graph-system-documentation-goal-define"}, "publication_decision": "block"}}
+  ]
+}

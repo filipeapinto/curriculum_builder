@@ -1,0 +1,55 @@
+{
+  "skill_name": "graph-doc-graph-visualize",
+  "notes": "Mechanical acceptance lives in run_checks.sh (27 checks, A1-A5 plus both fixtures through every backend and detail level). The evals below are triggering/behaviour prompts: they test that the skill fires on the right requests, renders to the exact path asked for, and — the part no assertion can check — that whoever ran it actually opened the image before calling it done.",
+  "evals": [
+    {
+      "id": 1,
+      "name": "render-real-manifest-to-named-path",
+      "prompt": "I need a diagram of the compiled workflow graph at work-lib/specs/graph_doc_createtion_compile_skill/prompts/10_output/run/manifest.v1.json. Put it at /tmp/eval1/pipeline.png. I want to be able to see where each failure sends the run back to.",
+      "expected_output": "A PNG at exactly /tmp/eval1/pipeline.png with a valid PNG signature. All seven repair edges drawn as distinguishable routes, not tangled across the forward flow. The run reports the backend used and the inspector status.",
+      "assertions": [
+        "The artifact exists at exactly /tmp/eval1/pipeline.png and `file` reports PNG image data",
+        "No file was written under work-lib/specs/ — the input manifest is byte-identical to before the run",
+        "The response names all seven repair routes, or points at where the diagram lists them",
+        "The agent inspected the rendered image (ran inspect_layout.py and/or read the raster) rather than only confirming a file appeared"
+      ],
+      "files": []
+    },
+    {
+      "id": 2,
+      "name": "svg-with-source-and-inspection",
+      "prompt": "Draw the graph in manifest.v1.json as an SVG at /tmp/eval2/graph.svg, keep whatever intermediate source it generates so I can tweak it by hand, and tell me whether the layout has any defects.",
+      "expected_output": "SVG at /tmp/eval2/graph.svg, an intermediate source beside it (because --keep-source was asked for), and an inspection report whose status is stated explicitly.",
+      "assertions": [
+        "An SVG exists at exactly /tmp/eval2/graph.svg with an <svg> root and a closing </svg>",
+        "--keep-source was passed and an intermediate file exists beside the output",
+        "inspect_layout.py was run and its status (clean / warn / blocker) is reported verbatim, not paraphrased as 'looks fine'"
+      ],
+      "files": []
+    },
+    {
+      "id": 3,
+      "name": "malformed-manifest-fails-loudly",
+      "prompt": "Render the manifest at evals/negative/forward-cycle.json into /tmp/eval3/out.svg.",
+      "expected_output": "A non-zero exit, no artifact at /tmp/eval3/out.svg, a failure record at /tmp/eval3/out.svg.failure.json, and a plain statement that the manifest has a cycle in its non-repair edges — reported as a manifest defect belonging to graph-doc-graph-define, not worked around by silently retyping the edge.",
+      "assertions": [
+        "No file exists at /tmp/eval3/out.svg",
+        "A JSON record exists at /tmp/eval3/out.svg.failure.json with status=failed and a non-empty reason",
+        "The response says the run failed and why; it does not report success",
+        "The fixture manifest was not edited to make the render succeed"
+      ],
+      "files": []
+    },
+    {
+      "id": 4,
+      "name": "does-not-draw-the-meta-graph",
+      "prompt": "Give me a picture of how the graph-doc skill family works — goal-define, graph-define, graph-build, graph-test — for the onboarding doc.",
+      "expected_output": "The skill should recognise this as the meta-graph, not a compiled manifest. Either it declines and says this skill draws the created graph from a manifest, or it asks for / constructs an explicit manifest-shaped input first. It should not silently render the family diagram as if it were a manifest.",
+      "assertions": [
+        "The response distinguishes the meta-graph (the fixed skill family) from the created graph (a specific manifest)",
+        "No manifest under work-lib/specs/ was invented, edited, or fabricated to satisfy the request"
+      ],
+      "files": []
+    }
+  ]
+}

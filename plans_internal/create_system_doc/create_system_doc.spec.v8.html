@@ -1,0 +1,146 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1"><meta name="color-scheme" content="light dark">
+  <title>Specification: Graph-System Documentation Skill Family</title>
+  <style>
+    :root{--ink:#172033;--muted:#586278;--paper:#fbfcff;--line:#d8deea;--blue:#175cc2;--soft:#eaf2ff;--warn:#8d5b00;--code:#f1f4f9}@media(prefers-color-scheme:dark){:root{--ink:#edf2fb;--muted:#aeb9cc;--paper:#101622;--line:#2d384c;--blue:#8abbff;--soft:#172b4c;--warn:#f0bd62;--code:#1a2333}}*{box-sizing:border-box}body{margin:0;background:var(--paper);color:var(--ink);font:16px/1.55 ui-sans-serif,system-ui,-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif}main{max-width:1100px;margin:0 auto;padding:48px 28px 72px}header{border-bottom:3px solid var(--blue);padding-bottom:24px}h1{font-size:clamp(2rem,5vw,3.5rem);line-height:1.05;letter-spacing:-.045em;margin:0 0 14px;max-width:900px}h2{font-size:1.55rem;line-height:1.2;margin:44px 0 14px;letter-spacing:-.02em}p{max-width:84ch}a{color:var(--blue)}code{background:var(--code);border:1px solid var(--line);border-radius:4px;padding:.1em .3em;font-size:.9em}.lede{color:var(--muted);font-size:1.12rem;max-width:78ch}.meta{color:var(--muted);font-size:.9rem}nav{margin:25px 0 0;display:flex;gap:12px;flex-wrap:wrap}nav a{border:1px solid var(--line);border-radius:999px;padding:5px 10px;text-decoration:none}.callout{margin:22px 0;padding:18px 20px;background:var(--soft);border-left:5px solid var(--blue);max-width:940px}.callout strong{display:block;margin-bottom:4px}table{border-collapse:collapse;width:100%;margin:16px 0 24px;font-size:.94rem}th,td{text-align:left;vertical-align:top;border:1px solid var(--line);padding:12px}th{background:var(--code)}li{margin:.45rem 0;max-width:88ch}.warn{color:var(--warn);font-weight:700}footer{color:var(--muted);margin-top:50px;padding-top:16px;border-top:1px solid var(--line);font-size:.9rem}
+  </style>
+</head>
+<body><main>
+  <header>
+    <p class="meta">Requirements specification · 16 August 2026 · Version 8 · Supersedes v7</p>
+    <h1>Graph-system documentation skill family</h1>
+    <p class="lede">This specification defines three skills that plan, create, and update system documentation for graph-based LLM systems. The skills encode the documentation standard and require human approval before creating or changing the document.</p>
+    <nav aria-label="Specification navigation"><a href="#purpose">Purpose</a><a href="#family">Skill family</a><a href="#artifacts">Artifacts</a><a href="#configuration">Configuration</a><a href="#architecture">Architecture</a><a href="#deployment">Deployment</a><a href="#security">Security</a><a href="#contracts">Contracts</a><a href="#visuals">Visualization</a><a href="#operations">Operations</a><a href="#conformance">Conformance</a></nav>
+  </header>
+
+  <section id="purpose"><h2>Purpose and boundary</h2>
+    <div class="callout"><strong>Create the system’s architecture and operations documentation.</strong>It explains the system boundary, graph behavior, interfaces, deployment, security, configuration, observability, operation, and recovery.</div>
+    <p>The document is complete enough for design review and authorized operation. Every factual statement is supported by inspected system evidence, and every unknown, conflict, or unverified behavior is labeled.</p>
+    <p>The skills run on any host that can inspect the system and persist files. Models, runtimes, graph frameworks, and renderers are implementation choices.</p>
+    <p>This is the output and conformance specification for <code>graph-system-documentation-plan</code>, <code>graph-system-documentation-create</code>, and <code>graph-system-documentation-update</code>. There is no separate goal-definition skill: the plan skill applies this specification’s documentation purpose and quality rules to the system, repository, audience information, and constraints supplied by the caller.</p>
+  </section>
+
+  <section id="family"><h2>Three-skill workflow and decision ownership</h2>
+    <p>Evidence inventory, system modeling, claim adjudication, rendering, and verification are internal work performed by the three skills.</p>
+    <table><thead><tr><th>Skill</th><th>Responsibility</th><th>Required output</th><th>Boundary</th></tr></thead><tbody>
+      <tr><td><code>graph-system-documentation-plan</code></td><td>Inspect permitted sources; determine scope from the target system and caller constraints; inventory evidence; model the system; adjudicate claims; select reader journey, sections, visuals, format, location, freshness rule, and acceptance checks.</td><td><code>system_documentation_plan.v1.json</code>, ending in explicit human approval status.</td><td>Must not create, overwrite, or update the documentation deliverable.</td></tr>
+      <tr><td><code>graph-system-documentation-create</code></td><td>Consume an approved plan, create the documentation and visuals, preserve claim traceability, run all conformance checks, and report publication eligibility.</td><td>Versioned document plus <code>system_documentation_build.v1.json</code>.</td><td>Must not proceed from an unapproved or digest-mismatched plan; must not expand scope silently.</td></tr>
+      <tr><td><code>graph-system-documentation-update</code></td><td>Compare current sources and documentation with the prior approved plan/build; identify affected claims and views; produce an update plan for human approval; apply only approved changes; reverify the complete deliverable.</td><td>Updated versioned document plus <code>system_documentation_update.v1.json</code>.</td><td>Must not treat regeneration as approval, erase unaffected authorship, or publish when the approved change set and actual diff diverge.</td></tr>
+    </tbody></table>
+    <p>The lifecycle is <code>plan → human plan approval → create → human reader acceptance → publish</code>. Updates follow <code>update impact plan → human approval → update → human reader acceptance → publish</code>. Plan approval and reader acceptance record the human evaluator, artifact digest, decision, time, and rationale. A changed digest invalidates the decision.</p>
+  </section>
+
+  <section id="artifacts"><h2>Artifact contracts and terminal states</h2>
+    <p>Every JSON handoff must validate against <a href="system_documentation_artifact.schema.v5.json"><code>system_documentation_artifact.schema.v5.json</code></a>. The plan contains the conformance profile, evidence, facts, and claims.</p>
+    <table><thead><tr><th>Required envelope field</th><th>Contract</th></tr></thead><tbody>
+      <tr><td><code>schema_id</code>, <code>schema_version</code></td><td>Exact artifact schema filename and semantic version.</td></tr>
+      <tr><td><code>artifact_id</code>, <code>artifact_digest</code></td><td>Stable identifier and lowercase SHA-256 of RFC 8785 JSON Canonicalization Scheme bytes after removing the top-level <code>artifact_digest</code> member. Strings and numbers outside the RFC 8785 I-JSON domain are invalid.</td></tr>
+      <tr><td><code>producer</code></td><td>Skill name, implementation identifier, implementation version, and host.</td></tr>
+      <tr><td><code>created_at</code>, <code>inputs</code></td><td>UTC RFC 3339 timestamp and ordered references containing each input artifact ID, schema version, and digest.</td></tr>
+      <tr><td><code>status</code>, <code>issues</code></td><td>Status enum <code>complete</code>, <code>complete_with_gaps</code>, or <code>blocked</code>; issues contain stable ID, severity, owner stage, reason, and disposition.</td></tr>
+      <tr><td><code>payload</code></td><td>Object containing the artifact-specific fields below.</td></tr>
+    </tbody></table>
+    <table><thead><tr><th>Artifact</th><th>Required payload fields</th></tr></thead><tbody>
+      <tr><td><code>system_documentation_plan.v1.json</code></td><td>Request and constraints; audience; scope and disclosure; delivery profile; <code>conformance_profile</code>; sources; fact model; adjudicated claims; reader journey; sections and views; acceptance checks; gaps; and <code>approval</code>. The profile supplies scenario checks, viewports, approved output location, disclosure approver, accepted gaps, authoritative roots/rules, deliverable, renderer, hosts, and freshness rule.</td></tr>
+      <tr><td><code>system_documentation_build.v1.json</code></td><td>Approved plan reference; deliverables; claim/view mappings; creation diff; and the shared verification object containing checks, gates, findings, freshness, reader acceptance, and publication decision.</td></tr>
+      <tr><td><code>system_documentation_update.v1.json</code></td><td>Prior plan/build references; changed sources; impacted claims/views; approved change set; actual diff; and the same shared verification object used by create.</td></tr>
+    </tbody></table>
+    <table><thead><tr><th>Contract rule</th><th>Requirement</th></tr></thead><tbody>
+      <tr><td>Claim granularity</td><td>Each claim records its evidence class, sources, scope, freshness, conflicts, disclosure status, and confidence. Sections and visuals retain those claim links.</td></tr>
+      <tr><td>Evidence precedence</td><td>The approved plan defines authority by claim type. Unresolved source conflicts remain explicit and block an unqualified claim.</td></tr>
+      <tr><td>Traceability</td><td>Each published factual element maps to one or more eligible claim identifiers; each required concern maps to a section, view, explicit not-applicable disposition, or verified gap.</td></tr>
+      <tr><td>Change control</td><td>A source, scope, disclosure, schema, or fact-model change invalidates dependent artifacts by digest. Before an existing document changes, the update skill generates a new impact plan and obtains human approval.</td></tr>
+    </tbody></table>
+    <p>Each skill ends as <code>complete</code>, <code>complete_with_gaps</code>, or <code>blocked</code>. Use <code>blocked</code> when no safe valid artifact can be produced. Use <code>complete_with_gaps</code> when the artifact is valid but a finding blocks approval or publication. Skills set <code>approval.eligibility</code>; only a human sets approval to <code>approved</code> or <code>rejected</code>. A self-blocked plan remains <code>pending</code>.</p>
+  </section>
+
+  <section id="configuration"><h2>Required run configuration and reference status</h2>
+    <p>The plan records authoritative sources and precedence, the deliverable, renderer, output location and overwrite policy, supported hosts, and an executable freshness check: executable, ordered arguments, expected exit code, and check kind. Prose-only freshness rules are invalid.</p>
+    <p>Repository-specific upgrade information is non-normative and lives in <a href="MIGRATION.v3-to-v4.md">the v3-to-v4 migration note</a>. No repository filename or existing prompt is part of this portable contract.</p>
+    <p>Automatic repair is bounded to two attempts for the same cause key at the same owning stage. The cause key is the RFC 8785 digest of <code>{stage, gate_or_validator_id, error_code, subject_id}</code>; free-text messages are excluded. A third occurrence stops as <code>blocked</code>. A relevant changed subject digest starts a new cause key. Repeated no-change output, a two-state digest oscillation, or failed disclosure also stops the run.</p>
+  </section>
+
+  <section id="architecture"><h2>Architecture and graph</h2>
+    <p>The documentation must explain the system boundary, major components, external dependencies, trust boundaries, and data movement before presenting component-level detail.</p>
+    <table><thead><tr><th>Architecture concern</th><th>Required documentation</th><th>Typical evidence</th></tr></thead><tbody>
+      <tr><td>System boundary</td><td>Users and actors, entry/exit interfaces, owned responsibilities, external systems, dependencies, and excluded scope.</td><td>Architecture, API definitions, integration configuration, policy.</td></tr>
+      <tr><td>Graph behavior</td><td>Entries, nodes or steps, directed edges or handoffs, branches, loops, joins, failure paths, terminals, and external boundaries.</td><td>Prompts, graph definitions, routing configuration, traces, tests.</td></tr>
+      <tr><td>Graph form</td><td>Whether behavior is prompt-orchestrated or framework-defined, and what that evidence proves.</td><td>Orchestrator prompts, component prompts, framework graph/runtime, code, traces.</td></tr>
+      <tr><td>Dependencies</td><td>Models, tools, APIs, data stores, queues, identity providers, and their required availability or fallback behavior.</td><td>Configuration, deployment manifests, code, runbooks, SLOs.</td></tr>
+    </tbody></table>
+    <p><span class="warn">Do not</span> infer formal nodes or edges solely from a prompt sequence, or treat a declared path as proof that it executed. If routing semantics are not evidenced, document a sequence or workflow rather than a graph.</p>
+  </section>
+
+  <section id="deployment"><h2>Deployment and environment</h2>
+    <p>The documentation must identify where the system runs and what is required to run it. “Deployed” is not a sufficient description.</p>
+    <table><thead><tr><th>Deployment concern</th><th>Required documentation</th><th>Typical evidence</th></tr></thead><tbody>
+      <tr><td>Hosting model</td><td>On-premises, cloud, hybrid, local development, or another model; provider/region or site only when authorized to disclose; environment names and their purpose.</td><td>Infrastructure definitions, deployment manifests, environment inventory.</td></tr>
+      <tr><td>Runtime topology</td><td>Services, workers, containers/functions, data stores, queues, network zones, ingress/egress, and scaling or high-availability boundaries.</td><td>IaC, orchestration manifests, platform configuration, architecture records.</td></tr>
+      <tr><td>Release and change path</td><td>Build artifact, versioning, promotion path, approvals, migrations, rollback, configuration reload, and feature-flag behavior.</td><td>CI/CD configuration, release process, deployment and migration records.</td></tr>
+      <tr><td>Environment configuration</td><td>Parameter name, type, allowed/default value, scope, source, effect, sensitivity, reload behavior, and change/release implications.</td><td>Environment schemas, configuration files, feature flags, deployment manifests.</td></tr>
+      <tr><td>Continuity</td><td>Backups, recovery objectives where defined, restore procedure, checkpoint/resume behavior, dependency outage handling, and known single points of failure.</td><td>Runbooks, backup configuration, SLOs, tests, incident records.</td></tr>
+    </tbody></table>
+    <p>Do not expose secret values, private endpoints, or other restricted implementation details. Document their purpose, ownership, source class, and handling rule at the permitted level of detail.</p>
+  </section>
+
+  <section id="security"><h2>Security, privacy, and governance</h2>
+    <p>Security documentation must describe implemented controls and verified gaps—not generic best-practice claims.</p>
+    <table><thead><tr><th>Control area</th><th>Required documentation</th><th>Typical evidence</th></tr></thead><tbody>
+      <tr><td>Identity and access</td><td>Human and workload identities, authentication method, authorization model, roles, privileged access, and approval or break-glass procedure.</td><td>Identity configuration, access policy, runbooks.</td></tr>
+      <tr><td>Data protection</td><td>Data classes, permitted use, storage and transmission protection, redaction, retention/deletion, residency, and tenant/isolation boundaries where applicable.</td><td>Data policy, schemas, storage configuration, privacy records.</td></tr>
+      <tr><td>Secrets and keys</td><td>Secret/credential source class, ownership, rotation, access boundary, and failure behavior—never values.</td><td>Secret-management configuration, policy, runbooks.</td></tr>
+      <tr><td>Network and integrations</td><td>Trust zones, ingress/egress controls, allowed integrations, external data/model transfer, and relevant failure or denial behavior.</td><td>Network policy, integration configuration, architecture records.</td></tr>
+      <tr><td>Audit and response</td><td>Security-relevant events, log/audit location and retention, alerting, incident ownership, and escalation path.</td><td>Observability configuration, incident runbooks, policy.</td></tr>
+    </tbody></table>
+  </section>
+
+  <section id="contracts"><h2>Runtime contracts and assumptions</h2>
+    <table><thead><tr><th>Contract family</th><th>What the documentation must show</th><th>Typical evidence</th></tr></thead><tbody>
+      <tr><td>Node and tool contract</td><td>Purpose; inputs and outputs; prompt/model behavior; tool/side-effect boundary; failure, timeout, retry, repair, and terminal semantics.</td><td>Prompts, node code, tool definitions, tests, run records.</td></tr>
+      <tr><td>State and schema contract</td><td>Field name, type, requiredness, reader/writer, validation, default, lineage, persistence/checkpoint boundary, merge/mutation rule, version/migration, and redaction rule.</td><td>State models, JSON Schema, reducers, migrations, policy.</td></tr>
+      <tr><td>Route contract</td><td>Source, target, trigger/guard, route class (deterministic, model-selected, tool-result, or human/external), transferred state, and outcome.</td><td>Routing prompts, graph definitions, code, tests, traces.</td></tr>
+      <tr><td>Assumptions and invariants</td><td>Preconditions, guarantees, model/tool/dependency assumptions, safety constraints, idempotency, ordering, and conditions that invalidate an outcome.</td><td>Policy, design records, tests, SLOs, incident/runbook records.</td></tr>
+    </tbody></table>
+  </section>
+
+  <section id="visuals"><h2>Visualization-led reader journey</h2>
+    <ol>
+      <li><strong>Begin with architecture.</strong> The first substantive element is a readable system map showing components, graph flow, data movement, deployment/trust boundaries, and key external dependencies.</li>
+      <li><strong>Show evidence class.</strong> Each visual exposes the claim-level distinction between <strong>declared</strong>, <strong>observed</strong>, <strong>inferred</strong>, and <strong>unknown</strong>; a visual may contain more than one class. Observed claims name run IDs, time/version scope, sampling limits, covered paths, and unexercised declared paths.</li>
+      <li><strong>Use focused views.</strong> Follow the overview with graph, schema/data-flow, configuration-impact, deployment, security-boundary, and failure/recovery views when they clarify relationships. Use tables where they are clearer.</li>
+      <li><strong>Make visuals inspectable.</strong> Show a title, takeaway, scope, evidence/freshness status, source references, and a legend where needed. Provide a prose or tabular equivalent; use semantic SVG <code>title</code> and <code>desc</code> where applicable. No meaning may depend on color alone.</li>
+      <li><strong>Keep visuals honest.</strong> A renderer arranges verified facts; it does not invent components, links, controls, parameter effects, execution outcomes, or confidence.</li>
+    </ol>
+    <p>HTML is preferred when it improves visual navigation or exploration. It must have a static, no-JavaScript baseline; external assets are not required for comprehension.</p>
+  </section>
+
+  <section id="operations"><h2>Operations guide and verification record</h2>
+    <p>The documentation must let an authorized operator determine system state, perform routine work, and respond safely to common failures.</p>
+    <table><thead><tr><th>Operational need</th><th>Required documentation</th></tr></thead><tbody>
+      <tr><td>Operate</td><td>Prerequisites, authorized roles, safe run modes, start/stop or trigger procedure, expected outputs, and prohibited actions.</td></tr>
+      <tr><td>Observe</td><td>Health signals, dashboards/logs/traces, run/correlation identifiers, alerts, success/failure criteria, and ownership.</td></tr>
+      <tr><td>Recover</td><td>Failure triage, retry/repair/resume rules, rollback/restore, escalation, and when not to retry.</td></tr>
+      <tr><td>Verify scope</td><td>Sources inspected, source versions/digests, verification time, excluded scope, unavailable checks, unresolved conflicts, and known risks.</td></tr>
+    </tbody></table>
+  </section>
+
+  <section id="conformance"><h2>Conformance procedure and quality gates</h2>
+    <p>Every run records pass, fail, or not-applicable for each gate. A failed required gate blocks publication. Human checks record the evaluator and rationale.</p>
+    <table><thead><tr><th>Gate</th><th>Owner</th><th>Required check and pass condition</th></tr></thead><tbody>
+      <tr><td>Reader sufficiency</td><td>Human reader after create/update</td><td>A named reader completes the approved plan’s scenario checklist using only the deliverable. The build/update verification records evaluator, time, rationale, and each scenario result. Publication waits for acceptance.</td></tr>
+      <tr><td>Accuracy and bounds</td><td>Plan + create/update</td><td>Every factual element resolves to an eligible claim ID; every claim resolves to inspected source IDs; no incomplete coverage is labeled complete.</td></tr>
+      <tr><td>Security and disclosure</td><td>Plan + create/update</td><td>Automated secret/restricted-pattern scan passes and the named disclosure approver accepts every exception against the approved plan.</td></tr>
+      <tr><td>Visual purpose</td><td>Plan + create/update</td><td>Every view has a reader question, takeaway, source claim IDs, and text equivalent; duplicate views without a distinct question fail.</td></tr>
+      <tr><td>Accessibility and offline use</td><td>Create/update</td><td>Automated WCAG 2.2 AA checks pass where testable; keyboard, text-equivalent, no-color-only, and disconnected/no-JavaScript checks pass by recorded inspection.</td></tr>
+      <tr><td>Rendered quality</td><td>Create/update</td><td>At every viewport in the approved plan’s <code>conformance_profile.viewports</code>, recorded renders contain no clipped labels, unintended overlap, unreadable legends, or broken internal/source links.</td></tr>
+      <tr><td>Freshness and location</td><td>Plan + create/update</td><td>The configured freshness command/rule passes against current source digests and every output resolves beneath the plan-approved location without an unauthorized overwrite.</td></tr>
+      <tr><td>Contract validity</td><td>Plan/create/update</td><td>Every artifact validates against its named schema and the normative fields here; identifiers, digests, dispositions, and publication eligibility pass referential checks.</td></tr>
+      <tr><td>Workflow traceability</td><td>Create/update</td><td>The run record identifies skill versions, input/output digests, approval, retries, actual diff, and terminal decision with no missing or unclosed attempt.</td></tr>
+    </tbody></table>
+    <p>A run conforms when every required gate passes. An implementation conforms when it produces the expected results for every case in <a href="fixtures/v8/conformance_cases.v3.json"><code>fixtures/v8/conformance_cases.v3.json</code></a>. Additional tests cannot replace these cases.</p>
+  </section>
+
+  <footer>Version 8 defines the plan, create, and update skills for system documentation. Supporting research: <a href="../../research/html_documentation/html_documentation_skills_assessment.v2.html">HTML documentation skills assessment</a>.</footer>
+</main></body></html>

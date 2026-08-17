@@ -1,0 +1,6 @@
+{
+  "status": "failed",
+  "stage": "internal",
+  "reason": "ValueError: the forward edge set (non-repair edges) contains a cycle; studio layout needs an acyclic spine",
+  "output_path": "/Users/filipepinto/Projects/akwrk/dos/work-lib/.claude/skills/graph-doc-graph-visualize/evals/negative/out/forward-cycle.svg"
+}

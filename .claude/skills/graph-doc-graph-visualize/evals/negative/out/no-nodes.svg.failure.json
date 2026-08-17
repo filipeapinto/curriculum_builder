@@ -1,0 +1,6 @@
+{
+  "status": "failed",
+  "stage": "input",
+  "reason": "manifest contains no nodes",
+  "output_path": "/Users/filipepinto/Projects/akwrk/dos/work-lib/.claude/skills/graph-doc-graph-visualize/evals/negative/out/no-nodes.svg"
+}

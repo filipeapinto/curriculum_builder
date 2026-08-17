@@ -1,0 +1,6 @@
+{
+  "status": "failed",
+  "stage": "input",
+  "reason": "--out must end in .svg or .png, got `.txt`",
+  "output_path": "/Users/filipepinto/Projects/akwrk/dos/work-lib/.claude/skills/graph-doc-graph-visualize/evals/negative/out/bad-ext.txt"
+}

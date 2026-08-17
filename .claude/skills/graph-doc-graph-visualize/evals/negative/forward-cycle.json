@@ -1,0 +1,5 @@
+{"run_id": "cyclic", "entry_node_id": "a", "terminal_node_ids": ["b"],
+ "nodes": [{"id": "a", "kind": "agent", "stage": "S0", "purpose": "a"},
+           {"id": "b", "kind": "agent", "stage": "S1", "purpose": "b"}],
+ "edges": [{"from": "a", "to": "b", "type": "sequential"},
+           {"from": "b", "to": "a", "type": "sequential"}]}

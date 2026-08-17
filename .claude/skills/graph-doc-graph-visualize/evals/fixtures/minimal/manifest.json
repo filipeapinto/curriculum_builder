@@ -1,0 +1,35 @@
+{
+  "run_id": "minimal-memo-001",
+  "manifest_stage": "compiled",
+  "execution_shape": "fixed_linear_sequence",
+  "entry_node_id": "s0-contract-compile",
+  "terminal_node_ids": ["s7-closure-receipt"],
+  "budgets": {"max_total_cost_usd": 8.0, "max_total_latency_seconds": 3600, "max_total_retries": 4},
+  "static_compile_checks": {"every_cycle_bounded": true, "all_outputs_reachable": true},
+  "escalation_decision": {"selected": "fixed_linear_sequence", "decisive_features": ["single_deliverable"]},
+  "nodes": [
+    {"id": "s0-contract-compile", "kind": "agent", "stage": "S0",
+     "purpose": "Compile the response contract for a one-page memo: what it must say and who reads it.",
+     "budget": {"max_cost_usd": 1.0, "max_latency_seconds": 300, "max_retries": 1},
+     "defect_ownership": "contract", "reads": ["intake.v1.json"], "writes": ["state/response_contract.json"]},
+    {"id": "s4-compose", "kind": "agent", "stage": "S4",
+     "purpose": "Compose the memo from the contract.",
+     "budget": {"max_cost_usd": 4.0, "max_latency_seconds": 1200, "max_retries": 2},
+     "defect_ownership": "composition", "reads": ["state/response_contract.json"], "writes": ["memo.md"]},
+    {"id": "s6-review-mechanical", "kind": "gate", "stage": "S6",
+     "purpose": "Run the deterministic review layer over the composed memo.",
+     "budget": {"max_cost_usd": 0.5, "max_latency_seconds": 300, "max_retries": 2},
+     "defect_ownership": "composition", "reads": ["memo.md"], "writes": ["state/review_mechanical.json"],
+     "repair_route": {"condition": "composition defect — the memo is malformed or cites nothing", "target_node_id": "s4-compose", "recurrence_limit": 2, "terminal_escape": "record non-convergence and stop"}},
+    {"id": "s7-closure-receipt", "kind": "tool", "stage": "S7",
+     "purpose": "Emit the closure receipt and prove closure mechanically.",
+     "budget": {"max_cost_usd": 0.5, "max_latency_seconds": 120, "max_retries": 1},
+     "defect_ownership": "closure", "reads": ["state/review_mechanical.json"], "writes": ["closure_receipt.json"]}
+  ],
+  "edges": [
+    {"from": "s0-contract-compile", "to": "s4-compose", "type": "sequential"},
+    {"from": "s4-compose", "to": "s6-review-mechanical", "type": "sequential"},
+    {"from": "s6-review-mechanical", "to": "s7-closure-receipt", "type": "conditional", "condition": "review_mechanical.json records every deterministic check passed"},
+    {"from": "s6-review-mechanical", "to": "s4-compose", "type": "repair", "condition": "composition defect — the memo is malformed or cites nothing"}
+  ]
+}

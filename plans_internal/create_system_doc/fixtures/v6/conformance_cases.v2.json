@@ -1,0 +1,46 @@
+{
+  "schema_version": "2.0.0",
+  "execution_contract": "For each case, create an isolated directory, materialize input.files exactly, invoke input.skill with input.request and input.conformance_profile, then compare the named expected fields exactly.",
+  "cases": [
+    {
+      "id": "complete",
+      "input": {
+        "skill": "graph-system-documentation-plan",
+        "request": "Plan system documentation from the supplied authoritative files.",
+        "files": {"system.yaml": "components:\n  - id: api\nroutes: []\n", "policy.yaml": "disclosure: approved\n"},
+        "conformance_profile": {"authoritative_roots": ["system.yaml", "policy.yaml"], "authority_rules": ["system.yaml controls topology", "policy.yaml controls disclosure"], "scenario_checklist": [{"id": "S1", "question": "What components exist?", "expected_answer": "api"}], "viewports": [{"name": "desktop", "width": 1440, "height": 900}, {"name": "narrow", "width": 390, "height": 844}], "approved_output_location": "docs/system/", "accepted_gap_classes": [], "disclosure_approver": "fixture-owner", "first_deliverable": "system overview", "renderer_policy": "static HTML", "required_hosts": ["fixture-host"], "freshness_rule": "SHA-256 of both files must match the plan"}
+      },
+      "expected": {"status": "complete", "approval_decision": "pending", "blocking_issue_owner": null, "publication_decision": null}
+    },
+    {
+      "id": "conflicting-evidence",
+      "input": {
+        "skill": "graph-system-documentation-plan",
+        "request": "Plan system documentation without choosing between equally authoritative conflicts.",
+        "files": {"graph-a.yaml": "route: api -> worker-a\n", "graph-b.yaml": "route: api -> worker-b\n"},
+        "conformance_profile": {"authoritative_roots": ["graph-a.yaml", "graph-b.yaml"], "authority_rules": ["both files have equal authority"], "scenario_checklist": [{"id": "S1", "question": "Where does api route?", "expected_answer": "unresolved conflict"}], "viewports": [{"name": "desktop", "width": 1440, "height": 900}, {"name": "narrow", "width": 390, "height": 844}], "approved_output_location": "docs/system/", "accepted_gap_classes": [], "disclosure_approver": "fixture-owner", "first_deliverable": "system overview", "renderer_policy": "static HTML", "required_hosts": ["fixture-host"], "freshness_rule": "SHA-256 of both files must match the plan"}
+      },
+      "expected": {"status": "complete_with_gaps", "approval_decision": "pending", "blocking_issue_owner": "graph-system-documentation-plan", "publication_decision": "block"}
+    },
+    {
+      "id": "stale-source",
+      "input": {
+        "skill": "graph-system-documentation-create",
+        "request": "Create documentation from the approved plan.",
+        "files": {"approved-plan.json": "{\"source_digest\":\"aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa\",\"approval\":\"approved\"}", "system.yaml": "components:\n  - id: changed-after-approval\n"},
+        "conformance_profile": {"authoritative_roots": ["system.yaml"], "authority_rules": ["system.yaml controls topology"], "scenario_checklist": [{"id": "S1", "question": "What components exist?", "expected_answer": "from approved plan"}], "viewports": [{"name": "desktop", "width": 1440, "height": 900}, {"name": "narrow", "width": 390, "height": 844}], "approved_output_location": "docs/system/", "accepted_gap_classes": [], "disclosure_approver": "fixture-owner", "first_deliverable": "system overview", "renderer_policy": "static HTML", "required_hosts": ["fixture-host"], "freshness_rule": "current system.yaml SHA-256 must equal approved-plan source_digest"}
+      },
+      "expected": {"status": "complete_with_gaps", "freshness_status": "stale", "blocking_issue_owner": "graph-system-documentation-create", "publication_decision": "block"}
+    },
+    {
+      "id": "disclosure-blocked",
+      "input": {
+        "skill": "graph-system-documentation-plan",
+        "request": "Plan externally publishable system documentation.",
+        "files": {"system.yaml": "component: secret-service\nclassification: restricted\n", "policy.yaml": "external_publication: denied\n"},
+        "conformance_profile": {"authoritative_roots": ["system.yaml", "policy.yaml"], "authority_rules": ["policy.yaml controls disclosure"], "scenario_checklist": [{"id": "S1", "question": "What may be published?", "expected_answer": "nothing"}], "viewports": [{"name": "desktop", "width": 1440, "height": 900}, {"name": "narrow", "width": 390, "height": 844}], "approved_output_location": "docs/public/", "accepted_gap_classes": [], "disclosure_approver": "fixture-owner", "first_deliverable": "public system overview", "renderer_policy": "static HTML", "required_hosts": ["fixture-host"], "freshness_rule": "SHA-256 of both files must match the plan"}
+      },
+      "expected": {"status": "blocked", "approval_decision": "rejected", "blocking_issue_owner": "graph-system-documentation-plan", "publication_decision": "block"}
+    }
+  ]
+}
