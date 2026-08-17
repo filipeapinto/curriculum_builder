@@ -26,8 +26,10 @@ dist/
 .plan26-run/
 
 # Scratch/run state for the graph-system-document skill (source inventory,
-# verify/repair attempt counters). Regenerated on every run, never committed.
+# verify/repair attempt counters, diagram render fragments). Regenerated on
+# every run, never committed.
 .doc-run/
+.doc-run-live/
 
 # skill-creator's optimization workspace (old-version snapshots, benchmark
 # eval runs comparing skill versions, throwaway fixtures). Not a deliverable.

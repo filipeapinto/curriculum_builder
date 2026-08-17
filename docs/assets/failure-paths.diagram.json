@@ -1,0 +1,276 @@
+{
+  "type": "flow",
+  "id": "fig-failure-paths",
+  "title": "Failure, repair and termination",
+  "takeaway": "Deterministic gates route repairable findings to D17, which plans a targeted repair and retests only the affected descendants; model faults are bounded at two attempts before CONVERGENCE_EXHAUSTED. M06 has no incoming edge in the compiled graph, so the model-repair arm of this loop cannot be entered.",
+  "scope": "Compiled topology at 9ef14e8. D91 is also reached from M01\u2013M04, not only M05; every node in the graph carries its own edge to D98 and to D96 \u2014 only the decision-bearing ones are drawn.",
+  "evidence": "observed",
+  "sources": [
+    "src/curriculum_factory/langgraph_factory/unit_graph.py:117",
+    "src/curriculum_factory/langgraph_factory/model_nodes.py:124",
+    "src/curriculum_factory/langgraph_factory/routing.py:116",
+    "src/curriculum_factory/langgraph_factory/nodes/terminal.py:48"
+  ],
+  "stages": [
+    {
+      "id": "gates",
+      "label": "Gates"
+    },
+    {
+      "id": "classify",
+      "label": "Classify"
+    },
+    {
+      "id": "plan",
+      "label": "Plan repair"
+    },
+    {
+      "id": "apply",
+      "label": "Apply \u00b7 retest"
+    },
+    {
+      "id": "end",
+      "label": "Terminate"
+    }
+  ],
+  "nodes": [
+    {
+      "id": "d08",
+      "label": "D08 validate_domain",
+      "stage": "gates",
+      "kind": "gate",
+      "evidence": "observed"
+    },
+    {
+      "id": "d09",
+      "label": "D09 validate_content",
+      "stage": "gates",
+      "kind": "gate",
+      "evidence": "observed"
+    },
+    {
+      "id": "d12",
+      "label": "D12 visual_join",
+      "stage": "gates",
+      "kind": "gate",
+      "evidence": "observed"
+    },
+    {
+      "id": "d14",
+      "label": "D14 inspect_pages",
+      "stage": "gates",
+      "kind": "gate",
+      "evidence": "observed"
+    },
+    {
+      "id": "m05",
+      "label": "M05 review_unit",
+      "stage": "gates",
+      "kind": "external",
+      "evidence": "observed"
+    },
+    {
+      "id": "d16",
+      "label": "D16 reduce_evidence",
+      "stage": "classify",
+      "kind": "gate",
+      "evidence": "observed"
+    },
+    {
+      "id": "d17",
+      "label": "D17 classify_findings",
+      "stage": "classify",
+      "kind": "gate",
+      "evidence": "observed"
+    },
+    {
+      "id": "d91",
+      "label": "D91 classify_model_failure",
+      "stage": "classify",
+      "kind": "gate",
+      "evidence": "observed"
+    },
+    {
+      "id": "d18",
+      "label": "D18 plan_repair",
+      "stage": "plan",
+      "evidence": "observed"
+    },
+    {
+      "id": "d19",
+      "label": "D19 route_repair",
+      "stage": "plan",
+      "kind": "gate",
+      "evidence": "observed"
+    },
+    {
+      "id": "d90",
+      "label": "D90 reserve_attempt",
+      "stage": "end",
+      "kind": "gate",
+      "note": "limit 2",
+      "evidence": "observed"
+    },
+    {
+      "id": "m06",
+      "label": "M06 repair_artifact",
+      "stage": "apply",
+      "kind": "external",
+      "note": "no incoming edge",
+      "evidence": "conflicting"
+    },
+    {
+      "id": "d20",
+      "label": "D20 admit_repair",
+      "stage": "apply",
+      "evidence": "observed"
+    },
+    {
+      "id": "d21",
+      "label": "D21 retest_descendants",
+      "stage": "apply",
+      "kind": "gate",
+      "evidence": "observed"
+    },
+    {
+      "id": "d96",
+      "label": "D96 interrupt_gate",
+      "stage": "end",
+      "kind": "gate",
+      "note": "no producer sets the token",
+      "evidence": "conflicting"
+    },
+    {
+      "id": "d98",
+      "label": "D98 write_terminal",
+      "stage": "end",
+      "kind": "terminal",
+      "note": "6 kinds \u00b7 exit 0/10/11/12/20",
+      "evidence": "observed"
+    }
+  ],
+  "edges": [
+    {
+      "from": "d08",
+      "to": "d17",
+      "label": "domain",
+      "kind": "repair"
+    },
+    {
+      "from": "d09",
+      "to": "d17",
+      "label": "content",
+      "kind": "repair"
+    },
+    {
+      "from": "d12",
+      "to": "d17",
+      "label": "visuals",
+      "kind": "repair"
+    },
+    {
+      "from": "d14",
+      "to": "d17",
+      "label": "layout",
+      "kind": "repair"
+    },
+    {
+      "from": "m05",
+      "to": "d16",
+      "kind": "forward"
+    },
+    {
+      "from": "m05",
+      "to": "d91",
+      "label": "fault",
+      "kind": "failure"
+    },
+    {
+      "from": "d16",
+      "to": "d17",
+      "label": "findings",
+      "kind": "repair"
+    },
+    {
+      "from": "d17",
+      "to": "d18",
+      "kind": "forward"
+    },
+    {
+      "from": "d17",
+      "to": "d98",
+      "label": "unrepairable",
+      "kind": "failure"
+    },
+    {
+      "from": "d18",
+      "to": "d19",
+      "kind": "forward"
+    },
+    {
+      "from": "d19",
+      "to": "d20",
+      "label": "deterministic",
+      "kind": "branch"
+    },
+    {
+      "from": "d19",
+      "to": "d90",
+      "label": "reserve M06",
+      "kind": "forward"
+    },
+    {
+      "from": "m06",
+      "to": "d20",
+      "label": "unreachable",
+      "kind": "failure"
+    },
+    {
+      "from": "d20",
+      "to": "d21",
+      "kind": "forward"
+    },
+    {
+      "from": "d21",
+      "to": "d08",
+      "label": "retest",
+      "kind": "repair"
+    },
+    {
+      "from": "d21",
+      "to": "d16",
+      "label": "retest done",
+      "kind": "repair"
+    },
+    {
+      "from": "d91",
+      "to": "d90",
+      "label": "retry 2 of 2",
+      "kind": "repair"
+    },
+    {
+      "from": "d91",
+      "to": "d17",
+      "label": "content class",
+      "kind": "repair"
+    },
+    {
+      "from": "d91",
+      "to": "d98",
+      "label": "exhausted",
+      "kind": "failure"
+    },
+    {
+      "from": "d21",
+      "to": "d96",
+      "label": "interrupt",
+      "kind": "failure"
+    },
+    {
+      "from": "d96",
+      "to": "d98",
+      "label": "INTERRUPTED",
+      "kind": "forward"
+    }
+  ]
+}
