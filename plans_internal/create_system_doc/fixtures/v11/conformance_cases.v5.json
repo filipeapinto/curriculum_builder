@@ -1,0 +1,72 @@
+{
+  "schema_version": "5.0.0",
+  "execution_contract": "For each case, materialize input.files, invoke input.skill, validate the returned artifact, resolve each expected key through expected_field_map, and compare the resolved value exactly. pointer_candidates uses the first existing JSON Pointer; missing_or_null resolves to null when no candidate exists.",
+  "expected_field_map": {
+    "status": {"pointer_candidates": ["/status"]},
+    "approval_decision": {"pointer_candidates": ["/payload/approval/decision"]},
+    "approval_eligibility": {"pointer_candidates": ["/payload/approval/eligibility"]},
+    "blocking_issue_owner": {"pointer_candidates": ["/issues/0/owner_skill"], "missing_or_null": null},
+    "publication_decision": {"pointer_candidates": ["/payload/publication_decision", "/payload/verification/publication_decision"]},
+    "freshness_status": {"pointer_candidates": ["/payload/verification/freshness_status"]},
+    "inspection_status": {"pointer_candidates": ["/payload/graph_renders/0/inspection_status"]},
+    "visual_review_result": {"pointer_candidates": ["/payload/graph_renders/0/visual_review/result"]},
+    "failure": {"pointer_candidates": ["/issues/0/disposition"]}
+  },
+  "cases": [
+    {
+      "id": "complete",
+      "input": {
+        "skill": "graph-system-documentation-plan",
+        "request": "Plan system documentation from the supplied authoritative files.",
+        "files": {"system.yaml": "components:\n  - id: api\nroutes: []\n", "policy.yaml": "disclosure: approved\n"},
+        "conformance_profile": {"authoritative_roots": ["system.yaml", "policy.yaml"], "authority_rules": ["system.yaml controls topology", "policy.yaml controls disclosure"], "scenario_checklist": [{"id": "S1", "question": "What components exist?", "expected_answer": "api"}], "viewports": [{"name": "desktop", "width": 1440, "height": 900}, {"name": "narrow", "width": 390, "height": 844}], "approved_output_location": "docs/system/", "accepted_gap_classes": [], "disclosure_approver": "fixture-owner", "first_deliverable": "system overview", "renderer_policy": ".claude/skills/graph-doc-graph-visualize:studio", "required_hosts": ["fixture-host"], "freshness_check": {"kind": "digest_compare", "algorithm": "sha256", "operands": ["system.yaml", "policy.yaml"]}}
+      },
+      "expected": {"status": "complete", "approval_eligibility": "eligible", "approval_decision": "pending", "blocking_issue_owner": null, "publication_decision": "awaiting_plan_approval"}
+    },
+    {
+      "id": "conflicting-evidence",
+      "input": {
+        "skill": "graph-system-documentation-plan",
+        "request": "Plan system documentation without choosing between equally authoritative conflicts.",
+        "files": {"graph-a.yaml": "route: api -> worker-a\n", "graph-b.yaml": "route: api -> worker-b\n"},
+        "conformance_profile": {"authoritative_roots": ["graph-a.yaml", "graph-b.yaml"], "authority_rules": ["both files have equal authority"], "scenario_checklist": [{"id": "S1", "question": "Where does api route?", "expected_answer": "unresolved conflict"}], "viewports": [{"name": "desktop", "width": 1440, "height": 900}, {"name": "narrow", "width": 390, "height": 844}], "approved_output_location": "docs/system/", "accepted_gap_classes": [], "disclosure_approver": "fixture-owner", "first_deliverable": "system overview", "renderer_policy": ".claude/skills/graph-doc-graph-visualize:studio", "required_hosts": ["fixture-host"], "freshness_check": {"kind": "digest_compare", "algorithm": "sha256", "operands": ["graph-a.yaml", "graph-b.yaml"]}}
+      },
+      "expected": {"status": "complete_with_gaps", "approval_decision": "pending", "blocking_issue_owner": "graph-system-documentation-plan", "publication_decision": "block"}
+    },
+    {
+      "id": "stale-source",
+      "input": {
+        "skill": "graph-system-documentation-create",
+        "request": "Create documentation from the approved plan.",
+        "files": {"approved-plan.json": "{\"source_digest\":\"aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa\",\"approval\":\"approved\"}", "system.yaml": "components:\n  - id: changed-after-approval\n"},
+        "conformance_profile": {"authoritative_roots": ["system.yaml"], "authority_rules": ["system.yaml controls topology"], "scenario_checklist": [{"id": "S1", "question": "What components exist?", "expected_answer": "from approved plan"}], "viewports": [{"name": "desktop", "width": 1440, "height": 900}, {"name": "narrow", "width": 390, "height": 844}], "approved_output_location": "docs/system/", "accepted_gap_classes": [], "disclosure_approver": "fixture-owner", "first_deliverable": "system overview", "renderer_policy": ".claude/skills/graph-doc-graph-visualize:studio", "required_hosts": ["fixture-host"], "freshness_check": {"kind": "digest_compare", "algorithm": "sha256", "operands": ["system.yaml", "approved-plan.json"]}}
+      },
+      "expected": {"status": "complete_with_gaps", "freshness_status": "stale", "blocking_issue_owner": "graph-system-documentation-create", "publication_decision": "block"}
+    },
+    {
+      "id": "disclosure-blocked",
+      "input": {
+        "skill": "graph-system-documentation-plan",
+        "request": "Plan externally publishable system documentation.",
+        "files": {"system.yaml": "component: secret-service\nclassification: restricted\n", "policy.yaml": "external_publication: denied\n"},
+        "conformance_profile": {"authoritative_roots": ["system.yaml", "policy.yaml"], "authority_rules": ["policy.yaml controls disclosure"], "scenario_checklist": [{"id": "S1", "question": "What may be published?", "expected_answer": "nothing"}], "viewports": [{"name": "desktop", "width": 1440, "height": 900}, {"name": "narrow", "width": 390, "height": 844}], "approved_output_location": "docs/public/", "accepted_gap_classes": [], "disclosure_approver": "fixture-owner", "first_deliverable": "public system overview", "renderer_policy": ".claude/skills/graph-doc-graph-visualize:studio", "required_hosts": ["fixture-host"], "freshness_check": {"kind": "digest_compare", "algorithm": "sha256", "operands": ["system.yaml", "policy.yaml"]}}
+      },
+      "expected": {"status": "blocked", "approval_eligibility": "self_blocked", "approval_decision": "pending", "blocking_issue_owner": "graph-system-documentation-plan", "publication_decision": "block"}
+    },
+    {
+      "id": "graph-render-digest-mismatch",
+      "input": {"skill": "graph-system-documentation-create", "request": "Create from the approved graph manifest.", "files": {"manifest.json": "{\"run_id\":\"r1\",\"execution_shape\":\"workflow\",\"entry_node_id\":\"a\",\"terminal_node_ids\":[\"b\"],\"nodes\":[{\"id\":\"a\",\"kind\":\"agent\",\"stage\":\"S1\",\"purpose\":\"Start\"},{\"id\":\"b\",\"kind\":\"gate\",\"stage\":\"S2\",\"purpose\":\"Finish\"}],\"edges\":[{\"from\":\"a\",\"to\":\"b\",\"type\":\"sequential\"}]}", "render-record.json": "{\"manifest_digest\":\"ffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffff\"}"}},
+      "expected": {"status": "complete_with_gaps", "blocking_issue_owner": "graph-system-documentation-create", "publication_decision": "block", "failure": "manifest_digest_mismatch"}
+    },
+    {
+      "id": "graph-inspection-blocked",
+      "input": {"skill": "graph-system-documentation-create", "request": "Verify the supplied render inspection.", "files": {"inspection.json": "{\"status\":\"blocked\",\"blockers\":[\"overlapping text\"]}"}},
+      "expected": {"status": "complete_with_gaps", "blocking_issue_owner": "graph-system-documentation-create", "publication_decision": "block", "inspection_status": "blocked"}
+    },
+    {
+      "id": "graph-render-awaiting-review",
+      "input": {"skill": "graph-system-documentation-create", "request": "Evaluate a clean render that has no human visual review.", "files": {"inspection.json": "{\"status\":\"clean\"}", "render.svg": "<svg xmlns=\"http://www.w3.org/2000/svg\"></svg>"}},
+      "expected": {"status": "complete_with_gaps", "blocking_issue_owner": "graph-system-documentation-create", "publication_decision": "block", "visual_review_result": "not_performed"}
+    }
+  ]
+}

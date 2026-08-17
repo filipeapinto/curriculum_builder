@@ -1,0 +1,170 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="color-scheme" content="light dark">
+  <title>Research results: control after recursive LLM specification work</title>
+  <style>
+    :root{--bg:#f4f1e9;--paper:#fffdf7;--ink:#17211d;--muted:#5e6862;--line:#cfd6ce;--jade:#087f67;--jade2:#d9f1e8;--coral:#c94f3d;--coral2:#f8dfd8;--gold:#a46a00;--gold2:#f8ebc8;--navy:#23395d;--shadow:0 18px 52px rgba(28,42,35,.12)}
+    @media(prefers-color-scheme:dark){:root{--bg:#111713;--paper:#18201b;--ink:#eef6f0;--muted:#aab8ae;--line:#3b4a40;--jade:#6ed8ba;--jade2:#153d31;--coral:#ff8c78;--coral2:#45251f;--gold:#f2c15d;--gold2:#413619;--navy:#a8c8ff;--shadow:0 18px 52px rgba(0,0,0,.28)}}
+    *{box-sizing:border-box}html{scroll-behavior:smooth}body{margin:0;background:var(--bg);color:var(--ink);font:16px/1.62 ui-sans-serif,system-ui,-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif}a{color:var(--jade);text-underline-offset:.17em}a:hover{text-decoration-thickness:2px}main{max-width:1180px;margin:auto;padding:24px 24px 80px}.hero{min-height:70vh;display:grid;grid-template-columns:1.25fr .75fr;gap:36px;align-items:end;padding:56px 0 44px;border-bottom:1px solid var(--line)}.kicker{font:700 .75rem/1.2 ui-monospace,SFMono-Regular,Menlo,monospace;letter-spacing:.12em;text-transform:uppercase;color:var(--jade)}h1{font-size:clamp(3rem,8vw,6.8rem);line-height:.91;letter-spacing:-.065em;margin:.16em 0 .23em;max-width:9.5ch}h2{font-size:clamp(2rem,4vw,3.25rem);line-height:1.02;letter-spacing:-.04em;margin:0 0 .45em}h3{font-size:1.18rem;line-height:1.25;margin:0 0 .5em}.lede{font-size:clamp(1.15rem,2vw,1.45rem);line-height:1.42;max-width:48ch;color:var(--muted)}.verdict{background:var(--ink);color:var(--paper);padding:26px;border-radius:2px;box-shadow:var(--shadow)}.verdict strong{display:block;font-size:1.4rem;line-height:1.2;margin:.3em 0}.verdict p{margin:.5em 0 0;color:color-mix(in srgb,var(--paper) 78%,transparent)}nav{position:sticky;top:0;z-index:5;background:color-mix(in srgb,var(--bg) 90%,transparent);backdrop-filter:blur(14px);border-bottom:1px solid var(--line);margin:0 -24px;padding:10px 24px;display:flex;gap:16px;overflow:auto;white-space:nowrap}nav a{text-decoration:none;font-size:.84rem;color:var(--muted)}section{padding:72px 0;border-bottom:1px solid var(--line)}.intro{max-width:74ch;font-size:1.08rem}.grid{display:grid;grid-template-columns:repeat(12,1fr);gap:18px}.card{grid-column:span 4;background:var(--paper);border:1px solid var(--line);padding:24px;min-height:190px}.card.wide{grid-column:span 6}.card b.num{display:block;font:700 2rem/1 ui-monospace,SFMono-Regular,Menlo,monospace;color:var(--coral);margin-bottom:16px}.card p{color:var(--muted);margin:.5em 0}.tag{display:inline-block;font:700 .7rem/1 ui-monospace,SFMono-Regular,Menlo,monospace;text-transform:uppercase;letter-spacing:.08em;padding:6px 8px;background:var(--jade2);color:var(--jade);margin-bottom:12px}.diagram{background:var(--paper);border:1px solid var(--line);padding:22px;overflow:auto}.diagram svg{display:block;width:100%;min-width:720px;height:auto}.diagram text{font-family:ui-sans-serif,system-ui,sans-serif;fill:var(--ink)}.diagram .small{font-size:12px;fill:var(--muted)}.diagram .label{font-size:15px;font-weight:700}.diagram .node{fill:var(--paper);stroke:var(--line);stroke-width:1.4}.diagram .risk{fill:var(--coral2);stroke:var(--coral)}.diagram .control{fill:var(--jade2);stroke:var(--jade)}.diagram .edge{fill:none;stroke:var(--muted);stroke-width:2;marker-end:url(#arrow)}.diagram .badedge{stroke:var(--coral)}.diagram .goodedge{stroke:var(--jade)}.legend{display:flex;gap:18px;flex-wrap:wrap;margin:14px 0 0;color:var(--muted);font-size:.85rem}.dot{display:inline-block;width:10px;height:10px;margin-right:6px;border-radius:50%}.timeline{display:grid;grid-template-columns:90px 1fr;gap:0}.tv{font:700 .85rem/1.4 ui-monospace,SFMono-Regular,Menlo,monospace;padding:18px 12px 18px 0;color:var(--jade);border-right:2px solid var(--line)}.te{padding:15px 0 24px 24px;position:relative}.te:before{content:"";position:absolute;width:10px;height:10px;border-radius:50%;background:var(--jade);left:-6px;top:22px}.te strong{display:block}.te span{color:var(--muted)}.callout{border-left:6px solid var(--coral);background:var(--coral2);padding:20px 24px;margin:28px 0;max-width:82ch}.callout.good{border-color:var(--jade);background:var(--jade2)}table{width:100%;border-collapse:collapse;background:var(--paper);font-size:.93rem}th,td{text-align:left;vertical-align:top;padding:14px;border:1px solid var(--line)}th{font-size:.77rem;text-transform:uppercase;letter-spacing:.06em;color:var(--muted)}td strong{display:block}.rating{font:700 .78rem/1 ui-monospace,SFMono-Regular,Menlo,monospace;white-space:nowrap}.high{color:var(--jade)}.mid{color:var(--gold)}.low{color:var(--coral)}details{border-top:1px solid var(--line);padding:18px 0}details:last-child{border-bottom:1px solid var(--line)}summary{font-weight:700;cursor:pointer}details p{max-width:78ch;color:var(--muted)}.probe{display:grid;grid-template-columns:repeat(5,1fr);gap:2px;background:var(--line);border:1px solid var(--line)}.step{background:var(--paper);padding:20px;min-height:190px}.step em{display:block;font:700 .75rem/1 ui-monospace,SFMono-Regular,Menlo,monospace;color:var(--jade);font-style:normal;margin-bottom:25px}.step strong{display:block;margin-bottom:8px}.step span{font-size:.9rem;color:var(--muted)}.sources{columns:2;column-gap:44px}.sources li{break-inside:avoid;margin:0 0 13px;padding-left:4px}.sources small{display:block;color:var(--muted)}footer{padding:38px 0 0;color:var(--muted);font-size:.85rem}.filterbar{display:flex;gap:8px;flex-wrap:wrap;margin:0 0 18px}.filterbar button{font:inherit;font-size:.82rem;border:1px solid var(--line);background:var(--paper);color:var(--ink);padding:7px 11px;cursor:pointer}.filterbar button[aria-pressed="true"]{background:var(--ink);color:var(--paper)}tr[hidden]{display:none}
+    @media(max-width:820px){.hero{grid-template-columns:1fr;min-height:auto}.card,.card.wide{grid-column:span 12}.probe{grid-template-columns:1fr}.sources{columns:1}section{padding:50px 0}h1{font-size:3.6rem}.timeline{grid-template-columns:70px 1fr}}
+    @media print{nav,.filterbar{display:none}.hero{min-height:auto}.card,.diagram,.verdict,table{break-inside:avoid}a{color:inherit}.sources{columns:1}}
+  </style>
+</head>
+<body>
+<main>
+  <header class="hero">
+    <div>
+      <div class="kicker">AI-native research · v1 · 17 Aug 2026</div>
+      <h1>When the spec starts steering you</h1>
+      <p class="lede">Repeated LLM review can make a specification more coherent, testable—and less yours. The risk is not disorder. It is confident convergence on a recursively manufactured objective.</p>
+    </div>
+    <aside class="verdict" aria-label="Research verdict">
+      <span class="kicker" style="color:inherit">Verdict</span>
+      <strong>Do not execute v11 unchanged.</strong>
+      <p>Re-anchor it with an independent intent probe, then authorize only a reversible, budget-capped slice. The goal is to regain steering information, not to perfect the document.</p>
+    </aside>
+  </header>
+
+  <nav aria-label="Report navigation"><a href="#shift">What changed</a><a href="#loop">Failure loop</a><a href="#local">v1→v11</a><a href="#patterns">AI-native patterns</a><a href="#architecture">Control architecture</a><a href="#probe">Probe</a><a href="#sources">Sources</a></nav>
+
+  <section id="shift">
+    <div class="kicker">01 · Reframing</div><h2>This is not document governance</h2>
+    <p class="intro">In agentic work, the specification is simultaneously a memory artifact, a prompt, an evaluator target, a coordination protocol, and an authorization surface. A rewrite does not merely edit requirements; it changes what future agents will notice, optimize, test, and treat as legitimate. OpenAI describes agents as shifting work from short interactions to delegated, long-horizon tasks, while Anthropic frames effective agent work as a problem of selecting and maintaining the right context over time. <a href="https://openai.com/index/how-agents-are-transforming-work/">OpenAI</a> · <a href="https://www.anthropic.com/engineering/effective-context-engineering-for-ai-agents">Anthropic</a></p>
+    <div class="grid">
+      <article class="card"><b class="num">01</b><h3>Generation is cheaper than comprehension</h3><p>Agents can add detail faster than a human can rebuild a causal model. Review debt grows even when prose quality improves.</p></article>
+      <article class="card"><b class="num">02</b><h3>Context is a lossy runtime</h3><p>Long-horizon agents rely on compaction, structured notes, and delegated summaries. What survives becomes operational truth; omitted rationale becomes practically nonexistent. <a href="https://www.anthropic.com/engineering/effective-context-engineering-for-ai-agents">Source</a></p></article>
+      <article class="card"><b class="num">03</b><h3>The evaluator can mutate the target</h3><p>If tests, rubrics, and critiques are derived from the current spec, the system can optimize self-consistency while original intent disappears.</p></article>
+      <article class="card"><b class="num">04</b><h3>Reviewers are not independent samples</h3><p>Model judges exhibit self-preference and preference leakage; same-family or related generator–judge pairs can share biases. <a href="https://aclanthology.org/2025.emnlp-main.86.pdf">EMNLP 2025</a> · <a href="https://huggingface.co/papers/2502.01534">Preference leakage</a></p></article>
+      <article class="card"><b class="num">05</b><h3>Agreement may be persuasion</h3><p>Multi-agent debate is not reliably truth-seeking by default; protocol, diversity, judge design, and external evidence matter. <a href="https://proceedings.mlr.press/v235/smit24a.html">ICML study</a> · <a href="https://pmc.ncbi.nlm.nih.gov/articles/PMC13061921/">Adversarial influence study</a></p></article>
+      <article class="card"><b class="num">06</b><h3>Action has compounding cost</h3><p>Long-running agents can expand files, schemas, tests, and dependencies in parallel. The control objective must include reversibility, information gain, and spend—not only task completion.</p></article>
+    </div>
+  </section>
+
+  <section id="loop">
+    <div class="kicker">02 · System dynamics</div><h2>How reciprocal review loses the owner</h2>
+    <div class="diagram" role="img" aria-label="An uncontrolled loop where owner intent becomes an LLM specification, then critique, revision and generated evaluation reinforce each other while owner context fades">
+      <svg viewBox="0 0 1040 420">
+        <defs><marker id="arrow" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0 0L10 5L0 10z" fill="context-stroke"/></marker></defs>
+        <rect class="node control" x="20" y="145" width="180" height="92" rx="4"/><text class="label" x="45" y="180">Owner intent</text><text class="small" x="45" y="202">tacit, incomplete, valuable</text>
+        <rect class="node" x="260" y="60" width="190" height="92" rx="4"/><text class="label" x="286" y="95">Agent-produced spec</text><text class="small" x="286" y="117">plausible formalization</text>
+        <rect class="node" x="510" y="60" width="190" height="92" rx="4"/><text class="label" x="536" y="95">Agent critique</text><text class="small" x="536" y="117">finds local inconsistency</text>
+        <rect class="node" x="760" y="60" width="220" height="92" rx="4"/><text class="label" x="786" y="95">Agent revision</text><text class="small" x="786" y="117">adds rules + machinery</text>
+        <rect class="node risk" x="510" y="275" width="190" height="92" rx="4"/><text class="label" x="536" y="310">Generated evals</text><text class="small" x="536" y="332">derived from current spec</text>
+        <rect class="node risk" x="260" y="275" width="190" height="92" rx="4"/><text class="label" x="286" y="310">Compacted history</text><text class="small" x="286" y="332">rationale is summarized away</text>
+        <path class="edge" d="M200 175C230 150 230 125 260 110"/><path class="edge badedge" d="M450 106H510"/><path class="edge badedge" d="M700 106H760"/><path class="edge badedge" d="M870 152C870 242 710 250 650 275"/><path class="edge badedge" d="M510 320H450"/><path class="edge badedge" d="M355 275C355 240 355 200 355 152"/>
+        <path class="edge" stroke-dasharray="7 6" d="M260 196C235 196 225 196 200 196"/><text class="small" x="213" y="220">review burden ↑</text>
+        <text class="small" x="748" y="388">The loop can converge while its distance from owner intent increases.</text>
+      </svg>
+    </div>
+    <div class="callout"><strong>The AI-native failure is objective laundering.</strong> An agent introduces a reasonable design choice; another agent critiques its completeness rather than its authority; the revision encodes it as normative; fixtures are generated from it; later reviewers see a tested requirement. Provenance has been replaced by internal coherence.</div>
+  </section>
+
+  <section id="local">
+    <div class="kicker">03 · Repository evidence</div><h2>v11 did not suddenly drift. The product changed shape early.</h2>
+    <p class="intro">Local inspection shows that v1 was a 14.5 KB, model-agnostic reader-facing documentation standard. By v2–v5 it had become a repository-specific three-skill system with artifact schemas, decision ownership, run configuration, conformance states, and approval workflow. From v7 onward the eleven-section structure stabilizes. v10→v11 is small. This is a repository observation, not an external claim.</p>
+    <div class="timeline">
+      <div class="tv">v1</div><div class="te"><strong>Reader outcome</strong><span>Architecture and operations documentation; model-agnostic quality guidance.</span></div>
+      <div class="tv">v2</div><div class="te"><strong>Workflow becomes product</strong><span>Skill-family decision ownership and artifact contracts appear.</span></div>
+      <div class="tv">v3</div><div class="te"><strong>Runtime and conformance</strong><span>Required run configuration and formal conformance procedure appear.</span></div>
+      <div class="tv">v5</div><div class="te"><strong>Three-skill architecture</strong><span>Plan, create, and update are established as the delivery system.</span></div>
+      <div class="tv">v7–v10</div><div class="te"><strong>Mechanism hardens</strong><span>Schemas, fixtures, visualization integration, digests, approvals, and terminal states accumulate.</span></div>
+      <div class="tv">v11</div><div class="te"><strong>Small contract refinement</strong><span>Schema v8, visual-review states, named human review, and fixture JSON-pointer mapping.</span></div>
+    </div>
+    <div class="callout good"><strong>Inference:</strong> v11 may be an excellent solution to a problem that emerged during iteration. The key uncertainty is whether “build a graph-system documentation skill family” was the owner’s intended product, or an agent-generated implementation strategy that became the premise of later reviews.</div>
+  </section>
+
+  <section id="patterns">
+    <div class="kicker">04 · Current approaches</div><h2>AI-native control patterns—not ceremony</h2>
+    <div class="filterbar" aria-label="Filter approaches"><button type="button" data-filter="all" aria-pressed="true">All</button><button type="button" data-filter="context" aria-pressed="false">Context</button><button type="button" data-filter="evaluation" aria-pressed="false">Evaluation</button><button type="button" data-filter="control" aria-pressed="false">Control</button></div>
+    <table id="patterns-table">
+      <thead><tr><th>Pattern</th><th>What is AI-native about it</th><th>What it controls</th><th>Residual failure</th><th>Fit</th></tr></thead>
+      <tbody>
+        <tr data-kind="context"><td><strong>Context kernel + ephemeral working context</strong></td><td>A tiny immutable kernel is injected fresh; retrieval and compaction carry only task-relevant evidence.</td><td>Context pollution and rationale loss. Anthropic recommends compaction, structured notes, and subagents for long horizons. <a href="https://www.anthropic.com/engineering/effective-context-engineering-for-ai-agents">Source</a></td><td>The kernel can still be wrong or too vague.</td><td><span class="rating high">HIGH</span></td></tr>
+        <tr data-kind="context"><td><strong>Event-sourced intent graph</strong></td><td>Intent is not one mutable document; goals, decisions, evidence, critiques, and supersessions are append-only typed objects.</td><td>Authority laundering and invisible full rewrites.</td><td>Graph complexity; still needs a decision owner.</td><td><span class="rating high">HIGH</span></td></tr>
+        <tr data-kind="evaluation"><td><strong>Orthogonal eval lanes</strong></td><td>Evals are generated from independent sources: owner examples, environment behavior, red-team mutations, and current spec—not from the spec alone.</td><td>Verification capture and Goodhart-like co-adaptation. OpenAI’s 2026 benchmark audit shows flawed tasks can create false capability signals. <a href="https://openai.com/index/separating-signal-from-noise-coding-evaluations/">Source</a></td><td>Independent lanes cost more and can conflict.</td><td><span class="rating high">HIGH</span></td></tr>
+        <tr data-kind="evaluation"><td><strong>Cross-family blinded judging</strong></td><td>Hide authorship, randomize order, use heterogeneous model families, and calibrate with owner decisions.</td><td>Self-preference, position, style, and preference-leakage bias. <a href="https://proceedings.neurips.cc/paper_files/paper/2024/file/7f1f0218e45f5414c79c0679633e47bc-Paper-Conference.pdf">NeurIPS</a> · <a href="https://aclanthology.org/2025.emnlp-main.86.pdf">EMNLP</a></td><td>Models still share data and cultural priors; heterogeneity is partial independence.</td><td><span class="rating mid">MED–HIGH</span></td></tr>
+        <tr data-kind="evaluation"><td><strong>Falsification tournaments</strong></td><td>Agents earn value by producing concrete counterexamples against independent evidence, not by improving prose or reaching consensus.</td><td>Politeness convergence and vague critique. Tool-grounded critique is more reliable than self-reflection alone. <a href="https://mlanthology.org/iclr/2024/gou2024iclr-critic/">CRITIC</a></td><td>Counterexamples may overfit accessible evidence.</td><td><span class="rating high">HIGH</span></td></tr>
+        <tr data-kind="control"><td><strong>Uncertainty-triggered authority</strong></td><td>Agents may act autonomously only within reversible bounds; novelty, disagreement, spend, and irreversible effects route to the owner.</td><td>Autonomous scope/cost amplification.</td><td>Bad thresholds can over-escalate or miss semantic novelty.</td><td><span class="rating high">HIGH</span></td></tr>
+        <tr data-kind="control"><td><strong>Information-gain budgeting</strong></td><td>Authorize the next experiment by expected uncertainty reduction per dollar/token, not by completeness of a master plan.</td><td>Sunk-cost escalation and premature full builds.</td><td>Information gain is estimated, not known.</td><td><span class="rating high">HIGH</span></td></tr>
+        <tr data-kind="control"><td><strong>Spec-driven development suites</strong></td><td>Specs become persistent, machine-consumable shared context across agents. Microsoft and GitHub describe intent/spec/plan/implementation flows for AI-native engineering. <a href="https://developer.microsoft.com/blog/spec-driven-development-ai-native-engineering">Microsoft</a> · <a href="https://github.github.com/spec-kit/reference/agentic-sdd.html">Spec Kit</a></td><td>Ambiguity, plan/code drift, coordination.</td><td>Can harden a mutated objective and recreate document bureaucracy.</td><td><span class="rating mid">MEDIUM</span></td></tr>
+        <tr data-kind="control"><td><strong>Bounded evaluator–optimizer</strong></td><td>Each iteration names a measurable failure and stops on pass, no gain, oscillation, or budget. <a href="https://www.anthropic.com/engineering/building-effective-agents">Anthropic</a></td><td>Runaway recursive polishing.</td><td>Measurable target may not equal intent.</td><td><span class="rating high">HIGH</span></td></tr>
+        <tr data-kind="evaluation"><td><strong>Multi-agent debate</strong></td><td>Role-specialized agents critique one another and expose reasoning paths.</td><td>Some local errors and missing perspectives.</td><td>Research finds outcomes depend strongly on debate protocol; persuasion and correlated errors remain. <a href="https://proceedings.mlr.press/v235/smit24a.html">ICML</a></td><td><span class="rating low">LOW ALONE</span></td></tr>
+      </tbody>
+    </table>
+  </section>
+
+  <section id="architecture">
+    <div class="kicker">05 · Proposed control architecture</div><h2>Keep the owner outside the recursive objective</h2>
+    <p class="intro">The owner should not approve every edit. The owner should control the few variables agents must not manufacture: desired outcomes, prohibited outcomes, risk/cost boundaries, and decisions that change those boundaries. Everything else can remain agentic.</p>
+    <div class="diagram" role="img" aria-label="A controlled LLM work architecture with an immutable intent kernel, append-only event store, heterogeneous agents, independent evidence lanes, uncertainty gate, and reversible execution sandbox">
+      <svg viewBox="0 0 1040 530">
+        <defs><marker id="arrow2" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0 0L10 5L0 10z" fill="context-stroke"/></marker></defs>
+        <rect class="node control" x="25" y="55" width="210" height="105" rx="4"/><text class="label" x="50" y="90">Intent kernel</text><text class="small" x="50" y="112">outcomes · non-outcomes</text><text class="small" x="50" y="132">risk · spend · authority</text>
+        <rect class="node control" x="25" y="235" width="210" height="105" rx="4"/><text class="label" x="50" y="270">Independent evidence</text><text class="small" x="50" y="292">owner examples · repository</text><text class="small" x="50" y="312">runtime probes · external facts</text>
+        <rect class="node" x="310" y="55" width="210" height="105" rx="4"/><text class="label" x="335" y="90">Append-only intent graph</text><text class="small" x="335" y="112">proposal ≠ decision</text><text class="small" x="335" y="132">every change has provenance</text>
+        <rect class="node" x="310" y="235" width="210" height="105" rx="4"/><text class="label" x="335" y="270">Heterogeneous agents</text><text class="small" x="335" y="292">builder · falsifier · judge</text><text class="small" x="335" y="312">blind until evidence submitted</text>
+        <rect class="node control" x="595" y="145" width="210" height="120" rx="4"/><text class="label" x="620" y="180">Uncertainty gate</text><text class="small" x="620" y="202">intent delta? disagreement?</text><text class="small" x="620" y="222">irreversible? budget breach?</text><text class="small" x="620" y="242">yes → owner; no → sandbox</text>
+        <rect class="node control" x="870" y="55" width="145" height="105" rx="4"/><text class="label" x="892" y="90">Owner decision</text><text class="small" x="892" y="112">only boundary</text><text class="small" x="892" y="132">changes</text>
+        <rect class="node" x="870" y="275" width="145" height="105" rx="4"/><text class="label" x="892" y="310">Reversible probe</text><text class="small" x="892" y="332">bounded writes</text><text class="small" x="892" y="352">measure + rollback</text>
+        <rect class="node" x="310" y="415" width="495" height="75" rx="4"/><text class="label" x="335" y="448">Trace + cost + counterexample stream</text><text class="small" x="335" y="470">new evidence updates context; it does not silently rewrite authority</text>
+        <path d="M235 108H310" fill="none" stroke="var(--jade)" stroke-width="2" marker-end="url(#arrow2)"/><path d="M235 287H310" fill="none" stroke="var(--jade)" stroke-width="2" marker-end="url(#arrow2)"/><path d="M520 108C565 108 565 175 595 185" fill="none" stroke="var(--jade)" stroke-width="2" marker-end="url(#arrow2)"/><path d="M520 287C565 287 565 235 595 225" fill="none" stroke="var(--jade)" stroke-width="2" marker-end="url(#arrow2)"/><path d="M805 180C835 150 840 110 870 108" fill="none" stroke="var(--coral)" stroke-width="2" marker-end="url(#arrow2)"/><path d="M805 230C840 250 840 315 870 325" fill="none" stroke="var(--jade)" stroke-width="2" marker-end="url(#arrow2)"/><path d="M942 380C942 450 850 452 805 452" fill="none" stroke="var(--muted)" stroke-width="2" marker-end="url(#arrow2)"/><path d="M310 452C245 452 130 400 130 340" fill="none" stroke="var(--muted)" stroke-width="2" stroke-dasharray="7 6" marker-end="url(#arrow2)"/>
+      </svg>
+    </div>
+    <div class="callout good"><strong>Key design rule:</strong> agents may propose changes to the intent kernel but cannot write them into force. The kernel is deliberately small; the high-volume detail lives in an append-only graph and is continuously challenged by evidence.</div>
+  </section>
+
+  <section id="probe">
+    <div class="kicker">06 · Next action</div><h2>Run a divergence probe, not a full audit</h2>
+    <p class="intro">The cheapest high-information move is to ask independent systems to reconstruct the product from different evidence boundaries, then measure where their predicted behaviors diverge. Do not let them rewrite v11 during the probe.</p>
+    <div class="probe">
+      <div class="step"><em>01</em><strong>Freeze</strong><span>Hash v1–v11, schemas, fixtures, prompts, and available transcripts. Set a hard research budget.</span></div>
+      <div class="step"><em>02</em><strong>Three blind reconstructions</strong><span>A: original prompts + v1. B: owner interview only. C: v11 only. Use different model families where possible.</span></div>
+      <div class="step"><em>03</em><strong>Generate witnesses</strong><span>Each produces ten concrete “the system will / will not” predictions, costs, dependencies, and irreversible effects.</span></div>
+      <div class="step"><em>04</em><strong>Falsify</strong><span>Independent agents seek repository evidence and counterexamples. Judges see anonymized outputs in randomized order.</span></div>
+      <div class="step"><em>05</em><strong>Owner adjudicates deltas</strong><span>Only material disagreements reach the owner. Approve a tiny reversible slice or stop.</span></div>
+    </div>
+    <h3 style="margin-top:34px">Pilot authorization rule</h3>
+    <p class="intro">Proceed only if the owner recognizes the v11 reconstruction as the desired product, all three lanes agree on the first reversible slice, and no disputed dependency, publication authority, architecture choice, or cost driver is hidden inside that slice. Otherwise, reconstruct a candidate from the owner lane plus repository evidence rather than polishing v11.</p>
+    <div class="callout"><strong>Current decision: RE-ANCHOR + PROBE.</strong> Not “execute,” not “rewrite everything,” and not “add more reviewers.” v11 remains evidence and a candidate implementation hypothesis.</div>
+  </section>
+
+  <section id="limits">
+    <div class="kicker">07 · What this review changes</div><h2>Corrections to the first research pass</h2>
+    <details open><summary>From traceability matrix to event-sourced intent graph</summary><p>A static matrix assumes stable artifacts and manageable change volume. An append-only graph better represents agent-generated proposals, evidence, decisions, supersessions, and unresolved contradictions without letting a rewrite erase provenance.</p></details>
+    <details><summary>From human approval everywhere to uncertainty-triggered authority</summary><p>Humans cannot review agent-volume output. Their scarce attention should be routed to semantic novelty, boundary changes, disagreement, spend, and irreversible actions.</p></details>
+    <details><summary>From acceptance tests to orthogonal eval lanes</summary><p>Tests derived from the current spec are endogenous. AI-native control requires at least one evaluation lane whose origin is outside the artifact being optimized.</p></details>
+    <details><summary>From independent reviewers to independence engineering</summary><p>Different prompts are not independent. Blindness, model-family diversity, randomized presentation, distinct evidence access, adversarial incentives, and human calibration create partial independence.</p></details>
+    <details><summary>From complete planning to reversible information gain</summary><p>Because agents make implementation cheap and plans rapidly stale, the next authorized unit should maximize uncertainty reduction while bounding downside—not attempt to specify the entire final system.</p></details>
+  </section>
+
+  <section id="sources">
+    <div class="kicker">08 · Linked evidence</div><h2>Sources</h2>
+    <ol class="sources">
+      <li><a href="https://www.anthropic.com/engineering/effective-context-engineering-for-ai-agents">Anthropic: Effective context engineering for AI agents</a><small>Compaction, context pollution, structured notes, subagents.</small></li>
+      <li><a href="https://www.anthropic.com/engineering/building-effective-agents">Anthropic: Building effective agents</a><small>Evaluator–optimizer fit, human checkpoints, stopping conditions.</small></li>
+      <li><a href="https://www.anthropic.com/engineering/demystifying-evals-for-ai-agents">Anthropic: Demystifying evals for AI agents</a><small>Mixed graders, calibration, transcript inspection, stochastic trials.</small></li>
+      <li><a href="https://openai.com/index/how-agents-are-transforming-work/">OpenAI: How agents are transforming work</a><small>Delegated long-horizon work and parallel agent use.</small></li>
+      <li><a href="https://openai.com/index/separating-signal-from-noise-coding-evaluations/">OpenAI: Separating signal from noise in coding evaluations</a><small>Broken and contaminated evals can create false capability signals.</small></li>
+      <li><a href="https://openai.com/index/building-self-improving-tax-agents-with-codex/">OpenAI: Building self-improving tax agents with Codex</a><small>Read-only traces, targeted and regression evals, durable decision context.</small></li>
+      <li><a href="https://aclanthology.org/2025.emnlp-main.86.pdf">Chen et al.: Beyond the Surface—Measuring Self-Preference in LLM Judgments</a><small>Self-preference measurement and model/post-training effects.</small></li>
+      <li><a href="https://proceedings.neurips.cc/paper_files/paper/2024/file/7f1f0218e45f5414c79c0679633e47bc-Paper-Conference.pdf">Panickssery et al.: LLM Evaluators Recognize and Favor Their Own</a><small>Self-recognition and self-preference in evaluation.</small></li>
+      <li><a href="https://huggingface.co/papers/2502.01534">Preference Leakage: A Contamination Problem in LLM-as-a-Judge</a><small>Generator–evaluator relatedness and pervasive preference leakage.</small></li>
+      <li><a href="https://proceedings.mlr.press/v235/smit24a.html">Smit et al.: Should we be going MAD?</a><small>Controlled comparison of multi-agent debate strategies.</small></li>
+      <li><a href="https://pmc.ncbi.nlm.nih.gov/articles/PMC13061921/">When collaboration fails: persuasion-driven adversarial influence in multi-agent debate</a><small>Structural vulnerability of collaborative debate to persuasion.</small></li>
+      <li><a href="https://mlanthology.org/iclr/2024/gou2024iclr-critic/">CRITIC: Tool-interactive critiquing</a><small>External tool feedback improves self-correction.</small></li>
+      <li><a href="https://developer.microsoft.com/blog/spec-driven-development-ai-native-engineering">Microsoft: Spec-driven development—AI-native engineering</a><small>Intent, ambiguity removal, constrained planning, validation.</small></li>
+      <li><a href="https://github.github.com/spec-kit/reference/agentic-sdd.html">GitHub Spec Kit: Agentic SDD reference</a><small>Constitution, specify, clarify, plan, analyze, implement.</small></li>
+      <li><a href="https://arxiv.org/abs/2602.00180">Spec-Driven Development: From Code to Contract in the Age of AI Coding Assistants</a><small>Current survey and AI-era spec-driven workflow framing.</small></li>
+      <li><a href="https://arxiv.org/abs/2604.20436">Shift-Up: Guardrails in AI-native software development</a><small>Early findings on executable requirements, architecture models, and decision records.</small></li>
+      <li><a href="https://arxiv.org/abs/2607.18886">TraceDev</a><small>Recent traceability-driven multi-agent requirement-to-code framework.</small></li>
+    </ol>
+  </section>
+  <footer>Research trigger: <code>research.trigger.v1.md</code> · Results version 1 · Repository evidence observed 2026-08-17. Emerging 2026 papers are treated as early evidence, not settled practice.</footer>
+</main>
+<script>
+  (()=>{const buttons=[...document.querySelectorAll('[data-filter]')],rows=[...document.querySelectorAll('#patterns-table tbody tr')];buttons.forEach(button=>button.addEventListener('click',()=>{const filter=button.dataset.filter;buttons.forEach(b=>b.setAttribute('aria-pressed',String(b===button)));rows.forEach(row=>row.hidden=filter!=='all'&&row.dataset.kind!==filter)}))})();
+</script>
+</body></html>
