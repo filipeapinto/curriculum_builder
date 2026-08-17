@@ -13,9 +13,9 @@ The first research pass responded with conventional requirements-management cont
 
 This rejection triggers a second, AI-native research pass.
 
-## Research decision to support
+## Research need
 
-Determine which control architecture can preserve meaningful human steering when LLM agents repeatedly revise specifications and review one another, and decide whether `create_system_doc.spec.v11.html` should be executed, re-anchored, experimentally probed, or replaced.
+Establish a reusable, trigger-independent body of evidence about control and intent preservation when LLM agents repeatedly revise artifacts and review one another. After the SME research is complete, a separate general-purpose analysis may apply it to the target that caused this trigger.
 
 ## Primary questions
 
@@ -23,8 +23,8 @@ Determine which control architecture can preserve meaningful human steering when
 2. Why can reciprocal Codex/Claude review converge while still drifting from the owner's intent?
 3. Which AI-native approaches have emerged: executable intent, context engineering, trace/eval systems, heterogeneous judges, debate protocols, agent harnesses, spec-driven development, uncertainty/escalation mechanisms, and reversible experiments?
 4. Which approaches merely reproduce old process in new terminology?
-5. What control loop fits this repository and the observed v1→v11 evolution?
-6. What is the cheapest high-information action before committing to implementation?
+5. Which mechanisms and control patterns generalize across domains and agent platforms?
+6. What are the evidence limits and unresolved research questions?
 
 ## Evidence boundary
 
@@ -50,27 +50,15 @@ The research must explicitly examine:
 - human review overload and plausible-text rubber stamping;
 - irreversible actions taken before uncertainty is surfaced.
 
-## Required output
+## Required separation of outputs
 
-Create one engaging, self-contained HTML research report at `research_results.v1.html`. It must:
+The research process has two epistemically distinct outputs:
 
-- link claims directly to sources;
-- distinguish findings, inference, and recommendation;
-- visualize the uncontrolled and controlled loops;
-- analyze the local v1→v11 trajectory;
-- compare candidate control architectures;
-- recommend a concrete pre-execution experiment;
-- state an explicit execution verdict;
-- remain readable offline except for following source links;
-- use no external scripts, fonts, or assets.
+1. `research_results.v2.html` — a trigger-agnostic synthesis produced from independent SME research. It may contain general evidence-backed findings, evidence limitations, reusable mechanisms, and clearly labeled design proposals. It must not mention or assess the triggering repository artifact.
+2. `research_application.v1.html` — a separate general-agent application of the completed research to the trigger. It owns all repository observations, mappings, inferences, recommendations, and execution verdicts.
+
+Both outputs must hyperlink externally supported claims to their sources, remain readable offline except for following source links, and use no external scripts, fonts, or assets.
 
 ## Completion condition
 
-Research is complete when the owner can use the report to choose among:
-
-1. execute v11 unchanged;
-2. re-anchor v11 and run a bounded probe;
-3. reconstruct a replacement candidate from independent evidence;
-4. abandon the specification family.
-
-The report must not confuse a more elaborate process with restored control.
+Research is complete when the reusable SME synthesis is valid without knowledge of this trigger. Application is complete when a separate agent transparently maps that synthesis to the triggering evidence and exposes its reasoning without altering the research layer.
