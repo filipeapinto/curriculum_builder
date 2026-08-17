@@ -25,6 +25,10 @@ dist/
 # branch contains a complete working copy and must never enter Git history.
 .plan26-run/
 
+# Scratch/run state for the graph-system-document skill (source inventory,
+# verify/repair attempt counters). Regenerated on every run, never committed.
+.doc-run/
+
 # macOS
 .DS_Store
 .retrieved_sources/

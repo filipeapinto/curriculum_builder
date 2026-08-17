@@ -1,0 +1,129 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1"><meta name="color-scheme" content="light dark">
+  <title>Specification: Graph-System Documentation Skill</title>
+  <style>
+    :root{--ink:#172033;--muted:#586278;--paper:#fbfcff;--line:#d8deea;--blue:#175cc2;--soft:#eaf2ff;--warn:#8d5b00;--code:#f1f4f9;--good:#087f67}@media(prefers-color-scheme:dark){:root{--ink:#edf2fb;--muted:#aeb9cc;--paper:#101622;--line:#2d384c;--blue:#8abbff;--soft:#172b4c;--warn:#f0bd62;--code:#1a2333;--good:#70dfbd}}*{box-sizing:border-box}body{margin:0;background:var(--paper);color:var(--ink);font:16px/1.55 ui-sans-serif,system-ui,-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif}main{max-width:1100px;margin:0 auto;padding:48px 28px 72px}header{border-bottom:3px solid var(--blue);padding-bottom:24px}h1{font-size:clamp(2rem,5vw,3.5rem);line-height:1.05;letter-spacing:-.045em;margin:0 0 14px;max-width:900px}h2{font-size:1.55rem;line-height:1.2;margin:44px 0 14px;letter-spacing:-.02em}h3{font-size:1.08rem;margin:24px 0 8px}p{max-width:84ch}a{color:var(--blue)}code{background:var(--code);border:1px solid var(--line);border-radius:4px;padding:.1em .3em;font-size:.9em}.lede{color:var(--muted);font-size:1.12rem;max-width:78ch}.meta{color:var(--muted);font-size:.9rem}nav{margin:25px 0 0;display:flex;gap:12px;flex-wrap:wrap}nav a{border:1px solid var(--line);border-radius:999px;padding:5px 10px;text-decoration:none}.callout{margin:22px 0;padding:18px 20px;background:var(--soft);border-left:5px solid var(--blue);max-width:940px}.callout strong{display:block;margin-bottom:4px}table{border-collapse:collapse;width:100%;margin:16px 0 24px;font-size:.94rem}th,td{text-align:left;vertical-align:top;border:1px solid var(--line);padding:12px}th{background:var(--code)}li{margin:.45rem 0;max-width:88ch}.warn{color:var(--warn);font-weight:700}.good{color:var(--good);font-weight:700}footer{color:var(--muted);margin-top:50px;padding-top:16px;border-top:1px solid var(--line);font-size:.9rem}
+  </style>
+</head>
+<body><main>
+  <header>
+    <p class="meta">Requirements specification · 17 August 2026 · Version 12 · Supersedes v11</p>
+    <h1>Graph-system documentation skill</h1>
+    <p class="lede">One reusable skill creates or updates detailed architecture and operations documentation for graph-based AI systems. Documentation depth is mandatory. Workflow bureaucracy is not.</p>
+    <nav aria-label="Specification navigation"><a href="#purpose">Purpose</a><a href="#workflow">Workflow</a><a href="#evidence">Evidence</a><a href="#content">Content</a><a href="#visuals">Visuals</a><a href="#updates">Updates</a><a href="#quality">Quality</a><a href="#assurance">Assurance</a><a href="#outputs">Outputs</a></nav>
+  </header>
+
+  <section id="purpose"><h2>Purpose and governing principle</h2>
+    <div class="callout"><strong>Create a trustworthy, detailed system guide.</strong>The guide explains the system boundary, architecture, graph behavior, runtime contracts, deployment, security, configuration, observability, operation, failure, and recovery at the level supported by inspected evidence.</div>
+    <p>The skill serves design reviewers, maintainers, and authorized operators. It must provide enough detail for them to understand the system and perform their permitted tasks without reconstructing it from the repository.</p>
+    <p><strong>Minimum sufficient process:</strong> use the least expensive workflow that satisfies the content and quality requirements below. Add a control only when it mitigates an identified consequence, disclosure risk, or audit requirement.</p>
+    <p>This specification does not require separate plan, create, and update skills; canonical JSON handoff artifacts; exhaustive claim records; graph manifests; or human approval of non-destructive drafting. Those controls remain available under higher assurance when justified.</p>
+  </section>
+
+  <section id="workflow"><h2>Single-skill staged workflow</h2>
+    <p>The skill performs these stages internally. A stage may use deterministic scripts or model reasoning, but it does not require a persisted artifact merely to hand work to the next stage.</p>
+    <table><thead><tr><th>Stage</th><th>Required action</th><th>Completion condition</th></tr></thead><tbody>
+      <tr><td>1. Frame</td><td>Identify the requested system, audience, deliverable, permitted sources, output location, disclosure constraints, and whether this is creation or update.</td><td>The task boundary is unambiguous. Ask only for missing information that would materially change or endanger the result.</td></tr>
+      <tr><td>2. Inspect</td><td>Read the relevant code, prompts, graph definitions, schemas, configuration, deployment material, tests, traces, policies, and runbooks. Follow dependencies needed to explain behavior.</td><td>Relevant evidence has been inspected or its absence is recorded.</td></tr>
+      <tr><td>3. Model</td><td>Reconstruct the architecture, execution paths, state, interfaces, dependencies, controls, failure behavior, and operational procedures. Resolve conflicts where evidence permits.</td><td>Every material assertion is supported, qualified, or marked unknown.</td></tr>
+      <tr><td>4. Write</td><td>Create the guide and only those diagrams or tables that materially improve understanding.</td><td>The content requirements applicable to the system are covered.</td></tr>
+      <tr><td>5. Verify</td><td>Check factual grounding, completeness, secrets, links, output integrity, accessibility, and rendered readability. Repair bounded failures.</td><td>Required checks pass or the deliverable clearly records remaining gaps.</td></tr>
+      <tr><td>6. Deliver</td><td>Write a new file freely within the authorized location. Before overwriting an existing deliverable or publishing externally, present a concise change and risk summary and obtain approval.</td><td>The user receives the deliverable plus a compact verification summary.</td></tr>
+    </tbody></table>
+    <p>Use deterministic code for file discovery, hashing, diffs, schema parsing, link checking, secret scanning, and retry counters. Do not spend model tokens narrating bookkeeping that code can perform.</p>
+  </section>
+
+  <section id="evidence"><h2>Evidence discipline</h2>
+    <p>Documentation detail must come from evidence, not plausible completion. The skill maintains a lightweight source register containing source path or identifier, version or freshness when available, and scope inspected. This register may live in the document or compact run summary.</p>
+    <table><thead><tr><th>Evidence label</th><th>Meaning</th><th>Required treatment</th></tr></thead><tbody>
+      <tr><td><strong>Declared</strong></td><td>A design, configuration, policy, prompt, schema, or runbook states the behavior.</td><td>Do not imply that the behavior executed successfully.</td></tr>
+      <tr><td><strong>Observed</strong></td><td>A trace, test, log, or other execution evidence demonstrates the behavior.</td><td>Name the observation scope, version or time, and important unexercised paths.</td></tr>
+      <tr><td><strong>Inferred</strong></td><td>The conclusion follows from inspected evidence but is not directly stated or executed.</td><td>State the reasoning and avoid presenting it as observed fact.</td></tr>
+      <tr><td><strong>Unknown or conflicting</strong></td><td>Evidence is absent, insufficient, stale, or contradictory.</td><td>Preserve the uncertainty and explain its effect on readers or operations.</td></tr>
+    </tbody></table>
+    <p>Apply labels where they matter: at a section, table row, diagram element, or important claim. Exhaustive sentence-level claim IDs are not required by default. Never expose secrets, credentials, private endpoints, restricted data, or disallowed implementation detail.</p>
+  </section>
+
+  <section id="content"><h2>Required documentation content</h2>
+    <p>The following standard preserves v11’s information depth. A concern may be marked not applicable only with a reason. Missing evidence is documented as a gap, not silently omitted.</p>
+    <table><thead><tr><th>Area</th><th>The guide must explain</th><th>Typical evidence</th></tr></thead><tbody>
+      <tr><td>Purpose and boundary</td><td>Users and actors; intended outcomes; owned responsibilities; entry and exit interfaces; external systems; exclusions and assumptions.</td><td>Requests, design records, APIs, policies, code.</td></tr>
+      <tr><td>Architecture</td><td>Major components, responsibilities, dependencies, data movement, trust boundaries, and how the parts form the system.</td><td>Code, architecture records, configuration, interfaces.</td></tr>
+      <tr><td>Graph behavior</td><td>Entries, nodes or stages, routes, branches, loops, joins, termination, human or external handoffs, failure paths, and whether the graph is framework-defined or prompt-orchestrated.</td><td>Graph definitions, routing prompts, code, tests, traces.</td></tr>
+      <tr><td>Node and tool contracts</td><td>Purpose, inputs, outputs, model or prompt behavior, tools and side effects, timeouts, retries, repair, failure, and terminal semantics.</td><td>Prompts, node code, tool definitions, tests.</td></tr>
+      <tr><td>State and data</td><td>Important fields, types, validation, readers and writers, lineage, persistence or checkpoints, mutation or merge rules, versioning, redaction, and retention.</td><td>Schemas, models, reducers, storage and migration code.</td></tr>
+      <tr><td>Route contracts</td><td>Source, destination, trigger or guard, decision mechanism, transferred state, fallback, and resulting outcome.</td><td>Graph definitions, routing prompts, code, traces.</td></tr>
+      <tr><td>Models and prompts</td><td>Model roles, selection and fallback, prompt responsibilities, structured outputs, important limits, and configuration affecting behavior.</td><td>Prompts, model configuration, adapters, tests.</td></tr>
+      <tr><td>Deployment</td><td>Environments, hosting model, runtime topology, services, workers, stores, queues, networks, ingress and egress, scaling, high availability, and external dependencies.</td><td>IaC, manifests, platform configuration, inventories.</td></tr>
+      <tr><td>Configuration and release</td><td>Important parameters, defaults and allowed values, source and scope, sensitivity, behavioral effect, reload behavior, build and promotion path, migrations, feature flags, rollback, and compatibility.</td><td>Configuration schemas, CI/CD, deployment files, runbooks.</td></tr>
+      <tr><td>Security and privacy</td><td>Identity, authentication, authorization, privileged access, data classes, protection, secrets handling, isolation, network controls, audit, retention, incident ownership, and verified gaps.</td><td>Policies, identity and network configuration, code, runbooks.</td></tr>
+      <tr><td>Observability</td><td>Health and success signals, logs, metrics, traces, dashboards, run identifiers, alerts, thresholds, ownership, and blind spots.</td><td>Instrumentation, dashboards, alert rules, SLOs.</td></tr>
+      <tr><td>Operations and recovery</td><td>Prerequisites and roles; safe start, stop, or trigger procedures; expected outputs; prohibited actions; triage; retry, resume, rollback, restore, backup, escalation, and conditions where operators must stop.</td><td>Runbooks, code, tests, incidents, continuity plans.</td></tr>
+      <tr><td>Limitations and verification</td><td>Inspected and excluded sources, freshness, conflicts, unknowns, untested paths, assumptions, known risks, and what would invalidate the guide.</td><td>Source register and verification results.</td></tr>
+    </tbody></table>
+    <p><span class="warn">Do not</span> infer formal nodes or edges from narrative order alone, treat declared behavior as proof of execution, invent generic security controls, or conceal missing evidence behind polished prose.</p>
+  </section>
+
+  <section id="visuals"><h2>Visuals chosen for reader value</h2>
+    <p>Use a diagram when relationships, flow, boundaries, or state changes are materially clearer visually. Use prose or a table when they are clearer. A diagram is not mandatory merely because the system contains a graph.</p>
+    <ul>
+      <li>For a complex system, begin the substantive guide with a readable architecture overview.</li>
+      <li>Add focused graph, data-flow, deployment, security-boundary, configuration-impact, or recovery views only when they answer distinct reader questions.</li>
+      <li>Every visual has a title, takeaway, scope, evidence status, and text or tabular equivalent.</li>
+      <li>No visual may invent a component, edge, control, parameter effect, execution result, or confidence level.</li>
+      <li>Inspect every generated visual for clipping, overlap, unreadable labels, broken arrows, misleading layout, and accessibility. No meaning may depend on color alone.</li>
+      <li>Any capable renderer may be used. A repository-local renderer is an implementation option, not a normative dependency.</li>
+    </ul>
+  </section>
+
+  <section id="updates"><h2>Efficient updates</h2>
+    <p>When updating an existing guide, compare current sources with the sources or versions recorded previously. Identify affected sections and visuals, then update only those areas unless structural change makes full regeneration safer or cheaper.</p>
+    <ul>
+      <li>Preserve unaffected, still-correct material.</li>
+      <li>Recheck dependencies of changed evidence.</li>
+      <li>Rerender only affected visuals.</li>
+      <li>Show the user a concise semantic diff before overwriting or publishing.</li>
+      <li>Do not preserve claims or visuals whose supporting evidence is stale or contradicted.</li>
+    </ul>
+  </section>
+
+  <section id="quality"><h2>Required quality gates</h2>
+    <table><thead><tr><th>Gate</th><th>Pass condition</th><th>Implementation</th></tr></thead><tbody>
+      <tr><td>Scope and completeness</td><td>Applicable content areas are covered; exclusions and missing evidence are explicit.</td><td>Content checklist plus targeted review.</td></tr>
+      <tr><td>Accuracy and evidence</td><td>Material factual assertions are traceable to inspected evidence and correctly labeled.</td><td>Source sampling by default; exhaustive mapping only at higher assurance.</td></tr>
+      <tr><td>Security and disclosure</td><td>No secrets or prohibited detail are exposed; security claims describe evidence, not generic aspiration.</td><td>Deterministic scan plus contextual review.</td></tr>
+      <tr><td>Operational usefulness</td><td>An authorized reader can understand state, perform routine actions, recognize failure, and find recovery or escalation guidance.</td><td>Reader-oriented review against the requested audience.</td></tr>
+      <tr><td>Links and outputs</td><td>Internal links and expected assets resolve; outputs remain within the authorized location.</td><td>Deterministic checks.</td></tr>
+      <tr><td>Rendered quality</td><td>The deliverable and its visuals are readable at intended viewports, without clipping, overlap, broken layout, or color-only meaning.</td><td>Render and inspect only formats and visuals actually produced.</td></tr>
+      <tr><td>Freshness</td><td>The guide records what was inspected and when or at which version; stale evidence is disclosed.</td><td>File metadata, version control, or digests as appropriate.</td></tr>
+    </tbody></table>
+    <p>Automatic repair is limited to two attempts for the same failure. Stop earlier when output is unchanged or oscillates. Report unresolved failures instead of consuming tokens indefinitely.</p>
+  </section>
+
+  <section id="assurance"><h2>Conditional assurance escalation</h2>
+    <p>The default workflow above is complete. Additional controls are activated only when the user requests them or when the intended action has a concrete consequence that requires them.</p>
+    <table><thead><tr><th>Trigger</th><th>Add</th><th>Do not add automatically</th></tr></thead><tbody>
+      <tr><td>Shared design review or operational dependency</td><td>Persisted source register, important-claim traceability, named reader scenarios, and structured gap list.</td><td>Sentence-level claim records or canonical artifacts.</td></tr>
+      <tr><td>Overwrite, external publication, or sensitive disclosure</td><td>Human approval of concise diff, disclosure findings, and known risks.</td><td>Approval before harmless drafting.</td></tr>
+      <tr><td>Regulated, contractual, safety-critical, or independently audited output</td><td>Full claim-level provenance, canonical digests, immutable approval records, independent review, complete render records, and applicable conformance fixtures.</td><td>Assumption that these controls benefit unrelated low-risk work.</td></tr>
+      <tr><td>Large or resumable multi-session job</td><td>Compact persisted checkpoints sufficient to resume without rereading everything.</td><td>Separate skills or expansive schemas unless interoperability requires them.</td></tr>
+    </tbody></table>
+    <p>If escalation is proposed, state the triggering risk and the added control. Complexity without a named risk or requirement is non-conforming.</p>
+  </section>
+
+  <section id="outputs"><h2>Required outputs and conformance</h2>
+    <p>A successful run produces:</p>
+    <ol>
+      <li>The requested detailed architecture and operations guide.</li>
+      <li>Any useful diagrams and their accessible equivalents.</li>
+      <li>A compact verification summary listing sources inspected, freshness, checks performed, unresolved gaps, and whether approval is needed for the next action.</li>
+    </ol>
+    <p>No JSON artifact is mandatory in the default workflow. The compact summary may be embedded in the guide, returned to the user, or saved beside the deliverable when continued maintenance requires it.</p>
+    <p>An implementation conforms to v12 when it produces the required detailed content, preserves evidence honesty, passes the applicable quality gates, uses bounded repair, and adds assurance controls only for stated risks or requirements.</p>
+    <div class="callout"><strong>Acceptance rule</strong>A reader must receive the same depth of system information expected by v11, with less mandatory process. Simplification that removes architecture, runtime, deployment, security, operational, or evidence detail does not conform.</div>
+  </section>
+
+  <footer>Version 12 replaces the mandatory three-skill and artifact-control architecture of v11 with one staged skill and conditional assurance. Version 11 remains a reference library for maximum-assurance controls, not the default implementation contract.</footer>
+</main></body></html>

@@ -1,0 +1,78 @@
+{
+  "skill_name": "graph-system-document",
+  "notes": "Each eval points the skill at a real graph-based system and asks for its guide. Expectations assert on evidence honesty, content coverage and proportionate process — not on wording or section order, since two competent runs will structure a guide differently and both be right. The load-bearing expectations are the negative ones: no invented security controls, no declared behavior narrated as observed, no silent omission of an area the evidence does not support. Evals 3 and 4 exist because the cheapest way to fail this specification is to over-process a small job or to regenerate a document that only needed a patch.",
+  "evals": [
+    {
+      "id": 1,
+      "name": "full-guide-from-repo-only-evidence",
+      "prompt": "We're onboarding a new maintainer onto our agent pipeline next week and there is no documentation at all. Can you write a proper architecture and operations guide for it? Everything's in this repo — the graph is in src/graph.py, prompts under prompts/, and the deploy stuff is in deploy/. Put it in docs/. There's no staging access from here so you can only go off the code.",
+      "expected_output": "A guide in docs/ covering all thirteen content areas or marking them not applicable with a reason, with claims labeled declared/observed/inferred/unknown, a source register recording what was inspected and at which revision, and a verification summary naming unresolved gaps.",
+      "files": [],
+      "expectations": [
+        "The guide covers every required content area, or explicitly marks an area not applicable with a stated reason — no area is silently dropped.",
+        "Claims are labeled by evidence state, and behavior read from code, config or prompts is labeled declared rather than presented as observed.",
+        "Deployment is labeled declared (read from infrastructure files), and the guide states that the running environment was not inspected.",
+        "The security section names only controls traceable to inspected files, and reports verified gaps where a control a reader would expect is absent.",
+        "No security control is asserted generically (no unsupported 'encrypted at rest, RBAC, secrets in a vault' boilerplate).",
+        "Nodes and routes are derived from dispatch in the graph definition, not inferred from the order of prose or function definitions, and the guide states whether the graph is framework-defined or prompt-orchestrated.",
+        "A source register exists recording path, version or revision, and freshness for the sources inspected, produced by scripts/source_register.py rather than hand-written.",
+        "The guide contains a limitations and verification section naming what was excluded, what is unknown, and what would invalidate the document.",
+        "scripts/verify_doc.py is run against the deliverable and its failures are addressed or reported.",
+        "No secrets, credentials or private endpoint values appear in the deliverable.",
+        "The file is written into docs/ without asking permission first, since it is a new file inside the authorized location.",
+        "Repair of any verification failure stops at two attempts for the same failure, with anything unresolved reported to the user rather than looped on."
+      ]
+    },
+    {
+      "id": 2,
+      "name": "operator-facing-runbook-depth",
+      "prompt": "Our on-call rotation keeps getting paged for the nightly ingestion agent and nobody except me knows how to recover it. I need a system guide they can actually use at 3am — what it does, how to tell it's broken, what they're allowed to restart and what they must not touch. Code's in services/ingest/, the runbook fragments we have are in ops/notes.md, and there are traces in logs/ from last month's runs.",
+      "expected_output": "A guide oriented to an authorized operator: observability signals and blind spots, triage, safe start/stop/resume, prohibited actions, escalation, and explicit stop conditions — with behavior seen in traces labeled observed and its scope named, and behavior only declared in code kept distinct.",
+      "files": [],
+      "expectations": [
+        "The operations section states prerequisites, permitted roles, safe start/stop/trigger procedures, and expected healthy output.",
+        "The guide names prohibited actions and explicit stop-and-escalate conditions, not just procedures.",
+        "Recovery covers retry, resume, rollback or restore, and escalation ownership.",
+        "Behavior demonstrated by the traces in logs/ is labeled observed and its scope, version or time window is named, including which paths the traces did not exercise.",
+        "Behavior read only from code or the notes file is labeled declared and is not presented as demonstrated.",
+        "The observability section names blind spots — what is not instrumented and will have to be detected by hand.",
+        "Conflicts between ops/notes.md and the code are surfaced as findings rather than silently resolved in favour of one.",
+        "The guide still covers the other required content areas rather than narrowing to a runbook, or states a reason for any area marked not applicable.",
+        "A diagram appears only where it answers a reader question prose would answer worse, and every visual carries a title, takeaway, scope, evidence status and a text equivalent."
+      ]
+    },
+    {
+      "id": 3,
+      "name": "small-job-stays-cheap",
+      "prompt": "Quick one — can you document the little retry wrapper agent in tools/retry_agent.py? It's about 200 lines, one node, no deployment story, we run it locally. Just needs to be enough that someone else can pick it up.",
+      "expected_output": "A short but complete guide proportionate to a 200-line single-node local tool: applicable areas covered, inapplicable ones marked with reasons, and no assurance machinery beyond the default workflow.",
+      "files": [],
+      "expectations": [
+        "Areas that genuinely do not apply (deployment topology, HA, observability infrastructure) are marked not applicable with a stated reason rather than padded with invented content.",
+        "Areas that do apply — node contract, state, configuration, failure and retry semantics, limitations — are covered with real detail from the file.",
+        "The retry and failure semantics are documented specifically, including bounds, since that is the entire subject of the tool.",
+        "No persisted claim registry, canonical JSON handoff artifact, approval gate for drafting, or multi-stage artifact chain is introduced — none of the escalation triggers apply and the run does not invent one.",
+        "No approval is requested before writing the new file.",
+        "The run does not spend tokens narrating bookkeeping that scripts/source_register.py performs.",
+        "A verification summary is still produced, however brief."
+      ]
+    },
+    {
+      "id": 4,
+      "name": "update-patches-rather-than-regenerates",
+      "prompt": "The system doc at docs/system-guide.md is from three months ago. Since then we added a validation node with a repair loop back to the drafting node, swapped the summarizer model, and moved the checkpointer from memory to Postgres. Update it — don't rewrite the whole thing, the rest was reviewed and is fine.",
+      "expected_output": "A targeted update: changed sources identified by comparing registers, only affected sections and visuals revised, unaffected reviewed material preserved, stale claims removed rather than inherited, and a semantic diff presented before overwriting.",
+      "files": [],
+      "expectations": [
+        "The run compares current sources against the previously recorded register (source_register.py --merge) rather than re-deriving everything from scratch.",
+        "Only the sections the changed evidence touches are revised — graph behavior, route contracts including the new repair back-edge and its bound, models and prompts, state persistence.",
+        "Reviewed sections whose evidence did not change are preserved rather than reworded.",
+        "Claims contradicted by the new evidence — in-memory checkpointing, the old summarizer model — are removed, not carried forward.",
+        "Only visuals affected by the change are re-rendered.",
+        "A concise semantic diff and its risks are presented to the user and approval is obtained before the existing file is overwritten.",
+        "The repair back-edge is documented with its trigger and its bound, not only the forward routes.",
+        "The freshness and verification section is updated to reflect the new inspection date and revision."
+      ]
+    }
+  ]
+}
