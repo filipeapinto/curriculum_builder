@@ -7,8 +7,14 @@ areas, presence of evidence labels and a verification summary. Judgement checks
 — accuracy against evidence, operational usefulness, whether a diagram is
 misleading — are deliberately *not* here; they need a reader, not a regex.
 
+Handles HTML and Markdown deliverables, detected from the extension. HTML gets
+the extra gates that decide whether a page still works in the situation it was
+written for: nothing loaded over the network, readable with JavaScript off, a
+language and a viewport declared, and every visual sitting in a figure with a
+caption and a text equivalent.
+
 Usage:
-    python3 verify_doc.py --doc GUIDE.md [--allow-dir DIR] [--root DIR]
+    python3 verify_doc.py --doc GUIDE.html [--allow-dir DIR] [--root DIR]
         [--areas-na "graph behavior:no graph in this system"]
         [--json REPORT.json] [--attempt-state STATE.json]
 
@@ -69,6 +75,20 @@ PLACEHOLDER = re.compile(
 
 EVIDENCE_LABELS = re.compile(r"(?i)\b(declared|observed|inferred|unknown|conflicting)\b")
 CODE_FENCE = re.compile(r"^\s*(```|~~~)")
+
+HTML_COMMENT = re.compile(r"<!--.*?-->", re.S)
+HTML_DROP = re.compile(r"<(script|style)\b[^>]*>.*?</\1>", re.S | re.I)
+HTML_HEADING = re.compile(r"<h([1-6])\b[^>]*>(.*?)</h\1>", re.S | re.I)
+HTML_TAG = re.compile(r"<[^>]+>")
+REMOTE = re.compile(r"^(?:https?:)?//", re.I)
+
+
+def _tagless(fragment: str) -> str:
+    return re.sub(r"\s+", " ", HTML_TAG.sub(" ", fragment)).strip()
+
+
+def _line_of(text: str, idx: int) -> int:
+    return text[:idx].count("\n") + 1
 
 
 def _load(path: str) -> str:
@@ -171,9 +191,8 @@ def check_alt_text(text: str, doc_path: str) -> list[dict]:
     return out
 
 
-def check_coverage(text: str, na: dict[str, str]) -> list[dict]:
-    body = _strip_code(text)
-    headings = "\n".join(re.findall(r"^#{1,6}\s+(.+?)\s*$", body, re.M)).lower()
+def check_coverage(headings: str, na: dict[str, str]) -> list[dict]:
+    headings = headings.lower()
     findings = []
     for name, pats in AREAS:
         if name in na:
@@ -192,7 +211,7 @@ def check_coverage(text: str, na: dict[str, str]) -> list[dict]:
     return findings
 
 
-def check_evidence_and_summary(text: str, doc_path: str) -> list[dict]:
+def check_evidence_and_summary(text: str, doc_path: str, headings: str) -> list[dict]:
     findings = []
     labels = len(EVIDENCE_LABELS.findall(text))
     if labels == 0:
@@ -207,13 +226,182 @@ def check_evidence_and_summary(text: str, doc_path: str) -> list[dict]:
                          "message": f"only {labels} evidence label(s) found; check that "
                                     f"claims about execution are distinguished from claims "
                                     f"about design"})
-    if not re.search(r"(?i)^#{1,6}\s.*(verification|limitations|source register|"
-                     r"what was inspected|evidence summary)", text, re.M):
+    if not re.search(r"(?i)(verification|limitations|source register|"
+                     r"what was inspected|evidence summary)", headings):
         findings.append({
             "gate": "scope-and-completeness", "severity": "fail", "id": "summary:missing",
             "message": f"{doc_path} has no verification / limitations section",
             "hint": "the run must record what was inspected, freshness, checks performed, "
                     "and unresolved gaps — inside the guide or beside it"})
+    return findings
+
+
+def check_links_html(text: str, doc_path: str) -> list[dict]:
+    """Resolve every local reference, and refuse anything fetched over a network.
+
+    A guide is read during the incident it documents, on a laptop that may have
+    no route to the internet and a proxy that eats CDNs. A stylesheet, font or
+    image loaded remotely is a section of the document that silently disappears
+    exactly when it is needed, so remote *resources* fail here while ordinary
+    <a> links out to the world are fine.
+    """
+    body = HTML_COMMENT.sub("", text)
+    ids = set(re.findall(r'\bid=["\']([^"\']+)["\']', body))
+    doc_dir = os.path.dirname(os.path.abspath(doc_path))
+    findings, external = [], 0
+
+    for m in re.finditer(r'<(\w+)\b[^>]*?\b(href|src)=["\']([^"\']*)["\']', body, re.I):
+        tag, attr, target = m.group(1).lower(), m.group(2).lower(), m.group(3).strip()
+        line = _line_of(body, m.start())
+        is_resource = attr == "src" or (tag == "link" and attr == "href")
+        if not target or target.startswith(("data:", "mailto:", "javascript:")):
+            continue
+        if REMOTE.match(target) or target.startswith(("http://", "https://")):
+            if is_resource:
+                findings.append({
+                    "gate": "self-containment", "severity": "fail",
+                    "id": f"remote:{target}",
+                    "message": f"{doc_path}:{line} loads a remote resource: {target}",
+                    "hint": "inline it. A guide that needs the network to render is "
+                            "unreadable in the outage it was written for"})
+            else:
+                external += 1
+            continue
+        if target.startswith("#"):
+            if target[1:] not in ids:
+                findings.append({
+                    "gate": "links-and-outputs", "severity": "fail",
+                    "id": f"anchor:{target[1:]}",
+                    "message": f"{doc_path}:{line} internal link goes nowhere: {target}",
+                    "hint": "a dead nav link in a sidebar is how a reader concludes the "
+                            "whole document is stale"})
+            continue
+        path, _, anchor = target.partition("#")
+        if path and not os.path.exists(os.path.normpath(os.path.join(doc_dir, path))):
+            findings.append({
+                "gate": "links-and-outputs", "severity": "fail", "id": f"link:{path}",
+                "message": f"{doc_path}:{line} link target does not exist: {path}"})
+    if external:
+        findings.append({"gate": "links-and-outputs", "severity": "info",
+                         "id": "link:external-count",
+                         "message": f"{external} external link(s) not fetched "
+                                    f"(no network access assumed)"})
+    return findings
+
+
+def check_visuals_html(text: str, doc_path: str) -> list[dict]:
+    """Every visual must survive not being seen.
+
+    The reader who cannot see the diagram — screen reader, greyscale print,
+    someone skimming on a phone — has to get the same claim out of the page. So
+    a visual needs a caption that says what it means, and a text equivalent that
+    carries the same facts. `diagram_svg.py` emits both; hand-written figures
+    forget the second one about half the time.
+    """
+    body = HTML_COMMENT.sub("", text)
+    findings = []
+
+    figures = [(m.start(), m.group(0))
+               for m in re.finditer(r"<figure\b.*?</figure>", body, re.S | re.I)]
+    covered = []
+    for start, frag in figures:
+        covered.append((start, start + len(frag)))
+        line = _line_of(body, start)
+        name = _tagless(re.search(r"<figcaption\b.*?</figcaption>", frag, re.S | re.I).group(0)
+                        )[:40] if re.search(r"<figcaption", frag, re.I) else f"figure@{line}"
+        if not re.search(r"<figcaption\b", frag, re.I):
+            findings.append({
+                "gate": "rendered-quality", "severity": "fail", "id": f"figcaption:{line}",
+                "message": f"{doc_path}:{line} figure has no <figcaption>",
+                "hint": "a diagram without a stated takeaway makes the reader guess what "
+                        "it proves, and they will guess generously"})
+            continue
+        if not re.search(r"<(table|details|dl|ol|ul)\b", frag, re.I):
+            findings.append({
+                "gate": "rendered-quality", "severity": "fail", "id": f"equiv:{line}",
+                "message": f"{doc_path}:{line} figure '{name}' has no text equivalent",
+                "hint": "add the table or <details> listing the same nodes/edges/rows; "
+                        "diagram_svg.py emits one for you"})
+        if not EVIDENCE_LABELS.search(frag):
+            findings.append({
+                "gate": "accuracy-and-evidence", "severity": "warn", "id": f"figev:{line}",
+                "message": f"{doc_path}:{line} figure '{name}' states no evidence status",
+                "hint": "a diagram reads as verified fact unless it says otherwise"})
+        if not re.search(r'\b(scope|from|source|@|rev)\b', frag, re.I):
+            findings.append({
+                "gate": "accuracy-and-evidence", "severity": "warn", "id": f"figscope:{line}",
+                "message": f"{doc_path}:{line} figure '{name}' names no scope or source"})
+
+    def inside_figure(idx: int) -> bool:
+        return any(a <= idx <= b for a, b in covered)
+
+    for m in re.finditer(r"<svg\b[^>]*>", body, re.I):
+        tag = m.group(0)
+        line = _line_of(body, m.start())
+        if not inside_figure(m.start()):
+            findings.append({
+                "gate": "rendered-quality", "severity": "fail", "id": f"svg-loose:{line}",
+                "message": f"{doc_path}:{line} inline <svg> sits outside a <figure>",
+                "hint": "wrap it so it carries a caption, takeaway, scope and text "
+                        "equivalent like every other visual"})
+        end = body.lower().find("</svg>", m.start())
+        frag = body[m.start():end if end > 0 else m.end()]
+        if 'role="img"' not in tag and "role='img'" not in tag:
+            findings.append({"gate": "rendered-quality", "severity": "warn",
+                             "id": f"svg-role:{line}",
+                             "message": f"{doc_path}:{line} inline <svg> has no role=\"img\""})
+        if not re.search(r"<title\b", frag, re.I) and "aria-label" not in tag:
+            findings.append({
+                "gate": "rendered-quality", "severity": "fail", "id": f"svg-title:{line}",
+                "message": f"{doc_path}:{line} inline <svg> has no <title> or aria-label",
+                "hint": "to a screen reader this is currently a blank space where the "
+                        "architecture was"})
+
+    for m in re.finditer(r"<img\b[^>]*>", body, re.I):
+        tag, line = m.group(0), _line_of(body, m.start())
+        alt = re.search(r'\balt=["\']([^"\']*)["\']', tag)
+        if not alt or not alt.group(1).strip():
+            findings.append({
+                "gate": "rendered-quality", "severity": "fail", "id": f"alt:{line}",
+                "message": f"{doc_path}:{line} <img> has no alt text"})
+        if not inside_figure(m.start()):
+            findings.append({"gate": "rendered-quality", "severity": "warn",
+                             "id": f"img-loose:{line}",
+                             "message": f"{doc_path}:{line} <img> sits outside a <figure>"})
+    return findings
+
+
+def check_html_hygiene(text: str, doc_path: str) -> list[dict]:
+    findings = []
+    if not re.search(r"<html\b[^>]*\blang=", text, re.I):
+        findings.append({"gate": "rendered-quality", "severity": "fail", "id": "html:lang",
+                         "message": f"{doc_path} <html> declares no lang",
+                         "hint": 'add lang="en" (or the real language) — assistive '
+                                 "technology needs it to pronounce the page"})
+    if not re.search(r'<meta[^>]+name=["\']viewport["\']', text, re.I):
+        findings.append({"gate": "rendered-quality", "severity": "fail", "id": "html:viewport",
+                         "message": f"{doc_path} has no viewport meta",
+                         "hint": "without it the page is unreadable on the phone an "
+                                 "on-call engineer actually has in their hand"})
+    if not re.search(r"<title\b[^>]*>\s*\S", text, re.I):
+        findings.append({"gate": "rendered-quality", "severity": "fail", "id": "html:title",
+                         "message": f"{doc_path} has no <title>"})
+    if re.search(r"<script\b", text, re.I):
+        findings.append({
+            "gate": "rendered-quality", "severity": "warn", "id": "html:script",
+            "message": f"{doc_path} contains <script> — confirm the page is still "
+                       f"complete and navigable with JavaScript disabled",
+            "hint": "static-first: JS may enhance, never carry content"})
+    if re.search(r"@media\s+print", text, re.I) is None:
+        findings.append({"gate": "rendered-quality", "severity": "warn", "id": "html:print",
+                         "message": f"{doc_path} has no print stylesheet; runbooks get "
+                                    f"printed and collapsed sections print collapsed"})
+    if "<!-- FILL" in text or "FILL:" in text:
+        findings.append({"gate": "scope-and-completeness", "severity": "fail",
+                         "id": "html:placeholder",
+                         "message": f"{doc_path} still contains template FILL placeholders",
+                         "hint": "an unfilled placeholder shipped as documentation is a "
+                                 "section the reader will trust and find empty"})
     return findings
 
 
@@ -291,17 +479,35 @@ def main() -> int:
         na[name] = reason.strip() or "(no reason given — a reason is required)"
 
     text = _load(args.doc)
+    is_html = (args.doc.lower().endswith((".html", ".htm"))
+               or text.lstrip()[:60].lower().startswith("<!doctype html"))
     findings: list[dict] = []
     findings += check_secrets(text, args.doc)
-    findings += check_links(text, args.doc, args.root)
-    findings += check_alt_text(text, args.doc)
-    findings += check_coverage(text, na)
-    findings += check_evidence_and_summary(text, args.doc)
+
+    if is_html:
+        # The evidence legend names all four labels by definition; counting it
+        # would let a page pass the evidence gate without labelling a single claim.
+        body_only = re.sub(r'<(ul|ol|div)\b[^>]*class=["\'][^"\']*legend[^"\']*["\'].*?</\1>',
+                           " ", text, flags=re.S | re.I)
+        prose = HTML_TAG.sub(" ", HTML_DROP.sub(" ", HTML_COMMENT.sub(" ", body_only)))
+        headings = "\n".join(_tagless(m.group(2)) for m in HTML_HEADING.finditer(text))
+        findings += check_links_html(text, args.doc)
+        findings += check_visuals_html(text, args.doc)
+        findings += check_html_hygiene(text, args.doc)
+    else:
+        prose = text
+        headings = "\n".join(re.findall(r"^#{1,6}\s+(.+?)\s*$", _strip_code(text), re.M))
+        findings += check_links(text, args.doc, args.root)
+        findings += check_alt_text(text, args.doc)
+
+    findings += check_coverage(headings, na)
+    findings += check_evidence_and_summary(prose, args.doc, headings)
     findings += check_containment(args.doc, args.allow_dir)
 
     fails = [f for f in findings if f["severity"] == "fail"]
     warns = [f for f in findings if f["severity"] == "warn"]
-    report = {"document": args.doc, "passed": not fails,
+    report = {"document": args.doc, "format": "html" if is_html else "markdown",
+              "passed": not fails,
               "counts": {"fail": len(fails), "warn": len(warns),
                          "info": len(findings) - len(fails) - len(warns)},
               "findings": findings}

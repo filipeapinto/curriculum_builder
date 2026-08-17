@@ -1,6 +1,6 @@
 ---
 name: graph-system-document
-description: Creates or updates the detailed architecture and operations guide for a graph-based AI system — boundary, components, graph and route behavior, node and tool contracts, state, models and prompts, deployment, configuration, security, observability, operations and recovery — written only from inspected evidence, with declared/observed/inferred/unknown kept apart, visuals added only where they beat prose, and deterministic gates for secrets, links, coverage and freshness. Use this whenever someone wants real documentation of a running or planned agent system: "document this pipeline", "write the architecture doc for our LangGraph app", "we need a runbook and system guide for the orchestrator", "onboard a new maintainer onto this agent", "update the system doc, the graph changed", "what does an operator need to know to run this?", "produce an ops guide for the multi-agent workflow", or when a design review, handover, audit or on-call rotation needs a document that does not require reading the repo to trust. Also use it proactively whenever someone is about to hand-write architecture documentation for a system with nodes, routes, prompts or agents — prose written from memory is exactly how a guide ends up asserting that declared behavior was observed, inventing security controls nobody implemented, and hiding missing evidence behind confident writing. Not for diagramming a plan or proposal (that is plan-infographic) and not for rendering an already-compiled manifest as a picture (that is graph-doc-graph-visualize, which this skill calls when a manifest exists).
+description: Creates or updates the detailed architecture and operations guide for a graph-based AI system as one self-contained, diagram-rich HTML page — boundary, components, graph and route behavior, node and tool contracts, state, models and prompts, deployment, configuration, security, observability, operations and recovery — written only from inspected evidence, with declared/observed/inferred/unknown kept visibly apart, run paths and failure loops drawn as generated SVG rather than described, and deterministic gates for secrets, links, self-containment, accessibility, coverage and freshness. Use this whenever someone wants real documentation of a running or planned agent system: "document this pipeline", "write the architecture doc for our LangGraph app", "we need a runbook and system guide for the orchestrator", "onboard a new maintainer onto this agent", "update the system doc, the graph changed", "what does an operator need to know to run this?", "produce an ops guide for the multi-agent workflow", "make the system doc something people will actually read", or when a design review, handover, audit or on-call rotation needs a document that does not require reading the repo to trust. Also use it proactively whenever someone is about to hand-write architecture documentation for a system with nodes, routes, prompts or agents — prose written from memory is exactly how a guide ends up asserting that declared behavior was observed, inventing security controls nobody implemented, and hiding missing evidence behind confident writing. Not for diagramming a plan or proposal (that is plan-infographic) and not for rendering an already-compiled manifest as a picture (that is graph-doc-graph-visualize, which this skill calls when a manifest exists).
 allowed-tools: Read, Grep, Glob, Write, Edit, Bash
 ---
 
@@ -10,21 +10,33 @@ The deliverable is one guide that a design reviewer, a maintainer, or an
 authorized operator can act on **without reconstructing the system from the
 repository**. That is the whole bar. Everything below serves it.
 
-Two forces pull against each other here, and holding both is the skill:
+Ship it as **one self-contained HTML page** — no CDN, no remote font, no linked
+image, no required JavaScript. That format is not decoration: it is what lets
+the run path be a diagram instead of a paragraph, the evidence state be visible
+at a glance instead of buried in a sentence, and the whole thing still open on a
+laptop with no network during the incident it was written for.
+
+Three forces pull against each other here, and holding all three is the skill:
 
 - **Depth is mandatory.** A short, tidy document that omits deployment, state
   handling, failure paths or recovery has not been simplified — it has been
   hollowed out, and the reader will find out at 3am.
-- **Process is not.** Use the least expensive workflow that produces that
-  depth. Add a control only when it mitigates a consequence, a disclosure risk,
-  or an audit requirement you can name. Handoff artifacts, claim registries and
-  approval steps for harmless drafting are cost without a reader.
+- **It has to be read.** Depth nobody gets through bought nothing. Thirteen
+  identical grey sections and eight-column tables are a wall; the reader
+  abandons it and goes back to the repo, which is the outcome this skill exists
+  to prevent.
+- **Process is not mandatory.** Use the least expensive workflow that produces
+  that depth. Add a control only when it mitigates a consequence, a disclosure
+  risk, or an audit requirement you can name. Handoff artifacts, claim
+  registries and approval steps for harmless drafting are cost without a reader.
 
 The failure this skill exists to prevent is not a thin document. It is a
 **confident** one: plausible completion where evidence ran out, declared
 behavior narrated as if it had been observed, generic security controls the
 system never implemented, a graph node inferred from the order of paragraphs in
-a README. Those defects are invisible in the prose and expensive in production.
+a README. Those defects are invisible in the prose and expensive in production —
+and a handsome page makes them *more* persuasive, not less, which is why the
+evidence discipline below is non-negotiable in exchange for the visual budget.
 
 ## The six stages
 
@@ -60,23 +72,41 @@ finding worth writing down. Leave the stage only when every material assertion
 is supported, qualified, or explicitly marked unknown.
 
 **4 · Write.** Produce the guide, plus only the visuals that materially improve
-understanding. `assets/guide_template.md` is a starting skeleton, not a form to
-fill: delete what does not apply (with a stated reason) and expand what carries
-the system's real complexity.
+understanding. Start from `assets/guide_template.html` — a skeleton carrying the
+page structure, evidence chips, callouts, print stylesheet and figure styling,
+not a form to fill. Delete what does not apply (with a stated reason), expand
+what carries the system's real complexity, and remove every `<!-- FILL -->`
+before shipping; the verifier fails on any that survive.
+
+Render diagrams rather than plotting them by hand:
+
+```bash
+python3 <skill-dir>/scripts/diagram_svg.py --print-schema   # spec format
+python3 <skill-dir>/scripts/diagram_svg.py run-path.json >> guide-fragment.html
+```
+
+It takes a small JSON spec — `flow`, `stack` or `sequence` — computes the
+layout from the content, routes repair and failure back-edges through a gutter
+beneath the flow, and emits a complete `<figure>`: inline SVG plus caption,
+scope, evidence status and a text-equivalent table. Then it inspects its own
+render for clipping, overlap and orphan nodes and refuses to emit a broken one.
+Paste the figure straight into the page.
 
 **5 · Verify.**
 
 ```bash
-python3 <skill-dir>/scripts/verify_doc.py --doc docs/system-guide.md \
+python3 <skill-dir>/scripts/verify_doc.py --doc docs/system-guide.html \
   --allow-dir docs --attempt-state .doc-run/repair.json \
   --json .doc-run/verify.json
 ```
 
-This settles the mechanical gates: secrets, link and asset resolution, output
-containment, coverage of the required areas, alt text, evidence labels,
-presence of a verification section. It deliberately does **not** judge accuracy
-or usefulness — read for those yourself, against the audience you framed in
-stage 1.
+This settles the mechanical gates: secrets, link and anchor resolution, remote
+resources, output containment, coverage of the required areas, figure captions
+and text equivalents, alt text and SVG labelling, `lang`/viewport/title, leftover
+placeholders, evidence labels, presence of a verification section. It
+deliberately does **not** judge accuracy, usefulness or whether the page is
+pleasant to read — read for those yourself, against the audience you framed in
+stage 1, and open the file in a browser before you hand it over.
 
 **6 · Deliver.** Writing a *new* file inside the authorized location needs no
 permission — asking for it is friction with no risk behind it. Before
@@ -86,8 +116,21 @@ compact verification summary: sources inspected, freshness, checks run,
 unresolved gaps, and whether the next action needs approval.
 
 Use deterministic code for discovery, hashing, diffs, schema parsing, link
-checking, secret scanning and retry counting. Model tokens spent narrating
-bookkeeping are tokens not spent understanding the system.
+checking, secret scanning, diagram layout and retry counting. Model tokens spent
+narrating bookkeeping — or nudging SVG coordinates — are tokens not spent
+understanding the system.
+
+## When the answer is not an HTML page
+
+HTML is the default because system guides are long, visual and read under
+pressure. It is not a policy that everything becomes a web page. Write Markdown
+instead when the artifact is short enough to hold in one screen, when it is
+consumed by a tool or another agent rather than a person, when the repository's
+review process depends on readable diffs of the prose, or when the user asks
+for it. `assets/guide_template.md` is the skeleton for that case, and
+`verify_doc.py` gates either format; the content and evidence requirements do
+not change with the container. Say which format you chose and
+why in one line, and move on — this is not a decision worth a paragraph.
 
 ## Evidence discipline
 
@@ -146,28 +189,42 @@ instead of evidence.
 
 ## Visuals
 
-Draw a diagram when relationships, flow, boundaries or state changes are
-materially clearer visually; use prose or a table when they are clearer. A
-system containing a graph does not automatically require a picture of it.
+Draw a diagram when a relationship costs the reader more in prose than in
+pixels; use prose or a table when it does not. A system containing a graph does
+not automatically require a picture of it, and two or three diagrams is usually
+the right number for a guide — each extra one is a maintenance burden forever.
 
-- Open the substantive guide with a readable architecture overview when the
-  system is complex enough that the reader needs orientation before detail.
-- Add focused graph, data-flow, deployment, security-boundary,
-  configuration-impact or recovery views only where each answers a *distinct*
-  reader question. Four diagrams saying the same thing cost four maintenance
-  burdens.
-- Every visual carries a title, a takeaway, its scope, its evidence status, and
-  a text or tabular equivalent. No meaning may rest on color alone.
-- A visual may not invent a component, edge, control, parameter effect,
-  execution result or confidence level. It is a rendering of the evidence, not
-  a second opinion about the system.
-- Inspect every generated visual for clipping, overlap, unreadable labels,
-  broken arrows and misleading layout before shipping it.
+| Reader question | Archetype | Usually lands in |
+|---|---|---|
+| What runs, in what order, and where does it go wrong? | `flow` | Graph behavior |
+| What are the parts, and which side of a boundary is each on? | `stack` | Architecture, deployment |
+| Who does what to whom, in what order? | `sequence` | Operations and recovery |
 
-Any capable renderer is fine — Mermaid in the document, D2, Graphviz. When the
-system already has a compiled workflow manifest, `graph-doc-graph-visualize`
-renders it and self-inspects the result; prefer it over hand-rolling a
-flowchart. No renderer is a normative dependency of this skill.
+- **Draw the failure paths.** A flow with only the happy path tells a reader in
+  an incident that they are off the map. Repair and failure edges are their own
+  edge kinds, and back-edges get routed through a gutter so the loops stay
+  readable instead of crossing the forward flow.
+- Every visual carries a title, a takeaway, its scope, its evidence status and a
+  text equivalent — `diagram_svg.py` emits all five, so the cheap path is also
+  the compliant one. No meaning may rest on color alone.
+- A visual may not invent a component, edge, control, bound, parameter effect,
+  execution result or confidence level. It renders the evidence; it is not a
+  second opinion about the system. Mixed evidence in one picture is normal —
+  nodes read from a graph definition are `declared`, the path a trace exercised
+  is `observed`.
+- When the renderer reports overlap, clipping or an orphan node, treat it as a
+  finding about the spec. An orphan usually means an edge exists that you have
+  not found in the evidence yet.
+
+When the system already has a compiled workflow manifest,
+`graph-doc-graph-visualize` renders it and self-inspects the result; prefer it
+over re-specifying the graph by hand. Other renderers (D2, Graphviz, Mermaid)
+are allowed, but anything you use must end up inline in the page — a linked
+image breaks the self-containment the format exists for.
+
+`references/html-craft.md` covers page rhythm, when a diagram earns its place,
+engagement that is not decoration, and the anti-patterns. Read it when the page
+is coming out uniform or you are inventing layout the template does not have.
 
 ## Updating an existing guide
 
@@ -186,6 +243,12 @@ re-render only affected visuals, and preserve unaffected material that is still
 correct. Regenerate wholesale only when structural change makes that safer or
 cheaper than surgery.
 
+Keep the diagram specs beside the guide (`docs/assets/*.diagram.json` or
+`.doc-run/`) so a changed route means editing four lines of JSON and re-pasting
+one figure, rather than re-deriving a picture from scratch. A guide whose
+diagrams are expensive to update is a guide whose diagrams go stale first, and a
+stale diagram is believed longer than stale prose.
+
 Do **not** preserve a claim or a visual whose supporting evidence is now stale
 or contradicted — inherited text that no longer matches the system is worse
 than an absent section, because it still reads as verified. Show a concise
@@ -199,13 +262,16 @@ semantic diff before overwriting or publishing.
 | Accuracy and evidence | Material assertions trace to inspected evidence and are labeled correctly. Sample sources by default. |
 | Security and disclosure | No secrets or prohibited detail; security claims describe evidence, not aspiration. |
 | Operational usefulness | An authorized reader can understand state, perform routine actions, recognize failure, and find recovery or escalation. |
-| Links and outputs | Internal links and expected assets resolve; output stays inside the authorized location. |
-| Rendered quality | Deliverable and visuals readable at intended viewports — no clipping, overlap, broken layout, or color-only meaning. Check only formats actually produced. |
+| Links and outputs | Internal links and anchors resolve; output stays inside the authorized location. |
+| Self-containment | Nothing loads over the network; the page is complete with JavaScript off and prints legibly. |
+| Rendered quality | Deliverable and visuals readable at intended viewports — no clipping, overlap, broken layout, or color-only meaning. Every visual has a caption, evidence status and text equivalent. |
 | Freshness | The guide records what was inspected and when or at which version; stale evidence disclosed. |
 
-`verify_doc.py` covers scope structure, disclosure, links, alt text, evidence
-labeling and containment. Accuracy, usefulness and rendered quality need you to
-read and to look.
+`verify_doc.py` covers scope structure, disclosure, links, self-containment,
+figure and alt-text discipline, page hygiene, leftover placeholders, evidence
+labeling and containment; `diagram_svg.py` covers diagram geometry. Accuracy,
+usefulness and whether the page is worth reading need you to read it and to open
+it in a browser.
 
 **Repair is bounded at two attempts for the same failure.** Stop earlier if the
 output is unchanged or oscillating. `--attempt-state` tracks the failure
@@ -223,8 +289,10 @@ each specifically does *not* justify adding are in
 
 ## What a run produces
 
-1. The detailed architecture and operations guide.
-2. Any useful diagrams, with their accessible equivalents.
+1. The detailed architecture and operations guide — one self-contained HTML
+   file (or Markdown, where that was the right call and you said why).
+2. Its diagrams, inline, each with a takeaway, scope, evidence status and text
+   equivalent; keep the specs that produced them if the guide will be maintained.
 3. A compact verification summary — sources inspected, freshness, checks
    performed, unresolved gaps, and whether approval is needed next.
 
@@ -233,4 +301,6 @@ to the user, or beside the deliverable when maintenance will continue.
 
 The acceptance test is a reader's, not a checklist's: **could a competent
 maintainer or operator who has never seen this system act on the guide, and
-tell the difference between what it verified and what it assumed?**
+tell the difference between what it verified and what it assumed?** A page that
+looks authoritative and quietly fails the second half is worse than the plain
+document it replaced.

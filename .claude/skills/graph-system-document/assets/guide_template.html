@@ -1,0 +1,290 @@
+<!doctype html>
+<!--
+  Skeleton for a system guide. It is a starting shape, not a form: delete what
+  the system does not have (and say why in Limitations), and expand the sections
+  where the real complexity lives. Thirteen equal-sized sections is the shape of
+  a document that was filled in rather than written.
+
+  House rules baked into this file, and why they are here:
+    · One file, no network. No CDN, no remote font, no remote image. A guide that
+      needs the internet to render is a guide that is unreadable in the incident
+      it was written for.
+    · No JavaScript required. Every disclosure below is <details>, which works in
+      any browser and prints. If you add JS, the page must still make sense with
+      it off.
+    · Evidence is visible, not implied. The .ev chips carry declared / observed /
+      inferred / unknown, and they are shaped and labelled as well as coloured,
+      so the distinction survives greyscale and colour blindness.
+    · Diagrams come from scripts/diagram_svg.py, which computes the layout and
+      inspects its own render. Paste the <figure> it emits straight in.
+
+  Replace every <!-- FILL --> and delete this comment before shipping.
+-->
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="color-scheme" content="light dark">
+<title><!-- FILL: System name --> — architecture and operations guide</title>
+<style>
+  :root{
+    --ink:#141c2b; --muted:#5a6579; --paper:#fcfdff; --card:#fff; --line:#dde3ee;
+    --blue:#175cc2; --soft:#eef4ff; --warn:#8d5b00; --warnbg:#fff7e6;
+    --stop:#b3261e; --stopbg:#fdeceb; --good:#087f67; --goodbg:#e7f7f2;
+    --code:#f2f5fa; --group:#f5f8fd; --note:#fff8e6;
+    --dg-ink:var(--ink); --dg-muted:var(--muted); --dg-card:var(--card);
+    --dg-line:var(--line); --dg-group:var(--group); --dg-note:var(--note);
+  }
+  @media (prefers-color-scheme:dark){
+    :root{
+      --ink:#e9eef8; --muted:#a7b2c6; --paper:#0d1219; --card:#141c28; --line:#2b3646;
+      --blue:#8fbcff; --soft:#152743; --warn:#f0bd62; --warnbg:#2a2010;
+      --stop:#ff9a90; --stopbg:#2d1614; --good:#6fdcbb; --goodbg:#0f2a24;
+      --code:#161f2c; --group:#121a26; --note:#241f10;
+    }
+  }
+  *{box-sizing:border-box}
+  html{scroll-behavior:smooth}
+  body{margin:0;background:var(--paper);color:var(--ink);
+       font:16px/1.6 ui-sans-serif,system-ui,-apple-system,"Segoe UI",Roboto,sans-serif}
+  .wrap{display:grid;grid-template-columns:230px minmax(0,1fr);gap:44px;
+        max-width:1320px;margin:0 auto;padding:0 28px 90px}
+  /* Sidebar: the reader arrives mid-incident and needs to jump, not scroll. */
+  .toc{position:sticky;top:0;align-self:start;max-height:100vh;overflow:auto;
+       padding:36px 0;font-size:.9rem}
+  .toc ol{list-style:none;margin:0;padding:0;counter-reset:s}
+  .toc a{display:block;padding:5px 10px;border-left:2px solid var(--line);
+         color:var(--muted);text-decoration:none;border-radius:0 5px 5px 0}
+  .toc a:hover,.toc a:focus{color:var(--ink);background:var(--soft);border-left-color:var(--blue)}
+  main{padding:36px 0;min-width:0}
+  header.hero{border-bottom:3px solid var(--blue);padding-bottom:26px;margin-bottom:8px}
+  h1{font-size:clamp(1.9rem,4.2vw,3rem);line-height:1.05;letter-spacing:-.03em;margin:6px 0 12px}
+  h2{font-size:1.5rem;line-height:1.2;letter-spacing:-.015em;margin:52px 0 8px;
+     scroll-margin-top:20px}
+  h2 .n{color:var(--blue);font-variant-numeric:tabular-nums;margin-right:.45em}
+  h3{font-size:1.05rem;margin:26px 0 6px}
+  p,li{max-width:78ch}
+  a{color:var(--blue)}
+  code{background:var(--code);border:1px solid var(--line);border-radius:4px;
+       padding:.08em .32em;font-size:.88em}
+  pre{background:var(--code);border:1px solid var(--line);border-radius:8px;
+      padding:14px 16px;overflow:auto;font-size:.86rem}
+  .lede{color:var(--muted);font-size:1.1rem;max-width:72ch}
+  .meta{color:var(--muted);font-size:.86rem;margin:0}
+  /* At-a-glance cards: the five facts a reader needs before any prose. */
+  .cards{display:grid;grid-template-columns:repeat(auto-fit,minmax(180px,1fr));
+         gap:14px;margin:26px 0 8px}
+  .card{background:var(--card);border:1px solid var(--line);border-radius:12px;padding:14px 16px}
+  .card b{display:block;font-size:.72rem;letter-spacing:.09em;text-transform:uppercase;
+          color:var(--muted);margin-bottom:5px}
+  /* Evidence chips. Shape + word, never colour alone. */
+  .ev{display:inline-block;font-size:.7rem;font-weight:700;letter-spacing:.07em;
+      text-transform:uppercase;padding:2px 8px;border-radius:999px;border:1px solid currentColor;
+      white-space:nowrap;vertical-align:.08em}
+  .ev-declared{color:var(--blue)} .ev-observed{color:var(--good)}
+  .ev-inferred{color:var(--warn)} .ev-unknown,.ev-conflicting{color:var(--stop)}
+  .legend{display:flex;gap:10px;flex-wrap:wrap;margin:16px 0 0;padding:0;list-style:none}
+  .legend li{color:var(--muted);font-size:.85rem;max-width:none}
+  /* Callouts. Left rule + label; each answers a different reader emergency. */
+  .box{border-left:5px solid var(--blue);background:var(--soft);padding:14px 18px;
+       margin:20px 0;border-radius:0 8px 8px 0;max-width:82ch}
+  .box>b:first-child{display:block;font-size:.74rem;letter-spacing:.09em;
+                     text-transform:uppercase;margin-bottom:4px}
+  .box.warn{border-color:var(--warn);background:var(--warnbg)}
+  .box.stop{border-color:var(--stop);background:var(--stopbg)}
+  .box.good{border-color:var(--good);background:var(--goodbg)}
+  table{border-collapse:collapse;width:100%;margin:14px 0 20px;font-size:.9rem}
+  th,td{border:1px solid var(--line);padding:9px 11px;text-align:left;vertical-align:top}
+  th{background:var(--code);font-size:.78rem;letter-spacing:.05em;text-transform:uppercase;
+     color:var(--muted)}
+  tbody tr:hover{background:var(--soft)}
+  /* Figures from diagram_svg.py land here. */
+  figure.dg{margin:26px 0;padding:18px;border:1px solid var(--line);border-radius:14px;
+            background:var(--card);overflow-x:auto}
+  figure.dg figcaption{margin-top:12px;color:var(--muted);font-size:.9rem;max-width:80ch}
+  figure.dg figcaption strong{color:var(--ink)}
+  .dg-meta{display:flex;margin-top:6px;gap:14px;flex-wrap:wrap;
+           align-items:center;font-size:.82rem}
+  figure.dg details{margin-top:10px}
+  figure.dg summary{cursor:pointer;color:var(--blue)}
+  table.dg-equiv{font-size:.82rem;margin-top:8px}
+  details.more{border:1px solid var(--line);border-radius:10px;padding:10px 14px;margin:16px 0;
+               background:var(--card)}
+  details.more summary{cursor:pointer;font-weight:600}
+  footer{margin-top:64px;padding-top:16px;border-top:1px solid var(--line);
+         color:var(--muted);font-size:.86rem}
+  @media (max-width:900px){.wrap{grid-template-columns:1fr;gap:0}.toc{position:static;max-height:none;padding:20px 0 0}}
+  /* Printing is not an afterthought: this page gets printed and taped to a desk. */
+  @media print{
+    .wrap{display:block;max-width:none;padding:0}
+    .toc{display:none}
+    body{background:#fff;color:#000;font-size:11pt}
+    h2{page-break-after:avoid}
+    figure.dg,table{page-break-inside:avoid}
+    details.more,figure.dg details{display:block}
+    details[open] summary,details summary{list-style:none}
+    details>*{display:block !important}
+    a[href^="http"]::after{content:" (" attr(href) ")";font-size:.8em;color:#444}
+  }
+</style>
+</head>
+<body>
+<div class="wrap">
+
+<nav class="toc" aria-label="Contents">
+  <ol>
+    <li><a href="#glance">At a glance</a></li>
+    <li><a href="#purpose">1 · Purpose and boundary</a></li>
+    <li><a href="#architecture">2 · Architecture</a></li>
+    <li><a href="#graph">3 · Graph behavior</a></li>
+    <li><a href="#nodes">4 · Node and tool contracts</a></li>
+    <li><a href="#state">5 · State and data</a></li>
+    <li><a href="#routes">6 · Route contracts</a></li>
+    <li><a href="#models">7 · Models and prompts</a></li>
+    <li><a href="#deployment">8 · Deployment</a></li>
+    <li><a href="#config">9 · Configuration and release</a></li>
+    <li><a href="#security">10 · Security and privacy</a></li>
+    <li><a href="#observability">11 · Observability</a></li>
+    <li><a href="#operations">12 · Operations and recovery</a></li>
+    <li><a href="#limitations">13 · Limitations and verification</a></li>
+  </ol>
+</nav>
+
+<main>
+<header class="hero">
+  <p class="meta"><!-- FILL: audience, e.g. “For maintainers and authorized on-call operators” --> ·
+     Generated <!-- FILL: date --> · Evidence basis <!-- FILL: repo @ rev; environment inspected or not --></p>
+  <h1><!-- FILL: System name --></h1>
+  <p class="lede"><!-- FILL: one or two sentences a reader can repeat back — what this
+     system does and what it is on the hook for. Not a feature list. --></p>
+  <ul class="legend">
+    <li><span class="ev ev-declared">declared</span> code, config or docs say so</li>
+    <li><span class="ev ev-observed">observed</span> a run, trace or test showed it</li>
+    <li><span class="ev ev-inferred">inferred</span> follows from evidence, not stated</li>
+    <li><span class="ev ev-unknown">unknown</span> evidence absent or contradictory</li>
+  </ul>
+</header>
+
+<section id="glance">
+  <div class="cards">
+    <div class="card"><b>Entry point</b><!-- FILL: the command, endpoint or schedule --></div>
+    <div class="card"><b>Runs on</b><!-- FILL: where it executes --></div>
+    <div class="card"><b>Holds state in</b><!-- FILL: store, or “nothing survives the process” --></div>
+    <div class="card"><b>Fails by</b><!-- FILL: the dominant failure mode --></div>
+    <div class="card"><b>Owned by</b><!-- FILL: team or person, escalation path --></div>
+  </div>
+  <div class="box stop"><b>Stop and escalate if</b>
+    <!-- FILL: the two or three conditions where an operator must not keep going.
+         Put them above the fold: at 3am nobody scrolls to section 12 first. -->
+  </div>
+</section>
+
+<h2 id="purpose"><span class="n">1</span>Purpose and boundary</h2>
+<!-- Who uses it, what it owns, where it starts and stops, what it explicitly
+     does not do, what it assumes about its environment. -->
+
+<h2 id="architecture"><span class="n">2</span>Architecture</h2>
+<!-- A `stack` diagram earns its place here when the reader needs orientation
+     before detail. Paste the <figure> from diagram_svg.py. -->
+<table>
+  <thead><tr><th>Component</th><th>Responsibility</th><th>Depends on</th><th>Trust boundary</th><th>Evidence</th></tr></thead>
+  <tbody><tr><td></td><td></td><td></td><td></td><td><span class="ev ev-declared">declared</span></td></tr></tbody>
+</table>
+
+<h2 id="graph"><span class="n">3</span>Graph behavior</h2>
+<!-- State plainly whether the graph is framework-defined or prompt-orchestrated
+     — a reader debugging a route needs to know whether to read code or a prompt.
+     A `flow` diagram belongs here: entries, stages, branches, loops and their
+     bounds, joins, termination, handoffs, failure paths. -->
+
+<h2 id="nodes"><span class="n">4</span>Node and tool contracts</h2>
+<table>
+  <thead><tr><th>Node</th><th>Purpose</th><th>In</th><th>Out</th><th>Tools · side effects</th>
+  <th>Timeout · retries · repair</th><th>Failure semantics</th><th>Evidence</th></tr></thead>
+  <tbody><tr><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td></tr></tbody>
+</table>
+
+<h2 id="state"><span class="n">5</span>State and data</h2>
+<table>
+  <thead><tr><th>Field</th><th>Type</th><th>Validation</th><th>Written by</th><th>Read by</th>
+  <th>Persistence</th><th>Merge rule</th><th>Retention</th><th>Evidence</th></tr></thead>
+  <tbody><tr><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td></tr></tbody>
+</table>
+<!-- What survives a crash and what does not. That sentence is the one an
+     operator will reread at 3am. -->
+
+<h2 id="routes"><span class="n">6</span>Route contracts</h2>
+<table>
+  <thead><tr><th>From</th><th>To</th><th>Trigger · guard</th><th>Decided by</th>
+  <th>State transferred</th><th>Fallback</th><th>Bound (back-edges)</th><th>Evidence</th></tr></thead>
+  <tbody><tr><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td></tr></tbody>
+</table>
+
+<h2 id="models"><span class="n">7</span>Models and prompts</h2>
+<!-- Model roles and selection, fallback chain, prompt responsibilities,
+     structured outputs and their parse-failure path, the limits that bind. -->
+
+<h2 id="deployment"><span class="n">8</span>Deployment</h2>
+<!-- Environments and how they differ, hosting, topology, stores and queues,
+     ingress/egress, scaling, HA, external dependencies. If the running
+     environment was not inspected, this section is declared — say so here. -->
+
+<h2 id="config"><span class="n">9</span>Configuration and release</h2>
+<table>
+  <thead><tr><th>Parameter</th><th>Default</th><th>Allowed</th><th>Source · scope</th>
+  <th>Sensitive</th><th>Behavioral effect</th><th>Reload</th><th>Evidence</th></tr></thead>
+  <tbody><tr><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td></tr></tbody>
+</table>
+
+<h2 id="security"><span class="n">10</span>Security and privacy</h2>
+<!-- Identity, authn, authz, privileged paths, data classes, secrets handling
+     (where they live and how they reach the runtime — never their values),
+     isolation, network controls, audit, retention, incident ownership. -->
+<div class="box warn"><b>Verified gaps</b>
+  <!-- FILL: controls a reader would assume exist and that do not, each with where
+       you confirmed the absence. This block is worth more than the list of
+       controls that do exist, and it is the first thing a reviewer looks for. -->
+</div>
+
+<h2 id="observability"><span class="n">11</span>Observability</h2>
+<!-- Health and success signals, logs and run identifiers, metrics, traces,
+     dashboards, alerts and thresholds and their owners. -->
+<div class="box warn"><b>Blind spots</b>
+  <!-- FILL: what is not instrumented, and therefore what an operator has to
+       detect by hand. -->
+</div>
+
+<h2 id="operations"><span class="n">12</span>Operations and recovery</h2>
+<div class="box good"><b>Healthy run looks like</b><!-- FILL: the observable signature of success --></div>
+<!-- Prerequisites and permitted roles; start / stop / trigger; prohibited
+     actions; triage; retry · resume · rollback · restore; escalation.
+     A `sequence` diagram earns its place here when recovery involves more than
+     one actor — operator, CLI, store — and the order matters. -->
+<div class="box stop"><b>Do not</b><!-- FILL: the actions that make an incident worse --></div>
+
+<h2 id="limitations"><span class="n">13</span>Limitations and verification</h2>
+<p><!-- FILL: what would invalidate this guide — the concrete changes that make it
+   stale. Put it first; it tells the reader how much to trust the rest. --></p>
+<details class="more" open>
+  <summary>Sources inspected</summary>
+  <!-- Paste the table from scripts/source_register.py --md. Hand-written source
+       lists drift; the generated one records revision and freshness. -->
+</details>
+<table>
+  <thead><tr><th>Excluded from inspection</th><th>Why</th></tr></thead>
+  <tbody><tr><td></td><td></td></tr></tbody>
+</table>
+<h3>Conflicts, unknowns, unexercised paths</h3>
+<!-- Conflicts found and how they were resolved; what is unknown and what it
+     costs the reader; which paths no trace or test exercised. -->
+<h3>Checks performed</h3>
+<!-- Which deterministic gates ran (verify_doc.py, diagram self-inspection) and
+     what a human still had to judge. -->
+
+<footer>
+  <!-- FILL: generated by / on / from which revision, and where to file a correction. -->
+</footer>
+</main>
+</div>
+</body>
+</html>

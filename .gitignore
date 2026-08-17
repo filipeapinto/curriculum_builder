@@ -29,6 +29,10 @@ dist/
 # verify/repair attempt counters). Regenerated on every run, never committed.
 .doc-run/
 
+# skill-creator's optimization workspace (old-version snapshots, benchmark
+# eval runs comparing skill versions, throwaway fixtures). Not a deliverable.
+.claude/skills/*-workspace/
+
 # macOS
 .DS_Store
 .retrieved_sources/
