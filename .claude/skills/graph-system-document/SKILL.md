@@ -71,6 +71,18 @@ conflicts where evidence allows; where it does not, the conflict itself is a
 finding worth writing down. Leave the stage only when every material assertion
 is supported, qualified, or explicitly marked unknown.
 
+A fact restated in two places is two chances to be wrong, not one extra
+confirmation. Before Write, or as a last pass before Verify, find every fact
+the draft states more than once — an edge list, a node's inbound/outbound
+count, a state-machine's legal transitions, an artifact's shape — and check
+both statements against each other and against the source. A silent mismatch
+between two sections is exactly the kind of conflict this stage exists to
+catch; tag it `conflicting` rather than letting the second mention quietly
+overrule the first. The same pass catches uneven depth between comparable
+items: if one node's or artifact's I/O is documented down to its schema and a
+sibling of similar importance gets only a name, either match the depth or
+say why the difference is real.
+
 **4 · Write.** Produce the guide, plus only the visuals that materially improve
 understanding. Start from `assets/guide_template.html` — a skeleton carrying the
 page structure, evidence chips, callouts, print stylesheet and figure styling,
