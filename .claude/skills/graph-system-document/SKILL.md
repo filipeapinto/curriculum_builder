@@ -123,6 +123,19 @@ document, not just the section clusters (resume, triage, exit codes) that
 already got checked last time — a fourth echo of the same defect has now
 turned up in a security-table row that had nothing else to do with resume.
 
+This grep is not a one-time debt to pay off — it is owed again every time
+*new* prose is added, not only when old prose is revisited. A fifth echo of
+the same resume-mechanism defect was introduced by brand-new content added
+in the very same pass that fixed a different, unrelated gap: prose written
+to explain fan-out crash recovery quietly assumed the pre-correction
+behavior ("resume replays the crashed member") because the writer wasn't
+thinking about the resume finding while drafting an answer to a fan-out
+question. Before shipping any new passage that touches a mechanism this
+guide has previously corrected, check the new text against the corrected
+fact explicitly — do not rely on having grepped for the *old* wording
+somewhere else in the document, because new prose invents its own wording
+and won't match that grep at all.
+
 A table that claims exhaustive coverage — "every node," "the full N-member
 set," a predecessor/successor column meant to make every ID lookupable — is a
 correctness claim about completeness itself, and spot-fixing one reported row
