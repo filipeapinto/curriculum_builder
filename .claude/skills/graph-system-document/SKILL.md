@@ -159,6 +159,93 @@ treat declared behavior as proof of execution; do not invent generic security
 controls that sound standard; do not conceal missing evidence behind polished
 prose. Silence reads as coverage.
 
+## Concreteness: a name is not documentation
+
+A diagram box or table row that says `model_jobs.v1.yaml — 8 frozen jobs` or
+`--engine-root / --curriculum` tells an operator the thing exists. It does not
+tell them what it looks like, what a real value is, or how to use it — and an
+operator who cannot answer "what do I actually type / put in this file" has
+not been documented to, no matter how many boxes are on the page. This is a
+specific way confident-but-useless output happens: every node in the required
+content areas is present, every label carries an evidence chip, and the guide
+is still unusable, because "declared: source-fetch allowlist + digest" is a
+description of a file, not the file.
+
+For every input, configuration file, CLI surface, prompt/schema pair, or
+parameter that the guide names as something an operator or maintainer
+interacts with, show a **worked example** somewhere in the guide, near where
+it is first named — not just its label:
+
+- A **file-shaped input or config** (a manifest, a policy file, a job
+  registry, a prompt) gets a short real excerpt — pulled from an actual file
+  in the repository, a fixture, or a test — not an invented one. If the real
+  file is large, quote the smallest slice that shows its shape (one job entry
+  out of eight, one profile out of a host allowlist), and say where the rest
+  lives.
+- A **CLI surface or invocation** gets at least one fully worked example with
+  real, plausible values filled in — not only the flag names, and not only a
+  placeholder like `PATH` for every argument. Show what the operator's
+  terminal actually looks like for the common case, then vary it for the
+  other modes.
+- A **parameter, flag or config key** gets its actual accepted values, default,
+  and what changes when it's set — read from the argument parser, schema or
+  validation code, not paraphrased from a comment.
+- Pull these examples from `tests/`, `fixtures/`, sample data already in the
+  repository, or the validation code's own accepted/rejected shapes — that
+  keeps them both real and free to write (see Evidence discipline: an example
+  copied from a fixture is `observed`; one you invented to illustrate a shape
+  is `inferred`, and must say so).
+- When more than one real example is available, prefer the one that shows the
+  field or file **populated and in active use** over a minimal or empty
+  fixture. A degenerate example (`"providers": {}`) technically satisfies "an
+  example exists" but teaches the reader nothing about the common case — if
+  only a degenerate example is available, say so explicitly rather than
+  letting it stand in silently for the real thing.
+- The **final deliverable's location and shape** — where completed output
+  actually lands under the output root, and its filename or directory
+  pattern — is exactly as concrete as any input. An operator who finishes a
+  run must be able to find what they produced without guessing; "collect
+  artifacts from the output root" is a name, not an example.
+
+This is not a mandate to document everything exhaustively down to every field.
+It is a mandate that whatever the guide *does* claim an operator needs to
+touch, it shows rather than merely names. A figure or table introducing a set
+of inputs should be followed by, or linked to, the place in the guide where at
+least one of them is shown concretely — a reader should never have to leave
+the guide and go read the source to find out what a "frozen job" or a
+"retrieval profile" actually contains.
+
+## Naming and disambiguation
+
+A system accumulates codenames, generation labels, ID prefixes and short
+overloaded words faster than a first-time reader can track them. Two specific
+failures recur and are cheap to prevent — cheap enough that leaving them in is
+a documentation defect, not an acceptable simplification:
+
+- **Collision with an unrelated repo concept.** If an internal codename could
+  plausibly be mistaken for something else that exists in the repository — a
+  directory, a file, a different subsystem — because it shares a word (a
+  runtime generation called "Plan 26" versus a top-level `plans/` directory),
+  say explicitly, at first use, that they are unrelated. Check for this during
+  Inspect: a quick grep of the codename against the repository's top-level
+  names is enough to catch it before a reader has to.
+- **Reuse of one word for two mechanisms.** If the same term legitimately
+  means two different things in the system (a structural "unreachable
+  frontier" versus a checkpoint "resume frontier"), never let the guide use
+  the bare word for both without a qualifier at each use.
+
+Two more apply to vocabulary generally:
+
+- If a term is used as a defined technical unit with a specific system
+  meaning narrower than its everyday sense ("activation", "episode",
+  "correlation key", "frozen"), define it once — in prose, not just a
+  diagram legend — before or at its first use, and keep reusing that same
+  definition rather than letting the reader infer its scope from context.
+- Introduce any naming or ID convention that a diagram depends on (prefixes,
+  ID formats, generation numbers) in prose *before* the first figure that
+  uses it, not after. A reader should never meet an unexplained ID and have
+  to hold it in suspension until a later section defines the scheme.
+
 ## Required content
 
 Cover every area below, or mark it not applicable **with a reason**. Missing
@@ -168,14 +255,14 @@ what makes the document trustworthy at all.
 | Area | The guide must explain |
 |---|---|
 | Purpose and boundary | Users and actors, intended outcomes, owned responsibilities, entry/exit interfaces, external systems, exclusions, assumptions. |
-| Architecture | Components, responsibilities, dependencies, data movement, trust boundaries, and how the parts compose into a system. |
+| Architecture | Components, responsibilities, dependencies, data movement, trust boundaries, how the parts compose into a system — and, for each input the system reads at its boundary, a worked example of what that input actually contains (see Concreteness). |
 | Graph behavior | Entries, nodes/stages, routes, branches, loops, joins, termination, human or external handoffs, failure paths — and whether the graph is framework-defined or prompt-orchestrated. |
-| Node and tool contracts | Purpose, inputs, outputs, model or prompt behavior, tools and side effects, timeouts, retries, repair, failure and terminal semantics. |
+| Node and tool contracts | Purpose, inputs, outputs, model or prompt behavior, tools and side effects, timeouts, retries, repair, failure and terminal semantics for every node that appears in a diagram, route table or run-path narrative — an ID the reader meets in a figure but cannot look up is a gap, not an acceptable abbreviation — with a real example input/output or invocation for at least the nodes a maintainer is most likely to touch or debug. |
 | State and data | Important fields, types, validation, readers and writers, lineage, persistence and checkpoints, mutation/merge rules, versioning, redaction, retention. |
 | Route contracts | Source, destination, trigger or guard, decision mechanism, state transferred, fallback, resulting outcome. |
 | Models and prompts | Model roles, selection and fallback, prompt responsibilities, structured outputs, limits, configuration that changes behavior. |
 | Deployment | Environments, hosting model, runtime topology, services, workers, stores, queues, networks, ingress/egress, scaling, HA, external dependencies. |
-| Configuration and release | Parameters, defaults and allowed values, source and scope, sensitivity, behavioral effect, reload behavior, build and promotion path, migrations, flags, rollback, compatibility. |
+| Configuration and release | Parameters, defaults and allowed values (as real values, not "see config"), source and scope, sensitivity, behavioral effect, reload behavior, build and promotion path, migrations, flags, rollback, compatibility. |
 | Security and privacy | Identity, authn, authz, privileged access, data classes, protection, secrets handling, isolation, network controls, audit, retention, incident ownership, and verified gaps. |
 | Observability | Health and success signals, logs, metrics, traces, dashboards, run identifiers, alerts, thresholds, ownership, blind spots. |
 | Operations and recovery | Prerequisites and roles, safe start/stop/trigger procedures, expected output, prohibited actions, triage, retry, resume, rollback, restore, backup, escalation, and the conditions under which an operator must stop. |
@@ -276,6 +363,7 @@ semantic diff before overwriting or publishing.
 |---|---|
 | Scope and completeness | Applicable areas covered; exclusions and missing evidence explicit. |
 | Accuracy and evidence | Material assertions trace to inspected evidence and are labeled correctly. Sample sources by default. |
+| Concreteness | Every input, config file, CLI surface and parameter the guide introduces is paired with a real worked example (excerpt, invocation or value), not only a name and an evidence chip. |
 | Security and disclosure | No secrets or prohibited detail; security claims describe evidence, not aspiration. |
 | Operational usefulness | An authorized reader can understand state, perform routine actions, recognize failure, and find recovery or escalation. |
 | Links and outputs | Internal links and anchors resolve; output stays inside the authorized location. |
