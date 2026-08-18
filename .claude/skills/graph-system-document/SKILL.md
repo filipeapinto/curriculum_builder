@@ -354,7 +354,17 @@ than one system's guide.
   the point of versioning. Do not edit a versioned file in place.
 - Record the new version number, the date, and a one-line summary of what
   changed in the guide's own "Limitations and verification" section. That is
-  the guide's changelog; it does not need a separate file.
+  the guide's changelog; it does not need a separate file. Append the new row
+  in chronological order — a changelog a reader has to re-sort to trust is a
+  changelog that reads as untrustworthy.
+- A version number lives in more than one place on the page — the filename,
+  the header/title badge, the footer, and any "evidence basis: repository at
+  `<rev>`" stamp are all claims about the same fact, and an update that
+  touches the changelog table but leaves an older version number or an older
+  commit hash sitting in the header or footer is a self-contradiction the
+  reader meets before reaching a single word of content. Grep the whole page
+  for the previous version string and the previous revision hash before
+  shipping, and update every occurrence together, not just the table.
 
 Regeneration throws away correct, reviewed work and rewrites it into slightly
 different words, which makes the diff unreadable and hides the real change.
