@@ -458,6 +458,20 @@ than one system's guide.
   chances one phrasing drifts from the other two, which is exactly how this
   defect has recurred even in versions written specifically to fix it. One
   number, stated once, is not a simplification here; it is the fix.
+- Do not write a superlative or streak claim about the review process itself
+  into a changelog row — "the first round both personas agreed," "N straight
+  rounds with no contradictions," "for the fourth consecutive time" — without
+  reading the row immediately above it first. These claims are exactly as
+  fact-checkable as any other restated fact, and are cheaper to get wrong
+  because nothing in the guide's own subject matter contradicts them, only
+  the guide's own prior sentence does. In this skill's own dogfood run, this
+  specific pattern recurred four times, including once inside the entry that
+  narrated fixing the third instance — the review process congratulating
+  itself is not exempt from the discipline it applies to the system under
+  review. If a round's outcome is genuinely notable, describe what happened
+  that round only ("architect found zero gaps, operator found one") and let
+  the reader compare rows themselves rather than asserting the comparison's
+  conclusion for them.
 
 Regeneration throws away correct, reviewed work and rewrites it into slightly
 different words, which makes the diff unreadable and hides the real change.
