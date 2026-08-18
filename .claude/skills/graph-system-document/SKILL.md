@@ -110,6 +110,19 @@ check every other outcome whose own instruction is also `--resume` — each is
 an independent claim that can share the same root cause without sharing any
 text with the one already found.
 
+Widen the grep past the section where the defect was found, too. A stale
+claim about a corrected mechanism does not only hide in the passages that
+are obviously about that mechanism — it hides just as easily in a section
+about something else entirely (a security or sandboxing table mentioning a
+node in passing, a deployment note, an aside in an unrelated figure caption)
+that happened to describe the old behavior before it was known to be wrong
+and was never revisited once the correction landed elsewhere. When a
+mechanism's real behavior changes what the guide says, grep for the node ID,
+function name, or mechanism's plain-language name across the *entire*
+document, not just the section clusters (resume, triage, exit codes) that
+already got checked last time — a fourth echo of the same defect has now
+turned up in a security-table row that had nothing else to do with resume.
+
 A table that claims exhaustive coverage — "every node," "the full N-member
 set," a predecessor/successor column meant to make every ID lookupable — is a
 correctness claim about completeness itself, and spot-fixing one reported row
