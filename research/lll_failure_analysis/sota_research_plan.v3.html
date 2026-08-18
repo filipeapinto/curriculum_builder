@@ -1,0 +1,184 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <meta name="color-scheme" content="light dark">
+  <title>SOTA Research Plan: Documenting LLM-Execution Failure</title>
+  <style>
+    :root{color-scheme:light dark;--bg:#f4f6f8;--paper:#fff;--ink:#182432;--muted:#586676;--line:#bcc7d2;--navy:#173b5b;--teal:#0d727b;--soft:#eaf1f5;--warm:#f6f0df;--red:#8c3640;--shadow:0 14px 38px rgba(24,36,50,.09)}
+    *{box-sizing:border-box}html{background:var(--bg);color:var(--ink);scroll-behavior:smooth}body{margin:0;font:16px/1.58 Inter,ui-sans-serif,system-ui,-apple-system,"Segoe UI",sans-serif}a{color:var(--teal)}
+    header{background:linear-gradient(125deg,#102a45,#174d65 68%,#12666f);color:#fff}.hero,main{width:min(1160px,calc(100% - 40px));margin:auto}.hero{padding:68px 0 50px}h1{max-width:1020px;margin:0;font-size:clamp(2.3rem,5vw,4.45rem);line-height:1.04;letter-spacing:-.045em}.dek{max-width:910px;margin:23px 0 0;color:#dceaf1;font-size:clamp(1.06rem,2vw,1.27rem)}.meta{display:flex;flex-wrap:wrap;gap:10px 25px;margin-top:28px;color:#dce7ed;font-size:.88rem}.meta strong{color:#fff}
+    main{padding:34px 0 74px}nav{display:flex;flex-wrap:wrap;gap:8px;margin-bottom:34px}nav a{padding:7px 11px;border:1px solid var(--line);border-radius:6px;background:var(--paper);color:var(--navy);font-size:.84rem;font-weight:750;text-decoration:none}section{margin:48px 0;scroll-margin-top:20px}h2{margin:0 0 13px;color:var(--navy);font-size:clamp(1.5rem,3vw,2.2rem);line-height:1.17;letter-spacing:-.025em}h3{margin:24px 0 8px;color:var(--navy);font-size:1.08rem}p{margin:9px 0}.lead{max-width:920px;color:var(--muted);font-size:1.08rem}
+    .question{padding:28px 30px;border-left:6px solid var(--teal);border-radius:8px;background:var(--paper);box-shadow:var(--shadow);font-size:clamp(1.18rem,2.3vw,1.55rem);line-height:1.45}.question small{display:block;margin-bottom:8px;color:var(--teal);font-size:.72rem;font-weight:850;letter-spacing:.12em;text-transform:uppercase}.grid{display:grid;grid-template-columns:repeat(3,1fr);gap:15px}.card{padding:20px;border:1px solid var(--line);border-radius:9px;background:var(--paper)}.card h3{margin-top:0}.tag{display:inline-block;margin-bottom:9px;color:var(--teal);font:800 .72rem ui-monospace,SFMono-Regular,Menlo,monospace;letter-spacing:.06em}.note{padding:19px 22px;border:1px solid #d2c28e;border-radius:8px;background:var(--warm)}
+    .figure{margin:25px 0;padding:19px;border:1px solid var(--line);border-radius:11px;background:var(--paper);box-shadow:var(--shadow);overflow-x:auto}.figure svg{display:block;width:100%;min-width:1020px;height:auto}.figure figcaption{max-width:940px;margin:15px 3px 2px;color:var(--muted);font-size:.9rem}.lane{fill:none;stroke:#aab5c1;stroke-width:1.2}.lane-label{font:800 11px Inter,system-ui,sans-serif;letter-spacing:.08em;fill:#596675}.task{fill:#fff;stroke:#173b5b;stroke-width:1.7}.human{fill:#fff;stroke:#8c3640;stroke-width:2}.gate{fill:#fff;stroke:#806510;stroke-width:2}.event{fill:#fff;stroke:#173b5b;stroke-width:2}.title{font:750 13px Inter,system-ui,sans-serif;fill:#182432}.copy{font:11px Inter,system-ui,sans-serif;fill:#4d5a69}.model{font:750 10px ui-monospace,SFMono-Regular,Menlo,monospace;fill:#173b5b}.flow{fill:none;stroke:#657587;stroke-width:1.8;marker-end:url(#arrow)}.return{fill:none;stroke:#8c3640;stroke-width:1.7;stroke-dasharray:5 4;marker-end:url(#arrow-red)}
+    .table-wrap{overflow-x:auto;border:1px solid var(--line);border-radius:9px;background:var(--paper)}table{width:100%;min-width:850px;border-collapse:collapse}th,td{padding:12px 14px;border-bottom:1px solid var(--line);text-align:left;vertical-align:top}th{background:var(--soft);color:var(--navy);font-size:.76rem;letter-spacing:.06em;text-transform:uppercase}tr:last-child td{border-bottom:0}td:first-child{color:var(--navy);font-weight:750}code{padding:.12em .34em;border-radius:4px;background:var(--soft);color:var(--navy);font:.87em ui-monospace,SFMono-Regular,Menlo,monospace}ul,ol{padding-left:1.25rem}li+li{margin-top:.4rem}.two{display:grid;grid-template-columns:1fr 1fr;gap:16px}.approval{padding:27px;border:2px solid #9b7921;border-radius:10px;background:var(--warm)}footer{padding:22px 20px 42px;color:var(--muted);text-align:center;font-size:.82rem}
+    @media(prefers-color-scheme:dark){:root{--bg:#0d1520;--paper:#151f2b;--ink:#e9eef3;--muted:#b3bec9;--line:#364658;--navy:#b7d7ed;--teal:#77cbd2;--soft:#1b3041;--warm:#382f1d;--shadow:none}.task,.human,.gate,.event{fill:#f7f8fa}.lane-label{fill:#b3bec9}.title{fill:#182432}.copy{fill:#4d5a69}.model{fill:#173b5b}}
+    @media(max-width:780px){.grid,.two{grid-template-columns:1fr}.hero,main{width:min(100% - 24px,1160px)}}@media print{header{background:#173b5b!important;print-color-adjust:exact}nav{display:none}.card,.figure,.question{box-shadow:none;break-inside:avoid}main{width:100%}}
+  </style>
+</head>
+<body>
+<header><div class="hero">
+  <h1>SOTA Research Plan: Documenting LLM-Execution Failure</h1>
+  <p class="dek">Research current mature practices for recording, reconstructing, explaining, and learning from failed or wasteful LLM execution, then determine what this repository should adopt.</p>
+  <div class="meta"><span><strong>Research date:</strong> August 2026</span><span><strong>Plan:</strong> version 3</span><span><strong>Status:</strong> awaiting approval</span></div>
+</div></header>
+
+<main>
+  <nav aria-label="Contents"><a href="#question">Question</a><a href="#method">Method</a><a href="#preliminary">Preliminary study</a><a href="#workflow">Research graph</a><a href="#evidence">Evidence</a><a href="#team">Team</a><a href="#models">Models</a><a href="#budget">Budget</a><a href="#outputs">Outputs</a><a href="#approval">Approval</a></nav>
+
+  <section id="question">
+    <h2>1. Research question</h2>
+    <div class="question"><small>Primary research question</small>Which mature mechanisms should this repository adopt or adapt to make failed, wasteful, or falsely successful LLM executions observable, explainable, reproducible, and useful for governing the next execution?</div>
+    <p class="lead">The reported incident—approximately 20% of weekly usage consumed overnight while producing graph-system documentation and revising a generic documentation skill—is the motivating case. The percentage, sequence, causes, and outcomes remain claims until supported by repository or usage evidence.</p>
+  </section>
+
+  <section id="method">
+    <h2>2. Research method</h2>
+    <p class="lead">The work combines a systematic literature review of external evidence with a forensic reconstruction of the repository incident. PRISMA 2020 governs reporting of identification, screening, exclusion, and inclusion. Software-engineering SLR guidance governs the review protocol, search strategy, quality assessment, extraction, and synthesis.</p>
+    <div class="grid">
+      <article class="card"><span class="tag">EXTERNAL EVIDENCE</span><h3>Systematic literature review</h3><p>Identify and appraise standards, primary research, official technical documentation, mature open-source implementations, and documented industry practice.</p></article>
+      <article class="card"><span class="tag">INTERNAL EVIDENCE</span><h3>Incident reconstruction</h3><p>Reconstruct what ran, why it ran, what it consumed, what it produced, what controls operated, and which evidence is missing.</p></article>
+      <article class="card"><span class="tag">COMPARATIVE SYNTHESIS</span><h3>Repository applicability</h3><p>Compare external mechanisms against the demonstrated failure modes, current repository controls, implementation cost, and residual risk.</p></article>
+    </div>
+  </section>
+
+  <section id="preliminary">
+    <h2>3. Preliminary study</h2>
+    <p class="lead">A bounded preliminary study precedes the full review. It prevents the search vocabulary, review type, team, model allocation, and budget from being guessed before the evidence landscape is known.</p>
+    <div class="table-wrap"><table>
+      <thead><tr><th>Activity</th><th>What it establishes</th><th>Output</th><th>Stop condition</th></tr></thead>
+      <tbody>
+        <tr><td>Repository evidence inventory</td><td>Available prompts, execution records, traces, usage data, artifacts, commits, reviews, and human testimony.</td><td>Evidence inventory with provenance and gaps</td><td>All known evidence locations checked</td></tr>
+        <tr><td>Terminology map</td><td>Terms used by standards and practice for LLM observability, incident analysis, evaluation, lineage, and durable execution.</td><td>Search concepts and synonyms</td><td>No new concept class in two successive searches</td></tr>
+        <tr><td>Pilot searches</td><td>Candidate yield, duplication, source quality, date coverage, and likely evidence volume.</td><td>Pilot search log and sample set</td><td>Sufficient data to estimate the full review</td></tr>
+        <tr><td>Review design decision</td><td>Whether the evidence supports a full SLR, a systematic map followed by focused reviews, or a justified rapid review.</td><td>Human-approved method decision</td><td>One review design selected with rationale</td></tr>
+        <tr><td>Full protocol</td><td>Final questions, sources, queries, inclusion/exclusion criteria, quality instrument, extraction form, synthesis, budget, and deviations.</td><td>Versioned review protocol</td><td>Human approval</td></tr>
+      </tbody>
+    </table></div>
+  </section>
+
+  <section id="workflow">
+    <h2>4. Research execution graph</h2>
+    <p class="lead">The graph uses a limited BPMN 2.0 vocabulary. Circles are events, rounded rectangles are activities, diamonds are decisions or joins, solid arrows are sequence flows, and lanes identify responsibility. Human review is identified by task type and label; color carries no process meaning.</p>
+    <figure class="figure" aria-labelledby="flow-title flow-caption">
+      <svg viewBox="0 0 1120 820" role="img" aria-labelledby="flow-title flow-desc">
+        <title id="flow-title">Execution graph for the SOTA research</title>
+        <desc id="flow-desc">After approval, a preliminary study inventories repository evidence and maps external terminology. A human chooses the review design and approves the full protocol. External evidence review and internal incident reconstruction proceed in parallel. Their outputs join for quality appraisal, mechanism comparison, independent challenge, synthesis, deterministic verification, and final human review. Failed gates return to the activity responsible for correction.</desc>
+        <defs><marker id="arrow" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto"><path d="M0 0L10 5L0 10z" fill="#657587"/></marker><marker id="arrow-red" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto"><path d="M0 0L10 5L0 10z" fill="#8c3640"/></marker></defs>
+        <rect x="8" y="10" width="1104" height="200" class="lane"/><rect x="8" y="210" width="1104" height="390" class="lane"/><rect x="8" y="600" width="1104" height="210" class="lane"/>
+        <text x="22" y="34" class="lane-label">HUMAN RESEARCH OWNER</text><text x="22" y="234" class="lane-label">RESEARCH EXECUTION</text><text x="22" y="624" class="lane-label">ASSURANCE</text>
+
+        <circle cx="75" cy="108" r="22" class="event"/><text x="75" y="112" text-anchor="middle" class="title">Start</text><path d="M97 108H148" class="flow"/>
+        <rect x="148" y="68" width="210" height="80" rx="14" class="human"/><text x="253" y="94" text-anchor="middle" class="title">Approve preliminary study</text><text x="253" y="115" text-anchor="middle" class="copy">Scope and initial ceiling</text><text x="253" y="136" text-anchor="middle" class="model">HUMAN TASK · NO MODEL</text>
+        <path d="M358 108H404" class="flow"/><polygon points="452,64 500,108 452,152 404,108" class="gate"/><text x="452" y="104" text-anchor="middle" class="title">Method</text><text x="452" y="121" text-anchor="middle" class="copy">approved?</text>
+        <path d="M500 108H548" class="flow"/><rect x="548" y="68" width="218" height="80" rx="14" class="human"/><text x="657" y="94" text-anchor="middle" class="title">Approve full protocol</text><text x="657" y="115" text-anchor="middle" class="copy">Questions, search, QA, budget</text><text x="657" y="136" text-anchor="middle" class="model">HUMAN TASK · NO MODEL</text>
+        <path d="M766 108H822" class="flow"/><circle cx="847" cy="108" r="22" class="event"/><text x="847" y="112" text-anchor="middle" class="title">Run</text>
+
+        <path d="M253 148V274H222" class="flow"/><rect x="102" y="274" width="240" height="86" rx="14" class="task"/><text x="222" y="299" text-anchor="middle" class="title">Repository evidence inventory</text><text x="222" y="320" text-anchor="middle" class="copy">Files, usage, artifacts, gaps</text><text x="222" y="342" text-anchor="middle" class="model">TOOLS + GPT-5.6-TERRA · HIGH</text>
+        <rect x="388" y="274" width="240" height="86" rx="14" class="task"/><text x="508" y="299" text-anchor="middle" class="title">Terminology + pilot searches</text><text x="508" y="320" text-anchor="middle" class="copy">Yield, duplication, source classes</text><text x="508" y="342" text-anchor="middle" class="model">GPT-5.6-TERRA · HIGH</text>
+        <path d="M342 317H388" class="flow"/><path d="M508 274V238H452V64" class="flow"/>
+
+        <path d="M847 130V394H560" class="flow"/><polygon points="560,366 592,394 560,422 528,394" class="gate"/><text x="560" y="398" text-anchor="middle" class="title">AND</text>
+        <path d="M528 394H402V448" class="flow"/><path d="M592 394H718V448" class="flow"/>
+        <rect x="270" y="448" width="264" height="92" rx="14" class="task"/><text x="402" y="474" text-anchor="middle" class="title">Systematic external review</text><text x="402" y="495" text-anchor="middle" class="copy">Identify · screen · appraise · extract</text><text x="402" y="518" text-anchor="middle" class="model">TIERED ROUTING · SEE §7</text>
+        <rect x="586" y="448" width="264" height="92" rx="14" class="task"/><text x="718" y="474" text-anchor="middle" class="title">Incident reconstruction</text><text x="718" y="495" text-anchor="middle" class="copy">Sequence · impact · causes · controls</text><text x="718" y="518" text-anchor="middle" class="model">GPT-5.6-TERRA · HIGH</text>
+        <path d="M402 540V572H560" class="flow"/><path d="M718 540V572H560" class="flow"/><polygon points="560,548 586,572 560,596 534,572" class="gate"/><text x="560" y="576" text-anchor="middle" class="title">AND</text>
+
+        <path d="M560 596V654H178" class="flow"/><rect x="78" y="654" width="200" height="82" rx="14" class="task"/><text x="178" y="679" text-anchor="middle" class="title">Quality appraisal</text><text x="178" y="700" text-anchor="middle" class="copy">Evidence quality + agreement</text><text x="178" y="721" text-anchor="middle" class="model">TERRA HIGH + HUMAN SAMPLE</text>
+        <path d="M278 695H326" class="flow"/><rect x="326" y="654" width="200" height="82" rx="14" class="task"/><text x="426" y="679" text-anchor="middle" class="title">Mechanism comparison</text><text x="426" y="700" text-anchor="middle" class="copy">Fit, cost, prevention, residual risk</text><text x="426" y="721" text-anchor="middle" class="model">GPT-5.6-SOL · HIGH</text>
+        <path d="M526 695H574" class="flow"/><rect x="574" y="654" width="200" height="82" rx="14" class="task"/><text x="674" y="679" text-anchor="middle" class="title">Independent challenge</text><text x="674" y="700" text-anchor="middle" class="copy">Evidence, causality, feasibility</text><text x="674" y="721" text-anchor="middle" class="model">GPT-5.5 · XHIGH</text>
+        <path d="M774 695H822" class="flow"/><rect x="822" y="654" width="200" height="82" rx="14" class="task"/><text x="922" y="679" text-anchor="middle" class="title">Synthesis + verification</text><text x="922" y="700" text-anchor="middle" class="copy">Report, citations, HTML, coverage</text><text x="922" y="721" text-anchor="middle" class="model">SOL XHIGH + DETERMINISTIC QA</text>
+        <path d="M922 736V774H1014" class="flow"/><circle cx="1040" cy="774" r="25" class="event"/><circle cx="1040" cy="774" r="19" class="event"/><text x="1040" y="778" text-anchor="middle" class="title">End</text>
+        <path d="M674 654V628H426V654" class="return"/>
+      </svg>
+      <figcaption id="flow-caption"><strong>Figure 1.</strong> The preliminary study produces the protocol; the approved protocol controls the full research. External evidence and the repository case remain separate until appraisal and comparison. Model use is shown only where inference is proposed.</figcaption>
+    </figure>
+  </section>
+
+  <section id="evidence">
+    <h2>5. Evidence selection and appraisal</h2>
+    <div class="two">
+      <article class="card"><h3>Candidate evidence classes</h3><ol><li>Standards and primary specifications</li><li>Peer-reviewed and original research</li><li>Official technical documentation</li><li>Mature open-source implementations and their tests</li><li>Documented industry incidents and engineering practice</li></ol></article>
+      <article class="card"><h3>Protocol requirements</h3><ul><li>Exact sources, queries, dates, and retrieval records</li><li>Explicit inclusion and exclusion criteria</li><li>Duplicate removal with receipts</li><li>Quality criteria appropriate to each evidence class</li><li>Claim-to-source mapping</li><li>Contradictions and missing evidence retained</li><li>PRISMA selection counts</li></ul></article>
+    </div>
+    <p>The preliminary study will determine whether the full review should treat observability records, causal analysis, cost controls, evaluation, durable execution, and governance as one synthesis or as focused subreviews. It will not assume that logs and traces are separate research domains.</p>
+  </section>
+
+  <section id="team">
+    <h2>6. Research team</h2>
+    <p class="lead">The preliminary study determines the smallest team that can cover the selected questions and preserve independent challenge. There is no fixed eleven-agent roster.</p>
+    <div class="table-wrap"><table>
+      <thead><tr><th>Required function</th><th>Responsibility</th><th>When it may be combined</th></tr></thead>
+      <tbody>
+        <tr><td>Research lead</td><td>Own the protocol, deviations, evidence coverage, and final research decisions.</td><td>May also perform synthesis; may not independently approve its own contested claims.</td></tr>
+        <tr><td>Evidence reviewer</td><td>Search, screen, appraise, and extract external evidence under the protocol.</td><td>Additional reviewers are added only when volume or agreement testing requires them.</td></tr>
+        <tr><td>Incident analyst</td><td>Reconstruct the repository case without importing external conclusions into the factual record.</td><td>May be the research lead if a separate challenger reviews the reconstruction.</td></tr>
+        <tr><td>Independent challenger</td><td>Test evidence strength, causal claims, applicability, feasibility, and whether recommendations would have affected the incident.</td><td>Must remain independent of initial synthesis.</td></tr>
+        <tr><td>Human research owner</td><td>Approve method, budget, material deviations, and the final report.</td><td>Cannot be replaced by a model.</td></tr>
+      </tbody>
+    </table></div>
+  </section>
+
+  <section id="models">
+    <h2>7. Model allocation</h2>
+    <div class="table-wrap"><table>
+      <thead><tr><th>Work</th><th>Proposed executor</th><th>Reason</th></tr></thead>
+      <tbody>
+        <tr><td>Discovery, hashing, validation, link and schema checks, duplicate detection</td><td>Deterministic tools</td><td>These operations are measurable and do not require model judgment.</td></tr>
+        <tr><td>Reversible metadata normalization or first-pass exclusion triage</td><td><code>gpt-5.6-luna</code>, medium, with sampled review</td><td>Bounded high-volume work; no final exclusion authority.</td></tr>
+        <tr><td>Preliminary mapping, evidence extraction, and incident reconstruction</td><td><code>gpt-5.6-terra</code>, high</td><td>Requires tool use and careful analysis but not frontier reasoning for every item.</td></tr>
+        <tr><td>Mechanism comparison</td><td><code>gpt-5.6-sol</code>, high</td><td>Requires cross-source technical and repository reasoning.</td></tr>
+        <tr><td>Independent challenge</td><td><code>gpt-5.5</code>, xhigh</td><td>Provides model-family diversity for high-consequence criticism.</td></tr>
+        <tr><td>Final synthesis</td><td><code>gpt-5.6-sol</code>, xhigh</td><td>Integrates heterogeneous evidence, disagreements, and repository implications.</td></tr>
+        <tr><td>Method, budget, deviations, acceptance</td><td>Human research owner</td><td>These are authority decisions, not inference tasks.</td></tr>
+      </tbody>
+    </table></div>
+    <p>No unavailable model may be silently substituted. Every model call records its exact model, effort, parent activity, input artifact identifiers, output artifact, elapsed time, retry status, and usage measures exposed by the platform.</p>
+  </section>
+
+  <section id="budget">
+    <h2>8. Budget and stopping rules</h2>
+    <p class="lead">The preliminary study receives a small human-approved ceiling. Its measured yield and cost are then used to estimate the full review.</p>
+    <div class="grid">
+      <article class="card"><h3>Estimate from evidence</h3><p>Use candidate yield, duplicate rate, screening time, extraction size, repository volume, model usage, and unresolved concept classes.</p></article>
+      <article class="card"><h3>Authorize hard limits</h3><p>Record maximum model calls, tokens, elapsed time, sources, concurrent workers, retries, and spend where available.</p></article>
+      <article class="card"><h3>Stop or escalate</h3><p>Stop at protocol completion, evidence saturation, repeated failure, limit threshold, inadequate evidence, or a decision requiring human authority.</p></article>
+    </div>
+    <p>A retry is permitted only after recording the failed activity and changing an input, hypothesis, executor, or method. Completed work is reused by stable identifier and digest.</p>
+  </section>
+
+  <section id="outputs">
+    <h2>9. Research outputs</h2>
+    <div class="table-wrap"><table>
+      <thead><tr><th>Artifact</th><th>Contents</th></tr></thead>
+      <tbody>
+        <tr><td>Preliminary-study report</td><td>Repository evidence inventory, terminology map, pilot searches, review-design recommendation, team estimate, and budget estimate.</td></tr>
+        <tr><td>Approved review protocol</td><td>Questions, sources, queries, selection criteria, quality instrument, extraction schema, synthesis method, controls, and deviation policy.</td></tr>
+        <tr><td>Incident reconstruction</td><td>Evidence-linked timeline, execution graph, cost and usage record, outputs, failures, controls, unknowns, and competing explanations.</td></tr>
+        <tr><td>Systematic-review records</td><td>Search log, source register, deduplication receipts, screening decisions, exclusion reasons, quality appraisals, extraction records, and PRISMA counts.</td></tr>
+        <tr><td>SOTA research report</td><td>Mature mechanisms, evidence strength, comparison, repository applicability, recommendations, limitations, and unresolved questions.</td></tr>
+        <tr><td>Governance recommendations</td><td>Proposed rules for a later governance version, each linked to evidence, incident relevance, implementation cost, and a proving test.</td></tr>
+        <tr><td>Verification report</td><td>Coverage, citation, link, schema, accessibility, rendering, and artifact-integrity results.</td></tr>
+      </tbody>
+    </table></div>
+  </section>
+
+  <section id="sources">
+    <h2>10. Method references</h2>
+    <ul>
+      <li><a href="https://www.prisma-statement.org/prisma-2020">PRISMA 2020 statement</a> and <a href="https://www.prisma-statement.org/prisma-2020-flow-diagram">official flow diagrams</a>.</li>
+      <li><a href="https://madeyski.e-informatyka.pl/download/Kitchenham07.pdf">Kitchenham and Charters, Guidelines for performing Systematic Literature Reviews in Software Engineering</a>.</li>
+      <li><a href="https://www.omg.org/spec/BPMN/2.0.2/">Object Management Group, BPMN 2.0.2</a>.</li>
+    </ul>
+    <p>These references define the research and diagram methods. They do not predetermine the findings about LLM-execution failure.</p>
+  </section>
+
+  <section id="approval" class="approval">
+    <h2>11. Approval requested</h2>
+    <p>Approval authorizes only the preliminary study described in Section 3, within a separately recorded numeric ceiling. The full systematic review begins only after the preliminary report, full protocol, team, model allocation, and budget are reviewed and approved.</p>
+  </section>
+</main>
+<footer>SOTA Research Plan: Documenting LLM-Execution Failure · Version 3 · August 2026</footer>
+</body>
+</html>

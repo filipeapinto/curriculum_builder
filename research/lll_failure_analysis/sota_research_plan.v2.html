@@ -1,0 +1,207 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <meta name="color-scheme" content="light dark">
+  <title>SOTA Research Plan — LLM Execution Failure Analysis</title>
+  <style>
+    :root{color-scheme:light dark;--bg:#f4f6f8;--paper:#fff;--ink:#182432;--muted:#596675;--line:#bcc7d2;--navy:#183b5b;--cyan:#0f7180;--soft:#eaf1f5;--warm:#f6f0df;--alert:#8c3640;--shadow:0 14px 38px rgba(24,36,50,.09)}
+    *{box-sizing:border-box}html{background:var(--bg);color:var(--ink);scroll-behavior:smooth}body{margin:0;font:16px/1.58 Inter,ui-sans-serif,system-ui,-apple-system,"Segoe UI",sans-serif}a{color:var(--cyan)}
+    header{background:linear-gradient(125deg,#102a45,#174d65 68%,#12666f);color:#fff}.hero,main{width:min(1160px,calc(100% - 40px));margin:auto}.hero{padding:68px 0 48px}.kicker{margin:0 0 12px;color:#b9e6e7;font-size:.77rem;font-weight:800;letter-spacing:.16em;text-transform:uppercase}h1{max-width:980px;margin:0;font-size:clamp(2.25rem,5vw,4.35rem);line-height:1.04;letter-spacing:-.045em}.dek{max-width:890px;margin:22px 0 0;color:#dceaf1;font-size:clamp(1.05rem,2vw,1.25rem)}.meta{display:flex;flex-wrap:wrap;gap:10px 25px;margin-top:29px;color:#dce7ed;font-size:.88rem}.meta strong{color:#fff}
+    main{padding:34px 0 74px}nav{display:flex;flex-wrap:wrap;gap:8px;margin-bottom:34px}nav a{padding:7px 11px;border:1px solid var(--line);border-radius:6px;background:var(--paper);color:var(--navy);font-size:.84rem;font-weight:750;text-decoration:none}section{margin:48px 0;scroll-margin-top:20px}h2{margin:0 0 13px;color:var(--navy);font-size:clamp(1.5rem,3vw,2.2rem);line-height:1.17;letter-spacing:-.025em}h3{margin:24px 0 8px;color:var(--navy);font-size:1.08rem}p{margin:9px 0}.lead{max-width:910px;color:var(--muted);font-size:1.08rem}
+    .question{padding:28px 30px;border-left:6px solid var(--cyan);border-radius:8px;background:var(--paper);box-shadow:var(--shadow);font-size:clamp(1.18rem,2.3vw,1.55rem);line-height:1.45}.question small{display:block;margin-bottom:8px;color:var(--cyan);font-size:.72rem;font-weight:850;letter-spacing:.12em;text-transform:uppercase}.grid{display:grid;grid-template-columns:repeat(3,1fr);gap:15px}.card{padding:20px;border:1px solid var(--line);border-radius:9px;background:var(--paper)}.card h3{margin-top:0}.tag{display:inline-block;margin-bottom:10px;color:var(--cyan);font:800 .72rem ui-monospace,SFMono-Regular,Menlo,monospace;letter-spacing:.06em}.note{padding:19px 22px;border:1px solid #d2c28e;border-radius:8px;background:var(--warm)}
+    .figure{margin:25px 0;padding:19px;border:1px solid var(--line);border-radius:11px;background:var(--paper);box-shadow:var(--shadow);overflow-x:auto}.figure svg{display:block;width:100%;min-width:1020px;height:auto}.figure figcaption{max-width:940px;margin:15px 3px 2px;color:var(--muted);font-size:.9rem}.lane{fill:none;stroke:#aab5c1;stroke-width:1.2}.lane-label{font:800 11px Inter,system-ui,sans-serif;letter-spacing:.08em;fill:#596675}.task{fill:#fff;stroke:#183b5b;stroke-width:1.7}.human{fill:#fff;stroke:#8c3640;stroke-width:2}.skill{fill:#fff;stroke:#0f7180;stroke-width:2}.gate{fill:#fff;stroke:#806510;stroke-width:2}.event{fill:#fff;stroke:#183b5b;stroke-width:2}.title{font:750 13px Inter,system-ui,sans-serif;fill:#182432}.copy{font:11px Inter,system-ui,sans-serif;fill:#4d5a69}.model{font:750 10px ui-monospace,SFMono-Regular,Menlo,monospace;fill:#183b5b}.flow{fill:none;stroke:#657587;stroke-width:1.8;marker-end:url(#arrow)}.message{fill:none;stroke:#657587;stroke-width:1.6;stroke-dasharray:5 4;marker-end:url(#arrow)}
+    .table-wrap{overflow-x:auto;border:1px solid var(--line);border-radius:9px;background:var(--paper)}table{width:100%;min-width:850px;border-collapse:collapse}th,td{padding:12px 14px;border-bottom:1px solid var(--line);text-align:left;vertical-align:top}th{background:var(--soft);color:var(--navy);font-size:.76rem;letter-spacing:.06em;text-transform:uppercase}tr:last-child td{border-bottom:0}td:first-child{color:var(--navy);font-weight:750}code{padding:.12em .34em;border-radius:4px;background:var(--soft);color:var(--navy);font:.87em ui-monospace,SFMono-Regular,Menlo,monospace}ul,ol{padding-left:1.25rem}li+li{margin-top:.4rem}.two{display:grid;grid-template-columns:1fr 1fr;gap:16px}.approval{padding:27px;border:2px solid #9b7921;border-radius:10px;background:var(--warm)}footer{padding:22px 20px 42px;color:var(--muted);text-align:center;font-size:.82rem}
+    @media(prefers-color-scheme:dark){:root{--bg:#0d1520;--paper:#151f2b;--ink:#e9eef3;--muted:#b3bec9;--line:#364658;--navy:#b7d7ed;--cyan:#77cbd2;--soft:#1b3041;--warm:#382f1d;--shadow:none}.task,.human,.skill,.gate,.event{fill:#f7f8fa}.lane-label{fill:#b3bec9}.title{fill:#182432}.copy{fill:#4d5a69}.model{fill:#183b5b}}
+    @media(max-width:780px){.grid,.two{grid-template-columns:1fr}.hero,main{width:min(100% - 24px,1160px)}}@media print{header{background:#183b5b!important;print-color-adjust:exact}nav{display:none}.card,.figure,.question{box-shadow:none;break-inside:avoid}main{width:100%}}
+  </style>
+</head>
+<body>
+<header><div class="hero">
+  <p class="kicker">Systematic evidence program · Research protocol v2</p>
+  <h1>SOTA Research Plan: LLM Execution Failure Analysis</h1>
+  <p class="dek">A protocol for discovering mature mechanisms for recording and learning from failed or wasteful LLM execution—and for converting the validated method into a governed Codex SOTA skill family.</p>
+  <div class="meta"><span><strong>Status:</strong> candidate protocol; not approved</span><span><strong>Date:</strong> 18 August 2026</span><span><strong>Supersedes:</strong> nothing; v1 retained</span><span><strong>Next gate:</strong> human protocol review</span></div>
+</div></header>
+
+<main>
+  <nav aria-label="Contents"><a href="#method">Method</a><a href="#question">Research question</a><a href="#phase-zero">Phase 0</a><a href="#workflow">Research graph</a><a href="#family">Skill family</a><a href="#team">Team governance</a><a href="#budget">Budget method</a><a href="#outputs">Outputs</a><a href="#approval">Approval</a></nav>
+
+  <section id="method">
+    <h2>1. Method: systematic review with an engineering evidence layer</h2>
+    <p class="lead">This is not an open-ended “research fan-out.” It is a protocol-led systematic literature review (SLR), adapted for software-engineering evidence and augmented by repository incident forensics. PRISMA 2020 governs transparent reporting of identification, screening, eligibility, and inclusion; Kitchenham-style software-engineering SLR practice governs protocol formation, study selection, quality assessment, extraction, and synthesis.</p>
+    <div class="grid">
+      <article class="card"><span class="tag">STREAM A · EXTERNAL</span><h3>Systematic evidence review</h3><p>Search standards, primary research, official documentation, mature implementations, and incident reports using a registered search and selection protocol.</p></article>
+      <article class="card"><span class="tag">STREAM B · INTERNAL</span><h3>Repository case reconstruction</h3><p>Reconstruct the graph-documentation incident from immutable artifacts, usage evidence, prompts, traces, logs, commits, and human testimony—with uncertainty labeled.</p></article>
+      <article class="card"><span class="tag">JOIN · SYNTHESIS</span><h3>Mechanism-to-failure fit</h3><p>Judge each mature mechanism against the observed failure modes and the repository’s operating constraints before proposing adoption.</p></article>
+    </div>
+    <p class="note"><strong>Protocol principle:</strong> the review question, inclusion/exclusion rules, quality instrument, extraction form, synthesis method, and stopping/budget rules are approved before the full search begins. Deviations are versioned and justified.</p>
+  </section>
+
+  <section id="question">
+    <h2>2. Primary research question</h2>
+    <div class="question"><small>RQ1 · The organizing question</small>Which mature mechanisms should this repository adopt or adapt to make failed, wasteful, or falsely successful LLM executions observable, explainable, reproducible, and convertible into enforceable governance for the next run?</div>
+    <h3>Operational definitions to be fixed in Phase 0</h3>
+    <p>“Failure,” “wasteful,” “false success,” “observable,” “explainable,” “reproducible,” “mechanism,” and “governance” are protocol terms, not keywords. Phase 0 must define each term against repository examples before search strings or specialist roles are finalized.</p>
+    <h3>Secondary questions are derived—not guessed</h3>
+    <p>The preliminary map may justify secondary questions about execution records, causal reconstruction, cost control, learning, privacy, or governance. It may also show that logs and traces belong to one observability question. No secondary question is frozen before Phase 0.</p>
+  </section>
+
+  <section id="phase-zero">
+    <h2>3. Phase 0: create the SOTA protocol before running the SOTA</h2>
+    <p class="lead">Phase 0 is the missing control in v1. Its product is a reviewable, executable research protocol. It prevents the team, graph, sources, models, and budget from being selected by intuition alone.</p>
+    <div class="table-wrap"><table>
+      <thead><tr><th>Phase 0 operation</th><th>Purpose</th><th>Exit evidence</th><th>Executor</th></tr></thead>
+      <tbody>
+        <tr><td>0.1 Incident reconnaissance</td><td>Bound the event, available evidence, decision stakes, and vocabulary.</td><td>Case inventory; known/unknown register</td><td><code>gpt-5.6-terra</code>, high + deterministic inventory</td></tr>
+        <tr><td>0.2 Preliminary mapping search</td><td>Estimate evidence volume, terminology, source classes, likely review type, and specialist domains.</td><td>Pilot queries; sample yield; saturation indicators</td><td><code>gpt-5.6-terra</code>, high</td></tr>
+        <tr><td>0.3 Review-type decision</td><td>Choose SLR, systematic map, rapid review, or staged combination based on question and evidence.</td><td>Decision record with rejected alternatives</td><td>Human research lead</td></tr>
+        <tr><td>0.4 Protocol creation</td><td>Define RQs, sources, queries, date bounds, inclusion/exclusion, quality appraisal, extraction, synthesis, and deviation handling.</td><td>Versioned protocol and registration record</td><td>Candidate <code>sota-plan-create</code> skill</td></tr>
+        <tr><td>0.5 Team derivation</td><td>Derive roles from the approved questions and evidence domains; minimize handoffs and correlated judgment.</td><td>Role justification and independence matrix</td><td>Candidate <code>sota-team-create</code> skill</td></tr>
+        <tr><td>0.6 Workflow derivation</td><td>Build the executable research graph from protocol operations, gates, artifact dependencies, and recovery rules.</td><td>BPMN-conformant graph plus machine-readable plan</td><td>Candidate <code>sota-graph-create</code> skill</td></tr>
+        <tr><td>0.7 Resource authorization</td><td>Estimate calls, tokens, elapsed time, source volume, and uncertainty from pilot measurements.</td><td>Budget envelope and stop/escalation rules</td><td>Governance policy + human approval</td></tr>
+      </tbody>
+    </table></div>
+  </section>
+
+  <section id="workflow">
+    <h2>4. Standards-based research workflow</h2>
+    <p class="lead">The diagram uses a constrained BPMN 2.0 vocabulary: circles are events, rounded rectangles are activities, diamonds are gateways, solid arrows are sequence flows, dashed arrows are artifact/message transfers, and lanes express responsibility. Color is non-semantic and used only for legibility. Human review and skill execution are distinguished by labels and markers.</p>
+    <figure class="figure" aria-labelledby="flow-title flow-caption">
+      <svg viewBox="0 0 1120 900" role="img" aria-labelledby="flow-title flow-desc">
+        <title id="flow-title">Proposed SOTA research workflow using BPMN-aligned notation</title>
+        <desc id="flow-desc">A start event enters Phase 0. Repository reconnaissance and a preliminary mapping search feed a human decision on review type. The sota plan creation skill writes a protocol, followed by human approval. Team and graph creation skills derive the bounded execution. External systematic review and internal incident reconstruction run in parallel, join at quality appraisal, undergo independent challenge, synthesis, deterministic verification, and human acceptance. Failed gates return to the owning activity.</desc>
+        <defs><marker id="arrow" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto"><path d="M0 0L10 5L0 10z" fill="#657587"/></marker></defs>
+        <rect x="8" y="10" width="1104" height="214" class="lane"/><rect x="8" y="224" width="1104" height="220" class="lane"/><rect x="8" y="444" width="1104" height="244" class="lane"/><rect x="8" y="688" width="1104" height="204" class="lane"/>
+        <text x="22" y="34" class="lane-label">HUMAN RESEARCH OWNER</text><text x="22" y="248" class="lane-label">SOTA PROTOCOL SKILLS</text><text x="22" y="468" class="lane-label">EVIDENCE EXECUTION</text><text x="22" y="712" class="lane-label">ASSURANCE &amp; DECISION</text>
+
+        <circle cx="78" cy="112" r="22" class="event"/><text x="78" y="116" text-anchor="middle" class="title">Start</text>
+        <path d="M100 112H142" class="flow"/>
+        <rect x="142" y="72" width="190" height="80" rx="14" class="task"/><text x="237" y="98" text-anchor="middle" class="title">0.1 Incident reconnaissance</text><text x="237" y="118" text-anchor="middle" class="copy">Evidence boundary + vocabulary</text><text x="237" y="138" text-anchor="middle" class="model">GPT-5.6-TERRA · HIGH</text>
+        <path d="M332 112H372" class="flow"/>
+        <rect x="372" y="72" width="190" height="80" rx="14" class="task"/><text x="467" y="98" text-anchor="middle" class="title">0.2 Preliminary map</text><text x="467" y="118" text-anchor="middle" class="copy">Pilot search + volume estimate</text><text x="467" y="138" text-anchor="middle" class="model">GPT-5.6-TERRA · HIGH</text>
+        <path d="M562 112H602" class="flow"/>
+        <polygon points="650,68 698,112 650,156 602,112" class="gate"/><text x="650" y="108" text-anchor="middle" class="title">Review</text><text x="650" y="124" text-anchor="middle" class="copy">type?</text>
+        <path d="M698 112H748" class="flow"/>
+        <rect x="748" y="72" width="224" height="80" rx="14" class="human"/><text x="860" y="98" text-anchor="middle" class="title">Human method decision</text><text x="860" y="118" text-anchor="middle" class="copy">SLR · map · rapid · staged</text><text x="860" y="138" text-anchor="middle" class="model">HUMAN TASK · NO MODEL</text>
+
+        <path d="M860 152V266H223" class="flow"/>
+        <rect x="106" y="266" width="234" height="84" rx="14" class="skill"/><text x="223" y="290" text-anchor="middle" class="title">⚙ sota-plan-create</text><text x="223" y="311" text-anchor="middle" class="copy">Protocol, search, quality, extraction</text><text x="223" y="333" text-anchor="middle" class="model">GPT-5.6-SOL · XHIGH</text>
+        <path d="M340 308H388" class="flow"/>
+        <rect x="388" y="266" width="214" height="84" rx="14" class="human"/><text x="495" y="291" text-anchor="middle" class="title">Protocol approval</text><text x="495" y="312" text-anchor="middle" class="copy">Human review task</text><text x="495" y="333" text-anchor="middle" class="model">HUMAN TASK · NO MODEL</text>
+        <path d="M602 308H642" class="flow"/>
+        <polygon points="686,268 730,308 686,348 642,308" class="gate"/><text x="686" y="305" text-anchor="middle" class="title">Pass?</text>
+        <path d="M686 268V244H223V266" class="flow"/>
+        <path d="M730 308H770" class="flow"/>
+        <rect x="770" y="248" width="224" height="66" rx="14" class="skill"/><text x="882" y="273" text-anchor="middle" class="title">⚙ sota-team-create</text><text x="882" y="294" text-anchor="middle" class="model">GPT-5.6-TERRA · HIGH</text>
+        <rect x="770" y="350" width="224" height="66" rx="14" class="skill"/><text x="882" y="375" text-anchor="middle" class="title">⚙ sota-graph-create</text><text x="882" y="396" text-anchor="middle" class="model">GPT-5.6-TERRA · HIGH</text>
+        <path d="M882 314V350" class="flow"/>
+
+        <path d="M882 416V488H560" class="flow"/>
+        <polygon points="560,480 602,518 560,556 518,518" class="gate"/><text x="560" y="515" text-anchor="middle" class="title">AND</text>
+        <path d="M518 518H418V566" class="flow"/><path d="M602 518H702V566" class="flow"/>
+        <rect x="290" y="566" width="256" height="86" rx="14" class="skill"/><text x="418" y="591" text-anchor="middle" class="title">⚙ Systematic evidence review</text><text x="418" y="612" text-anchor="middle" class="copy">PRISMA identify · screen · include</text><text x="418" y="634" text-anchor="middle" class="model">TIERED ROUTING · SEE §6</text>
+        <rect x="574" y="566" width="256" height="86" rx="14" class="skill"/><text x="702" y="591" text-anchor="middle" class="title">⚙ Incident reconstruction</text><text x="702" y="612" text-anchor="middle" class="copy">Facts · sequence · impact · controls</text><text x="702" y="634" text-anchor="middle" class="model">GPT-5.6-TERRA · HIGH</text>
+        <path d="M418 652V670H560" class="flow"/><path d="M702 652V670H560" class="flow"/>
+        <polygon points="560,646 586,670 560,694 534,670" class="gate"/><text x="560" y="674" text-anchor="middle" class="title">AND</text>
+
+        <path d="M560 694V736H190" class="flow"/>
+        <rect x="86" y="736" width="208" height="82" rx="14" class="task"/><text x="190" y="761" text-anchor="middle" class="title">Quality appraisal</text><text x="190" y="782" text-anchor="middle" class="copy">Calibrated dual review</text><text x="190" y="803" text-anchor="middle" class="model">TERRA HIGH + HUMAN SAMPLE</text>
+        <path d="M294 777H342" class="flow"/>
+        <rect x="342" y="736" width="210" height="82" rx="14" class="task"/><text x="447" y="761" text-anchor="middle" class="title">Adversarial challenge</text><text x="447" y="782" text-anchor="middle" class="copy">Causality + prevention claims</text><text x="447" y="803" text-anchor="middle" class="model">GPT-5.5 · XHIGH</text>
+        <path d="M552 777H600" class="flow"/>
+        <rect x="600" y="736" width="210" height="82" rx="14" class="skill"/><text x="705" y="761" text-anchor="middle" class="title">⚙ sota-synthesize</text><text x="705" y="782" text-anchor="middle" class="copy">Reconcile evidence + case</text><text x="705" y="803" text-anchor="middle" class="model">GPT-5.6-SOL · XHIGH</text>
+        <path d="M810 777H852" class="flow"/>
+        <rect x="852" y="736" width="196" height="82" rx="14" class="task"/><text x="950" y="761" text-anchor="middle" class="title">Deterministic verify</text><text x="950" y="782" text-anchor="middle" class="copy">Coverage · links · schema · HTML</text><text x="950" y="803" text-anchor="middle" class="model">NO MODEL</text>
+        <path d="M950 818V854H1012" class="flow"/><circle cx="1040" cy="854" r="27" class="event"/><circle cx="1040" cy="854" r="21" class="event"/><text x="1040" y="858" text-anchor="middle" class="title">Gate</text>
+        <path d="M447 736V708H702V566" class="message"/>
+      </svg>
+      <figcaption id="flow-caption"><strong>Figure 1.</strong> BPMN-aligned control flow, with a text equivalent in the surrounding sections. Model labels identify the proposed executor for each model-mediated activity. The method and human gates use notation and labels—not color—to carry meaning. The graph is intentionally a protocol workflow, not an org chart of eleven speculative agents.</figcaption>
+    </figure>
+  </section>
+
+  <section id="family">
+    <h2>5. Candidate Codex SOTA skill family</h2>
+    <p class="lead">The family will be created after this research plan is approved. Phase 0 must validate the boundaries below. Skills perform repeatable work; governance constrains every skill. Source selection and budgeting therefore need both an operational skill surface and shared policy.</p>
+    <div class="table-wrap"><table>
+      <thead><tr><th>Candidate capability</th><th>Why it may be a skill</th><th>What belongs in shared governance</th></tr></thead>
+      <tbody>
+        <tr><td><code>sota-plan-create</code></td><td>Creates or versions the review protocol from a bounded research problem and pilot map.</td><td>Required protocol fields, approval gates, versioning, deviations, permitted review types.</td></tr>
+        <tr><td><code>sota-source-strategy-create</code></td><td>Builds reproducible databases/sources, queries, snowballing, deduplication, and selection operations.</td><td>Authority classes, inclusion/exclusion invariants, recency, source diversity, conflict rules.</td></tr>
+        <tr><td><code>sota-team-create</code></td><td>Derives the smallest defensible role set from approved RQs, domains, evidence volume, and independence needs.</td><td>Maximum fan-out, separation of duties, model diversity, authorization, termination, cost attribution.</td></tr>
+        <tr><td><code>sota-graph-create</code></td><td>Compiles protocol steps and artifacts into an executable, restartable graph with explicit gates.</td><td>Approved notation, node contracts, checkpointing, idempotency, failure routing, human gates.</td></tr>
+        <tr><td><code>sota-run</code></td><td>Executes identification, screening, appraisal, extraction, and case analysis with durable receipts.</td><td>Budget envelope, trace/log contract, privacy, retries, evidence retention, circuit breakers.</td></tr>
+        <tr><td><code>sota-synthesize</code></td><td>Reconciles evidence, records disagreements, maps mechanisms to the case, and authors findings.</td><td>Claim-evidence thresholds, confidence, prohibited inference, independent challenge, publication gate.</td></tr>
+        <tr><td><code>sota-verify</code></td><td>Runs deterministic completeness, linkage, schema, citation, accessibility, and render checks.</td><td>Required checks and fail-closed release policy.</td></tr>
+      </tbody>
+    </table></div>
+    <p><strong>Family-creation rule:</strong> do not create seven thin wrapper skills merely because seven names are listed. Phase 0 must compare cohesive one-skill, core-plus-helpers, and explicit-family architectures. A capability becomes a separate skill only if it has a stable contract, independent reuse, distinct inputs/outputs, and a testable boundary.</p>
+  </section>
+
+  <section id="team">
+    <h2>6. Team creation is governed, not hard-coded</h2>
+    <p>V1’s eleven-agent roster was unjustified. V2 proposes no fixed research headcount. <code>sota-team-create</code> derives roles only after the protocol and pilot map exist.</p>
+    <div class="two">
+      <article class="card"><h3>Required team parameters</h3><ul><li>Approved research and secondary questions</li><li>Evidence domains and estimated volume</li><li>Required expertise and independence</li><li>Artifact dependencies and parallelizable work</li><li>Model/tool capability and cost profile</li><li>Maximum handoffs and fan-out</li><li>Conflict-of-interest and correlated-error controls</li></ul></article>
+      <article class="card"><h3>Default minimal topology</h3><ol><li>One protocol/research lead</li><li>One or more reviewers only when evidence volume warrants parallel screening</li><li>One repository case analyst</li><li>One independent challenger</li><li>One synthesis owner</li></ol><p>Roles may be combined when independence is preserved. Additional roles require a written marginal-value justification.</p></article>
+    </div>
+  </section>
+
+  <section id="budget">
+    <h2>7. Budget and stopping rules come from preliminary evidence</h2>
+    <p class="lead">A token ceiling chosen before knowing source volume is theater; an unbounded research loop is negligence. Phase 0 uses pilot measurements to construct a hybrid envelope.</p>
+    <div class="grid">
+      <article class="card"><h3>Measured inputs</h3><p>Candidate yield per query, duplicate rate, screening time, extraction size, model-call cost, repository volume, and unresolved-domain count.</p></article>
+      <article class="card"><h3>Authorized envelope</h3><p>Hard ceilings for calls, tokens, elapsed time, retries, sources, and concurrent workers; softer allocations by phase.</p></article>
+      <article class="card"><h3>Stopping logic</h3><p>Protocol completion, theoretical/source saturation, no-new-mechanism threshold, repeated failure fingerprint, budget threshold, or human escalation.</p></article>
+    </div>
+    <h3>Tiered model routing</h3>
+    <div class="table-wrap"><table>
+      <thead><tr><th>Work class</th><th>Default executor</th><th>Reason</th></tr></thead>
+      <tbody>
+        <tr><td>File discovery, hashing, schema/link checks, deduplication</td><td>Deterministic tools; no model</td><td>Directly measurable work should not consume inference.</td></tr>
+        <tr><td>Metadata normalization and obvious exclusion triage</td><td><code>gpt-5.6-luna</code>, low/medium, with sampled audit</td><td>High-volume, bounded classification with reversible decisions.</td></tr>
+        <tr><td>Preliminary mapping, repository reconstruction, extraction</td><td><code>gpt-5.6-terra</code>, high</td><td>Balanced tool use and analysis without frontier cost on every record.</td></tr>
+        <tr><td>Protocol design and final synthesis</td><td><code>gpt-5.6-sol</code>, xhigh</td><td>Highest consequence, cross-source reasoning, and governance design.</td></tr>
+        <tr><td>Independent adversarial review</td><td><code>gpt-5.5</code>, xhigh</td><td>Model-family diversity reduces correlated acceptance of the synthesis.</td></tr>
+        <tr><td>Method choice, protocol acceptance, material deviations, implementation</td><td>Human decision</td><td>Authority and accountability cannot be delegated to model confidence.</td></tr>
+      </tbody>
+    </table></div>
+  </section>
+
+  <section id="outputs">
+    <h2>8. Phase outputs and acceptance evidence</h2>
+    <div class="table-wrap"><table>
+      <thead><tr><th>Phase</th><th>Required artifacts</th><th>Gate</th></tr></thead>
+      <tbody>
+        <tr><td>0 · Protocol creation</td><td>Pilot map, vocabulary, review-type decision, SLR protocol, candidate skill architecture, derived team, BPMN workflow, estimated budget.</td><td>Human protocol approval</td></tr>
+        <tr><td>1 · Identification</td><td>Executed queries, source exports, repository evidence inventory, deduplication receipts, PRISMA counts.</td><td>Search reproducibility</td></tr>
+        <tr><td>2 · Screening/appraisal</td><td>Inclusion decisions with reasons, quality scores, sampled agreement, exclusions register.</td><td>Selection integrity</td></tr>
+        <tr><td>3 · Extraction/case analysis</td><td>Structured extraction records, incident timeline, cost reconstruction, evidence gaps, mechanism catalogue.</td><td>Traceability and case sufficiency</td></tr>
+        <tr><td>4 · Synthesis/challenge</td><td>Evidence synthesis, disagreement register, adversarial findings and dispositions, governance mapping.</td><td>Independent review</td></tr>
+        <tr><td>5 · Publication</td><td>SOTA HTML, source register, PRISMA flow, verification report, skill-family specification and vN+1 recommendations.</td><td>Deterministic QA + human acceptance</td></tr>
+      </tbody>
+    </table></div>
+  </section>
+
+  <section id="sources">
+    <h2>9. Preliminary methodological anchors</h2>
+    <ul>
+      <li><a href="https://www.prisma-statement.org/prisma-2020">PRISMA 2020 statement</a> and <a href="https://www.prisma-statement.org/prisma-2020-flow-diagram">official flow templates</a> — reporting the search and selection process.</li>
+      <li><a href="https://madeyski.e-informatyka.pl/download/Kitchenham07.pdf">Kitchenham and Charters, Guidelines for performing Systematic Literature Reviews in Software Engineering</a> — protocol-led software-engineering evidence synthesis and preliminary mapping.</li>
+      <li><a href="https://www.omg.org/spec/BPMN/2.0.2/">OMG BPMN 2.0.2</a> — standardized process-model vocabulary.</li>
+      <li><a href="https://opentelemetry.io/docs/specs/semconv/general/">OpenTelemetry general semantic conventions</a> — a preliminary research target for the later failure-observability SOTA, not a conclusion of this plan.</li>
+    </ul>
+    <p>These sources justify the planning method and notation only. They are not the evidence base for the eventual LLM failure-analysis conclusions.</p>
+  </section>
+
+  <section id="approval" class="approval">
+    <h2>10. Approval boundary and recommended sequence</h2>
+    <p><strong>Recommendation:</strong> perfect and approve this protocol first; then use it as the requirements artifact for creating the Codex SOTA skill family. Building the family now would fossilize assumptions that Phase 0 exists to test.</p>
+    <p>Approval of this document would authorize Phase 0 only: incident reconnaissance, preliminary mapping, review-type selection, and production of the full SLR protocol, derived team, derived graph, and evidence-based budget. Full SOTA execution and skill-family implementation would each return to separate human gates.</p>
+  </section>
+</main>
+<footer>SOTA Research Plan v2 · LLM Execution Failure Analysis · v1 preserved · 18 August 2026</footer>
+</body>
+</html>

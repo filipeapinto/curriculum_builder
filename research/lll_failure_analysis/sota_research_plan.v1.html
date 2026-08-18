@@ -1,0 +1,252 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="color-scheme" content="light dark">
+  <title>SOTA Research Plan — Failure Analysis for LLM Execution</title>
+  <style>
+    :root {
+      color-scheme: light dark;
+      --ink: #172238;
+      --muted: #5d6878;
+      --paper: #f7f8fb;
+      --surface: #ffffff;
+      --line: #cad2df;
+      --navy: #173b65;
+      --blue: #246b9e;
+      --teal: #167f78;
+      --gold: #a46a05;
+      --red: #a73a45;
+      --lavender: #6656a8;
+      --soft-blue: #e9f3fa;
+      --soft-teal: #e7f5f2;
+      --soft-gold: #fff3d9;
+      --soft-red: #fae9ea;
+      --soft-lavender: #f0edfb;
+      --shadow: 0 12px 32px rgba(23, 34, 56, .09);
+    }
+    * { box-sizing: border-box; }
+    html { scroll-behavior: smooth; background: var(--paper); color: var(--ink); }
+    body { margin: 0; font: 16px/1.58 Inter, ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif; }
+    a { color: var(--blue); }
+    header { background: linear-gradient(135deg, #102b4d 0%, #174d72 62%, #167f78 100%); color: white; }
+    .hero { width: min(1180px, calc(100% - 40px)); margin: auto; padding: 68px 0 52px; }
+    .eyebrow { margin: 0 0 12px; font-size: .78rem; font-weight: 800; letter-spacing: .16em; text-transform: uppercase; color: #bfe9e3; }
+    h1 { max-width: 940px; margin: 0; font-size: clamp(2.25rem, 5vw, 4.45rem); line-height: 1.04; letter-spacing: -.045em; }
+    .dek { max-width: 860px; margin: 24px 0 0; color: #dceaf4; font-size: clamp(1.05rem, 2vw, 1.28rem); }
+    .meta { display: flex; flex-wrap: wrap; gap: 10px 24px; margin-top: 30px; color: #d6e5ef; font-size: .88rem; }
+    .meta strong { color: white; }
+    main { width: min(1180px, calc(100% - 40px)); margin: 0 auto; padding: 42px 0 76px; }
+    nav { display: flex; flex-wrap: wrap; gap: 8px; margin: 0 0 34px; }
+    nav a { padding: 7px 12px; border: 1px solid var(--line); border-radius: 7px; background: var(--surface); color: var(--navy); text-decoration: none; font-size: .86rem; font-weight: 700; }
+    section { margin: 48px 0; scroll-margin-top: 24px; }
+    h2 { margin: 0 0 14px; color: var(--navy); font-size: clamp(1.55rem, 3vw, 2.25rem); line-height: 1.17; letter-spacing: -.025em; }
+    h3 { margin: 24px 0 8px; color: var(--navy); font-size: 1.08rem; }
+    p { margin: 10px 0; }
+    .lead { max-width: 900px; color: var(--muted); font-size: 1.08rem; }
+    .callout { padding: 23px 26px; border-left: 5px solid var(--teal); border-radius: 8px; background: var(--surface); box-shadow: var(--shadow); }
+    .callout strong { color: var(--navy); }
+    .grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 16px; }
+    .card { padding: 20px; border: 1px solid var(--line); border-radius: 10px; background: var(--surface); }
+    .card h3 { margin-top: 0; }
+    .number { display: inline-grid; width: 30px; height: 30px; place-items: center; margin-bottom: 10px; border-radius: 50%; background: var(--navy); color: white; font-size: .8rem; font-weight: 800; }
+    .figure { margin: 26px 0; padding: 20px; border: 1px solid var(--line); border-radius: 12px; background: var(--surface); box-shadow: var(--shadow); overflow-x: auto; }
+    .figure svg { display: block; width: 100%; min-width: 1000px; height: auto; }
+    .figure figcaption { max-width: 920px; margin: 16px 4px 2px; color: var(--muted); font-size: .9rem; }
+    .node-title { font: 700 15px Inter, ui-sans-serif, system-ui, sans-serif; fill: #172238; }
+    .node-copy { font: 12px Inter, ui-sans-serif, system-ui, sans-serif; fill: #445164; }
+    .model-copy { font: 700 11px ui-monospace, SFMono-Regular, Menlo, monospace; fill: #173b65; }
+    .lane-title { font: 800 12px Inter, ui-sans-serif, system-ui, sans-serif; letter-spacing: .08em; fill: #5d6878; }
+    .edge { fill: none; stroke: #8290a2; stroke-width: 2; marker-end: url(#arrow); }
+    .edge-loop { fill: none; stroke: #a73a45; stroke-width: 2; stroke-dasharray: 6 5; marker-end: url(#arrow-red); }
+    .table-wrap { overflow-x: auto; border: 1px solid var(--line); border-radius: 10px; background: var(--surface); }
+    table { width: 100%; border-collapse: collapse; min-width: 840px; }
+    th, td { padding: 13px 15px; border-bottom: 1px solid var(--line); text-align: left; vertical-align: top; }
+    th { background: var(--soft-blue); color: var(--navy); font-size: .78rem; letter-spacing: .06em; text-transform: uppercase; }
+    tr:last-child td { border-bottom: 0; }
+    td:first-child { font-weight: 750; color: var(--navy); }
+    code { padding: .12em .34em; border-radius: 4px; background: var(--soft-blue); color: var(--navy); font: .88em ui-monospace, SFMono-Regular, Menlo, monospace; }
+    ul, ol { padding-left: 1.25rem; }
+    li + li { margin-top: .42rem; }
+    .decision { display: grid; grid-template-columns: 1.2fr .8fr; gap: 18px; }
+    .approval { padding: 28px; border: 2px solid var(--gold); border-radius: 11px; background: var(--soft-gold); }
+    .approval h2 { color: #6d4806; }
+    .approval p:last-child { margin-bottom: 0; }
+    footer { padding: 26px 20px 44px; color: var(--muted); text-align: center; font-size: .82rem; }
+    @media (prefers-color-scheme: dark) {
+      :root { --ink: #e8edf4; --muted: #b4bfcc; --paper: #0e1520; --surface: #151f2d; --line: #354459; --navy: #b9daf4; --blue: #87c6ef; --soft-blue: #192f43; --soft-teal: #153b38; --soft-gold: #412f12; --soft-red: #41232a; --soft-lavender: #2d2947; --shadow: none; }
+      header { background: linear-gradient(135deg, #102743, #17465e 62%, #17645f); }
+      .node-title { fill: #172238; } .node-copy { fill: #445164; } .model-copy { fill: #173b65; }
+      .lane-title { fill: #b4bfcc; }
+      .approval h2 { color: #ffd786; }
+    }
+    @media (max-width: 800px) { .grid, .decision { grid-template-columns: 1fr; } .hero, main { width: min(100% - 24px, 1180px); } }
+    @media print { header { background: #173b65 !important; print-color-adjust: exact; } nav { display: none; } .figure, .card, .callout { box-shadow: none; break-inside: avoid; } main { width: 100%; } }
+  </style>
+</head>
+<body>
+  <header>
+    <div class="hero">
+      <p class="eyebrow">Research authorization package · Version 1</p>
+      <h1>Failure analysis for LLM execution</h1>
+      <p class="dek">A bounded August 2026 state-of-the-art investigation into how this repository should prompt, log, trace, and learn from failed or economically wasteful model execution—so evidence from run N becomes enforceable governance for run N+1.</p>
+      <div class="meta"><span><strong>Status:</strong> proposed; research not started</span><span><strong>Date:</strong> 18 August 2026</span><span><strong>Decision owner:</strong> human approver</span><span><strong>Target:</strong> governance vN+1 recommendations</span></div>
+    </div>
+  </header>
+
+  <main>
+    <nav aria-label="Document contents">
+      <a href="#mandate">Mandate</a><a href="#questions">Questions</a><a href="#graph">Agent graph</a><a href="#team">Team</a><a href="#method">Method</a><a href="#controls">Controls</a><a href="#outputs">Outputs</a><a href="#approval">Approval gate</a>
+    </nav>
+
+    <section id="mandate">
+      <h2>1. Mandate and boundary</h2>
+      <div class="callout"><strong>Research question.</strong> How should this repository capture, explain, trace, and learn from failed or wasteful LLM executions without reinventing mature observability, incident-management, durable-execution, and evaluation mechanisms?</div>
+      <p class="lead">The motivating incident reportedly consumed roughly 20% of weekly usage overnight while generating graph-system documentation and revising its generic documentation skill. The investigation will reconstruct that event only from repository evidence and explicitly supplied usage records. The reported percentage is a hypothesis until corroborated.</p>
+      <p>This plan authorizes research artifacts only. It does not authorize changes to the graph-documentation skill, runtime, schemas, policies, or governance. Those changes require a later implementation decision.</p>
+    </section>
+
+    <section id="questions">
+      <h2>2. Questions the research must resolve</h2>
+      <div class="grid">
+        <article class="card"><span class="number">P</span><h3>Prompt</h3><p>Which prompt envelope, context manifest, assumptions, constraints, acceptance tests, model settings, revision lineage, and stop rules make failure diagnosable?</p></article>
+        <article class="card"><span class="number">L</span><h3>Log</h3><p>Which append-only events, resource measures, decisions, artifacts, and missing-evidence states must be recorded—and at what granularity?</p></article>
+        <article class="card"><span class="number">T</span><h3>Trace</h3><p>How should runs, agents, model calls, tool calls, handoffs, retries, evaluations, checkpoints, approvals, and artifacts be causally linked?</p></article>
+        <article class="card"><span class="number">I</span><h3>Infer</h3><p>How can evidence support root-cause hypotheses, counterfactuals, recurrence fingerprints, regression fixtures, and justified changes?</p></article>
+        <article class="card"><span class="number">G</span><h3>Govern</h3><p>Which budgets, circuit breakers, escalation thresholds, retention rules, gates, and promotion criteria should flow to version N+1?</p></article>
+        <article class="card"><span class="number">A</span><h3>Adopt</h3><p>Which mature standards or tools should be adopted, adapted, or rejected, and what is the smallest repository-native interoperability layer?</p></article>
+      </div>
+    </section>
+
+    <section id="graph">
+      <h2>3. Proposed research execution graph</h2>
+      <p class="lead">The graph separates factual reconstruction, parallel domain research, repository integration, adversarial review, and synthesis. Model choice is part of the execution contract—not an implementation note.</p>
+      <figure class="figure" aria-labelledby="graph-title graph-caption">
+        <svg viewBox="0 0 1120 810" role="img" aria-labelledby="graph-title graph-desc">
+          <title id="graph-title">Agent graph and proposed models for the LLM failure-analysis research</title>
+          <desc id="graph-desc">Human approval leads to repository evidence reconstruction. The resulting incident packet feeds seven parallel domain agents using GPT-5.6-sol at high reasoning. Their reports are mapped to repository governance, challenged by an independent GPT-5.5 reviewer, and synthesized by GPT-5.6-sol at xhigh reasoning. Failed challenge findings loop back to the responsible domain agent. Deterministic validation follows synthesis before human review.</desc>
+          <defs>
+            <marker id="arrow" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M 0 0 L 10 5 L 0 10 z" fill="#8290a2"/></marker>
+            <marker id="arrow-red" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M 0 0 L 10 5 L 0 10 z" fill="#a73a45"/></marker>
+          </defs>
+
+          <text x="18" y="40" class="lane-title">AUTHORIZATION &amp; EVIDENCE</text>
+          <rect x="360" y="18" width="400" height="68" rx="10" fill="#fff3d9" stroke="#a46a05" stroke-width="2"/>
+          <text x="560" y="45" text-anchor="middle" class="node-title">H0 · Human approval</text><text x="560" y="66" text-anchor="middle" class="node-copy">Scope, graph, models, controls, and outputs</text>
+          <path class="edge" d="M560 86 L560 112"/>
+          <rect x="360" y="112" width="400" height="82" rx="10" fill="#e9f3fa" stroke="#246b9e" stroke-width="2"/>
+          <text x="560" y="137" text-anchor="middle" class="node-title">A0 · Incident Evidence Curator</text><text x="560" y="157" text-anchor="middle" class="node-copy">Repository forensics; separates fact, report, inference, and unknown</text><text x="560" y="179" text-anchor="middle" class="model-copy">MODEL · GPT-5.6-sol · HIGH</text>
+
+          <path class="edge" d="M560 194 L560 222 L115 222 L115 246"/><path class="edge" d="M560 194 L560 222 L265 222 L265 246"/><path class="edge" d="M560 194 L560 222 L415 222 L415 246"/><path class="edge" d="M560 194 L560 222 L565 222 L565 246"/><path class="edge" d="M560 194 L560 222 L715 222 L715 246"/><path class="edge" d="M560 194 L560 222 L865 222 L865 246"/><path class="edge" d="M560 194 L560 222 L1015 222 L1015 246"/>
+          <text x="18" y="270" class="lane-title">PARALLEL DOMAIN RESEARCH</text>
+
+          <g><rect x="43" y="246" width="144" height="130" rx="9" fill="#e7f5f2" stroke="#167f78"/><text x="115" y="272" text-anchor="middle" class="node-title">A1 · Prompt</text><text x="115" y="294" text-anchor="middle" class="node-copy"><tspan x="115">Prompt/context</tspan><tspan x="115" dy="17">failure records</tspan></text><text x="115" y="348" text-anchor="middle" class="model-copy"><tspan x="115">GPT-5.6-sol</tspan><tspan x="115" dy="16">HIGH</tspan></text></g>
+          <g><rect x="193" y="246" width="144" height="130" rx="9" fill="#e7f5f2" stroke="#167f78"/><text x="265" y="272" text-anchor="middle" class="node-title">A2 · Logging</text><text x="265" y="294" text-anchor="middle" class="node-copy"><tspan x="265">Events, metrics,</tspan><tspan x="265" dy="17">cost, lineage</tspan></text><text x="265" y="348" text-anchor="middle" class="model-copy"><tspan x="265">GPT-5.6-sol</tspan><tspan x="265" dy="16">HIGH</tspan></text></g>
+          <g><rect x="343" y="246" width="144" height="130" rx="9" fill="#e7f5f2" stroke="#167f78"/><text x="415" y="272" text-anchor="middle" class="node-title">A3 · Tracing</text><text x="415" y="294" text-anchor="middle" class="node-copy"><tspan x="415">Causal spans,</tspan><tspan x="415" dy="17">context, artifacts</tspan></text><text x="415" y="348" text-anchor="middle" class="model-copy"><tspan x="415">GPT-5.6-sol</tspan><tspan x="415" dy="16">HIGH</tspan></text></g>
+          <g><rect x="493" y="246" width="144" height="130" rx="9" fill="#e7f5f2" stroke="#167f78"/><text x="565" y="272" text-anchor="middle" class="node-title">A4 · Learning</text><text x="565" y="294" text-anchor="middle" class="node-copy"><tspan x="565">Inference, tests,</tspan><tspan x="565" dy="17">counterfactuals</tspan></text><text x="565" y="348" text-anchor="middle" class="model-copy"><tspan x="565">GPT-5.6-sol</tspan><tspan x="565" dy="16">HIGH</tspan></text></g>
+          <g><rect x="643" y="246" width="144" height="130" rx="9" fill="#e7f5f2" stroke="#167f78"/><text x="715" y="272" text-anchor="middle" class="node-title">A5 · SRE</text><text x="715" y="294" text-anchor="middle" class="node-copy"><tspan x="715">Postmortems and</tspan><tspan x="715" dy="17">safety practice</tspan></text><text x="715" y="348" text-anchor="middle" class="model-copy"><tspan x="715">GPT-5.6-sol</tspan><tspan x="715" dy="16">HIGH</tspan></text></g>
+          <g><rect x="793" y="246" width="144" height="130" rx="9" fill="#e7f5f2" stroke="#167f78"/><text x="865" y="272" text-anchor="middle" class="node-title">A6 · Adoption</text><text x="865" y="294" text-anchor="middle" class="node-copy"><tspan x="865">Standards/tools;</tspan><tspan x="865" dy="17">build vs adopt</tspan></text><text x="865" y="348" text-anchor="middle" class="model-copy"><tspan x="865">GPT-5.6-sol</tspan><tspan x="865" dy="16">HIGH</tspan></text></g>
+          <g><rect x="943" y="246" width="144" height="130" rx="9" fill="#e7f5f2" stroke="#167f78"/><text x="1015" y="272" text-anchor="middle" class="node-title">A7 · Cost</text><text x="1015" y="294" text-anchor="middle" class="node-copy"><tspan x="1015">Budgets, loops,</tspan><tspan x="1015" dy="17">circuit breakers</tspan></text><text x="1015" y="348" text-anchor="middle" class="model-copy"><tspan x="1015">GPT-5.6-sol</tspan><tspan x="1015" dy="16">HIGH</tspan></text></g>
+
+          <path class="edge" d="M115 376 L115 408 L560 408 L560 434"/><path class="edge" d="M265 376 L265 408 L560 408"/><path class="edge" d="M415 376 L415 408 L560 408"/><path class="edge" d="M565 376 L565 434"/><path class="edge" d="M715 376 L715 408 L560 408"/><path class="edge" d="M865 376 L865 408 L560 408"/><path class="edge" d="M1015 376 L1015 408 L560 408"/>
+          <text x="18" y="458" class="lane-title">INTEGRATE, CHALLENGE, SYNTHESIZE</text>
+          <rect x="360" y="434" width="400" height="82" rx="10" fill="#f0edfb" stroke="#6656a8" stroke-width="2"/>
+          <text x="560" y="460" text-anchor="middle" class="node-title">A8 · Repository Governance Mapper</text><text x="560" y="480" text-anchor="middle" class="node-copy">Maps findings to current schemas, policies, gates, and migration options</text><text x="560" y="501" text-anchor="middle" class="model-copy">MODEL · GPT-5.6-sol · HIGH</text>
+          <path class="edge" d="M560 516 L560 546"/>
+          <rect x="360" y="546" width="400" height="82" rx="10" fill="#fae9ea" stroke="#a73a45" stroke-width="2"/>
+          <text x="560" y="572" text-anchor="middle" class="node-title">A9 · Independent Adversarial Reviewer</text><text x="560" y="592" text-anchor="middle" class="node-copy">Challenges causality, evidence, portability, privacy, and prevention claims</text><text x="560" y="613" text-anchor="middle" class="model-copy">DIVERSITY MODEL · GPT-5.5 · XHIGH</text>
+          <path class="edge-loop" d="M360 587 C230 587 230 310 343 310"/>
+          <path class="edge" d="M560 628 L560 658"/>
+          <rect x="360" y="658" width="400" height="82" rx="10" fill="#fff3d9" stroke="#a46a05" stroke-width="2"/>
+          <text x="560" y="684" text-anchor="middle" class="node-title">A10 · LLM Reliability Synthesis SME</text><text x="560" y="704" text-anchor="middle" class="node-copy">Resolves disagreements; authors the repository-specific SOTA position</text><text x="560" y="725" text-anchor="middle" class="model-copy">SYNTHESIS MODEL · GPT-5.6-sol · XHIGH</text>
+          <path class="edge" d="M760 699 L834 699"/>
+          <rect x="834" y="658" width="248" height="82" rx="10" fill="#e9f3fa" stroke="#246b9e" stroke-width="2"/>
+          <text x="958" y="684" text-anchor="middle" class="node-title">D1 · Deterministic QA</text><text x="958" y="704" text-anchor="middle" class="node-copy">Links · citations · HTML · a11y</text><text x="958" y="725" text-anchor="middle" class="model-copy">NO MODEL</text>
+          <path class="edge" d="M958 740 L958 770 L760 770"/>
+          <rect x="360" y="758" width="400" height="40" rx="10" fill="#fff3d9" stroke="#a46a05" stroke-width="2"/>
+          <text x="560" y="783" text-anchor="middle" class="node-title">H1 · Human acceptance and implementation decision</text>
+        </svg>
+        <figcaption id="graph-caption"><strong>Figure 1.</strong> Evidence first, parallel research second, synthesis last. GPT-5.6-sol is proposed for primary research because the work requires tool-using research and repository reasoning; high effort is reserved for bounded domain work and xhigh for cross-domain synthesis. GPT-5.5 provides a deliberately different reviewer family to reduce correlated critique. Deterministic checks validate properties that do not require judgment.</figcaption>
+      </figure>
+    </section>
+
+    <section id="team">
+      <h2>4. Team contracts and model allocation</h2>
+      <div class="table-wrap"><table>
+        <thead><tr><th>ID / role</th><th>Mandate</th><th>Required output</th><th>Proposed model</th></tr></thead>
+        <tbody>
+          <tr><td>A0 · Incident Evidence Curator</td><td>Reconstruct the documentation incident from repository records; label facts, reports, inferences, contradictions, and missing evidence.</td><td>Evidence matrix and incident timeline</td><td><code>gpt-5.6-sol</code>, high</td></tr>
+          <tr><td>A1 · Prompt Failure Engineer</td><td>Research prompt, context, revision, evaluator, and model-configuration records needed for diagnosis and replay.</td><td>Prompt-failure record proposal</td><td><code>gpt-5.6-sol</code>, high</td></tr>
+          <tr><td>A2 · Observability Architect</td><td>Research structured event logging, metrics, cost attribution, lineage, redaction, and retention.</td><td>Canonical event and metric model</td><td><code>gpt-5.6-sol</code>, high</td></tr>
+          <tr><td>A3 · Distributed Tracing Specialist</td><td>Map LLM and agent execution onto trace/span semantics, stable correlation identifiers, retries, handoffs, and artifacts.</td><td>Trace topology and semantic mapping</td><td><code>gpt-5.6-sol</code>, high</td></tr>
+          <tr><td>A4 · Failure-Learning Researcher</td><td>Research causal analysis, hypothesis discipline, counterfactuals, failure fingerprints, eval sets, and regression promotion.</td><td>Failure-to-learning protocol</td><td><code>gpt-5.6-sol</code>, high</td></tr>
+          <tr><td>A5 · SRE/Postmortem SME</td><td>Identify transferable practices from SRE, incident command, safety cases, and blameless postmortems—and their limits.</td><td>Mature-mechanism transfer matrix</td><td><code>gpt-5.6-sol</code>, high</td></tr>
+          <tr><td>A6 · Standards &amp; Adoption Analyst</td><td>Compare standards, research, official platforms, and mature open-source mechanisms; avoid vendor lock-in.</td><td>Adopt/adapt/reject assessment</td><td><code>gpt-5.6-sol</code>, high</td></tr>
+          <tr><td>A7 · Cost &amp; Loop-Control Auditor</td><td>Research token/time/tool budgets, anomaly signals, information-gain tests, circuit breakers, and human escalation.</td><td>Resource-control architecture</td><td><code>gpt-5.6-sol</code>, high</td></tr>
+          <tr><td>A8 · Governance Mapper</td><td>Compare findings with repository schemas and governance; design additive migration options.</td><td>Gap and vN+1 mapping</td><td><code>gpt-5.6-sol</code>, high</td></tr>
+          <tr><td>A9 · Adversarial Reviewer</td><td>Attack weak evidence, monoculture, privacy exposure, false causality, non-portability, and controls that would not have stopped the incident.</td><td>Disposition-ready challenge report</td><td><code>gpt-5.5</code>, xhigh</td></tr>
+          <tr><td>A10 · Synthesis SME</td><td>Act as an LLM reliability and LLMOps governance integrator; reconcile—not concatenate—the domain reports.</td><td>Final SOTA and recommendations</td><td><code>gpt-5.6-sol</code>, xhigh</td></tr>
+          <tr><td>D1 · Deterministic QA</td><td>Check internal links, source URLs, citation coverage, file paths, HTML validity, accessibility signals, and size.</td><td>Machine-readable verification report</td><td>No model</td></tr>
+        </tbody>
+      </table></div>
+      <p><strong>Model substitution rule.</strong> If a proposed model is unavailable, the run stops for a recorded routing decision. It must not silently substitute another model. Every model call records the exact model identifier, reasoning effort, start/end time, token and cache measures when exposed, tool calls, parent trace, and output artifact.</p>
+    </section>
+
+    <section id="method">
+      <h2>5. Evidence and synthesis method</h2>
+      <div class="decision">
+        <div class="card"><h3>Evidence hierarchy</h3><ol><li>Standards and primary specifications</li><li>Peer-reviewed or original research</li><li>Official platform documentation</li><li>Mature open-source implementations</li><li>High-quality engineering incident reports</li><li>Vendor claims, explicitly labeled and independently triangulated</li></ol></div>
+        <div class="card"><h3>Claim discipline</h3><ul><li>Each material claim maps to a source.</li><li>Retrieval date and source class are recorded.</li><li>Quoted text stays within copyright limits.</li><li>Facts, interpretations, and recommendations remain distinct.</li><li>Conflicting evidence receives a disposition, not silent averaging.</li></ul></div>
+      </div>
+      <h3>Coverage frame</h3>
+      <p>The research will evaluate OpenTelemetry-style observability and GenAI semantic conventions, W3C trace correlation, durable-execution journals and checkpoints, experiment and artifact lineage, evaluation frameworks, SRE incident learning, AI risk governance, and privacy/security controls. Named mechanisms are research targets, not predetermined endorsements.</p>
+      <h3>Failure ontology requirement</h3>
+      <p>The final ontology must distinguish at least: symptom, failed stage, proximate cause, contributing condition, violated control, impact, detectability, evidence quality, recoverability, recurrence fingerprint, and corrective-action class. “Successful but economically unreasonable” must be representable independently of terminal success or failure.</p>
+      <h3>Synthesis gate</h3>
+      <p>A10 may promote a recommendation only when it states the incident relevance, evidence strength, expected preventive or detective effect, adoption cost, portability, privacy implications, falsification test, and proposed governance destination. Unresolved disagreement remains visible.</p>
+    </section>
+
+    <section id="controls">
+      <h2>6. Controls on the research itself</h2>
+      <div class="grid">
+        <article class="card"><h3>Bounded fan-out</h3><p>One initial assignment per domain. Follow-up is permitted only for a named evidence gap or reviewer finding.</p></article>
+        <article class="card"><h3>No blind retries</h3><p>A failed model call may be repeated only after its failure is logged and the input, hypothesis, tool path, or model decision changes.</p></article>
+        <article class="card"><h3>Persist immediately</h3><p>Each agent writes a bounded report before synthesis. Completed work is reused by identifier and digest.</p></article>
+        <article class="card"><h3>Stop conditions</h3><p>Stop on sufficient evidence, source saturation, hard budget, repeated failure fingerprint, missing authority, or an unresolved human decision.</p></article>
+        <article class="card"><h3>Cost visibility</h3><p>Usage, duration, retries, sources, and artifacts are attributed per agent. Missing provider telemetry is recorded as missing.</p></article>
+        <article class="card"><h3>Human boundaries</h3><p>Research approval does not imply implementation approval. Material governance changes return to a human gate.</p></article>
+      </div>
+      <p><strong>Pre-run budget record.</strong> Before fan-out, the orchestrator must write a machine-readable budget specifying maximum model calls, maximum retry calls, wall-clock deadline, per-agent source ceiling, and escalation threshold. Numeric limits are deliberately not invented in this plan; they require the approver’s available-usage context.</p>
+    </section>
+
+    <section id="outputs">
+      <h2>7. Planned repository outputs</h2>
+      <p>All work will remain under <code>research/lll_failure_analysis/</code>.</p>
+      <div class="table-wrap"><table>
+        <thead><tr><th>Artifact</th><th>Purpose</th></tr></thead>
+        <tbody>
+          <tr><td><code>sota_research_plan.v1.html</code></td><td>This approved execution contract.</td></tr>
+          <tr><td><code>research_agents.v1.json</code></td><td>Agent prompts, models, inputs, outputs, constraints, and stop rules.</td></tr>
+          <tr><td><code>research_budget.v1.json</code></td><td>Pre-authorized call, retry, time, and source limits.</td></tr>
+          <tr><td><code>action_log.jsonl</code></td><td>Append-only record of research actions and failures.</td></tr>
+          <tr><td><code>incident_evidence_matrix.v1.html</code></td><td>Repository-grounded reconstruction, impact, and evidence gaps.</td></tr>
+          <tr><td><code>source_register.v1.json</code></td><td>Source identity, authority, retrieval date, claims, and disposition.</td></tr>
+          <tr><td><code>domain_reports/*.html</code></td><td>Bounded specialist reports produced before synthesis.</td></tr>
+          <tr><td><code>llm_execution_failure_sota.aug2026.v1.html</code></td><td>Self-contained state-of-the-art synthesis.</td></tr>
+          <tr><td><code>recommendations_to_governance_vnext.v1.html</code></td><td>Proposed rules, schemas, gates, migration sequence, and proving tests.</td></tr>
+          <tr><td><code>verification_report.v1.json</code></td><td>Deterministic delivery checks and their results.</td></tr>
+        </tbody>
+      </table></div>
+    </section>
+
+    <section id="approval" class="approval">
+      <h2>8. Human approval gate</h2>
+      <p><strong>Current state:</strong> plan written; research has not begun.</p>
+      <p>Approval authorizes the bounded fan-out, current-source research, and creation of the research artifacts above using the named model allocation. It does not authorize modifying production skills, schemas, policies, runtime code, or governance.</p>
+      <p><strong>Required decision:</strong> approve the research graph and model allocation, and supply or approve the numeric research budget before execution begins.</p>
+    </section>
+  </main>
+  <footer>Research plan v1 · LLM execution failure analysis · Curriculum Factory · 18 August 2026</footer>
+</body>
+</html>
