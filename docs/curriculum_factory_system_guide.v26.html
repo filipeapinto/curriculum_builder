@@ -127,7 +127,7 @@
 <main>
 <header class="hero">
   <p class="meta">For maintainers and authorized operators of the factory ·
-     Generated 2026-08-18 · v25, updated from v24 · Evidence basis: repository at <code>91505f9</code>
+     Generated 2026-08-18 · v26, updated from v25 · Evidence basis: repository at <code>56c0fb6</code>
      (the graph was compiled, the LangGraph <code>Send</code> semantics were tested directly, and the test suite
      was executed on this machine; no deployed environment exists to inspect) — every commit from
      <code>bb704ee</code> through this update's own is documentation-only (<code>SKILL.md</code> and
@@ -4283,6 +4283,33 @@ this guide's inspection; the WAL/torn-copy risk and the lock's lifetime are each
             (it does not exercise the frozen-digest or sandbox isolation layers).
             Running total: 156 closed through v24 (above) + 4 this round = <b>160 closed through v25</b>.
             <span class="ev ev-observed">observed</span></td></tr>
+    <tr><td><b>v26</b></td><td>2026-08-18</td>
+        <td>Closed 6 named items from an eleventh independent review against v25 (round 10 of the persona-pair
+            cycle): 1 recurring resume-mechanism echo, 2 architect gaps, plus 3 items whose first-pass fix (by a
+            regeneration fork) was itself found inaccurate on independent re-verification and corrected in place —
+            the same discipline applied to v24's <code>EvidenceCorrupt</code> error. <b>The crash case, corrected
+            twice:</b> the fork's initial fix for the resume-mechanism echo in the new fan-out crash box replaced
+            one wrong claim (in-thread pending-write replay on <code>--resume</code>) with a different wrong claim
+            (<code>D04</code> hands <code>D92</code> a real frontier on resume) — traced independently and
+            rewritten to state the true mechanics: <code>D00_BOOTSTRAP_EPISODE</code>'s guard table routes
+            <code>bootstrap_kind="recover_orphan"</code> straight to <code>D96_GRACEFUL_INTERRUPT_GATE</code>
+            (<code>routing.py:117-120</code>), bypassing <code>D04</code>'s frontier computation and <code>D92</code>
+            entirely; since <code>close_episode()</code> has no production caller, every real <code>--resume</code>
+            takes this path. The frontier machinery is real and tested, just never reached in production — the
+            remedy is the same fresh output root as every other crash or pause. <b>Architect — traced beyond
+            <code>BLOCKED</code>:</b> a repo-wide grep of every <code>unit_status</code> write site found only
+            three real producers (<code>SELECTED</code> at D05, <code>REVIEWING</code> in
+            <code>acceptance.py</code>, <code>REPAIRING</code> in <code>repair.py</code>) — <code>SOURCING</code>,
+            <code>BUILDING</code> and <code>ACCEPTED</code> are unreached like <code>BLOCKED</code>, and
+            <code>unit_status</code> is confirmed write-only: <code>D05</code>'s own selection logic reads
+            <code>accepted_unit_receipts</code> and <code>cursor</code>, never <code>unit_status</code>.
+            <b>Architect — zero-manifest-files:</b> traced that an empty glob result falls through
+            <code>require()</code>'s plain <code>SystemFailure</code>, bypassing every other bad-input case's
+            clean <code>CliError</code>/exit-2-or-3 treatment, and lands in <code>main()</code>'s generic
+            <code>except Exception</code> as exit 20 with <code>code="SystemFailure"</code> — the exception class
+            name, not the <code>"invalid_input"</code> cause <code>require()</code> actually classified it as.
+            Running total: 160 closed through v25 (above) + 6 this round = <b>166 closed through v26</b>.
+            <span class="ev ev-observed">observed</span></td></tr>
   </tbody>
 </table>
 
@@ -4541,8 +4568,8 @@ this guide's inspection; the WAL/torn-copy risk and the lock's lifetime are each
 </details>
 
 <footer>
-Generated 2026-08-18 (v25, updated from v24) from <code>curriculum_factory</code>; commit citation
-<code>91505f9</code> is the repository HEAD at generation time, not a claim that the evidence changed — no
+Generated 2026-08-18 (v26, updated from v25) from <code>curriculum_factory</code>; commit citation
+<code>56c0fb6</code> is the repository HEAD at generation time, not a claim that the evidence changed — no
 file this guide treats as evidence has changed since <code>f6a8aca</code> (see header). Worktree clean at
 generation time apart from this file, by the
 <code>graph-system-document</code> skill using its
