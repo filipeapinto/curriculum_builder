@@ -1,0 +1,259 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="description" content="A practical, evidence-labelled guide to controlling token consumption in long-running Codex research and review tasks.">
+  <title>Controlling Token Use in Codex</title>
+  <style>
+    :root {
+      --ink: #172035;
+      --muted: #5d677c;
+      --paper: #ffffff;
+      --canvas: #f2f5f8;
+      --navy: #142c4c;
+      --blue: #1769aa;
+      --cyan: #1d91a6;
+      --green: #16765a;
+      --amber: #9b6411;
+      --red: #a43d43;
+      --line: #d8e0e8;
+      --soft-blue: #eaf4fb;
+      --soft-green: #e8f6f0;
+      --soft-amber: #fff5df;
+      --soft-red: #fff0f0;
+      --shadow: 0 18px 48px rgba(20, 44, 76, .10);
+    }
+    * { box-sizing: border-box; }
+    html { scroll-behavior: smooth; }
+    body {
+      margin: 0;
+      color: var(--ink);
+      background: var(--canvas);
+      font: 16px/1.62 Inter, ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+    }
+    a { color: var(--blue); text-underline-offset: 3px; }
+    a:hover { color: var(--navy); }
+    header {
+      color: white;
+      background:
+        radial-gradient(circle at 86% 10%, rgba(41, 184, 194, .32), transparent 30%),
+        linear-gradient(135deg, #10243f 0%, #173f69 70%, #12677a 100%);
+    }
+    .hero, main, footer { width: min(1120px, calc(100% - 40px)); margin: auto; }
+    .hero { padding: 72px 0 62px; }
+    .eyebrow { margin: 0 0 12px; color: #87dce4; font-size: .78rem; font-weight: 800; letter-spacing: .13em; text-transform: uppercase; }
+    h1 { max-width: 790px; margin: 0; font-size: clamp(2.35rem, 6vw, 4.65rem); line-height: 1.02; letter-spacing: -.045em; }
+    .dek { max-width: 760px; margin: 24px 0; color: #dcebf5; font-size: clamp(1.08rem, 2vw, 1.34rem); }
+    .meta { display: flex; flex-wrap: wrap; gap: 10px; }
+    .meta span { padding: 6px 10px; border: 1px solid rgba(255,255,255,.22); border-radius: 99px; background: rgba(255,255,255,.08); font-size: .82rem; }
+    nav { position: sticky; top: 0; z-index: 5; border-bottom: 1px solid var(--line); background: rgba(255,255,255,.94); backdrop-filter: blur(12px); }
+    nav .inner { width: min(1120px, calc(100% - 40px)); margin: auto; padding: 11px 0; overflow-x: auto; white-space: nowrap; }
+    nav a { margin-right: 21px; color: var(--navy); font-size: .86rem; font-weight: 750; text-decoration: none; }
+    main { padding: 44px 0 72px; }
+    section { margin: 0 0 56px; scroll-margin-top: 70px; }
+    h2 { margin: 0 0 16px; color: var(--navy); font-size: clamp(1.55rem, 3vw, 2.2rem); line-height: 1.18; letter-spacing: -.025em; }
+    h3 { margin: 0 0 8px; color: var(--navy); font-size: 1.08rem; }
+    p { margin: 0 0 16px; }
+    .lead { max-width: 850px; color: #38465d; font-size: 1.1rem; }
+    .decision {
+      display: grid;
+      grid-template-columns: 1.4fr .9fr;
+      gap: 28px;
+      padding: 30px;
+      border: 1px solid #b7ded1;
+      border-left: 7px solid var(--green);
+      border-radius: 14px;
+      background: var(--soft-green);
+      box-shadow: var(--shadow);
+    }
+    .decision strong.big { display: block; margin-bottom: 8px; color: #0d5b43; font-size: clamp(1.35rem, 3vw, 2rem); line-height: 1.2; }
+    .decision ul { margin: 0; padding-left: 20px; }
+    .meter { align-self: center; padding: 21px; border-radius: 12px; background: var(--paper); }
+    .meter-label { display: flex; justify-content: space-between; gap: 12px; font-size: .82rem; font-weight: 750; }
+    .bar { height: 13px; margin: 9px 0 12px; overflow: hidden; border-radius: 99px; background: #dce6e1; }
+    .bar span { display: block; width: 80%; height: 100%; background: linear-gradient(90deg, var(--green), #57ad7d); }
+    .meter small { display: block; color: var(--muted); }
+    .grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 18px; }
+    .card { padding: 22px; border: 1px solid var(--line); border-radius: 12px; background: var(--paper); box-shadow: 0 5px 18px rgba(20,44,76,.05); }
+    .tag { display: inline-block; margin-bottom: 13px; padding: 4px 8px; border-radius: 5px; font-size: .7rem; font-weight: 850; letter-spacing: .08em; text-transform: uppercase; }
+    .fact { color: #0f654c; background: var(--soft-green); }
+    .inference { color: #825308; background: var(--soft-amber); }
+    .unknown { color: #92343a; background: var(--soft-red); }
+    .flow { display: grid; grid-template-columns: 1fr 54px 1fr 54px 1fr; align-items: stretch; gap: 0; }
+    .flow .step { padding: 22px; border: 1px solid var(--line); border-radius: 12px; background: white; }
+    .flow .arrow { display: grid; place-items: center; color: var(--cyan); font-size: 1.8rem; font-weight: 800; }
+    .step b { display: block; margin-bottom: 7px; color: var(--navy); }
+    .callout { padding: 22px 24px; border-radius: 10px; background: var(--soft-blue); border-left: 5px solid var(--blue); }
+    .warning { background: var(--soft-amber); border-left-color: var(--amber); }
+    .table-wrap { overflow-x: auto; border: 1px solid var(--line); border-radius: 12px; background: white; }
+    table { width: 100%; min-width: 780px; border-collapse: collapse; }
+    th, td { padding: 14px 16px; border-bottom: 1px solid var(--line); text-align: left; vertical-align: top; }
+    th { color: var(--navy); background: #eef3f7; font-size: .76rem; letter-spacing: .06em; text-transform: uppercase; }
+    tr:last-child td { border-bottom: 0; }
+    td:first-child { font-weight: 750; }
+    code { padding: .12em .35em; border-radius: 4px; color: var(--navy); background: #e9eef3; font: .88em ui-monospace, SFMono-Regular, Menlo, monospace; }
+    ol, ul { padding-left: 1.35rem; }
+    li + li { margin-top: .5rem; }
+    .checklist { columns: 2; column-gap: 42px; }
+    .checklist li { break-inside: avoid; margin-bottom: 10px; }
+    .sources li { margin-bottom: 10px; }
+    footer { padding-bottom: 48px; color: var(--muted); font-size: .84rem; }
+    @media (max-width: 820px) {
+      .decision, .grid { grid-template-columns: 1fr; }
+      .flow { grid-template-columns: 1fr; gap: 10px; }
+      .flow .arrow { transform: rotate(90deg); }
+      .checklist { columns: 1; }
+    }
+    @media print {
+      nav { display: none; }
+      body { background: white; font-size: 11pt; }
+      .hero { padding: 34px 0; }
+      main { padding-top: 28px; }
+      section { break-inside: avoid; margin-bottom: 32px; }
+      .card, .decision { box-shadow: none; }
+    }
+  </style>
+</head>
+<body>
+  <header>
+    <div class="hero">
+      <p class="eyebrow">Research note · practical control design</p>
+      <h1>Controlling Token Use in Codex</h1>
+      <p class="dek">How to keep a long-running review within an explicit token ceiling—without assuming that parallel agents, external tools, or account limits are automatically included.</p>
+      <div class="meta"><span>Version 1</span><span>18 August 2026</span><span>Scope: Codex goals, fan-out, and spend controls</span></div>
+    </div>
+  </header>
+
+  <nav aria-label="Page contents"><div class="inner">
+    <a href="#answer">Answer</a><a href="#model">Control model</a><a href="#evidence">Evidence</a><a href="#strategies">Strategies</a><a href="#limits">What does not work</a><a href="#application">Apply it</a><a href="#sources">Sources</a>
+  </div></nav>
+
+  <main>
+    <section id="answer">
+      <div class="decision">
+        <div>
+          <strong class="big">Recommended: one budgeted goal, one Codex thread, no fan-out.</strong>
+          <p>This is the clearest native way to bound the review. Create the goal before substantive work, keep all model activity in the same thread, check usage during execution, and stop collection before the hard ceiling.</p>
+          <ul>
+            <li>Use the goal’s token accounting as the task-level control.</li>
+            <li>Stop new research at 80% and reserve the remainder for synthesis and verification.</li>
+            <li>Track paid tools and other non-token charges separately.</li>
+          </ul>
+        </div>
+        <div class="meter" aria-label="Recommended budget allocation">
+          <div class="meter-label"><span>Collection stop</span><span>80%</span></div>
+          <div class="bar"><span></span></div>
+          <small>The final 20% remains available for consolidation, challenge, validation, and reporting.</small>
+        </div>
+      </div>
+    </section>
+
+    <section id="model">
+      <h2>The control boundary</h2>
+      <p class="lead">A Codex goal is associated with a thread. That makes it useful for controlling work inside that thread, but it should not be treated as a universal meter for everything connected to the task.</p>
+      <div class="flow" role="img" aria-label="Budget flows from a task authorization to one Codex goal and then to controlled work in one thread">
+        <div class="step"><b>1 · Authorize</b>Set an explicit task objective and token ceiling before the review begins.</div>
+        <div class="arrow" aria-hidden="true">→</div>
+        <div class="step"><b>2 · Execute</b>Keep research, synthesis, and verification inside the same budgeted thread.</div>
+        <div class="arrow" aria-hidden="true">→</div>
+        <div class="step"><b>3 · Stop</b>Query usage, stop collection at 80%, and do not exceed the authorized ceiling.</div>
+      </div>
+      <div class="callout warning" style="margin-top:18px">
+        <strong>Important boundary:</strong> a fork receives a new thread identity. No reviewed official source establishes that child or parallel-thread usage automatically rolls into the parent goal. External model calls and separately priced tools also require their own accounting.
+      </div>
+    </section>
+
+    <section id="evidence">
+      <h2>What is known—and what is not</h2>
+      <div class="grid">
+        <article class="card"><span class="tag fact">Documented</span><h3>Goal accounting exists</h3><p>Codex goal state can include a token budget, tokens used, and elapsed-time usage, and it is associated with a thread ID.</p></article>
+        <article class="card"><span class="tag inference">Conservative inference</span><h3>Thread scope matters</h3><p>Because forks receive new thread IDs, parent accounting cannot safely be assumed to include forked, spawned, or parallel execution.</p></article>
+        <article class="card"><span class="tag unknown">Not established</span><h3>Automatic fan-out roll-up</h3><p>The reviewed public documentation does not state that subagent or external-tool token usage is automatically aggregated into a root goal.</p></article>
+      </div>
+      <div class="table-wrap" style="margin-top:18px">
+        <table>
+          <thead><tr><th>ID</th><th>Finding</th><th>Status</th><th>Operational meaning</th></tr></thead>
+          <tbody>
+            <tr><td>CBT-01–03</td><td>Goal management and usage fields are tied to a thread.</td><td>Documented</td><td>A goal is the strongest native control identified for one-thread work.</td></tr>
+            <tr><td>CBT-04</td><td>A fork creates a new thread ID while retaining the root session ID.</td><td>Documented</td><td>Session relationship does not itself prove shared budget accounting.</td></tr>
+            <tr><td>CBT-05–06</td><td>Goal usage can persist across updates; session/account usage is observable.</td><td>Documented</td><td>Observability supports enforcement, but is not the stop rule by itself.</td></tr>
+            <tr><td>CBT-07–09</td><td>Same-thread context likely counts; fan-out and external calls may fall outside root accounting.</td><td>Inference</td><td>Design conservatively and maintain an aggregate ledger when work leaves the thread.</td></tr>
+            <tr><td>CBT-10–11</td><td>Token goals are not universal monetary controls; account limits are outer controls.</td><td>Mixed</td><td>Track external spend and tool-specific consumption as separate budget classes.</td></tr>
+          </tbody>
+        </table>
+      </div>
+    </section>
+
+    <section id="strategies">
+      <h2>Three workable strategies</h2>
+      <div class="grid">
+        <article class="card">
+          <span class="tag fact">Recommended</span>
+          <h3>A · Single budgeted goal</h3>
+          <p>Use one thread for inspection, research, synthesis, challenge, and verification. Disable fan-out and monitor the goal’s remaining budget.</p>
+        </article>
+        <article class="card">
+          <span class="tag inference">More administration</span>
+          <h3>B · Partitioned fan-out</h3>
+          <p>Give the controller and every child explicit allocations whose sum cannot exceed the overall ceiling. Record each child’s final usage in one ledger.</p>
+        </article>
+        <article class="card">
+          <span class="tag inference">Most exact</span>
+          <h3>C · API request controller</h3>
+          <p>Count each request, cap its output, reject unaffordable calls before sending them, and add reported usage—including retries and graders—to a shared ledger.</p>
+        </article>
+      </div>
+    </section>
+
+    <section id="limits">
+      <h2>Controls that are not enough</h2>
+      <div class="table-wrap">
+        <table>
+          <thead><tr><th>Control</th><th>Why it is insufficient</th></tr></thead>
+          <tbody>
+            <tr><td>A YAML or Markdown ceiling</td><td>It records policy but does not mechanically stop model execution.</td></tr>
+            <tr><td>Tokens or requests per minute</td><td>Rate limits control throughput, not the total consumption of a long task.</td></tr>
+            <tr><td><code>/status</code> or usage reporting</td><td>Measurement is observability; it becomes a control only when paired with a stop rule.</td></tr>
+            <tr><td>Account exhaustion</td><td>It is a broad backstop, not a dependable per-task allocation.</td></tr>
+            <tr><td>A smaller model</td><td>It may reduce consumption, but it does not impose a hard ceiling.</td></tr>
+          </tbody>
+        </table>
+      </div>
+    </section>
+
+    <section id="application">
+      <h2>Apply this to the full review</h2>
+      <p class="lead">The review currently proposes a ceiling of 1,000,000 tokens and 160 judgment-bearing model calls. Those numbers become enforceable only when connected to runtime accounting.</p>
+      <div class="callout">
+        <strong>Required execution decision:</strong> bind the review to one budgeted Codex goal and keep fan-out disabled, or execute it through a controlled API/SDK path. If an independent child lane is required, authorize a separate child allocation and include it in the aggregate ledger.
+      </div>
+      <h3 style="margin-top:24px">Start-of-run checklist</h3>
+      <ol class="checklist">
+        <li>Record the objective and authorized ceiling.</li>
+        <li>Create the goal before substantive model work.</li>
+        <li>Choose one-thread or explicitly partitioned execution.</li>
+        <li>Reserve 20% for synthesis and verification.</li>
+        <li>Record externally metered tools separately.</li>
+        <li>Include retries, graders, and challengers in accounting.</li>
+        <li>Stop if usage cannot be retrieved.</li>
+        <li>Record final usage and terminal status.</li>
+      </ol>
+    </section>
+
+    <section id="sources">
+      <h2>Official sources reviewed</h2>
+      <ol class="sources">
+        <li>OpenAI, <a href="https://learn.chatgpt.com/docs/long-running-work">Long-running work</a>.</li>
+        <li>OpenAI, <a href="https://developers.openai.com/codex/app-server">Codex App Server</a>.</li>
+        <li>OpenAI, <a href="https://learn.chatgpt.com/docs/pricing">Codex pricing and usage</a>.</li>
+        <li>OpenAI, <a href="https://developers.openai.com/api/docs/guides/token-counting">Counting tokens</a>.</li>
+        <li>OpenAI, <a href="https://learn.chatgpt.com/docs/enterprise/usage-limits">ChatGPT usage limits and spend controls</a>.</li>
+      </ol>
+      <p><strong>Research limitation:</strong> public documentation reviewed for version 1 did not establish automatic parent-budget aggregation across spawned or forked threads. Until that behavior is explicitly documented or verified, this report treats fan-out as outside the parent’s guaranteed accounting boundary.</p>
+    </section>
+  </main>
+
+  <footer>Codex token-budget controls · Version 1 · Evidence labels distinguish documented behavior, conservative inference, and unresolved questions.</footer>
+</body>
+</html>

@@ -1,0 +1,309 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="description" content="Generic research on keeping any long-running Codex task within an explicit token ceiling across threads, forks, subagents, tools, and account controls.">
+  <title>Controlling Token Use in Long-Running Codex Tasks — Version 3</title>
+  <style>
+    :root {
+      --ink: #172035;
+      --muted: #5d677c;
+      --paper: #ffffff;
+      --canvas: #f2f5f8;
+      --navy: #142c4c;
+      --blue: #1769aa;
+      --cyan: #1d91a6;
+      --green: #16765a;
+      --amber: #9b6411;
+      --red: #a43d43;
+      --line: #d8e0e8;
+      --soft-blue: #eaf4fb;
+      --soft-green: #e8f6f0;
+      --soft-amber: #fff5df;
+      --soft-red: #fff0f0;
+      --shadow: 0 18px 48px rgba(20, 44, 76, .10);
+    }
+    * { box-sizing: border-box; }
+    html { scroll-behavior: smooth; }
+    body {
+      margin: 0;
+      color: var(--ink);
+      background: var(--canvas);
+      font: 16px/1.62 Inter, ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+    }
+    a { color: var(--blue); text-underline-offset: 3px; }
+    a:hover { color: var(--navy); }
+    header {
+      color: white;
+      background:
+        radial-gradient(circle at 86% 10%, rgba(41, 184, 194, .32), transparent 30%),
+        linear-gradient(135deg, #10243f 0%, #173f69 70%, #12677a 100%);
+    }
+    .hero, main, footer { width: min(1120px, calc(100% - 40px)); margin: auto; }
+    .hero { padding: 72px 0 62px; }
+    .eyebrow { margin: 0 0 12px; color: #87dce4; font-size: .78rem; font-weight: 800; letter-spacing: .13em; text-transform: uppercase; }
+    h1 { max-width: 790px; margin: 0; font-size: clamp(2.35rem, 6vw, 4.65rem); line-height: 1.02; letter-spacing: -.045em; }
+    .dek { max-width: 760px; margin: 24px 0; color: #dcebf5; font-size: clamp(1.08rem, 2vw, 1.34rem); }
+    .meta { display: flex; flex-wrap: wrap; gap: 10px; }
+    .meta span { padding: 6px 10px; border: 1px solid rgba(255,255,255,.22); border-radius: 99px; background: rgba(255,255,255,.08); font-size: .82rem; }
+    nav { position: sticky; top: 0; z-index: 5; border-bottom: 1px solid var(--line); background: rgba(255,255,255,.94); backdrop-filter: blur(12px); }
+    nav .inner { width: min(1120px, calc(100% - 40px)); margin: auto; padding: 11px 0; overflow-x: auto; white-space: nowrap; }
+    nav a { margin-right: 21px; color: var(--navy); font-size: .86rem; font-weight: 750; text-decoration: none; }
+    main { padding: 44px 0 72px; }
+    section { margin: 0 0 56px; scroll-margin-top: 70px; }
+    h2 { margin: 0 0 16px; color: var(--navy); font-size: clamp(1.55rem, 3vw, 2.2rem); line-height: 1.18; letter-spacing: -.025em; }
+    h3 { margin: 0 0 8px; color: var(--navy); font-size: 1.08rem; }
+    p { margin: 0 0 16px; }
+    .lead { max-width: 850px; color: #38465d; font-size: 1.1rem; }
+    .decision {
+      display: grid;
+      grid-template-columns: 1.4fr .9fr;
+      gap: 28px;
+      padding: 30px;
+      border: 1px solid #b7ded1;
+      border-left: 7px solid var(--green);
+      border-radius: 14px;
+      background: var(--soft-green);
+      box-shadow: var(--shadow);
+    }
+    .decision strong.big { display: block; margin-bottom: 8px; color: #0d5b43; font-size: clamp(1.35rem, 3vw, 2rem); line-height: 1.2; }
+    .decision ul { margin: 0; padding-left: 20px; }
+    .meter { align-self: center; padding: 21px; border-radius: 12px; background: var(--paper); }
+    .meter-label { display: flex; justify-content: space-between; gap: 12px; font-size: .82rem; font-weight: 750; }
+    .bar { height: 13px; margin: 9px 0 12px; overflow: hidden; border-radius: 99px; background: #dce6e1; }
+    .bar span { display: block; width: 80%; height: 100%; background: linear-gradient(90deg, var(--green), #57ad7d); }
+    .meter small { display: block; color: var(--muted); }
+    .grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 18px; }
+    .card { padding: 22px; border: 1px solid var(--line); border-radius: 12px; background: var(--paper); box-shadow: 0 5px 18px rgba(20,44,76,.05); }
+    .tag { display: inline-block; margin-bottom: 13px; padding: 4px 8px; border-radius: 5px; font-size: .7rem; font-weight: 850; letter-spacing: .08em; text-transform: uppercase; }
+    .fact { color: #0f654c; background: var(--soft-green); }
+    .inference { color: #825308; background: var(--soft-amber); }
+    .unknown { color: #92343a; background: var(--soft-red); }
+    .flow { display: grid; grid-template-columns: 1fr 54px 1fr 54px 1fr; align-items: stretch; gap: 0; }
+    .flow .step { padding: 22px; border: 1px solid var(--line); border-radius: 12px; background: white; }
+    .flow .arrow { display: grid; place-items: center; color: var(--cyan); font-size: 1.8rem; font-weight: 800; }
+    .step b { display: block; margin-bottom: 7px; color: var(--navy); }
+    .callout { padding: 22px 24px; border-radius: 10px; background: var(--soft-blue); border-left: 5px solid var(--blue); }
+    .warning { background: var(--soft-amber); border-left-color: var(--amber); }
+    .table-wrap { overflow-x: auto; border: 1px solid var(--line); border-radius: 12px; background: white; }
+    table { width: 100%; min-width: 780px; border-collapse: collapse; }
+    th, td { padding: 14px 16px; border-bottom: 1px solid var(--line); text-align: left; vertical-align: top; }
+    th { color: var(--navy); background: #eef3f7; font-size: .76rem; letter-spacing: .06em; text-transform: uppercase; }
+    tr:last-child td { border-bottom: 0; }
+    td:first-child { font-weight: 750; }
+    code { padding: .12em .35em; border-radius: 4px; color: var(--navy); background: #e9eef3; font: .88em ui-monospace, SFMono-Regular, Menlo, monospace; }
+    ol, ul { padding-left: 1.35rem; }
+    li + li { margin-top: .5rem; }
+    .checklist { columns: 2; column-gap: 42px; }
+    .checklist li { break-inside: avoid; margin-bottom: 10px; }
+    .sources li { margin-bottom: 10px; }
+    .term { padding-top: 4px; }
+    .term dt { margin-top: 18px; color: var(--navy); font-weight: 800; }
+    .term dd { margin: 3px 0 0; color: #38465d; }
+    .example { margin-top: 12px; padding: 14px 16px; border-radius: 8px; background: #f5f7fa; color: #354258; font-size: .92rem; }
+    .not-equal { color: var(--red); font-weight: 850; }
+    footer { padding-bottom: 48px; color: var(--muted); font-size: .84rem; }
+    @media (max-width: 820px) {
+      .decision, .grid { grid-template-columns: 1fr; }
+      .flow { grid-template-columns: 1fr; gap: 10px; }
+      .flow .arrow { transform: rotate(90deg); }
+      .checklist { columns: 1; }
+    }
+    @media print {
+      nav { display: none; }
+      body { background: white; font-size: 11pt; }
+      .hero { padding: 34px 0; }
+      main { padding-top: 28px; }
+      section { break-inside: avoid; margin-bottom: 32px; }
+      .card, .decision { box-shadow: none; }
+    }
+  </style>
+</head>
+<body>
+  <header>
+    <div class="hero">
+      <p class="eyebrow">Generic research · terminology and practical control design</p>
+      <h1>Controlling Token Use in Long-Running Codex Tasks</h1>
+      <p class="dek">How to keep a long-running task within an explicit token ceiling—without assuming that parallel agents, external tools, or account limits are automatically included.</p>
+      <div class="meta"><span>Version 3</span><span>18 August 2026</span><span>Applies to any long-running task</span><span>Scope: goals, threads, forks, subagents, fan-out, tools, and outer limits</span></div>
+    </div>
+  </header>
+
+  <nav aria-label="Page contents"><div class="inner">
+    <a href="#answer">Answer</a><a href="#concepts">Key concepts</a><a href="#fork-vs-fanout">Fork vs. fan-out</a><a href="#model">Control model</a><a href="#evidence">Evidence</a><a href="#strategies">Strategies</a><a href="#limits">What does not work</a><a href="#application">Apply it</a><a href="#sources">Sources</a>
+  </div></nav>
+
+  <main>
+    <section id="answer">
+      <div class="decision">
+        <div>
+          <strong class="big">Recommended: one budgeted goal, one Codex thread, no fan-out.</strong>
+          <p>This is the clearest native way to bound a long-running task. Create the goal before substantive work, keep all model activity in the same thread, check usage during execution, and stop optional work before the hard ceiling.</p>
+          <ul>
+            <li>Use the goal’s token accounting as the task-level control.</li>
+            <li>Stop starting optional work at 80% and reserve the remainder for integration, validation, and final delivery.</li>
+            <li>Track paid tools and other non-token charges separately.</li>
+          </ul>
+        </div>
+        <div class="meter" aria-label="Recommended budget allocation">
+          <div class="meter-label"><span>Optional-work stop</span><span>80%</span></div>
+          <div class="bar"><span></span></div>
+          <small>The final 20% remains available for integration, correction, validation, and delivery of the required output.</small>
+        </div>
+      </div>
+    </section>
+
+    <section id="concepts">
+      <h2>Key concepts in plain language</h2>
+      <p class="lead">These words describe different layers of execution. Treating them as synonyms makes token accounting unreliable.</p>
+      <div class="grid">
+        <article class="card"><span class="tag fact">Conversation unit</span><h3>Thread</h3><p>A stored conversation history with its own thread ID. Turns happen inside a thread. A new thread, a forked thread, and a subagent thread are separate accounting boundaries unless the product explicitly says otherwise.</p></article>
+        <article class="card"><span class="tag fact">Work unit</span><h3>Turn</h3><p>One user instruction and the resulting model/tool activity inside a thread. A thread normally contains multiple turns.</p></article>
+        <article class="card"><span class="tag fact">Budgeted objective</span><h3>Goal</h3><p>A persisted objective attached to one thread. Goal state can carry a token budget, tokens used, elapsed time, and completion status.</p></article>
+        <article class="card"><span class="tag fact">History branch</span><h3>Fork</h3><p>A new thread created by copying the stored history of an existing thread, optionally only through a selected turn. It begins with inherited conversational context but receives a new thread ID.</p></article>
+        <article class="card"><span class="tag fact">Delegated worker</span><h3>Subagent</h3><p>A separate agent started for a bounded task. It performs its own model and tool work in its own agent thread, then returns a result or summary to the main agent.</p></article>
+        <article class="card"><span class="tag inference">Workflow shape</span><h3>Fan-out</h3><p>A one-to-many orchestration pattern: the main agent delegates several independent tasks, often to several subagents, and later combines their results. Fan-out describes the pattern, not a specific thread API operation.</p></article>
+      </div>
+      <dl class="term">
+        <dt>Session</dt><dd>The broader running interaction or orchestration container. It may contain a primary thread and spawned descendant threads. Sharing a session does not prove that those threads share one token budget.</dd>
+        <dt>Tool call</dt><dd>An operation requested by an agent, such as searching, running a command, or calling an MCP connector. A tool call is not automatically a new thread. A tool may, however, invoke external metered services whose cost is not covered by the thread’s model-token counter.</dd>
+        <dt>Context</dt><dd>The information available to the model for a turn: instructions, conversation history, selected files, tool results, and other injected material. More context can increase input-token consumption.</dd>
+        <dt>Aggregate ledger</dt><dd>A task-owned record that adds together usage from the main thread, every separately budgeted child thread, retries, evaluators, and externally metered services.</dd>
+      </dl>
+    </section>
+
+    <section id="fork-vs-fanout">
+      <h2>Fork, spawn, and fan-out are different</h2>
+      <div class="table-wrap">
+        <table>
+          <thead><tr><th>Concept</th><th>What happens</th><th>When it happens</th><th>History/context</th><th>Budget consequence</th></tr></thead>
+          <tbody>
+            <tr><td>Continue the same thread</td><td>The next turn is added to the existing conversation.</td><td>Normal back-and-forth work.</td><td>Uses the same stored thread history.</td><td>Best fit for one thread-scoped goal.</td></tr>
+            <tr><td>Start a new thread</td><td>A separate conversation is created.</td><td>A user or client intentionally starts unrelated or clean-context work.</td><td>Does not copy the old thread’s history by default.</td><td>Do not assume the old thread’s goal covers it.</td></tr>
+            <tr><td>Fork a thread</td><td>The client calls <code>thread/fork</code>, copying stored history into a new thread ID.</td><td>A user, client, or orchestration layer deliberately branches from an existing conversation—often to explore an alternative without changing the original.</td><td>Copies history through the chosen point; later turns may be excluded.</td><td>The fork is a new thread. Give it its own allocation unless roll-up is explicitly guaranteed.</td></tr>
+            <tr><td>Spawn one subagent</td><td>Codex delegates a bounded task to another agent thread.</td><td>The user directly asks for delegation, or applicable project/skill instructions require it. Some supported high-intelligence modes may delegate proactively.</td><td>The subagent receives task context selected or inherited by orchestration; it is not simply the parent transcript continuing.</td><td>The subagent performs its own model work and consumes additional tokens.</td></tr>
+            <tr><td>Fan out</td><td>The controller spawns or coordinates multiple independent workers, sometimes concurrently, then gathers their results.</td><td>The task has genuinely separable lanes—for example, file discovery, implementation, testing, and documentation.</td><td>Each worker has its own working context/thread.</td><td>Partition the total budget across controller and children; sum usage in a ledger.</td></tr>
+          </tbody>
+        </table>
+      </div>
+      <div class="callout warning" style="margin-top:18px">
+        <strong class="not-equal">Fork ≠ fan-out.</strong> A fork is one explicit way to branch one thread’s history into another thread. Fan-out is the broader pattern of distributing work to multiple lanes. A fan-out may spawn several subagents without using <code>thread/fork</code> at all.
+      </div>
+      <div class="grid" style="margin-top:18px">
+        <article class="card"><h3>Fork example</h3><p>“Take our conversation through the architecture decision and explore PostgreSQL in one branch while leaving the original intact.”</p><div class="example">One parent history → one new branch with copied history.</div></article>
+        <article class="card"><h3>Single-subagent example</h3><p>“Delegate a read-only dependency scan to one specialist and return its findings here.”</p><div class="example">One primary thread → one bounded worker thread → one returned summary.</div></article>
+        <article class="card"><h3>Fan-out example</h3><p>“Use separate agents for security, test coverage, and documentation, then synthesize all three.”</p><div class="example">One controller → three worker threads → one combined result.</div></article>
+      </div>
+      <p style="margin-top:18px"><strong>Does the agent fork automatically?</strong> Do not assume so. The documented App Server operation is an explicit <code>thread/fork</code> request. Documented local subagent behavior is triggered by a direct delegation request or applicable project/skill instruction; supported proactive modes are a separate product behavior. Spawning a subagent creates a worker thread, but that should not be casually described as “forking” unless stored parent history was actually copied through the fork operation.</p>
+    </section>
+
+    <section id="model">
+      <h2>The control boundary</h2>
+      <p class="lead">A Codex goal is associated with a thread. That makes it useful for controlling work inside that thread, but it should not be treated as a universal meter for forks, subagent threads, or external services connected to the same larger task.</p>
+      <div class="flow" role="img" aria-label="Budget flows from a task authorization to one Codex goal and then to controlled work in one thread">
+        <div class="step"><b>1 · Authorize</b>Set an explicit objective, definition of done, and token ceiling before the task begins.</div>
+        <div class="arrow" aria-hidden="true">→</div>
+        <div class="step"><b>2 · Execute</b>Keep planning, implementation, integration, and validation inside the same budgeted thread.</div>
+        <div class="arrow" aria-hidden="true">→</div>
+        <div class="step"><b>3 · Stop</b>Query usage, stop optional work at 80%, finish the required output, and do not exceed the authorized ceiling.</div>
+      </div>
+      <div class="callout warning" style="margin-top:18px">
+        <strong>Important boundary:</strong> a fork receives a new thread identity, and a subagent performs work in its own agent thread. No official source examined establishes that child or parallel-thread usage automatically rolls into the parent goal. External model calls and separately priced tools also require their own accounting.
+      </div>
+    </section>
+
+    <section id="evidence">
+      <h2>What is known—and what is not</h2>
+      <div class="grid">
+        <article class="card"><span class="tag fact">Documented</span><h3>Goal accounting exists</h3><p>Codex goal state can include a token budget, tokens used, and elapsed-time usage, and it is associated with a thread ID.</p></article>
+        <article class="card"><span class="tag inference">Conservative inference</span><h3>Thread scope matters</h3><p>Because forks receive new thread IDs, parent accounting cannot safely be assumed to include forked, spawned, or parallel execution.</p></article>
+        <article class="card"><span class="tag unknown">Not established</span><h3>Automatic fan-out roll-up</h3><p>The public documentation examined does not state that subagent or external-tool token usage is automatically aggregated into a root goal.</p></article>
+      </div>
+      <div class="table-wrap" style="margin-top:18px">
+        <table>
+          <thead><tr><th>ID</th><th>Finding</th><th>Status</th><th>Operational meaning</th></tr></thead>
+          <tbody>
+            <tr><td>CBT-01–03</td><td>Goal management and usage fields are tied to a thread.</td><td>Documented</td><td>A goal is the strongest native control identified for one-thread work.</td></tr>
+            <tr><td>CBT-04</td><td>A fork creates a new thread ID while retaining the root session ID.</td><td>Documented</td><td>Session relationship does not itself prove shared budget accounting.</td></tr>
+            <tr><td>CBT-05–06</td><td>Goal usage can persist across updates; session/account usage is observable.</td><td>Documented</td><td>Observability supports enforcement, but is not the stop rule by itself.</td></tr>
+            <tr><td>CBT-07–09</td><td>Same-thread context likely counts; fan-out and external calls may fall outside root accounting.</td><td>Inference</td><td>Design conservatively and maintain an aggregate ledger when work leaves the thread.</td></tr>
+            <tr><td>CBT-10–11</td><td>Token goals are not universal monetary controls; account limits are outer controls.</td><td>Mixed</td><td>Track external spend and tool-specific consumption as separate budget classes.</td></tr>
+          </tbody>
+        </table>
+      </div>
+    </section>
+
+    <section id="strategies">
+      <h2>Three workable strategies</h2>
+      <div class="grid">
+        <article class="card">
+          <span class="tag fact">Recommended</span>
+          <h3>A · Single budgeted goal</h3>
+          <p>Use one thread for planning, inspection, execution, integration, validation, and delivery. Disable fan-out and monitor the goal’s remaining budget.</p>
+        </article>
+        <article class="card">
+          <span class="tag inference">More administration</span>
+          <h3>B · Partitioned fan-out</h3>
+          <p>Give the controller and every child explicit allocations whose sum cannot exceed the overall ceiling. Record each child’s final usage in one ledger.</p>
+        </article>
+        <article class="card">
+          <span class="tag inference">Most exact</span>
+          <h3>C · API request controller</h3>
+          <p>Count each request, cap its output, reject unaffordable calls before sending them, and add reported usage—including retries and evaluators—to a shared ledger.</p>
+        </article>
+      </div>
+    </section>
+
+    <section id="limits">
+      <h2>Controls that are not enough</h2>
+      <div class="table-wrap">
+        <table>
+          <thead><tr><th>Control</th><th>Why it is insufficient</th></tr></thead>
+          <tbody>
+            <tr><td>A YAML or Markdown ceiling</td><td>It records policy but does not mechanically stop model execution.</td></tr>
+            <tr><td>Tokens or requests per minute</td><td>Rate limits control throughput, not the total consumption of a long task.</td></tr>
+            <tr><td><code>/status</code> or usage reporting</td><td>Measurement is observability; it becomes a control only when paired with a stop rule.</td></tr>
+            <tr><td>Account exhaustion</td><td>It is a broad backstop, not a dependable per-task allocation.</td></tr>
+            <tr><td>A smaller model</td><td>It may reduce consumption, but it does not impose a hard ceiling.</td></tr>
+          </tbody>
+        </table>
+      </div>
+    </section>
+
+    <section id="application">
+      <h2>Apply this to any long-running task</h2>
+      <p class="lead">A token ceiling written in a prompt, plan, Markdown file, or YAML file is only a policy statement. It becomes an operational control when it is connected to runtime accounting and an explicit stop rule.</p>
+      <div class="callout">
+        <strong>Required execution decision:</strong> bind the task to one budgeted Codex goal and keep fan-out disabled, or execute it through a controlled API/SDK path. If child lanes are necessary, authorize each child allocation before it starts and include every lane in the aggregate ledger.
+      </div>
+      <h3 style="margin-top:24px">Start-of-run checklist</h3>
+      <ol class="checklist">
+        <li>Record the objective and authorized ceiling.</li>
+        <li>Create the goal before substantive model work.</li>
+        <li>Choose one-thread or explicitly partitioned execution.</li>
+        <li>Reserve 20% for integration, validation, correction, and delivery.</li>
+        <li>Record externally metered tools separately.</li>
+        <li>Include retries, evaluators, and child workers in accounting.</li>
+        <li>Stop if usage cannot be retrieved.</li>
+        <li>Record final usage and terminal status.</li>
+      </ol>
+    </section>
+
+    <section id="sources">
+      <h2>Official sources and current manual sections consulted</h2>
+      <ol class="sources">
+        <li>OpenAI, <a href="https://learn.chatgpt.com/docs/long-running-work">Long-running work</a>.</li>
+        <li>OpenAI, <a href="https://developers.openai.com/codex/app-server">Codex App Server</a>.</li>
+        <li>OpenAI, <a href="https://learn.chatgpt.com/docs/pricing">Codex pricing and usage</a>.</li>
+        <li>OpenAI, <a href="https://developers.openai.com/api/docs/guides/token-counting">Counting tokens</a>.</li>
+        <li>OpenAI, <a href="https://learn.chatgpt.com/docs/enterprise/usage-limits">ChatGPT usage limits and spend controls</a>.</li>
+        <li>OpenAI, <a href="https://learn.chatgpt.com/docs/agent-configuration/subagents">Subagents</a>.</li>
+      </ol>
+      <p><strong>Research limitation:</strong> the public documentation examined did not establish automatic parent-budget aggregation across spawned or forked threads. Until that behavior is explicitly documented or verified, this report treats fan-out as outside the parent’s guaranteed accounting boundary.</p>
+    </section>
+  </main>
+
+  <footer>Codex token-budget controls for long-running tasks · Version 3 · Evidence labels distinguish documented behavior, conservative inference, and unresolved questions.</footer>
+</body>
+</html>
