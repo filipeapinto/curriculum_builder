@@ -365,6 +365,16 @@ than one system's guide.
   reader meets before reaching a single word of content. Grep the whole page
   for the previous version string and the previous revision hash before
   shipping, and update every occurrence together, not just the table.
+- If a changelog entry cites a running total (gaps closed to date, files
+  inspected, whatever cumulative count), state it as a single carried-forward
+  number — this version's total is last version's stated total plus this
+  round's own delta, taken as already-settled fact, not re-derived by
+  re-summing every prior round from scratch. State that arithmetic once. A
+  sentence that restates the same total three different ways — as an opening
+  count, then as a supporting sum, then as a closing figure — multiplies the
+  chances one phrasing drifts from the other two, which is exactly how this
+  defect has recurred even in versions written specifically to fix it. One
+  number, stated once, is not a simplification here; it is the fix.
 
 Regeneration throws away correct, reviewed work and rewrites it into slightly
 different words, which makes the diff unreadable and hides the real change.
