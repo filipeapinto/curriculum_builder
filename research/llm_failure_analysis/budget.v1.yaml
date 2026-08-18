@@ -1,0 +1,51 @@
+# yaml-language-server: $schema=../../schemas/limits.schema.v1.json
+limits_version: "1.0"
+schema: schemas/limits.schema.v1.json
+per_lab:
+  fully_assessed_external_sources:
+    value: 12
+    flag: --max-assessed-sources
+    rationale: Enough full assessments to calibrate evidence quality and extraction effort.
+per_run:
+  elapsed_hours:
+    value: 4
+    flag: --max-elapsed-hours
+    rationale: Bounds the preliminary study before protocol approval is required.
+  external_candidate_sources:
+    value: 30
+    flag: --max-candidate-sources
+    rationale: Provides a useful pilot yield without silently expanding into the full review.
+  model_calls:
+    value: 40
+    flag: --max-model-calls
+    rationale: Caps judgment-bearing operations during the preliminary research phase.
+  model_tokens:
+    value: 250000
+    flag: --max-model-tokens
+    rationale: Prevents the motivating pattern of unbounded token consumption.
+  concurrency:
+    value: 1
+    flag: --max-concurrency
+    rationale: Keeps this preliminary execution sequential and its evidence trail easy to audit.
+  external_spend_usd:
+    value: 25
+    flag: --max-external-spend-usd
+    rationale: Bounds metered external cost when reliable spend telemetry is available.
+convergence:
+  stop_threshold_percent:
+    value: 80
+    flag: --stop-threshold-percent
+    rationale: Stops new collection early enough to consolidate evidence before a hard ceiling.
+  successive_searches_without_new_concept_class:
+    value: 2
+    flag: --max-saturated-searches
+    rationale: Implements the terminology-map saturation rule stated in the approved plan.
+retry:
+  retries_per_failed_activity:
+    value: 2
+    flag: --max-retries
+    rationale: Each retry requires a recorded failure and a materially changed approach.
+behaviour_on_limit:
+  - Stop initiating new collection when any measured limit reaches eighty percent and consolidate the evidence already gathered.
+  - Stop the preliminary study when a hard limit is reached; record the terminal reason and preserve all completed evidence products.
+  - Escalate to the human research owner when telemetry is unavailable, evidence is inadequate, or additional authority is required.
