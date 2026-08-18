@@ -87,6 +87,19 @@ difference is real. Re-run this pass after any late edit, not only once
 before the first Verify: a fix made to resolve one contradiction can silently
 introduce another if the surrounding claims aren't re-checked too.
 
+This exact failure mode — fixing the passage a reviewer pointed at while
+leaving an echo of the old, wrong claim sitting in a table row, a triage
+bullet, or a footnote elsewhere — is the single most-recurring defect across
+review rounds of this skill, including in guides that had already applied
+this rule. Treat it accordingly: a correction is not done when the box you
+found the contradiction in reads right, it is done when you have grepped the
+whole document for the fact you just changed (the node name, the exit code,
+the mechanism's old description) and patched every place it appears,
+including cross-reference tables, footnotes, glossary entries and the
+changelog's own claim about what got fixed. If the changelog says "the
+exit-code table is now corrected to match," that claim is a promise the grep
+must actually verify, not a summary to write on faith.
+
 A table that claims exhaustive coverage — "every node," "the full N-member
 set," a predecessor/successor column meant to make every ID lookupable — is a
 correctness claim about completeness itself, and spot-fixing one reported row
