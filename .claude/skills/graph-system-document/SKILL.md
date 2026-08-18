@@ -87,6 +87,19 @@ difference is real. Re-run this pass after any late edit, not only once
 before the first Verify: a fix made to resolve one contradiction can silently
 introduce another if the surrounding claims aren't re-checked too.
 
+A table that claims exhaustive coverage — "every node," "the full N-member
+set," a predecessor/successor column meant to make every ID lookupable — is a
+correctness claim about completeness itself, and spot-fixing one reported row
+leaves the same claim false everywhere else it wasn't checked. Derive that
+kind of table from the union of every distinct edge-declaring structure in
+the code (static guard tables, dynamic dispatch tuples, unconditional edges,
+retry/resume/retest destination sets), not by patching the specific row a
+reviewer happened to name. A script that mechanically unions those sources
+and diffs the result against the drafted table is worth writing once a table
+like this exists; re-derive it wholesale after any edit that touches routing,
+rather than trusting the previous version's row was already exhaustive.
+introduce another if the surrounding claims aren't re-checked too.
+
 **4 · Write.** Produce the guide, plus only the visuals that materially improve
 understanding. Start from `assets/guide_template.html` — a skeleton carrying the
 page structure, evidence chips, callouts, print stylesheet and figure styling,
