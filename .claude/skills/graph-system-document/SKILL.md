@@ -98,7 +98,6 @@ reviewer happened to name. A script that mechanically unions those sources
 and diffs the result against the drafted table is worth writing once a table
 like this exists; re-derive it wholesale after any edit that touches routing,
 rather than trusting the previous version's row was already exhaustive.
-introduce another if the surrounding claims aren't re-checked too.
 
 **4 · Write.** Produce the guide, plus only the visuals that materially improve
 understanding. Start from `assets/guide_template.html` — a skeleton carrying the
