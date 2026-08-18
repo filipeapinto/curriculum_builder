@@ -246,6 +246,15 @@ Two more apply to vocabulary generally:
   uses it, not after. A reader should never meet an unexplained ID and have
   to hold it in suspension until a later section defines the scheme.
 
+A glossary built only from the terms the writer already suspects are
+confusing will miss the ones that aren't obviously jargon but are load-bearing
+anyway — a gating concept used in a dozen node contracts is a bigger gap
+undefined than a codename used twice. Before shipping, do one mechanical
+pass over the draft: list every bolded or `coded` term that recurs across
+three or more sections or drives a routing/admission decision, and check each
+one against the glossary. A term failing that check is exactly the kind of
+gap a reader can't route around by re-reading harder.
+
 ## Required content
 
 Cover every area below, or mark it not applicable **with a reason**. Missing
