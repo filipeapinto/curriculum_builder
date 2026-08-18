@@ -80,8 +80,12 @@ between two sections is exactly the kind of conflict this stage exists to
 catch; tag it `conflicting` rather than letting the second mention quietly
 overrule the first. The same pass catches uneven depth between comparable
 items: if one node's or artifact's I/O is documented down to its schema and a
-sibling of similar importance gets only a name, either match the depth or
-say why the difference is real.
+sibling of similar importance gets only a name — or one terminal
+outcome/exit code gets a full worked payload and a sibling outcome of equal
+operational weight gets only a label — either match the depth or say why the
+difference is real. Re-run this pass after any late edit, not only once
+before the first Verify: a fix made to resolve one contradiction can silently
+introduce another if the surrounding claims aren't re-checked too.
 
 **4 · Write.** Produce the guide, plus only the visuals that materially improve
 understanding. Start from `assets/guide_template.html` — a skeleton carrying the
