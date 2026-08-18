@@ -50,12 +50,9 @@ EXPECTED_DEV_DEPENDENCIES = {
     "ruamel.yaml==0.19.1",
 }
 
-# P00 inventory python_surface.entry_points (4 module_main_guard commands under runtime/).
+# The package exposes only the production Plan 26 command.
 EXPECTED_CONSOLE_SCRIPT_TARGETS = {
     "curriculum-factory-run-curriculum": "curriculum_factory.run_curriculum:main",
-    "curriculum-factory-session-bridge": "curriculum_factory.session_bridge:main",
-    "curriculum-factory-capability-cycle": "curriculum_factory.capability_cycle:main",
-    "curriculum-factory-finalize-evidence": "curriculum_factory.finalize_evidence:main",
 }
 
 
@@ -164,7 +161,8 @@ def test_src_curriculum_factory_is_importable_without_installation():
     try:
         import curriculum_factory  # noqa: F401
 
-        assert curriculum_factory.__all__ == ["CurriculumRuntime", "RuntimeFailure"]
+        assert not hasattr(curriculum_factory, "CurriculumRuntime")
+        assert not hasattr(curriculum_factory, "RuntimeFailure")
     finally:
         sys.path.remove(str(SRC_ROOT))
         sys.modules.pop("curriculum_factory", None)

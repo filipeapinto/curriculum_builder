@@ -1,0 +1,1131 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="color-scheme" content="light dark">
+<title>curriculum_factory — architecture and operations guide</title>
+<style>
+  :root{
+    --ink:#141c2b; --muted:#5a6579; --paper:#fcfdff; --card:#fff; --line:#dde3ee;
+    --blue:#175cc2; --soft:#eef4ff; --warn:#8d5b00; --warnbg:#fff7e6;
+    --stop:#b3261e; --stopbg:#fdeceb; --good:#087f67; --goodbg:#e7f7f2;
+    --code:#f2f5fa; --group:#f5f8fd; --note:#fff8e6;
+    --dg-ink:var(--ink); --dg-muted:var(--muted); --dg-card:var(--card);
+    --dg-line:var(--line); --dg-group:var(--group); --dg-note:var(--note);
+  }
+  @media (prefers-color-scheme:dark){
+    :root{
+      --ink:#e9eef8; --muted:#a7b2c6; --paper:#0d1219; --card:#141c28; --line:#2b3646;
+      --blue:#8fbcff; --soft:#152743; --warn:#f0bd62; --warnbg:#2a2010;
+      --stop:#ff9a90; --stopbg:#2d1614; --good:#6fdcbb; --goodbg:#0f2a24;
+      --code:#161f2c; --group:#121a26; --note:#241f10;
+    }
+  }
+  *{box-sizing:border-box}
+  html{scroll-behavior:smooth}
+  body{margin:0;background:var(--paper);color:var(--ink);
+       font:16px/1.6 ui-sans-serif,system-ui,-apple-system,"Segoe UI",Roboto,sans-serif}
+  .wrap{display:grid;grid-template-columns:230px minmax(0,1fr);gap:44px;
+        max-width:1320px;margin:0 auto;padding:0 28px 90px}
+  .toc{position:sticky;top:0;align-self:start;max-height:100vh;overflow:auto;
+       padding:36px 0;font-size:.9rem}
+  .toc ol{list-style:none;margin:0;padding:0;counter-reset:s}
+  .toc a{display:block;padding:5px 10px;border-left:2px solid var(--line);
+         color:var(--muted);text-decoration:none;border-radius:0 5px 5px 0}
+  .toc a:hover,.toc a:focus{color:var(--ink);background:var(--soft);border-left-color:var(--blue)}
+  main{padding:36px 0;min-width:0}
+  header.hero{border-bottom:3px solid var(--blue);padding-bottom:26px;margin-bottom:8px}
+  h1{font-size:clamp(1.9rem,4.2vw,3rem);line-height:1.05;letter-spacing:-.03em;margin:6px 0 12px}
+  h2{font-size:1.5rem;line-height:1.2;letter-spacing:-.015em;margin:52px 0 8px;
+     scroll-margin-top:20px}
+  h2 .n{color:var(--blue);font-variant-numeric:tabular-nums;margin-right:.45em}
+  h3{font-size:1.05rem;margin:26px 0 6px}
+  p,li{max-width:78ch}
+  a{color:var(--blue)}
+  code{background:var(--code);border:1px solid var(--line);border-radius:4px;
+       padding:.08em .32em;font-size:.88em}
+  pre{background:var(--code);border:1px solid var(--line);border-radius:8px;
+      padding:14px 16px;overflow:auto;font-size:.86rem}
+  .lede{color:var(--muted);font-size:1.1rem;max-width:72ch}
+  .meta{color:var(--muted);font-size:.86rem;margin:0}
+  .cards{display:grid;grid-template-columns:repeat(auto-fit,minmax(180px,1fr));
+         gap:14px;margin:26px 0 8px}
+  .card{background:var(--card);border:1px solid var(--line);border-radius:12px;padding:14px 16px}
+  .card b{display:block;font-size:.72rem;letter-spacing:.09em;text-transform:uppercase;
+          color:var(--muted);margin-bottom:5px}
+  .ev{display:inline-block;font-size:.7rem;font-weight:700;letter-spacing:.07em;
+      text-transform:uppercase;padding:2px 8px;border-radius:999px;border:1px solid currentColor;
+      white-space:nowrap;vertical-align:.08em}
+  .ev-declared{color:var(--blue)} .ev-observed{color:var(--good)}
+  .ev-inferred{color:var(--warn)} .ev-unknown,.ev-conflicting{color:var(--stop)}
+  .legend{display:flex;gap:10px;flex-wrap:wrap;margin:16px 0 0;padding:0;list-style:none}
+  .legend li{color:var(--muted);font-size:.85rem;max-width:none}
+  .box{border-left:5px solid var(--blue);background:var(--soft);padding:14px 18px;
+       margin:20px 0;border-radius:0 8px 8px 0;max-width:82ch}
+  .box>b:first-child{display:block;font-size:.74rem;letter-spacing:.09em;
+                     text-transform:uppercase;margin-bottom:4px}
+  .box.warn{border-color:var(--warn);background:var(--warnbg)}
+  .box.stop{border-color:var(--stop);background:var(--stopbg)}
+  .box.good{border-color:var(--good);background:var(--goodbg)}
+  table{border-collapse:collapse;width:100%;margin:14px 0 20px;font-size:.9rem}
+  th,td{border:1px solid var(--line);padding:9px 11px;text-align:left;vertical-align:top}
+  th{background:var(--code);font-size:.78rem;letter-spacing:.05em;text-transform:uppercase;
+     color:var(--muted)}
+  tbody tr:hover{background:var(--soft)}
+  figure.dg{margin:26px 0;padding:18px;border:1px solid var(--line);border-radius:14px;
+            background:var(--card);overflow-x:auto}
+  figure.dg figcaption{margin-top:12px;color:var(--muted);font-size:.9rem;max-width:80ch}
+  figure.dg figcaption strong{color:var(--ink)}
+  .dg-meta{display:flex;margin-top:6px;gap:14px;flex-wrap:wrap;
+           align-items:center;font-size:.82rem}
+  figure.dg details{margin-top:10px}
+  figure.dg summary{cursor:pointer;color:var(--blue)}
+  table.dg-equiv{font-size:.82rem;margin-top:8px}
+  details.more{border:1px solid var(--line);border-radius:10px;padding:10px 14px;margin:16px 0;
+               background:var(--card)}
+  details.more summary{cursor:pointer;font-weight:600}
+  footer{margin-top:64px;padding-top:16px;border-top:1px solid var(--line);
+         color:var(--muted);font-size:.86rem}
+  @media (max-width:900px){.wrap{grid-template-columns:1fr;gap:0}.toc{position:static;max-height:none;padding:20px 0 0}}
+  @media print{
+    .wrap{display:block;max-width:none;padding:0}
+    .toc{display:none}
+    body{background:#fff;color:#000;font-size:11pt}
+    h2{page-break-after:avoid}
+    figure.dg,table{page-break-inside:avoid}
+    details.more,figure.dg details{display:block}
+    details[open] summary,details summary{list-style:none}
+    details>*{display:block !important}
+    a[href^="http"]::after{content:" (" attr(href) ")";font-size:.8em;color:#444}
+  }
+</style>
+</head>
+<body>
+<div class="wrap">
+
+<nav class="toc" aria-label="Contents">
+  <ol>
+    <li><a href="#glance">At a glance</a></li>
+    <li><a href="#purpose">1 · Purpose and boundary</a></li>
+    <li><a href="#architecture">2 · Architecture</a></li>
+    <li><a href="#graph">3 · Graph behavior</a></li>
+    <li><a href="#nodes">4 · Node and tool contracts</a></li>
+    <li><a href="#state">5 · State and data</a></li>
+    <li><a href="#routes">6 · Route contracts</a></li>
+    <li><a href="#models">7 · Models and prompts</a></li>
+    <li><a href="#deployment">8 · Deployment</a></li>
+    <li><a href="#config">9 · Configuration and release</a></li>
+    <li><a href="#security">10 · Security and privacy</a></li>
+    <li><a href="#observability">11 · Observability</a></li>
+    <li><a href="#operations">12 · Operations and recovery</a></li>
+    <li><a href="#limitations">13 · Limitations and verification</a></li>
+  </ol>
+</nav>
+
+<main>
+<header class="hero">
+  <p class="meta">For maintainers and authorized operators of the factory ·
+     Generated 2026-08-17 · Evidence basis: repository at <code>9ef14e8</code>, clean worktree;
+     the graph was compiled and the test suite executed on this machine; no deployed environment exists to inspect.</p>
+  <h1>curriculum_factory</h1>
+  <p class="lede">A single-operator, contract-first pipeline that turns one curriculum manifest into
+     reviewed, accepted curriculum units and a workbook. It is a LangGraph state machine in which
+     <em>all</em> routing authority is code-owned: models author and review artifacts, and are
+     structurally prevented from deciding what happens next.</p>
+  <ul class="legend">
+    <li><span class="ev ev-declared">declared</span> code, config or docs say so</li>
+    <li><span class="ev ev-observed">observed</span> a run, trace or test showed it</li>
+    <li><span class="ev ev-inferred">inferred</span> follows from evidence, not stated</li>
+    <li><span class="ev ev-unknown">unknown</span> evidence absent or contradictory</li>
+  </ul>
+</header>
+
+<section id="glance">
+  <div class="cards">
+    <div class="card"><b>Entry point</b><code>curriculum-factory-run-curriculum</code> — one process, one graph invocation, exits with a classified terminal</div>
+    <div class="card"><b>Runs on</b>One operator's macOS machine. <code>sandbox-exec</code> is a hard requirement; there is no server, no scheduler, no container</div>
+    <div class="card"><b>Holds state in</b><code>&lt;output-root&gt;/.langgraph/checkpoints.sqlite3</code> plus hash-chained JSONL ledgers and a content-addressed artifact store</div>
+    <div class="card"><b>Fails by</b>Refusing to start (exit 3) or writing one of six terminal kinds (exit 0/10/11/12/20). It does not fail silently</div>
+    <div class="card"><b>Owned by</b><span class="ev ev-unknown">unknown</span> — no <code>CODEOWNERS</code>, <code>OWNERS</code> or escalation contact exists in the repository</div>
+  </div>
+  <div class="box stop"><b>Stop and escalate if</b>
+    <ul>
+      <li>A terminal comes back as <code>SYSTEM_FAILURE</code> with <code>cause: "integrity"</code> and
+        <code>node: "D98_WRITE_TERMINAL"</code>. That is D98 rejecting another node's terminal claim during its own
+        independent re-derivation — the run believed something the evidence did not support. Do not re-run into the
+        same output root; preserve it.</li>
+      <li>A run routes into <code>D19_ROUTE_UNIT_REPAIR</code> and plans a <em>model</em> repair, or reaches
+        <code>D27_FREEZE_WORKBOOK_REVIEW_PACKET</code>. <code>M06</code>, <code>M07</code> and <code>M08</code> are
+        registered but have no incoming edge in the compiled graph (see §3) — the dispatcher cannot reach them.</li>
+      <li>The output root is non-empty and the CLI reports <code>COLLISION</code>. Do not delete it to get past the
+        message: it may hold an interrupted run's only checkpoint, and nothing in this system backs it up.</li>
+    </ul>
+  </div>
+</section>
+
+<h2 id="purpose"><span class="n">1</span>Purpose and boundary</h2>
+
+<p>The system consumes one <em>immutable</em> curriculum manifest and one <em>immutable</em> engine tree, and
+produces accepted curriculum units — domain data, written content, visuals, a rendered PDF — and finally an
+assembled workbook, entirely underneath a caller-supplied output root. Its single actor is a human operator on
+their own machine, holding their own Claude and Codex subscription credentials. There is no service, no API and
+no second user. <span class="ev ev-observed">observed</span></p>
+
+<p>Its entry interface is one CLI invocation; its exit interface is a JSON terminal record on stdout plus a
+process exit code. Between those two points it makes exactly one call to
+<code>compiled.invoke()</code> (<code>run_curriculum.py:827</code>) — the CLI runs no product step itself.</p>
+
+<h3>What it is on the hook for</h3>
+<ul>
+  <li>Deriving the unit count and order from the supplied manifest, not from configuration.</li>
+  <li>Proving, before any model runs, that the sandbox and both model CLIs are actually present and behave as
+      the frozen registry expects (<code>D03_PROVE_CAPABILITIES</code>).</li>
+  <li>Never letting a model decide a route, a verdict or a terminal.</li>
+  <li>Writing nothing outside the output root it was given.</li>
+</ul>
+
+<div class="box"><b>Exclusions a reader will otherwise assume</b>
+<ul>
+  <li><b>Curriculum content is not in the package.</b> <code>curricula/</code>, <code>policy/</code>,
+      <code>schemas/</code> and <code>meta_prompt/</code> are repository-owned data supplied by path at runtime.
+      Packaging confirms this: <code>pyproject.toml</code> includes only <code>curriculum_factory*</code> from
+      <code>src/</code>.</li>
+  <li><b>No scheduling, queueing, concurrency or multi-run coordination.</b> One <code>flock</code> per output
+      root is the entire concurrency model; a second process gets exit 3 and does nothing.</li>
+  <li><b>No graceful stop.</b> The mechanism exists but is not wired — see §12.</li>
+  <li><b>No backup, retention, rotation or cleanup of anything it writes.</b> Verified absent across the
+      checkpoint DB, all ledgers and the artifact store.</li>
+  <li><b>Not portable off macOS.</b> <code>build_sandboxed_argv</code> raises <code>CapabilityProofFailed</code>
+      when <code>sandbox_mechanism()</code> is <code>"none"</code>, which is the case on any non-Darwin host
+      (<code>transport.py:928</code>).</li>
+</ul>
+</div>
+
+<p><b>Assumptions it makes about its environment</b>, each enforced rather than documented: an operator-owned
+<code>~/.claude.json</code> and <code>~/.codex/auth.json</code> exist; no <code>*_API_KEY</code> variable is set
+(their presence fails the capability proof); <code>pandoc</code>/<code>typst</code> and the poppler tools are
+installed; and the output root is empty or absent for a fresh run.</p>
+
+<h2 id="architecture"><span class="n">2</span>Architecture</h2>
+
+<p>The package installs <b>one engine generation</b>: the Plan 26 LangGraph runtime.</p>
+
+<table>
+  <thead><tr><th>Generation</th><th>Modules</th><th>Reached by</th><th>Status</th><th>Evidence</th></tr></thead>
+  <tbody>
+    <tr><td><b>Plan 26</b> — current</td>
+        <td><code>langgraph_factory/</code> (21 modules), driven by <code>run_curriculum.py</code></td>
+        <td><code>curriculum-factory-run-curriculum</code></td>
+        <td>The one production graph. All routing, state and evidence discipline described in this guide is here.</td>
+        <td><span class="ev ev-observed">observed</span></td></tr>
+  </tbody>
+</table>
+
+<div class="box ok"><b>Single-engine package</b>
+The retired Plan 25 controller, bridge, evidence finalizer, Gemini helpers, and supporting modules are not
+installed. Importing <code>curriculum_factory</code> has no legacy-engine side effects, and the sole published
+console script is <code>curriculum-factory-run-curriculum</code>.
+<span class="ev ev-observed">observed</span></div>
+
+<figure class="dg" id="fig-fig-topology">
+<svg viewBox="0 0 996 1057" width="100%" style="max-width:996px" role="img" aria-labelledby="fig-topology-t fig-topology-d" xmlns="http://www.w3.org/2000/svg"><title id="fig-topology-t">Runtime topology and trust boundaries</title><desc id="fig-topology-d">Everything runs in one operator-owned process on one machine. The Python process is forbidden from reaching a model API at all; only the sandbox-exec child may, and its sandbox constrains it by port, not by hostname.</desc><style>
+.node{fill:var(--dg-card,#fff);stroke-width:1.6}
+.group{fill:var(--dg-group,#f4f7fc);stroke:var(--dg-line,#c9d3e4);stroke-width:1.4}
+.plate{fill:var(--dg-card,#fff);stroke:var(--dg-line,#d8deea);stroke-width:1}
+.note{fill:var(--dg-note,#fff8e6);stroke:var(--dg-line,#d8deea);stroke-width:1.2}
+.edge{stroke-width:1.9;stroke-linejoin:round;stroke-linecap:round}
+.lifeline{stroke:var(--dg-line,#c9d3e4);stroke-width:1.2;stroke-dasharray:2 6}
+.stagerule{stroke:var(--dg-line,#c9d3e4);stroke-width:2}
+text{font-family:ui-sans-serif,system-ui,-apple-system,"Segoe UI",sans-serif;fill:var(--dg-ink,#172033)}
+.ntitle{font-size:14px;font-weight:650}
+.nnote{font-size:11.5px;fill:var(--dg-muted,#586278)}
+.nbadge{font-size:10px;font-weight:700;letter-spacing:.08em}
+.elabel{font-size:11px;fill:var(--dg-muted,#3d4c66)}
+.stage{font-size:11px;font-weight:700;letter-spacing:.1em;fill:var(--dg-muted,#586278)}
+.gnote{font-size:11px;fill:var(--dg-muted,#586278)}
+</style><defs><marker id="a-3d4c66" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M 0 1 L 9 5 L 0 9 z" fill="#3d4c66"/></marker><marker id="a-175cc2" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M 0 1 L 9 5 L 0 9 z" fill="#175cc2"/></marker><marker id="a-8d5b00" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M 0 1 L 9 5 L 0 9 z" fill="#8d5b00"/></marker><marker id="a-b3261e" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M 0 1 L 9 5 L 0 9 z" fill="#b3261e"/></marker><marker id="a-0f7490" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M 0 1 L 9 5 L 0 9 z" fill="#0f7490"/></marker></defs><rect x="28.0" y="28.0" width="940.0" height="163.8" rx="14" class="group"/><text x="44.0" y="47.0" class="stage">REPOSITORY DATA ROOT (READ)</text><text x="952.0" y="47.0" class="gnote" text-anchor="end">supplied by --engine-root / --curriculum</text><rect x="46.0" y="60.0" width="208" height="111.8" rx="12" class="node" stroke="#175cc2"/><rect x="46.0" y="60.0" width="5" height="111.8" rx="2.5" fill="#175cc2"/><text x="60.0" y="83.9" class="ntitle" text-anchor="start">curricula/*/manifest</text><text x="60.0" y="106.8" class="nnote" text-anchor="start">unit list; frozen at D01</text><text x="60.0" y="128.9" class="nbadge" fill="#175cc2">DECLARED</text><rect x="278.0" y="60.0" width="208" height="111.8" rx="12" class="node" stroke="#175cc2"/><rect x="278.0" y="60.0" width="5" height="111.8" rx="2.5" fill="#175cc2"/><text x="292.0" y="83.9" class="ntitle" text-anchor="start">policy/retrieval_</text><text x="292.0" y="102.8" class="ntitle" text-anchor="start">hosts.v1.yaml</text><text x="292.0" y="125.7" class="nnote" text-anchor="start">source-fetch allowlist +</text><text x="292.0" y="141.2" class="nnote" text-anchor="start">digest</text><text x="292.0" y="163.4" class="nbadge" fill="#175cc2">DECLARED</text><rect x="510.0" y="60.0" width="208" height="111.8" rx="12" class="node" stroke="#175cc2"/><rect x="510.0" y="60.0" width="5" height="111.8" rx="2.5" fill="#175cc2"/><text x="524.0" y="83.9" class="ntitle" text-anchor="start">model_jobs.v1.yaml</text><text x="524.0" y="106.8" class="nnote" text-anchor="start">8 frozen jobs, packaged</text><text x="524.0" y="122.3" class="nnote" text-anchor="start">in-tree</text><text x="524.0" y="144.5" class="nbadge" fill="#175cc2">OBSERVED</text><rect x="742.0" y="60.0" width="208" height="111.8" rx="12" class="node" stroke="#175cc2"/><rect x="742.0" y="60.0" width="5" height="111.8" rx="2.5" fill="#175cc2"/><text x="756.0" y="83.9" class="ntitle" text-anchor="start">M01–M08 prompts +</text><text x="756.0" y="102.8" class="ntitle" text-anchor="start">schemas</text><text x="756.0" y="125.7" class="nnote" text-anchor="start">package resources,</text><text x="756.0" y="141.2" class="nnote" text-anchor="start">digest-pinned</text><text x="756.0" y="163.4" class="nbadge" fill="#175cc2">OBSERVED</text><rect x="28.0" y="213.8" width="940.0" height="144.9" rx="14" class="group" stroke-dasharray="7 5"/><text x="44.0" y="232.8" class="stage">OPERATOR MACHINE · FACTORY PROCESS</text><text x="952.0" y="232.8" class="gnote" text-anchor="end">trust boundary: holds the operator&#x27;s credentials</text><rect x="46.0" y="245.8" width="208" height="93.0" rx="12" class="node" stroke="#175cc2"/><rect x="46.0" y="245.8" width="5" height="93.0" rx="2.5" fill="#175cc2"/><text x="60.0" y="269.8" class="ntitle" text-anchor="start">run_curriculum CLI</text><text x="60.0" y="292.6" class="nnote" text-anchor="start">single invoke; exit</text><text x="60.0" y="308.2" class="nnote" text-anchor="start">0/2/3/10/11/12/20</text><text x="60.0" y="330.3" class="nbadge" fill="#175cc2">OBSERVED</text><rect x="278.0" y="245.8" width="208" height="93.0" rx="12" class="node" stroke="#175cc2"/><rect x="278.0" y="245.8" width="5" height="93.0" rx="2.5" fill="#175cc2"/><text x="292.0" y="269.8" class="ntitle" text-anchor="start">LangGraph StateGraph</text><text x="292.0" y="292.6" class="nnote" text-anchor="start">50 nodes, compiled once</text><text x="292.0" y="314.8" class="nbadge" fill="#175cc2">OBSERVED</text><rect x="510.0" y="245.8" width="208" height="93.0" rx="12" class="node" stroke="#175cc2"/><rect x="510.0" y="245.8" width="5" height="93.0" rx="2.5" fill="#175cc2"/><text x="524.0" y="269.8" class="ntitle" text-anchor="start">EgressGuard</text><text x="524.0" y="292.6" class="nnote" text-anchor="start">patches socket.connect;</text><text x="524.0" y="308.2" class="nnote" text-anchor="start">deny by default</text><text x="524.0" y="330.3" class="nbadge" fill="#175cc2">OBSERVED</text><rect x="742.0" y="245.8" width="208" height="93.0" rx="12" class="node" stroke="#175cc2"/><rect x="742.0" y="245.8" width="5" height="93.0" rx="2.5" fill="#175cc2"/><text x="756.0" y="269.8" class="ntitle" text-anchor="start">SourceRetriever</text><text x="756.0" y="292.6" class="nnote" text-anchor="start">https only, host+port+IP</text><text x="756.0" y="308.2" class="nnote" text-anchor="start">pinned</text><text x="756.0" y="330.3" class="nbadge" fill="#175cc2">DECLARED</text><rect x="28.0" y="380.8" width="940.0" height="144.9" rx="14" class="group" stroke-dasharray="7 5"/><text x="44.0" y="399.8" class="stage">SANDBOX-EXEC CHILD (PER ACTIVATION)</text><text x="952.0" y="399.8" class="gnote" text-anchor="end">trust boundary: network scoped by port 443/80/53, not by host</text><rect x="46.0" y="412.8" width="208" height="93.0" rx="12" class="node" stroke="#6b5bd2" stroke-dasharray="5 4"/><rect x="46.0" y="412.8" width="5" height="93.0" rx="2.5" fill="#6b5bd2"/><text x="60.0" y="436.7" class="ntitle" text-anchor="start">claude CLI</text><text x="60.0" y="459.6" class="nnote" text-anchor="start">M01–M04, M06, M08</text><text x="60.0" y="481.7" class="nbadge" fill="#6b5bd2">DECLARED</text><rect x="278.0" y="412.8" width="208" height="93.0" rx="12" class="node" stroke="#6b5bd2" stroke-dasharray="5 4"/><rect x="278.0" y="412.8" width="5" height="93.0" rx="2.5" fill="#6b5bd2"/><text x="292.0" y="436.7" class="ntitle" text-anchor="start">codex CLI</text><text x="292.0" y="459.6" class="nnote" text-anchor="start">M05, M07 · cross-family</text><text x="292.0" y="475.1" class="nnote" text-anchor="start">review</text><text x="292.0" y="497.2" class="nbadge" fill="#6b5bd2">DECLARED</text><rect x="510.0" y="412.8" width="208" height="93.0" rx="12" class="node" stroke="#175cc2"/><rect x="510.0" y="412.8" width="5" height="93.0" rx="2.5" fill="#175cc2"/><text x="524.0" y="436.7" class="ntitle" text-anchor="start">pandoc / typst</text><text x="524.0" y="459.6" class="nnote" text-anchor="start">unit + workbook render,</text><text x="524.0" y="475.1" class="nnote" text-anchor="start">600s</text><text x="524.0" y="497.2" class="nbadge" fill="#175cc2">DECLARED</text><rect x="742.0" y="412.8" width="208" height="93.0" rx="12" class="node" stroke="#175cc2"/><rect x="742.0" y="412.8" width="5" height="93.0" rx="2.5" fill="#175cc2"/><text x="756.0" y="436.7" class="ntitle" text-anchor="start">pdftoppm / pdftotext</text><text x="756.0" y="459.6" class="nnote" text-anchor="start">page inventory and</text><text x="756.0" y="475.1" class="nnote" text-anchor="start">inspection</text><text x="756.0" y="497.2" class="nbadge" fill="#175cc2">DECLARED</text><rect x="28.0" y="547.8" width="940.0" height="295.7" rx="14" class="group"/><text x="44.0" y="566.8" class="stage">OUTPUT ROOT (ONLY AUTHORIZED WRITE TARGET)</text><rect x="46.0" y="579.8" width="208" height="111.8" rx="12" class="node" stroke="#0f7490" stroke-dasharray="1 5"/><rect x="46.0" y="579.8" width="5" height="111.8" rx="2.5" fill="#0f7490"/><text x="60.0" y="603.6" class="ntitle" text-anchor="start">.langgraph/checkpoints</text><text x="60.0" y="622.5" class="ntitle" text-anchor="start">.sqlite3</text><text x="60.0" y="645.4" class="nnote" text-anchor="start">SqliteSaver, WAL,</text><text x="60.0" y="661.0" class="nnote" text-anchor="start">synchronous=FULL</text><text x="60.0" y="683.1" class="nbadge" fill="#0f7490">OBSERVED</text><rect x="278.0" y="579.8" width="208" height="111.8" rx="12" class="node" stroke="#0f7490" stroke-dasharray="1 5"/><rect x="278.0" y="579.8" width="5" height="111.8" rx="2.5" fill="#0f7490"/><text x="292.0" y="603.6" class="ntitle" text-anchor="start">.langgraph/identity_</text><text x="292.0" y="622.5" class="ntitle" text-anchor="start">envelope.json</text><text x="292.0" y="645.4" class="nnote" text-anchor="start">0444; run identity for</text><text x="292.0" y="661.0" class="nnote" text-anchor="start">resume</text><text x="292.0" y="683.1" class="nbadge" fill="#0f7490">OBSERVED</text><rect x="510.0" y="579.8" width="208" height="111.8" rx="12" class="node" stroke="#0f7490" stroke-dasharray="1 5"/><rect x="510.0" y="579.8" width="5" height="111.8" rx="2.5" fill="#0f7490"/><text x="524.0" y="603.6" class="ntitle" text-anchor="start">.langgraph/execution.</text><text x="524.0" y="622.5" class="ntitle" text-anchor="start">lock</text><text x="524.0" y="645.4" class="nnote" text-anchor="start">flock; one writer per root</text><text x="524.0" y="667.6" class="nbadge" fill="#0f7490">OBSERVED</text><rect x="742.0" y="579.8" width="208" height="111.8" rx="12" class="node" stroke="#0f7490" stroke-dasharray="1 5"/><rect x="742.0" y="579.8" width="5" height="111.8" rx="2.5" fill="#0f7490"/><text x="756.0" y="603.6" class="ntitle" text-anchor="start">.evidence/egress_</text><text x="756.0" y="622.5" class="ntitle" text-anchor="start">receipts.jsonl</text><text x="756.0" y="645.4" class="nnote" text-anchor="start">every allowed and denied</text><text x="756.0" y="661.0" class="nnote" text-anchor="start">connect</text><text x="756.0" y="683.1" class="nbadge" fill="#0f7490">OBSERVED</text><rect x="46.0" y="711.6" width="208" height="111.8" rx="12" class="node" stroke="#0f7490" stroke-dasharray="1 5"/><rect x="46.0" y="711.6" width="5" height="111.8" rx="2.5" fill="#0f7490"/><text x="60.0" y="735.5" class="ntitle" text-anchor="start">artifact store</text><text x="60.0" y="754.4" class="ntitle" text-anchor="start">(versions/heads)</text><text x="60.0" y="777.3" class="nnote" text-anchor="start">content-addressed; accepted</text><text x="60.0" y="792.8" class="nnote" text-anchor="start">bytes 0444</text><text x="60.0" y="814.9" class="nbadge" fill="#0f7490">OBSERVED</text><rect x="278.0" y="711.6" width="208" height="111.8" rx="12" class="node" stroke="#0f7490" stroke-dasharray="1 5"/><rect x="278.0" y="711.6" width="5" height="111.8" rx="2.5" fill="#0f7490"/><text x="292.0" y="735.5" class="ntitle" text-anchor="start">evidence/*.jsonl</text><text x="292.0" y="758.4" class="nnote" text-anchor="start">hash-chained but never</text><text x="292.0" y="773.9" class="nnote" text-anchor="start">written</text><text x="292.0" y="796.0" class="nbadge" fill="#0f7490">CONFLICTING</text><rect x="28.0" y="865.5" width="940.0" height="163.8" rx="14" class="group"/><text x="44.0" y="884.5" class="stage">EXTERNAL DEPENDENCIES</text><rect x="46.0" y="897.5" width="208" height="111.8" rx="12" class="node" stroke="#6b5bd2" stroke-dasharray="5 4"/><rect x="46.0" y="897.5" width="5" height="111.8" rx="2.5" fill="#6b5bd2"/><text x="60.0" y="921.4" class="ntitle" text-anchor="start">api.anthropic.com</text><text x="60.0" y="944.2" class="nnote" text-anchor="start">reached only by the claude</text><text x="60.0" y="959.8" class="nnote" text-anchor="start">child</text><text x="60.0" y="981.9" class="nbadge" fill="#6b5bd2">DECLARED</text><rect x="278.0" y="897.5" width="208" height="111.8" rx="12" class="node" stroke="#6b5bd2" stroke-dasharray="5 4"/><rect x="278.0" y="897.5" width="5" height="111.8" rx="2.5" fill="#6b5bd2"/><text x="292.0" y="921.4" class="ntitle" text-anchor="start">OpenAI / chatgpt.com</text><text x="292.0" y="944.2" class="nnote" text-anchor="start">reached only by the codex</text><text x="292.0" y="959.8" class="nnote" text-anchor="start">child</text><text x="292.0" y="981.9" class="nbadge" fill="#6b5bd2">DECLARED</text><rect x="510.0" y="897.5" width="208" height="111.8" rx="12" class="node" stroke="#6b5bd2" stroke-dasharray="5 4"/><rect x="510.0" y="897.5" width="5" height="111.8" rx="2.5" fill="#6b5bd2"/><text x="524.0" y="921.4" class="ntitle" text-anchor="start">primary source hosts</text><text x="524.0" y="944.2" class="nnote" text-anchor="start">allowlisted https fetch by</text><text x="524.0" y="959.8" class="nnote" text-anchor="start">the parent</text><text x="524.0" y="981.9" class="nbadge" fill="#6b5bd2">DECLARED</text><rect x="742.0" y="897.5" width="208" height="111.8" rx="12" class="node" stroke="#0f7490" stroke-dasharray="1 5"/><rect x="742.0" y="897.5" width="5" height="111.8" rx="2.5" fill="#0f7490"/><text x="756.0" y="921.4" class="ntitle" text-anchor="start">~/.claude.json,</text><text x="756.0" y="940.2" class="ntitle" text-anchor="start">~/.codex/auth.json</text><text x="756.0" y="963.1" class="nnote" text-anchor="start">subscription credentials;</text><text x="756.0" y="978.7" class="nnote" text-anchor="start">no API key path</text><text x="756.0" y="1000.8" class="nbadge" fill="#0f7490">OBSERVED</text></svg>
+<figcaption>
+  <strong>Runtime topology and trust boundaries.</strong> Everything runs in one operator-owned process on one machine. The Python process is forbidden from reaching a model API at all; only the sandbox-exec child may, and its sandbox constrains it by port, not by hostname.
+  <span class="dg-meta"><span><strong>Scope:</strong> Read from transport.py, egress.py, graph.py and persistence.py at 9ef14e8. No deployed or staging environment was inspected — there is none in the repository.</span> <span class="ev ev-declared">declared</span> <span><strong>From:</strong> <code>src/curriculum_factory/langgraph_factory/transport.py:696</code>, <code>src/curriculum_factory/langgraph_factory/egress.py:270</code>, <code>src/curriculum_factory/langgraph_factory/graph.py:199</code>, <code>src/curriculum_factory/langgraph_factory/persistence.py:171</code></span></span>
+  <details><summary>Text equivalent</summary>
+<table class="dg-equiv"><tr><th scope="col">Group</th><th scope="col">Item</th><th scope="col">Detail</th><th scope="col">Evidence</th></tr><tr><td>Repository data root (read)</td><td>curricula/*/manifest</td><td>unit list; frozen at D01</td><td>declared</td></tr><tr><td>Repository data root (read)</td><td>policy/retrieval_hosts.v1.yaml</td><td>source-fetch allowlist + digest</td><td>declared</td></tr><tr><td>Repository data root (read)</td><td>model_jobs.v1.yaml</td><td>8 frozen jobs, packaged in-tree</td><td>observed</td></tr><tr><td>Repository data root (read)</td><td>M01–M08 prompts + schemas</td><td>package resources, digest-pinned</td><td>observed</td></tr><tr><td>Operator machine · factory process</td><td>run_curriculum CLI</td><td>single invoke; exit 0/2/3/10/11/12/20</td><td>observed</td></tr><tr><td>Operator machine · factory process</td><td>LangGraph StateGraph</td><td>50 nodes, compiled once</td><td>observed</td></tr><tr><td>Operator machine · factory process</td><td>EgressGuard</td><td>patches socket.connect; deny by default</td><td>observed</td></tr><tr><td>Operator machine · factory process</td><td>SourceRetriever</td><td>https only, host+port+IP pinned</td><td>declared</td></tr><tr><td>sandbox-exec child (per activation)</td><td>claude CLI</td><td>M01–M04, M06, M08</td><td>declared</td></tr><tr><td>sandbox-exec child (per activation)</td><td>codex CLI</td><td>M05, M07 · cross-family review</td><td>declared</td></tr><tr><td>sandbox-exec child (per activation)</td><td>pandoc / typst</td><td>unit + workbook render, 600s</td><td>declared</td></tr><tr><td>sandbox-exec child (per activation)</td><td>pdftoppm / pdftotext</td><td>page inventory and inspection</td><td>declared</td></tr><tr><td>Output root (only authorized write target)</td><td>.langgraph/checkpoints.sqlite3</td><td>SqliteSaver, WAL, synchronous=FULL</td><td>observed</td></tr><tr><td>Output root (only authorized write target)</td><td>.langgraph/identity_envelope.json</td><td>0444; run identity for resume</td><td>observed</td></tr><tr><td>Output root (only authorized write target)</td><td>.langgraph/execution.lock</td><td>flock; one writer per root</td><td>observed</td></tr><tr><td>Output root (only authorized write target)</td><td>.evidence/egress_receipts.jsonl</td><td>every allowed and denied connect</td><td>observed</td></tr><tr><td>Output root (only authorized write target)</td><td>artifact store (versions/heads)</td><td>content-addressed; accepted bytes 0444</td><td>observed</td></tr><tr><td>Output root (only authorized write target)</td><td>evidence/*.jsonl</td><td>hash-chained but never written</td><td>conflicting</td></tr><tr><td>External dependencies</td><td>api.anthropic.com</td><td>reached only by the claude child</td><td>declared</td></tr><tr><td>External dependencies</td><td>OpenAI / chatgpt.com</td><td>reached only by the codex child</td><td>declared</td></tr><tr><td>External dependencies</td><td>primary source hosts</td><td>allowlisted https fetch by the parent</td><td>declared</td></tr><tr><td>External dependencies</td><td>~/.claude.json, ~/.codex/auth.json</td><td>subscription credentials; no API key path</td><td>observed</td></tr></table>
+</details>
+</figcaption>
+</figure>
+
+<p>Within Plan 26 the composition is deliberately one-directional. <code>graph.py</code> owns registration and
+the common node boundary but no node body; node bodies live in <code>nodes/</code>, <code>model_nodes.py</code>,
+<code>workbook.py</code>, <code>repair.py</code> and <code>acceptance.py</code> — and
+<code>PRODUCTION_BINDING_MODULES</code> (<code>graph.py:101</code>) rejects a callable from anywhere else by
+stable ID, so "the graph compiled" cannot mean "the graph compiled against a stand-in". Routing
+(<code>routing.py</code>) is a pure function of state that reads no service, no clock and no filesystem. The
+transport (<code>transport.py</code>, 2&nbsp;847 lines) is the only module that may start an external process.</p>
+
+<h2 id="graph"><span class="n">3</span>Graph behavior</h2>
+
+<p>The graph is <b>framework-defined, not prompt-orchestrated</b>. Nodes and edges are registered into a
+LangGraph <code>StateGraph</code> at build time and a model never chooses the next step: a node body emits a
+<code>pending_guard</code> record carrying one declared string value, and a pure guard function maps that value
+to exactly one destination. A value outside the frozen table raises <code>RoutingViolation</code> rather than
+resolving to a terminal, because a table/body disagreement is a build defect, not a run outcome
+(<code>routing.py:1-26</code>). <span class="ev ev-observed">observed</span></p>
+
+<p>Compiling the graph on this machine yields <b>50 nodes and 158 edges</b>, digest
+<code>0e1eca87080aa102…</code>. Two rules run before any node-specific routing rule, in this order: a classified
+<code>pending_failure</code> routes to the terminal writer (to <code>D91</code> for a model node, whose failures
+are the one class a classifier may retry), and only then does an observed interrupt route to the interrupt gate.
+Failure deliberately outranks interruption so that an episode which broke <em>and</em> was asked to stop is not
+recorded as merely <code>INTERRUPTED</code>.</p>
+
+<figure class="dg" id="fig-fig-run-path">
+<svg viewBox="0 0 1176 798" width="100%" style="max-width:1176px" role="img" aria-labelledby="fig-run-path-t fig-run-path-d" xmlns="http://www.w3.org/2000/svg"><title id="fig-run-path-t">Happy path: one unit, authored to accepted</title><desc id="fig-run-path-d">Every model call is reached only through D90, which reserves an attempt before dispatch; a unit is accepted only after D16 reduces review evidence, and D23 then loops back to D05 for the next unit until the manifest is exhausted.</desc><style>
+.node{fill:var(--dg-card,#fff);stroke-width:1.6}
+.group{fill:var(--dg-group,#f4f7fc);stroke:var(--dg-line,#c9d3e4);stroke-width:1.4}
+.plate{fill:var(--dg-card,#fff);stroke:var(--dg-line,#d8deea);stroke-width:1}
+.note{fill:var(--dg-note,#fff8e6);stroke:var(--dg-line,#d8deea);stroke-width:1.2}
+.edge{stroke-width:1.9;stroke-linejoin:round;stroke-linecap:round}
+.lifeline{stroke:var(--dg-line,#c9d3e4);stroke-width:1.2;stroke-dasharray:2 6}
+.stagerule{stroke:var(--dg-line,#c9d3e4);stroke-width:2}
+text{font-family:ui-sans-serif,system-ui,-apple-system,"Segoe UI",sans-serif;fill:var(--dg-ink,#172033)}
+.ntitle{font-size:14px;font-weight:650}
+.nnote{font-size:11.5px;fill:var(--dg-muted,#586278)}
+.nbadge{font-size:10px;font-weight:700;letter-spacing:.08em}
+.elabel{font-size:11px;fill:var(--dg-muted,#3d4c66)}
+.stage{font-size:11px;font-weight:700;letter-spacing:.1em;fill:var(--dg-muted,#586278)}
+.gnote{font-size:11px;fill:var(--dg-muted,#586278)}
+</style><defs><marker id="a-3d4c66" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M 0 1 L 9 5 L 0 9 z" fill="#3d4c66"/></marker><marker id="a-175cc2" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M 0 1 L 9 5 L 0 9 z" fill="#175cc2"/></marker><marker id="a-8d5b00" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M 0 1 L 9 5 L 0 9 z" fill="#8d5b00"/></marker><marker id="a-b3261e" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M 0 1 L 9 5 L 0 9 z" fill="#b3261e"/></marker><marker id="a-0f7490" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M 0 1 L 9 5 L 0 9 z" fill="#0f7490"/></marker></defs><text x="28.0" y="42.0" class="stage">BOOTSTRAP</text><line x1="28.0" y1="50.0" x2="236.0" y2="50.0" class="stagerule"/><text x="332.0" y="42.0" class="stage">AUTHOR</text><line x1="332.0" y1="50.0" x2="540.0" y2="50.0" class="stagerule"/><text x="636.0" y="42.0" class="stage">VERIFY</text><line x1="636.0" y1="50.0" x2="844.0" y2="50.0" class="stagerule"/><text x="940.0" y="42.0" class="stage">ACCEPT</text><line x1="940.0" y1="50.0" x2="1148.0" y2="50.0" class="stagerule"/><rect x="28.0" y="122.9" width="208" height="77.4" rx="12.0" class="node" stroke="#175cc2"/><rect x="28.0" y="122.9" width="5" height="77.4" rx="2.5" fill="#175cc2"/><text x="42.0" y="146.8" class="ntitle" text-anchor="start">D00 bootstrap_episode</text><text x="42.0" y="169.7" class="nnote" text-anchor="start">fresh or resume</text><text x="42.0" y="191.8" class="nbadge" fill="#175cc2">OBSERVED</text><rect x="28.0" y="226.3" width="208" height="77.4" rx="12.0" class="node" stroke="#175cc2"/><rect x="28.0" y="226.3" width="5" height="77.4" rx="2.5" fill="#175cc2"/><text x="42.0" y="250.2" class="ntitle" text-anchor="start">D01 freeze_inputs</text><text x="42.0" y="273.1" class="nnote" text-anchor="start">manifest digest frozen</text><text x="42.0" y="295.2" class="nbadge" fill="#175cc2">OBSERVED</text><rect x="28.0" y="329.7" width="208" height="77.4" rx="12.0" class="node" stroke="#8d5b00"/><rect x="28.0" y="329.7" width="5" height="77.4" rx="2.5" fill="#8d5b00"/><text x="42.0" y="353.6" class="ntitle" text-anchor="start">D03 prove_capabilities</text><text x="42.0" y="376.5" class="nnote" text-anchor="start">sandbox + CLI proof</text><text x="42.0" y="398.7" class="nbadge" fill="#8d5b00">GATE</text><rect x="28.0" y="433.2" width="208" height="76.8" rx="12.0" class="node" stroke="#175cc2"/><rect x="28.0" y="433.2" width="5" height="76.8" rx="2.5" fill="#175cc2"/><text x="42.0" y="457.1" class="ntitle" text-anchor="start">D04</text><text x="42.0" y="476.0" class="ntitle" text-anchor="start">initialize_or_resume</text><text x="42.0" y="501.5" class="nbadge" fill="#175cc2">OBSERVED</text><rect x="28.0" y="536.0" width="208" height="77.4" rx="12.0" class="node" stroke="#8d5b00"/><rect x="28.0" y="536.0" width="5" height="77.4" rx="2.5" fill="#8d5b00"/><text x="42.0" y="559.9" class="ntitle" text-anchor="start">D05 select_next_unit</text><text x="42.0" y="582.8" class="nnote" text-anchor="start">manifest cursor</text><text x="42.0" y="604.9" class="nbadge" fill="#8d5b00">GATE</text><rect x="332.0" y="122.8" width="208" height="96.3" rx="12.0" class="node" stroke="#8d5b00"/><rect x="332.0" y="122.8" width="5" height="96.3" rx="2.5" fill="#8d5b00"/><text x="346.0" y="146.7" class="ntitle" text-anchor="start">D90</text><text x="346.0" y="165.6" class="ntitle" text-anchor="start">reserve_model_attempt</text><text x="346.0" y="188.5" class="nnote" text-anchor="start">max 2 per activation</text><text x="346.0" y="210.7" class="nbadge" fill="#8d5b00">GATE</text><rect x="332.0" y="245.2" width="208" height="77.4" rx="12.0" class="node" stroke="#6b5bd2" stroke-dasharray="5 4"/><rect x="332.0" y="245.2" width="5" height="77.4" rx="2.5" fill="#6b5bd2"/><text x="346.0" y="269.1" class="ntitle" text-anchor="start">M01 research_sources</text><text x="346.0" y="292.0" class="nnote" text-anchor="start">claude-sonnet-5 · WebSearch</text><text x="346.0" y="314.1" class="nbadge" fill="#6b5bd2">EXTERNAL</text><rect x="332.0" y="348.6" width="208" height="58.0" rx="12.0" class="node" stroke="#8d5b00"/><rect x="332.0" y="348.6" width="5" height="58.0" rx="2.5" fill="#8d5b00"/><text x="346.0" y="372.5" class="ntitle" text-anchor="start">D07 admit_sources</text><text x="346.0" y="398.0" class="nbadge" fill="#8d5b00">GATE</text><rect x="332.0" y="432.6" width="208" height="77.4" rx="12.0" class="node" stroke="#6b5bd2" stroke-dasharray="5 4"/><rect x="332.0" y="432.6" width="5" height="77.4" rx="2.5" fill="#6b5bd2"/><text x="346.0" y="456.5" class="ntitle" text-anchor="start">M02 domain_data</text><text x="346.0" y="479.4" class="nnote" text-anchor="start">claude-sonnet-5</text><text x="346.0" y="501.5" class="nbadge" fill="#6b5bd2">EXTERNAL</text><rect x="332.0" y="536.0" width="208" height="77.4" rx="12.0" class="node" stroke="#6b5bd2" stroke-dasharray="5 4"/><rect x="332.0" y="536.0" width="5" height="77.4" rx="2.5" fill="#6b5bd2"/><text x="346.0" y="559.9" class="ntitle" text-anchor="start">M03 unit_content</text><text x="346.0" y="582.8" class="nnote" text-anchor="start">claude-sonnet-5</text><text x="346.0" y="604.9" class="nbadge" fill="#6b5bd2">EXTERNAL</text><rect x="636.0" y="58.0" width="208" height="58.0" rx="12.0" class="node" stroke="#8d5b00"/><rect x="636.0" y="58.0" width="5" height="58.0" rx="2.5" fill="#8d5b00"/><text x="650.0" y="81.9" class="ntitle" text-anchor="start">D08 validate_domain</text><text x="650.0" y="107.4" class="nbadge" fill="#8d5b00">GATE</text><rect x="636.0" y="142.0" width="208" height="58.0" rx="12.0" class="node" stroke="#8d5b00"/><rect x="636.0" y="142.0" width="5" height="58.0" rx="2.5" fill="#8d5b00"/><text x="650.0" y="165.9" class="ntitle" text-anchor="start">D09 validate_content</text><text x="650.0" y="191.4" class="nbadge" fill="#8d5b00">GATE</text><rect x="636.0" y="226.0" width="208" height="77.4" rx="12.0" class="node" stroke="#8d5b00"/><rect x="636.0" y="226.0" width="5" height="77.4" rx="2.5" fill="#8d5b00"/><text x="650.0" y="249.9" class="ntitle" text-anchor="start">D12 visual_join</text><text x="650.0" y="272.8" class="nnote" text-anchor="start">Send fan-in barrier</text><text x="650.0" y="294.9" class="nbadge" fill="#8d5b00">GATE</text><rect x="636.0" y="329.4" width="208" height="77.4" rx="12.0" class="node" stroke="#175cc2"/><rect x="636.0" y="329.4" width="5" height="77.4" rx="2.5" fill="#175cc2"/><text x="650.0" y="353.3" class="ntitle" text-anchor="start">D13 render_unit</text><text x="650.0" y="376.2" class="nnote" text-anchor="start">pandoc/typst · 600s</text><text x="650.0" y="398.3" class="nbadge" fill="#175cc2">OBSERVED</text><rect x="636.0" y="432.9" width="208" height="58.0" rx="12.0" class="node" stroke="#8d5b00"/><rect x="636.0" y="432.9" width="5" height="58.0" rx="2.5" fill="#8d5b00"/><text x="650.0" y="456.8" class="ntitle" text-anchor="start">D14 inspect_pages</text><text x="650.0" y="482.2" class="nbadge" fill="#8d5b00">GATE</text><rect x="636.0" y="516.9" width="208" height="58.0" rx="12.0" class="node" stroke="#175cc2"/><rect x="636.0" y="516.9" width="5" height="58.0" rx="2.5" fill="#175cc2"/><text x="650.0" y="540.8" class="ntitle" text-anchor="start">D15 freeze_packet</text><text x="650.0" y="566.2" class="nbadge" fill="#175cc2">OBSERVED</text><rect x="636.0" y="600.9" width="208" height="77.4" rx="12.0" class="node" stroke="#6b5bd2" stroke-dasharray="5 4"/><rect x="636.0" y="600.9" width="5" height="77.4" rx="2.5" fill="#6b5bd2"/><text x="650.0" y="624.8" class="ntitle" text-anchor="start">M05 review_unit</text><text x="650.0" y="647.6" class="nnote" text-anchor="start">gpt-5.6-sol · cross-family</text><text x="650.0" y="669.8" class="nbadge" fill="#6b5bd2">EXTERNAL</text><rect x="940.0" y="203.4" width="208" height="58.0" rx="12.0" class="node" stroke="#8d5b00"/><rect x="940.0" y="203.4" width="5" height="58.0" rx="2.5" fill="#8d5b00"/><text x="954.0" y="227.3" class="ntitle" text-anchor="start">D16 reduce_evidence</text><text x="954.0" y="252.8" class="nbadge" fill="#8d5b00">GATE</text><rect x="940.0" y="287.4" width="208" height="58.0" rx="12.0" class="node" stroke="#175cc2"/><rect x="940.0" y="287.4" width="5" height="58.0" rx="2.5" fill="#175cc2"/><text x="954.0" y="311.3" class="ntitle" text-anchor="start">D22 accept_unit</text><text x="954.0" y="336.8" class="nbadge" fill="#175cc2">OBSERVED</text><rect x="940.0" y="371.4" width="208" height="58.0" rx="12.0" class="node" stroke="#0f7490" stroke-dasharray="1 5"/><rect x="940.0" y="371.4" width="5" height="58.0" rx="2.5" fill="#0f7490"/><text x="954.0" y="395.3" class="ntitle" text-anchor="start">D23 checkpoint_unit</text><text x="954.0" y="420.8" class="nbadge" fill="#0f7490">STORE</text><rect x="940.0" y="455.4" width="208" height="77.4" rx="12.0" class="node" stroke="#8d5b00"/><rect x="940.0" y="455.4" width="5" height="77.4" rx="2.5" fill="#8d5b00"/><text x="954.0" y="479.3" class="ntitle" text-anchor="start">D24 prove_coverage</text><text x="954.0" y="502.2" class="nnote" text-anchor="start">workbook branch entry</text><text x="954.0" y="524.4" class="nbadge" fill="#8d5b00">GATE</text><path d="M 132.0 200.3 V 220.3" class="edge" stroke="#175cc2" stroke-dasharray="6 4" marker-end="url(#a-175cc2)" fill="none"/><path d="M 132.0 303.7 V 323.7" class="edge" stroke="#3d4c66" marker-end="url(#a-3d4c66)" fill="none"/><path d="M 132.0 407.2 V 427.2" class="edge" stroke="#175cc2" stroke-dasharray="6 4" marker-end="url(#a-175cc2)" fill="none"/><path d="M 132.0 510.0 V 530.0" class="edge" stroke="#3d4c66" marker-end="url(#a-3d4c66)" fill="none"/><path d="M 236.0 574.7 H 284.0 V 171.0 H 326.0" class="edge" stroke="#175cc2" stroke-dasharray="6 4" marker-end="url(#a-175cc2)" fill="none"/><path d="M 436.0 219.2 V 239.2" class="edge" stroke="#175cc2" stroke-dasharray="6 4" marker-end="url(#a-175cc2)" fill="none"/><path d="M 436.0 322.6 V 342.6" class="edge" stroke="#3d4c66" marker-end="url(#a-3d4c66)" fill="none"/><path d="M 436.0 406.6 V 426.6" class="edge" stroke="#3d4c66" marker-end="url(#a-3d4c66)" fill="none"/><path d="M 540.0 471.3 H 588.0 V 87.0 H 630.0" class="edge" stroke="#3d4c66" marker-end="url(#a-3d4c66)" fill="none"/><path d="M 740.0 116.0 V 702.3 H 436.0 V 619.4" class="edge" stroke="#3d4c66" marker-end="url(#a-3d4c66)" fill="none"/><path d="M 540.0 574.7 H 588.0 V 171.0 H 630.0" class="edge" stroke="#3d4c66" marker-end="url(#a-3d4c66)" fill="none"/><path d="M 740.0 200.0 V 220.0" class="edge" stroke="#3d4c66" marker-end="url(#a-3d4c66)" fill="none"/><path d="M 740.0 303.4 V 323.4" class="edge" stroke="#3d4c66" marker-end="url(#a-3d4c66)" fill="none"/><path d="M 740.0 406.9 V 426.9" class="edge" stroke="#3d4c66" marker-end="url(#a-3d4c66)" fill="none"/><path d="M 740.0 490.9 V 510.9" class="edge" stroke="#175cc2" stroke-dasharray="6 4" marker-end="url(#a-175cc2)" fill="none"/><path d="M 740.0 574.9 V 594.9" class="edge" stroke="#3d4c66" marker-end="url(#a-3d4c66)" fill="none"/><path d="M 844.0 639.6 H 892.0 V 232.4 H 934.0" class="edge" stroke="#3d4c66" marker-end="url(#a-3d4c66)" fill="none"/><path d="M 1044.0 261.4 V 281.4" class="edge" stroke="#175cc2" stroke-dasharray="6 4" marker-end="url(#a-175cc2)" fill="none"/><path d="M 1044.0 345.4 V 365.4" class="edge" stroke="#3d4c66" marker-end="url(#a-3d4c66)" fill="none"/><path d="M 1044.0 429.4 V 736.3 H 132.0 V 619.4" class="edge" stroke="#8d5b00" stroke-dasharray="3 4" marker-end="url(#a-8d5b00)" fill="none"/><path d="M 236.0 574.7 H 588.0 V 494.1 H 934.0" class="edge" stroke="#175cc2" stroke-dasharray="6 4" marker-end="url(#a-175cc2)" fill="none"/><rect x="135.0" y="203.8" width="40.8" height="19.0" rx="4" class="plate"/><text x="155.4" y="217.3" class="elabel" text-anchor="middle">fresh</text><rect x="135.0" y="307.2" width="53.1" height="19.0" rx="4" class="plate"/><text x="161.6" y="320.7" class="elabel" text-anchor="middle">via D02</text><rect x="135.0" y="410.7" width="47.0" height="19.0" rx="4" class="plate"/><text x="158.5" y="424.1" class="elabel" text-anchor="middle">proven</text><rect x="257.4" y="149.5" width="53.1" height="19.0" rx="4" class="plate"/><text x="284.0" y="163.0" class="elabel" text-anchor="middle">via D06</text><rect x="439.0" y="222.7" width="28.5" height="19.0" rx="4" class="plate"/><text x="453.2" y="236.1" class="elabel" text-anchor="middle">M01</text><rect x="439.0" y="410.1" width="53.1" height="19.0" rx="4" class="plate"/><text x="465.6" y="423.5" class="elabel" text-anchor="middle">via D90</text><rect x="561.4" y="692.8" width="53.1" height="19.0" rx="4" class="plate"/><text x="588.0" y="706.2" class="elabel" text-anchor="middle">via D90</text><rect x="743.0" y="203.5" width="77.8" height="19.0" rx="4" class="plate"/><text x="781.9" y="217.0" class="elabel" text-anchor="middle">via D10/D11</text><rect x="743.0" y="494.4" width="59.3" height="19.0" rx="4" class="plate"/><text x="772.6" y="507.8" class="elabel" text-anchor="middle">pages ok</text><rect x="743.0" y="578.4" width="53.1" height="19.0" rx="4" class="plate"/><text x="769.6" y="591.8" class="elabel" text-anchor="middle">via D90</text><rect x="1047.0" y="264.9" width="47.0" height="19.0" rx="4" class="plate"/><text x="1070.5" y="278.4" class="elabel" text-anchor="middle">passed</text><rect x="555.3" y="726.8" width="65.4" height="19.0" rx="4" class="plate"/><text x="588.0" y="740.2" class="elabel" text-anchor="middle">next unit</text><rect x="555.3" y="472.6" width="65.4" height="19.0" rx="4" class="plate"/><text x="588.0" y="486.1" class="elabel" text-anchor="middle">exhausted</text></svg>
+<figcaption>
+  <strong>Happy path: one unit, authored to accepted.</strong> Every model call is reached only through D90, which reserves an attempt before dispatch; a unit is accepted only after D16 reduces review evidence, and D23 then loops back to D05 for the next unit until the manifest is exhausted.
+  <span class="dg-meta"><span><strong>Scope:</strong> Compiled topology of build_curriculum_factory_graph() at 9ef14e8 (50 nodes, 158 edges, graph digest 0e1eca87). Success routes only — failure, repair and terminal routes are figure 2.</span> <span class="ev ev-observed">observed</span> <span><strong>From:</strong> <code>src/curriculum_factory/langgraph_factory/graph.py:710</code>, <code>src/curriculum_factory/langgraph_factory/unit_graph.py:117</code>, <code>src/curriculum_factory/langgraph_factory/routing.py:116</code></span></span>
+  <details><summary>Text equivalent</summary>
+<table class="dg-equiv"><tr><th scope="col">From</th><th scope="col">To</th><th scope="col">Trigger</th><th scope="col">Kind</th></tr><tr><td colspan="4"><strong>D00 bootstrap_episode</strong> — fresh or resume <em>observed</em></td></tr><tr><td colspan="4"><strong>D01 freeze_inputs</strong> — manifest digest frozen <em>observed</em></td></tr><tr><td colspan="4"><strong>D03 prove_capabilities</strong> — sandbox + CLI proof <em>observed</em></td></tr><tr><td colspan="4"><strong>D04 initialize_or_resume</strong> —  <em>observed</em></td></tr><tr><td colspan="4"><strong>D05 select_next_unit</strong> — manifest cursor <em>observed</em></td></tr><tr><td colspan="4"><strong>D90 reserve_model_attempt</strong> — max 2 per activation <em>observed</em></td></tr><tr><td colspan="4"><strong>M01 research_sources</strong> — claude-sonnet-5 · WebSearch <em>observed</em></td></tr><tr><td colspan="4"><strong>D07 admit_sources</strong> —  <em>observed</em></td></tr><tr><td colspan="4"><strong>M02 domain_data</strong> — claude-sonnet-5 <em>observed</em></td></tr><tr><td colspan="4"><strong>M03 unit_content</strong> — claude-sonnet-5 <em>observed</em></td></tr><tr><td colspan="4"><strong>D08 validate_domain</strong> —  <em>observed</em></td></tr><tr><td colspan="4"><strong>D09 validate_content</strong> —  <em>observed</em></td></tr><tr><td colspan="4"><strong>D12 visual_join</strong> — Send fan-in barrier <em>observed</em></td></tr><tr><td colspan="4"><strong>D13 render_unit</strong> — pandoc/typst · 600s <em>observed</em></td></tr><tr><td colspan="4"><strong>D14 inspect_pages</strong> —  <em>observed</em></td></tr><tr><td colspan="4"><strong>D15 freeze_packet</strong> —  <em>observed</em></td></tr><tr><td colspan="4"><strong>M05 review_unit</strong> — gpt-5.6-sol · cross-family <em>observed</em></td></tr><tr><td colspan="4"><strong>D16 reduce_evidence</strong> —  <em>observed</em></td></tr><tr><td colspan="4"><strong>D22 accept_unit</strong> —  <em>observed</em></td></tr><tr><td colspan="4"><strong>D23 checkpoint_unit</strong> —  <em>observed</em></td></tr><tr><td colspan="4"><strong>D24 prove_coverage</strong> — workbook branch entry <em>observed</em></td></tr><tr><td>d00</td><td>d01</td><td>fresh</td><td>branch</td></tr><tr><td>d01</td><td>d03</td><td>via D02</td><td>forward</td></tr><tr><td>d03</td><td>d04</td><td>proven</td><td>branch</td></tr><tr><td>d04</td><td>d05</td><td>—</td><td>forward</td></tr><tr><td>d05</td><td>d90</td><td>via D06</td><td>branch</td></tr><tr><td>d90</td><td>m01</td><td>M01</td><td>branch</td></tr><tr><td>m01</td><td>d07</td><td>—</td><td>forward</td></tr><tr><td>d07</td><td>m02</td><td>via D90</td><td>forward</td></tr><tr><td>m02</td><td>d08</td><td>—</td><td>forward</td></tr><tr><td>d08</td><td>m03</td><td>via D90</td><td>forward</td></tr><tr><td>m03</td><td>d09</td><td>—</td><td>forward</td></tr><tr><td>d09</td><td>d12</td><td>via D10/D11</td><td>forward</td></tr><tr><td>d12</td><td>d13</td><td>—</td><td>forward</td></tr><tr><td>d13</td><td>d14</td><td>—</td><td>forward</td></tr><tr><td>d14</td><td>d15</td><td>pages ok</td><td>branch</td></tr><tr><td>d15</td><td>m05</td><td>via D90</td><td>forward</td></tr><tr><td>m05</td><td>d16</td><td>—</td><td>forward</td></tr><tr><td>d16</td><td>d22</td><td>passed</td><td>branch</td></tr><tr><td>d22</td><td>d23</td><td>—</td><td>forward</td></tr><tr><td>d23</td><td>d05</td><td>next unit</td><td>repair</td></tr><tr><td>d05</td><td>d24</td><td>exhausted</td><td>branch</td></tr></table>
+</details>
+</figcaption>
+</figure>
+
+<figure class="dg" id="fig-fig-failure-paths">
+<svg viewBox="0 0 1480 572" width="100%" style="max-width:1480px" role="img" aria-labelledby="fig-failure-paths-t fig-failure-paths-d" xmlns="http://www.w3.org/2000/svg"><title id="fig-failure-paths-t">Failure, repair and termination</title><desc id="fig-failure-paths-d">Deterministic gates route repairable findings to D17, which plans a targeted repair and retests only the affected descendants; model faults are bounded at two attempts before CONVERGENCE_EXHAUSTED. M06 has no incoming edge in the compiled graph, so the model-repair arm of this loop cannot be entered.</desc><style>
+.node{fill:var(--dg-card,#fff);stroke-width:1.6}
+.group{fill:var(--dg-group,#f4f7fc);stroke:var(--dg-line,#c9d3e4);stroke-width:1.4}
+.plate{fill:var(--dg-card,#fff);stroke:var(--dg-line,#d8deea);stroke-width:1}
+.note{fill:var(--dg-note,#fff8e6);stroke:var(--dg-line,#d8deea);stroke-width:1.2}
+.edge{stroke-width:1.9;stroke-linejoin:round;stroke-linecap:round}
+.lifeline{stroke:var(--dg-line,#c9d3e4);stroke-width:1.2;stroke-dasharray:2 6}
+.stagerule{stroke:var(--dg-line,#c9d3e4);stroke-width:2}
+text{font-family:ui-sans-serif,system-ui,-apple-system,"Segoe UI",sans-serif;fill:var(--dg-ink,#172033)}
+.ntitle{font-size:14px;font-weight:650}
+.nnote{font-size:11.5px;fill:var(--dg-muted,#586278)}
+.nbadge{font-size:10px;font-weight:700;letter-spacing:.08em}
+.elabel{font-size:11px;fill:var(--dg-muted,#3d4c66)}
+.stage{font-size:11px;font-weight:700;letter-spacing:.1em;fill:var(--dg-muted,#586278)}
+.gnote{font-size:11px;fill:var(--dg-muted,#586278)}
+</style><defs><marker id="a-3d4c66" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M 0 1 L 9 5 L 0 9 z" fill="#3d4c66"/></marker><marker id="a-175cc2" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M 0 1 L 9 5 L 0 9 z" fill="#175cc2"/></marker><marker id="a-8d5b00" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M 0 1 L 9 5 L 0 9 z" fill="#8d5b00"/></marker><marker id="a-b3261e" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M 0 1 L 9 5 L 0 9 z" fill="#b3261e"/></marker><marker id="a-0f7490" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M 0 1 L 9 5 L 0 9 z" fill="#0f7490"/></marker></defs><text x="28.0" y="42.0" class="stage">GATES</text><line x1="28.0" y1="50.0" x2="236.0" y2="50.0" class="stagerule"/><text x="332.0" y="42.0" class="stage">CLASSIFY</text><line x1="332.0" y1="50.0" x2="540.0" y2="50.0" class="stagerule"/><text x="636.0" y="42.0" class="stage">PLAN REPAIR</text><line x1="636.0" y1="50.0" x2="844.0" y2="50.0" class="stagerule"/><text x="940.0" y="42.0" class="stage">APPLY · RETEST</text><line x1="940.0" y1="50.0" x2="1148.0" y2="50.0" class="stagerule"/><text x="1244.0" y="42.0" class="stage">TERMINATE</text><line x1="1244.0" y1="50.0" x2="1452.0" y2="50.0" class="stagerule"/><rect x="28.0" y="58.0" width="208" height="58.0" rx="12.0" class="node" stroke="#8d5b00"/><rect x="28.0" y="58.0" width="5" height="58.0" rx="2.5" fill="#8d5b00"/><text x="42.0" y="81.9" class="ntitle" text-anchor="start">D08 validate_domain</text><text x="42.0" y="107.4" class="nbadge" fill="#8d5b00">GATE</text><rect x="28.0" y="142.0" width="208" height="58.0" rx="12.0" class="node" stroke="#8d5b00"/><rect x="28.0" y="142.0" width="5" height="58.0" rx="2.5" fill="#8d5b00"/><text x="42.0" y="165.9" class="ntitle" text-anchor="start">D09 validate_content</text><text x="42.0" y="191.4" class="nbadge" fill="#8d5b00">GATE</text><rect x="28.0" y="226.0" width="208" height="58.0" rx="12.0" class="node" stroke="#8d5b00"/><rect x="28.0" y="226.0" width="5" height="58.0" rx="2.5" fill="#8d5b00"/><text x="42.0" y="249.9" class="ntitle" text-anchor="start">D12 visual_join</text><text x="42.0" y="275.4" class="nbadge" fill="#8d5b00">GATE</text><rect x="28.0" y="310.0" width="208" height="58.0" rx="12.0" class="node" stroke="#8d5b00"/><rect x="28.0" y="310.0" width="5" height="58.0" rx="2.5" fill="#8d5b00"/><text x="42.0" y="333.9" class="ntitle" text-anchor="start">D14 inspect_pages</text><text x="42.0" y="359.4" class="nbadge" fill="#8d5b00">GATE</text><rect x="28.0" y="394.0" width="208" height="58.0" rx="12.0" class="node" stroke="#6b5bd2" stroke-dasharray="5 4"/><rect x="28.0" y="394.0" width="5" height="58.0" rx="2.5" fill="#6b5bd2"/><text x="42.0" y="417.9" class="ntitle" text-anchor="start">M05 review_unit</text><text x="42.0" y="443.4" class="nbadge" fill="#6b5bd2">EXTERNAL</text><rect x="332.0" y="132.6" width="208" height="58.0" rx="12.0" class="node" stroke="#8d5b00"/><rect x="332.0" y="132.6" width="5" height="58.0" rx="2.5" fill="#8d5b00"/><text x="346.0" y="156.5" class="ntitle" text-anchor="start">D16 reduce_evidence</text><text x="346.0" y="182.0" class="nbadge" fill="#8d5b00">GATE</text><rect x="332.0" y="216.6" width="208" height="58.0" rx="12.0" class="node" stroke="#8d5b00"/><rect x="332.0" y="216.6" width="5" height="58.0" rx="2.5" fill="#8d5b00"/><text x="346.0" y="240.5" class="ntitle" text-anchor="start">D17 classify_findings</text><text x="346.0" y="266.0" class="nbadge" fill="#8d5b00">GATE</text><rect x="332.0" y="300.6" width="208" height="76.8" rx="12.0" class="node" stroke="#8d5b00"/><rect x="332.0" y="300.6" width="5" height="76.8" rx="2.5" fill="#8d5b00"/><text x="346.0" y="324.5" class="ntitle" text-anchor="start">D91</text><text x="346.0" y="343.4" class="ntitle" text-anchor="start">classify_model_failure</text><text x="346.0" y="368.9" class="nbadge" fill="#8d5b00">GATE</text><rect x="636.0" y="184.0" width="208" height="58.0" rx="12.0" class="node" stroke="#175cc2"/><rect x="636.0" y="184.0" width="5" height="58.0" rx="2.5" fill="#175cc2"/><text x="650.0" y="207.9" class="ntitle" text-anchor="start">D18 plan_repair</text><text x="650.0" y="233.4" class="nbadge" fill="#175cc2">OBSERVED</text><rect x="636.0" y="268.0" width="208" height="58.0" rx="12.0" class="node" stroke="#8d5b00"/><rect x="636.0" y="268.0" width="5" height="58.0" rx="2.5" fill="#8d5b00"/><text x="650.0" y="291.9" class="ntitle" text-anchor="start">D19 route_repair</text><text x="650.0" y="317.4" class="nbadge" fill="#8d5b00">GATE</text><rect x="1244.0" y="105.1" width="208" height="77.4" rx="12.0" class="node" stroke="#8d5b00"/><rect x="1244.0" y="105.1" width="5" height="77.4" rx="2.5" fill="#8d5b00"/><text x="1258.0" y="129.0" class="ntitle" text-anchor="start">D90 reserve_attempt</text><text x="1258.0" y="151.9" class="nnote" text-anchor="start">limit 2</text><text x="1258.0" y="174.0" class="nbadge" fill="#8d5b00">GATE</text><rect x="940.0" y="132.3" width="208" height="77.4" rx="12.0" class="node" stroke="#6b5bd2" stroke-dasharray="5 4"/><rect x="940.0" y="132.3" width="5" height="77.4" rx="2.5" fill="#6b5bd2"/><text x="954.0" y="156.2" class="ntitle" text-anchor="start">M06 repair_artifact</text><text x="954.0" y="179.1" class="nnote" text-anchor="start">no incoming edge</text><text x="954.0" y="201.2" class="nbadge" fill="#6b5bd2">EXTERNAL</text><rect x="940.0" y="235.7" width="208" height="58.0" rx="12.0" class="node" stroke="#175cc2"/><rect x="940.0" y="235.7" width="5" height="58.0" rx="2.5" fill="#175cc2"/><text x="954.0" y="259.6" class="ntitle" text-anchor="start">D20 admit_repair</text><text x="954.0" y="285.1" class="nbadge" fill="#175cc2">OBSERVED</text><rect x="940.0" y="319.7" width="208" height="58.0" rx="12.0" class="node" stroke="#8d5b00"/><rect x="940.0" y="319.7" width="5" height="58.0" rx="2.5" fill="#8d5b00"/><text x="954.0" y="343.6" class="ntitle" text-anchor="start">D21 retest_descendants</text><text x="954.0" y="369.1" class="nbadge" fill="#8d5b00">GATE</text><rect x="1244.0" y="208.5" width="208" height="77.4" rx="12.0" class="node" stroke="#8d5b00"/><rect x="1244.0" y="208.5" width="5" height="77.4" rx="2.5" fill="#8d5b00"/><text x="1258.0" y="232.4" class="ntitle" text-anchor="start">D96 interrupt_gate</text><text x="1258.0" y="255.3" class="nnote" text-anchor="start">no producer sets the token</text><text x="1258.0" y="277.5" class="nbadge" fill="#8d5b00">GATE</text><rect x="1244.0" y="312.0" width="208" height="93.0" rx="46.5" class="node" stroke="#087f67"/><text x="1258.0" y="335.9" class="ntitle" text-anchor="start">D98 write_terminal</text><text x="1258.0" y="358.8" class="nnote" text-anchor="start">6 kinds · exit</text><text x="1258.0" y="374.3" class="nnote" text-anchor="start">0/10/11/12/20</text><text x="1258.0" y="396.4" class="nbadge" fill="#087f67">TERMINAL</text><path d="M 236.0 87.0 H 284.0 V 245.6 H 326.0" class="edge" stroke="#8d5b00" stroke-dasharray="3 4" marker-end="url(#a-8d5b00)" fill="none"/><path d="M 236.0 171.0 H 284.0 V 245.6 H 326.0" class="edge" stroke="#8d5b00" stroke-dasharray="3 4" marker-end="url(#a-8d5b00)" fill="none"/><path d="M 236.0 255.0 H 284.0 V 245.6 H 326.0" class="edge" stroke="#8d5b00" stroke-dasharray="3 4" marker-end="url(#a-8d5b00)" fill="none"/><path d="M 236.0 339.0 H 284.0 V 245.6 H 326.0" class="edge" stroke="#8d5b00" stroke-dasharray="3 4" marker-end="url(#a-8d5b00)" fill="none"/><path d="M 236.0 423.0 H 284.0 V 161.6 H 326.0" class="edge" stroke="#3d4c66" marker-end="url(#a-3d4c66)" fill="none"/><path d="M 236.0 423.0 H 284.0 V 339.0 H 326.0" class="edge" stroke="#b3261e" stroke-dasharray="8 5" marker-end="url(#a-b3261e)" fill="none"/><path d="M 436.0 190.6 V 210.6" class="edge" stroke="#8d5b00" stroke-dasharray="3 4" marker-end="url(#a-8d5b00)" fill="none"/><path d="M 540.0 245.6 H 588.0 V 213.0 H 630.0" class="edge" stroke="#3d4c66" marker-end="url(#a-3d4c66)" fill="none"/><path d="M 540.0 245.6 H 892.0 V 358.4 H 1238.0" class="edge" stroke="#b3261e" stroke-dasharray="8 5" marker-end="url(#a-b3261e)" fill="none"/><path d="M 740.0 242.0 V 262.0" class="edge" stroke="#3d4c66" marker-end="url(#a-3d4c66)" fill="none"/><path d="M 844.0 297.0 H 892.0 V 264.7 H 934.0" class="edge" stroke="#175cc2" stroke-dasharray="6 4" marker-end="url(#a-175cc2)" fill="none"/><path d="M 844.0 297.0 H 1044.0 V 143.8 H 1238.0" class="edge" stroke="#3d4c66" marker-end="url(#a-3d4c66)" fill="none"/><path d="M 1044.0 209.7 V 229.7" class="edge" stroke="#b3261e" stroke-dasharray="8 5" marker-end="url(#a-b3261e)" fill="none"/><path d="M 1044.0 293.7 V 313.7" class="edge" stroke="#3d4c66" marker-end="url(#a-3d4c66)" fill="none"/><path d="M 1044.0 377.7 V 476.0 H 132.0 V 122.0" class="edge" stroke="#8d5b00" stroke-dasharray="3 4" marker-end="url(#a-8d5b00)" fill="none"/><path d="M 1044.0 377.7 V 510.0 H 436.0 V 196.6" class="edge" stroke="#8d5b00" stroke-dasharray="3 4" marker-end="url(#a-8d5b00)" fill="none"/><path d="M 540.0 339.0 H 892.0 V 143.8 H 1238.0" class="edge" stroke="#8d5b00" stroke-dasharray="3 4" marker-end="url(#a-8d5b00)" fill="none"/><path d="M 540.0 339.0 H 556.0 V 245.6 H 546.0" class="edge" stroke="#8d5b00" stroke-dasharray="3 4" marker-end="url(#a-8d5b00)" fill="none"/><path d="M 540.0 339.0 H 892.0 V 358.4 H 1238.0" class="edge" stroke="#b3261e" stroke-dasharray="8 5" marker-end="url(#a-b3261e)" fill="none"/><path d="M 1148.0 348.7 H 1196.0 V 247.2 H 1238.0" class="edge" stroke="#b3261e" stroke-dasharray="8 5" marker-end="url(#a-b3261e)" fill="none"/><path d="M 1348.0 286.0 V 306.0" class="edge" stroke="#3d4c66" marker-end="url(#a-3d4c66)" fill="none"/><rect x="260.5" y="65.5" width="47.0" height="19.0" rx="4" class="plate"/><text x="284.0" y="79.0" class="elabel" text-anchor="middle">domain</text><rect x="257.4" y="149.5" width="53.1" height="19.0" rx="4" class="plate"/><text x="284.0" y="163.0" class="elabel" text-anchor="middle">content</text><rect x="257.4" y="224.1" width="53.1" height="19.0" rx="4" class="plate"/><text x="284.0" y="237.6" class="elabel" text-anchor="middle">visuals</text><rect x="260.5" y="204.1" width="47.0" height="19.0" rx="4" class="plate"/><text x="284.0" y="217.6" class="elabel" text-anchor="middle">layout</text><rect x="263.6" y="317.5" width="40.8" height="19.0" rx="4" class="plate"/><text x="284.0" y="331.0" class="elabel" text-anchor="middle">fault</text><rect x="439.0" y="194.1" width="59.3" height="19.0" rx="4" class="plate"/><text x="468.6" y="207.6" class="elabel" text-anchor="middle">findings</text><rect x="850.0" y="224.1" width="83.9" height="19.0" rx="4" class="plate"/><text x="892.0" y="237.6" class="elabel" text-anchor="middle">unrepairable</text><rect x="847.0" y="243.2" width="90.1" height="19.0" rx="4" class="plate"/><text x="892.0" y="256.7" class="elabel" text-anchor="middle">deterministic</text><rect x="1005.1" y="102.3" width="77.8" height="19.0" rx="4" class="plate"/><text x="1044.0" y="115.8" class="elabel" text-anchor="middle">reserve M06</text><rect x="1047.0" y="213.2" width="77.8" height="19.0" rx="4" class="plate"/><text x="1085.9" y="226.7" class="elabel" text-anchor="middle">unreachable</text><rect x="564.5" y="466.5" width="47.0" height="19.0" rx="4" class="plate"/><text x="588.0" y="480.0" class="elabel" text-anchor="middle">retest</text><rect x="701.1" y="500.5" width="77.8" height="19.0" rx="4" class="plate"/><text x="740.0" y="514.0" class="elabel" text-anchor="middle">retest done</text><rect x="850.0" y="122.3" width="83.9" height="19.0" rx="4" class="plate"/><text x="892.0" y="135.8" class="elabel" text-anchor="middle">retry 2 of 2</text><rect x="557.0" y="242.8" width="90.1" height="19.0" rx="4" class="plate"/><text x="602.0" y="256.3" class="elabel" text-anchor="middle">content class</text><rect x="859.3" y="317.5" width="65.4" height="19.0" rx="4" class="plate"/><text x="892.0" y="331.0" class="elabel" text-anchor="middle">exhausted</text><rect x="1163.3" y="225.7" width="65.4" height="19.0" rx="4" class="plate"/><text x="1196.0" y="239.2" class="elabel" text-anchor="middle">interrupt</text><rect x="1351.0" y="289.5" width="77.8" height="19.0" rx="4" class="plate"/><text x="1389.9" y="302.9" class="elabel" text-anchor="middle">INTERRUPTED</text></svg>
+<figcaption>
+  <strong>Failure, repair and termination.</strong> Deterministic gates route repairable findings to D17, which plans a targeted repair and retests only the affected descendants; model faults are bounded at two attempts before CONVERGENCE_EXHAUSTED. M06 has no incoming edge in the compiled graph, so the model-repair arm of this loop cannot be entered.
+  <span class="dg-meta"><span><strong>Scope:</strong> Compiled topology at 9ef14e8. D91 is also reached from M01–M04, not only M05; every node in the graph carries its own edge to D98 and to D96 — only the decision-bearing ones are drawn.</span> <span class="ev ev-observed">observed</span> <span><strong>From:</strong> <code>src/curriculum_factory/langgraph_factory/unit_graph.py:117</code>, <code>src/curriculum_factory/langgraph_factory/model_nodes.py:124</code>, <code>src/curriculum_factory/langgraph_factory/routing.py:116</code>, <code>src/curriculum_factory/langgraph_factory/nodes/terminal.py:48</code></span></span>
+  <details><summary>Text equivalent</summary>
+<table class="dg-equiv"><tr><th scope="col">From</th><th scope="col">To</th><th scope="col">Trigger</th><th scope="col">Kind</th></tr><tr><td colspan="4"><strong>D08 validate_domain</strong> —  <em>observed</em></td></tr><tr><td colspan="4"><strong>D09 validate_content</strong> —  <em>observed</em></td></tr><tr><td colspan="4"><strong>D12 visual_join</strong> —  <em>observed</em></td></tr><tr><td colspan="4"><strong>D14 inspect_pages</strong> —  <em>observed</em></td></tr><tr><td colspan="4"><strong>M05 review_unit</strong> —  <em>observed</em></td></tr><tr><td colspan="4"><strong>D16 reduce_evidence</strong> —  <em>observed</em></td></tr><tr><td colspan="4"><strong>D17 classify_findings</strong> —  <em>observed</em></td></tr><tr><td colspan="4"><strong>D91 classify_model_failure</strong> —  <em>observed</em></td></tr><tr><td colspan="4"><strong>D18 plan_repair</strong> —  <em>observed</em></td></tr><tr><td colspan="4"><strong>D19 route_repair</strong> —  <em>observed</em></td></tr><tr><td colspan="4"><strong>D90 reserve_attempt</strong> — limit 2 <em>observed</em></td></tr><tr><td colspan="4"><strong>M06 repair_artifact</strong> — no incoming edge <em>conflicting</em></td></tr><tr><td colspan="4"><strong>D20 admit_repair</strong> —  <em>observed</em></td></tr><tr><td colspan="4"><strong>D21 retest_descendants</strong> —  <em>observed</em></td></tr><tr><td colspan="4"><strong>D96 interrupt_gate</strong> — no producer sets the token <em>conflicting</em></td></tr><tr><td colspan="4"><strong>D98 write_terminal</strong> — 6 kinds · exit 0/10/11/12/20 <em>observed</em></td></tr><tr><td>d08</td><td>d17</td><td>domain</td><td>repair</td></tr><tr><td>d09</td><td>d17</td><td>content</td><td>repair</td></tr><tr><td>d12</td><td>d17</td><td>visuals</td><td>repair</td></tr><tr><td>d14</td><td>d17</td><td>layout</td><td>repair</td></tr><tr><td>m05</td><td>d16</td><td>—</td><td>forward</td></tr><tr><td>m05</td><td>d91</td><td>fault</td><td>failure</td></tr><tr><td>d16</td><td>d17</td><td>findings</td><td>repair</td></tr><tr><td>d17</td><td>d18</td><td>—</td><td>forward</td></tr><tr><td>d17</td><td>d98</td><td>unrepairable</td><td>failure</td></tr><tr><td>d18</td><td>d19</td><td>—</td><td>forward</td></tr><tr><td>d19</td><td>d20</td><td>deterministic</td><td>branch</td></tr><tr><td>d19</td><td>d90</td><td>reserve M06</td><td>forward</td></tr><tr><td>m06</td><td>d20</td><td>unreachable</td><td>failure</td></tr><tr><td>d20</td><td>d21</td><td>—</td><td>forward</td></tr><tr><td>d21</td><td>d08</td><td>retest</td><td>repair</td></tr><tr><td>d21</td><td>d16</td><td>retest done</td><td>repair</td></tr><tr><td>d91</td><td>d90</td><td>retry 2 of 2</td><td>repair</td></tr><tr><td>d91</td><td>d17</td><td>content class</td><td>repair</td></tr><tr><td>d91</td><td>d98</td><td>exhausted</td><td>failure</td></tr><tr><td>d21</td><td>d96</td><td>interrupt</td><td>failure</td></tr><tr><td>d96</td><td>d98</td><td>INTERRUPTED</td><td>forward</td></tr></table>
+</details>
+</figcaption>
+</figure>
+
+<h3>The unreachable frontier</h3>
+
+<div class="box stop"><b>Verified gap: five registered nodes cannot be entered</b>
+<p>Compiling the production graph and walking it from <code>__start__</code> leaves five nodes with no incoming
+edge and no path from the entry point:</p>
+<p><code>M06_REPAIR_NAMED_UNIT_ARTIFACT</code> · <code>M07_REVIEW_ACTUAL_WORKBOOK</code> ·
+<code>M08_REPAIR_NAMED_WORKBOOK_DEFECT</code> · <code>D28_REDUCE_WORKBOOK_EVIDENCE</code> ·
+<code>D32_RECOMPUTE_FINAL_RELEASE</code></p>
+<p><b>Cause, traced.</b> Every model node is reached only through <code>D90_RESERVE_MODEL_ATTEMPT</code>, whose
+conditional path map is the tuple at <code>unit_graph.py:117-125</code>. That tuple lists
+<code>M01</code>–<code>M05</code> and stops. Its own comment states the rule it then breaks: <em>"the path map has
+to enumerate every model job this path can reserve for, or the compiled edge cannot reach the one reserved."</em>
+<code>M06</code>, <code>M07</code> and <code>M08</code> are absent. <code>D28</code> is reachable only from
+<code>M07</code>, and <code>D32</code> only from <code>D28</code>, so both fall with them.</p>
+<p><b>Consequence for an operator</b> <span class="ev ev-inferred">inferred</span>: a run that reaches
+<code>D19</code> with a model-repair plan, or reaches <code>D27</code>, has no compiled edge to take.
+<code>COMPLETE</code> is written only by <code>D32</code> (<code>workbook.py:1172</code>), so a full
+<code>--all</code> run cannot reach its success terminal. This is inference, not observation: no run in this
+inspection got that far.</p>
+<p><b>Conflicting evidence.</b> <code>graph.py:721-731</code> states that <code>D24</code>–<code>D32</code> "are
+both real, wired members of the one compiled production graph" and that the deferred <code>D05 →
+D24</code> row "resolves automatically". The first half is observably true — <code>D05 → D24</code> and
+<code>D24 → D25 → D26 → D27</code> all compile. The claim does not hold for the model jobs behind them.
+<code>workbook.py:1280</code> does register conditional edges out of <code>D28</code>, <code>D32</code>,
+<code>M07</code> and <code>M08</code>; they are simply edges out of nodes nothing can enter.</p>
+</div>
+
+<h3>Loops and their bounds</h3>
+<table>
+  <thead><tr><th>Loop</th><th>Back-edge</th><th>Bound</th><th>What happens at the bound</th><th>Evidence</th></tr></thead>
+  <tbody>
+    <tr><td>Model attempt</td><td><code>D91 → D90</code></td>
+        <td><code>MODEL_NODE_ATTEMPT_LIMIT = 2</code> (<code>model_nodes.py:124</code>), matching
+            <code>retry_limit: 1</code> per route</td>
+        <td><code>CONVERGENCE_EXHAUSTED</code>, exit 12, <code>bound: "attempt_bound"</code></td>
+        <td><span class="ev ev-observed">observed</span></td></tr>
+    <tr><td>Targeted unit repair</td><td><code>D21 → D07/D08/D09/D10/D13/D16</code></td>
+        <td>Failure fingerprints — a repeat fingerprint ends the loop rather than an iteration counter</td>
+        <td><code>CONVERGENCE_EXHAUSTED</code> with <code>bound: "fingerprint_bound"</code></td>
+        <td><span class="ev ev-declared">declared</span></td></tr>
+    <tr><td>Unit iteration</td><td><code>D23 → D05</code></td>
+        <td>The frozen manifest — <code>D05</code> advances a monotonic cursor and cannot revisit a unit</td>
+        <td><code>D05</code> routes to <code>D24</code> on <code>manifest_exhausted</code></td>
+        <td><span class="ev ev-observed">observed</span></td></tr>
+    <tr><td>Workbook repair</td><td><code>D31 → D26</code></td>
+        <td>Same fingerprint mechanism</td>
+        <td>Not exercisable — the loop's model arm is unreachable (above)</td>
+        <td><span class="ev ev-conflicting">conflicting</span></td></tr>
+  </tbody>
+</table>
+
+<h2 id="nodes"><span class="n">4</span>Node and tool contracts</h2>
+
+<p>Node bodies come in two shapes. <b>Deterministic nodes</b> (<code>D…</code>) take
+<code>(state, RuntimeContext)</code> and may touch the artifact store, the retriever and the clock, but never a
+model. <b>Model nodes</b> (<code>M…</code>) receive a narrowed context and reach a model only through the
+transport. Both are wrapped by a common boundary (<code>graph.py:366</code>) that injects the context, converts
+any unhandled exception into a classified <code>pending_failure</code> <em>plus</em> a fully-formed
+<code>SYSTEM_FAILURE</code> terminal candidate, and re-raises LangGraph's own control-flow exceptions untouched.</p>
+
+<table>
+  <thead><tr><th>Node</th><th>Purpose and side effects</th><th>Limits</th><th>Failure semantics</th><th>Evidence</th></tr></thead>
+  <tbody>
+    <tr><td><code>D03_PROVE_CAPABILITIES</code></td>
+        <td>Probes <code>sandbox-exec</code>, both CLIs and the egress broker in a temp dir. Refuses to proceed
+            unless every <em>required</em> facet is proven.</td>
+        <td>60 s per probe; positive isolation probe retried 3×</td>
+        <td>Raises <code>CapabilityProofFailed</code> before <code>invoke()</code>; exit 20</td>
+        <td><span class="ev ev-observed">observed</span></td></tr>
+    <tr><td><code>D90_RESERVE_MODEL_ATTEMPT</code></td>
+        <td>Commits an attempt-counter increment <em>before</em> dispatch, so a crash cannot buy a free retry.
+            Counter key is <code>job|phase|correlation</code>.</td>
+        <td>2 per activation</td>
+        <td><code>decision: "exhausted"</code> → <code>D98</code>, <code>CONVERGENCE_EXHAUSTED</code></td>
+        <td><span class="ev ev-observed">observed</span></td></tr>
+    <tr><td><code>M01_RESEARCH_UNIT_SOURCES</code></td>
+        <td>Two phases (discover, interpret) with separate attempt budgets. <b>The only node granted a tool</b>:
+            <code>--tools WebSearch</code>, which forces <code>--permission-mode bypassPermissions</code>.
+            Returned locators are re-checked against the host allowlist afterwards
+            (<code>model_nodes.py:1393</code>).</td>
+        <td>900 s; 2 attempts per phase</td>
+        <td>Parse/transport faults → <code>D91</code>; identity mismatch is terminal, never retried</td>
+        <td><span class="ev ev-observed">observed</span></td></tr>
+    <tr><td><code>D06B_RETRIEVE_SOURCE_CANDIDATES</code></td>
+        <td>The only HTTP fetch performed by the factory process itself. Writes retrieval receipts with byte
+            counts and content hashes.</td>
+        <td>30 s; 25 MB; 3 redirects; https only</td>
+        <td>Denied fetches are receipted and become findings, not exceptions</td>
+        <td><span class="ev ev-declared">declared</span></td></tr>
+    <tr><td><code>D08</code>/<code>D09</code>/<code>D12</code>/<code>D14</code></td>
+        <td>Deterministic validation gates. On success they admit a new artifact head — which the node boundary
+            commits to the on-disk <code>ArtifactStore</code> before the update is returned
+            (<code>graph.py:271</code>). <b>This is a side effect that repeats on replay</b>, made safe by a
+            deterministic idempotency key rather than by not repeating.</td>
+        <td>—</td>
+        <td>Repairable findings → <code>D17</code>; otherwise <code>D98</code></td>
+        <td><span class="ev ev-observed">observed</span></td></tr>
+    <tr><td><code>D13_RENDER_UNIT</code></td>
+        <td>Spawns <code>pandoc</code>/<code>typst</code> inside the sandbox with networking denied; writes PDF
+            bytes under the output root.</td>
+        <td>600 s</td>
+        <td>Nonzero exit → classified failure → <code>D98</code></td>
+        <td><span class="ev ev-declared">declared</span></td></tr>
+    <tr><td><code>M05_REVIEW_ACTUAL_UNIT</code></td>
+        <td>Cross-family review: authored by Claude, reviewed by Codex. The transport <em>rejects</em> a review
+            that executed in the authoring family (<code>transport.py:1348</code>).</td>
+        <td>900 s; 2 attempts</td>
+        <td><code>IdentityMismatch</code> → system terminal, no retry</td>
+        <td><span class="ev ev-observed">observed</span></td></tr>
+    <tr><td><code>D98_WRITE_TERMINAL</code></td>
+        <td>The only writer of the <code>terminal</code> channel. Independently re-derives every terminal claim
+            from state; it does not trust the node that proposed it. Writes <b>no files</b> — the terminal
+            reaches the operator as JSON on stdout.</td>
+        <td>One terminal per episode</td>
+        <td>A rejected candidate is <em>replaced</em> by <code>SYSTEM_FAILURE</code> / <code>integrity</code></td>
+        <td><span class="ev ev-observed">observed</span></td></tr>
+  </tbody>
+</table>
+
+<div class="box"><b>The terminal contract, concretely</b>
+<p><code>UNIT_ACCEPTED</code> (0) and <code>COMPLETE</code> (0) are the only kinds that claim success, and each is
+re-proved from scratch: <code>COMPLETE</code> requires a <code>PASS</code> release audit whose key matches, a
+current workbook head equal to the claimed hash, and <em>exact</em> manifest coverage — no extra unit, no missing
+unit. <code>PAUSED_PREREQUISITE</code> (11) is rejected unless <code>pending_failure["class"] == "pause"</code>,
+so a schema or tool fault cannot wear a pause candidate to look benign. <code>INTERRUPTED</code> (10) and
+<code>PAUSED_PREREQUISITE</code> are the only resumable kinds.</p>
+</div>
+
+<h2 id="state"><span class="n">5</span>State and data</h2>
+
+<p><code>FactoryState</code> is a 77-field <code>TypedDict</code> in which <b>every field declares exactly one
+reducer</b> through <code>typing.Annotated</code>; a field with zero or two reducers raises
+<code>StateInventoryError</code> at import (<code>state.py:224</code>). The reducer, not the writing node, is
+what makes concurrent and replayed writes safe — so the merge rule is the contract a maintainer must read before
+adding a field.</p>
+
+<table>
+  <thead><tr><th>Reducer</th><th>Fields</th><th>Merge rule</th><th>Rejects</th></tr></thead>
+  <tbody>
+    <tr><td><code>append_unique</code></td><td>37</td>
+        <td>Append by correlation key (default <code>key</code>); an equal replay is skipped</td>
+        <td><code>DuplicateConflict</code> — same key, different record</td></tr>
+    <tr><td><code>write_once</code></td><td>19 (run identity, frozen inputs, episode)</td>
+        <td>First non-<code>None</code> write wins; an equal replay is idempotent</td>
+        <td><code>WriteOnceConflict</code> — a differing second value</td></tr>
+    <tr><td><code>replace_current</code></td><td>8 (ephemeral routing fields)</td>
+        <td>Last write wins; <code>None</code> is an explicit clear</td>
+        <td>Non-JSON values</td></tr>
+    <tr><td><code>union_disjoint</code></td><td>6 (fan-out results)</td>
+        <td>Commutative map union — this is what makes <code>Send</code> fan-out order-independent</td>
+        <td><code>UnionConflict</code> — two workers writing different values for one key</td></tr>
+    <tr><td><code>advance_head</code></td><td>2 (<code>artifact_heads</code>, <code>workbook_head</code>)</td>
+        <td>Version 1 must have a null parent; version <i>n</i>+1 must name version <i>n</i>'s hash as parent</td>
+        <td><code>HeadAdvanceError</code> — a gap or a wrong parent breaks the chain</td></tr>
+    <tr><td><code>monotonic_max</code></td><td>2 (<code>cursor</code>, <code>attempt_counters</code>)</td>
+        <td>Counters never decrease</td>
+        <td><code>CounterRegression</code> — this is what stops a replay refunding a spent attempt</td></tr>
+    <tr><td><code>monotonic_status</code></td><td>1 (<code>unit_status</code>)</td>
+        <td>Declared transition table; <code>ACCEPTED</code> and <code>BLOCKED</code> absorb</td>
+        <td><code>StatusTransitionError</code> — an undeclared transition</td></tr>
+    <tr><td><code>accept_once</code></td><td>1 (<code>accepted_unit_receipts</code>)</td>
+        <td>A receipt is immutable once written</td><td><code>AcceptOnceConflict</code></td></tr>
+    <tr><td><code>write_episode_terminal_once</code></td><td>1 (<code>terminal</code>)</td>
+        <td>Exactly one terminal per episode, kind must be one of six</td><td><code>TerminalConflict</code></td></tr>
+  </tbody>
+</table>
+
+<h3>What survives a crash</h3>
+<p>Four independent layers persist, and they do not all agree on how carefully:</p>
+<ul>
+  <li><b>The checkpoint DB</b> — <code>.langgraph/checkpoints.sqlite3</code>, LangGraph's <code>SqliteSaver</code>
+      with <code>WAL</code> + <code>synchronous=FULL</code> + <code>busy_timeout=30000</code>, re-verified after
+      <code>setup()</code> because setup may relax them. Thread id is
+      <code>&lt;run_id&gt;:episode:&lt;ordinal:06d&gt;</code>; <code>checkpoint_ns</code> is always the empty string.
+      <span class="ev ev-observed">observed</span></li>
+  <li><b>Hash-chained JSONL ledgers</b> under <code>.langgraph/</code> — each record carries
+      <code>prev_hash</code> and a contiguous ordinal, so a deleted or reordered line is detectable rather than
+      merely lost.</li>
+  <li><b>The content-addressed artifact store</b> — blobs by SHA-256, version records, and one mutable file per
+      stream: the head pointer. That head pointer is the <em>only</em> thing in the entire store that is ever
+      overwritten; anything under an <code>accepted/</code> path is refused even with <code>overwrite=True</code>
+      and is chmod'd <code>0444</code>/<code>0555</code>.</li>
+  <li><b>Egress receipts</b> — <code>.evidence/egress_receipts.jsonl</code>, the only evidence log with a
+      production writer.</li>
+</ul>
+
+<div class="box warn"><b>Two durability guarantees that are declared but not wired</b>
+<p><code>flush_checkpoint_durability()</code> (<code>persistence.py:555</code>) commits, forces a full WAL
+checkpoint and <code>fsync</code>s the DB, the WAL and the directory. Its own docstring says this is required
+"before a receipt or terminal may pass". <b>It has no caller in <code>src/</code>.</b> Likewise
+<code>AdmissionLedger.admit()</code> — the mechanism documented as making "a crash between a committed side
+effect and its checkpoint non-duplicating on retry" — is never called, so <code>admissions.jsonl</code> is only
+ever created empty.</p>
+<p><b>What that costs the reader:</b> a machine that loses power between a node returning and SQLite flushing its
+WAL may lose the last checkpoint, and the artifact-store side effect that node already committed will be redone
+on replay. The idempotency keys make redoing it safe; the missing flush means you may replay further back than
+the guide's own design intends. <span class="ev ev-inferred">inferred</span></p>
+</div>
+
+<h2 id="routes"><span class="n">6</span>Route contracts</h2>
+
+<p>Routing lives in one 812-line pure module. Three mechanisms, in decreasing order of how often a maintainer
+meets them:</p>
+
+<table>
+  <thead><tr><th>Mechanism</th><th>Decided by</th><th>Destination comes from</th><th>Fallback when it cannot be evaluated</th></tr></thead>
+  <tbody>
+    <tr><td><b>Static guard</b></td>
+        <td>A declared string in <code>pending_guard.value</code></td>
+        <td><code>GUARD_DESTINATIONS[node][value]</code> (<code>routing.py:116</code>)</td>
+        <td><code>RoutingViolation</code> — deliberately <em>not</em> laundered into <code>SYSTEM_FAILURE</code>,
+            because an undeclared value is a build defect</td></tr>
+    <tr><td><b>Dynamic guard</b></td>
+        <td>A destination the node body <em>stored</em> in <code>pending_guard.detail</code>, used by
+            <code>D92</code> (resume re-entry) and <code>D21</code> (retest)</td>
+        <td>The stored string, checked against the registered set</td>
+        <td><code>RoutingViolation</code> if the stored destination is a model node — a stored destination may
+            never be an <code>M…</code> node</td></tr>
+    <tr><td><b>Fan-out (<code>Send</code>)</b></td>
+        <td>A staged <code>pending_packet</code> written <em>before</em> dispatch</td>
+        <td>One <code>Send</code> per staged worker projection, one-for-one</td>
+        <td><code>RoutingViolation</code> if the packet is missing or empty — the guard never materialises a
+            projection itself, because one invented at routing time is one no denominator committed to</td></tr>
+  </tbody>
+</table>
+
+<p>Two universal edges precede all of the above and exist on essentially every node: a classified failure goes to
+<code>D98</code> (or <code>D91</code> from a model node), and an observed interrupt goes to <code>D96</code>.
+They account for most of the 158 compiled edges and are why the figures above draw only the decision-bearing
+ones.</p>
+
+<h3>Back-edges an operator will meet</h3>
+<table>
+  <thead><tr><th>From → to</th><th>Trigger</th><th>State transferred</th><th>Bound</th><th>Evidence</th></tr></thead>
+  <tbody>
+    <tr><td><code>D91 → D90</code></td><td>Retryable transport/parse fault, attempts remaining</td>
+        <td>Attempt counters only; the failed candidate is discarded</td>
+        <td>2 per activation, counted before dispatch</td>
+        <td><span class="ev ev-observed">observed</span></td></tr>
+    <tr><td><code>D91 → D17</code></td><td>Policy or content failure class</td>
+        <td>Findings — never transport-retried, because the model did respond</td><td>Fingerprint</td>
+        <td><span class="ev ev-observed">observed</span></td></tr>
+    <tr><td><code>D21 → D07…D16</code></td><td>A repair was admitted; descendants must be revalidated</td>
+        <td>Retest plan naming the exact descendants</td><td>Fingerprint</td>
+        <td><span class="ev ev-observed">observed</span></td></tr>
+    <tr><td><code>D23 → D05</code></td><td>Unit accepted, manifest not exhausted</td>
+        <td>Monotonic cursor + accepted receipt</td><td>Manifest length</td>
+        <td><span class="ev ev-observed">observed</span></td></tr>
+    <tr><td><code>D92 → 12 deterministic nodes</code></td><td>Resume with a validated frontier</td>
+        <td>The stored frontier record</td><td>One re-entry per episode</td>
+        <td><span class="ev ev-observed">observed</span></td></tr>
+  </tbody>
+</table>
+
+<h2 id="models"><span class="n">7</span>Models and prompts</h2>
+
+<p>Eight model jobs are frozen in <code>langgraph_factory/config/model_jobs.v1.yaml</code>
+(<code>frozen: true</code>, <code>job_count: 8</code>, enforced by the loader at <code>transport.py:190</code>).
+Prompts and output schemas are resolved as package resources by bare name, never relative to the working
+directory, and their file digests are folded into the graph digest — so <b>the same topology over a changed
+prompt is not the same graph</b>.</p>
+
+<table>
+  <thead><tr><th>Job</th><th>CLI · model</th><th>Effort</th><th>Role</th><th>Reachable?</th></tr></thead>
+  <tbody>
+    <tr><td>M01 research_unit_sources</td><td>claude · <code>claude-sonnet-5</code></td><td>xhigh</td>
+        <td>Discover and interpret sources; the only tool-granted job</td><td>yes</td></tr>
+    <tr><td>M02 create_unit_domain_data</td><td>claude · <code>claude-sonnet-5</code></td><td>high</td>
+        <td>Domain facts for the unit</td><td>yes</td></tr>
+    <tr><td>M03 write_unit_content</td><td>claude · <code>claude-sonnet-5</code></td><td>high</td>
+        <td>Child-facing explanatory writing</td><td>yes</td></tr>
+    <tr><td>M04 create_unit_visuals</td><td>claude · <code>claude-sonnet-5</code></td><td>high</td>
+        <td>Visual prompts</td><td>yes</td></tr>
+    <tr><td>M05 review_actual_unit</td><td>codex · <code>gpt-5.6-sol</code></td><td>xhigh</td>
+        <td>Cross-family review of the rendered unit</td><td>yes</td></tr>
+    <tr><td>M06 repair_named_unit_artifact</td><td>claude · <code>claude-sonnet-5</code></td><td>xhigh</td>
+        <td>Targeted artifact repair</td>
+        <td><span class="ev ev-conflicting">no — not in D90's path map</span></td></tr>
+    <tr><td>M07 review_actual_workbook</td><td>codex · <code>gpt-5.6-sol</code></td><td>xhigh</td>
+        <td>Workbook review</td>
+        <td><span class="ev ev-conflicting">no</span></td></tr>
+    <tr><td>M08 repair_named_workbook_defect</td><td>claude · <code>claude-sonnet-5</code></td><td>xhigh</td>
+        <td>Workbook defect repair</td>
+        <td><span class="ev ev-conflicting">no</span></td></tr>
+  </tbody>
+</table>
+
+<p>Every job carries <code>timeout_seconds: 900</code> and <code>retry_limit: 1</code>. <b>No token budget, cost
+cap or context limit is declared anywhere</b>, and there is <b>no fallback chain</b> — the opposite is enforced.
+<code>assert_identity_matches</code> raises <code>IdentityMismatch</code> if the model the CLI reports executing
+differs from the registry, if the family differs, or if a review ran in the authoring family; that class is
+system-terminal and never retried. A maintainer looking for "what happens if Sonnet is unavailable" should read
+this as: <em>the run stops</em>.</p>
+
+<h3>Structured output and its failure path</h3>
+<p>Models are invoked as <b>subprocesses, not APIs</b>. Codex writes <code>result.json</code> into its workspace;
+Claude's structured output is extracted from the last <code>result</code> event of its stream-json output.
+Parsing is strict single-document, and each way it can fail is its own class —
+<code>empty_result</code>, <code>fenced_result</code> (any markdown fence), <code>malformed_json</code>,
+<code>trailing_material</code>, <code>result_is_not_an_object</code>, <code>duplicate_json_key</code>,
+<code>non_finite_json_constant</code>, then <code>schema_invalid_result</code> against the job's JSON Schema
+(Draft 2020-12).</p>
+<p>Two gates then run that a reader would not expect from a schema check.
+<code>assert_no_authoritative_fields</code> rejects a candidate — <em>or a schema</em> — containing any
+control-plane key such as a route, verdict or terminal name (<code>transport.py:274</code>). And
+<code>workspace.assert_no_undeclared_writes(permitted_new=("result.json",))</code> fails the attempt if the model
+wrote any other file. Together these are the mechanism behind "a model has no routing authority": it is enforced
+at the transport boundary, not trusted to the prompt.</p>
+
+<h2 id="deployment"><span class="n">8</span>Deployment</h2>
+
+<div class="box warn"><b>There is no deployment</b>
+<p>The pattern <code>deploy/**</code> matched nothing in the source register — recorded as an evidence gap rather
+than silently dropped. There is no Dockerfile, no infrastructure-as-code, no service manifest, no hosting
+configuration anywhere in the repository. <b>This section is therefore about the only environment that exists:
+an operator's laptop.</b> <span class="ev ev-observed">observed</span></p>
+</div>
+
+<p>Runtime topology is a single Python 3.13 process (pinned <code>&gt;=3.13,&lt;3.14</code>) that spawns one
+short-lived sandboxed child per model activation, per render and per inspection. There are no workers, no queues,
+no network services, and no horizontal scaling story: concurrency is bounded to one process per output root by
+<code>flock</code>, and to one in-flight model activation by the graph's own shape.</p>
+
+<p><b>The platform is not portable.</b> <code>sandbox-exec</code> is macOS-only, and the transport fails closed
+when it is absent. This has a consequence for the one automated environment that does exist:</p>
+
+<table>
+  <thead><tr><th>Environment</th><th>What runs</th><th>What cannot run there</th><th>Evidence</th></tr></thead>
+  <tbody>
+    <tr><td>Operator machine (macOS)</td><td>Everything</td><td>—</td>
+        <td><span class="ev ev-declared">declared</span></td></tr>
+    <tr><td>CI — <code>.github/workflows/plan26-lock-drift.yml</code>, <code>ubuntu-latest</code></td>
+        <td>Lock-file drift check (<code>pip-compile --generate-hashes</code> then
+            <code>git diff --exit-code</code>), a hash-verified install, and exactly two test files:
+            <code>test_plan26_api_contract.py</code> and <code>test_plan26_lock_drift.py</code></td>
+        <td>Any model path, any sandbox path, any render — no <code>sandbox-exec</code> on Linux. The other ~30
+            runtime test files are never run in CI.</td>
+        <td><span class="ev ev-observed">observed</span></td></tr>
+  </tbody>
+</table>
+
+<p><b>External dependencies that must be up for a run to work at all:</b> the Anthropic and OpenAI CLI backends
+(reached by the child processes, not by this code), plus whichever primary source hosts the active retrieval
+profile allows. Nothing degrades gracefully if they are down — the attempt bound is reached and the run
+terminates <code>CONVERGENCE_EXHAUSTED</code>. <span class="ev ev-inferred">inferred</span></p>
+
+<h2 id="config"><span class="n">9</span>Configuration and release</h2>
+
+<table>
+  <thead><tr><th>Parameter</th><th>Source · default</th><th>Behavioral effect</th><th>Sensitive</th><th>Evidence</th></tr></thead>
+  <tbody>
+    <tr><td><code>--engine-root</code>, <code>--curriculum</code>, <code>--output-root</code></td>
+        <td>CLI, all required, no defaults</td>
+        <td>Fix the run identity. All three are hashed into <code>run_id</code>, so changing any one of them
+            makes a resume refuse with an identity drift.</td><td>no</td>
+        <td><span class="ev ev-observed">observed</span></td></tr>
+    <tr><td><code>--preflight</code> | <code>--unit</code> | <code>--all</code> | <code>--resume</code></td>
+        <td>CLI, mutually exclusive, one required</td>
+        <td><code>--preflight</code> is read-only and creates no run — it probes capabilities in a temp
+            directory. <code>--unit</code> sets <code>mode=one</code> (terminal <code>UNIT_ACCEPTED</code>);
+            <code>--all</code> sets <code>mode=all</code> (terminal <code>COMPLETE</code>).</td><td>no</td>
+        <td><span class="ev ev-observed">observed</span></td></tr>
+    <tr><td><code>--authorization</code></td>
+        <td>CLI; a JSON file with <code>approved_at_utc</code>, <code>expires_at_utc</code>,
+            <code>providers</code></td>
+        <td>Required for every real run, <b>forbidden with <code>--preflight</code></b>. Checked against expiry,
+            run id, curriculum digest and output-root scope <em>before</em> any child process is spawned.</td>
+        <td>no — it authorizes, it does not authenticate</td>
+        <td><span class="ev ev-observed">observed</span></td></tr>
+    <tr><td><code>model_jobs.v1.yaml</code></td><td>Packaged in-tree, <code>frozen: true</code></td>
+        <td>Model, effort, timeout and retry per job. Editing it changes the graph digest.</td><td>no</td>
+        <td><span class="ev ev-observed">observed</span></td></tr>
+    <tr><td><code>policy/retrieval_hosts.v1.yaml</code></td><td>Repository data root</td>
+        <td>The exact-match host allowlist for source retrieval. Its SHA-256 is recorded as
+            <code>policy_digest</code> on every fetch. Models never supply hosts.</td><td>no</td>
+        <td><span class="ev ev-declared">declared</span></td></tr>
+    <tr><td><code>CURRICULUM_FACTORY_REPOSITORY_ROOT</code></td><td>Environment; no default</td>
+        <td>Supplies the repository data root. <b>Not read by any of the four CLIs</b> — two of them advertise it
+            in <code>--help</code> text only, and then dereference a <code>None</code> default.</td><td>no</td>
+        <td><span class="ev ev-observed">observed</span></td></tr>
+    <tr><td><code>ANTHROPIC_API_KEY</code>, <code>ANTHROPIC_AUTH_TOKEN</code>, <code>OPENAI_API_KEY</code>,
+            <code>CLAUDE_API_KEY</code>, <code>CODEX_API_KEY</code></td>
+        <td>Environment; must be <b>unset</b></td>
+        <td>Presence of any one fails the <code>permitted_auth_mode</code> capability facet and aborts the run.
+            The names found are reported; values never are.</td><td>yes</td>
+        <td><span class="ev ev-observed">observed</span></td></tr>
+  </tbody>
+</table>
+
+<p><b>Nothing reloads.</b> Configuration is read once during bootstrap and frozen into state under
+<code>write_once</code> reducers; changing a file mid-run has no effect, and changing one between a run and its
+resume causes the resume to refuse.</p>
+
+<p><b>Release path.</b> Dependencies are pinned exactly in <code>pyproject.toml</code> (LangGraph 1.2.9,
+langgraph-checkpoint-sqlite 3.1.0, jsonschema 4.26.0, PyYAML 6.0.3, Pillow 12.2.0) and hash-locked in
+<code>requirements/plan26.lock</code>, whose drift is the one thing CI enforces. There is no versioning,
+migration, feature-flag or rollback mechanism for the factory itself: the rollback story is git.</p>
+
+<h2 id="security"><span class="n">10</span>Security and privacy</h2>
+
+<p>There is no authentication and no authorization <em>of a caller</em>, because there is no caller: whoever can
+run the CLI already has the operator's shell. What the system does instead is constrain what its own child
+processes may do — and that machinery is unusually thorough, which makes its gaps worth stating precisely.</p>
+
+<table>
+  <thead><tr><th>Control</th><th>What is actually enforced</th><th>Evidence</th></tr></thead>
+  <tbody>
+    <tr><td>Process isolation</td>
+        <td>Every model, render and inspection child runs under <code>/usr/bin/sandbox-exec -f &lt;profile&gt;</code>.
+            Absence of the mechanism fails the run rather than degrading to an unsandboxed spawn.</td>
+        <td><span class="ev ev-observed">observed</span></td></tr>
+    <tr><td>Egress from the factory process</td>
+        <td><code>EgressGuard</code> patches <code>socket.connect</code>, <code>connect_ex</code> and
+            <code>create_connection</code> process-wide and denies by default. Every denial is receipted with a
+            reason and a traceback origin.</td>
+        <td><span class="ev ev-observed">observed</span></td></tr>
+    <tr><td>Model APIs are unreachable from Python</td>
+        <td><code>api.anthropic.com</code>, <code>api.openai.com</code> and <code>chatgpt.com</code> are denied
+            <em>even with an active grant</em> — the parent process may never talk to a model API.</td>
+        <td><span class="ev ev-observed">observed</span></td></tr>
+    <tr><td>Source retrieval</td>
+        <td>https only, exact-match host allowlist (no suffix matching), port pinned, every resolved address
+            required to be globally routable, redirects re-validated both before and after, 25 MB cap, content
+            type allowlist. DNS rebinding is a named, receipted denial reason.</td>
+        <td><span class="ev ev-declared">declared</span></td></tr>
+    <tr><td>Credentials</td>
+        <td>No API key is ever read or set. Claude gets four non-secret fields copied out of
+            <code>~/.claude.json</code> into a disposable home plus a read-only Keychain symlink; Codex gets a
+            read-only symlink to <code>~/.codex/auth.json</code>. The worker environment is an allowlist built
+            from scratch — not <code>os.environ</code> — and the live path passes no
+            <code>env_passthrough</code> at all.</td>
+        <td><span class="ev ev-observed">observed</span></td></tr>
+    <tr><td>Authorization receipts</td>
+        <td>An <code>AuthorizationRecord</code> is validated against provider, data classes, expiry, run id,
+            curriculum digest and output-root scope <em>before</em> the child process exists.</td>
+        <td><span class="ev ev-observed">observed</span></td></tr>
+    <tr><td>Write containment</td>
+        <td><code>resolve_within</code> rejects absolute paths, <code>..</code>, NUL bytes, symlinked components
+            and any realpath escape. Accepted artifacts become <code>0444</code>/<code>0555</code> and are
+            refused even under an explicit overwrite.</td>
+        <td><span class="ev ev-observed">observed</span></td></tr>
+  </tbody>
+</table>
+
+<div class="box warn"><b>Verified gaps</b>
+<ul>
+  <li><b>The sandbox constrains the model child by port, not by host.</b> Its network rule allows outbound TCP to
+      any host on 443 and 80 and UDP on 53. The code says so itself and records it as a
+      <em>non-required</em> capability facet named <code>subprocess_network_scope</code>
+      (<code>transport.py:1058-1066</code>). A compromised or misbehaving CLI child can reach any host on those
+      ports; the elaborate parent-side allowlist does not apply to it.</li>
+  <li><b>M01's WebSearch is outside every control described above.</b> It executes inside the Claude child, so
+      neither <code>EgressGuard</code> nor <code>RetrievalPolicy</code> sees it. Only the locators it returns are
+      re-checked. Granting it also forces that activation to
+      <code>--permission-mode bypassPermissions</code>.</li>
+  <li><b>Model stdout and stderr are persisted verbatim and hashed.</b> Redaction is a single rule — argv tokens
+      longer than 200 characters are replaced by a hash — applied to one field. Nothing scrubs a credential or
+      personal datum that a CLI happened to print to stderr, and nothing redacts prompts, model outputs or state
+      values in any ledger or checkpoint.</li>
+  <li><b>No retention or deletion exists anywhere.</b> Everything the system writes — checkpoints, ledgers,
+      receipts, artifacts, model output — accumulates indefinitely under the output root. By construction it
+      <em>cannot</em> be truncated: a hash chain with contiguous ordinals fails its own audit if a line is
+      removed.</li>
+  <li><b>No incident owner is recorded.</b> No <code>CODEOWNERS</code>, no escalation contact, no security
+      contact anywhere in the repository. <span class="ev ev-unknown">unknown</span></li>
+</ul>
+</div>
+
+<h2 id="observability"><span class="n">11</span>Observability</h2>
+
+<p>The design intent is unusually strong: six hash-chained evidence logs (<code>events</code>,
+<code>activations</code>, <code>routes</code>, <code>executions</code>, <code>checkpoints</code>,
+<code>index</code>), each append-only, <code>flock</code>-protected, <code>fsync</code>'d, schema-validated, and
+able to distinguish a tampered record from a deleted one from a torn append.</p>
+
+<div class="box stop"><b>Blind spots — read this before you rely on anything above</b>
+<ul>
+  <li><b><code>EvidenceStore.append()</code> is never called from <code>src/</code>.</b> The store is
+      constructed at <code>graph.py:227</code> and injected into every node's <code>RuntimeContext</code> as
+      <code>evidence_service</code>, and no node body uses it. Five of the six logs have no writer anywhere; the
+      sixth has one writer called only from tests. <b><code>evidence/*.jsonl</code> is never created at
+      runtime.</b> <span class="ev ev-observed">observed</span></li>
+  <li>Consequently <code>evidence_index_entries</code> is always empty, so D98's
+      <code>log_high_water_mark</code> ceiling is checked against nothing, and
+      <code>write_audit_report()</code> never runs.</li>
+  <li><b>No logging framework at all.</b> <code>grep</code> for <code>import logging</code>,
+      <code>prometheus</code>, <code>opentelemetry</code>, <code>statsd</code>, <code>datadog</code>,
+      <code>sentry</code> across <code>src/</code> returns zero matches. No levels, no handlers, no diagnostic log
+      file. Console output is 15 <code>print()</code> sites.</li>
+  <li><b>No metrics, traces, spans, dashboards, alerts, health endpoint or SLO.</b> Nothing is exported anywhere.</li>
+  <li><b>No timing anywhere.</b> No node duration, no model-call latency. Timestamps exist only as
+      <code>time.time_ns()</code> inside ledger payloads.</li>
+  <li>The legacy <code>ExecutionLogger</code> — the one thing in the repo shaped like an operational log — carries
+      <b>no run id, no episode id and no time of day</b>, only a date. It is also unreachable from
+      <code>langgraph_factory</code>.</li>
+  <li><b>Episode leases are opened and never closed.</b> <code>close_episode()</code> has no caller in
+      <code>src/</code>, so every run leaves an open lease and every <code>--resume</code> is forced down the
+      orphan-recovery branch. The plain resume branch appears to be unreachable in practice.
+      <span class="ev ev-inferred">inferred</span></li>
+</ul>
+</div>
+
+<p><b>What an operator actually has.</b> Two things: the terminal JSON printed on stdout (kind, exit code,
+resumability, heads, validation results) and <code>.evidence/egress_receipts.jsonl</code>, which records every
+allowed and denied network attempt with its reason. Everything else — whether a node is slow, which unit is in
+flight, how many attempts have been spent — must be inferred by reading the SQLite checkpoint or watching the
+process. Plan for that before an incident, not during one.</p>
+
+<h2 id="operations"><span class="n">12</span>Operations and recovery</h2>
+
+<div class="box good"><b>A healthy run looks like</b>
+Exit code <code>0</code> with a terminal of kind <code>UNIT_ACCEPTED</code> (for <code>--unit</code>) or
+<code>COMPLETE</code> (for <code>--all</code>), an <code>accepted_unit_receipts</code> entry per unit, a
+non-empty <code>.evidence/egress_receipts.jsonl</code> with no unexpected denials, and an output root containing
+<code>.langgraph/checkpoints.sqlite3</code> plus the artifact tree.
+</div>
+
+<h3>Prerequisites</h3>
+<ul>
+  <li>macOS with <code>/usr/bin/sandbox-exec</code>; Python 3.13.x; <code>claude</code>, <code>codex</code>,
+      <code>pandoc</code>/<code>typst</code> and poppler tools on <code>PATH</code>.</li>
+  <li>Logged-in Claude and Codex CLIs. <b>No <code>*_API_KEY</code> variable set</b> — their presence aborts the
+      run.</li>
+  <li>The package importable. Note that a bare <code>python3 -m pytest -q</code> from the repository root fails
+      collection with <code>ModuleNotFoundError</code> unless the package is installed
+      (<code>pip install -e '.[dev]'</code>) — there is no <code>pythonpath</code> setting in
+      <code>pyproject.toml</code>. <span class="ev ev-observed">observed</span></li>
+</ul>
+
+<h3>Procedures</h3>
+<pre><code># 1 · Check readiness. Read-only, creates no run, takes no --authorization.
+curriculum-factory-run-curriculum \
+  --engine-root PATH --curriculum PATH --output-root PATH --preflight
+# exit 0 = ready · exit 3 = not ready (missing capability, or output root collision)
+
+# 2 · One unit. Output root must be absent or an empty directory.
+curriculum-factory-run-curriculum \
+  --engine-root PATH --curriculum PATH --output-root PATH \
+  --unit L01 --authorization auth.json
+
+# 3 · Whole manifest.
+curriculum-factory-run-curriculum ... --all --authorization auth.json
+
+# 4 · Resume an interrupted or paused run, into the SAME output root.
+curriculum-factory-run-curriculum ... --resume --authorization auth.json
+</code></pre>
+
+<table>
+  <thead><tr><th>Exit</th><th>Meaning</th><th>Resumable</th><th>Do this</th></tr></thead>
+  <tbody>
+    <tr><td><code>0</code></td><td><code>UNIT_ACCEPTED</code> / <code>COMPLETE</code></td><td>n/a</td>
+        <td>Collect artifacts from the output root</td></tr>
+    <tr><td><code>2</code></td><td>Argument error</td><td>n/a</td><td>Fix the command line</td></tr>
+    <tr><td><code>3</code></td><td>Not ready — <code>COLLISION</code>, <code>LOCK-UNAVAILABLE</code>,
+        <code>RESUME-NO-IDENTITY</code>, <code>BOOTSTRAP-REFUSED</code>, <code>RESUME-REFUSED</code></td>
+        <td>n/a</td><td>Nothing was started. Read the code in the message before changing anything</td></tr>
+    <tr><td><code>10</code></td><td><code>INTERRUPTED</code></td><td><b>yes</b></td><td><code>--resume</code></td></tr>
+    <tr><td><code>11</code></td><td><code>PAUSED_PREREQUISITE</code></td><td><b>yes</b></td>
+        <td>Satisfy the stated <code>required_resume_condition</code>, then <code>--resume</code></td></tr>
+    <tr><td><code>12</code></td><td><code>CONVERGENCE_EXHAUSTED</code></td><td>no</td>
+        <td>The bound was reached (attempts or fingerprints). Re-running will not help — read the findings</td></tr>
+    <tr><td><code>20</code></td><td><code>SYSTEM_FAILURE</code></td><td>no</td>
+        <td>Preserve the output root and escalate</td></tr>
+  </tbody>
+</table>
+
+<div class="box stop"><b>Do not</b>
+<ul>
+  <li><b>Do not send SIGINT expecting a clean stop.</b> <code>InterruptToken.install()</code> has no caller in
+      <code>src/</code>, no code calls <code>set()</code>, and <code>is_set()</code> returns a private in-memory
+      boolean — the <code>.langgraph/interrupt.token</code> file is written, never read. There is no signal
+      handler in <code>run_curriculum.py</code> at all. Ctrl-C therefore kills the process at whatever point it
+      had reached, leaving an open episode lease and no terminal record. <code>D96</code> is compiled and
+      reachable in the topology but nothing can trigger it.
+      <span class="ev ev-observed">observed</span></li>
+  <li><b>Do not delete or empty the output root to clear a <code>COLLISION</code>.</b> It holds the only copy of
+      the checkpoint, the identity envelope and the accepted artifacts. Move it aside instead.</li>
+  <li><b>Do not edit anything under the output root by hand.</b> The identity envelope is <code>0444</code> and
+      hash-verified; ledgers are hash-chained; artifact records are re-hashed on read. A hand edit surfaces later
+      as <code>CheckpointCorrupt</code> or <code>EvidenceCorrupt</code>, and the run refuses.</li>
+  <li><b>Do not change <code>--engine-root</code>, <code>--curriculum</code> or <code>--output-root</code>
+      between a run and its resume.</b> All three are hashed into <code>run_id</code>; the resume refuses with an
+      identity drift naming the field.</li>
+  <li><b>Do not run <code>curriculum-factory-finalize-evidence</code> and trust its output.</b> It always returns
+      0, and two of its six validations invoke CLI flags that no longer exist.</li>
+  <li><b>Do not run two processes against one output root.</b> The second gets exit 3 — which is the system
+      working — but do not defeat it by copying the root.</li>
+</ul>
+</div>
+
+<h3>Triage</h3>
+<ol>
+  <li><b>Read the terminal JSON on stdout first.</b> It carries the kind, the failing node, the safe artifact
+      heads and the validation rejections. It is more informative than anything on disk.</li>
+  <li><b>If the kind is <code>SYSTEM_FAILURE</code> with <code>node: "D98_WRITE_TERMINAL"</code> and
+      <code>cause: "integrity"</code></b>, another node proposed a terminal that D98's independent re-derivation
+      rejected; the <code>rejected_candidate_kind</code> and the rejection list name what did not hold. Escalate
+      — this is a correctness fault, not an environment fault.</li>
+  <li><b>Check <code>.evidence/egress_receipts.jsonl</code></b> for denials. A <code>host_not_pinned</code> or
+      <code>unauthorized_socket_no_active_retrieval</code> entry usually means the retrieval profile does not
+      list a host the run needed.</li>
+  <li><b>For a crash with no terminal</b> (killed process, power loss), the run left an open lease. Resume takes
+      the orphan-recovery path, which re-enters through <code>D92</code> at a validated frontier with the
+      transport and retriever <em>disabled</em> for that step.</li>
+</ol>
+
+<div class="box warn"><b>Recovery has no backup and no rollback</b>
+There is no restore procedure, because there is no backup: nothing copies the output root, and the only rollback
+primitive in the system is git, which does not cover generated output. Artifact history is preserved by
+construction (every version is retained; only the head pointer moves), so a bad head can in principle be
+reasoned about from the version records — but <b>no code exists to move a head backwards</b>. Treat the output
+root as the single copy of the run and back it up yourself before intervening.
+<span class="ev ev-observed">observed</span>
+</div>
+
+<h2 id="limitations"><span class="n">13</span>Limitations and verification</h2>
+
+<h3>What would make this guide wrong</h3>
+<ul>
+  <li>If <code>unit_graph.py</code>'s <code>D90_RESERVE_MODEL_ATTEMPT</code> destination tuple
+      (<code>:117-125</code>) gains <code>M06</code>/<code>M07</code>/<code>M08</code>, the unreachable-frontier
+      finding in §3, the reachability column in §7 and the second stop condition are all stale.</li>
+  <li>If the graph digest is no longer <code>0e1eca87080aa102…</code>, the topology behind figures 1 and 2 has
+      changed — recompile and compare before trusting §3 or §6.</li>
+  <li>If any caller of <code>EvidenceStore.append()</code>, <code>close_episode()</code>,
+      <code>flush_checkpoint_durability()</code> or <code>AdmissionLedger.admit()</code> appears in
+      <code>src/</code>, §11 and the durability box in §5 are stale.</li>
+  <li>If <code>model_jobs.v1.yaml</code> changes, §7 is stale and so is the graph digest, since contract digests
+      are folded into it.</li>
+  <li>If a <code>deploy/</code> tree, a Dockerfile or a second CI workflow appears, §8 is stale.</li>
+</ul>
+
+<h3>How this was verified</h3>
+<table>
+  <thead><tr><th>Check</th><th>Method</th><th>Result</th></tr></thead>
+  <tbody>
+    <tr><td>Topology, node and edge counts, reachability</td>
+        <td>Compiled <code>build_curriculum_factory_graph()</code> on this machine and walked
+            <code>compiled.get_graph()</code> from <code>__start__</code></td>
+        <td>50 nodes, 158 edges, 5 unreachable — <span class="ev ev-observed">observed</span></td></tr>
+    <tr><td>Test suite</td>
+        <td><code>PYTHONPATH=src python3 -m pytest -q</code> (full), then <code>tests/runtime tests/gates
+            tests/selftest</code></td>
+        <td>Runtime suite: <b>1370 passed, 2 skipped, 419 subtests</b>, no failures. Full suite: 4 failed,
+            9 errors — <em>all</em> in <code>tests/refactor_repo/</code> and
+            <code>tests/test_validate_instance.py</code>, caused by a missing
+            <code>plans_internal/create_system_doc/create_system_doc.prompt.v2.yaml</code>, i.e. repo tooling
+            outside the package boundary — <span class="ev ev-observed">observed</span></td></tr>
+    <tr><td>Unwired components</td>
+        <td>Grep for every caller of the named functions across <code>src/</code></td>
+        <td>Confirmed individually — <span class="ev ev-observed">observed</span></td></tr>
+    <tr><td>Diagram geometry</td><td><code>diagram_svg.py</code> self-inspection</td>
+        <td>Figures 1 and 3 clean; figure 2 emits an orphan warning for <code>M06</code>, which is the finding
+            rather than a defect in the spec</td></tr>
+    <tr><td>Page hygiene, links, secrets, self-containment</td><td><code>verify_doc.py</code></td>
+        <td>See the run summary accompanying this guide</td></tr>
+  </tbody>
+</table>
+
+<h3>Conflicts, unknowns and unexercised paths</h3>
+<table>
+  <thead><tr><th>Item</th><th>State</th><th>What it costs the reader</th></tr></thead>
+  <tbody>
+    <tr><td><code>graph.py:721-731</code> asserts D24–D32 are "real, wired members of the one compiled production
+        graph"</td>
+        <td><span class="ev ev-conflicting">conflicting</span></td>
+        <td>Partly true (D24–D27, D29, D31 compile and are reachable), false for M06/M07/M08/D28/D32. Resolved in
+            favour of the compiled graph. Do not take that docstring as evidence of coverage.</td></tr>
+    <tr><td>Behaviour of a real model activation</td><td><span class="ev ev-unknown">unknown</span></td>
+        <td>No model was invoked during this inspection: no credentials were used, no child process spawned. All
+            transport, sandbox, timeout and identity behaviour is <b>declared</b> — read from code and its tests,
+            never watched running.</td></tr>
+    <tr><td>The workbook branch end-to-end</td><td><span class="ev ev-unknown">unknown</span></td>
+        <td>Cannot be exercised while its model jobs are unreachable, so no statement here about workbook output
+            quality or release semantics rests on a run.</td></tr>
+    <tr><td>Resume and orphan recovery</td><td><span class="ev ev-inferred">inferred</span></td>
+        <td>Covered by unit tests, not by an observed crash-and-resume on real output. The claim that every
+            resume takes the orphan path follows from <code>close_episode()</code> having no caller — it was not
+            watched happening.</td></tr>
+    <tr><td>Ownership and escalation</td><td><span class="ev ev-unknown">unknown</span></td>
+        <td>An operator who hits the stop conditions in this guide has nobody named to escalate to. That is the
+            most actionable gap in this document.</td></tr>
+  </tbody>
+</table>
+
+<h3>Excluded from inspection</h3>
+<table>
+  <thead><tr><th>Excluded</th><th>Why</th></tr></thead>
+  <tbody>
+    <tr><td><code>curricula/</code>, <code>schemas/</code>, <code>meta_prompt/</code>, <code>governance/</code>,
+        <code>issues/</code>, <code>plans/</code>, <code>plans_internal/</code>, <code>research/</code></td>
+        <td>Repository-owned data and process material, outside the installed package boundary this guide
+            documents</td></tr>
+    <tr><td><code>tests/</code> bodies</td>
+        <td>Read for what they prove about the package, not documented as a component. Results reported above</td></tr>
+    <tr><td><code>build/</code>, <code>outputs/</code>, <code>.retrieved_sources/</code></td>
+        <td>Generated artifacts, not source</td></tr>
+    <tr><td>Any running or deployed environment</td>
+        <td>None exists. <code>deploy/**</code> matched nothing and is recorded as an evidence gap in the
+            register below</td></tr>
+  </tbody>
+</table>
+
+<details class="more">
+  <summary>Sources inspected — 76 files, generated 2026-08-17T21:18:57+00:00 at <code>9ef14e8</code> (clean worktree)</summary>
+  <table>
+    <thead><tr><th>Source</th><th>Version / last commit</th><th>Freshness (UTC)</th></tr></thead>
+    <tbody>
+      <tr><td><code>src/curriculum_factory/capability_cycle.py</code></td><td><em>missing</em></td><td>pattern matched nothing — evidence gap</td></tr>
+      <tr><td><code>src/curriculum_factory/lesson_render.py</code></td><td><em>missing</em></td><td>pattern matched nothing — evidence gap</td></tr>
+      <tr><td><code>src/curriculum_factory/model_worker.py</code></td><td><em>missing</em></td><td>pattern matched nothing — evidence gap</td></tr>
+      <tr><td><code>src/curriculum_factory/workbook.py</code></td><td><em>missing</em></td><td>pattern matched nothing — evidence gap</td></tr>
+      <tr><td><code>src/curriculum_factory/run_state.py</code></td><td><em>missing</em></td><td>pattern matched nothing — evidence gap</td></tr>
+      <tr><td><code>src/curriculum_factory/controller.py</code></td><td><em>missing</em></td><td>pattern matched nothing — evidence gap</td></tr>
+      <tr><td><code>src/curriculum_factory/readability.py</code></td><td><em>missing</em></td><td>pattern matched nothing — evidence gap</td></tr>
+      <tr><td><code>src/curriculum_factory/checkpoint.py</code></td><td><em>missing</em></td><td>pattern matched nothing — evidence gap</td></tr>
+      <tr><td><code>src/curriculum_factory/factory_state.py</code></td><td><em>missing</em></td><td>pattern matched nothing — evidence gap</td></tr>
+      <tr><td><code>src/curriculum_factory/checks.py</code></td><td><em>missing</em></td><td>pattern matched nothing — evidence gap</td></tr>
+      <tr><td><code>src/curriculum_factory/io.py</code></td><td><em>missing</em></td><td>pattern matched nothing — evidence gap</td></tr>
+      <tr><td><code>src/curriculum_factory/session_bridge.py</code></td><td><em>missing</em></td><td>pattern matched nothing — evidence gap</td></tr>
+      <tr><td><code>src/curriculum_factory/__init__.py</code></td><td><em>missing</em></td><td>pattern matched nothing — evidence gap</td></tr>
+      <tr><td><code>src/curriculum_factory/gemini.py</code></td><td><em>missing</em></td><td>pattern matched nothing — evidence gap</td></tr>
+      <tr><td><code>src/curriculum_factory/logger.py</code></td><td><em>missing</em></td><td>pattern matched nothing — evidence gap</td></tr>
+      <tr><td><code>src/curriculum_factory/run_curriculum.py</code></td><td><em>missing</em></td><td>pattern matched nothing — evidence gap</td></tr>
+      <tr><td><code>src/curriculum_factory/retry.py</code></td><td><em>missing</em></td><td>pattern matched nothing — evidence gap</td></tr>
+      <tr><td><code>src/curriculum_factory/capabilities.py</code></td><td><em>missing</em></td><td>pattern matched nothing — evidence gap</td></tr>
+      <tr><td><code>src/curriculum_factory/routing.py</code></td><td><em>missing</em></td><td>pattern matched nothing — evidence gap</td></tr>
+      <tr><td><code>src/curriculum_factory/curriculum_factory_graph.py</code></td><td><em>missing</em></td><td>pattern matched nothing — evidence gap</td></tr>
+      <tr><td><code>src/curriculum_factory/pdf_inspect.py</code></td><td><em>missing</em></td><td>pattern matched nothing — evidence gap</td></tr>
+      <tr><td><code>src/curriculum_factory/visual_maps.py</code></td><td><em>missing</em></td><td>pattern matched nothing — evidence gap</td></tr>
+      <tr><td><code>src/curriculum_factory/finalize_evidence.py</code></td><td><em>missing</em></td><td>pattern matched nothing — evidence gap</td></tr>
+      <tr><td><code>src/curriculum_factory/resources.py</code></td><td><em>missing</em></td><td>pattern matched nothing — evidence gap</td></tr>
+      <tr><td><code>src/curriculum_factory/roots.py</code></td><td><em>missing</em></td><td>pattern matched nothing — evidence gap</td></tr>
+      <tr><td><code>src/curriculum_factory/langgraph_factory/repair.py</code></td><td><em>missing</em></td><td>pattern matched nothing — evidence gap</td></tr>
+      <tr><td><code>src/curriculum_factory/langgraph_factory/workbook.py</code></td><td><em>missing</em></td><td>pattern matched nothing — evidence gap</td></tr>
+      <tr><td><code>src/curriculum_factory/langgraph_factory/egress.py</code></td><td><em>missing</em></td><td>pattern matched nothing — evidence gap</td></tr>
+      <tr><td><code>src/curriculum_factory/langgraph_factory/persistence.py</code></td><td><em>missing</em></td><td>pattern matched nothing — evidence gap</td></tr>
+      <tr><td><code>src/curriculum_factory/langgraph_factory/reducers.py</code></td><td><em>missing</em></td><td>pattern matched nothing — evidence gap</td></tr>
+      <tr><td><code>src/curriculum_factory/langgraph_factory/unit_graph.py</code></td><td><em>missing</em></td><td>pattern matched nothing — evidence gap</td></tr>
+      <tr><td><code>src/curriculum_factory/langgraph_factory/transport.py</code></td><td><em>missing</em></td><td>pattern matched nothing — evidence gap</td></tr>
+      <tr><td><code>src/curriculum_factory/langgraph_factory/model_nodes.py</code></td><td><em>missing</em></td><td>pattern matched nothing — evidence gap</td></tr>
+      <tr><td><code>src/curriculum_factory/langgraph_factory/acceptance.py</code></td><td><em>missing</em></td><td>pattern matched nothing — evidence gap</td></tr>
+      <tr><td><code>src/curriculum_factory/langgraph_factory/graph.py</code></td><td><em>missing</em></td><td>pattern matched nothing — evidence gap</td></tr>
+      <tr><td><code>src/curriculum_factory/langgraph_factory/__init__.py</code></td><td><em>missing</em></td><td>pattern matched nothing — evidence gap</td></tr>
+      <tr><td><code>src/curriculum_factory/langgraph_factory/routing.py</code></td><td><em>missing</em></td><td>pattern matched nothing — evidence gap</td></tr>
+      <tr><td><code>src/curriculum_factory/langgraph_factory/artifacts.py</code></td><td><em>missing</em></td><td>pattern matched nothing — evidence gap</td></tr>
+      <tr><td><code>src/curriculum_factory/langgraph_factory/evidence.py</code></td><td><em>missing</em></td><td>pattern matched nothing — evidence gap</td></tr>
+      <tr><td><code>src/curriculum_factory/langgraph_factory/state.py</code></td><td><em>missing</em></td><td>pattern matched nothing — evidence gap</td></tr>
+      <tr><td><code>src/curriculum_factory/langgraph_factory/nodes/domain.py</code></td><td><em>missing</em></td><td>pattern matched nothing — evidence gap</td></tr>
+      <tr><td><code>src/curriculum_factory/langgraph_factory/nodes/terminal.py</code></td><td><em>missing</em></td><td>pattern matched nothing — evidence gap</td></tr>
+      <tr><td><code>src/curriculum_factory/langgraph_factory/nodes/render.py</code></td><td><em>missing</em></td><td>pattern matched nothing — evidence gap</td></tr>
+      <tr><td><code>src/curriculum_factory/langgraph_factory/nodes/__init__.py</code></td><td><em>missing</em></td><td>pattern matched nothing — evidence gap</td></tr>
+      <tr><td><code>src/curriculum_factory/langgraph_factory/nodes/review.py</code></td><td><em>missing</em></td><td>pattern matched nothing — evidence gap</td></tr>
+      <tr><td><code>src/curriculum_factory/langgraph_factory/nodes/sources.py</code></td><td><em>missing</em></td><td>pattern matched nothing — evidence gap</td></tr>
+      <tr><td><code>src/curriculum_factory/langgraph_factory/nodes/content.py</code></td><td><em>missing</em></td><td>pattern matched nothing — evidence gap</td></tr>
+      <tr><td><code>src/curriculum_factory/langgraph_factory/nodes/inputs.py</code></td><td><em>missing</em></td><td>pattern matched nothing — evidence gap</td></tr>
+      <tr><td><code>src/curriculum_factory/langgraph_factory/nodes/visuals.py</code></td><td><em>missing</em></td><td>pattern matched nothing — evidence gap</td></tr>
+      <tr><td><code>src/curriculum_factory/langgraph_factory/prompts/M07_review_actual_workbook.prompt.md</code></td><td><em>missing</em></td><td>pattern matched nothing — evidence gap</td></tr>
+      <tr><td><code>src/curriculum_factory/langgraph_factory/prompts/M06_repair_named_unit_artifact.prompt.md</code></td><td><em>missing</em></td><td>pattern matched nothing — evidence gap</td></tr>
+      <tr><td><code>src/curriculum_factory/langgraph_factory/prompts/M01_research_unit_sources.prompt.md</code></td><td><em>missing</em></td><td>pattern matched nothing — evidence gap</td></tr>
+      <tr><td><code>src/curriculum_factory/langgraph_factory/prompts/M08_repair_named_workbook_defect.prompt.md</code></td><td><em>missing</em></td><td>pattern matched nothing — evidence gap</td></tr>
+      <tr><td><code>src/curriculum_factory/langgraph_factory/prompts/M03_write_unit_content.prompt.md</code></td><td><em>missing</em></td><td>pattern matched nothing — evidence gap</td></tr>
+      <tr><td><code>src/curriculum_factory/langgraph_factory/prompts/M02_create_unit_domain_data.prompt.md</code></td><td><em>missing</em></td><td>pattern matched nothing — evidence gap</td></tr>
+      <tr><td><code>src/curriculum_factory/langgraph_factory/prompts/M05_review_actual_unit.prompt.md</code></td><td><em>missing</em></td><td>pattern matched nothing — evidence gap</td></tr>
+      <tr><td><code>src/curriculum_factory/langgraph_factory/prompts/M04_create_unit_visuals.prompt.md</code></td><td><em>missing</em></td><td>pattern matched nothing — evidence gap</td></tr>
+      <tr><td><code>src/curriculum_factory/langgraph_factory/schemas/M05_review_actual_unit.schema.json</code></td><td><em>missing</em></td><td>pattern matched nothing — evidence gap</td></tr>
+      <tr><td><code>src/curriculum_factory/langgraph_factory/schemas/M06_repair_named_unit_artifact.schema.json</code></td><td><em>missing</em></td><td>pattern matched nothing — evidence gap</td></tr>
+      <tr><td><code>src/curriculum_factory/langgraph_factory/schemas/M01_research_unit_sources.schema.json</code></td><td><em>missing</em></td><td>pattern matched nothing — evidence gap</td></tr>
+      <tr><td><code>src/curriculum_factory/langgraph_factory/schemas/internal_execution_receipt.schema.json</code></td><td><em>missing</em></td><td>pattern matched nothing — evidence gap</td></tr>
+      <tr><td><code>src/curriculum_factory/langgraph_factory/schemas/internal_capability_proof.schema.json</code></td><td><em>missing</em></td><td>pattern matched nothing — evidence gap</td></tr>
+      <tr><td><code>src/curriculum_factory/langgraph_factory/schemas/M08_repair_named_workbook_defect.schema.json</code></td><td><em>missing</em></td><td>pattern matched nothing — evidence gap</td></tr>
+      <tr><td><code>src/curriculum_factory/langgraph_factory/schemas/internal_authorization_receipt.schema.json</code></td><td><em>missing</em></td><td>pattern matched nothing — evidence gap</td></tr>
+      <tr><td><code>src/curriculum_factory/langgraph_factory/schemas/M02_create_unit_domain_data.schema.json</code></td><td><em>missing</em></td><td>pattern matched nothing — evidence gap</td></tr>
+      <tr><td><code>src/curriculum_factory/langgraph_factory/schemas/M03_write_unit_content.schema.json</code></td><td><em>missing</em></td><td>pattern matched nothing — evidence gap</td></tr>
+      <tr><td><code>src/curriculum_factory/langgraph_factory/schemas/M04_create_unit_visuals.schema.json</code></td><td><em>missing</em></td><td>pattern matched nothing — evidence gap</td></tr>
+      <tr><td><code>src/curriculum_factory/langgraph_factory/schemas/M07_review_actual_workbook.schema.json</code></td><td><em>missing</em></td><td>pattern matched nothing — evidence gap</td></tr>
+      <tr><td><code>src/curriculum_factory/langgraph_factory/schemas/internal_egress_receipt.schema.json</code></td><td><em>missing</em></td><td>pattern matched nothing — evidence gap</td></tr>
+      <tr><td><code>src/curriculum_factory/langgraph_factory/config/model_jobs.v1.yaml</code></td><td><em>missing</em></td><td>pattern matched nothing — evidence gap</td></tr>
+      <tr><td><code>src/curriculum_factory/resolve_gemini_settings.mjs</code></td><td><em>missing</em></td><td>pattern matched nothing — evidence gap</td></tr>
+      <tr><td><code>pyproject.toml</code></td><td><em>missing</em></td><td>pattern matched nothing — evidence gap</td></tr>
+      <tr><td><code>readme.md</code></td><td><em>missing</em></td><td>pattern matched nothing — evidence gap</td></tr>
+      <tr><td><code>policy/routing/readme.md</code></td><td><em>missing</em></td><td>pattern matched nothing — evidence gap</td></tr>
+      <tr><td><code>deploy/**</code></td><td><em>missing</em></td><td>pattern matched nothing; record as an evidence gap</td></tr>
+      <tr><td><code>.github/workflows/plan26-lock-drift.yml</code></td><td><em>missing</em></td><td>pattern matched nothing — evidence gap</td></tr>
+    </tbody>
+  </table>
+</details>
+
+<footer>
+Generated 2026-08-17 from <code>curriculum_factory</code> at revision <code>9ef14e8</code> (clean worktree), by
+the <code>graph-system-document</code> skill. Diagram specs live beside this file in
+<code>docs/assets/*.diagram.json</code>; re-render them with <code>scripts/diagram_svg.py</code> when the graph
+changes. Corrections belong in the repository alongside this file — no owner or issue tracker is recorded in the
+repository to direct them to.
+</footer>
+</main>
+</div>
+</body>
+</html>

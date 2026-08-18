@@ -26,9 +26,6 @@ dev = [
 
 [project.scripts]
 curriculum-factory-run-curriculum = "curriculum_factory.run_curriculum:main"
-curriculum-factory-session-bridge = "curriculum_factory.session_bridge:main"
-curriculum-factory-capability-cycle = "curriculum_factory.capability_cycle:main"
-curriculum-factory-finalize-evidence = "curriculum_factory.finalize_evidence:main"
 
 [tool.setuptools.packages.find]
 where = ["src"]

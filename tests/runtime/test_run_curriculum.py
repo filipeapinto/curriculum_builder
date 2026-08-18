@@ -7,7 +7,6 @@ import tempfile
 from pathlib import Path
 from unittest import mock
 
-from curriculum_factory.controller import CurriculumRuntime
 from curriculum_factory.langgraph_factory import egress as eg
 from curriculum_factory.langgraph_factory import transport as tp
 import curriculum_factory.run_curriculum as run_curriculum_module
@@ -86,37 +85,6 @@ class RunCurriculumMigrationContractTests(unittest.TestCase):
         for module in forbidden_modules:
             with self.subTest(module=module):
                 self.assertNotIn(module, imported_modules)
-
-
-class RunCurriculumElapsedTimeTests(unittest.TestCase):
-    def setUp(self):
-        self.runtime = CurriculumRuntime(ENGINE)
-        outputs_root = ENGINE / "outputs"
-        outputs_root.mkdir(parents=True, exist_ok=True)
-        self.temp = tempfile.TemporaryDirectory(dir=str(outputs_root))
-        self.base = Path(self.temp.name)
-
-    def tearDown(self):
-        self.temp.cleanup()
-
-    def test_simulation_accepts_after_all_removed_time_thresholds(self):
-        monotonic_times = [0.0, 901.0, 5401.0, 36001.0]
-        monotonic_times.extend(36002.0 + index for index in range(len(self.runtime.states) - 3))
-        output = self.base / "thresholds"
-        with mock.patch("curriculum_factory.controller.time.monotonic", side_effect=monotonic_times):
-            result = self.runtime.simulate(CURRICULUM, output, lab_id="L01")
-
-        self.assertEqual(result["terminal_state"], "ACCEPTED")
-        self.assertEqual(result["coverage"], "simulated-controller-only")
-        checkpoints = [
-            json.loads(path.read_text(encoding="utf-8"))
-            for path in sorted((output / "checkpoints").glob("*.json"))
-        ]
-        elapsed = [record["elapsed_seconds"] for record in checkpoints]
-        self.assertTrue(all(isinstance(value, (int, float)) for value in elapsed))
-        self.assertGreater(elapsed[0], 900)
-        self.assertGreater(elapsed[1], 5400)
-        self.assertGreater(elapsed[2], 36000)
 
 
 # ===========================================================================

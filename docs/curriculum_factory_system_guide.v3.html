@@ -126,8 +126,9 @@
 <main>
 <header class="hero">
   <p class="meta">For maintainers and authorized operators of the factory ·
-     Generated 2026-08-17 · Evidence basis: repository at <code>9ef14e8</code>, clean worktree;
-     the graph was compiled and the test suite executed on this machine; no deployed environment exists to inspect.</p>
+     Generated 2026-08-17 · v3, updated from v2 · Evidence basis: repository at <code>4c0bbf4</code>,
+     dirty worktree (uncommitted Plan 25 removal); the graph was compiled and the test suite executed on
+     this machine; no deployed environment exists to inspect.</p>
   <h1>curriculum_factory</h1>
   <p class="lede">A single-operator, contract-first pipeline that turns one curriculum manifest into
      reviewed, accepted curriculum units and a workbook. It is a LangGraph state machine in which
@@ -209,8 +210,7 @@ installed; and the output root is empty or absent for a fresh run.</p>
 
 <h2 id="architecture"><span class="n">2</span>Architecture</h2>
 
-<p>The package holds <b>two engine generations, both installed</b>, and telling them apart is the first thing a
-new maintainer needs.</p>
+<p>The package installs <b>one engine generation</b>: the Plan 26 LangGraph runtime.</p>
 
 <table>
   <thead><tr><th>Generation</th><th>Modules</th><th>Reached by</th><th>Status</th><th>Evidence</th></tr></thead>
@@ -220,25 +220,14 @@ new maintainer needs.</p>
         <td><code>curriculum-factory-run-curriculum</code></td>
         <td>The one production graph. All routing, state and evidence discipline described in this guide is here.</td>
         <td><span class="ev ev-observed">observed</span></td></tr>
-    <tr><td><b>Plan 25</b> — legacy</td>
-        <td><code>curriculum_factory_graph.py</code> (1&nbsp;645 lines), <code>controller.py</code>,
-            <code>model_worker.py</code>, <code>routing.py</code>, <code>checkpoint.py</code>,
-            <code>logger.py</code>, <code>checks.py</code></td>
-        <td><code>curriculum-factory-session-bridge</code> — <b>still a published console script</b></td>
-        <td>Separate control flow, separate checkpointing, separate logging. Uses a Gemini reviewer and
-            <code>dict(os.environ)</code> passthrough that the Plan 26 transport forbids.</td>
-        <td><span class="ev ev-observed">observed</span></td></tr>
   </tbody>
 </table>
 
-<div class="box warn"><b>Coupling worth knowing</b>
-<code>src/curriculum_factory/__init__.py</code> imports <code>controller.CurriculumRuntime</code>, so importing
-the package at all pulls in the legacy engine. <code>finalize_evidence.py</code> shells out to
-<code>run_curriculum.py --test-static</code> and <code>--test-simulated-all</code> — flags that no longer exist
-in <code>build_parser</code> (<code>run_curriculum.py:135-157</code>). Those subprocesses exit 2, the return code
-is only recorded and never checked, and <code>main()</code> returns 0 regardless
-(<code>finalize_evidence.py:38-39, 103</code>). <span class="ev ev-observed">observed</span>
-</div>
+<div class="box ok"><b>Single-engine package</b>
+The retired Plan 25 controller, bridge, evidence finalizer, Gemini helpers, and supporting modules are not
+installed. Importing <code>curriculum_factory</code> has no legacy-engine side effects, and the sole published
+console script is <code>curriculum-factory-run-curriculum</code>.
+<span class="ev ev-observed">observed</span></div>
 
 <figure class="dg" id="fig-fig-topology">
 <svg viewBox="0 0 996 1057" width="100%" style="max-width:996px" role="img" aria-labelledby="fig-topology-t fig-topology-d" xmlns="http://www.w3.org/2000/svg"><title id="fig-topology-t">Runtime topology and trust boundaries</title><desc id="fig-topology-d">Everything runs in one operator-owned process on one machine. The Python process is forbidden from reaching a model API at all; only the sandbox-exec child may, and its sandbox constrains it by port, not by hostname.</desc><style>
@@ -651,6 +640,25 @@ control-plane key such as a route, verdict or terminal name (<code>transport.py:
 wrote any other file. Together these are the mechanism behind "a model has no routing authority": it is enforced
 at the transport boundary, not trusted to the prompt.</p>
 
+<h3>Model-selection manifests (declared, prompt-read)</h3>
+<p><code>policy/routing/</code> holds four YAML manifests —
+<code>model_registry.v1.yaml</code> (capabilities and availability),
+<code>task_taxonomy.v2.yaml</code> (task classes and risk profiles),
+<code>routing_policy.v1.yaml</code> (candidate-pool and escalation policy) and
+<code>quality_gates.v1.yaml</code> (observable acceptance gates) — plus a
+folder-index <code>readme.md</code>. Per that readme, none of the four is an
+input to code: the rules that bind a run live in the meta prompt's
+<code>## Routing</code> section, which reads these files as its data.
+<code>inputs.py:67</code> cites <code>model_registry.v1.yaml</code> only in a
+comment pinning the two driver CLIs. This entire manifest set is therefore
+<span class="ev ev-declared">declared</span>, not <span class="ev ev-observed">observed</span> —
+no traced run was found that shows a model consuming them, and this guide does
+not know whether the fixed eight-job table above and this candidate-pool
+mechanism are two names for the same routing path or two coexisting ones.
+That ambiguity is unresolved in v2; a maintainer changing routing behavior
+should locate the meta prompt's <code>## Routing</code> section first and
+confirm which mechanism is live before trusting either description in isolation.</p>
+
 <h2 id="deployment"><span class="n">8</span>Deployment</h2>
 
 <div class="box warn"><b>There is no deployment</b>
@@ -959,6 +967,39 @@ root as the single copy of the run and back it up yourself before intervening.
 
 <h2 id="limitations"><span class="n">13</span>Limitations and verification</h2>
 
+<h3>Version history</h3>
+<table>
+  <thead><tr><th>Version</th><th>Date</th><th>What changed</th></tr></thead>
+  <tbody>
+    <tr><td>v1</td><td>2026-08-17</td>
+        <td>Initial guide after the Plan 25 removal: single-engine (Plan 26) package,
+            reduced CLI surface, side-effect-free import.</td></tr>
+    <tr><td>v2</td><td>2026-08-17</td>
+        <td>Re-diffed sources against v1's register (<code>source_register.py --merge</code>):
+            confirmed the 17 Plan 25 <code>src/curriculum_factory/*</code> modules (16 <code>.py</code> +
+            1 <code>.mjs</code>) v1 already described as removed are still gone and
+            <code>pyproject.toml</code> / <code>__init__.py</code> are otherwise unchanged since v1.
+            Closed one evidence gap v1 had flagged — <code>policy/routing/*</code> — by reading the
+            four manifests and their folder <code>readme.md</code>; added §7's
+            "Model-selection manifests" subsection and marked the relationship between that
+            candidate-pool mechanism and the fixed eight-job table as an open unknown rather than
+            assuming they are the same path.</td></tr>
+    <tr><td>v3</td><td>2026-08-17</td>
+        <td>Re-verified §2, §8 and §13 against the worktree directly (not against this guide's own prior
+            claims): confirmed 17 deleted <code>src/curriculum_factory/*</code> modules
+            (<code>.py</code> + one <code>.mjs</code>) plus <code>tests/runtime/unit_fixture.py</code> and 14
+            deleted <code>test_*.py</code> files, one console script in <code>pyproject.toml</code>, and a
+            side-effect-free <code>__init__.py</code> — all still accurate. Corrected the test-suite row in
+            "How this was verified": <code>tests/gates</code> and <code>tests/selftest</code> collect no
+            pytest items (they run via <code>tests/run_gates.sh</code>), so the prior "tests/runtime
+            tests/gates tests/selftest" pytest invocation and its reported counts were wrong; replaced with
+            the counts from a direct re-run. Also fixed a defect in v2's own "Sources inspected" register,
+            which had wrongly marked 58 live files (including <code>run_curriculum.py</code> and
+            <code>langgraph_factory/graph.py</code>) as missing/evidence-gap; regenerated it and corrected
+            the "12 Plan 25 files" figure in v2's changelog entry to 17.</td></tr>
+  </tbody>
+</table>
+
 <h3>What would make this guide wrong</h3>
 <ul>
   <li>If <code>unit_graph.py</code>'s <code>D90_RESERVE_MODEL_ATTEMPT</code> destination tuple
@@ -983,11 +1024,12 @@ root as the single copy of the run and back it up yourself before intervening.
             <code>compiled.get_graph()</code> from <code>__start__</code></td>
         <td>50 nodes, 158 edges, 5 unreachable — <span class="ev ev-observed">observed</span></td></tr>
     <tr><td>Test suite</td>
-        <td><code>PYTHONPATH=src python3 -m pytest -q</code> (full), then <code>tests/runtime tests/gates
-            tests/selftest</code></td>
-        <td>Runtime suite: <b>1370 passed, 2 skipped, 419 subtests</b>, no failures. Full suite: 4 failed,
-            9 errors — <em>all</em> in <code>tests/refactor_repo/</code> and
-            <code>tests/test_validate_instance.py</code>, caused by a missing
+        <td><code>PYTHONPATH=src python3 -m pytest -q tests/runtime</code>, then
+            <code>PYTHONPATH=src python3 -m pytest -q</code> (full)</td>
+        <td>Runtime suite: <b>1200 passed, 1 skipped, 372 subtests</b>, no failures.
+            (<code>tests/gates</code>, <code>tests/selftest</code> collect no pytest items — see version
+            history above.) Full suite: <b>1334 passed, 1 skipped, 1 failed, 372 subtests</b> — the one failure
+            is in <code>tests/test_validate_instance.py</code>, caused by a missing
             <code>plans_internal/create_system_doc/create_system_doc.prompt.v2.yaml</code>, i.e. repo tooling
             outside the package boundary — <span class="ev ev-observed">observed</span></td></tr>
     <tr><td>Unwired components</td>
@@ -1021,9 +1063,6 @@ root as the single copy of the run and back it up yourself before intervening.
         <td>Covered by unit tests, not by an observed crash-and-resume on real output. The claim that every
             resume takes the orphan path follows from <code>close_episode()</code> having no caller — it was not
             watched happening.</td></tr>
-    <tr><td>Legacy Plan 25 engine</td><td><span class="ev ev-declared">declared</span></td>
-        <td>Inspected only far enough to establish that it exists, is reachable through a published console
-            script, and does not share the Plan 26 controls. Its own behaviour is out of scope here.</td></tr>
     <tr><td>Ownership and escalation</td><td><span class="ev ev-unknown">unknown</span></td>
         <td>An operator who hits the stop conditions in this guide has nobody named to escalate to. That is the
             most actionable gap in this document.</td></tr>
@@ -1049,93 +1088,90 @@ root as the single copy of the run and back it up yourself before intervening.
 </table>
 
 <details class="more">
-  <summary>Sources inspected — 76 files, generated 2026-08-17T21:18:57+00:00 at <code>9ef14e8</code> (clean worktree)</summary>
+  <summary>Sources inspected — 65 files, generated 2026-08-18T01:08:46+00:00 at <code>4c0bbf4</code> (dirty worktree)</summary>
   <table>
     <thead><tr><th>Source</th><th>Version / last commit</th><th>Freshness (UTC)</th></tr></thead>
     <tbody>
-      <tr><td><code>src/curriculum_factory/capability_cycle.py</code></td><td><em>missing</em></td><td>pattern matched nothing — evidence gap</td></tr>
-      <tr><td><code>src/curriculum_factory/lesson_render.py</code></td><td><em>missing</em></td><td>pattern matched nothing — evidence gap</td></tr>
-      <tr><td><code>src/curriculum_factory/model_worker.py</code></td><td><em>missing</em></td><td>pattern matched nothing — evidence gap</td></tr>
-      <tr><td><code>src/curriculum_factory/workbook.py</code></td><td><em>missing</em></td><td>pattern matched nothing — evidence gap</td></tr>
-      <tr><td><code>src/curriculum_factory/run_state.py</code></td><td><em>missing</em></td><td>pattern matched nothing — evidence gap</td></tr>
-      <tr><td><code>src/curriculum_factory/controller.py</code></td><td><em>missing</em></td><td>pattern matched nothing — evidence gap</td></tr>
-      <tr><td><code>src/curriculum_factory/readability.py</code></td><td><em>missing</em></td><td>pattern matched nothing — evidence gap</td></tr>
-      <tr><td><code>src/curriculum_factory/checkpoint.py</code></td><td><em>missing</em></td><td>pattern matched nothing — evidence gap</td></tr>
-      <tr><td><code>src/curriculum_factory/factory_state.py</code></td><td><em>missing</em></td><td>pattern matched nothing — evidence gap</td></tr>
-      <tr><td><code>src/curriculum_factory/checks.py</code></td><td><em>missing</em></td><td>pattern matched nothing — evidence gap</td></tr>
-      <tr><td><code>src/curriculum_factory/io.py</code></td><td><em>missing</em></td><td>pattern matched nothing — evidence gap</td></tr>
-      <tr><td><code>src/curriculum_factory/session_bridge.py</code></td><td><em>missing</em></td><td>pattern matched nothing — evidence gap</td></tr>
-      <tr><td><code>src/curriculum_factory/__init__.py</code></td><td><em>missing</em></td><td>pattern matched nothing — evidence gap</td></tr>
-      <tr><td><code>src/curriculum_factory/gemini.py</code></td><td><em>missing</em></td><td>pattern matched nothing — evidence gap</td></tr>
-      <tr><td><code>src/curriculum_factory/logger.py</code></td><td><em>missing</em></td><td>pattern matched nothing — evidence gap</td></tr>
-      <tr><td><code>src/curriculum_factory/run_curriculum.py</code></td><td><em>missing</em></td><td>pattern matched nothing — evidence gap</td></tr>
-      <tr><td><code>src/curriculum_factory/retry.py</code></td><td><em>missing</em></td><td>pattern matched nothing — evidence gap</td></tr>
-      <tr><td><code>src/curriculum_factory/capabilities.py</code></td><td><em>missing</em></td><td>pattern matched nothing — evidence gap</td></tr>
-      <tr><td><code>src/curriculum_factory/routing.py</code></td><td><em>missing</em></td><td>pattern matched nothing — evidence gap</td></tr>
-      <tr><td><code>src/curriculum_factory/curriculum_factory_graph.py</code></td><td><em>missing</em></td><td>pattern matched nothing — evidence gap</td></tr>
-      <tr><td><code>src/curriculum_factory/pdf_inspect.py</code></td><td><em>missing</em></td><td>pattern matched nothing — evidence gap</td></tr>
-      <tr><td><code>src/curriculum_factory/visual_maps.py</code></td><td><em>missing</em></td><td>pattern matched nothing — evidence gap</td></tr>
-      <tr><td><code>src/curriculum_factory/finalize_evidence.py</code></td><td><em>missing</em></td><td>pattern matched nothing — evidence gap</td></tr>
-      <tr><td><code>src/curriculum_factory/resources.py</code></td><td><em>missing</em></td><td>pattern matched nothing — evidence gap</td></tr>
-      <tr><td><code>src/curriculum_factory/roots.py</code></td><td><em>missing</em></td><td>pattern matched nothing — evidence gap</td></tr>
-      <tr><td><code>src/curriculum_factory/langgraph_factory/repair.py</code></td><td><em>missing</em></td><td>pattern matched nothing — evidence gap</td></tr>
-      <tr><td><code>src/curriculum_factory/langgraph_factory/workbook.py</code></td><td><em>missing</em></td><td>pattern matched nothing — evidence gap</td></tr>
-      <tr><td><code>src/curriculum_factory/langgraph_factory/egress.py</code></td><td><em>missing</em></td><td>pattern matched nothing — evidence gap</td></tr>
-      <tr><td><code>src/curriculum_factory/langgraph_factory/persistence.py</code></td><td><em>missing</em></td><td>pattern matched nothing — evidence gap</td></tr>
-      <tr><td><code>src/curriculum_factory/langgraph_factory/reducers.py</code></td><td><em>missing</em></td><td>pattern matched nothing — evidence gap</td></tr>
-      <tr><td><code>src/curriculum_factory/langgraph_factory/unit_graph.py</code></td><td><em>missing</em></td><td>pattern matched nothing — evidence gap</td></tr>
-      <tr><td><code>src/curriculum_factory/langgraph_factory/transport.py</code></td><td><em>missing</em></td><td>pattern matched nothing — evidence gap</td></tr>
-      <tr><td><code>src/curriculum_factory/langgraph_factory/model_nodes.py</code></td><td><em>missing</em></td><td>pattern matched nothing — evidence gap</td></tr>
-      <tr><td><code>src/curriculum_factory/langgraph_factory/acceptance.py</code></td><td><em>missing</em></td><td>pattern matched nothing — evidence gap</td></tr>
-      <tr><td><code>src/curriculum_factory/langgraph_factory/graph.py</code></td><td><em>missing</em></td><td>pattern matched nothing — evidence gap</td></tr>
-      <tr><td><code>src/curriculum_factory/langgraph_factory/__init__.py</code></td><td><em>missing</em></td><td>pattern matched nothing — evidence gap</td></tr>
-      <tr><td><code>src/curriculum_factory/langgraph_factory/routing.py</code></td><td><em>missing</em></td><td>pattern matched nothing — evidence gap</td></tr>
-      <tr><td><code>src/curriculum_factory/langgraph_factory/artifacts.py</code></td><td><em>missing</em></td><td>pattern matched nothing — evidence gap</td></tr>
-      <tr><td><code>src/curriculum_factory/langgraph_factory/evidence.py</code></td><td><em>missing</em></td><td>pattern matched nothing — evidence gap</td></tr>
-      <tr><td><code>src/curriculum_factory/langgraph_factory/state.py</code></td><td><em>missing</em></td><td>pattern matched nothing — evidence gap</td></tr>
-      <tr><td><code>src/curriculum_factory/langgraph_factory/nodes/domain.py</code></td><td><em>missing</em></td><td>pattern matched nothing — evidence gap</td></tr>
-      <tr><td><code>src/curriculum_factory/langgraph_factory/nodes/terminal.py</code></td><td><em>missing</em></td><td>pattern matched nothing — evidence gap</td></tr>
-      <tr><td><code>src/curriculum_factory/langgraph_factory/nodes/render.py</code></td><td><em>missing</em></td><td>pattern matched nothing — evidence gap</td></tr>
-      <tr><td><code>src/curriculum_factory/langgraph_factory/nodes/__init__.py</code></td><td><em>missing</em></td><td>pattern matched nothing — evidence gap</td></tr>
-      <tr><td><code>src/curriculum_factory/langgraph_factory/nodes/review.py</code></td><td><em>missing</em></td><td>pattern matched nothing — evidence gap</td></tr>
-      <tr><td><code>src/curriculum_factory/langgraph_factory/nodes/sources.py</code></td><td><em>missing</em></td><td>pattern matched nothing — evidence gap</td></tr>
-      <tr><td><code>src/curriculum_factory/langgraph_factory/nodes/content.py</code></td><td><em>missing</em></td><td>pattern matched nothing — evidence gap</td></tr>
-      <tr><td><code>src/curriculum_factory/langgraph_factory/nodes/inputs.py</code></td><td><em>missing</em></td><td>pattern matched nothing — evidence gap</td></tr>
-      <tr><td><code>src/curriculum_factory/langgraph_factory/nodes/visuals.py</code></td><td><em>missing</em></td><td>pattern matched nothing — evidence gap</td></tr>
-      <tr><td><code>src/curriculum_factory/langgraph_factory/prompts/M07_review_actual_workbook.prompt.md</code></td><td><em>missing</em></td><td>pattern matched nothing — evidence gap</td></tr>
-      <tr><td><code>src/curriculum_factory/langgraph_factory/prompts/M06_repair_named_unit_artifact.prompt.md</code></td><td><em>missing</em></td><td>pattern matched nothing — evidence gap</td></tr>
-      <tr><td><code>src/curriculum_factory/langgraph_factory/prompts/M01_research_unit_sources.prompt.md</code></td><td><em>missing</em></td><td>pattern matched nothing — evidence gap</td></tr>
-      <tr><td><code>src/curriculum_factory/langgraph_factory/prompts/M08_repair_named_workbook_defect.prompt.md</code></td><td><em>missing</em></td><td>pattern matched nothing — evidence gap</td></tr>
-      <tr><td><code>src/curriculum_factory/langgraph_factory/prompts/M03_write_unit_content.prompt.md</code></td><td><em>missing</em></td><td>pattern matched nothing — evidence gap</td></tr>
-      <tr><td><code>src/curriculum_factory/langgraph_factory/prompts/M02_create_unit_domain_data.prompt.md</code></td><td><em>missing</em></td><td>pattern matched nothing — evidence gap</td></tr>
-      <tr><td><code>src/curriculum_factory/langgraph_factory/prompts/M05_review_actual_unit.prompt.md</code></td><td><em>missing</em></td><td>pattern matched nothing — evidence gap</td></tr>
-      <tr><td><code>src/curriculum_factory/langgraph_factory/prompts/M04_create_unit_visuals.prompt.md</code></td><td><em>missing</em></td><td>pattern matched nothing — evidence gap</td></tr>
-      <tr><td><code>src/curriculum_factory/langgraph_factory/schemas/M05_review_actual_unit.schema.json</code></td><td><em>missing</em></td><td>pattern matched nothing — evidence gap</td></tr>
-      <tr><td><code>src/curriculum_factory/langgraph_factory/schemas/M06_repair_named_unit_artifact.schema.json</code></td><td><em>missing</em></td><td>pattern matched nothing — evidence gap</td></tr>
-      <tr><td><code>src/curriculum_factory/langgraph_factory/schemas/M01_research_unit_sources.schema.json</code></td><td><em>missing</em></td><td>pattern matched nothing — evidence gap</td></tr>
-      <tr><td><code>src/curriculum_factory/langgraph_factory/schemas/internal_execution_receipt.schema.json</code></td><td><em>missing</em></td><td>pattern matched nothing — evidence gap</td></tr>
-      <tr><td><code>src/curriculum_factory/langgraph_factory/schemas/internal_capability_proof.schema.json</code></td><td><em>missing</em></td><td>pattern matched nothing — evidence gap</td></tr>
-      <tr><td><code>src/curriculum_factory/langgraph_factory/schemas/M08_repair_named_workbook_defect.schema.json</code></td><td><em>missing</em></td><td>pattern matched nothing — evidence gap</td></tr>
-      <tr><td><code>src/curriculum_factory/langgraph_factory/schemas/internal_authorization_receipt.schema.json</code></td><td><em>missing</em></td><td>pattern matched nothing — evidence gap</td></tr>
-      <tr><td><code>src/curriculum_factory/langgraph_factory/schemas/M02_create_unit_domain_data.schema.json</code></td><td><em>missing</em></td><td>pattern matched nothing — evidence gap</td></tr>
-      <tr><td><code>src/curriculum_factory/langgraph_factory/schemas/M03_write_unit_content.schema.json</code></td><td><em>missing</em></td><td>pattern matched nothing — evidence gap</td></tr>
-      <tr><td><code>src/curriculum_factory/langgraph_factory/schemas/M04_create_unit_visuals.schema.json</code></td><td><em>missing</em></td><td>pattern matched nothing — evidence gap</td></tr>
-      <tr><td><code>src/curriculum_factory/langgraph_factory/schemas/M07_review_actual_workbook.schema.json</code></td><td><em>missing</em></td><td>pattern matched nothing — evidence gap</td></tr>
-      <tr><td><code>src/curriculum_factory/langgraph_factory/schemas/internal_egress_receipt.schema.json</code></td><td><em>missing</em></td><td>pattern matched nothing — evidence gap</td></tr>
-      <tr><td><code>src/curriculum_factory/langgraph_factory/config/model_jobs.v1.yaml</code></td><td><em>missing</em></td><td>pattern matched nothing — evidence gap</td></tr>
-      <tr><td><code>src/curriculum_factory/resolve_gemini_settings.mjs</code></td><td><em>missing</em></td><td>pattern matched nothing — evidence gap</td></tr>
-      <tr><td><code>pyproject.toml</code></td><td><em>missing</em></td><td>pattern matched nothing — evidence gap</td></tr>
-      <tr><td><code>readme.md</code></td><td><em>missing</em></td><td>pattern matched nothing — evidence gap</td></tr>
-      <tr><td><code>policy/routing/readme.md</code></td><td><em>missing</em></td><td>pattern matched nothing — evidence gap</td></tr>
-      <tr><td><code>deploy/**</code></td><td><em>missing</em></td><td>pattern matched nothing; record as an evidence gap</td></tr>
-      <tr><td><code>.github/workflows/plan26-lock-drift.yml</code></td><td><em>missing</em></td><td>pattern matched nothing — evidence gap</td></tr>
+      <tr><td><code>.github/workflows/plan26-lock-drift.yml</code></td><td>d5149bb 2026-08-11</td><td>2026-08-16T22:13:02+00:00</td></tr>
+      <tr><td><code>deploy/**</code></td><td><em>missing</em></td><td>pattern matched nothing — evidence gap</td></tr>
+      <tr><td><code>docs/curriculum_factory-system-guide.md</code></td><td>7432776 2026-08-17</td><td>2026-08-17T22:17:27+00:00</td></tr>
+      <tr><td><code>pyproject.toml</code></td><td>6a8f3b6 2026-08-16</td><td>2026-08-17T22:13:28+00:00</td></tr>
+      <tr><td><code>readme.md</code></td><td>40733fa 2026-08-16</td><td>2026-08-16T22:13:03+00:00</td></tr>
+      <tr><td><code>src/curriculum_factory/**/*.mjs</code></td><td><em>missing</em></td><td>pattern matched nothing — evidence gap</td></tr>
+      <tr><td><code>src/curriculum_factory/__init__.py</code></td><td>75638cd 2026-08-16</td><td>2026-08-17T22:16:40+00:00</td></tr>
+      <tr><td><code>src/curriculum_factory/checks.py</code></td><td>75638cd 2026-08-16</td><td>2026-08-17T22:15:25+00:00</td></tr>
+      <tr><td><code>src/curriculum_factory/io.py</code></td><td>75638cd 2026-08-16</td><td>2026-08-16T22:13:03+00:00</td></tr>
+      <tr><td><code>src/curriculum_factory/langgraph_factory/__init__.py</code></td><td>75638cd 2026-08-16</td><td>2026-08-16T22:13:03+00:00</td></tr>
+      <tr><td><code>src/curriculum_factory/langgraph_factory/acceptance.py</code></td><td>75638cd 2026-08-16</td><td>2026-08-16T22:13:03+00:00</td></tr>
+      <tr><td><code>src/curriculum_factory/langgraph_factory/artifacts.py</code></td><td>75638cd 2026-08-16</td><td>2026-08-16T22:13:03+00:00</td></tr>
+      <tr><td><code>src/curriculum_factory/langgraph_factory/config/model_jobs.v1.yaml</code></td><td>75638cd 2026-08-16</td><td>2026-08-16T22:13:03+00:00</td></tr>
+      <tr><td><code>src/curriculum_factory/langgraph_factory/egress.py</code></td><td>ffa6fc4 2026-08-16</td><td>2026-08-16T22:13:03+00:00</td></tr>
+      <tr><td><code>src/curriculum_factory/langgraph_factory/evidence.py</code></td><td>75638cd 2026-08-16</td><td>2026-08-16T22:13:03+00:00</td></tr>
+      <tr><td><code>src/curriculum_factory/langgraph_factory/graph.py</code></td><td>75638cd 2026-08-16</td><td>2026-08-16T22:13:03+00:00</td></tr>
+      <tr><td><code>src/curriculum_factory/langgraph_factory/model_nodes.py</code></td><td>75638cd 2026-08-16</td><td>2026-08-16T22:13:03+00:00</td></tr>
+      <tr><td><code>src/curriculum_factory/langgraph_factory/nodes/__init__.py</code></td><td>75638cd 2026-08-16</td><td>2026-08-16T22:13:03+00:00</td></tr>
+      <tr><td><code>src/curriculum_factory/langgraph_factory/nodes/content.py</code></td><td>75638cd 2026-08-16</td><td>2026-08-16T22:13:03+00:00</td></tr>
+      <tr><td><code>src/curriculum_factory/langgraph_factory/nodes/domain.py</code></td><td>75638cd 2026-08-16</td><td>2026-08-16T22:13:03+00:00</td></tr>
+      <tr><td><code>src/curriculum_factory/langgraph_factory/nodes/inputs.py</code></td><td>ffa6fc4 2026-08-16</td><td>2026-08-16T22:13:03+00:00</td></tr>
+      <tr><td><code>src/curriculum_factory/langgraph_factory/nodes/render.py</code></td><td>75638cd 2026-08-16</td><td>2026-08-16T22:13:03+00:00</td></tr>
+      <tr><td><code>src/curriculum_factory/langgraph_factory/nodes/review.py</code></td><td>75638cd 2026-08-16</td><td>2026-08-16T22:13:03+00:00</td></tr>
+      <tr><td><code>src/curriculum_factory/langgraph_factory/nodes/sources.py</code></td><td>75638cd 2026-08-16</td><td>2026-08-16T22:13:03+00:00</td></tr>
+      <tr><td><code>src/curriculum_factory/langgraph_factory/nodes/terminal.py</code></td><td>75638cd 2026-08-16</td><td>2026-08-16T22:13:03+00:00</td></tr>
+      <tr><td><code>src/curriculum_factory/langgraph_factory/nodes/visuals.py</code></td><td>75638cd 2026-08-16</td><td>2026-08-16T22:13:03+00:00</td></tr>
+      <tr><td><code>src/curriculum_factory/langgraph_factory/persistence.py</code></td><td>75638cd 2026-08-16</td><td>2026-08-16T22:13:03+00:00</td></tr>
+      <tr><td><code>src/curriculum_factory/langgraph_factory/prompts/M01_research_unit_sources.prompt.md</code></td><td>75638cd 2026-08-16</td><td>2026-08-16T22:13:03+00:00</td></tr>
+      <tr><td><code>src/curriculum_factory/langgraph_factory/prompts/M02_create_unit_domain_data.prompt.md</code></td><td>75638cd 2026-08-16</td><td>2026-08-16T22:13:03+00:00</td></tr>
+      <tr><td><code>src/curriculum_factory/langgraph_factory/prompts/M03_write_unit_content.prompt.md</code></td><td>75638cd 2026-08-16</td><td>2026-08-16T22:13:03+00:00</td></tr>
+      <tr><td><code>src/curriculum_factory/langgraph_factory/prompts/M04_create_unit_visuals.prompt.md</code></td><td>75638cd 2026-08-16</td><td>2026-08-16T22:13:03+00:00</td></tr>
+      <tr><td><code>src/curriculum_factory/langgraph_factory/prompts/M05_review_actual_unit.prompt.md</code></td><td>75638cd 2026-08-16</td><td>2026-08-16T22:13:03+00:00</td></tr>
+      <tr><td><code>src/curriculum_factory/langgraph_factory/prompts/M06_repair_named_unit_artifact.prompt.md</code></td><td>75638cd 2026-08-16</td><td>2026-08-16T22:13:03+00:00</td></tr>
+      <tr><td><code>src/curriculum_factory/langgraph_factory/prompts/M07_review_actual_workbook.prompt.md</code></td><td>75638cd 2026-08-16</td><td>2026-08-16T22:13:03+00:00</td></tr>
+      <tr><td><code>src/curriculum_factory/langgraph_factory/prompts/M08_repair_named_workbook_defect.prompt.md</code></td><td>75638cd 2026-08-16</td><td>2026-08-16T22:13:03+00:00</td></tr>
+      <tr><td><code>src/curriculum_factory/langgraph_factory/reducers.py</code></td><td>75638cd 2026-08-16</td><td>2026-08-16T22:13:03+00:00</td></tr>
+      <tr><td><code>src/curriculum_factory/langgraph_factory/repair.py</code></td><td>75638cd 2026-08-16</td><td>2026-08-16T22:13:03+00:00</td></tr>
+      <tr><td><code>src/curriculum_factory/langgraph_factory/routing.py</code></td><td>75638cd 2026-08-16</td><td>2026-08-16T22:13:03+00:00</td></tr>
+      <tr><td><code>src/curriculum_factory/langgraph_factory/schemas/M01_research_unit_sources.schema.json</code></td><td>75638cd 2026-08-16</td><td>2026-08-16T22:13:03+00:00</td></tr>
+      <tr><td><code>src/curriculum_factory/langgraph_factory/schemas/M02_create_unit_domain_data.schema.json</code></td><td>75638cd 2026-08-16</td><td>2026-08-16T22:13:03+00:00</td></tr>
+      <tr><td><code>src/curriculum_factory/langgraph_factory/schemas/M03_write_unit_content.schema.json</code></td><td>75638cd 2026-08-16</td><td>2026-08-16T22:13:03+00:00</td></tr>
+      <tr><td><code>src/curriculum_factory/langgraph_factory/schemas/M04_create_unit_visuals.schema.json</code></td><td>75638cd 2026-08-16</td><td>2026-08-16T22:13:03+00:00</td></tr>
+      <tr><td><code>src/curriculum_factory/langgraph_factory/schemas/M05_review_actual_unit.schema.json</code></td><td>75638cd 2026-08-16</td><td>2026-08-16T22:13:03+00:00</td></tr>
+      <tr><td><code>src/curriculum_factory/langgraph_factory/schemas/M06_repair_named_unit_artifact.schema.json</code></td><td>75638cd 2026-08-16</td><td>2026-08-16T22:13:03+00:00</td></tr>
+      <tr><td><code>src/curriculum_factory/langgraph_factory/schemas/M07_review_actual_workbook.schema.json</code></td><td>75638cd 2026-08-16</td><td>2026-08-16T22:13:03+00:00</td></tr>
+      <tr><td><code>src/curriculum_factory/langgraph_factory/schemas/M08_repair_named_workbook_defect.schema.json</code></td><td>75638cd 2026-08-16</td><td>2026-08-16T22:13:03+00:00</td></tr>
+      <tr><td><code>src/curriculum_factory/langgraph_factory/schemas/internal_authorization_receipt.schema.json</code></td><td>75638cd 2026-08-16</td><td>2026-08-16T22:13:03+00:00</td></tr>
+      <tr><td><code>src/curriculum_factory/langgraph_factory/schemas/internal_capability_proof.schema.json</code></td><td>75638cd 2026-08-16</td><td>2026-08-16T22:13:03+00:00</td></tr>
+      <tr><td><code>src/curriculum_factory/langgraph_factory/schemas/internal_egress_receipt.schema.json</code></td><td>75638cd 2026-08-16</td><td>2026-08-16T22:13:03+00:00</td></tr>
+      <tr><td><code>src/curriculum_factory/langgraph_factory/schemas/internal_execution_receipt.schema.json</code></td><td>75638cd 2026-08-16</td><td>2026-08-16T22:13:03+00:00</td></tr>
+      <tr><td><code>src/curriculum_factory/langgraph_factory/state.py</code></td><td>75638cd 2026-08-16</td><td>2026-08-16T22:13:03+00:00</td></tr>
+      <tr><td><code>src/curriculum_factory/langgraph_factory/transport.py</code></td><td>6a8f3b6 2026-08-16</td><td>2026-08-16T22:13:03+00:00</td></tr>
+      <tr><td><code>src/curriculum_factory/langgraph_factory/unit_graph.py</code></td><td>ffa6fc4 2026-08-16</td><td>2026-08-16T22:13:03+00:00</td></tr>
+      <tr><td><code>src/curriculum_factory/langgraph_factory/workbook.py</code></td><td>75638cd 2026-08-16</td><td>2026-08-16T22:13:03+00:00</td></tr>
+      <tr><td><code>src/curriculum_factory/pdf_inspect.py</code></td><td>75638cd 2026-08-16</td><td>2026-08-17T22:15:25+00:00</td></tr>
+      <tr><td><code>src/curriculum_factory/readability.py</code></td><td>ffa6fc4 2026-08-16</td><td>2026-08-17T22:15:25+00:00</td></tr>
+      <tr><td><code>src/curriculum_factory/resources.py</code></td><td>6a8f3b6 2026-08-16</td><td>2026-08-16T22:13:03+00:00</td></tr>
+      <tr><td><code>src/curriculum_factory/roots.py</code></td><td>40733fa 2026-08-16</td><td>2026-08-16T22:13:03+00:00</td></tr>
+      <tr><td><code>src/curriculum_factory/run_curriculum.py</code></td><td>ffa6fc4 2026-08-16</td><td>2026-08-16T22:13:03+00:00</td></tr>
+      <tr><td><code>src/curriculum_factory/visual_maps.py</code></td><td>75638cd 2026-08-16</td><td>2026-08-17T22:15:25+00:00</td></tr>
+      <tr><td><code>policy/routing/readme.md</code></td><td>a0694ea 2026-07-31</td><td>full file — inspected for §7</td></tr>
+      <tr><td><code>policy/routing/model_registry.v1.yaml</code></td><td>ba8e850 2026-08-14</td><td>full file — inspected for §7</td></tr>
+      <tr><td><code>policy/routing/task_taxonomy.v2.yaml</code></td><td>5b1a0c6 2026-07-31</td><td>full file — inspected for §7</td></tr>
+      <tr><td><code>policy/routing/routing_policy.v1.yaml</code></td><td>5b1a0c6 2026-07-31</td><td>full file — inspected for §7</td></tr>
+      <tr><td><code>policy/routing/quality_gates.v1.yaml</code></td><td>5b1a0c6 2026-07-31</td><td>full file — inspected for §7</td></tr>
     </tbody>
   </table>
+  <p class="gnote">Regenerated for this update via <code>source_register.py</code>; the prior table in
+  this section was wrong — it marked 58 files that exist in this worktree (including live Plan 26
+  modules such as <code>run_curriculum.py</code> and <code>langgraph_factory/graph.py</code>) as
+  <em>missing</em>, apparently from a broken glob run in an earlier pass. Only two patterns are
+  genuinely unmatched: <code>deploy/**</code> (no deployment tree exists — declared elsewhere in this
+  guide) and <code>src/curriculum_factory/**/*.mjs</code> (the one Plan 25 script in that extension was
+  removed; nothing replaced it).</p>
 </details>
 
 <footer>
-Generated 2026-08-17 from <code>curriculum_factory</code> at revision <code>9ef14e8</code> (clean worktree), by
-the <code>graph-system-document</code> skill. Diagram specs live beside this file in
+Generated 2026-08-17 (v3, updated from v2) from <code>curriculum_factory</code> at revision
+<code>4c0bbf4</code> (dirty worktree), by the <code>graph-system-document</code> skill using its
+merge-based update workflow (§"Updating an existing guide"). Diagram specs live beside this file in
 <code>docs/assets/*.diagram.json</code>; re-render them with <code>scripts/diagram_svg.py</code> when the graph
 changes. Corrections belong in the repository alongside this file — no owner or issue tracker is recorded in the
 repository to direct them to.

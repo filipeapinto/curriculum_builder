@@ -48,7 +48,7 @@ console-scripted as `curriculum-factory-run-curriculum`. **[observed]** — `--p
 
 ## 2. Architecture
 
-The system is one Python package with **two engine generations present in the same tree**, only one of which the production CLI reaches.
+The system is one Python package containing the Plan 26 LangGraph engine and one production CLI.
 
 ```mermaid
 flowchart TB
@@ -69,9 +69,6 @@ flowchart TB
     EG["egress.py<br/>socket-level broker"]
     PS["persistence.py<br/>SqliteSaver + lock"]
   end
-  subgraph P25["Plan 25 modules — legacy, not on the production path"]
-    OLD["curriculum_factory_graph.py<br/>controller.py · run_state.py · checkpoint.py"]
-  end
   EXT["claude / codex CLIs · allowlisted source hosts"]
 
   CLI -->|"builds + invokes once"| G
@@ -86,18 +83,17 @@ flowchart TB
   TP -->|"every socket"| EG
   EG -->|"allowlisted only"| EXT
   G -->|"compiles over saver"| PS
-  CLI -.->|"no import"| P25
 ```
 
-*Diagram — Component composition. Takeaway: everything the production CLI executes flows through the compiled Plan 26 graph, and every external reach is funnelled through one transport and one egress broker. Scope: import structure of `src/curriculum_factory/`. Evidence: **[declared]** from imports and module docstrings; the dotted "no import" edge is **[observed]** — a `grep` for `curriculum_factory_graph` finds it referenced only by tests and by its own module.*
+*Diagram — Component composition. Takeaway: everything the production CLI executes flows through the compiled Plan 26 graph, and every external reach is funnelled through one transport and one egress broker. Scope: import structure of `src/curriculum_factory/`. Evidence: **[declared]** from imports and module docstrings.*
 
-**Text equivalent.** `run_curriculum.py` builds and invokes the compiled graph in `langgraph_factory/graph.py`. That graph executes deterministic node bodies (`nodes/`, `acceptance.py`, `workbook.py`) and eight model adapters (`model_nodes.py`), all reading and writing one typed `FactoryState` whose merges are fixed by `reducers.py`. Routing decisions come from pure functions in `routing.py`, which the builder wires as conditional edges. Nodes reach the outside world only through services opened once per invocation into a `RuntimeContext`: the artifact store, the evidence log, the model transport, the egress broker, the checkpoint saver. The Plan 25 modules (`curriculum_factory_graph.py`, `controller.py`, `run_state.py`, `checkpoint.py`) implement an earlier non-LangGraph engine and are not imported by the production entry point.
+**Text equivalent.** `run_curriculum.py` builds and invokes the compiled graph in `langgraph_factory/graph.py`. That graph executes deterministic node bodies (`nodes/`, `acceptance.py`, `workbook.py`) and eight model adapters (`model_nodes.py`), all reading and writing one typed `FactoryState` whose merges are fixed by `reducers.py`. Routing decisions come from pure functions in `routing.py`, which the builder wires as conditional edges. Nodes reach the outside world only through services opened once per invocation into a `RuntimeContext`: the artifact store, the evidence log, the model transport, the egress broker, the checkpoint saver.
 
 **Trust boundaries.** Three, all crossed only in one direction through one module each: (1) **process boundary** — model CLIs are child processes spawned by `transport.py` in a disposable sandboxed workspace; (2) **network boundary** — `egress.py` intercepts `socket.socket` itself, so *every* network path in the process is brokered, and only `SourceRetriever` is permitted to open HTTPS; (3) **filesystem boundary** — `artifacts.py` resolves every write inside `--output-root` and rejects path escape. **[declared]**
 
 **Dependencies.** `langgraph==1.2.9`, `langgraph-checkpoint-sqlite==3.1.0`, `jsonschema==4.26.0`, `PyYAML==6.0.3`, `Pillow==12.2.0`; Python `>=3.13,<3.14`. All pinned exactly. **[declared]** (`pyproject.toml`.)
 
-**A finding, not a fact about intent.** Two engine generations coexist. `run_curriculum.py`'s docstring calls itself "the sole production entry"; the package's own `__init__.py` still exports the Plan 25 `CurriculumRuntime`, and three other console scripts (`session_bridge`, `capability_cycle`, `finalize_evidence`) exist whose relationship to the Plan 26 graph was **not** established during this inspection. Treat the Plan 25 modules as legacy on the evidence available, but do not delete them on the strength of this guide alone. **[inferred]**
+**Single-engine package.** The retired Plan 25 implementation and its auxiliary console scripts have been removed. Importing `curriculum_factory` has no legacy-engine side effects; `curriculum-factory-run-curriculum` is the only published command. **[observed]**
 
 ---
 
@@ -335,7 +331,6 @@ Security here is enforced structurally rather than by policy prose, and the cont
 - **No metrics, no traces, no dashboards, no alerts.** Nothing emits to a monitoring system; there is no threshold, no SLO and nothing to page on. A stalled run is visible only as a process that has not exited.
 - **No progress signal during a long run.** Model jobs have 900-second timeouts and a run spans many; between stdout at start and stdout at end, the evidence logs are the only way to see where a run is.
 - **Nothing watches the output root's growth.** No size accounting was found.
-- **[unknown]:** what `logger.py` and `finalize_evidence.py` contribute to this picture — both were listed but not read in depth during this inspection.
 
 ---
 
@@ -403,7 +398,7 @@ python3 -m curriculum_factory.run_curriculum --engine-root . \
 **Sources inspected.** 57 files: all 50 Python modules under `src/curriculum_factory/`, `pyproject.toml`, and six `policy/*.yaml` files, at git `a0694ea` with a dirty worktree. The machine-generated register with per-file digests, last-commit dates and freshness is at [`../.doc-run/sources.md`](../.doc-run/sources.md) (JSON: [`../.doc-run/sources.json`](../.doc-run/sources.json)), produced by `.claude/skills/graph-system-document/scripts/source_register.py`.
 
 **Read in depth:** `graph.py`, `state.py`, `routing.py`, `unit_graph.py`, `nodes/__init__.py`, `model_nodes.py`, `reducers.py`, `persistence.py`, `egress.py`, `evidence.py`, `artifacts.py`, `transport.py` (docstring, registry and process-control sections), `run_curriculum.py`.
-**Read only at the surface:** `nodes/*.py` bodies, `acceptance.py`, `workbook.py`, `repair.py`, `logger.py`, `checks.py`, `visual_maps.py`, `lesson_render.py`, `pdf_inspect.py`, and all Plan 25 modules.
+**Read only at the surface:** `nodes/*.py` bodies, `acceptance.py`, `workbook.py`, `repair.py`, `checks.py`, `visual_maps.py`, and `pdf_inspect.py`.
 **Not inspected:** `curricula/`, `schemas/`, `meta_prompt/`, `tests/` bodies (the suite was run, not read), `tools/`, `governance/`, `plans_internal/`.
 
 **Executions performed during this inspection — the basis of every [observed] label:**
@@ -417,14 +412,14 @@ python3 -m curriculum_factory.run_curriculum --engine-root . \
 
 **The 13 failing/erroring tests are all outside the graph engine.** Twelve are in `tests/refactor_repo/test_inventory.py` (repository-refactor inventory tooling) and one is `tests/test_validate_instance.py::test_real_migrated_prompt_validates_against_v4`. Every `tests/runtime/test_plan26_*` module passed. This is a real but bounded signal: the engine's own suite is green here; the repo tooling's is not, and it was not diagnosed.
 
-**Conflicts found.** One, unresolved: two engine generations coexist (see [§2](#2-architecture)). The production CLI reaches only Plan 26; `__init__.py` still exports Plan 25's `CurriculumRuntime`, and three other console scripts have no established relationship to the graph. Resolved in favour of "Plan 26 is production" on the strength of `run_curriculum.py` being the only module that builds the compiled graph — that is **[inferred]**, not confirmed by a maintainer.
+**Conflicts found.** None in the installed engine surface: Plan 26 is the sole runtime and `run_curriculum.py` is its sole console entry point.
 
-**Unknowns carried into this document:** retention and redaction; incident ownership and escalation; backup of an output root; CI, migrations and rollback; whether `policy/limits.v1.yaml` binds the Plan 26 graph; the roles of `session_bridge`, `capability_cycle`, `finalize_evidence` and `logger.py`.
+**Unknowns carried into this document:** retention and redaction; incident ownership and escalation; backup of an output root; CI, migrations and rollback; and whether `policy/limits.v1.yaml` binds the Plan 26 graph.
 
 **Untested and unexercised paths.** No real end-to-end factory run was executed — no `--unit`, no `--all`, no `--resume`. `outputs/` is empty and `failed_execution_evidence/` contains repository-refactor orchestration logs, **not** factory run traces; nothing in this guide rests on them. Every claim about repair convergence, workbook assembly, acceptance, interruption, orphan recovery and terminal writing is therefore **[declared]** or **[inferred]** from code and from the tests that exercise it, never **[observed]** end to end.
 
-**Assumptions this guide stands on:** that the compiled graph on this machine is the one a real run compiles; that `model_jobs.v1.yaml` as shipped is what production uses; and that the Plan 25 modules are dormant.
+**Assumptions this guide stands on:** that the compiled graph on this machine is the one a real run compiles and that `model_jobs.v1.yaml` as shipped is what production uses.
 
 **Checks performed on this document.** `verify_doc.py` (deterministic gates: secrets, internal links and anchors, output containment, coverage of all thirteen content areas, image alt text, evidence labelling, presence of this section) — passed with no failures or warnings. Both Mermaid diagrams were rendered with `@mermaid-js/mermaid-cli` and inspected as images: the first attempt at the graph diagram drew all 48 nodes and was rejected for unreadable layout, and the architecture diagram's service edges were labelled after an unlabelled arrow read as a dependency that does not exist. Accuracy against the sources, operational usefulness, and whether the diagrams mislead were judged by reading and looking, not by a checker.
 
-**What would invalidate this guide.** A change to `graph.py`, `routing.py`, `state.py`, `unit_graph.py`, `acceptance.py`, `workbook.py` or `model_jobs.v1.yaml` invalidates [§3](#3-graph-behavior), [§4](#4-node-and-tool-contracts), [§5](#5-state-and-data), [§6](#6-route-contracts) and [§7](#7-models-and-prompts) — recompute `graph_digest()` and compare against `0e1eca87080aa102…` to find out cheaply. Deleting or promoting the Plan 25 modules invalidates [§2](#2-architecture). Any deployment of this system as a service invalidates [§8](#8-deployment), [§10](#10-security-and-privacy) and [§11](#11-observability) wholesale — every control described there assumes a single local operator.
+**What would invalidate this guide.** A change to `graph.py`, `routing.py`, `state.py`, `unit_graph.py`, `acceptance.py`, `workbook.py` or `model_jobs.v1.yaml` invalidates [§3](#3-graph-behavior), [§4](#4-node-and-tool-contracts), [§5](#5-state-and-data), [§6](#6-route-contracts) and [§7](#7-models-and-prompts) — recompute `graph_digest()` and compare against `0e1eca87080aa102…` to find out cheaply. Any deployment of this system as a service invalidates [§8](#8-deployment), [§10](#10-security-and-privacy) and [§11](#11-observability) wholesale — every control described there assumes a single local operator.

@@ -228,6 +228,22 @@ is coming out uniform or you are inventing layout the template does not have.
 
 ## Updating an existing guide
 
+### Filename and version
+
+A guide's identity is its filename: `<system>_system_guide.v<N>.<ext>` (for
+example `curriculum_factory_system_guide.v1.html`). Find the existing guide by
+that pattern rather than assuming a fixed name — a directory can hold more
+than one system's guide.
+
+- No file matching the pattern exists → this is a **creation**. Write `v1`.
+- A file matching the pattern exists → this is an **update**. Read `N` from
+  its filename, write the patched guide to `v<N+1>`, and leave `v<N-1>` and
+  earlier in place — they are the diffable history, and deleting them defeats
+  the point of versioning. Do not edit a versioned file in place.
+- Record the new version number, the date, and a one-line summary of what
+  changed in the guide's own "Limitations and verification" section. That is
+  the guide's changelog; it does not need a separate file.
+
 Regeneration throws away correct, reviewed work and rewrites it into slightly
 different words, which makes the diff unreadable and hides the real change.
 Compare instead:
