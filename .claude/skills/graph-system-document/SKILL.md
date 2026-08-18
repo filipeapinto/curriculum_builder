@@ -99,6 +99,17 @@ and diffs the result against the drafted table is worth writing once a table
 like this exists; re-derive it wholesale after any edit that touches routing,
 rather than trusting the previous version's row was already exhaustive.
 
+The same exhaustiveness problem hides inside a single label, not just a
+table: a reason code or `bound` value that a terminal payload can carry
+(`attempt_bound`, `fingerprint_bound`) is exactly as multi-sense-prone as a
+prose term like "Frontier" or "Packet" once more than one code path can
+produce it, but it's easy to disambiguate the *term* while never asking how
+many distinct producers share the *value*. When the guide names a bound,
+cause, or reason-code field, grep for every place that constructs a payload
+carrying it, not just the site the current section happens to be discussing
+— if two or more distinct mechanisms produce the same label, that label
+needs the same badge-plus-rule treatment as any other multi-sense term.
+
 **4 · Write.** Produce the guide, plus only the visuals that materially improve
 understanding. Start from `assets/guide_template.html` — a skeleton carrying the
 page structure, evidence chips, callouts, print stylesheet and figure styling,
