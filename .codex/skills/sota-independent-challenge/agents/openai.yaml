@@ -1,0 +1,4 @@
+interface:
+  display_name: "SOTA Independent Challenge"
+  short_description: "Independently challenge research findings"
+  default_prompt: "Use $sota-independent-challenge to challenge these findings independently."

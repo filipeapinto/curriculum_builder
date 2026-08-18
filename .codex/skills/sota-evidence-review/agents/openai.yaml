@@ -1,0 +1,4 @@
+interface:
+  display_name: "SOTA Evidence Review"
+  short_description: "Search, screen, appraise, and extract evidence"
+  default_prompt: "Use $sota-evidence-review to review and extract the approved research evidence."

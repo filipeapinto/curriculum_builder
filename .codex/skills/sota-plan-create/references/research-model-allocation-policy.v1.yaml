@@ -1,0 +1,62 @@
+policy_id: research-model-allocation
+version: "1.0"
+status: active
+scope: Plans produced by sota-plan-create.
+
+purpose: >-
+  Select an economical, auditable allocation of deterministic tools, models,
+  and human authority. Embed the selected allocation in the generated plan so
+  execution does not depend on this policy file.
+
+allocations:
+  - work: Discovery, hashing, validation, links, schemas, and duplicate detection
+    executor:
+      type: deterministic_tools
+    reason: Measurable operations do not require model judgment.
+
+  - work: Reversible metadata normalization or first-pass triage
+    executor:
+      type: model
+      model: gpt-5.6-luna
+      reasoning_effort: medium
+      review: sampled
+    constraints:
+      - Work must be bounded and reversible.
+      - The executor has no final exclusion authority.
+    reason: Use the economical model for bounded, high-volume work.
+
+  - work: Preliminary mapping, extraction, and incident reconstruction
+    executor:
+      type: model
+      model: gpt-5.6-terra
+      reasoning_effort: high
+    reason: Support careful analysis and tool use without frontier cost on every item.
+
+  - work: Protocol, comparison, and synthesis
+    executor:
+      type: model
+      model: gpt-5.6-sol
+      reasoning_effort: high_or_xhigh
+    reason: Use stronger reasoning for high-consequence cross-source decisions.
+
+  - work: Independent challenge
+    executor:
+      type: model
+      model: gpt-5.5
+      reasoning_effort: xhigh
+    constraints:
+      - Preserve model-family diversity from the primary synthesis executor.
+    reason: Provide independent criticism of high-consequence findings.
+
+  - work: Method, budget, material deviations, and acceptance
+    executor:
+      type: human_owner
+    reason: Authority decisions are not inference tasks.
+
+plan_contract:
+  required:
+    - Embed every selected allocation in the plan.
+    - Record the actual executor, model version, and reasoning effort during execution.
+    - Record and justify every deviation before affected work begins.
+  override_authority: human_owner
+

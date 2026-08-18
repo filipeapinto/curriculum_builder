@@ -1,0 +1,4 @@
+interface:
+  display_name: "SOTA Plan Execute"
+  short_description: "Execute approved SOTA research plans"
+  default_prompt: "Use $sota-plan-execute to execute the latest approved SOTA research plan."

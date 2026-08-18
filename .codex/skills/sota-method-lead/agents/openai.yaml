@@ -1,0 +1,4 @@
+interface:
+  display_name: "SOTA Method Lead"
+  short_description: "Govern research protocols and deviations"
+  default_prompt: "Use $sota-method-lead to govern this research protocol and its evidence coverage."

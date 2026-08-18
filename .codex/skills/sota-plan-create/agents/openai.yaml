@@ -1,0 +1,4 @@
+interface:
+  display_name: "SOTA Plan Create"
+  short_description: "Create and version rigorous research plans"
+  default_prompt: "Use $sota-plan-create to create or iterate a versioned SOTA research plan."

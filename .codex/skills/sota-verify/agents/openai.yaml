@@ -1,0 +1,4 @@
+interface:
+  display_name: "SOTA Verify"
+  short_description: "Verify research artifacts deterministically"
+  default_prompt: "Use $sota-verify to verify the completed research package."

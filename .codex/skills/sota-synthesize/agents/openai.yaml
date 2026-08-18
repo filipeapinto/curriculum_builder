@@ -1,0 +1,4 @@
+interface:
+  display_name: "SOTA Synthesize"
+  short_description: "Synthesize research into supported findings"
+  default_prompt: "Use $sota-synthesize to produce evidence-linked comparative findings."

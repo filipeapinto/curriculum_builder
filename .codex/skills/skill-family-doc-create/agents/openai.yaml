@@ -1,0 +1,4 @@
+interface:
+  display_name: "Skill Family Guide"
+  short_description: "Create, version, index, and audit skill-family guides"
+  default_prompt: "Use $skill-family-doc-create to document this coordinated skill family, increment its version, write a slug-prefixed versioned HTML guide, and refresh the shared family index."
