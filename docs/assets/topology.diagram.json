@@ -3,7 +3,7 @@
   "id": "fig-topology",
   "title": "Runtime topology and trust boundaries",
   "takeaway": "Everything runs in one operator-owned process on one machine. The Python process is forbidden from reaching a model API at all; only the sandbox-exec child may, and its sandbox constrains it by port, not by hostname.",
-  "scope": "Read from transport.py, egress.py, graph.py and persistence.py at 9ef14e8. No deployed or staging environment was inspected — there is none in the repository.",
+  "scope": "Read from transport.py, egress.py, graph.py and persistence.py at 9ef14e8. No deployed or staging environment was inspected \u2014 there is none in the repository. Corrected in v37: pandoc/typst and pdftoppm/pdftotext are not sandboxed (transport.py:2531-2536,1842-1890 call subprocess.run() directly, never render_sandbox_profile()).",
   "evidence": "declared",
   "sources": [
     "src/curriculum_factory/langgraph_factory/transport.py:696",
@@ -16,21 +16,53 @@
       "label": "Repository data root (read)",
       "note": "supplied by --engine-root / --curriculum",
       "items": [
-        {"label": "curricula/*/manifest", "note": "unit list; frozen at D01", "evidence": "declared"},
-        {"label": "policy/retrieval_hosts.v1.yaml", "note": "source-fetch allowlist + digest", "evidence": "declared"},
-        {"label": "model_jobs.v1.yaml", "note": "8 frozen jobs, packaged in-tree", "evidence": "observed"},
-        {"label": "M01–M08 prompts + schemas", "note": "package resources, digest-pinned", "evidence": "observed"}
+        {
+          "label": "curricula/*/manifest",
+          "note": "unit list; frozen at D01",
+          "evidence": "declared"
+        },
+        {
+          "label": "policy/retrieval_hosts.v1.yaml",
+          "note": "source-fetch allowlist + digest",
+          "evidence": "declared"
+        },
+        {
+          "label": "model_jobs.v1.yaml",
+          "note": "8 frozen jobs, packaged in-tree",
+          "evidence": "observed"
+        },
+        {
+          "label": "M01\u2013M08 prompts + schemas",
+          "note": "package resources, digest-pinned",
+          "evidence": "observed"
+        }
       ]
     },
     {
-      "label": "Operator machine · factory process",
+      "label": "Operator machine \u00b7 factory process",
       "boundary": true,
       "note": "trust boundary: holds the operator's credentials",
       "items": [
-        {"label": "run_curriculum CLI", "note": "single invoke; exit 0/2/3/10/11/12/20", "evidence": "observed"},
-        {"label": "LangGraph StateGraph", "note": "50 nodes, compiled once", "evidence": "observed"},
-        {"label": "EgressGuard", "note": "patches socket.connect; deny by default", "evidence": "observed"},
-        {"label": "SourceRetriever", "note": "https only, host+port+IP pinned", "evidence": "declared"}
+        {
+          "label": "run_curriculum CLI",
+          "note": "single invoke; exit 0/2/3/10/11/12/20",
+          "evidence": "observed"
+        },
+        {
+          "label": "LangGraph StateGraph",
+          "note": "50 nodes, compiled once",
+          "evidence": "observed"
+        },
+        {
+          "label": "EgressGuard",
+          "note": "patches socket.connect; deny by default",
+          "evidence": "observed"
+        },
+        {
+          "label": "SourceRetriever",
+          "note": "https only, host+port+IP pinned",
+          "evidence": "declared"
+        }
       ]
     },
     {
@@ -38,30 +70,105 @@
       "boundary": true,
       "note": "trust boundary: network scoped by port 443/80/53, not by host",
       "items": [
-        {"label": "claude CLI", "kind": "external", "note": "M01–M04, M06, M08", "evidence": "declared"},
-        {"label": "codex CLI", "kind": "external", "note": "M05, M07 · cross-family review", "evidence": "declared"},
-        {"label": "pandoc / typst", "note": "unit + workbook render, 600s", "evidence": "declared"},
-        {"label": "pdftoppm / pdftotext", "note": "page inventory and inspection", "evidence": "declared"}
+        {
+          "label": "claude CLI",
+          "kind": "external",
+          "note": "M01\u2013M04, M06, M08",
+          "evidence": "declared"
+        },
+        {
+          "label": "codex CLI",
+          "kind": "external",
+          "note": "M05, M07 \u00b7 cross-family review",
+          "evidence": "declared"
+        }
+      ]
+    },
+    {
+      "label": "Unsandboxed child (per activation)",
+      "boundary": true,
+      "note": "trust boundary: no sandbox at all -- raw OS-level network + filesystem access, wider than the parent process's own restricted state",
+      "items": [
+        {
+          "label": "pandoc / typst",
+          "note": "unit + workbook render, 600s",
+          "evidence": "declared"
+        },
+        {
+          "label": "pdftoppm / pdftotext",
+          "note": "page inventory and inspection",
+          "evidence": "declared"
+        }
       ]
     },
     {
       "label": "Output root (only authorized write target)",
       "items": [
-        {"label": ".langgraph/checkpoints.sqlite3", "kind": "store", "note": "SqliteSaver, WAL, synchronous=FULL", "evidence": "observed"},
-        {"label": ".langgraph/identity_envelope.json", "kind": "store", "note": "0444; run identity for resume", "evidence": "observed"},
-        {"label": ".langgraph/execution.lock", "kind": "store", "note": "flock; one writer per root", "evidence": "observed"},
-        {"label": ".evidence/egress_receipts.jsonl", "kind": "store", "note": "every allowed and denied connect", "evidence": "observed"},
-        {"label": "artifact store (versions/heads)", "kind": "store", "note": "content-addressed; accepted bytes 0444", "evidence": "observed"},
-        {"label": "evidence/*.jsonl", "kind": "store", "note": "hash-chained but never written", "evidence": "conflicting"}
+        {
+          "label": ".langgraph/checkpoints.sqlite3",
+          "kind": "store",
+          "note": "SqliteSaver, WAL, synchronous=FULL",
+          "evidence": "observed"
+        },
+        {
+          "label": ".langgraph/identity_envelope.json",
+          "kind": "store",
+          "note": "0444; run identity for resume",
+          "evidence": "observed"
+        },
+        {
+          "label": ".langgraph/execution.lock",
+          "kind": "store",
+          "note": "flock; one writer per root",
+          "evidence": "observed"
+        },
+        {
+          "label": ".evidence/egress_receipts.jsonl",
+          "kind": "store",
+          "note": "every allowed and denied connect",
+          "evidence": "observed"
+        },
+        {
+          "label": "artifact store (versions/heads)",
+          "kind": "store",
+          "note": "content-addressed; accepted bytes 0444",
+          "evidence": "observed"
+        },
+        {
+          "label": "evidence/*.jsonl",
+          "kind": "store",
+          "note": "hash-chained but never written",
+          "evidence": "conflicting"
+        }
       ]
     },
     {
       "label": "External dependencies",
       "items": [
-        {"label": "api.anthropic.com", "kind": "external", "note": "reached only by the claude child", "evidence": "declared"},
-        {"label": "OpenAI / chatgpt.com", "kind": "external", "note": "reached only by the codex child", "evidence": "declared"},
-        {"label": "primary source hosts", "kind": "external", "note": "allowlisted https fetch by the parent", "evidence": "declared"},
-        {"label": "~/.claude.json, ~/.codex/auth.json", "kind": "store", "note": "subscription credentials; no API key path", "evidence": "observed"}
+        {
+          "label": "api.anthropic.com",
+          "kind": "external",
+          "note": "reached only by the claude child",
+          "evidence": "declared"
+        },
+        {
+          "label": "OpenAI / chatgpt.com",
+          "kind": "external",
+          "note": "reached only by the codex child",
+          "evidence": "declared"
+        },
+        {
+          "label": "primary source hosts",
+          "kind": "external",
+          "note": "allowlisted https fetch by the parent",
+          "evidence": "declared"
+        },
+        {
+          "label": "~/.claude.json, ~/.codex/auth.json",
+          "kind": "store",
+          "note": "subscription credentials; no API key path",
+          "evidence": "observed"
+        }
       ]
     }
   ]
