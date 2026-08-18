@@ -100,6 +100,16 @@ changelog's own claim about what got fixed. If the changelog says "the
 exit-code table is now corrected to match," that claim is a promise the grep
 must actually verify, not a summary to write on faith.
 
+One more layer to that grep: a correction can invalidate a *recommended
+action*, not just a restated fact, and other rows or passages can recommend
+that same action without ever restating the fact that just got corrected.
+Finding every echo of the old claim's wording is not the same search as
+finding every place that relies on the old claim's *conclusion*. If a fix
+proves "running `--resume` after outcome X doesn't do what this row says,"
+check every other outcome whose own instruction is also `--resume` — each is
+an independent claim that can share the same root cause without sharing any
+text with the one already found.
+
 A table that claims exhaustive coverage — "every node," "the full N-member
 set," a predecessor/successor column meant to make every ID lookupable — is a
 correctness claim about completeness itself, and spot-fixing one reported row
