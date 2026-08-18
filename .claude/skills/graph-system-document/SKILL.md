@@ -283,6 +283,17 @@ three or more sections or drives a routing/admission decision, and check each
 one against the glossary. A term failing that check is exactly the kind of
 gap a reader can't route around by re-reading harder.
 
+Two follow-on checks the same pass should not skip: a field or identifier
+whose name is a variant of an already-glossed concept (`denominator` defined,
+but `denominator_id` — a distinct state field — appearing once with no gloss
+of its own) inherits none of the parent gloss automatically and needs either
+its own definition or an explicit note that it *is* the same thing. And once
+a term is identified as carrying two senses, it must get the same treatment
+every other multi-sense term gets — an `ev-conflicting` badge and a stated
+disambiguation rule — not just a description of the two senses in prose;
+partial disambiguation reads as confidently as full disambiguation and is
+therefore just as costly when it's missed.
+
 ## Required content
 
 Cover every area below, or mark it not applicable **with a reason**. Missing
