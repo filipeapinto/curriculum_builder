@@ -1,0 +1,14 @@
+{
+  "schema": "csmqg-verification-rendering-receipt/v1",
+  "record_id": "VERIFY-CSMQG-RENDER-001",
+  "run_id": "RUN-CSMQG-20260819-001",
+  "created_at_utc": "2026-08-19T10:35:49Z",
+  "responsible_role": "sota-verify",
+  "renderer": "macOS Quick Look thumbnail renderer (qlmanage -t -s 1440)",
+  "results": [
+    {"artifact": "../report/sota_research_report.v1.html", "viewport": "desktop thumbnail, 1440px", "status": "pass", "evidence": "Generated /private/tmp/csmqg_verify_render/sota_research_report.v1.html.png and visually inspected header, navigation, executive-answer cards, and blocker panel; no clipping or overlap observed in rendered region."},
+    {"artifact": "../design/codex_same_model_qa_reference_architecture.v1.html", "viewport": "desktop thumbnail, 1440px", "status": "pass", "evidence": "Generated /private/tmp/csmqg_verify_render/codex_same_model_qa_reference_architecture.v1.html.png and visually inspected header, navigation, candidate-status panel, and first card row; no clipping or overlap observed in rendered region."},
+    {"artifact": "both primary HTML deliverables", "viewport": "mobile", "status": "not_measurable", "evidence": "The available Quick Look renderer did not provide a controllable narrow viewport. The in-app browser service was unavailable and the local Computer Use runtime failed before opening a browser. CSS contains a max-width:780px media rule, but that is a static implementation check, not a mobile rendering inspection."},
+    {"artifact": "both primary HTML deliverables", "viewport": "print", "status": "not_measurable", "evidence": "The available renderer produced only a screen thumbnail; no print-media/PDF rendering surface was available. CSS contains an @media print rule, but print layout was not rendered or visually inspected."}
+  ]
+}

@@ -1,0 +1,55 @@
+{
+  "schema": "sota-benchmark-feasibility/v1",
+  "record_id": "BENCH-FEAS-CSMQG-001",
+  "run_id": "RUN-CSMQG-20260819-001",
+  "created_at_utc": "2026-08-19T09:29:48Z",
+  "responsible_role": "sota-plan-execute",
+  "status": "feasible_subject_to_protocol_approval",
+  "source_paths": [
+    ".claude/skills/qa-gate-codex-run/evals/evals.json",
+    ".claude/skills/qa-gate-codex-run/evals/inputs/"
+  ],
+  "artifact_classes": {
+    "code": {
+      "feasible": true,
+      "proposed_cases": 30,
+      "seed_basis": "Repository-owned synthetic fixtures plus newly authored minimal synthetic variants; no third-party benchmark redistribution required.",
+      "case_families": ["functional defect", "boundary condition", "grounding contradiction", "configuration/startup failure", "security-relevant behavior", "correct negative control"],
+      "oracle": "Executable criteria-specific tests or deterministic inspection rules with gold labels frozen before gate execution."
+    },
+    "document_plan": {
+      "feasible": true,
+      "proposed_cases": 30,
+      "seed_basis": "Newly authored synthetic documents and plans stored in-repository with explicit acceptance criteria and fault manifests.",
+      "case_families": ["missing required section", "internal contradiction", "unsupported factual claim", "broken citation or link", "version/status mismatch", "correct negative control"],
+      "oracle": "Deterministic structural/link/schema checks plus pre-adjudicated semantic gold labels; semantic labels are not disclosed to gate variants."
+    }
+  },
+  "fault_taxonomy": [
+    {"id":"FT-01","class":"omission","meaningful_fault":true},
+    {"id":"FT-02","class":"incorrect behavior or assertion","meaningful_fault":true},
+    {"id":"FT-03","class":"boundary-condition failure","meaningful_fault":true},
+    {"id":"FT-04","class":"grounding or provenance conflict","meaningful_fault":true},
+    {"id":"FT-05","class":"criteria-irrelevant imperfection","meaningful_fault":false,"purpose":"false-block control"},
+    {"id":"FT-06","class":"clean artifact","meaningful_fault":false,"purpose":"negative control"}
+  ],
+  "variants": ["deterministic-only","fresh same-model reviewer","same-model panel","test-generation-plus-execution","mutation-or-fault-calibrated","hybrid-tiered"],
+  "repeat_design": {"stochastic_repeats":3,"maximum_runs":1080,"pairing":"Each eligible case is evaluated by every compatible variant; stochastic variants repeat under recorded seeds/order."},
+  "primary_metrics": ["false-pass rate","false-block rate","abstention rate","reproducibility","criterion-linked evidence quality"],
+  "secondary_metrics": ["coverage or mutation score where applicable","latency","model calls","input/output tokens","cost","attack surface","human escalation rate"],
+  "contamination_controls": [
+    "Freeze case artifacts, criteria, gold labels, and digests before runs.",
+    "Withhold seeded-fault labels and scorer logic from gate variants.",
+    "Separate test generation from adjudication where possible.",
+    "Randomize case and variant order and retain seeds.",
+    "Use synthetic or repository-owned cases and record any pre-existing public exposure.",
+    "Keep training-data independence as unknown; do not claim it from synthetic construction alone."
+  ],
+  "precision_rationale": "The proposed 60-case paired design supports descriptive comparison and per-fault-class error intervals but is not represented as powered for small between-variant differences. Report binomial uncertainty and paired differences; treat sparse strata as exploratory.",
+  "calibration_stop_condition": "met: at least one feasible, legally usable benchmark design is identified for both code and document/plan artifacts",
+  "open_decisions_for_human_protocol_gate": [
+    "Approve creation of the 60-case synthetic corpus during full execution.",
+    "Approve the minimum number of cases per fault family after pilot case construction.",
+    "Approve whether security-relevant cases require a separate higher-risk sandbox tier."
+  ]
+}

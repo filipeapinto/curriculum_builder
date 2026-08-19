@@ -1,0 +1,85 @@
+{
+  "schema": "sota-local-incident-reconstruction/v2",
+  "record_id": "LIR-CSMQG-20260819-002",
+  "run_id": "RUN-CSMQG-20260819-001",
+  "created_at_utc": "2026-08-19T09:47:55Z",
+  "responsible_role": "sota-incident-analyze",
+  "status": "final_for_synthesis_handoff",
+  "supersedes": {
+    "record_id": "LIR-CSMQG-20260819-001",
+    "path": "local_incident_reconstruction.v1.json",
+    "reason": "Records final protocol-gate state and source-boundary revalidation while retaining the calibration reconstruction's factual limits."
+  },
+  "scope": "Reconstruction of intended qa-gate-codex-run execution from the approved read-only source boundary. It is not a record of a completed production gate run or a controlled-evaluation result.",
+  "run_context": [
+    {"id": "CTX-001", "class": "verified_fact", "statement": "The full protocol gate is approved; full screening, corpus construction, and comparative evaluation are allowed, but implementation is not allowed.", "evidence": ["protocol_gate_status.v1.json:GATE-CSMQG-FULL-001"]},
+    {"id": "CTX-002", "class": "verified_fact", "statement": "No evaluation run, corpus-construction output, or external-review conclusion is imported into this reconstruction.", "evidence": ["execution_log.jsonl:EVT-CSMQG-0007", "local_control_threat_matrix.v2.json:GAP-004"]},
+    {"id": "CTX-003", "class": "verified_fact", "statement": "The 22-file source boundary matches LCI-CSMQG-20260819-001 at finalization.", "evidence": ["local_source_boundary_revalidation.v1.json:LSBR-CSMQG-20260819-001"]}
+  ],
+  "actors": [
+    {"id": "ACT-QA-SCRIPT", "class": "verified_fact", "role": "Local Python process that creates state, prompts, invokes a transport, records rounds, finalizes, and verifies.", "evidence": ["scripts/qa_gate.py:650-776,823-1162"]},
+    {"id": "ACT-CODEX-REVIEW", "class": "verified_fact", "role": "External process invoked through configured app-server or exec transport; its returned JSON verdict is consumed by the script.", "evidence": ["scripts/qa_gate.py:427-434,685-701"]},
+    {"id": "ACT-CODEX-POST", "class": "verified_fact", "role": "A new invocation with no resume id used for postmortem classification.", "evidence": ["scripts/qa_gate.py:1197-1289"]},
+    {"id": "ACT-ROLLOUT", "class": "attributed_claim", "role": "Current-user session file described by documentation as a Codex-process witness and read by the QA script.", "evidence": ["references/protocol.md:83-115", "scripts/qa_gate.py:1043-1140"]},
+    {"id": "ACT-PRODUCER", "class": "attributed_claim", "role": "Documentation identifies a Claude artifact producer/fixer; this role name is not an architectural necessity under the research plan.", "evidence": ["scripts/qa_gate.py:452-472"]}
+  ],
+  "timeline": [
+    {"id": "EVT-LIR-001", "class": "verified_fact", "operation": "Start checks artifact existence and version syntax, obtains criteria and grounding, writes session state, and begins round one.", "evidence": ["scripts/qa_gate.py:823-894"]},
+    {"id": "EVT-LIR-002", "class": "verified_fact", "operation": "For execution, direct artifact-parent siblings are copied into QA/exec; otherwise review cwd is the artifact parent.", "evidence": ["scripts/qa_gate.py:112-149,665-671"]},
+    {"id": "EVT-LIR-003", "class": "verified_fact", "operation": "The script creates a criteria/threshold prompt, adds rendered history from later rounds, and invokes the configured transport with the recorded resume id when available.", "evidence": ["scripts/qa_gate.py:443-496,680-701"]},
+    {"id": "EVT-LIR-004", "class": "verified_fact", "operation": "After a response, the script requires a first-round rollout path, records hashes and chain data, saves the round, and finalizes according to history consistency, verdict/threshold, stall, and iteration rules.", "evidence": ["scripts/qa_gate.py:703-776"]},
+    {"id": "EVT-LIR-005", "class": "verified_fact", "operation": "A later round accepts only a newer same-base artifact or rebuttal and rejects a transport switch.", "evidence": ["scripts/qa_gate.py:897-943"]},
+    {"id": "EVT-LIR-006", "class": "verified_fact", "operation": "Verify recomputes record checks and compares available rollout material, request/response bodies, and available sandbox context before writing verification.json.", "evidence": ["scripts/qa_gate.py:946-1162"]},
+    {"id": "EVT-LIR-007", "class": "verified_fact", "operation": "Postmortem constructs a transcript and sends it to a new Codex invocation, then writes a classification JSON/Markdown report if the invocation succeeds.", "evidence": ["scripts/qa_gate.py:1197-1289"]}
+  ],
+  "outputs": [
+    {"id": "OUT-001", "class": "verified_fact", "artifact": "QA/session.json, QA/rounds/*, QA/verdict.json, QA/verification.json", "generation": "qa_gate write operations"},
+    {"id": "OUT-002", "class": "attributed_claim", "artifact": "~/.codex/sessions/**/rollout-*.jsonl", "generation": "Documentation attributes generation to the Codex process; no live provenance demonstration is in the boundary."},
+    {"id": "OUT-003", "class": "verified_fact", "artifact": "QA/postmortem.json and QA/postmortem.md", "generation": "cmd_postmortem if its invocation succeeds"}
+  ],
+  "assessment": {
+    "verified_facts": [
+      {"id": "FACT-001", "statement": "The local source implements procedural controls for versioning, criteria, chain records, rollout comparison, execution-copy preparation, bounded iteration, and fresh-session postmortem.", "evidence": ["local_control_threat_matrix.v2.json:CTRL-001 through CTRL-012"]},
+      {"id": "FACT-002", "statement": "The only recorded included regressions passed: four synthetic integrity-fixture unittest cases and a bridge-flush fixture.", "evidence": ["local_control_inventory.v1.json:TST-LCI-001,TST-LCI-002"]},
+      {"id": "FACT-003", "statement": "Those regressions did not call Codex, resolve the plugin, exercise a live app-server transport, or prove sandbox behavior.", "evidence": ["local_control_inventory.v1.json:tests_executed[]"]},
+      {"id": "FACT-004", "statement": "The boundary contains five declared eval cases but no local execution/scoring ledger for them.", "evidence": ["local_control_threat_matrix.v2.json:GAP-004"]}
+    ],
+    "attributed_claims": [
+      {"id": "CLM-001", "statement": "Both transports restore the same conversation and prior direct tests demonstrated recall and forged-history detection.", "evidence": ["local_control_threat_matrix.v2.json:CLM-001"]},
+      {"id": "CLM-002", "statement": "The session file is a Codex-authored witness, not a gate-written file.", "evidence": ["local_control_threat_matrix.v2.json:CLM-002"]},
+      {"id": "CLM-003", "statement": "Execution caught a runtime defect missed by read-only review.", "evidence": ["local_control_threat_matrix.v2.json:CLM-003"]},
+      {"id": "CLM-004", "statement": "A witness rejected a perfect-chain forged session.", "evidence": ["local_control_threat_matrix.v2.json:CLM-004"]}
+    ],
+    "inferences": [
+      {"id": "INF-001", "confidence": "high", "statement": "The local architecture is a procedural assurance layer over a shared machine and potentially the same model, rather than a distinct trust root.", "basis": ["CTRL-003", "CTRL-004", "CTRL-005", "CTRL-006", "CTRL-011", "references/protocol.md:152-161"]},
+      {"id": "INF-002", "confidence": "high", "statement": "Deterministic mechanisms can detect specified inconsistencies and bind records to bytes, but cannot by themselves establish semantic correctness or independent origin of a reviewer verdict.", "basis": ["CTRL-005", "CTRL-006", "CTRL-007", "GAP-003"]},
+      {"id": "INF-003", "confidence": "high", "statement": "Portability and exposure depend materially on caller-selected paths and externally enforced runtime sandbox behavior.", "basis": ["CTRL-008", "THR-007", "THR-008"]}
+    ],
+    "competing_explanations": [
+      {"id": "ALT-001", "question": "What a clean verification result establishes", "explanation_a": "Useful procedural evidence that checked local records and a current-user rollout agree.", "explanation_b": "Not adversary-resistant provenance where same-user processes can potentially affect both local stores.", "status": "Unresolved by the authorized boundary; do not choose either explanation as fact."},
+      {"id": "ALT-002", "question": "What a fresh postmortem establishes", "explanation_a": "It may reduce anchoring to a prior review thread.", "explanation_b": "It may retain same-model/rubric-correlated error and is not authenticated by cmd_verify.", "status": "Unresolved; controlled measurement is required for detection-lift claims."}
+    ],
+    "unknowns": [
+      {"id": "UNK-001", "statement": "Whether the live deployment meets plugin, model, session, rollout, and sandbox preconditions.", "resolving_evidence": "Version-pinned live run ledger plus raw records and sandbox probes."},
+      {"id": "UNK-002", "statement": "Whether fresh review/postmortem reduce false passes or false blocks for the artifact classes in scope.", "resolving_evidence": "Blinded fault corpus, frozen scorer, and per-variant results with uncertainty."},
+      {"id": "UNK-003", "statement": "Whether the rollout-writer attribution and immutability claim holds for the actual deployment identity and permissions.", "resolving_evidence": "Environment-specific ownership/permission evidence or an external append-only/signing trust service."}
+    ]
+  },
+  "handoff": {
+    "to": "sota-synthesize",
+    "primary_matrix": "local_control_threat_matrix.v2.json (LCTM-CSMQG-20260819-002)",
+    "boundary_revalidation": "local_source_boundary_revalidation.v1.json (LSBR-CSMQG-20260819-001)",
+    "allowed_factual_use": "Use FACT-001 through FACT-004 and the matrix's verified facts only for local implementation description.",
+    "classification_rule": "Preserve CLM, INF, ALT, and UNK labels exactly. Do not promote them to factual effectiveness, independence, cryptographic assurance, or production-readiness claims.",
+    "blocking_for_effectiveness_claims": ["GAP-003", "GAP-004", "UNK-001", "UNK-002", "UNK-003"],
+    "implementation_boundary": "Implementation remains prohibited by GATE-CSMQG-FULL-001 despite full evaluation work being allowed."
+  },
+  "provenance": {
+    "plan": "research/codex_same_model_qa_gate/plan/sota_research.plan.v1.html",
+    "inventory": "local_control_inventory.v1.json",
+    "prior_matrix": "local_control_threat_matrix.v1.json",
+    "prior_reconstruction": "local_incident_reconstruction.v1.json",
+    "revalidation": "local_source_boundary_revalidation.v1.json",
+    "calibration_records": "calibration_*.v1.json plus protocol_gate_status.v1.json, approval_register.jsonl, run_manifest.json, budget_ledger.json, execution_log.jsonl, deviation_register.json, and benchmark_feasibility.v1.json"
+  }
+}

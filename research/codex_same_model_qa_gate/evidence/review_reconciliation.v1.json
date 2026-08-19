@@ -1,0 +1,10 @@
+{
+  "schema":"codex_same_model_qa_gate.review_reconciliation","schema_version":"1.0.0","record_id":"RUN-CSMQG-20260819-001-RECONCILIATION-v1","run_id":"RUN-CSMQG-20260819-001","created_at_utc":"2026-08-19T11:20:00Z","responsible_role":"sota-evidence-review",
+  "inputs":{"search_log":"review_search_log.v1.json","source_register":"review_fulltext_source_register.v1.json","eligibility":"review_fulltext_eligibility_decisions.v1.json","exclusions":"review_exclusions.v1.json","appraisals":"review_appraisals.v1.json","extractions":"review_extractions.v1.json","evidence_map":"review_evidence_map.v1.json"},
+  "counts":{"candidate_occurrences":26,"duplicate_occurrences":1,"deduplicated_candidates":25,"retrieval_attempted":25,"full_texts_with_byte_hash":19,"insufficient_access_exclusions":6,"included":19,"excluded":6,"included_appraisals":19,"included_extractions":19,"claim_level_records":19,"access_screen_assessments_not_evidence":6},
+  "reconciliations":["26 - 1 = 25 deduplicated candidates.","19 included + 6 excluded = 25 full-text eligibility decisions.","19 included = 19 included appraisals = 19 extraction records = 19 claim records.","Six preliminary access-screen assessments remain in review_appraisals.v1.json for audit trace only and are not counted as included evidence."],
+  "budget":{"deduplicated_candidates":{"used":25,"ceiling":240,"warning":192},"full_text_retrieval_attempts":{"used":25,"ceiling":80,"warning":64},"included":{"used":19,"ceiling":45,"warning":36},"search_expansion":"none","stopping_status":"Candidate corpus closed at approved 25; no unapproved refinement or expansion performed."},
+  "unresolved_access_cases":["SRC-011","SRC-012","SRC-015","SRC-016","SRC-017","SRC-021"],
+  "coverage_status":"Approved candidate corpus screened. This is not a statement of full-review saturation across the plan's 240-candidate ceiling; expansion was intentionally not authorized.",
+  "handoff_limit":"No source synthesis, architecture comparison, recommendation, corpus evaluation, or acceptance determination was performed."
+}

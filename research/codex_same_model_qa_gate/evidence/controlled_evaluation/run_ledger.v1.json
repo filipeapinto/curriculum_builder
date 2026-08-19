@@ -1,0 +1,9 @@
+{
+  "schema":"csmqg-evaluation-run-ledger/v1",
+  "run_id":"RUN-CSMQG-20260819-001",
+  "status":"blocked_before_comparative_execution",
+  "planned":{"cases":60,"variants":6,"repeat_slots":3,"operations":1080,"model_call_ceiling":1400,"token_ceiling":8000000,"cost_ceiling_usd":200,"retry_ceiling":40},
+  "usage":{"scheduled_operations":0,"valid_operations":0,"invalid_operations":0,"retries":0,"model_calls":0,"input_tokens":null,"output_tokens":null,"cost_usd":null,"peak_workers":0},
+  "telemetry_state":"Total root/session model calls, input/output tokens, and cost are not exposed by the execution environment. Existing budget ledger states total calls are unreconciled; its frozen unavailable-measure behavior prohibits further model work pending reconciliation.",
+  "operations":[]
+}

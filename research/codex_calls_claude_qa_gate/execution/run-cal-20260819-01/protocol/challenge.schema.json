@@ -1,0 +1,23 @@
+{
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["challenges"],
+  "properties": {
+    "challenges": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": ["challenge_id", "severity", "finding_ids", "challenge", "evidence", "required_disposition"],
+        "properties": {
+          "challenge_id": {"type": "string", "pattern": "^CH-[0-9]{3}$"},
+          "severity": {"enum": ["blocker", "major", "minor"]},
+          "finding_ids": {"type": "array", "items": {"type": "string"}},
+          "challenge": {"type": "string"},
+          "evidence": {"type": "string"},
+          "required_disposition": {"type": "string"}
+        }
+      }
+    }
+  }
+}

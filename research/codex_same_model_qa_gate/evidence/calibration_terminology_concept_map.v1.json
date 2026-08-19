@@ -1,0 +1,31 @@
+{
+  "schema": "codex_same_model_qa_gate.calibration_terminology_concept_map",
+  "schema_version": "1.0.0",
+  "record_id": "CAL-MAP-001",
+  "creation_time_utc": "2026-08-19T09:30:36Z",
+  "responsible_role": "sota-evidence-review",
+  "stage": "calibration_only",
+  "status": "complete_for_pilot_not_full_screening",
+  "provenance": {
+    "approved_plan": {"path": "research/codex_same_model_qa_gate/plan/sota_research.plan.v1.html", "sha256": "16ae937c64bb8ce4f673354ec2882d1b422085845b204746408b2c47fce8e862"},
+    "role_instruction": {"path": ".codex/skills/sota-evidence-review/SKILL.md", "sha256": "2d3f24c8c92cbf1e65001d14bf1230950441425d370dfa46ec606971b675e6e1"},
+    "retrieval_method": "public-web pilot searches; direct source URLs retained in CAL-PILOT-SOURCES-001",
+    "retrieval_date_utc": "2026-08-19"
+  },
+  "terminology_rule": "Same model means the same named Codex model/version. Independence is never asserted without a qualifier; fresh contexts and repeated samples are procedural separation, not separate training, ownership, incentives, or trust roots.",
+  "mechanism_classes": [
+    {"id": "MC-01", "label": "same-model self-review or self-refinement", "search_terms": ["self-refine", "self-critique", "self-feedback", "verifier"], "gate_relevance": "candidate procedural control; requires comparative detection evidence"},
+    {"id": "MC-02", "label": "judge calibration, bias, instability, and panel disagreement", "search_terms": ["LLM-as-a-judge", "self-preference", "position bias", "calibration", "multi-sample", "ensemble", "agreement", "abstention"], "gate_relevance": "tests whether model verdicts need calibration, repetition, randomized ordering, or escalation"},
+    {"id": "MC-03", "label": "executable specification and fault-oriented validation", "search_terms": ["property-based testing", "metamorphic testing", "mutation testing", "hidden tests", "fault injection"], "gate_relevance": "binds a verdict to observable behavior rather than model preference"},
+    {"id": "MC-04", "label": "provenance, integrity, and version binding", "search_terms": ["provenance", "attestation", "artifact digest", "audit log", "immutable record"], "gate_relevance": "binds artifacts, criteria, tools, and records; does not by itself establish semantic correctness"},
+    {"id": "MC-05", "label": "prompt-injection and untrusted-artifact controls", "search_terms": ["prompt injection", "untrusted content", "sandbox", "least privilege", "confirmation"], "gate_relevance": "separates reviewed artifact data from gate instructions and limits action authority"},
+    {"id": "MC-06", "label": "risk-tiered human authority and escalation", "search_terms": ["human oversight", "risk management", "escalation", "abstain", "approval threshold"], "gate_relevance": "assigns authority for unresolved, high-impact, or untestable criteria"},
+    {"id": "MC-07", "label": "criteria and evaluation-dataset formalization", "search_terms": ["grader", "evaluation schema", "rubric", "gold labels", "reference answer"], "gate_relevance": "makes gate criteria versioned and testable"},
+    {"id": "MC-08", "label": "evidence-bound verdict and failure reporting", "search_terms": ["criterion-linked evidence", "confusion matrix", "false pass", "false block", "coverage"], "gate_relevance": "requires verdicts, uncertainty, and missing evidence to be observable and auditable"}
+  ],
+  "boundaries": {
+    "approved_source_classes": ["public standards bodies", "peer-reviewed or original research", "official vendor/model documentation", "primary benchmark papers and datasets", "mature open-source tools with tests"],
+    "excluded_actions": ["full-text eligibility decision", "final exclusion", "appraisal", "claim extraction", "implementation", "production rollout"],
+    "interpretive_limit": "This is a terminology and candidate map only. Source snippets are not treated as verified findings."
+  }
+}

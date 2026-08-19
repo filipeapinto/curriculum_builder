@@ -1,0 +1,22 @@
+{
+  "schema": "csmqg-pre-run-dry-run/v1",
+  "run_id": "RUN-CSMQG-20260819-001",
+  "status": "passed",
+  "method": "read-only deterministic verifier run against frozen corpus and label store; no evaluation operation and no model call.",
+  "checks": [
+    "60 unique public case IDs reconcile one-to-one with 60 private labels",
+    "code=30 (18 fault-seeded/12 clean); document_or_plan=30 (18 fault-seeded/12 clean)",
+    "each class covers >=5 fault taxonomy categories and no category exceeds 6 of 18 seeded cases",
+    "public bundle contains no private verdict/taxonomy/oracle fields",
+    "canonical artifact and label digests computed deterministically",
+    "scorer rejects a synthetic raw row containing a prohibited private-label field before it can score"
+  ],
+  "result_digests": {
+    "public_bundle_sha256": "2cb4160a5ef462f655df6d8ea2e84e915ed1b25505998016a435d2f0a1db5e27",
+    "private_label_sha256": "edc2422591c706c40693ec4435b5468dc50667ad2d2640fa4918bd3f9ec1b14e"
+  },
+  "scorer_determinism": "score_verdicts.py is deterministic: it rejects raw rows with private-label fields, accepts only pass/fail/abstain, and maps committed verdicts to gold outcomes after loading private labels.",
+  "ledger_integrity": "Configuration defines 1080 operations, required telemetry fields, retry bounds, and pre-scheduling count behavior. No comparative operation was scheduled.",
+  "model_calls_used": 0,
+  "evaluated_runs_used": 0
+}

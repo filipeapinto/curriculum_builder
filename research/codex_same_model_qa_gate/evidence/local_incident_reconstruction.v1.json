@@ -1,0 +1,61 @@
+{
+  "schema": "sota-local-incident-reconstruction/v1",
+  "record_id": "LIR-CSMQG-20260819-001",
+  "run_id": "RUN-CSMQG-20260819-001",
+  "created_at_utc": "2026-08-19T09:31:00Z",
+  "responsible_role": "sota-incident-analyze",
+  "scope": "calibration reconstruction of intended QA-gate execution, not a record of a completed production gate run",
+  "actors": [
+    {"id": "ACT-CLAUDE", "class": "attributed_claim", "role": "Artifact producer/fixer; documentation says it does not supply the verdict."},
+    {"id": "ACT-CODEX-REVIEW", "class": "verified_fact", "role": "External process invoked by qa_gate via configured app-server or exec transport; returns a JSON verdict consumed by the script."},
+    {"id": "ACT-CODEX-POST", "class": "verified_fact", "role": "A new invocation without resume id for postmortem classification."},
+    {"id": "ACT-QA-SCRIPT", "class": "verified_fact", "role": "Local Python process that creates session records, prompts, invokes transport, finalizes, and verifies."},
+    {"id": "ACT-ROLLOUT", "class": "attributed_claim", "role": "Current-user Codex session file described as process-written witness and read by the QA script."}
+  ],
+  "timeline": [
+    {"id": "EVT-001", "class": "verified_fact", "operation": "start validates artifact exists/version syntax, criteria and grounding paths; writes session state and opens round one.", "evidence": "scripts/qa_gate.py:823-894"},
+    {"id": "EVT-002", "class": "verified_fact", "operation": "For execution, artifact-parent siblings are copied to QA/exec; otherwise artifact parent is review cwd.", "evidence": "scripts/qa_gate.py:112-149; 665-671"},
+    {"id": "EVT-003", "class": "verified_fact", "operation": "Script builds a criteria/threshold prompt, attaches history from round two, and invokes fixed-session transport.", "evidence": "scripts/qa_gate.py:443-603; 685-701"},
+    {"id": "EVT-004", "class": "verified_fact", "operation": "Script records meta hashes/chain and round summary after a response, checks claimed reviewer history inconsistency, then opens/finalizes according to verdict, threshold, stall and iteration rules.", "evidence": "scripts/qa_gate.py:703-818"},
+    {"id": "EVT-005", "class": "verified_fact", "operation": "A later round accepts only newer same-base artifact or rebuttal; it rejects a transport switch.", "evidence": "scripts/qa_gate.py:897-943"},
+    {"id": "EVT-006", "class": "verified_fact", "operation": "verify replays chain and looks for current-user rollout evidence, request/response matches and available sandbox context before writing verification.json.", "evidence": "scripts/qa_gate.py:946-1162"},
+    {"id": "EVT-007", "class": "verified_fact", "operation": "postmortem sends a constructed transcript to a new Codex invocation and writes a classification report.", "evidence": "scripts/qa_gate.py:1197-1289"}
+  ],
+  "outputs": [
+    {"id": "OUT-001", "class": "verified_fact", "artifact": "QA/session.json, QA/rounds/*, QA/verdict.json, QA/verification.json", "generation": "qa_gate write operations"},
+    {"id": "OUT-002", "class": "attributed_claim", "artifact": "~/.codex/sessions/**/rollout-*.jsonl", "generation": "documentation attributes generation to Codex process; not live-verified in this inventory"},
+    {"id": "OUT-003", "class": "verified_fact", "artifact": "QA/postmortem.json and QA/postmortem.md", "generation": "cmd_postmortem if its invocation succeeds"}
+  ],
+  "incident_assessment": {
+    "verified_facts": [
+      "The repository boundary implements procedural controls for versioning, criteria, records, session reuse, hashes, rollouts, terminal-state recomputation, execution copies, and a new-session postmortem.",
+      "Its only included executable regressions passed locally and cover two synthetic verify tamper cases plus bridge-output flushing.",
+      "The boundary contains five declared eval scenarios but no local execution/results ledger for them."
+    ],
+    "attributed_claims": [
+      "Documentation represents the method as independent/unfakeable, while also explicitly limiting it against a determined same-user shell adversary.",
+      "Documentation represents direct prior transport and forged-history verification as completed, but local raw support was not found in the named boundary."
+    ],
+    "inferences": [
+      "The architecture is a procedural assurance layer over the same machine and potentially same model, not a separate trust root.",
+      "Deterministic components can make records internally consistent and detect specified tampering but cannot by themselves establish a reviewer verdict's semantic correctness or independent origin.",
+      "The portability and data-exposure envelope is determined as much by caller-selected paths and external sandbox behavior as by this source code."
+    ],
+    "unknowns": [
+      "Whether the live current environment satisfies plugin/session/sandbox preconditions.",
+      "Whether fresh review and postmortem measurably reduce false passes for the artifact types in scope.",
+      "Whether the attribution that rollout files cannot be altered by the producer holds for the concrete deployment identity and permissions."
+    ]
+  },
+  "handoff": {
+    "to": "sota-synthesize",
+    "use": "Use only the verified facts for factual description of the local gate. Keep CLM-001 through CLM-005 attributed, and do not turn GAP/ALT records into causal effectiveness conclusions without appraised evidence or controlled evaluation.",
+    "blocking_gaps": ["GAP-008", "GAP-009"],
+    "related_record": "local_control_threat_matrix.v1.json"
+  },
+  "provenance": {
+    "source_inventory": "local_control_inventory.v1.json",
+    "matrix": "local_control_threat_matrix.v1.json",
+    "plan": "research/codex_same_model_qa_gate/plan/sota_research.plan.v1.html"
+  }
+}

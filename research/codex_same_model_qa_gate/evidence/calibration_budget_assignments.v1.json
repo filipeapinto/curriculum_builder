@@ -1,0 +1,49 @@
+{
+  "schema_name": "codex_same_model_qa_gate.calibration_budget_assignments",
+  "schema_version": "1.0.0",
+  "record_id": "CAL-BUDGET-ASSIGN-v1",
+  "record_status": "proposed_frozen_pending_human_approval",
+  "created_at_utc": "2026-08-19T09:30:04Z",
+  "responsible_role": "$sota-method-lead",
+  "source_plan": {"path": "../plan/sota_research.plan.v1.html", "sha256": "16ae937c64bb8ce4f673354ec2882d1b422085845b204746408b2c47fce8e862"},
+  "budget_scope": "Calibration and full execution combined; no amount consumed is asserted by this proposal.",
+  "ceilings": [
+    {"budget_id": "B-EXT", "unit": "records", "dimensions": {"deduplicated_candidates": 240, "full_texts": 80, "included": 45}, "warning": {"deduplicated_candidates": 192, "full_texts": 64, "included": 36}, "hard_stop": "Stop accepting new retrievals at the applicable ceiling and finish already-open decisions; if counts fail, stop screening and repair the register."},
+    {"budget_id": "B-RUN", "unit": "evaluated_runs", "ceiling": 1080, "warning": 864, "derivation": "60 cases x 6 variants x 3 repeat slots", "hard_stop": "Stop scheduling before run 1081; halt if ledger counting fails."},
+    {"budget_id": "B-CALL", "unit": "model_calls", "ceiling": 1400, "warning": 1120, "allocation": {"evaluation": 1080, "review_and_extraction": 160, "synthesis_and_challenge": 80, "contingency": 80}, "hard_stop": "Stop before call 1401. If automatic counts are unavailable, reconcile session/turn identifiers before more model work."},
+    {"budget_id": "B-TOKEN", "unit": "input_plus_output_tokens", "ceiling": 8000000, "warning": 6400000, "hard_stop": "Stop at 8,000,000. If telemetry is unavailable, the call ceiling binds and human review occurs at 1,120 calls."},
+    {"budget_id": "B-TIME", "unit": "hours_and_days", "ceiling": {"active_hours": 40, "calendar_days": 14}, "warning": {"active_hours": 32, "calendar_day": 11}, "hard_stop": "Stop at 40 active hours or end of calendar day 14 after the recorded approval timestamp, whichever is first. Repair incomplete timestamps before continuing."},
+    {"budget_id": "B-CONC", "unit": "active_model_workers", "ceiling": 3, "warning": 3, "hard_stop": "Refuse a fourth active model worker; if concurrency cannot be observed, run sequentially."},
+    {"budget_id": "B-RETRY", "unit": "retries", "ceiling": {"per_operation": 2, "overall": 40}, "warning": {"per_operation": 2, "overall": 32}, "hard_stop": "Stop after two retries for an operation or forty overall; every retry must record a changed input, hypothesis, executor, or method."},
+    {"budget_id": "B-COST", "unit": "USD", "ceiling": 200, "warning": 160, "hard_stop": "Stop before exceeding USD 200. If pricing or cost telemetry is unavailable, calls and tokens bind and human approval is required at the token warning."}
+  ],
+  "allocation_constraints": [
+    "A deterministic evaluated run is recorded in the run ledger even when it consumes no model call.",
+    "The panel uses the three planned repeat slots as its three members; it does not create three panels per case.",
+    "Each configured case/variant/repeat operation may consume at most one model call unless a human-approved material deviation revises the budget arithmetic.",
+    "Model calls used during calibration count against the 1,400 total and must be entered before full execution begins.",
+    "Raising any hard ceiling requires a versioned deviation approved by the human owner."
+  ],
+  "assignments": [
+    {"assignment_id": "A-METHOD", "role": "$sota-method-lead", "executor": "gpt-5.6-sol high", "scope": "Freeze and govern protocol, eligibility, appraisal, extraction, coverage, stopping, and deviations; adjudicate borderlines and may pause work.", "excluded_authority": "Cannot approve budget, material scope, model substitution, protocol, or final acceptance.", "inputs": ["approved plan", "calibration records", "budget and deviation ledgers"], "outputs": ["protocol freeze", "assignment boundaries", "coverage and deviation state"]},
+    {"assignment_id": "A-REVIEW-TRIAGE", "role": "$sota-evidence-review", "executor": "gpt-5.6-luna medium", "scope": "Reversible metadata normalization and first-pass triage after approval; sample at least 20 percent plus all borderline proposed exclusions.", "excluded_authority": "No final exclusion, appraisal conclusion, synthesis, or acceptance authority.", "outputs": ["candidate and duplicate records", "reversible triage statuses"]},
+    {"assignment_id": "A-REVIEW-FULL", "role": "$sota-evidence-review", "executor": "gpt-5.6-terra high", "scope": "Full-text eligibility, appraisal, and structured extraction under frozen instruments after approval.", "excluded_authority": "Borderline exclusions and high-impact negative evidence require method-lead adjudication.", "outputs": ["source register", "exclusions", "appraisals", "extractions", "evidence map inputs"]},
+    {"assignment_id": "A-LOCAL", "role": "$sota-incident-analyze", "executor": "gpt-5.6-terra high", "scope": "Read-only reconstruction of the named local gate boundary with path/digest provenance.", "excluded_authority": "Cannot mutate sources, infer unknowns as facts, or import external conclusions into local evidence.", "outputs": ["local inventory", "control-threat matrix", "fact/claim/inference/unknown reconstruction"]},
+    {"assignment_id": "A-EVAL", "role": "controlled evaluation executor", "executor": "gpt-5.6-terra high plus deterministic tools", "scope": "Construct approved corpus and execute frozen variants under blinding, versioning, randomization, raw retention, and deterministic scoring.", "excluded_authority": "Cannot view gold labels during gate runs, alter scorers after unblinding, waive deterministic failures, or exceed retry/budget ceilings.", "outputs": ["corpus manifest", "run ledger", "raw results", "scoring output"]},
+    {"assignment_id": "A-SYNTH", "role": "$sota-synthesize", "executor": "gpt-5.6-sol xhigh for final cross-source synthesis", "scope": "Quality-stratified comparative synthesis, findings, assurance tiers, and recommendations.", "excluded_authority": "Cannot alter source records, close own challenges, or accept the package.", "outputs": ["finding-evidence map", "comparative report inputs", "architecture recommendation inputs"]},
+    {"assignment_id": "A-CHALLENGE", "role": "$sota-independent-challenge", "executor": "gpt-5.5 xhigh in fresh context", "scope": "Challenge causal language, sufficiency, omissions, applicability, feasibility, and controls.", "excluded_authority": "Cannot author initial synthesis or unilaterally accept/reject the package.", "outputs": ["challenge register", "challenge dispositions requiring response"]},
+    {"assignment_id": "A-VERIFY", "role": "$sota-verify", "executor": "deterministic tools with assigned verifier judgment only where the plan requires it", "scope": "Deterministically verify artifacts, IDs, counts, citations, links, schemas, rendering, integrity, budgets, and dispositions.", "excluded_authority": "Cannot repair silently or waive failures.", "outputs": ["verification report"]},
+    {"assignment_id": "A-HUMAN", "role": "human research owner", "executor": "human", "scope": "Approve protocol, budget, material deviations, model substitutions, residual risk, unresolved challenges, and final research.", "excluded_authority": "No authority is delegated to a model by silence.", "outputs": ["dated approval/rejection/revision records"]}
+  ],
+  "handoff_order": [
+    "Human plan approval record",
+    "Calibration protocol packet",
+    "Human full-protocol approval",
+    "Parallel evidence review, local analysis, and controlled evaluation",
+    "Synthesis",
+    "Independent challenge and explicit dispositions",
+    "Deterministic verification",
+    "Human final acceptance"
+  ],
+  "deviation_rule": "No silent change to scope, eligibility, queries, instruments, schema, sample, variant, model, effort, budget, decision rule, or authority boundary. Log proposed changes before affected work; material changes require human approval and, when they alter the plan contract, a vN+1 plan."
+}

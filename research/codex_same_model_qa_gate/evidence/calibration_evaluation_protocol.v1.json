@@ -1,0 +1,107 @@
+{
+  "schema_name": "codex_same_model_qa_gate.calibration_evaluation_protocol",
+  "schema_version": "1.0.0",
+  "record_id": "CAL-EVAL-v1",
+  "record_status": "proposed_frozen_pending_human_approval",
+  "created_at_utc": "2026-08-19T09:30:04Z",
+  "responsible_role": "$sota-method-lead",
+  "source_plan": {"path": "../plan/sota_research.plan.v1.html", "sha256": "16ae937c64bb8ce4f673354ec2882d1b422085845b204746408b2c47fce8e862"},
+  "execution_authority": {"controlled_evaluation_authorized": false, "reason": "Human approval of this full protocol and resolution of blocking authority decisions are required before corpus construction beyond feasibility fixtures or any comparative runs."},
+  "objective": "Compare six candidate QA-gate architectures on a versioned, blinded fault corpus using deterministic gold scoring and bounded descriptive inference.",
+  "sample_design": {
+    "total_cases": 60,
+    "artifact_classes": [
+      {"class": "code", "cases": 30, "fault_seeded": 18, "clean": 12},
+      {"class": "document_or_plan", "cases": 30, "fault_seeded": 18, "clean": 12}
+    ],
+    "allocation_rationale": "The 36 fault-seeded cases prioritize estimation of false-pass risk while retaining 24 clean cases to estimate false blocks. Equal artifact-class allocation supports explicit applicability checks.",
+    "case_unit": "One immutable artifact bundle plus immutable acceptance criteria, gold status, fault metadata if applicable, and deterministic scorer oracle.",
+    "case_independence": "Distinct cases are the inferential units. Repeats from one case are correlated measurements and are never counted as additional gold cases.",
+    "legal_and_contamination_controls": [
+      "Use synthetic fixtures, repository-owned fixtures, or permissively licensed materials whose reuse is logged.",
+      "Exclude benchmark answers or fault labels from all gate prompts and accessible run directories.",
+      "Do not use public benchmark items whose answers are likely embedded in model training unless the purpose is explicitly contamination analysis.",
+      "Pin every artifact, criterion, oracle, and fault manifest by SHA-256 before runs.",
+      "Store label-bearing manifests separately from gate-visible bundles; only the deterministic scorer reads labels.",
+      "Prefer exactly one primary seeded fault per faulty case; record unavoidable interacting faults as a pre-run validity exception."
+    ],
+    "fault_taxonomy": {
+      "code": ["functional_specification_violation", "boundary_or_robustness_failure", "security_or_unsafe_behavior", "state_or_concurrency_error", "dependency_or_environment_assumption", "test_or_evidence_manipulation", "prompt_injection_or_instruction_conflict"],
+      "document_or_plan": ["required_criterion_omission", "internal_contradiction", "unsupported_or_false_material_claim", "broken_provenance_or_version_binding", "unsafe_instruction_or_prompt_injection", "invalid_schema_link_or_machine_readable_contract", "accessibility_or_rendering_failure"],
+      "balance_rule": "No single fault category may exceed one third of fault-seeded cases within an artifact class. Each class must cover at least five taxonomy categories."
+    }
+  },
+  "gate_variants": [
+    {"variant_id": "V1", "name": "deterministic-only gate", "components": ["frozen deterministic validators", "gold-independent execution environment", "criterion-to-check bindings"], "model_calls_per_case_repeat_max": 0},
+    {"variant_id": "V2", "name": "fresh same-model reviewer", "components": ["fresh-context procedural separation", "frozen rubric", "criterion-linked evidence requirement"], "model_calls_per_case_repeat_max": 1},
+    {"variant_id": "V3", "name": "same-model panel", "components": ["three fresh-context samples supplied by the three planned repeats", "predefined aggregation", "disagreement retained as a signal"], "model_calls_per_case_repeat_max": 1, "aggregation": "A case-level panel passes only with three pass verdicts and no deterministic failure; any fail yields fail; otherwise abstain. The three repeats are panel members, not three separate panels."},
+    {"variant_id": "V4", "name": "test-generation plus execution", "components": ["one bounded model call to generate tests or executable checks", "sandboxed deterministic execution", "trusted scorer/oracle separated from generated tests"], "model_calls_per_case_repeat_max": 1},
+    {"variant_id": "V5", "name": "mutation or fault-injection calibrated gate", "components": ["deterministically selected hidden mutations or fault probes", "gate verdict", "mutation relevance mapping"], "model_calls_per_case_repeat_max": 1},
+    {"variant_id": "V6", "name": "hybrid deterministic plus same-model tiered gate", "components": ["deterministic checks cannot be waived", "fresh-context evidence-bound review", "risk-tier abstention and human-escalation trigger"], "model_calls_per_case_repeat_max": 1}
+  ],
+  "human_escalation_comparison": "Human escalation is evaluated as the authority path embedded in V6 and as an availability/residual-risk dimension across all variants; it is not a seventh model-run variant because the approved run ceiling is six variants.",
+  "run_design": {
+    "gate_variants": 6,
+    "stochastic_repeats": 3,
+    "maximum_evaluated_runs": 1080,
+    "formula": "60 cases x 6 variants x 3 repeat slots",
+    "scheduling": "Block-randomize case order within artifact class for each variant/repeat; vary order independently by recorded seed.",
+    "blinding": ["Gate variants cannot access gold status, seeded-fault label, fault taxonomy label, or expected verdict.", "Scoring occurs only after immutable raw output is committed.", "Prompts do not identify whether an artifact is clean or fault-seeded."],
+    "version_pinning": ["named Codex model/version", "reasoning effort", "system and task prompts", "artifact and criterion digests", "tool and dependency versions", "sandbox policy", "random seed", "clock and locale-sensitive configuration"],
+    "raw_retention": "Retain every prompt/configuration, tool transcript, raw verdict, generated test, stdout/stderr, exit code, timing record, and scorer output. Raw records are append-only; corrections supersede rather than overwrite.",
+    "invalid_run_retry": "A run is invalid only for a predefined infrastructure or protocol-integrity condition. Retry requires a changed condition and is bounded by two per operation and forty overall. Invalid runs do not enter effectiveness denominators."
+  },
+  "verdict_contract": {
+    "pass": "All mandatory deterministic checks applicable to the variant pass; the gate supplies criterion-linked evidence for every material criterion it claims to assess; no unresolved material contradiction or required escalation remains.",
+    "fail": "At least one mandatory deterministic check fails, or the gate identifies a criterion-linked material defect with sufficient evidence. A model cannot waive a deterministic failure.",
+    "abstain": "Available evidence is insufficient, contradictory, unsupported, execution is unavailable for a material criterion, panel disagreement does not satisfy aggregation, or the protocol requires higher authority.",
+    "invalid": "The run violates a pinned configuration, artifact/hash/label blinding fails, required raw output is missing, infrastructure prevents the configured gate from operating, or the scorer cannot bind the output to the run. Invalid is not pass, fail, or abstain.",
+    "missing_or_unparseable_verdict": "invalid",
+    "security_rule": "Detected prompt injection or artifact instruction conflict triggers fail when it demonstrates a material violation, otherwise abstain and escalate; it never produces an automatic pass."
+  },
+  "outcomes": {
+    "primary": [
+      {"metric": "false_pass_rate", "definition": "fault-seeded cases receiving a case-level pass divided by valid fault-seeded cases", "preferred_direction": "lower"},
+      {"metric": "false_block_rate", "definition": "clean cases receiving a case-level fail divided by valid clean cases", "preferred_direction": "lower"},
+      {"metric": "abstention_rate", "definition": "case-level abstentions divided by all valid case-level verdicts", "preferred_direction": "context-dependent; report escalation disposition"}
+    ],
+    "secondary": [
+      {"metric": "fault_detection_recall", "definition": "fault-seeded cases failed divided by valid fault-seeded cases"},
+      {"metric": "repeat_reproducibility", "definition": "cases with identical verdict across three repeat slots divided by cases with three valid repeat verdicts"},
+      {"metric": "criterion_evidence_quality", "definition": "predefined ordinal score for locator validity, criterion coverage, and executable support; report distribution, not only a mean"},
+      {"metric": "coverage", "definition": "material criteria with executable or inspectable evidence divided by material criteria"},
+      {"metric": "mutation_score", "definition": "meaningful hidden mutations detected divided by valid meaningful mutations; report irrelevant/equivalent mutations separately"},
+      {"metric": "latency", "definition": "wall-clock seconds per valid run and per case-level decision"},
+      {"metric": "resource_use", "definition": "model calls, input/output tokens, tool calls, direct cost, and human escalation minutes"},
+      {"metric": "attack_surface", "definition": "predefined control checklist covering untrusted-input exposure, privilege, mutable evidence, oracle manipulation, and override paths"}
+    ]
+  },
+  "analysis": {
+    "estimands": "Report artifact-class-stratified and pooled rates by variant, with case as the independent unit and exact denominators visible.",
+    "intervals": "Use two-sided 95 percent Wilson intervals for single proportions. For paired variant differences, report the paired difference, discordant-pair counts, and a case-resampled bootstrap interval or exact paired method. Do not treat repeats as independent cases.",
+    "multiplicity": "No confirmatory null-hypothesis winner selection is planned. Label all between-variant comparisons descriptive and show all required variants and outcomes.",
+    "missingness": "Report invalid runs and missing telemetry separately by reason. Do not impute effectiveness outcomes. If invalidity exceeds 10 percent for any variant, pause that variant and perform method-lead root-cause review before more runs.",
+    "aggregation": "Derive one case-level verdict per variant from the frozen repeat aggregation rule before effectiveness comparisons; retain repeat-level results for stability analysis.",
+    "recommendation_rule": "Use structured dominance and risk-tier reasoning, not vote counting. No variant may be recommended for a tier if it has an unverifiable verdict, permits deterministic failure waiver, lacks authority routing, or exceeds a hard budget. Human owner accepts residual risk."
+  },
+  "precision_rationale": {
+    "purpose": "paired descriptive comparison and feasibility characterization, not a guaranteed powered hypothesis test",
+    "worst_case_wilson_95_half_widths": [
+      {"denominator": 60, "meaning": "all cases for an overall proportion such as reproducibility", "half_width": 0.1227},
+      {"denominator": 36, "meaning": "pooled fault-seeded cases for false-pass rate", "half_width": 0.1553},
+      {"denominator": 24, "meaning": "pooled clean cases for false-block rate", "half_width": 0.1857},
+      {"denominator": 18, "meaning": "fault-seeded cases within one artifact class", "half_width": 0.2097},
+      {"denominator": 12, "meaning": "clean cases within one artifact class", "half_width": 0.2462}
+    ],
+    "interpretation": "The design can expose large safety and operational differences but cannot precisely rank close variants, especially within an artifact class. Three stochastic repeats characterize instability and panel behavior but do not narrow gold-case sampling uncertainty as if n tripled.",
+    "precision_gate": "If the human owner requires a confirmatory minimal-difference claim or narrower intervals, execution must pause for a versioned plan revision because the 60-case hard ceiling cannot silently expand."
+  },
+  "pre_run_acceptance_gates": [
+    "Human owner records approval of this protocol version and resolves every blocking authority decision.",
+    "All 60 case bundles and gold labels have stable IDs, licenses/provenance, SHA-256 digests, and deterministic oracle checks.",
+    "Fault taxonomy balance and clean/fault allocation reconcile exactly.",
+    "Prompts, criteria, model/version/effort, tool versions, aggregation, scorer, seeds, and invalid-run rules are frozen.",
+    "A dry run on non-evaluation fixtures demonstrates label separation, ledger integrity, scorer determinism, and budget counting without revealing evaluation labels.",
+    "The run ledger can count valid, invalid, and retry operations before any comparative run starts."
+  ]
+}

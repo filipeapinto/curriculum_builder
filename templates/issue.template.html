@@ -1,0 +1,33 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>[PRIORITY] Issue title</title>
+  <style>
+    :root{color-scheme:light dark;--bg:#f4f6f8;--paper:#fff;--ink:#172330;--muted:#596775;--line:#c8d0d8;--accent:#174f6b;--danger:#922f3e;--soft:#eaf1f5;--warn:#fff4d6}*{box-sizing:border-box}body{margin:0;background:var(--bg);color:var(--ink);font:16px/1.58 system-ui,-apple-system,"Segoe UI",sans-serif}header,main,footer{width:min(1080px,calc(100% - 32px));margin:auto}header{padding:52px 0 26px}main{padding-bottom:56px}.eyebrow{color:var(--danger);font-weight:800;letter-spacing:.08em;text-transform:uppercase}h1{max-width:900px;margin:.25rem 0;font-size:clamp(2rem,5vw,3.5rem);line-height:1.05}h2{margin-top:2.25rem;color:var(--accent)}.meta,.card,.callout{padding:18px;border:1px solid var(--line);border-radius:9px;background:var(--paper)}.meta{display:grid;grid-template-columns:repeat(auto-fit,minmax(180px,1fr));gap:10px}.card{margin:14px 0}.callout{border-left:6px solid var(--danger);background:var(--warn)}table{width:100%;border-collapse:collapse;background:var(--paper)}th,td{padding:10px 12px;border:1px solid var(--line);text-align:left;vertical-align:top}th{background:var(--soft)}code{padding:.12em .3em;border-radius:4px;background:var(--soft)}pre{overflow:auto;padding:16px;border-radius:8px;background:#15212c;color:#edf4f7}a{color:var(--accent)}footer{padding:20px 0 36px;color:var(--muted)}@media(prefers-color-scheme:dark){:root{--bg:#0e1720;--paper:#17232d;--ink:#edf2f5;--muted:#b6c0c8;--line:#3b4b58;--accent:#83c9de;--danger:#ff9aa8;--soft:#203542;--warn:#3c321d}}
+  </style>
+</head>
+<body>
+  <header>
+    <div class="eyebrow">[PRIORITY] · [STATUS]</div>
+    <h1>[Issue title]</h1>
+    <p>[One-sentence operational consequence.]</p>
+  </header>
+  <main>
+    <section class="meta" aria-label="Issue metadata">
+      <div><strong>Area</strong><br>[Component or family]</div>
+      <div><strong>Evidence</strong><br>[Primary paths or records]</div>
+      <div><strong>Owner</strong><br>[Responsible owner]</div>
+      <div><strong>Decision</strong><br>[Decision required]</div>
+    </section>
+    <section><h2>Issue</h2><div class="callout"><p>[State the invariant that is violated, not merely the observed symptom.]</p></div></section>
+    <section><h2>Evidence</h2><p>[Record verified observations with exact paths, IDs, and states. Separate fact from inference.]</p></section>
+    <section><h2>Expected contract</h2><p>[Define behavior that must remain invariant and the variation that remains legitimate.]</p></section>
+    <section><h2>Impact</h2><p>[Explain audit, safety, reliability, interoperability, and user consequences.]</p></section>
+    <section><h2>Acceptance criteria</h2><ul><li>[Testable condition]</li></ul></section>
+    <section><h2>Unknowns</h2><p>[List facts that cannot be established from available provenance.]</p></section>
+  </main>
+  <footer>Repository issue template · preserve evidence links and use testable acceptance criteria</footer>
+</body>
+</html>

@@ -1,0 +1,224 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <meta name="color-scheme" content="light dark">
+  <title>Codex Same-Model QA Reference Architecture v1 — Candidate / Not Approved</title>
+  <style>
+    :root{color-scheme:light dark;--bg:#eff3f5;--paper:#fff;--ink:#172531;--muted:#536571;--line:#b8c6cf;--navy:#153c59;--teal:#08747b;--red:#8b3340;--amber:#846310;--soft:#e7f0f3;--warn:#faf1d6;--bad:#f7e4e7;--green:#286746;--shadow:0 10px 30px rgba(20,44,62,.08)}*{box-sizing:border-box}html{background:var(--bg);color:var(--ink);scroll-behavior:smooth}body{margin:0;font:16px/1.54 Inter,ui-sans-serif,system-ui,-apple-system,"Segoe UI",sans-serif}a{color:var(--teal);text-underline-offset:2px}header{background:linear-gradient(125deg,#102b45,#174e65 70%,#12686d);color:#fff}.hero,main{width:min(1200px,calc(100% - 40px));margin:auto}.hero{padding:58px 0 44px}h1{max-width:1080px;margin:0;font-size:clamp(2.05rem,5vw,3.9rem);line-height:1.04;letter-spacing:-.04em}.dek{max-width:960px;margin:18px 0 0;color:#dfebf0;font-size:1.12rem}.meta{display:flex;flex-wrap:wrap;gap:8px 22px;margin-top:23px;color:#d8e5eb;font-size:.86rem}.meta strong{color:#fff}.status{display:inline-block;padding:6px 10px;border:1px solid #ffd17a;border-radius:999px;background:#654b13;color:#fff;font-size:.72rem;font-weight:850;letter-spacing:.06em;text-transform:uppercase}main{padding:28px 0 72px}nav{display:flex;flex-wrap:wrap;gap:7px;margin-bottom:32px}nav a{padding:7px 9px;border:1px solid var(--line);border-radius:6px;background:var(--paper);color:var(--navy);font-size:.77rem;font-weight:750;text-decoration:none}section{margin:43px 0;scroll-margin-top:16px}h2{margin:0 0 12px;color:var(--navy);font-size:clamp(1.45rem,3vw,2.05rem);line-height:1.18;letter-spacing:-.02em}h3{margin:21px 0 7px;color:var(--navy);font-size:1.08rem}p{margin:8px 0}.lead{max-width:980px;color:var(--muted);font-size:1.04rem}.grid{display:grid;grid-template-columns:repeat(3,1fr);gap:14px}.two{display:grid;grid-template-columns:1fr 1fr;gap:14px}.card{padding:18px;border:1px solid var(--line);border-radius:9px;background:var(--paper)}.card h3{margin-top:0}.tag{display:inline-block;margin-bottom:7px;color:var(--teal);font:800 .7rem ui-monospace,SFMono-Regular,Menlo,monospace;letter-spacing:.05em}.note,.warning,.blocked{padding:17px 19px;border-radius:8px}.note{border:1px solid var(--line);background:var(--soft)}.warning{border:1px solid #d0b860;background:var(--warn)}.blocked{border:1px solid #cb8d96;border-left:6px solid var(--red);background:var(--bad)}.table-wrap{overflow-x:auto;border:1px solid var(--line);border-radius:9px;background:var(--paper)}table{width:100%;min-width:920px;border-collapse:collapse}th,td{padding:10px 12px;border-bottom:1px solid var(--line);text-align:left;vertical-align:top}th{background:var(--soft);color:var(--navy);font-size:.72rem;letter-spacing:.05em;text-transform:uppercase}tr:last-child td{border-bottom:0}td:first-child{color:var(--navy);font-weight:750}code{padding:.12em .32em;border-radius:4px;background:var(--soft);color:var(--navy);font:.85em ui-monospace,SFMono-Regular,Menlo,monospace}.schema{padding:15px;border:1px solid var(--line);border-radius:8px;background:var(--paper)}.schema ul{margin-bottom:0}.flow{display:flex;flex-wrap:wrap;gap:8px;align-items:stretch;margin:16px 0}.step{flex:1 1 145px;padding:13px;border:1px solid var(--line);border-radius:8px;background:var(--paper)}.step b{display:block;color:var(--navy)}.arrow{align-self:center;color:var(--teal);font-weight:900}ul,ol{padding-left:1.25rem}li+li{margin-top:.35rem}.small{color:var(--muted);font-size:.86rem}.hard{color:var(--red);font-weight:800}.conditional{color:var(--amber);font-weight:800}.ok{color:var(--green);font-weight:800}footer{padding:22px;color:var(--muted);text-align:center;font-size:.8rem}@media(prefers-color-scheme:dark){:root{--bg:#0d1520;--paper:#151f2b;--ink:#e8eef2;--muted:#b6c0c9;--line:#354759;--navy:#b9d9ed;--teal:#7ccfd4;--soft:#1c3040;--warn:#3a311d;--bad:#392229;--shadow:none}}@media(max-width:800px){.grid,.two{grid-template-columns:1fr}.hero,main{width:min(100% - 24px,1200px)}.arrow{display:none}}@media print{header{background:#173b5b!important;print-color-adjust:exact}.hero,main{width:100%}nav{display:none}.card,.schema,.blocked{break-inside:avoid;box-shadow:none}a{color:inherit;text-decoration:none}section{margin:27px 0}}
+  </style>
+</head>
+<body>
+<header><div class="hero">
+  <span class="status">Reference candidate · not approved for implementation</span>
+  <h1>Codex Same-Model QA Reference Architecture</h1>
+  <p class="dek">An implementation-neutral control contract for deterministic evidence, procedurally separated Codex review, abstention, human authority, audit lineage, budget interlocks, and fail-closed routing.</p>
+  <div class="meta"><span><strong>Version:</strong> 1</span><span><strong>Run:</strong> RUN-CSMQG-20260819-001</span><span><strong>Date:</strong> 19 August 2026</span><span><strong>Evidence:</strong> F-CSMQG-001–009</span><span><strong>Status:</strong> partial / blocked pending evaluation</span></div>
+</div></header>
+<main>
+  <nav aria-label="Contents"><a href="#contract">Contract</a><a href="#flow">Flow</a><a href="#trust">Trust</a><a href="#roles">Roles</a><a href="#tiers">Tiers</a><a href="#schemas">Schemas</a><a href="#states">States</a><a href="#budgets">Budgets</a><a href="#failures">Failures</a><a href="#proving-tests">Tests</a><a href="#adoption">Adoption</a><a href="#rollback">Rollback</a></nav>
+
+  <section id="contract">
+    <h2>Architecture contract and evidence status</h2>
+    <p class="blocked"><strong>No production authorization, selection, or superiority claim.</strong> This architecture is only an unexecuted candidate pattern selected for future testing by coverage rationale: it lists more named control categories on paper. The evaluation has zero operations, corpus labels/oracles are not independently adjudicated, and telemetry feasibility is unproven. See <a href="../evidence/challenge_dispositions.v1.json">challenge dispositions</a> and the <a href="../report/sota_research_report.v1.html">bounded review</a>.</p>
+    <div class="grid">
+      <article class="card"><span class="tag">NON-WAIVABLE BASE</span><h3>Observable checks first</h3><p>Every material criterion is mapped to deterministic, executable, inspectable, model-reviewed, or human-authority evidence. Applicable deterministic failure cannot be waived.</p></article>
+      <article class="card"><span class="tag">BOUNDED MODEL ROLE</span><h3>Evidence, not trust root</h3><p>Same-model sessions inspect untrusted artifacts in frozen contexts and return criterion-linked evidence. They may fail or abstain; any pass is bounded by tier and calibration.</p></article>
+      <article class="card"><span class="tag">EXPLICIT AUTHORITY</span><h3>Risk owns the route</h3><p>Disagreement, insufficiency, material injection, unavailable execution, provenance gaps, or high consequences route to the named human or external authority. Silence never approves.</p></article>
+    </div>
+    <h3>Invariants</h3>
+    <ol><li>Artifact, criteria, configuration, evidence, and verdict identities are versioned and digest-bound.</li><li>Artifact content is data, not instruction; generated checks run only in the bounded execution zone.</li><li>A deterministic failure yields <code>FAIL</code>; repair creates a new lineage and a new run.</li><li>Missing, unparseable, misbound, or incomplete raw data yields <code>INVALID</code>, never pass.</li><li>Unresolved material uncertainty yields <code>ABSTAIN</code> and an authority route.</li><li>Fresh contexts and samples are “procedurally separated,” never “independent” without a qualifier.</li><li>Hashes establish equality to recorded bytes; only an independently administered trust service may add separate provenance authority, and neither establishes semantic truth.</li><li>Budget and telemetry interlocks execute before scheduling, not after a call.</li></ol>
+  </section>
+
+  <section id="flow">
+    <h2>Control and data flow</h2>
+    <div class="flow" role="img" aria-label="Authority freezes artifact and criteria. A preflight verifies lineage, telemetry, budget, and sandbox. Deterministic checks run first. Failure stops. Remaining semantic criteria may go to procedurally separated same-model review. A deterministic aggregator creates pass, fail, abstain, or invalid. High risk or abstention goes to human authority. Audit verification binds records. Release eligibility is separate from research or human acceptance.">
+      <div class="step"><b>1 · Freeze</b>Artifact, criteria, tier, configuration</div><span class="arrow">→</span><div class="step"><b>2 · Preflight</b>Identity, telemetry, budget, sandbox</div><span class="arrow">→</span><div class="step"><b>3 · Deterministic</b>Schemas, tests, links, provenance</div><span class="arrow">→</span><div class="step"><b>4 · Model evidence</b>Fresh context; untrusted input</div><span class="arrow">→</span><div class="step"><b>5 · Aggregate</b>Pass / fail / abstain / invalid</div><span class="arrow">→</span><div class="step"><b>6 · Authority</b>Escalate by tier and condition</div><span class="arrow">→</span><div class="step"><b>7 · Verify</b>Replay records and policy</div>
+    </div>
+    <p class="note"><strong>Textual equivalent:</strong> a criteria owner freezes the artifact, acceptance criteria, assurance tier, and configuration. Preflight verifies all identities, accounting, sandbox, and authority prerequisites. Applicable deterministic checks run before model review; a failure terminates that lineage. Only unresolved semantic criteria reach procedurally separated same-model sessions. A deterministic aggregator applies frozen rules. Pass is merely tier-eligible; fail blocks; abstain routes to authority; invalid repairs infrastructure and reruns without entering effectiveness denominators. Audit verification checks the complete record. Human acceptance and production release remain separate decisions.</p>
+    <h3>Data-transfer contracts</h3>
+    <div class="table-wrap"><table><thead><tr><th>From → to</th><th>Payload</th><th>Required control</th><th>Failure</th></tr></thead><tbody>
+      <tr><td>Criteria authority → freezer</td><td>Artifact, criteria, tier, policy/version</td><td>Stable IDs, digests, explicit materiality and oracle type</td><td>BLOCKED_CONFIGURATION</td></tr>
+      <tr><td>Freezer → deterministic runner</td><td>Read-only public bundle and allowlisted check plan</td><td>No gold/private labels; ephemeral scratch; recorded versions</td><td>INVALID or FAIL</td></tr>
+      <tr><td>Freezer → model reviewer</td><td>Artifact, criteria, seed, role prompt only</td><td>Fresh context, no private labels, artifact treated as untrusted data</td><td>INVALID/ABSTAIN</td></tr>
+      <tr><td>Runner/reviewer → aggregator</td><td>Signed/digested raw result, findings, evidence, usage</td><td>Schema validation and full identity binding</td><td>INVALID</td></tr>
+      <tr><td>Aggregator → human authority</td><td>Frozen artifact/criteria, unresolved criteria, evidence, risk, budget</td><td>No automatic approval on two-business-day target</td><td>PENDING_AUTHORITY</td></tr>
+      <tr><td>All components → audit store</td><td>Append-only lineage, events, raw outputs, side effects</td><td>Supersede rather than overwrite; external attestation optional by tier</td><td>INTEGRITY_BREACH</td></tr>
+    </tbody></table></div>
+    <p class="warning"><strong>Open terminology blocker CH-CSMQG-007:</strong> the frozen V3 prompt record still says “independently sampled panel member.” Synthesis does not mutate approved evidence. A responsible protocol/evaluation owner must create a superseding prompt using “separately sampled” or an explicit procedural qualifier before model runs.</p>
+  </section>
+
+  <section id="trust">
+    <h2>Trust boundaries</h2>
+    <div class="table-wrap"><table><thead><tr><th>Zone</th><th>Trusted for</th><th>Not trusted for</th><th>Boundary control</th></tr></thead><tbody>
+      <tr><td>Z1 Artifact and grounding</td><td>Recorded bytes only after digest verification</td><td>Instructions, labels, semantic truth, safety</td><td>Read-only mount; content-as-data rule; current rehash</td></tr>
+      <tr><td>Z2 Criteria and policy</td><td>Authorized decision contract</td><td>Completeness unless explicitly reviewed</td><td>Named owner, version, materiality, oracle mapping</td></tr>
+      <tr><td>Z3 Deterministic execution</td><td>Configured observable results</td><td>Properties outside oracle/check coverage</td><td>Allowlisted tools, pinned versions, sandbox, retained side effects</td></tr>
+      <tr><td>Z4 Codex reviewer contexts</td><td>Criterion-linked candidate evidence</td><td>Independent trust, labels, waiver, final high-risk authority</td><td>Fresh context, frozen prompt, seed, schema, abstention</td></tr>
+      <tr><td>Z5 Aggregator/scorer</td><td>Frozen rules and label-bound scoring</td><td>Changing labels/rules after unblinding</td><td>Private label store; deterministic implementation; digest pinning</td></tr>
+      <tr><td>Z6 Evidence ledger</td><td>Change detection and audit lineage</td><td>Semantic truth or independent provenance by digest alone</td><td>Append-only events; optional external signer/attestation</td></tr>
+      <tr><td>Z7 Human/external authority</td><td>Residual-risk, deviation, broader-capability, final acceptance decisions</td><td>Automatic correctness</td><td>Named authority, complete packet, explicit disposition, no silence-as-consent</td></tr>
+    </tbody></table></div>
+  </section>
+
+  <section id="roles">
+    <h2>Role and session separation</h2>
+    <div class="table-wrap"><table><thead><tr><th>Role</th><th>May</th><th>Must not</th><th>Required identity</th></tr></thead><tbody>
+      <tr><td>Producer</td><td>Create or repair a versioned artifact</td><td>Set its own pass, alter frozen criteria, or view private labels</td><td>Actor/session + parent artifact digest</td></tr>
+      <tr><td>Criteria owner</td><td>Define criteria, materiality, oracle, tier</td><td>Silently change a frozen decision contract</td><td>Named authority + approval event</td></tr>
+      <tr><td>Deterministic verifier</td><td>Run allowlisted checks and emit evidence</td><td>Infer unencoded semantics or accept overrides</td><td>Tool/version/config digest</td></tr>
+      <tr><td>Same-model reviewer</td><td>Inspect criteria in a fresh context; fail or abstain with locators</td><td>Claim independence, see gold labels, waive deterministic failure</td><td>Model/version/effort/session/turn/seed</td></tr>
+      <tr><td>Aggregator</td><td>Apply frozen rules and retain disagreement</td><td>Change rules after verdicts or treat majority as truth</td><td>Algorithm/config digest</td></tr>
+      <tr><td>Scorer/calibrator</td><td>Read private labels after raw commitment; compute metrics</td><td>Expose labels or alter scorers after unblinding</td><td>Scorer/label digests</td></tr>
+      <tr><td>Budget controller</td><td>Warn, stop, and reconcile usage before scheduling</td><td>Estimate from transcripts when ledger counting fails</td><td>Run and operation ledger IDs</td></tr>
+      <tr><td>Human authority</td><td>Accept residual risk, approve deviation, broader capability, final research</td><td>Waive deterministic evidence without repair/rerun</td><td>Named role + dated disposition</td></tr>
+      <tr><td>Procedurally separate challenge/verifier role</td><td>Challenge or check a frozen package</td><td>Claim independent model/trust root, silently edit synthesis, or self-accept</td><td>Separate role/session and immutable handoff; “independent” refers only to workflow authorship, not model or trust-root diversity</td></tr>
+    </tbody></table></div>
+  </section>
+
+  <section id="tiers">
+    <h2>Proposed assurance tiers</h2>
+    <p class="lead">Tier thresholds must be declared by the human owner and proven on the local corpus before use. The current package cannot authorize any tier.</p>
+    <div class="table-wrap"><table><thead><tr><th>Tier</th><th>Boundary</th><th>Minimum controls</th><th>Authority</th><th>Exit condition</th></tr></thead><tbody>
+      <tr><td>T0 Record-only</td><td>Draft/exploration</td><td>Artifact and criteria identity; no gated-release label</td><td>None</td><td>Move to a declared tier before release</td></tr>
+      <tr><td>T1 Deterministic</td><td>Low-impact, reversible, fully testable</td><td>Frozen criteria, validators, lineage, telemetry, verification</td><td>Policy-defined deterministic result</td><td>All material criteria encoded and passed</td></tr>
+      <tr><td>T2 Evidence-bound</td><td>Moderate/reversible bounded semantics; excludes material document/plan semantics without executable or inspectable oracles</td><td>T1 + procedurally separated same-model review, evidence schema, abstention, proven sandbox</td><td>Only inside a locally calibrated, independently adjudicated label envelope</td><td>No deterministic fail or unresolved material/document criterion</td></tr>
+      <tr><td>T3 Calibrated hybrid</td><td>Higher risk after successful evaluation</td><td>T2 + hidden fault probes, repeat/panel rule, escalation, provenance controls</td><td>Human or demonstrated policy boundary</td><td>Within artifact/fault/model envelope and accepted thresholds</td></tr>
+      <tr><td>T4 Human/external</td><td>Critical, irreversible, regulated, security/privacy/safety/financial/production</td><td>All applicable controls plus required domain/external trust</td><td>Named human/external authority</td><td>Explicit acceptance only; same-model evidence advisory</td></tr>
+    </tbody></table></div>
+    <p class="warning"><strong>Same-model insufficiency:</strong> force T4 or a blocked/abstain route for absent trusted oracle, high-impact/irreversible action, own-output disputed semantics, disagreement/non-convergence, material prompt injection or broader capability, unverifiable identity/provenance, unavailable accounting, deterministic failure, or unauthorized material deviation.</p>
+  </section>
+
+  <section id="schemas">
+    <h2>Required logical schemas</h2>
+    <p class="lead">These are technology-neutral field contracts. Concrete serialization may vary, but no field may be silently omitted when applicable. Every record declares <code>schema</code>, <code>schema_version</code>, <code>record_id</code>, <code>created_at_utc</code>, <code>responsible_role</code>, and <code>run_id</code>.</p>
+    <div class="two">
+      <article class="schema"><span class="tag">CRITERIA</span><h3>Criterion record</h3><ul><li><code>criterion_id</code>, text, rationale, materiality/severity</li><li>artifact/tier/policy IDs and digests</li><li>oracle type: deterministic, executable, inspectable, model-evidence, human</li><li>expected evidence kind and acceptable locators</li><li>pass/fail/abstain rule; applicability predicate</li><li>owner, waiver policy (never for deterministic result), version lineage</li></ul></article>
+      <article class="schema"><span class="tag">FINDING</span><h3>Finding record</h3><ul><li><code>finding_id</code>, criterion ID, category, severity</li><li>statement, observed/attributed/inferred classification</li><li>evidence IDs and exact locators; evidence digest</li><li>author role/session, confidence, status</li><li>contradiction/alternative/unknown fields</li><li>disposition, disposer authority, superseding finding</li></ul></article>
+      <article class="schema"><span class="tag">VERDICT</span><h3>Verdict record</h3><ul><li>operation/case/variant/repeat/run IDs</li><li>artifact, criteria, prompt, tool/config digests</li><li>model/version/effort/session/turn/seed when applicable</li><li><code>pass|fail|abstain|invalid</code>; finding/evidence IDs</li><li>start/end UTC, calls, input/output tokens, cost, tool transcript/raw/scorer digests</li><li>aggregation and authority state; schema-validation result</li></ul></article>
+      <article class="schema"><span class="tag">EVIDENCE</span><h3>Evidence record</h3><ul><li><code>evidence_id</code>, criterion/finding IDs, kind</li><li>source path/URL, locator, observed value, command/tool</li><li>source/tool/version/input/output digests and exit state</li><li>raw vs derived classification and transformation</li><li>access boundary, redactions, uncertainty, limitations</li><li>supersession rather than overwrite</li></ul></article>
+      <article class="schema"><span class="tag">LINEAGE</span><h3>Lineage record</h3><ul><li>artifact ID/version/digest and parent digest</li><li>criteria, grounding, configuration, scorer, policy digests</li><li>creator identity/session and UTC</li><li>chain predecessor/event type and verification state</li><li>optional signer/subject/attestation/policy fields</li><li>explicit assurance class: local change detection vs external provenance</li></ul></article>
+      <article class="schema"><span class="tag">ABSTENTION</span><h3>Abstention/escalation record</h3><ul><li><code>abstention_id</code>, verdict and unmet criterion IDs</li><li>reason: insufficient, contradictory, unavailable execution, disagreement, risk, budget, provenance</li><li>attempted evidence and unavailable evidence</li><li>risk/consequence tier and named authority</li><li>packet digest, response target, timeout behavior</li><li>human disposition and rationale; no automatic approval</li></ul></article>
+      <article class="schema"><span class="tag">BUDGET / EVENT</span><h3>Accounting and event record</h3><ul><li>operation/session/turn/model IDs; purpose and status</li><li>calls, tokens in/out, cost, start/end, retries</li><li>warning/hard-stop state before and after scheduling</li><li>changed retry condition and original operation</li><li>unavailable-measure route and authority event</li><li>append-only sequence and prior-event digest</li></ul></article>
+      <article class="schema"><span class="tag">CHALLENGE / ACCEPTANCE</span><h3>Decision record</h3><ul><li>challenge or decision ID and targeted finding/recommendation</li><li>accepted, corrected, rejected-with-reason, or unresolved</li><li>materiality: false pass, sufficiency, security, feasibility, assurance</li><li>responsible role and evidence links</li><li>verification result and human acceptance state</li><li>implementation authority as a separate explicit field</li></ul></article>
+    </div>
+  </section>
+
+  <section id="states">
+    <h2>State machine</h2>
+    <div class="table-wrap"><table><thead><tr><th>State</th><th>Entry</th><th>Allowed transition</th><th>Forbidden shortcut</th></tr></thead><tbody>
+      <tr><td>DRAFT</td><td>Artifact/criteria mutable</td><td>FROZEN_INPUTS after authorized version/digests</td><td>Direct pass</td></tr>
+      <tr><td>FROZEN_INPUTS</td><td>Artifact, criteria, tier, config pinned</td><td>PREFLIGHT</td><td>Silent mutation</td></tr>
+      <tr><td>PREFLIGHT</td><td>Telemetry, budget, authority, sandbox, schema checked</td><td>DETERMINISTIC_RUNNING or BLOCKED/INVALID</td><td>Model call before accounting</td></tr>
+      <tr><td>DETERMINISTIC_RUNNING</td><td>Applicable non-model checks executing</td><td>FAIL, MODEL_REVIEW, AGGREGATE, INVALID</td><td>Waive a failure</td></tr>
+      <tr><td>MODEL_REVIEW</td><td>Remaining semantic criteria in frozen fresh contexts</td><td>AGGREGATE or INVALID</td><td>Gold-label access or rule change</td></tr>
+      <tr><td>AGGREGATE</td><td>All raw results committed and schema-valid</td><td>PASS_ELIGIBLE, FAIL, ABSTAIN, INVALID</td><td>Consensus-as-truth</td></tr>
+      <tr><td>ABSTAIN</td><td>Insufficient/conflicting/unavailable/high-risk evidence</td><td>PENDING_AUTHORITY or new-lineage repair</td><td>Timeout pass</td></tr>
+      <tr><td>PENDING_AUTHORITY</td><td>Complete frozen packet delivered</td><td>AUTH_ACCEPTED, AUTH_REJECTED, REVISION_REQUESTED</td><td>Model self-approval</td></tr>
+      <tr><td>PASS_ELIGIBLE</td><td>Gate conditions met within tier</td><td>AUDIT_VERIFY then policy/human release</td><td>Treat as research acceptance</td></tr>
+      <tr><td>FAIL</td><td>Mandatory check or material evidenced defect</td><td>New artifact lineage only</td><td>In-place waiver</td></tr>
+      <tr><td>INVALID</td><td>Protocol, identity, raw-record, or infrastructure failure</td><td>Bounded retry with changed condition</td><td>Enter effectiveness denominator or pass</td></tr>
+      <tr><td>BLOCKED_BUDGET</td><td>Missing accounting or warning/hard-stop route</td><td>Authorized reconciliation/deviation</td><td>Estimate use and continue</td></tr>
+      <tr><td>INTEGRITY_BREACH</td><td>Lineage/evidence mismatch</td><td>Quarantine, investigate, new authorized run</td><td>Reuse prior pass</td></tr>
+      <tr><td>AUDIT_VERIFY</td><td>Complete records and dispositions available</td><td>VERIFIED or VERIFICATION_FAILED</td><td>Silent repair</td></tr>
+    </tbody></table></div>
+  </section>
+
+  <section id="budgets">
+    <h2>Budget and stopping rules</h2>
+    <p class="lead">The research/evaluation interlocks below are inherited from the approved plan. A future operational gate must also declare per-artifact limits; it may be stricter but cannot silently raise these research ceilings.</p>
+    <div class="table-wrap"><table><thead><tr><th>Measure</th><th>Warning</th><th>Hard stop</th><th>Unavailable-measure behavior</th></tr></thead><tbody>
+      <tr><td>External candidates / full texts / included</td><td>192 / 64 / 36</td><td>240 / 80 / 45; finish only already-open decisions</td><td>Stop screening and repair register counts</td></tr>
+      <tr><td>Evaluated operations</td><td>864</td><td>1,080 scheduled operations</td><td>Halt evaluation; never estimate from transcripts</td></tr>
+      <tr><td>Model calls</td><td>1,120</td><td>Before call 1,401</td><td>Reconcile session/turn IDs before further model work</td></tr>
+      <tr><td>Input + output tokens</td><td>6.4 million</td><td>8 million</td><td>Calls become binding proxy; human review at 1,120 calls</td></tr>
+      <tr><td>Active time / calendar</td><td>32 hours / day 11</td><td>40 hours or end of day 14</td><td>Pause and reconstruct timestamps</td></tr>
+      <tr><td>Active model workers</td><td>3 (capacity)</td><td>Refuse a fourth</td><td>Run sequentially</td></tr>
+      <tr><td>Retries</td><td>Second per operation or 32 total</td><td>After 2 per operation or 40 total</td><td>No retry if original identity or changed condition cannot be proven</td></tr>
+      <tr><td>Direct spend</td><td>USD 160</td><td>Before USD 200</td><td>Calls/tokens bind; human approval at 80% token warning</td></tr>
+    </tbody></table></div>
+    <p class="warning"><strong>Current state:</strong> blocked before all comparative operations. No concrete ledger or validated interlock proves the required telemetry is feasible under the frozen contract, and no independent corpus-label/oracle QA record exists. A desired resume condition is not feasibility evidence.</p>
+  </section>
+
+  <section id="failures">
+    <h2>Failure routing</h2>
+    <div class="table-wrap"><table><thead><tr><th>Trigger</th><th>Terminal/intermediate state</th><th>Required action</th><th>Resume condition</th></tr></thead><tbody>
+      <tr><td>Mandatory deterministic failure</td><td>FAIL</td><td>Preserve evidence; block current lineage</td><td>Repaired new artifact/version and full rerun</td></tr>
+      <tr><td>Malformed/missing/misbound verdict or raw data</td><td>INVALID</td><td>Exclude from outcomes; diagnose infrastructure</td><td>Changed-condition retry within ceiling</td></tr>
+      <tr><td>Reviewer disagreement or non-convergence</td><td>ABSTAIN</td><td>Retain every sample and aggregate trace; escalate by tier</td><td>Human disposition or new evidence</td></tr>
+      <tr><td>Material prompt injection / unsafe instruction</td><td>FAIL or ABSTAIN</td><td>Quarantine execution; capture side effects; no automatic pass</td><td>Safe adjudication or repaired artifact</td></tr>
+      <tr><td>Sandbox escape, unauthorized network/secret/host action</td><td>INTEGRITY_BREACH / FAIL</td><td>Terminate, preserve logs, rotate exposed authority if needed</td><td>Human security decision and revalidated environment</td></tr>
+      <tr><td>Artifact/criteria/grounding/config changes</td><td>INTEGRITY_BREACH or new lineage</td><td>Invalidate prior pass applicability</td><td>Authorized freeze and rerun</td></tr>
+      <tr><td>Budget warning</td><td>PENDING_AUTHORITY where plan requires</td><td>Stop new work at warning review boundary</td><td>Dated authority decision within ceiling</td></tr>
+      <tr><td>Budget hard stop or missing accounting</td><td>BLOCKED_BUDGET</td><td>Schedule nothing further</td><td>Reconciliation or approved material deviation</td></tr>
+      <tr><td>Model/version/effort substitution</td><td>BLOCKED_CONFIGURATION</td><td>Record proposed deviation before use</td><td>Human approval; vN+1 plan if contract changes</td></tr>
+      <tr><td>Human response target expires</td><td>PENDING_AUTHORITY</td><td>Remain pending; notify/escalate administratively</td><td>Explicit recorded disposition</td></tr>
+      <tr><td>Challenge/verification material failure</td><td>NOT_ACCEPTED</td><td>Return to synthesis or evidence owner; no silent repair</td><td>Disposition, repair, and re-verification</td></tr>
+    </tbody></table></div>
+  </section>
+
+  <section id="proving-tests">
+    <h2>Proposed proving-test concepts</h2>
+    <p class="blocked"><strong>Not completed proof:</strong> PT-CSMQG-001–018 are concepts only. Before any can support acceptance it needs an owner, inputs, fixtures, command or manual procedure, expected artifacts, pass/fail schema, dependencies, ordering, evidence retention, and blocking effect.</p>
+    <div class="table-wrap"><table><thead><tr><th>ID</th><th>Test</th><th>Pass condition</th><th>Finding / recommendation</th></tr></thead><tbody>
+      <tr><td>PT-CSMQG-001</td><td>Telemetry pre-scheduling interlock</td><td>No model operation starts without reconciled identity/accounting.</td><td>F-007 / REC-001</td></tr>
+      <tr><td>PT-CSMQG-002</td><td>Artifact/criteria substitution</td><td>Any byte change creates new lineage or breach; prior pass is inapplicable.</td><td>F-004/005</td></tr>
+      <tr><td>PT-CSMQG-003</td><td>Current-grounding verification</td><td>Deletion, addition, reordering, and substitution are detected at verify time.</td><td>F-004/005</td></tr>
+      <tr><td>PT-CSMQG-004</td><td>Verdict schema negatives</td><td>Malformed, missing-evidence, and extra-authority outputs are invalid on all transports.</td><td>F-005</td></tr>
+      <tr><td>PT-CSMQG-005</td><td>Blinded six-variant evaluation</td><td>Raw records and scores complete; cases, not repeats, are independent units.</td><td>F-007/009</td></tr>
+      <tr><td>PT-CSMQG-006</td><td>Panel correlation/disagreement</td><td>Frozen aggregation, visible disagreement, no independent-truth label.</td><td>F-001/003</td></tr>
+      <tr><td>PT-CSMQG-007</td><td>Non-waivable deterministic fail</td><td>Injected deterministic fail always blocks despite model PASS.</td><td>F-002/009</td></tr>
+      <tr><td>PT-CSMQG-008</td><td>Injection and sandbox suite</td><td>No criteria/label/secret/network/host compromise; side effects retained.</td><td>F-006</td></tr>
+      <tr><td>PT-CSMQG-009</td><td>Denominator/uncertainty audit</td><td>Invalids, abstentions, repeats, and missingness follow frozen analysis.</td><td>F-003/007</td></tr>
+      <tr><td>PT-CSMQG-010</td><td>Warnings and hard stops</td><td>Exact pre-scheduling boundaries and unavailable-measure routes.</td><td>F-007</td></tr>
+      <tr><td>PT-CSMQG-011</td><td>Crash/retry/partial write</td><td>Atomic append-only records; retry has changed condition; partials invalid.</td><td>F-004/005</td></tr>
+      <tr><td>PT-CSMQG-012</td><td>Abstention/human timeout</td><td>Complete packet routes to named owner; timeout never approves.</td><td>F-001/009</td></tr>
+      <tr><td>PT-CSMQG-013</td><td>Same-user tamper/external provenance</td><td>Local byte agreement and independent signer policy remain distinct and fail closed.</td><td>F-004</td></tr>
+      <tr><td>PT-CSMQG-014</td><td>Evidence closure</td><td>Counts reconcile and bounded-review gaps are expanded or explicitly accepted.</td><td>F-008</td></tr>
+      <tr><td>PT-CSMQG-015</td><td>Corpus label/oracle QA</td><td>Independent adjudication or deterministic proof per case, ambiguity/negative-control review, frozen invalid-case rule.</td><td>F-010</td></tr>
+      <tr><td>PT-CSMQG-016</td><td>Telemetry feasibility proof</td><td>Concrete ledger/interlock retained dry run, or infeasibility triggers approved protocol revision.</td><td>F-011</td></tr>
+      <tr><td>PT-CSMQG-017</td><td>Deterministic-plus-human baseline/capacity</td><td>Shadow/manual outcomes, workload, response, consistency, quality, capacity, and timeout are measured or omission justified.</td><td>F-012</td></tr>
+      <tr><td>PT-CSMQG-018</td><td>Test-spec completeness</td><td>Every concept has the full executable/auditable specification contract.</td><td>F-013</td></tr>
+    </tbody></table></div>
+  </section>
+
+  <section id="adoption">
+    <h2>Adoption gates</h2>
+    <p class="lead">Adoption is a later human decision. It is prohibited until every gate below is evidenced; passing them authorizes only the scope stated by the human owner.</p>
+    <ol>
+      <li><strong>Accounting gate:</strong> BLK-CSMQG-EVAL-001 is closed with approved, pre-scheduling call/token/cost/session telemetry.</li>
+      <li><strong>Feasibility gate:</strong> a concrete telemetry source and interlock pass PT-CSMQG-016, or an approved revised protocol records infeasibility.</li>
+      <li><strong>Oracle gate:</strong> independent corpus-label/oracle QA passes PT-CSMQG-015 before any comparative operation.</li>
+      <li><strong>Evaluation gate:</strong> all six variants receive reproducible raw records and deterministic scoring; false-pass, false-block, abstention, reproducibility, evidence quality, coverage/mutation, latency, resources, attack surface, and escalation are reported with valid denominators and uncertainty.</li>
+      <li><strong>Disqualifier gate:</strong> candidate cannot waive deterministic failure, emit unverifiable verdicts, lack authority routing, exceed budgets, expose labels, or violate sandbox policy.</li>
+      <li><strong>Threshold gate:</strong> the human owner predeclares tier-specific acceptable false-pass/false-block/abstention and operational thresholds; the 60-case design is not used for an unpowered close-winner claim.</li>
+      <li><strong>Local gap gate:</strong> source-derived requirements for schema, grounding, postmortem witness, live transport/resume, sandbox, plugin/model identity, and declared-eval behavior receive live proving records.</li>
+      <li><strong>Baseline/human gate:</strong> deterministic-plus-human/shadow alternatives and human workload, capacity, consistency, timeout, and decision quality are measured or explicitly justified.</li>
+      <li><strong>Test-spec gate:</strong> every PT concept satisfies PT-CSMQG-018 before its result can support adoption.</li>
+      <li><strong>Evidence gate:</strong> bounded-review and six access gaps are expanded or explicitly accepted; no unsupported completeness claim remains.</li>
+      <li><strong>Challenge gate:</strong> every procedurally separate challenge is dispositioned; unresolved material false-pass, sufficiency, security, feasibility, or assurance issues block. CH-CSMQG-003, -005, -007, and -010 are currently unresolved.</li>
+      <li><strong>Verification gate:</strong> required files, IDs, counts, links, schemas, rendering, integrity, budget, and challenge dispositions pass deterministic verification.</li>
+      <li><strong>Human gate:</strong> the repository owner explicitly accepts residual risk, tier scope, response capacity, adoption stage, and rollback authority.</li>
+      <li><strong>Staged pilot:</strong> shadow mode precedes enforcement; decisions are compared to the current human/deterministic process without production authority.</li>
+    </ol>
+  </section>
+
+  <section id="rollback">
+    <h2>Rollback contract</h2>
+    <div class="two">
+      <article class="card"><h3>Immediate triggers</h3><ul><li>Any false pass above the owner’s predeclared tier threshold, or any critical seeded/real fault passed.</li><li>Deterministic failure waived or prior pass reused after artifact/criteria change.</li><li>Telemetry, raw records, scorer binding, or budget accounting incomplete.</li><li>Prompt injection, label leakage, sandbox escape, secret/network/host exposure.</li><li>Model/version/effort drift or material deviation without approval.</li><li>Human escalation timeout treated as approval.</li><li>Unresolved material challenge, failed verification, or provenance breach.</li></ul></article>
+      <article class="card"><h3>Rollback actions</h3><ol><li>Disable model-derived pass authority and return to the last verified deterministic + human process.</li><li>Quarantine affected gate versions, decisions, artifacts, credentials, and evidence; preserve records append-only.</li><li>Identify the first affected lineage and invalidate downstream pass applicability.</li><li>Notify the repository owner and security/domain authority where relevant.</li><li>Re-run affected artifacts under the last accepted policy or require manual review.</li><li>Perform root-cause analysis; add a proving test and versioned remediation.</li><li>Resume only after challenge, verification, and explicit human reauthorization.</li></ol></article>
+    </div>
+    <p class="note"><strong>Recovery objective:</strong> rollback is fail-safe, not evidence erasure. The system preserves the failed gate’s raw records and makes affected decisions visible. Re-adoption begins in shadow mode and cannot silently inherit the prior acceptance.</p>
+  </section>
+
+  <section id="handoff">
+    <h2>Evidence and governance handoff</h2>
+    <p>Stable findings and recommendations: <a href="../evidence/synthesis_findings.v1.json">synthesis_findings.v1.json</a>, <a href="../evidence/synthesis_recommendations.v1.json">synthesis_recommendations.v1.json</a>, and <a href="../evidence/synthesis_finding_evidence_map.v1.json">synthesis_finding_evidence_map.v1.json</a>. Dispositions: <a href="../evidence/challenge_dispositions.v1.json">challenge_dispositions.v1.json</a>. Candidate status: <a href="../evidence/synthesis_candidate_manifest.v1.json">SYNMAN-CSMQG-20260819-001</a>. Its hashes cover synthesis components only; the later verifier must enumerate, hash, and report every cited supporting evidence record.</p>
+    <p class="blocked"><strong>Required next roles:</strong> responsible protocol/evaluation owners must resolve CH-CSMQG-003, -005, -007, and -010; then the deterministic verifier must hash the full cited evidence package and run conformance checks; then the human research owner decides. This architecture cannot self-accept or authorize implementation.</p>
+  </section>
+</main>
+<footer>Codex Same-Model QA Reference Architecture · Version 1 · Implementation-neutral candidate · Partial / blocked pending evaluation · Not accepted</footer>
+</body>
+</html>

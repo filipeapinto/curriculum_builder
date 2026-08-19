@@ -1,0 +1,94 @@
+{
+  "schema_name": "codex_same_model_qa_gate.calibration_authority_decisions",
+  "schema_version": "1.0.0",
+  "record_id": "CAL-AUTH-v1",
+  "record_status": "open",
+  "created_at_utc": "2026-08-19T09:30:04Z",
+  "responsible_role": "$sota-method-lead",
+  "source_plan": {"path": "../plan/sota_research.plan.v1.html", "sha256": "16ae937c64bb8ce4f673354ec2882d1b422085845b204746408b2c47fce8e862"},
+  "existing_authority": [
+    {"approval_id": "APR-CSMQG-20260819-001", "record_path": "approval_register.jsonl", "decision": "approved", "scope": "Calibration phase only within the plan boundary and hard ceilings.", "effect": "Resolves the immutable plan file's stale awaiting-approval display for calibration execution only; does not authorize full screening or controlled evaluation."}
+  ],
+  "decisions": [
+    {
+      "decision_id": "AUTH-001",
+      "status": "open_blocking",
+      "authority": "human research owner",
+      "question": "Approve, reject, or request revision of the complete calibrated full protocol represented by CAL-SEARCH-ELIG-v1, CAL-APPRAISAL-v1, the extraction schema, CAL-EVAL-v1, and CAL-BUDGET-ASSIGN-v1?",
+      "proposed_resolution": "Approve the packet as protocol version 1.0.0, subject to resolution of AUTH-002 through AUTH-007.",
+      "work_blocked": ["full-text screening", "final eligibility decisions", "appraisal and extraction", "60-case corpus construction", "comparative evaluation"],
+      "required_record": "A dated approval event bound to the SHA-256 of the calibration packet manifest."
+    },
+    {
+      "decision_id": "AUTH-002",
+      "status": "open_blocking_before_evaluation",
+      "authority": "human research owner",
+      "question": "Approve creation of a 60-case synthetic or repository-owned corpus with 30 code and 30 document/plan cases, allocated within each class to 18 fault-seeded and 12 clean cases?",
+      "proposed_resolution": "Approve this allocation because it prioritizes false-pass precision while retaining false-block controls and stays within the 60-case ceiling.",
+      "required_record": "Approval or a revised allocation that does not exceed 60 cases; a larger design requires a vN+1 plan."
+    },
+    {
+      "decision_id": "AUTH-003",
+      "status": "open_blocking_before_corpus_freeze",
+      "authority": "human research owner",
+      "question": "Approve the fault-family balance rule and minimum coverage for both artifact classes?",
+      "proposed_resolution": "At least five taxonomy categories per artifact class; no category exceeds one third of fault-seeded cases in that class; security/prompt-injection coverage is mandatory in both classes where technically meaningful.",
+      "required_record": "Approved balance rule recorded before gold labels are frozen."
+    },
+    {
+      "decision_id": "AUTH-004",
+      "status": "open_blocking_before_security_runs",
+      "authority": "human research owner",
+      "question": "Do security-relevant, prompt-injection, or generated-test cases require a separately configured higher-risk sandbox tier?",
+      "proposed_resolution": "Yes: no network by default, least privilege, ephemeral workspace, no secrets, bounded CPU/memory/time, allowlisted tools, and captured side effects; any broader capability requires case-specific human authorization.",
+      "required_record": "Approved sandbox tier and prohibited actions in the frozen run configuration."
+    },
+    {
+      "decision_id": "AUTH-005",
+      "status": "open_blocking_before_model_runs",
+      "authority": "human research owner",
+      "question": "Which exact available named Codex model/version and reasoning effort are pinned for producer and same-model reviewer conditions?",
+      "proposed_resolution": "Use the same exact named Codex model/version for producer and model-based gate variants, with the plan-listed effort for evaluation, and record any effort difference as a deliberate experimental factor rather than independent evidence.",
+      "required_record": "Model identifier, version or release identifier, effort, availability check, and substitution policy. Any unavailable listed model or substitution is a material deviation requiring approval."
+    },
+    {
+      "decision_id": "AUTH-006",
+      "status": "open_blocking_before_human_escalation_evaluation",
+      "authority": "human research owner",
+      "question": "What human availability, response target, evidence view, and final authority apply to V6 escalations?",
+      "proposed_resolution": "Designate the repository owner or delegate as sole decision authority; show immutable artifact/criteria/verdict/evidence links and reason for escalation; measure response time but impose no automatic approval on timeout.",
+      "required_record": "Named authority role, escalation packet fields, response target, timeout behavior, and audit record requirements."
+    },
+    {
+      "decision_id": "AUTH-007",
+      "status": "open_blocking_before_comparative_scoring",
+      "authority": "human research owner",
+      "question": "Approve descriptive dominance and risk-tier constraints rather than a confirmatory minimum-effect winner threshold?",
+      "proposed_resolution": "Approve descriptive paired comparisons with 95 percent intervals, hard disqualifiers, and explicit residual-risk judgment. Do not claim the 60-case design is powered to distinguish close variants.",
+      "required_record": "Approval of the decision rule or a vN+1 plan with a powered sample-size target and revised ceiling."
+    },
+    {
+      "decision_id": "AUTH-008",
+      "status": "open_nonblocking_until_retrieval",
+      "authority": "human research owner or delegated method lead within approved access policy",
+      "question": "May inaccessible full texts be retrieved through repository-approved subscriptions, or must they receive INSUFFICIENT_ACCESS after documented public attempts?",
+      "proposed_resolution": "Use approved institutional access if already available without new spend or account changes; otherwise record INSUFFICIENT_ACCESS and preserve the candidate record.",
+      "required_record": "Access rule and any approved source-specific exceptions before affected final exclusions."
+    },
+    {
+      "decision_id": "AUTH-009",
+      "status": "open_nonblocking_until_cost_warning",
+      "authority": "human research owner",
+      "question": "Which official pricing snapshot and cost-accounting method bind the USD 200 cap?",
+      "proposed_resolution": "At execution start, record official provider pricing, date, currency, model identifiers, and treatment of cached tokens/tool charges; if unavailable, calls and tokens remain binding and human review occurs at the plan's warning threshold.",
+      "required_record": "Pricing snapshot or explicit use of the plan's unavailable-measure fallback."
+    }
+  ],
+  "method_lead_state": {
+    "full_protocol_status": "paused_pending_human_approval",
+    "allowed_work": ["deterministic validation of calibration records", "register reconciliation", "human review of this packet"],
+    "prohibited_work": ["full screening", "final inclusion or exclusion", "appraisal", "extraction", "comparative model runs", "production implementation"],
+    "deviations_observed": [],
+    "note": "The approved calibration run used public-web pilot queries and created candidate records only; this is within calibration and is not treated as full screening."
+  }
+}

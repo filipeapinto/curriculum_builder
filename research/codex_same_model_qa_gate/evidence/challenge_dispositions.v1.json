@@ -1,0 +1,137 @@
+{
+  "schema": "csmqg-challenge-dispositions/v1",
+  "record_id": "CHDISP-CSMQG-20260819-001",
+  "run_id": "RUN-CSMQG-20260819-001",
+  "created_at_utc": "2026-08-19T10:22:19Z",
+  "responsible_role": "sota-synthesize",
+  "source_challenge_register": {
+    "path": "challenge_register.v1.json",
+    "record_id": "CHAL-CSMQG-20260819-001",
+    "sha256": "5056e36628052093951bce48b176fe5758a78b4625fa10256be704fb71e6d1cb"
+  },
+  "status": "all_challenges_dispositioned_acceptance_not_granted",
+  "authority_boundary": "These dispositions revise synthesis and preserve blockers. They do not close unresolved empirical or feasibility conditions, verify the package, accept the research, or authorize implementation.",
+  "counts": {"received":12,"corrected":8,"unresolved":4,"accepted_without_correction":0,"rejected_with_reason":0},
+  "material_unresolved_challenge_ids": ["CH-CSMQG-003","CH-CSMQG-005","CH-CSMQG-007","CH-CSMQG-010"],
+  "dispositions": [
+    {
+      "challenge_id": "CH-CSMQG-001",
+      "severity": "critical",
+      "status": "corrected",
+      "response": "The challenge is valid. All 'leading' and 'best mechanism coverage' language is removed. F-CSMQG-009 and both HTMLs now describe the hybrid only as an unexecuted candidate pattern selected for future testing by coverage rationale, without superiority, architecture-selection, or adoption support.",
+      "changed_records": ["synthesis_findings.v1.json:F-CSMQG-009","synthesis_recommendations.v1.json:REC-CSMQG-002","../report/sota_research_report.v1.html","../design/codex_same_model_qa_reference_architecture.v1.html"],
+      "residual_or_reason": "Zero-run evaluation still blocks architecture selection and final acceptance; correction is wording and decision posture only.",
+      "acceptance_impact": "remains_blocked_by_F-CSMQG-007"
+    },
+    {
+      "challenge_id": "CH-CSMQG-002",
+      "severity": "high",
+      "status": "corrected",
+      "response": "The package is now called a bounded evidence review throughout final-facing synthesis. Database expansion, snowballing, six access exclusions, and the absence of full saturation are explicit. REC-CSMQG-008 requires targeted expansion/access or explicit human acceptance before any complete-SOTA claim.",
+      "changed_records": ["synthesis_findings.v1.json:F-CSMQG-008","synthesis_recommendations.v1.json:REC-CSMQG-008","../report/sota_research_report.v1.html","../design/codex_same_model_qa_reference_architecture.v1.html"],
+      "residual_or_reason": "No expansion or human gap-acceptance record exists; an unqualified complete-SOTA claim remains blocked.",
+      "acceptance_impact": "complete_sota_claim_blocked"
+    },
+    {
+      "challenge_id": "CH-CSMQG-003",
+      "severity": "critical",
+      "status": "unresolved",
+      "response": "The challenge is accepted as a new material finding F-CSMQG-010 and recommendation REC-CSMQG-009. The dry run did not validate gold correctness. PT-CSMQG-015 now defines the proposed corpus-label QA concept.",
+      "changed_records": ["synthesis_findings.v1.json:F-CSMQG-010","synthesis_recommendations.v1.json:REC-CSMQG-009,PT-CSMQG-015","synthesis_finding_evidence_map.v1.json","../report/sota_research_report.v1.html","../design/codex_same_model_qa_reference_architecture.v1.html"],
+      "residual_or_reason": "Synthesis cannot independently adjudicate the 60 labels or create deterministic oracle proofs. A separate pre-run corpus-label QA record remains absent.",
+      "acceptance_impact": "blocks_evaluation_resume_and_effectiveness_claims_even_after_runs"
+    },
+    {
+      "challenge_id": "CH-CSMQG-004",
+      "severity": "high",
+      "status": "corrected",
+      "response": "Artifact-class limits are explicit. Code and structural document checks remain the strongest applicability area; material document/plan semantics are marked under-evidenced and require human or external adjudication without executable or inspectable oracles.",
+      "changed_records": ["synthesis_findings.v1.json:F-CSMQG-002","synthesis_recommendations.v1.json:REC-CSMQG-006","../report/sota_research_report.v1.html","../design/codex_same_model_qa_reference_architecture.v1.html"],
+      "residual_or_reason": "Targeted document-validation evidence and valid document/plan evaluation results remain absent, so broad document assurance claims remain blocked.",
+      "acceptance_impact": "document_semantic_assurance_blocked"
+    },
+    {
+      "challenge_id": "CH-CSMQG-005",
+      "severity": "critical",
+      "status": "unresolved",
+      "response": "The package now distinguishes a desired resume condition from demonstrated feasibility. F-CSMQG-011, REC-CSMQG-010, and PT-CSMQG-016 require a concrete telemetry source, reconciliation method, pre-scheduling interlock, failure analysis, and retained validation record or an approved protocol revision.",
+      "changed_records": ["synthesis_findings.v1.json:F-CSMQG-011","synthesis_recommendations.v1.json:REC-CSMQG-010,PT-CSMQG-016","synthesis_finding_evidence_map.v1.json","../report/sota_research_report.v1.html","../design/codex_same_model_qa_reference_architecture.v1.html"],
+      "residual_or_reason": "No telemetry mechanism or feasibility proof exists in the evidence boundary. This requires environment capability, external coordination, or approved protocol change.",
+      "acceptance_impact": "blocks_evaluation_resume_and_final_research_acceptance"
+    },
+    {
+      "challenge_id": "CH-CSMQG-006",
+      "severity": "critical",
+      "status": "corrected",
+      "response": "Sandbox and prompt-injection controls are now labeled unproven requirements. Security-relevant and higher-risk tiers are explicitly blocked until executable probes retain denial evidence, side effects, and tool/version identity.",
+      "changed_records": ["synthesis_findings.v1.json:F-CSMQG-006","synthesis_recommendations.v1.json:REC-CSMQG-005","../report/sota_research_report.v1.html","../design/codex_same_model_qa_reference_architecture.v1.html"],
+      "residual_or_reason": "PT-CSMQG-007/008 remain proposed test concepts and have not demonstrated live runtime enforcement.",
+      "acceptance_impact": "security_and_higher_risk_adoption_blocked"
+    },
+    {
+      "challenge_id": "CH-CSMQG-007",
+      "severity": "medium",
+      "status": "unresolved",
+      "response": "Architecture role wording is corrected to 'procedurally separate challenge/verifier role' with an explicit non-independence qualifier. REC-CSMQG-004 requires the V3 prompt to be superseded with 'separately sampled' or equivalent before execution.",
+      "changed_records": ["synthesis_recommendations.v1.json:REC-CSMQG-004","../design/codex_same_model_qa_reference_architecture.v1.html"],
+      "residual_or_reason": "The frozen prompt_templates.v1.json remains an approved evidence record and synthesis has no authority to mutate it. Its phrase 'independently sampled' remains until a superseding prompt record is created by the responsible protocol/evaluation role.",
+      "acceptance_impact": "requires_superseding_prompt_before_model_runs"
+    },
+    {
+      "challenge_id": "CH-CSMQG-008",
+      "severity": "high",
+      "status": "corrected",
+      "response": "Every carried-forward local pattern is now labeled a requirement derived from inspected source unless backed by live proof. Verdict schema, current grounding, postmortem witness, live transport/resume, sandbox, plugin/model identity, and five-case eval blockers are explicit.",
+      "changed_records": ["synthesis_findings.v1.json:F-CSMQG-005","synthesis_recommendations.v1.json:REC-CSMQG-003","../report/sota_research_report.v1.html","../design/codex_same_model_qa_reference_architecture.v1.html"],
+      "residual_or_reason": "The required live proving records do not exist; repository adoption remains blocked until they do.",
+      "acceptance_impact": "repository_adoption_blocked"
+    },
+    {
+      "challenge_id": "CH-CSMQG-009",
+      "severity": "high",
+      "status": "corrected",
+      "response": "The missing deterministic-only, deterministic-plus-human, shadow-mode, and current-process baselines are explicit. F-CSMQG-012, REC-CSMQG-011, and PT-CSMQG-017 add comparison/justification, human workload, capacity, timeout, consistency, and decision-quality prerequisites.",
+      "changed_records": ["synthesis_findings.v1.json:F-CSMQG-012","synthesis_recommendations.v1.json:REC-CSMQG-011,PT-CSMQG-017","synthesis_finding_evidence_map.v1.json","../report/sota_research_report.v1.html","../design/codex_same_model_qa_reference_architecture.v1.html"],
+      "residual_or_reason": "No baseline or human-feasibility run exists. Operational recommendation remains blocked despite corrected specification.",
+      "acceptance_impact": "operational_recommendation_blocked"
+    },
+    {
+      "challenge_id": "CH-CSMQG-010",
+      "severity": "high",
+      "status": "unresolved",
+      "response": "The PT-CSMQG entries are relabeled proposed test concepts, never completed proofs. F-CSMQG-013, REC-CSMQG-012, and PT-CSMQG-018 require owner, fixtures, procedure, outputs, schemas, dependencies, ordering, retained evidence, and blocking effect for each test.",
+      "changed_records": ["synthesis_findings.v1.json:F-CSMQG-013","synthesis_recommendations.v1.json:REC-CSMQG-012,proving_test_maturity,PT-CSMQG-018","synthesis_finding_evidence_map.v1.json","../report/sota_research_report.v1.html","../design/codex_same_model_qa_reference_architecture.v1.html"],
+      "residual_or_reason": "Creating executable specifications depends on future implementation, runtime integration, assigned owners, and human procedures outside synthesis authority.",
+      "acceptance_impact": "blocks_control_acceptance_and_adoption"
+    },
+    {
+      "challenge_id": "CH-CSMQG-011",
+      "severity": "medium",
+      "status": "corrected",
+      "response": "All appraisal summaries now state that 3 high/15 moderate/1 low applies only to the 19 included sources. The appraisals audit additionally preserves six excluded access-screen assessments, yielding separate all-assessment totals of 3/20/2.",
+      "changed_records": ["synthesis_findings.v1.json:F-CSMQG-008","../report/sota_research_report.v1.html"],
+      "residual_or_reason": "No evidence-status change; excluded access assessments remain audit trace only and are not synthesized evidence.",
+      "acceptance_impact": "traceability_corrected"
+    },
+    {
+      "challenge_id": "CH-CSMQG-012",
+      "severity": "medium",
+      "status": "corrected",
+      "response": "The candidate manifest now declares that its component hashes cover only synthesis outputs, not the full supporting evidence package. Both HTMLs require the later verifier to enumerate, hash, and report every cited supporting record.",
+      "changed_records": ["synthesis_candidate_manifest.v1.json","../report/sota_research_report.v1.html","../design/codex_same_model_qa_reference_architecture.v1.html"],
+      "residual_or_reason": "Full-package evidence hashing and drift verification remain the verifier's responsibility and have not been completed.",
+      "acceptance_impact": "final_verification_required"
+    }
+  ],
+  "unresolved_acceptance_blockers": [
+    "CH-CSMQG-003: independent corpus-label/oracle QA record absent",
+    "CH-CSMQG-005: telemetry feasibility proof or approved revised protocol absent",
+    "CH-CSMQG-007: frozen V3 prompt still uses unqualified independently-sampled wording",
+    "CH-CSMQG-010: proving-test concepts lack executable/auditable specifications",
+    "Zero comparative operations and no effectiveness metrics",
+    "Document semantic and security/higher-risk adoption evidence absent",
+    "Deterministic-plus-human/shadow baselines and human feasibility unmeasured",
+    "Full supporting-evidence hash verification not completed",
+    "Human acceptance and implementation authority absent"
+  ]
+}

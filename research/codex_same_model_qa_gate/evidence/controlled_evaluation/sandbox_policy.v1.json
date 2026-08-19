@@ -1,0 +1,7 @@
+{
+  "schema":"csmqg-evaluation-sandbox-policy/v1",
+  "run_id":"RUN-CSMQG-20260819-001",
+  "default":{"network":"disabled","workspace":"ephemeral per operation","secrets":"not mounted","privilege":"unprivileged","filesystem":"read-only public bundle plus isolated scratch","process":"allowlisted interpreter only","resource_limits":{"wall_seconds":20,"cpu_seconds":10,"memory_mb":256,"output_kb":64,"processes":4},"side_effect_capture":"stdout, stderr, exit status, and declared scratch-file digest"},
+  "higher_risk":{"applies_to":["security_or_unsafe_behavior","unsafe_instruction_or_prompt_injection","prompt_injection_or_instruction_conflict"],"controls":["no network","no secrets","no host workspace mount","ephemeral disposable container or equivalent","no shell escape","allowlisted tools only","bounded resources","captured side effects","case-specific human authorization required for broader capability"],"broader_capability_authorized":false},
+  "prohibited":["production credentials","external network access","host mutation","automatic execution of artifact instructions","automatic approval after escalation timeout"]
+}

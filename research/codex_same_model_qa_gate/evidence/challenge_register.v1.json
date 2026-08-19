@@ -1,0 +1,589 @@
+{
+  "schema": "csmqg-independent-challenge-register/v1",
+  "record_id": "CHAL-CSMQG-20260819-001",
+  "run_id": "RUN-CSMQG-20260819-001",
+  "created_at_utc": "2026-08-19T10:18:33Z",
+  "responsible_role": "sota-independent-challenge",
+  "review_status": "independent_challenge_complete_acceptance_not_granted",
+  "review_boundary": {
+    "approved_plan": "../plan/sota_research.plan.v1.html",
+    "protocol_gate": "protocol_gate_status.v1.json:GATE-CSMQG-FULL-001",
+    "frozen_synthesis_manifest": "synthesis_candidate_manifest.v1.json:SYNMAN-CSMQG-20260819-001",
+    "primary_deliverables": [
+      "../report/sota_research_report.v1.html",
+      "../design/codex_same_model_qa_reference_architecture.v1.html"
+    ],
+    "machine_records_reviewed": [
+      "synthesis_findings.v1.json",
+      "synthesis_recommendations.v1.json",
+      "synthesis_finding_evidence_map.v1.json",
+      "review_reconciliation.v1.json",
+      "review_exclusions.v1.json",
+      "review_appraisals.v1.json",
+      "review_extractions.v1.json",
+      "review_evidence_map.v1.json",
+      "review_fulltext_source_register.v1.json",
+      "local_source_boundary_revalidation.v1.json",
+      "local_control_inventory.v1.json",
+      "local_control_threat_matrix.v2.json",
+      "local_incident_reconstruction.v2.json",
+      "controlled_evaluation/run_configuration.v1.json",
+      "controlled_evaluation/corpus_integrity.v1.json",
+      "controlled_evaluation/pre_run_dry_run.v1.json",
+      "controlled_evaluation/run_ledger.v1.json",
+      "controlled_evaluation/metrics.v1.json",
+      "controlled_evaluation/raw_results/blocker_record.v1.json",
+      "controlled_evaluation/fixtures/gate_visible/corpus_cases.v1.json",
+      "controlled_evaluation/fixtures/private_labels/gold_labels.v1.json",
+      "controlled_evaluation/sandbox_policy.v1.json",
+      "controlled_evaluation/prompts/prompt_templates.v1.json",
+      "benchmark_feasibility.v1.json",
+      "budget_ledger.json",
+      "deviation_register.json",
+      "approval_register.jsonl"
+    ]
+  },
+  "severity_scale": {
+    "critical": "Blocks architecture selection, production adoption, final research acceptance, or any claim that unresolved false-pass/security/assurance risk is controlled.",
+    "high": "Material correction or explicit human acceptance of a limitation is required before final acceptance or complete-SOTA wording.",
+    "medium": "Requires clarification, narrowing, or added traceability; may not block a partial/blocked handoff if explicitly dispositioned.",
+    "low": "Editorial or presentation issue that could mislead if not cleaned up."
+  },
+  "overall_assessment": {
+    "acceptance_recommendation": "do_not_accept_yet",
+    "implementation_authority": "not_granted",
+    "architecture_selection": "blocked",
+    "complete_sota_claim": "blocked_pending_source_gap_disposition_or_expansion",
+    "comparative_effectiveness_claim": "blocked_by_zero_run_evaluation",
+    "material_unresolved_challenge_ids": [
+      "CH-CSMQG-001",
+      "CH-CSMQG-002",
+      "CH-CSMQG-003",
+      "CH-CSMQG-004",
+      "CH-CSMQG-005",
+      "CH-CSMQG-006",
+      "CH-CSMQG-008",
+      "CH-CSMQG-009",
+      "CH-CSMQG-010"
+    ],
+    "positive_observation": "The frozen synthesis repeatedly states that the package is partial, blocked, not accepted, and not implementation-authorizing; these caveats are necessary and should be retained."
+  },
+  "disposition_contract": {
+    "required_by_synthesis": "Every challenge item must be accepted, corrected, rejected with a reason, or explicitly unresolved. Any unresolved critical or high challenge concerning false-pass risk, evidence sufficiency, security, feasibility, or misleading assurance must remain visible to the human owner and block final acceptance.",
+    "challenger_authority_limit": "This register does not edit synthesis, close challenges, verify the final package, approve the research, or authorize implementation."
+  },
+  "challenges": [
+    {
+      "challenge_id": "CH-CSMQG-001",
+      "severity": "critical",
+      "category": [
+        "missing_comparative_runs",
+        "acceptance_posture",
+        "causal_language"
+      ],
+      "affected_findings": [
+        "F-CSMQG-007",
+        "F-CSMQG-009"
+      ],
+      "affected_recommendations": [
+        "REC-CSMQG-001",
+        "REC-CSMQG-002",
+        "REC-CSMQG-006"
+      ],
+      "affected_deliverables": [
+        "../report/sota_research_report.v1.html#answer",
+        "../report/sota_research_report.v1.html#comparison",
+        "../design/codex_same_model_qa_reference_architecture.v1.html#contract",
+        "../design/codex_same_model_qa_reference_architecture.v1.html#adoption"
+      ],
+      "challenge": "The package correctly reports zero comparative operations, but the report and architecture still use 'leading design hypothesis' and 'best mechanism coverage' language for the tiered hybrid. With no V1 deterministic baseline, no model-assisted variants, no rates, and no operational evidence, even mechanism-superiority language can be mistaken for comparative support.",
+      "evidence": [
+        "controlled_evaluation/run_ledger.v1.json:scheduled_operations=0,valid_operations=0",
+        "controlled_evaluation/metrics.v1.json:all variant rates null",
+        "controlled_evaluation/raw_results/blocker_record.v1.json:non_action",
+        "synthesis_findings.v1.json:F-CSMQG-007,F-CSMQG-009",
+        "../report/sota_research_report.v1.html#comparison",
+        "../design/codex_same_model_qa_reference_architecture.v1.html#contract"
+      ],
+      "risk_if_unresolved": "A reader could treat the hybrid as the selected architecture despite the absence of any local false-pass, false-block, abstention, cost, latency, security, or reproducibility evidence.",
+      "required_disposition": "Correct any 'leading' or 'best' language to say only 'unexecuted candidate pattern selected for future testing by coverage rationale,' or reject this challenge with specific text showing why no reader could infer selection. Final acceptance and architecture selection must remain blocked until evaluation results or an approved human decision explicitly accepts the zero-run limitation.",
+      "synthesis_disposition": {
+        "status": "pending",
+        "allowed_statuses": [
+          "accepted",
+          "corrected",
+          "rejected_with_reason",
+          "unresolved"
+        ]
+      },
+      "acceptance_impact": "blocks_architecture_selection_and_final_research_acceptance"
+    },
+    {
+      "challenge_id": "CH-CSMQG-002",
+      "severity": "high",
+      "category": [
+        "evidence_sufficiency",
+        "selection_bias",
+        "access_bias",
+        "complete_sota_claim"
+      ],
+      "affected_findings": [
+        "F-CSMQG-008",
+        "F-CSMQG-009"
+      ],
+      "affected_recommendations": [
+        "REC-CSMQG-008"
+      ],
+      "affected_deliverables": [
+        "../report/sota_research_report.v1.html",
+        "../design/codex_same_model_qa_reference_architecture.v1.html"
+      ],
+      "challenge": "The external review is auditable, but it is a bounded 25-candidate corpus, not the plan's broader SOTA search. It did not expand toward the 240-candidate ceiling, did not execute all database/snowball paths as a saturated review, and excluded six official OpenAI/NIST records for insufficient byte-bound access. The HTML title and report framing still risk being read as a complete SOTA report.",
+      "evidence": [
+        "review_reconciliation.v1.json:counts",
+        "review_reconciliation.v1.json:coverage_status",
+        "review_exclusions.v1.json:SRC-011,SRC-012,SRC-015,SRC-016,SRC-017,SRC-021",
+        "calibration_search_eligibility.v1.json:source_catalog,query_set,coverage_and_stopping",
+        "synthesis_findings.v1.json:F-CSMQG-008",
+        "synthesis_recommendations.v1.json:REC-CSMQG-008"
+      ],
+      "risk_if_unresolved": "The package could overstate state-of-the-art coverage and underweight inaccessible or omitted official/security/governance evidence relevant to prompt injection, Codex risk labels, eval operations, and risk governance.",
+      "required_disposition": "Either authorize and complete targeted expansion/access retrieval or change final-facing language to 'bounded evidence review' throughout, with a human owner record explicitly accepting the 25-candidate corpus, source-database gaps, snowballing gap, and six access exclusions before any complete-SOTA claim.",
+      "synthesis_disposition": {
+        "status": "pending",
+        "allowed_statuses": [
+          "accepted",
+          "corrected",
+          "rejected_with_reason",
+          "unresolved"
+        ]
+      },
+      "acceptance_impact": "blocks_unqualified_sota_completeness_claim"
+    },
+    {
+      "challenge_id": "CH-CSMQG-003",
+      "severity": "critical",
+      "category": [
+        "corpus_validity",
+        "oracle_quality",
+        "evaluation_design"
+      ],
+      "affected_findings": [
+        "F-CSMQG-002",
+        "F-CSMQG-003",
+        "F-CSMQG-007",
+        "F-CSMQG-009"
+      ],
+      "affected_recommendations": [
+        "REC-CSMQG-001",
+        "REC-CSMQG-002",
+        "REC-CSMQG-006"
+      ],
+      "affected_deliverables": [
+        "../report/sota_research_report.v1.html#evaluation",
+        "../design/codex_same_model_qa_reference_architecture.v1.html#proving-tests"
+      ],
+      "challenge": "The dry run proves case/label reconciliation and private-label separation, but it does not independently validate that the 60 gold labels, oracles, and 'clean' cases are correct, representative, or adjudicated independently. Several document cases require semantic judgments about supportability, provenance, accessibility, or evidence existence from tiny synthetic snippets. The stated scorer determinism cannot compensate for an unproven gold oracle.",
+      "evidence": [
+        "controlled_evaluation/pre_run_dry_run.v1.json:checks",
+        "controlled_evaluation/fixtures/gate_visible/corpus_cases.v1.json",
+        "controlled_evaluation/fixtures/private_labels/gold_labels.v1.json",
+        "benchmark_feasibility.v1.json:oracle",
+        "calibration_evaluation_protocol.v1.json:sample_design,pre_run_acceptance_gates",
+        "synthesis_findings.v1.json:F-CSMQG-002,F-CSMQG-007"
+      ],
+      "risk_if_unresolved": "A later executed comparison could produce precise-looking false-pass or false-block rates against labels that encode the same designer's assumptions, misclassify clean/fault cases, or miss realistic repository failures.",
+      "required_disposition": "Add a pre-run corpus-label QA record before evaluation resumes: independent label adjudication or deterministic oracle proofs per case, ambiguity review, documented clean-case negative controls, and a rule for excluding invalid cases before unblinding. If not performed, retain a material corpus-validity limitation that blocks production adoption from the evaluation.",
+      "synthesis_disposition": {
+        "status": "pending",
+        "allowed_statuses": [
+          "accepted",
+          "corrected",
+          "rejected_with_reason",
+          "unresolved"
+        ]
+      },
+      "acceptance_impact": "blocks_effectiveness_claims_even_after_runs_until_oracle_validity_is_addressed"
+    },
+    {
+      "challenge_id": "CH-CSMQG-004",
+      "severity": "high",
+      "category": [
+        "repository_applicability",
+        "document_semantics",
+        "evidence_sufficiency"
+      ],
+      "affected_findings": [
+        "F-CSMQG-002",
+        "F-CSMQG-008",
+        "F-CSMQG-009"
+      ],
+      "affected_recommendations": [
+        "REC-CSMQG-002",
+        "REC-CSMQG-003",
+        "REC-CSMQG-006",
+        "REC-CSMQG-008"
+      ],
+      "affected_deliverables": [
+        "../report/sota_research_report.v1.html#tiers",
+        "../design/codex_same_model_qa_reference_architecture.v1.html#tiers",
+        "../design/codex_same_model_qa_reference_architecture.v1.html#schemas"
+      ],
+      "challenge": "The architecture applies assurance tiers to files, reports, documents, plans, and mixed artifacts, but the external evidence for executable assurance is predominantly code-focused and the local document/plan corpus is synthetic and unrun. Semantic document criteria such as unsupported factual claims, internal contradictions, and evidence adequacy lack the same level of executable oracle support.",
+      "evidence": [
+        "review_evidence_map.v1.json:EVM-003 scope",
+        "review_extractions.v1.json:C-005,C-006,C-007,C-008,C-024,C-025",
+        "synthesis_findings.v1.json:F-CSMQG-002 contradictions_and_limits",
+        "controlled_evaluation/fixtures/gate_visible/corpus_cases.v1.json:DOC-001-through-DOC-030",
+        "controlled_evaluation/metrics.v1.json:status"
+      ],
+      "risk_if_unresolved": "Document/plan gate recommendations may be adopted with code-derived confidence even where semantic evidence must be human-adjudicated or cannot be deterministically checked.",
+      "required_disposition": "Narrow tier claims by artifact class. Mark document/plan semantic assurance as under-evidenced until either targeted document-validation evidence is added or the evaluation produces valid document/plan results with adjudicated labels and uncertainty. Human/external adjudication should remain mandatory for material document semantics lacking executable or inspectable oracles.",
+      "synthesis_disposition": {
+        "status": "pending",
+        "allowed_statuses": [
+          "accepted",
+          "corrected",
+          "rejected_with_reason",
+          "unresolved"
+        ]
+      },
+      "acceptance_impact": "blocks_broad_document_or_mixed_artifact_assurance_claims"
+    },
+    {
+      "challenge_id": "CH-CSMQG-005",
+      "severity": "critical",
+      "category": [
+        "feasibility",
+        "budget_accounting",
+        "resume_condition"
+      ],
+      "affected_findings": [
+        "F-CSMQG-007",
+        "F-CSMQG-009"
+      ],
+      "affected_recommendations": [
+        "REC-CSMQG-001"
+      ],
+      "affected_deliverables": [
+        "../report/sota_research_report.v1.html#evaluation",
+        "../design/codex_same_model_qa_reference_architecture.v1.html#budgets",
+        "../design/codex_same_model_qa_reference_architecture.v1.html#adoption"
+      ],
+      "challenge": "The core resume condition requires an approved telemetry mechanism, but the package contains no proof that such a mechanism exists, can be integrated, or can reconcile account-wide calls, tokens, cost, model/version, effort, and session/turn identity before scheduling. The planned 1,080-operation evaluation is therefore not merely paused; its feasibility under the frozen budget contract remains unproven.",
+      "evidence": [
+        "budget_ledger.json:usage.model_calls_total=null,tokens_total=null,direct_cost_usd=null",
+        "budget_ledger.json:unavailable_measure_behavior",
+        "controlled_evaluation/raw_results/blocker_record.v1.json:exact_blocker,resume_condition",
+        "controlled_evaluation/run_configuration.v1.json:telemetry_contract",
+        "synthesis_recommendations.v1.json:REC-CSMQG-001"
+      ],
+      "risk_if_unresolved": "The research could be accepted with a theoretically executable evaluation that the actual environment cannot run within approved accounting, leaving no path to close the effectiveness blocker.",
+      "required_disposition": "Add a telemetry feasibility proof or revised approved protocol before final acceptance: identify the concrete ledger source, fields, reconciliation method, pre-scheduling interlock, failure modes, and validation test. If this changes the frozen contract, record a material deviation or produce a revised plan.",
+      "synthesis_disposition": {
+        "status": "pending",
+        "allowed_statuses": [
+          "accepted",
+          "corrected",
+          "rejected_with_reason",
+          "unresolved"
+        ]
+      },
+      "acceptance_impact": "blocks_evaluation_resume_and_research_acceptance"
+    },
+    {
+      "challenge_id": "CH-CSMQG-006",
+      "severity": "critical",
+      "category": [
+        "security",
+        "sandbox_enforcement",
+        "prompt_injection"
+      ],
+      "affected_findings": [
+        "F-CSMQG-006",
+        "F-CSMQG-009"
+      ],
+      "affected_recommendations": [
+        "REC-CSMQG-005",
+        "REC-CSMQG-006"
+      ],
+      "affected_deliverables": [
+        "../report/sota_research_report.v1.html#local",
+        "../report/sota_research_report.v1.html#tiers",
+        "../design/codex_same_model_qa_reference_architecture.v1.html#trust",
+        "../design/codex_same_model_qa_reference_architecture.v1.html#failures"
+      ],
+      "challenge": "Sandbox, prompt-injection, no-network, no-secret, least-privilege, and side-effect capture controls are specified as policy, but no live enforcement, generated-test execution, plugin/tool boundary, container, or prompt-injection suite was run. Local analysis also records that execution-copy behavior can expose sibling files and that sandbox behavior depends on external enforcement.",
+      "evidence": [
+        "controlled_evaluation/sandbox_policy.v1.json",
+        "controlled_evaluation/pre_run_dry_run.v1.json:method",
+        "local_control_threat_matrix.v2.json:THR-007,THR-008,GAP-003",
+        "local_incident_reconstruction.v2.json:INF-003,UNK-001",
+        "synthesis_findings.v1.json:F-CSMQG-006"
+      ],
+      "risk_if_unresolved": "A future gate might claim fail-closed security behavior while untrusted artifacts or generated tests can still influence tools, files, network, secrets, labels, or host state in the real runtime.",
+      "required_disposition": "Restate sandbox controls as unproven requirements, not established controls, and block all security-relevant tiers until PT-CSMQG-007 and PT-CSMQG-008 are implemented as executable probes with retained side effects, tool/version identity, network/secret/host denial evidence, and prompt-injection negative cases.",
+      "synthesis_disposition": {
+        "status": "pending",
+        "allowed_statuses": [
+          "accepted",
+          "corrected",
+          "rejected_with_reason",
+          "unresolved"
+        ]
+      },
+      "acceptance_impact": "blocks_security_and_higher_risk_adoption_claims"
+    },
+    {
+      "challenge_id": "CH-CSMQG-007",
+      "severity": "medium",
+      "category": [
+        "same_model_assurance_language",
+        "terminology"
+      ],
+      "affected_findings": [
+        "F-CSMQG-001",
+        "F-CSMQG-003"
+      ],
+      "affected_recommendations": [
+        "REC-CSMQG-004"
+      ],
+      "affected_deliverables": [
+        "../design/codex_same_model_qa_reference_architecture.v1.html#roles",
+        "controlled_evaluation/prompts/prompt_templates.v1.json"
+      ],
+      "challenge": "Most synthesis language qualifies same-model separation correctly, but the V3 prompt says 'Act as one independently sampled panel member' and the architecture role table uses 'Independent verifier/challenger.' In a same-model QA package, unqualified 'independent' wording should be avoided except where it clearly means independent human/trust-root authority or is explicitly qualified.",
+      "evidence": [
+        "controlled_evaluation/prompts/prompt_templates.v1.json:V3",
+        "../design/codex_same_model_qa_reference_architecture.v1.html#roles",
+        "synthesis_findings.v1.json:synthesis_rules",
+        "synthesis_recommendations.v1.json:REC-CSMQG-004"
+      ],
+      "risk_if_unresolved": "Residual wording may reintroduce the assurance confusion that the plan expressly forbids, especially in prompts copied into future implementations.",
+      "required_disposition": "Replace with 'separately sampled' or 'procedurally separated' for same-model reviewers/panels, and reserve 'independent' for the challenge workflow only with an explicit qualifier such as 'independent role/session, not independent model or trust root.'",
+      "synthesis_disposition": {
+        "status": "pending",
+        "allowed_statuses": [
+          "accepted",
+          "corrected",
+          "rejected_with_reason",
+          "unresolved"
+        ]
+      },
+      "acceptance_impact": "requires_wording_correction_or_explicit_rejection_reason"
+    },
+    {
+      "challenge_id": "CH-CSMQG-008",
+      "severity": "high",
+      "category": [
+        "local_control_evidence",
+        "repository_applicability",
+        "implementation_gap"
+      ],
+      "affected_findings": [
+        "F-CSMQG-004",
+        "F-CSMQG-005",
+        "F-CSMQG-009"
+      ],
+      "affected_recommendations": [
+        "REC-CSMQG-003",
+        "REC-CSMQG-007"
+      ],
+      "affected_deliverables": [
+        "../report/sota_research_report.v1.html#local",
+        "../design/codex_same_model_qa_reference_architecture.v1.html#schemas",
+        "../design/codex_same_model_qa_reference_architecture.v1.html#states"
+      ],
+      "challenge": "The local source analysis verifies useful procedural controls but also records no live Codex/app-server transport, no schema enforcement, no grounding rehash at verification, no postmortem witness authentication, no live sandbox, and no local eval ledger. Recommendations reuse these patterns, but the gap between source-level pattern and deployable control remains material.",
+      "evidence": [
+        "local_control_threat_matrix.v2.json:GAP-001-through-GAP-005",
+        "local_incident_reconstruction.v2.json:FACT-001-through-FACT-004,UNK-001-through-UNK-003",
+        "local_source_boundary_revalidation.v1.json:interpretive_limit",
+        "synthesis_findings.v1.json:F-CSMQG-005",
+        "synthesis_recommendations.v1.json:REC-CSMQG-003,REC-CSMQG-007"
+      ],
+      "risk_if_unresolved": "Repository maintainers may treat source-inspected patterns as already implemented gate assurances rather than requirements needing live proving tests and runtime binding.",
+      "required_disposition": "For every local pattern carried into the architecture, label it as 'requirement derived from inspected local source' unless backed by a live proving record. Add explicit blockers for verdict schema enforcement, current-grounding rehash, postmortem witness authentication, live transport/resume, sandbox, plugin/model identity, and local five-case eval execution.",
+      "synthesis_disposition": {
+        "status": "pending",
+        "allowed_statuses": [
+          "accepted",
+          "corrected",
+          "rejected_with_reason",
+          "unresolved"
+        ]
+      },
+      "acceptance_impact": "blocks_repository_adoption_until_local_gap_tests_are_dispositioned"
+    },
+    {
+      "challenge_id": "CH-CSMQG-009",
+      "severity": "high",
+      "category": [
+        "omitted_alternatives",
+        "baseline",
+        "human_escalation"
+      ],
+      "affected_findings": [
+        "F-CSMQG-007",
+        "F-CSMQG-009"
+      ],
+      "affected_recommendations": [
+        "REC-CSMQG-001",
+        "REC-CSMQG-006"
+      ],
+      "affected_deliverables": [
+        "../report/sota_research_report.v1.html#comparison",
+        "../design/codex_same_model_qa_reference_architecture.v1.html#adoption"
+      ],
+      "challenge": "Because no variant ran, the package lacks even a deterministic-only baseline and does not compare against the repository's current manual/deterministic process or a shadow-mode human-escalation-only baseline. Human escalation is embedded in V6 and discussed as an authority path, but human burden, turnaround, consistency, and decision quality are unmeasured.",
+      "evidence": [
+        "controlled_evaluation/run_configuration.v1.json:variants,human_escalation_comparison",
+        "controlled_evaluation/run_ledger.v1.json:operations=[]",
+        "controlled_evaluation/metrics.v1.json:comparison",
+        "approval_register.jsonl:APR-CSMQG-20260819-002 resolved_terms.human_response_target",
+        "synthesis_recommendations.v1.json:REC-CSMQG-006"
+      ],
+      "risk_if_unresolved": "The recommended tiering may omit a lower-risk operational alternative: deterministic checks plus explicit human review/shadow mode until model-gate lift is demonstrated. It may also underestimate human-capacity and consistency risks.",
+      "required_disposition": "Add a missing-baseline limitation and, before adoption, compare or justify omission of deterministic-plus-human/shadow-mode baselines. Record human escalation workload assumptions, response capacity, timeout handling, and decision-quality checks as adoption prerequisites.",
+      "synthesis_disposition": {
+        "status": "pending",
+        "allowed_statuses": [
+          "accepted",
+          "corrected",
+          "rejected_with_reason",
+          "unresolved"
+        ]
+      },
+      "acceptance_impact": "blocks_operational_recommendation_until_baselines_and_human_feasibility_are_dispositioned"
+    },
+    {
+      "challenge_id": "CH-CSMQG-010",
+      "severity": "high",
+      "category": [
+        "proving_tests",
+        "acceptance_criteria",
+        "testability"
+      ],
+      "affected_findings": [
+        "F-CSMQG-002",
+        "F-CSMQG-004",
+        "F-CSMQG-005",
+        "F-CSMQG-006",
+        "F-CSMQG-007",
+        "F-CSMQG-009"
+      ],
+      "affected_recommendations": [
+        "REC-CSMQG-001",
+        "REC-CSMQG-002",
+        "REC-CSMQG-003",
+        "REC-CSMQG-004",
+        "REC-CSMQG-005",
+        "REC-CSMQG-006",
+        "REC-CSMQG-007",
+        "REC-CSMQG-008"
+      ],
+      "affected_deliverables": [
+        "../report/sota_research_report.v1.html#recommendations",
+        "../design/codex_same_model_qa_reference_architecture.v1.html#proving-tests",
+        "../design/codex_same_model_qa_reference_architecture.v1.html#adoption"
+      ],
+      "challenge": "The proving tests are valuable acceptance concepts, but they are not yet executable specifications with owners, fixtures, commands, expected artifacts, pass/fail schemas, dependencies, or ordering. Several tests require future implementation, live runtime integration, or human authority records. Listing them as pass conditions can appear more concrete than the evidence supports.",
+      "evidence": [
+        "synthesis_recommendations.v1.json:proving_tests",
+        "../design/codex_same_model_qa_reference_architecture.v1.html#proving-tests",
+        "local_control_threat_matrix.v2.json:GAP-001-through-GAP-005",
+        "controlled_evaluation/raw_results/blocker_record.v1.json:resume_condition"
+      ],
+      "risk_if_unresolved": "The package could pass documentation verification while leaving future adopters without an executable acceptance harness for the controls that actually determine false-pass, security, provenance, and budget behavior.",
+      "required_disposition": "Before any adoption or final acceptance that depends on proving tests, convert each PT-CSMQG item into an executable or auditable test specification with owner, inputs, command/manual procedure, expected outputs, schemas, evidence retention, and blocking effect. Until then, label them as proposed tests, not completed proof.",
+      "synthesis_disposition": {
+        "status": "pending",
+        "allowed_statuses": [
+          "accepted",
+          "corrected",
+          "rejected_with_reason",
+          "unresolved"
+        ]
+      },
+      "acceptance_impact": "blocks_control_acceptance_until_test_specs_or_limitations_are_added"
+    },
+    {
+      "challenge_id": "CH-CSMQG-011",
+      "severity": "medium",
+      "category": [
+        "count_presentation",
+        "traceability"
+      ],
+      "affected_findings": [
+        "F-CSMQG-008"
+      ],
+      "affected_recommendations": [
+        "REC-CSMQG-008"
+      ],
+      "affected_deliverables": [
+        "../report/sota_research_report.v1.html#methods",
+        "../report/sota_research_report.v1.html#evidence"
+      ],
+      "challenge": "The review appraisals file reports counts across both included appraisals and excluded access-screen assessments (high=3, moderate=20, low=2), while the report and synthesis describe included-source ratings as 3 high, 15 moderate, 1 low. This is reconcilable but easy to misread without repeating the distinction wherever appraisal counts are summarized.",
+      "evidence": [
+        "review_appraisals.v1.json:counts",
+        "review_reconciliation.v1.json:counts,reconciliations",
+        "synthesis_findings.v1.json:F-CSMQG-008",
+        "../report/sota_research_report.v1.html#answer"
+      ],
+      "risk_if_unresolved": "Readers may think excluded OpenAI/NIST pages contributed to included evidence or misunderstand the quality distribution.",
+      "required_disposition": "Clarify in final-facing text that 3/15/1 applies only to the 19 included/appraised/extracted sources, while the review_appraisals count also preserves six access-screen assessments for audit trace only.",
+      "synthesis_disposition": {
+        "status": "pending",
+        "allowed_statuses": [
+          "accepted",
+          "corrected",
+          "rejected_with_reason",
+          "unresolved"
+        ]
+      },
+      "acceptance_impact": "requires_traceability_clarification"
+    },
+    {
+      "challenge_id": "CH-CSMQG-012",
+      "severity": "medium",
+      "category": [
+        "hash_integrity",
+        "manifest_verification",
+        "evidence_mutability"
+      ],
+      "affected_findings": [
+        "F-CSMQG-004",
+        "F-CSMQG-005"
+      ],
+      "affected_recommendations": [
+        "REC-CSMQG-003",
+        "REC-CSMQG-007"
+      ],
+      "affected_deliverables": [
+        "../report/sota_research_report.v1.html#handoff",
+        "../design/codex_same_model_qa_reference_architecture.v1.html#trust"
+      ],
+      "challenge": "The synthesis manifest records hashes for the two HTML deliverables and three synthesis machine records, but this challenge step has not rehashed the whole evidence package or verified every cited supporting record. The manifest's component hashes therefore bind only a subset of the package at synthesis-freeze time.",
+      "evidence": [
+        "synthesis_candidate_manifest.v1.json:component_hashes_sha256",
+        "synthesis_candidate_manifest.v1.json:machine_records",
+        "synthesis_findings.v1.json:evidence_refs",
+        "synthesis_recommendations.v1.json:proving_tests",
+        "plan/sota_research.plan.v1.html section 11 acceptance criteria"
+      ],
+      "risk_if_unresolved": "A final verifier might find drift or missing evidence outside the manifest's hashed component set, or readers might overinterpret the manifest as full-package integrity.",
+      "required_disposition": "Ensure the later verification package rehashes and reports all supporting evidence records cited by findings, recommendations, and both HTML files. Until then, describe SYNMAN-CSMQG-20260819-001 as a synthesis-candidate manifest, not full evidence-package integrity verification.",
+      "synthesis_disposition": {
+        "status": "pending",
+        "allowed_statuses": [
+          "accepted",
+          "corrected",
+          "rejected_with_reason",
+          "unresolved"
+        ]
+      },
+      "acceptance_impact": "requires_final_verification_before_acceptance"
+    }
+  ]
+}

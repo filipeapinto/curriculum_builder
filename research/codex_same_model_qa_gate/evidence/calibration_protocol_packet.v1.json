@@ -1,0 +1,53 @@
+{
+  "schema_name": "codex_same_model_qa_gate.calibration_protocol_packet",
+  "schema_version": "1.0.0",
+  "packet_id": "CAL-PACKET-v1",
+  "created_at_utc": "2026-08-19T09:30:04Z",
+  "responsible_role": "$sota-method-lead",
+  "status": "submitted_for_human_full_protocol_approval",
+  "run_id": "RUN-CSMQG-20260819-001",
+  "source_plan": {
+    "path": "../plan/sota_research.plan.v1.html",
+    "sha256": "16ae937c64bb8ce4f673354ec2882d1b422085845b204746408b2c47fce8e862",
+    "approval_record_id": "APR-CSMQG-20260819-001",
+    "approval_scope": "calibration only"
+  },
+  "protocol_freeze": {
+    "state": "proposed_frozen_pending_human_approval",
+    "meaning": "The contents listed as method-lead-owned protocol records are frozen for owner review. They may not be used for full screening or evaluation until a human approval is bound to this manifest and its component hashes.",
+    "material_change_rule": "Any material change after approval requires a recorded deviation and human approval; a change to the plan contract requires a preserved vN+1 plan."
+  },
+  "components": [
+    {"path": "calibration_search_eligibility.v1.json", "sha256": "72cd532264d32f42829ae88fe807d08a94e07b46a00fce651530c25b3336afef", "owner": "$sota-method-lead", "purpose": "frozen proposed sources, full queries, eligibility, screening, coverage, and pilot reconciliation"},
+    {"path": "calibration_appraisal_instruments.v1.json", "sha256": "cf8d52b85e32e27453e4ec0130058cad348d935efccd866e5e6bd6bad89f3cfd", "owner": "$sota-method-lead", "purpose": "empirical, standards/docs, software, and formal appraisal instruments"},
+    {"path": "calibration_extraction_schema.v1.json", "sha256": "f0b383b545db145dcece2a1dbefb62281d8d40eecd6828de9891bc75b66706ff", "owner": "$sota-method-lead", "purpose": "JSON Schema for claim-linked evidence extraction"},
+    {"path": "calibration_evaluation_protocol.v1.json", "sha256": "1a1fccab1958faa619121a35c7124274036527b6cf6ef8049526db420ea3afed", "owner": "$sota-method-lead", "purpose": "sample, variants, experiment, verdicts, outcomes, precision, and pre-run gates"},
+    {"path": "calibration_budget_assignments.v1.json", "sha256": "820b495df7310f2cf0bf9958c31c6e910e61efd36b00148ca262fa4b4f042ff7", "owner": "$sota-method-lead", "purpose": "hard ceilings, warning/stopping behavior, assignments, handoffs, and authority boundaries"},
+    {"path": "calibration_authority_decisions.v1.json", "sha256": "e4000f89176157ec83ec206d40b419f66786780c08a8bb2200395ab3f2b9a9d4", "owner": "$sota-method-lead", "purpose": "resolved calibration authority and open full-protocol decisions"},
+    {"path": "calibration_pilot_search_log.v1.json", "sha256": "37df6eb91afaf5fffae10a141fdac419a617cf8370e00926868e02fdedc84136", "owner": "$sota-evidence-review", "purpose": "20-query pilot counts, mechanism convergence, and budget status"},
+    {"path": "calibration_pilot_source_register.v1.json", "sha256": "85513413b96f4b3fbc11663abdce8c60f5c596ea53d78df3cf7006eb1777e2ad", "owner": "$sota-evidence-review", "purpose": "25 deduplicated unscreened candidate records and duplicate lineage"},
+    {"path": "calibration_terminology_concept_map.v1.json", "sha256": "35c594174988fee4569c725d5c9d66e9447215fea1fbbdd1f0739f401e2e8e0d", "owner": "$sota-evidence-review", "purpose": "MC-01 through MC-08 terminology and mechanism map"},
+    {"path": "benchmark_feasibility.v1.json", "sha256": "54bbe574ff3094e344c4be9438b851e10c0526b1d6c819c7d4555358e74487a1", "owner": "$sota-plan-execute", "purpose": "legally usable code and document/plan benchmark feasibility"},
+    {"path": "local_control_inventory.v1.json", "sha256": "19ea89a1288554d69553a620c3e67c32a278e371d42c0cab2649fb3056e579d6", "owner": "$sota-incident-analyze", "purpose": "versioned local gate inventory"},
+    {"path": "local_control_threat_matrix.v1.json", "sha256": "1fb9f1b775b4e603ac4e6d38b017e5bfa6ad49ded70de13e7e3919eadbcf569c", "owner": "$sota-incident-analyze", "purpose": "local control and threat mapping"},
+    {"path": "local_incident_reconstruction.v1.json", "sha256": "343045f15a33f1518b9b5c2e7ea1784d6c8ccd504a139c832c6d317deca78c6e", "owner": "$sota-incident-analyze", "purpose": "facts, claims, inference, alternatives, and unknowns for the local boundary"},
+    {"path": "approval_register.jsonl", "sha256": "128f74a34388cd61820253a53bb3f5aa296ac1adc475e3408cb97c1b8b30f209", "owner": "$sota-plan-execute", "purpose": "human calibration authorization bound to the plan digest"},
+    {"path": "budget_ledger.json", "sha256": "96ed0f262e49e10166430b985a286c65818fd2e495e97000b243e72b9109ee72", "owner": "$sota-plan-execute", "purpose": "observed calibration budget state"},
+    {"path": "deviation_register.json", "sha256": "ed972aef0796da0cd8a7b195dc6d6b2208fcfecba77da115226feb3501252f4d", "owner": "$sota-method-lead", "purpose": "empty deviation state and plan-status caveat"},
+    {"path": "run_manifest.json", "sha256": "d0ca9dc7ce2f2b8c9303bf75ee198625b7631c5212ca7c38d2b96a7513ebe20c", "owner": "$sota-plan-execute", "purpose": "run, repository, plan, approval, phase, and gate provenance"}
+  ],
+  "calibration_findings": {
+    "local_inventory": "Completed within the named read-only boundary; detailed claims remain in the linked local records.",
+    "pilot": {"exact_queries": 20, "query_batches": 5, "candidate_occurrences": 26, "duplicates": 1, "deduplicated_pilot_relevant": 25, "included": 0, "appraised": 0, "extracted": 0, "all_mechanism_classes_covered": true, "last_two_refinements_added_new_class": false},
+    "benchmark": "At least one feasible, legally usable design exists for each required artifact class, subject to protocol and sandbox approval.",
+    "precision": "The 60-case design is descriptive and suited to finding large differences; it is not powered to rank close variants. Repeats measure stability and do not triple the independent sample size.",
+    "budget": "No ceiling increase is proposed. Full execution retains 240 candidates, 80 full texts, 45 inclusions, 60 cases, six variants, three repeat slots, 1,080 evaluated runs, 1,400 calls, 8M tokens, 40 active hours/14 days, three workers, 40 retries, and USD 200."
+  },
+  "gate_result": {
+    "calibration_packet_complete": true,
+    "full_protocol_approved": false,
+    "full_screening_or_evaluation_allowed": false,
+    "blocking_record": "calibration_authority_decisions.v1.json",
+    "next_authorized_action": "Human owner reviews the packet and records approval, rejection, or revision requested."
+  }
+}

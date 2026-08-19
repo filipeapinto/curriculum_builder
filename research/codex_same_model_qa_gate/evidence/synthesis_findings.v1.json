@@ -1,0 +1,243 @@
+{
+  "schema": "csmqg-synthesis-findings/v1",
+  "record_id": "SYN-CSMQG-20260819-001",
+  "run_id": "RUN-CSMQG-20260819-001",
+  "created_at_utc": "2026-08-19T10:04:35Z",
+  "revised_at_utc": "2026-08-19T10:22:19Z",
+  "responsible_role": "sota-synthesize",
+  "status": "challenge_revised_candidate_partial_blocked_pending_evaluation_verification_and_human_decision",
+  "acceptance": "not_accepted",
+  "evidence_boundary": {
+    "approved_plan": "../plan/sota_research.plan.v1.html",
+    "protocol_gate": "protocol_gate_status.v1.json:GATE-CSMQG-FULL-001",
+    "calibration_packet": "calibration_protocol_packet.v1.json:CAL-PACKET-v1",
+    "external_review": "bounded evidence review: 19 included, appraised, and extracted sources from 25 deduplicated candidates; six access exclusions; database expansion and snowballing were not completed; no claim of full-review saturation",
+    "local_analysis": "local_control_threat_matrix.v2.json and local_incident_reconstruction.v2.json over a revalidated 22-file read-only boundary",
+    "controlled_evaluation": "60-case corpus frozen and pre-run dry run passed; zero comparative operations and zero valid case-level verdicts"
+  },
+  "synthesis_rules": [
+    "Evidence was synthesized within class before cross-class comparison.",
+    "Evidence strength and repository applicability are separate fields.",
+    "Local attributed claims, inferences, competing explanations, and unknowns were not promoted to verified facts.",
+    "Null evaluation metrics are not treated as zero error rates, effectiveness, equivalence, or a winner result.",
+    "Fresh contexts and repeated samples are described only as procedural separation, never as an independent model, organization, incentive, or trust root."
+  ],
+  "findings": [
+    {
+      "finding_id": "F-CSMQG-001",
+      "title": "Same-model review is a bounded signal, not independent assurance",
+      "claim": "Fresh-context or repeated same-model review may expose defects or disagreement, but the available evidence also shows instability, prompt/order sensitivity, reference sensitivity, adversarial susceptibility, and same-family self-preference. It cannot be represented as independent acceptance authority.",
+      "evidence_strength": "moderate_empirical_direction_of_evidence",
+      "repository_applicability": "high_as_a_risk_boundary; local_effect_size_unknown",
+      "evidence_refs": [
+        "review_evidence_map.v1.json:EVM-001",
+        "review_extractions.v1.json:C-003,C-013,C-014,C-018,C-022",
+        "local_incident_reconstruction.v2.json:INF-001,ALT-002,UNK-002"
+      ],
+      "contradictions_and_limits": [
+        "Debiasing and aggregation studies report conditional improvements, but they are not a same-Codex fault-corpus result.",
+        "No comparative operation measured local detection lift, false-pass rate, or false-block rate."
+      ],
+      "assurance_implication": "A model verdict may add evidence, fail, or abstain; it must not waive deterministic failures or be the sole authority for high-consequence residual risk."
+    },
+    {
+      "finding_id": "F-CSMQG-002",
+      "title": "Executable criteria provide observable binding but remain oracle-limited",
+      "claim": "Deterministic validators, executable properties, metamorphic checks, hidden tests, and mutation/fault probes can bind decisions to observable behavior more directly than ungrounded semantic judgment. Their assurance is limited to encoded criteria, oracle quality, meaningful fault coverage, and the execution environment.",
+      "evidence_strength": "high_official_plus_moderate_empirical_conditional_support",
+      "repository_applicability": "high_for_code_and_structural_document_checks; under_evidenced_for_material_document_or_plan_semantics",
+      "evidence_refs": [
+        "review_evidence_map.v1.json:EVM-003",
+        "review_extractions.v1.json:C-005,C-006,C-007,C-008,C-024,C-025",
+        "local_control_threat_matrix.v2.json:CTRL-001,CTRL-002,CTRL-005,CTRL-007,CTRL-009"
+      ],
+      "contradictions_and_limits": [
+        "Visible-test passes can coexist with hidden failures.",
+        "Mutation score can overstate assurance when mutants are irrelevant or equivalent.",
+        "The external empirical evidence is predominantly code-focused; document semantics remain under-evidenced."
+      ],
+      "assurance_implication": "Use deterministic checks as a non-waivable base, while making untested material criteria explicit rather than silently treating them as passed. Material document/plan semantics without an executable or inspectable oracle require human or external adjudication."
+    },
+    {
+      "finding_id": "F-CSMQG-003",
+      "title": "Panels and repeats require local labeled calibration and preserve correlation",
+      "claim": "Repeated or panel judgment can reduce some variance and make disagreement visible, but useful aggregation depends on predeclared rules, nonredundant signals, labeled calibration, and explicit abstention handling. Consensus is not truth and repeat samples are not independent gold cases.",
+      "evidence_strength": "moderate_empirical_conditional_support_with_negative_evidence",
+      "repository_applicability": "medium_design_relevance; effectiveness_and_cost_unknown",
+      "evidence_refs": [
+        "review_evidence_map.v1.json:EVM-001,EVM-002",
+        "review_extractions.v1.json:C-002,C-003,C-013,C-019,C-020,C-023",
+        "calibration_evaluation_protocol.v1.json:analysis,precision_rationale"
+      ],
+      "contradictions_and_limits": [
+        "Some studied improvements use mixed model families and do not establish same-named-model diversity.",
+        "The approved three repeats measure stability and panel behavior; they do not triple the 60-case independent sample."
+      ],
+      "assurance_implication": "Treat disagreement as an escalation signal and require local calibration before panel outputs affect an assurance tier."
+    },
+    {
+      "finding_id": "F-CSMQG-004",
+      "title": "Hashes and attestations bind bytes and provenance claims, not semantic truth",
+      "claim": "Digest chains, lineage, rollout comparison, and verified attestations can detect specified changes or bind a record to a subject and signer. They do not establish artifact correctness, reviewer correctness, organizational independence, or adversary-resistant provenance when one identity may affect all stores.",
+      "evidence_strength": "high_official_control_evidence_plus_verified_local_behavior",
+      "repository_applicability": "high_for_lineage_and_audit; bounded_for_trust",
+      "evidence_refs": [
+        "review_evidence_map.v1.json:EVM-004",
+        "review_extractions.v1.json:C-009,C-010,C-023",
+        "local_control_threat_matrix.v2.json:CTRL-005,CTRL-006,CTRL-007,THR-005,THR-006",
+        "local_incident_reconstruction.v2.json:INF-002,ALT-001,UNK-003"
+      ],
+      "contradictions_and_limits": [
+        "Current grounding is not rehashed at verification time in the inspected local gate.",
+        "Postmortem witness material is recorded but not authenticated by the local verify command."
+      ],
+      "assurance_implication": "Use hashes for change detection and optional external signing/attestation for provenance; never label a hash chain alone cryptographic or independent assurance."
+    },
+    {
+      "finding_id": "F-CSMQG-005",
+      "title": "The local gate is a control inventory, not demonstrated effectiveness",
+      "claim": "The revalidated local boundary contains source-level implementations of twelve observable procedural control patterns and two named deterministic regressions passed. These are requirements derived from inspected local source, not deployable assurances: the boundary has no live Codex, app-server, sandbox, resume-fidelity, verdict-accuracy, or five-case eval ledger, and it contains specific verification gaps.",
+      "evidence_strength": "verified_local_source_and_test_facts",
+      "repository_applicability": "direct",
+      "evidence_refs": [
+        "local_source_boundary_revalidation.v1.json:LSBR-CSMQG-20260819-001",
+        "local_control_threat_matrix.v2.json:CTRL-001-through-CTRL-012,GAP-001-through-GAP-005",
+        "local_incident_reconstruction.v2.json:FACT-001-through-FACT-004"
+      ],
+      "contradictions_and_limits": [
+        "Documentation claims about memory recall, witness authorship, execution lift, and perfect-chain forgery remain attributed claims only.",
+        "Digest continuity proves only that the 22-file source set did not change between inventory and revalidation."
+      ],
+      "assurance_implication": "Carry local patterns forward only as requirements derived from inspected source until verdict-schema enforcement, current-grounding rehash, postmortem witness authentication, live transport/resume, sandbox, plugin/model identity, and local eval execution have live proving records."
+    },
+    {
+      "finding_id": "F-CSMQG-006",
+      "title": "Untrusted artifacts require constrained impact and fail-closed routing",
+      "claim": "Artifacts can contain instructions that target the reviewer, tests, or execution environment. A future gate must treat artifact content as data, constrain execution authority, retain side effects, and route unresolved instruction conflicts to fail or abstain/escalation rather than automatic pass. These are unproven security requirements, not demonstrated deployment controls.",
+      "evidence_strength": "moderate_empirical_adversarial_evidence_plus_local_threat_analysis_and_approved_protocol",
+      "repository_applicability": "high",
+      "evidence_refs": [
+        "review_extractions.v1.json:C-022",
+        "local_control_threat_matrix.v2.json:THR-007,THR-008,GAP-003",
+        "controlled_evaluation/sandbox_policy.v1.json",
+        "controlled_evaluation/prompts/prompt_templates.v1.json"
+      ],
+      "contradictions_and_limits": [
+        "Six official security/governance pages were excluded for insufficient hash-bound access and do not support synthesized claims.",
+        "The approved sandbox policy is a frozen design record, not evidence that a deployment enforces it."
+      ],
+      "assurance_implication": "Security-relevant or higher-risk tiers remain blocked until executable sandbox and prompt-injection probes demonstrate no network, secret, host, label, or unauthorized-tool exposure with retained side effects and version identity."
+    },
+    {
+      "finding_id": "F-CSMQG-007",
+      "title": "Comparative effectiveness is not estimable",
+      "claim": "The 60-case corpus and scorer preflight are frozen and internally reconciled, but the approved telemetry and call-accounting stop prevented every one of the 1,080 planned operations. All variant effectiveness, uncertainty, latency, cost, and ranking fields are therefore unavailable.",
+      "evidence_strength": "verified_execution_record",
+      "repository_applicability": "decisive_blocker",
+      "evidence_refs": [
+        "controlled_evaluation/corpus_integrity.v1.json",
+        "controlled_evaluation/pre_run_dry_run.v1.json",
+        "controlled_evaluation/run_ledger.v1.json",
+        "controlled_evaluation/metrics.v1.json",
+        "controlled_evaluation/raw_results/blocker_record.v1.json:BLK-CSMQG-EVAL-001"
+      ],
+      "contradictions_and_limits": [
+        "Zero operations is not zero false passes, zero false blocks, equality, safety, or effectiveness.",
+        "Deterministic V1 was intentionally not run because comparative scheduling stopped before any operation.",
+        "The feasibility of obtaining the required pre-scheduling account-wide telemetry under the frozen budget contract is unproven.",
+        "The dry run did not independently validate the correctness, representativeness, or adjudication of the 60 case labels and oracles."
+      ],
+      "assurance_implication": "No architecture may be ranked, selected as a winner, or accepted for production from this package."
+    },
+    {
+      "finding_id": "F-CSMQG-008",
+      "title": "The external review is auditable but not fully saturated",
+      "claim": "The approved 25-candidate corpus reconciles to 19 included/appraised/extracted sources and six access exclusions. Among the 19 included sources only, three are high, fifteen moderate, and one low appraisal. The review_appraisals audit counts additionally retain six excluded access-screen assessments, producing the separate all-assessment totals of three high, twenty moderate, and two low. The review did not complete database expansion or snowballing toward the 240-candidate ceiling and does not claim full-review saturation.",
+      "evidence_strength": "verified_review_records",
+      "repository_applicability": "high_for_scope_limit",
+      "evidence_refs": [
+        "review_reconciliation.v1.json",
+        "review_appraisals.v1.json",
+        "review_exclusions.v1.json",
+        "review_fulltext_eligibility_decisions.v1.json"
+      ],
+      "contradictions_and_limits": [
+        "The source set contains strong risk and mechanism evidence but limited Codex-specific and document-semantic evidence.",
+        "Insufficient-access exclusions are reversible and cannot be treated as negative evidence."
+      ],
+      "assurance_implication": "Describe this as a bounded evidence review and either authorize targeted expansion or retain the resulting evidence gap in final acceptance."
+    },
+    {
+      "finding_id": "F-CSMQG-009",
+      "title": "A tiered hybrid is an unexecuted candidate pattern selected for future testing by coverage rationale",
+      "claim": "The synthesis selects a tiered hybrid only as an unexecuted candidate pattern for future testing because, on paper, it represents more of the named control categories: a non-waivable deterministic base, explicit criteria and lineage, bounded same-model review, abstention/disagreement routing, constrained execution, and human authority. This is not comparative support, mechanism superiority, architecture selection, or adoption evidence.",
+      "evidence_strength": "coverage_rationale_only_from_cross_class_synthesis; no_local_comparative_support",
+      "repository_applicability": "reference_test_candidate_only; architecture_selection_and_adoption_blocked",
+      "evidence_refs": [
+        "F-CSMQG-001",
+        "F-CSMQG-002",
+        "F-CSMQG-003",
+        "F-CSMQG-004",
+        "F-CSMQG-005",
+        "F-CSMQG-006",
+        "F-CSMQG-007"
+      ],
+      "contradictions_and_limits": [
+        "Hybrid complexity, latency, attack surface, false-pass/false-block tradeoffs, and human burden are unmeasured.",
+        "Implementation remains unauthorized and final research acceptance requires challenge, verification, and human decision."
+      ],
+      "assurance_implication": "Use the reference architecture only to specify one candidate for comparison alongside deterministic-only, deterministic-plus-human/shadow-mode, and other approved baselines; do not infer superiority or production readiness."
+    },
+    {
+      "finding_id": "F-CSMQG-010",
+      "title": "Corpus label and oracle validity is unproven",
+      "claim": "The pre-run dry run verifies count reconciliation, label separation, digest computation, and scorer behavior, but it does not independently validate the correctness, representativeness, ambiguity, or negative-control status of the 60 gold labels and case-specific oracles.",
+      "evidence_strength": "verified_preflight_scope_plus_independent_challenge",
+      "repository_applicability": "critical_precondition_for_any_future_effectiveness_claim",
+      "evidence_refs": ["controlled_evaluation/pre_run_dry_run.v1.json", "controlled_evaluation/fixtures/gate_visible/corpus_cases.v1.json", "controlled_evaluation/fixtures/private_labels/gold_labels.v1.json", "challenge_register.v1.json:CH-CSMQG-003"],
+      "contradictions_and_limits": ["Deterministic scoring can reproduce labels while the labels themselves remain wrong or ambiguous.", "Several synthetic document criteria require semantic adjudication beyond tiny visible snippets."],
+      "assurance_implication": "Evaluation must not resume until a pre-run corpus-label QA record provides independent adjudication or deterministic oracle proof per case, ambiguity review, clean negative-control review, and pre-unblinding invalid-case rules."
+    },
+    {
+      "finding_id": "F-CSMQG-011",
+      "title": "Evaluation feasibility under the frozen accounting contract is unproven",
+      "claim": "No concrete telemetry source or validated integration currently demonstrates that operation, session/turn, call, token, cost, model/version, and effort can be reconciled before scheduling within the frozen budget contract.",
+      "evidence_strength": "verified_absence_in_execution_records_plus_independent_challenge",
+      "repository_applicability": "critical_resume_blocker",
+      "evidence_refs": ["budget_ledger.json", "controlled_evaluation/run_configuration.v1.json:telemetry_contract", "controlled_evaluation/raw_results/blocker_record.v1.json:BLK-CSMQG-EVAL-001", "challenge_register.v1.json:CH-CSMQG-005"],
+      "contradictions_and_limits": ["A desired resume condition is not proof that the environment can satisfy it."],
+      "assurance_implication": "A telemetry feasibility proof or approved revised protocol is required before evaluation resume or final research acceptance."
+    },
+    {
+      "finding_id": "F-CSMQG-012",
+      "title": "Missing baselines and human feasibility prevent operational recommendation",
+      "claim": "The zero-run package lacks deterministic-only, deterministic-plus-human, shadow-mode human-escalation, and current-process comparative results. Human workload, turnaround, consistency, and decision quality are unmeasured despite a two-business-day response target.",
+      "evidence_strength": "verified_zero_run_and_design_omission_plus_independent_challenge",
+      "repository_applicability": "high_operational_blocker",
+      "evidence_refs": ["controlled_evaluation/run_configuration.v1.json", "controlled_evaluation/run_ledger.v1.json", "approval_register.jsonl:APR-CSMQG-20260819-002", "challenge_register.v1.json:CH-CSMQG-009"],
+      "contradictions_and_limits": ["Human escalation is an authority path, not a measured accuracy or capacity control."],
+      "assurance_implication": "Adoption requires comparison or justified omission of deterministic-plus-human/shadow baselines and an auditable human-capacity and decision-quality protocol."
+    },
+    {
+      "finding_id": "F-CSMQG-013",
+      "title": "Proving tests are proposed concepts, not completed executable specifications",
+      "claim": "PT-CSMQG-001 through PT-CSMQG-014 state useful pass conditions but lack complete owners, fixtures, commands or manual procedures, expected artifacts, pass/fail schemas, dependencies, ordering, and retained evidence definitions.",
+      "evidence_strength": "verified_synthesis_record_scope_plus_independent_challenge",
+      "repository_applicability": "high_control_acceptance_blocker",
+      "evidence_refs": ["synthesis_recommendations.v1.json:proving_tests", "challenge_register.v1.json:CH-CSMQG-010"],
+      "contradictions_and_limits": ["Documenting a pass condition does not create an executable acceptance harness."],
+      "assurance_implication": "Every proposed proving test must become an executable or auditable test specification before control acceptance or adoption depends on it."
+    }
+  ],
+  "blocking_conditions": [
+    "BLK-CSMQG-EVAL-001 remains unresolved: model-call, token, cost, and session/turn telemetry cannot be reconciled before scheduling.",
+    "No controlled-effectiveness metric or candidate ranking exists.",
+    "Independent challenge is complete, but CH-CSMQG-003, CH-CSMQG-005, CH-CSMQG-007, and CH-CSMQG-010 remain explicitly unresolved in challenge_dispositions.v1.json.",
+    "Corpus-label and oracle validity has not been independently adjudicated.",
+    "Telemetry feasibility under the frozen accounting contract is unproven.",
+    "Deterministic-plus-human/shadow baselines and human operational feasibility remain unmeasured.",
+    "Proving-test concepts have not been converted into executable or auditable specifications.",
+    "Deterministic package verification has not yet been completed.",
+    "The human owner has not accepted the research or authorized implementation."
+  ]
+}

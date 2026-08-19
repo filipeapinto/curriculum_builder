@@ -1,0 +1,403 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>P0 — SOTA family method/output contract inconsistency confirmed — Issue Confirmation Report v1</title>
+  <style>
+    :root{color-scheme:light dark;--bg:#eef2f4;--paper:#fff;--ink:#172631;--muted:#536573;--line:#cbd5dc;--navy:#123b55;--teal:#087d78;--teal-soft:#e2f3f0;--amber:#9a6515;--amber-soft:#fff3d5;--red:#922f46;--red-soft:#fbe8ec;--green:#236a46;--green-soft:#e4f2e9;--blue-soft:#e8f0f7;--shadow:0 12px 36px rgba(16,42,57,.09)}*{box-sizing:border-box}html{scroll-behavior:smooth;background:var(--bg)}body{margin:0;color:var(--ink);font:16px/1.58 system-ui,-apple-system,"Segoe UI",sans-serif}a{color:var(--teal);text-underline-offset:.16em}a:focus-visible{outline:3px solid #f0aa30;outline-offset:3px}code{padding:.08em .3em;border-radius:4px;background:var(--blue-soft);font:.88em ui-monospace,SFMono-Regular,Menlo,monospace}.skip{position:absolute;left:-9999px;top:8px;z-index:10;padding:8px 12px;background:var(--paper)}.skip:focus{left:8px}.wrap{width:min(1180px,calc(100% - 34px));margin-inline:auto}.hero{color:#fff;background:linear-gradient(125deg,#102c43,#165567 68%,#087d78)}.hero .wrap{padding:54px 0 38px}.eyebrow{margin:0 0 8px;color:#bdece6;font-weight:850;letter-spacing:.1em;text-transform:uppercase}h1{max-width:1020px;margin:0;font-size:clamp(2.15rem,5vw,4rem);line-height:1.04;letter-spacing:-.035em}.dek{max-width:940px;margin:18px 0 24px;color:#e1f0f2;font-size:1.12rem}.state-grid{display:grid;grid-template-columns:repeat(4,minmax(150px,1fr));gap:10px}.state-card{min-height:94px;padding:13px 14px;border:1px solid rgba(255,255,255,.3);border-radius:9px;background:rgba(255,255,255,.09)}.state-card small{display:block;margin-bottom:5px;color:#cbe2e6;font-size:.7rem;font-weight:800;letter-spacing:.07em;text-transform:uppercase}.state-card strong{display:block;font-size:.96rem;overflow-wrap:anywhere}.authority-stop{margin-top:14px;padding:13px 15px;border:2px solid #ffd989;border-radius:8px;background:#523b0d;color:#fff8e7;font-weight:800}nav{position:sticky;top:0;z-index:5;border-bottom:1px solid var(--line);background:color-mix(in srgb,var(--paper) 96%,transparent);backdrop-filter:blur(8px)}nav .wrap{display:flex;gap:4px;overflow-x:auto;padding-block:9px}nav a{flex:0 0 auto;padding:6px 8px;border-radius:5px;color:var(--navy);font-size:.75rem;font-weight:750;text-decoration:none}nav a:hover{background:var(--teal-soft)}main{padding:20px 0 70px}section{margin:46px 0;scroll-margin-top:62px}h2{margin:0 0 12px;color:var(--navy);font-size:clamp(1.45rem,3vw,2rem);line-height:1.2}h3{margin:22px 0 7px;color:var(--navy)}p{margin:8px 0}.lead{max-width:970px;color:var(--muted);font-size:1.04rem}.panel,.callout,.metric,blockquote{border:1px solid var(--line);border-radius:10px;background:var(--paper);box-shadow:var(--shadow)}.panel,.callout{padding:20px}.callout{border-left:7px solid var(--teal)}.callout.warning{border-left-color:var(--amber);background:var(--amber-soft)}.callout.stop{border-left-color:var(--red);background:var(--red-soft)}blockquote{margin:14px 0;padding:20px 22px;border-left:7px solid var(--navy);font-size:1.04rem}.metrics{display:grid;grid-template-columns:repeat(4,1fr);gap:12px;margin:18px 0}.metric{padding:18px}.metric strong{display:block;color:var(--navy);font-size:1.65rem;line-height:1.1}.metric span{display:block;margin-top:6px;color:var(--muted);font-size:.82rem}.two{display:grid;grid-template-columns:repeat(2,1fr);gap:14px}.table-wrap{overflow-x:auto;border:1px solid var(--line);border-radius:10px;background:var(--paper);box-shadow:var(--shadow)}table{width:100%;min-width:880px;border-collapse:collapse}caption{padding:12px 14px;color:var(--muted);font-size:.82rem;text-align:left}th,td{padding:10px 12px;border-bottom:1px solid var(--line);text-align:left;vertical-align:top}th{background:var(--teal-soft);color:var(--navy);font-size:.73rem;letter-spacing:.045em;text-transform:uppercase}tr:last-child td{border-bottom:0}.pill{display:inline-block;padding:3px 8px;border-radius:999px;font-size:.72rem;font-weight:850;letter-spacing:.025em}.pill.confirmed,.pill.accepted{color:var(--green);background:var(--green-soft)}.pill.pending,.pill.inconclusive{color:var(--amber);background:var(--amber-soft)}.pill.blocked,.pill.critical{color:var(--red);background:var(--red-soft)}.pill.info{color:var(--navy);background:var(--blue-soft)}.legend{display:flex;flex-wrap:wrap;gap:7px;margin:12px 0}.legend span{padding:4px 8px;border:1px solid var(--line);border-radius:5px;background:var(--paper);font-size:.76rem}.boundary-list{display:grid;grid-template-columns:repeat(2,1fr);gap:12px}.boundary-list article{padding:17px;border:1px solid var(--line);border-radius:9px;background:var(--paper)}.boundary-list article:first-child{border-top:5px solid var(--green)}.boundary-list article:last-child{border-top:5px solid var(--red)}footer{padding:24px 0 38px;border-top:1px solid var(--line);color:var(--muted);font-size:.84rem}@media(max-width:820px){.state-grid,.metrics,.two,.boundary-list{grid-template-columns:1fr}nav{position:relative}}@media(prefers-color-scheme:dark){:root{--bg:#0d1720;--paper:#17242e;--ink:#edf3f5;--muted:#b6c2c9;--line:#3b4d59;--navy:#9dd5e5;--teal:#86d8d0;--teal-soft:#193b3b;--amber:#ffd27d;--amber-soft:#3c321c;--red:#ff9cac;--red-soft:#3e232b;--green:#83d6a7;--green-soft:#1b3829;--blue-soft:#213846;--shadow:none}}@media print{:root{color-scheme:light;--bg:#fff;--paper:#fff;--ink:#111;--muted:#444;--line:#aaa;--navy:#123b55;--teal:#087d78;--teal-soft:#e8f4f2;--amber-soft:#fff6df;--red-soft:#fbecef;--green-soft:#e8f4ed;--blue-soft:#edf3f7;--shadow:none}nav,.skip{display:none}.hero{color:#fff;background:#173f55!important;print-color-adjust:exact}section{margin:28px 0}.panel,.callout,.metric,blockquote,.table-wrap{break-inside:avoid;box-shadow:none}a{color:inherit;text-decoration:none}}
+    :root{--amber:#94600e}.eyebrow{color:#f2fffd}.dek{color:#f4fbfc}.state-card{border-color:rgba(255,255,255,.38);background:rgba(0,0,0,.14)}.state-card small{color:#fff}
+  </style>
+</head>
+<body>
+  <a class="skip" href="#main">Skip to report</a>
+  <header class="hero">
+    <div class="wrap">
+      <p class="eyebrow">P0 · Issue confirmation report · v1 · Human review pending</p>
+      <h1>SOTA family method/output contract inconsistency is confirmed and expanded</h1>
+      <p class="dek">The family has useful generic research controls, but it does not enforce one canonical package, schema, precedence, verification, and terminal-answer contract; both comparison runs also contain independently verified defects under their own governing records.</p>
+      <div class="state-grid" aria-label="Independent report states">
+        <div class="state-card"><small>Agent verdict</small><strong>CONFIRMED</strong></div>
+        <div class="state-card"><small>Investigated severity</small><strong>SEV-2_CRITICAL</strong></div>
+        <div class="state-card"><small>Human review</small><strong>PENDING</strong></div>
+        <div class="state-card"><small>Plan handoff</small><strong>ELIGIBLE — AWAITING ACCEPTANCE</strong></div>
+      </div>
+      <div class="authority-stop">Implementation authority: NONE. Planning remains closed until the human owner accepts this exact report version.</div>
+    </div>
+  </header>
+
+  <nav aria-label="Report contents"><div class="wrap"><a href="#decision">Decision</a><a href="#original-report">Original suspicion</a><a href="#charter">Charter</a><a href="#configuration">Configuration</a><a href="#evidence">Evidence</a><a href="#investigation">Investigation</a><a href="#findings">Findings</a><a href="#counterevidence">Counterevidence</a><a href="#conclusion">Conclusion</a><a href="#limitations">Unknowns</a><a href="#review">Human review</a><a href="#versioning">Versions</a><a href="#handoff">Plan gate</a><a href="#validation">Validation</a><a href="#sources">Sources</a></div></nav>
+
+  <main id="main" class="wrap">
+    <section id="decision" data-required-section="true">
+      <h2>Decision at a glance</h2>
+      <div class="callout">
+        <p><span class="pill confirmed">CONFIRMED</span> The reported common-contract defect exists, with one material refinement: the family is not devoid of controls. It has a generic baseline, but the baseline is insufficiently precise and is not enforced as a non-waivable verification layer.</p>
+        <p><strong>Evidence sufficiency: sufficient for confirmation and remediation planning review.</strong> Confidence is high for current contract gaps and observed run defects; historical skill invocation remains unknown and is not needed for the core verdict.</p>
+      </div>
+      <div class="metrics" aria-label="Investigation coverage">
+        <div class="metric"><strong>8 + 5</strong><span>installed skills and direct dependencies inspected</span></div>
+        <div class="metric"><strong>94</strong><span>case-study files classified</span></div>
+        <div class="metric"><strong>25</strong><span>audit-level inconsistencies classified</span></div>
+        <div class="metric"><strong>12 / 0</strong><span>independent challenges / unresolved</span></div>
+      </div>
+      <div class="legend" aria-label="Evidence labels"><span>FACT — direct repository evidence</span><span>ATTRIBUTED_CLAIM — a run's statement</span><span>INFERENCE — reasoned conclusion</span><span>UNKNOWN — provenance not established</span></div>
+    </section>
+
+    <section id="original-report" data-required-section="true">
+      <h2>Original suspicion</h2>
+      <blockquote data-record-id="CLAIM-SOTA-FAMILY-001">The SOTA skill family lacks an enforceable common research contract.<br><br>Two executions attributed to the same skill family use incompatible run topology, canonical records, lifecycle evidence, verification thresholds, and terminal-answer semantics. The plans vary legitimately; the underlying method varies without control.</blockquote>
+      <div class="table-wrap"><table>
+        <caption>Original report provenance</caption>
+        <tbody>
+          <tr><th scope="row">Claim ID</th><td>CLAIM-SOTA-FAMILY-001</td><th scope="row">Reporter</th><td>Repository human owner</td></tr>
+          <tr><th scope="row">Recorded</th><td><time datetime="2026-08-19">19 August 2026</time></td><th scope="row">Source</th><td><a href="sota-skill-family-method-output-contract-inconsistency.issue.html">Original issue statement</a></td></tr>
+          <tr><th scope="row">Reporter priority</th><td>P0</td><th scope="row">Reported impact</th><td>Results produced by one family are not method-comparable.</td></tr>
+          <tr><th scope="row">Verbatim-text SHA-256</th><td colspan="3"><code>cd705a938ad86af6ebee9552ae931418e9d9e33893e139a1715e351df1fb46b7</code></td></tr>
+          <tr><th scope="row">Source-file SHA-256</th><td colspan="3"><code>790e44b39483d61e88ed2beccebc88bb4bf33cc860bca3699fd69bf64b8102ee</code></td></tr>
+        </tbody>
+      </table></div>
+    </section>
+
+    <section id="charter" data-required-section="true">
+      <h2>Investigation charter</h2>
+      <p class="lead">Determine whether the issue statement is supported by the installed family contracts and the complete contents of both named runs, distinguish legitimate study variation from prohibited method drift, and produce an evidence-only recommendation for human review.</p>
+      <div class="two">
+        <article class="panel"><h3>Questions and applicable expectation</h3><p>Does the current family define an enforceable common run package, canonical records, lifecycle, verification baseline, and terminal answer? Do both runs comply with their contemporaneous plans and contracts? Can either run prove the skill versions and assigned agents used?</p><p><strong>Applicable authority:</strong> current <code>sota-*</code> skill contracts, their direct references, the two approved plans, and their run records.</p><p><strong>Decision criterion:</strong> confirm only claims supported by exact repository evidence; preserve legitimate variation and unknown provenance.</p></article>
+        <article class="panel"><h3>Boundary and authority</h3><p><strong>In scope:</strong> eight installed SOTA skills, all direct dependencies, the complete two-run file trees, their lifecycle, schemas, IDs, approvals, evidence, challenges, verification, and reports.</p><p><strong>Out of scope:</strong> changing skills, repairing runs, migrating records, creating the remediation plan, or authorizing implementation.</p><p><strong>Permissions:</strong> the investigation was read-only. This document/template authoring was separately requested after the audit.</p></article>
+      </div>
+      <div class="table-wrap"><table>
+        <caption>Hypotheses, methods, and stopping logic</caption>
+        <thead><tr><th>ID</th><th>Hypothesis</th><th>Falsification method</th><th>Sufficiency / stop condition</th></tr></thead>
+        <tbody>
+          <tr><td>HYP-001</td><td>A canonical family contract is missing or unenforced.</td><td>Read every governing skill/reference and search for exact topology, schema, precedence, verification, and terminal rules.</td><td>Every family component accounted for.</td></tr>
+          <tr><td>HYP-002</td><td>The two runs exhibit prohibited implementation drift.</td><td>Map both complete trees to one lifecycle and compare equivalent artifacts and meanings.</td><td>Every file classified and every lifecycle stage assigned a status.</td></tr>
+          <tr><td>HYP-003</td><td>The apparent differences may be legitimate research variation.</td><td>Separate question/method/sample differences from shared governance requirements and test strongest alternatives.</td><td>Every variance classified as legitimate, prohibited, or unknown.</td></tr>
+          <tr><td>HYP-004</td><td>Historical provenance explains the divergence.</td><td>Inspect commit bindings, skill digests, agent/model receipts, and Git tracking.</td><td>Report unknown rather than infer invocation.</td></tr>
+        </tbody>
+      </table></div>
+    </section>
+
+    <section id="configuration" data-required-section="true">
+      <h2>Affected configuration and impact boundary</h2>
+      <div class="table-wrap"><table>
+        <caption>Repository state used by the investigation</caption>
+        <thead><tr><th>Item</th><th>Version / commit / state</th><th>Why it matters</th><th>Availability</th></tr></thead>
+        <tbody>
+          <tr><td>Installed SOTA family</td><td>Eight current <code>.codex/skills/sota-*/SKILL.md</code> files at repository HEAD <code>ac91eed9976712ecc2c46c5faac787f74dda2859</code></td><td>Current normative family behavior</td><td>Present; all read</td></tr>
+          <tr><td>Family dependencies</td><td>Plan contract, allocation policy, plan-version script, execution contract, structural plan reference</td><td>Directly required contract inputs</td><td>Present; all read</td></tr>
+          <tr><td>Run 1</td><td><code>research/codex_calls_claude_qa_gate/</code>; 33 files; untracked</td><td>Compact Markdown/CSV/JSONL execution package</td><td>Present; historical skill binding unknown</td></tr>
+          <tr><td>Run 2</td><td><code>research/codex_same_model_qa_gate/</code>; 61 files; untracked; manifest names HEAD commit</td><td>Versioned JSON-heavy package and contrasting verifier behavior</td><td>Present; candidate skill bytes reconstructable, invocation unknown</td></tr>
+          <tr><td>Family guide</td><td><code>docs/skill-families/sota/sota-guide.v1.html</code></td><td>Documents plan-defined package shape and now-stale integration-evidence statement</td><td>Present; structurally valid</td></tr>
+        </tbody>
+      </table></div>
+    </section>
+
+    <section id="evidence" data-required-section="true">
+      <h2>Evidence register</h2>
+      <div class="table-wrap"><table>
+        <caption>Primary evidence supporting or constraining the confirmation verdict</caption>
+        <thead><tr><th>ID</th><th>Type / use</th><th>Locator and origin</th><th>Integrity / state</th><th>Relation</th><th>Limit</th></tr></thead>
+        <tbody>
+          <tr data-record-id="EVD-001"><td>EVD-001</td><td>ORIGINAL_REPORT · ATTRIBUTED_CLAIM</td><td><a href="sota-skill-family-method-output-contract-inconsistency.issue.html">Issue statement</a></td><td>File SHA-256 <code>790e44b3…102ee</code></td><td>Context only until independently verified</td><td>Issue assertion is not proof</td></tr>
+          <tr data-record-id="EVD-002"><td>EVD-002</td><td>REQUIREMENT_OR_CONTRACT · FACT</td><td><a href="../../.codex/skills/sota-plan-create/SKILL.md">Plan-create skill</a> and <a href="../../.codex/skills/sota-plan-create/references/plan-contract.md">plan contract</a></td><td>Current repository bytes</td><td>Supports sole-plan authority and role assignment findings</td><td>Does not prove historical invocation</td></tr>
+          <tr data-record-id="EVD-003"><td>EVD-003</td><td>REQUIREMENT_OR_CONTRACT · FACT</td><td><a href="../../.codex/skills/sota-plan-execute/SKILL.md">Plan-execute skill</a> and <a href="../../.codex/skills/sota-plan-execute/references/execution-contract.md">execution contract</a></td><td>Current repository bytes</td><td>Shows generic IDs, event, provenance, budget, challenge, verification, and acceptance requirements</td><td>No canonical topology/schema vocabulary</td></tr>
+          <tr data-record-id="EVD-004"><td>EVD-004</td><td>REQUIREMENT_OR_CONTRACT · FACT</td><td><a href="../../.codex/skills/sota-verify/SKILL.md">Verifier skill</a></td><td>Current repository bytes</td><td>Shows checklist is derived only from approved plan</td><td>Semantic contract, not historical invocation evidence</td></tr>
+          <tr data-record-id="EVD-005"><td>EVD-005</td><td>CHANGE_OR_AUDIT_RECORD · FACT</td><td><a href="../../docs/skill-families/sota/sota-guide.v1.html">Family guide v1</a></td><td>Existing guide validates structurally</td><td>Confirms filenames/schemas and run root are plan-defined</td><td>Generated before the two current case runs</td></tr>
+          <tr data-record-id="EVD-006"><td>EVD-006</td><td>REQUIREMENT_OR_CONTRACT · FACT</td><td><a href="../../research/codex_calls_claude_qa_gate/plan/codex_calls_claude_qa_gate.plan.v1.html">Run 1 plan</a> and <a href="../../research/codex_calls_claude_qa_gate/execution/run-cal-20260819-01/protocol/calibration-benchmark-protocol.v1.md">approved protocol</a></td><td>Plan digest recorded; second approval lacks protocol/corpus digest</td><td>Defines mandatory dual adjudication, intervals, IDs, outputs, and gates</td><td>Plan file itself retains pre-approval text</td></tr>
+          <tr data-record-id="EVD-007"><td>EVD-007</td><td>CHANGE_OR_AUDIT_RECORD · FACT</td><td><a href="../../research/codex_calls_claude_qa_gate/execution/run-cal-20260819-01/records/challenge.raw.json">Run 1 raw challenge</a> and <a href="../../research/codex_calls_claude_qa_gate/execution/run-cal-20260819-01/records/challenge-register.md">register</a></td><td>9 raw versus 12 register items</td><td>Supports challenge-integrity defect</td><td>No durable raw receipt for the later 12-item representation</td></tr>
+          <tr data-record-id="EVD-008"><td>EVD-008</td><td>TEST_OR_REPRODUCTION_RESULT · FACT</td><td><a href="../../research/codex_calls_claude_qa_gate/execution/run-cal-20260819-01/benchmark/claude-sonnet-5.receipts.jsonl">Claude receipts</a>, <a href="../../research/codex_calls_claude_qa_gate/execution/run-cal-20260819-01/protocol/benchmark_controller.py">controller</a></td><td>60 rows; 18 omit <code>run_id</code></td><td>Supports receipt-schema/verification defect</td><td>Missing IDs prevent direct stable-record citation for those rows</td></tr>
+          <tr data-record-id="EVD-009"><td>EVD-009</td><td>CHANGE_OR_AUDIT_RECORD · FACT</td><td><a href="../../research/codex_calls_claude_qa_gate/execution/run-cal-20260819-01/final-verification-report.md">Run 1 final verification</a></td><td>Reports PASS WITH DISCLOSED LIMITATIONS</td><td>Supports inconsistent severity/terminal treatment</td><td>Verifier is not human acceptance</td></tr>
+          <tr data-record-id="EVD-010"><td>EVD-010</td><td>REQUIREMENT_OR_CONTRACT · FACT</td><td><a href="../../research/codex_same_model_qa_gate/plan/sota_research.plan.v1.html">Run 2 plan</a></td><td>Approval records separately digest-bind plan and protocol packet</td><td>Defines exact outputs, envelope, lifecycle, and hard verification gates</td><td>Plan HTML retains awaiting-approval text by immutability convention</td></tr>
+          <tr data-record-id="EVD-011"><td>EVD-011</td><td>TEST_OR_REPRODUCTION_RESULT · FACT</td><td><a href="../../research/codex_same_model_qa_gate/evidence/calibration_extraction_schema.v1.json">Extraction schema</a> and <a href="../../research/codex_same_model_qa_gate/evidence/review_extractions.v1.json">19 extractions</a></td><td>Independent jsonschema result: 0/19 valid</td><td>Supports current-plan schema violation</td><td>Content merit was not re-appraised by this validation</td></tr>
+          <tr data-record-id="EVD-012"><td>EVD-012</td><td>CHANGE_OR_AUDIT_RECORD · FACT</td><td><a href="../../research/codex_same_model_qa_gate/evidence/execution_log.jsonl">Run 2 activity events</a>, <a href="../../research/codex_same_model_qa_gate/evidence/budget_ledger.json">budget</a>, and <a href="../../research/codex_same_model_qa_gate/evidence/controlled_evaluation/raw_results/blocker_record.v1.json">blocker</a></td><td>Missing event pairs; stale budget; 0/1,080 operations</td><td>Supports lifecycle and blocked-execution findings</td><td>Zero operations are not an effectiveness result</td></tr>
+          <tr data-record-id="EVD-013"><td>EVD-013</td><td>CHANGE_OR_AUDIT_RECORD · FACT</td><td><a href="../../research/codex_same_model_qa_gate/evidence/verification/verification_report.v1.json">Run 2 verification</a></td><td>Multiple required failures/not-measurable checks; not accepted</td><td>Supports verification precedence and terminal-state findings</td><td>Misses ten plan-wide envelope violations and the uninstalled executor role</td></tr>
+          <tr data-record-id="EVD-014"><td>EVD-014</td><td>DERIVED_ANALYSIS · FACT</td><td><a href="prompts/identify-sota-family-inconsistencies.goal-loop-test.md">Audit protocol</a>; two in-memory comparison passes</td><td>Pass 1 and pass 2 found the same ten-class set</td><td>Supports closure and classification coverage</td><td>Detailed command receipts were returned in the originating conversation, not a separate repository artifact</td></tr>
+          <tr data-record-id="EVD-015"><td>EVD-015</td><td>DERIVED_ANALYSIS · FACT</td><td>Independent <code>gpt-5.5</code>, xhigh challenge in a separate agent context</td><td>12 challenges; all accepted/corrected; 0 unresolved</td><td>Tests overreach, legitimate variation, provenance, feasibility, and presentation boundaries</td><td>Challenge exists in the conversation and is summarized here; no separate file was written during the read-only audit</td></tr>
+        </tbody>
+      </table></div>
+    </section>
+
+    <section id="investigation" data-required-section="true">
+      <h2>Investigation log and reproduction</h2>
+      <div class="table-wrap"><table>
+        <caption>Read-only audit actions followed by separately authorized report authoring</caption>
+        <thead><tr><th>Activity</th><th>Actor/tool</th><th>Expected</th><th>Observed</th><th>Evidence</th><th>Deviation / safety</th></tr></thead>
+        <tbody>
+          <tr><td>ACT-001 · Scope freeze</td><td>Primary Codex investigator</td><td>Issue treated as hypothesis; no target mutation</td><td>Evidence-only boundary preserved</td><td>EVD-001, EVD-014</td><td>None</td></tr>
+          <tr><td>ACT-002 · Complete inventory</td><td>Filesystem tools and SHA-256</td><td>Every component/file accounted for</td><td>8 skills, 5 direct dependencies, 33 + 61 run files</td><td>EVD-002–013</td><td>Four metadata/cache files explicitly excluded as non-evidence</td></tr>
+          <tr><td>ACT-003 · Deterministic validation</td><td>Python 3, jsonschema 4.26.0, Git</td><td>Test IDs, schemas, file counts, provenance</td><td>9/12 challenge conflict; 18 missing IDs; 0/19 valid extractions; ten envelope gaps</td><td>EVD-007, EVD-008, EVD-011, EVD-013</td><td>No file writes</td></tr>
+          <tr><td>ACT-004 · Lifecycle comparison</td><td>Primary investigator</td><td>Neutral lifecycle/status matrix</td><td>All stages mapped; terminal semantics incompatible</td><td>EVD-014</td><td>No downstream artifact used to infer completion</td></tr>
+          <tr><td>ACT-005 · Independent challenge</td><td>Separate gpt-5.5 xhigh agent</td><td>Test uniformity, evidence, alternatives, provenance, feasibility</td><td>12 challenges; all corrected; none unresolved</td><td>EVD-015</td><td>Challenger received frozen draft without intended defenses</td></tr>
+          <tr><td>ACT-006 · Re-test</td><td>Python 3 and repository inspection</td><td>No new inconsistency class after corrections</td><td>Second pass reproduced all ten classes, zero new classes</td><td>EVD-014</td><td>None</td></tr>
+          <tr><td>ACT-007 · Confirmation-template research</td><td>Separate research agent; authoritative web sources</td><td>Assurance-case-style human-gated vN contract</td><td>Lifecycle, vocabularies, metadata, validation, and source matrix delivered</td><td>Sources in this report</td><td>No repository writes by research agent</td></tr>
+        </tbody>
+      </table></div>
+    </section>
+
+    <section id="findings" data-required-section="true">
+      <h2>Claim and finding register</h2>
+      <div class="table-wrap"><table>
+        <caption>Confirmation findings; audit-level subfindings remain summarized under these stable IDs</caption>
+        <thead><tr><th>ID</th><th>Class / status</th><th>Finding</th><th>Evidence and reasoning</th><th>Scope / confidence</th></tr></thead>
+        <tbody>
+          <tr data-record-id="ICF-001"><td>ICF-001</td><td>FACT + INFERENCE · SUPPORTED</td><td>The family has generic controls, but lacks canonical topology, schemas, precedence, and terminal semantics.</td><td>EVD-002–005; exact categories exist, exact enforceable record contract does not.</td><td>Current family · High</td></tr>
+          <tr data-record-id="ICF-002"><td>ICF-002</td><td>FACT + INFERENCE · SUPPORTED</td><td>Calling the plan the sole contract without a non-weakening family-precedence rule permits effective method redefinition.</td><td>EVD-002–004</td><td>Current authority model · High</td></tr>
+          <tr data-record-id="ICF-003"><td>ICF-003</td><td>FACT · SUPPORTED</td><td>Equivalent artifact classes use incompatible locations and representations; format alone is not the defect.</td><td>EVD-005–013; Run 1 execution root versus Run 2 evidence root</td><td>Both runs · High</td></tr>
+          <tr data-record-id="ICF-004"><td>ICF-004</td><td>FACT · SUPPORTED</td><td>No shared append-only lifecycle/terminal record makes resume and final-state discovery deterministic.</td><td>EVD-003, EVD-009, EVD-012, EVD-013</td><td>Both runs · High</td></tr>
+          <tr data-record-id="ICF-005"><td>ICF-005</td><td>FACT + INFERENCE · SUPPORTED</td><td>The verifier has no non-waivable family suite because it derives checks only from each plan.</td><td>EVD-004; observed outcome mismatch in EVD-009 and EVD-013</td><td>Current verification contract · High</td></tr>
+          <tr data-record-id="ICF-006"><td>ICF-006</td><td>FACT · SUPPORTED</td><td>Run 1's raw challenge and human-readable register conflict in count and reused-ID semantics.</td><td>EVD-007: 9 raw versus 12 register challenges</td><td>Run 1 contemporaneous defect · High</td></tr>
+          <tr data-record-id="ICF-007"><td>ICF-007</td><td>FACT · SUPPORTED</td><td>Run 1 has 18 receipts without required run IDs and passed verification despite missing protocol-mandated adjudication and intervals.</td><td>EVD-006, EVD-008, EVD-009</td><td>Run 1 contemporaneous defect · High</td></tr>
+          <tr data-record-id="ICF-008"><td>ICF-008</td><td>FACT · SUPPORTED</td><td>Run 2 has 0/19 valid extraction records under its approved schema and ten controlled-evaluation records missing plan-required provenance fields.</td><td>EVD-010, EVD-011, EVD-013</td><td>Run 2 contemporaneous defect · High</td></tr>
+          <tr data-record-id="ICF-009"><td>ICF-009</td><td>FACT · SUPPORTED</td><td>Run 2's execution is genuinely blocked and partial: activity pairs, budget accounting, telemetry, evaluation, and challenge gates remain incomplete.</td><td>EVD-012, EVD-013</td><td>Run 2 · High</td></tr>
+          <tr data-record-id="ICF-010"><td>ICF-010</td><td>FACT + INFERENCE · SUPPORTED</td><td>Top-level terms such as PASS WITH DISCLOSED LIMITATIONS and blocked_not_accepted conflate research support, execution, verification, human acceptance, and implementation authority.</td><td>EVD-009, EVD-013</td><td>Both runs · High</td></tr>
+          <tr data-record-id="ICF-011"><td>ICF-011</td><td>UNKNOWN · SUPPORTED</td><td>Neither run proves actual skill invocation or complete agent/model/effort assignment. Run 2 proves only candidate skill bytes at its recorded commit.</td><td>Git inspection plus Run 2 manifest; no invocation receipt</td><td>Historical provenance · High confidence that evidence is absent</td></tr>
+          <tr data-record-id="ICF-012"><td>ICF-012</td><td>FACT · SUPPORTED</td><td>Run 1's second approval does not digest-bind the exact protocol/controller/corpus; Run 2's corresponding packet approval does.</td><td>EVD-006, EVD-010</td><td>Authority semantics · High</td></tr>
+          <tr data-record-id="ICF-013"><td>ICF-013</td><td>FACT · SUPPORTED</td><td>The family guide is structurally valid but now stale about integration evidence and continues to document a plan-defined run shape.</td><td>EVD-005</td><td>Documentation · High</td></tr>
+          <tr data-record-id="ICF-014"><td>ICF-014</td><td>FACT · SUPPORTED</td><td>Different questions, sources, corpora, budgets, report counts, and 180 versus 0 executed operations are legitimate plan variation.</td><td>Both plans and EVD-008/EVD-012</td><td>Boundary refinement · High</td></tr>
+        </tbody>
+      </table></div>
+    </section>
+
+    <section id="counterevidence" data-required-section="true">
+      <h2>Counterevidence and alternative explanations</h2>
+      <div class="table-wrap"><table>
+        <caption>Strongest challenges to the reported issue and their disposition</caption>
+        <thead><tr><th>ID</th><th>Counterevidence or alternative</th><th>Test / evidence</th><th>Disposition</th><th>Residual plausibility</th></tr></thead>
+        <tbody>
+          <tr data-record-id="ALT-001"><td>ALT-001</td><td>The family has no baseline at all.</td><td>Execution contract explicitly requires IDs, paired events, provenance, budgets, challenge, verification, and acceptance.</td><td>DEFEATED; original issue is reframed to an underspecified/non-enforced baseline.</td><td>None for the absolute claim</td></tr>
+          <tr data-record-id="ALT-002"><td>ALT-002</td><td>Markdown/CSV versus JSON proves the defect.</td><td>Run 1 CSV has stable IDs and is machine-readable; formats can be schema-bound.</td><td>DEFEATED; missing canonical validation/authority is the defect, not format.</td><td>None</td></tr>
+          <tr data-record-id="ALT-003"><td>ALT-003</td><td>Different empirical outcomes prove inconsistent method.</td><td>Plans ask different questions and approve different evaluations/budgets.</td><td>DEFEATED; classified as legitimate variation.</td><td>None</td></tr>
+          <tr data-record-id="ALT-004"><td>ALT-004</td><td>Run 2's extensive JSON structure shows the family contract already works.</td><td>0/19 extraction validation, ten envelope gaps, event/budget failures, and unassigned executor role.</td><td>PARTIALLY_DEFEATED; Run 2 is stronger structurally, but plan-specific and internally nonconformant.</td><td>Low</td></tr>
+          <tr data-record-id="ALT-005"><td>ALT-005</td><td>Historical skill-version drift caused all differences.</td><td>Run 2 commit reconstructs candidate bytes; Run 1 has no durable binding; neither proves invocation.</td><td>UNRESOLVED and unnecessary for the core contract-gap finding.</td><td>Material only to historical attribution</td></tr>
+          <tr data-record-id="ALT-006"><td>ALT-006</td><td>A canonical root must physically contain every human report.</td><td>Current plans legitimately designate external report/design locations.</td><td>DEFEATED; canonical index may bind external/mirrored human deliverables.</td><td>None</td></tr>
+          <tr data-record-id="ALT-007"><td>ALT-007</td><td>Both legacy runs should be called defective solely because they fail the proposed future topology.</td><td>The proposed topology was not in force when the runs were created.</td><td>DEFEATED; current-plan violations and future-baseline migration findings are separated.</td><td>None</td></tr>
+        </tbody>
+      </table></div>
+    </section>
+
+    <section id="conclusion" data-required-section="true">
+      <h2>Confirmation conclusion</h2>
+      <div class="callout"><p><strong>Verdict:</strong> <span class="pill confirmed">CONFIRMED</span> · <strong>Scope change:</strong> EXPANDED · <strong>Evidence sufficiency:</strong> SUFFICIENT</p><p>The central issue is confirmed: an execution attributed to this family does not inherit one enforceable package, schema, lifecycle, verification, and research-answer contract. The investigation expanded the issue with direct contemporary defects in both runs and narrowed one overstatement: the family already has meaningful generic invariants, but they are too underspecified and plan-dependent to provide comparable conformance.</p></div>
+      <h3>Impact and severity rationale</h3>
+      <p><strong>Investigated severity: SEV-2_CRITICAL; priority: P0.</strong> The defect can produce false assurance, incompatible terminal states, unreliable resume/acceptance discovery, and non-comparable research packages across every SOTA-family execution. It is not classified SEV-1 because no immediate safety catastrophe or production outage is evidenced. Severity reflects consequence; P0 reflects remediation priority.</p>
+      <h3>Applicable expectation and decision criterion</h3>
+      <p>A later plan should establish one family-owned canonical record root, schema/ID/provenance contract, append-only lifecycle, digest-bound challenge and authority records, non-waivable verifier baseline, per-question research-answer vocabulary, separate execution/verification/acceptance/implementation states, typed domain extensions, and plan strengthen-only rules. This is a planning input, not an implementation design or authorization.</p>
+    </section>
+
+    <section id="limitations" data-required-section="true">
+      <h2>Unknowns and limitations</h2>
+      <div class="table-wrap"><table>
+        <caption>Unknowns do not silently support the verdict</caption>
+        <thead><tr><th>ID</th><th>Unknown / limitation</th><th>Decision relevance</th><th>Evidence that could resolve it</th></tr></thead>
+        <tbody>
+          <tr data-record-id="UNK-001"><td>UNK-001</td><td>Exact skill version and invocation evidence for Run 1</td><td>Not required to confirm current contract and run-record defects; required for historical attribution</td><td>Durable run manifest, skill digests, dispatch/session receipts</td></tr>
+          <tr data-record-id="UNK-002"><td>UNK-002</td><td>Actual skill invocation and full agent/model/effort assignments for Run 2</td><td>Candidate bytes are known; invocation claims remain unproved</td><td>Role dispatch and session receipts captured at execution time</td></tr>
+          <tr data-record-id="UNK-003"><td>UNK-003</td><td>Final schema registry location and compatibility policy</td><td>Human design decision for remediation planning</td><td>Accepted plan decision</td></tr>
+          <tr data-record-id="UNK-004"><td>UNK-004</td><td>Which analysis/evaluation stages are universally required versus conditionally applicable</td><td>Changes canonical package applicability rules</td><td>Human-approved family contract</td></tr>
+          <tr data-record-id="UNK-005"><td>UNK-005</td><td>Whether and how the two untracked legacy packages should be committed or wrapped</td><td>Migration and preservation decision only</td><td>Repository-owner decision and migration plan</td></tr>
+          <tr data-record-id="UNK-006"><td>UNK-006</td><td>Minimum durable identity/authenticity assurance for human acceptance and implementation authority</td><td>Required before high-assurance approval schema is finalized</td><td>Human governance decision and platform capability assessment</td></tr>
+        </tbody>
+      </table></div>
+    </section>
+
+    <section id="review" data-required-section="true">
+      <h2>Human review and pushback ledger</h2>
+      <div class="callout warning"><p>Current state: <strong>PENDING</strong>. Only the repository human owner can accept this report. Acceptance must bind the report ID, v1, and the embedded canonical payload digest. Agent completion is not acceptance.</p></div>
+      <div class="table-wrap"><table>
+        <caption>Verbatim review events and later dispositions</caption>
+        <thead><tr><th>Review ID / time</th><th>Human and authority</th><th>Target version / digest</th><th>Decision and verbatim comment</th><th>Disposition / addressed in</th></tr></thead>
+        <tbody><tr><td>REVIEW-PENDING-001</td><td>Repository human owner · final report authority</td><td>v1 · canonical payload digest shown in the embedded record</td><td><span class="pill pending">PENDING</span> No human disposition recorded yet.</td><td>Pushback will be preserved verbatim and addressed in immutable v2.</td></tr></tbody>
+      </table></div>
+      <p>Valid review decisions are <code>ACCEPTED</code>, <code>CHANGES_REQUESTED</code>, <code>REJECTED</code>, or <code>DEFERRED</code>. Any byte-affecting correction creates v2; this v1 file remains unchanged.</p>
+    </section>
+
+    <section id="versioning" data-required-section="true">
+      <h2>Version and provenance ledger</h2>
+      <div class="table-wrap"><table>
+        <caption>Issued versions are immutable; every new report points backward</caption>
+        <thead><tr><th>Version</th><th>Issued</th><th>Predecessor / digest</th><th>Actors</th><th>Material change and reason</th></tr></thead>
+        <tbody><tr><td>v1</td><td><time datetime="2026-08-19T13:37:04Z">19 August 2026, 13:37 UTC</time></td><td>None — initial confirmation report</td><td>Primary Codex investigator; separate independent challenger; separate template-research agent; deterministic tools</td><td>Converts the completed evidence-only audit into the first human-reviewable issue confirmation dossier.</td></tr></tbody>
+      </table></div>
+      <p><strong>Canonical payload SHA-256:</strong> <code>b786de5b2fe1d3c62d9c1c00a85861c0d10fd15a3069a845d17968294c579864</code>. It is computed over the embedded <code>issue-confirmation-record</code> JSON with <code>canonical_payload_sha256</code> omitted, serialized as UTF-8 JSON with lexicographically sorted keys, separators <code>,</code> and <code>:</code>, and no insignificant whitespace.</p>
+      <p><strong>Template:</strong> <a href="../../templates/issue-confirmation-report.template.v1.html">issue-confirmation-report.template.v1.html</a>, SHA-256 <code>35f84ea98f1dadbd30d77d63b04e785207ba68c93c8e1696cda21224a5909c1b</code>.</p>
+      <p>If feedback changes any byte or substantive disposition, preserve this file and create exactly <code>...confirmation-report.v2.html</code>. The new version points to v1 and resets human review and plan handoff.</p>
+    </section>
+
+    <section id="handoff" data-required-section="true">
+      <h2>Plan-handoff gate</h2>
+      <div class="callout stop"><p><strong>ELIGIBLE_AWAITING_HUMAN_ACCEPTANCE — GATE CLOSED.</strong> The agent verdict is eligible for planning, but no plan may be drafted from it until the human owner accepts this exact report version.</p><p>Acceptance authorizes drafting a separate remediation plan only. It does not approve a fix, budget, owner, code change, deployment, or release.</p></div>
+      <div class="table-wrap"><table>
+        <caption>Fail-closed prerequisites for planning</caption>
+        <thead><tr><th>Gate check</th><th>Required state</th><th>Current state</th><th>Evidence / receipt</th></tr></thead>
+        <tbody>
+          <tr><td>Eligible verdict</td><td>CONFIRMED or PARTIALLY_CONFIRMED</td><td><span class="pill confirmed">CONFIRMED</span></td><td>ICF-001–ICF-014</td></tr>
+          <tr><td>Structural and semantic validation</td><td>PASS</td><td><span class="pill accepted">PASS</span></td><td>VAL-ICR-001; checks listed below</td></tr>
+          <tr><td>Human acceptance</td><td>ACCEPTED for exact version/digest</td><td><span class="pill pending">PENDING</span></td><td>None</td></tr>
+          <tr><td>Implementation authority</td><td>NONE</td><td>NONE</td><td>Invariant</td></tr>
+        </tbody>
+      </table></div>
+      <p><strong>Later plan contract:</strong> the repository already provides <a href="../../schemas/plan.schema.v1.json"><code>schemas/plan.schema.v1.json</code></a>. It requires a versioned YAML plan and fixes <code>authorizes_implementation</code> to <code>false</code>. No plan was created in this task.</p>
+    </section>
+
+    <section id="validation" data-required-section="true">
+      <h2>Deterministic validation</h2>
+      <div class="table-wrap"><table>
+        <caption>Validator success establishes structural consistency, not substantive truth</caption>
+        <thead><tr><th>Validator / time</th><th>Scope</th><th>Result</th><th>Failures / waivers</th></tr></thead>
+        <tbody>
+          <tr><td>VAL-ICR-001 · repository-local Python/lxml/JSON checks · 2026-08-19</td><td>HTML parse; required sections; unique IDs; local links; embedded JSON; controlled states; evidence/finding/alternative/unknown references; unresolved placeholders; implementation boundary</td><td><span class="pill accepted">PASS</span></td><td>None</td></tr>
+          <tr><td>VAL-ICR-002 · visual render inspection · 2026-08-19</td><td>Standalone desktop rendering, hierarchy, contrast, overflow, and readable status presentation</td><td><span class="pill accepted">PASS</span></td><td>Static visual inspection is not a full assistive-technology audit</td></tr>
+        </tbody>
+      </table></div>
+    </section>
+
+    <section id="sources" data-required-section="true">
+      <h2>Sources and template design basis</h2>
+      <p class="lead">The confirmation finding is grounded in the local contracts and run artifacts linked above. The reusable report contract was independently researched against primary guidance retrieved on 19 August 2026.</p>
+      <div class="two">
+        <article class="panel"><h3>Repository sources</h3><ul><li><a href="sota-skill-family-method-output-contract-inconsistency.issue.html">Original issue statement</a></li><li><a href="prompts/identify-sota-family-inconsistencies.goal-loop-test.md">Audit Goal–Loop–Test protocol</a></li><li><a href="../../.codex/skills/sota-plan-execute/references/execution-contract.md">SOTA execution contract</a></li><li><a href="../../.codex/skills/sota-verify/SKILL.md">SOTA verifier contract</a></li><li><a href="../../research/codex_calls_claude_qa_gate/">Run 1 complete tree</a></li><li><a href="../../research/codex_same_model_qa_gate/">Run 2 complete tree</a></li></ul></article>
+        <article class="panel"><h3>Report-contract sources</h3><ul><li><a href="https://swehb.nasa.gov/display/SWEHBVD/5.01%2B-%2BCR-PR%2B-%2BSoftware%2BChange%2BRequest%2B-%2BProblem%2BReport">NASA problem-report guidance</a> and <a href="https://swehb.nasa.gov/spaces/SWEHBVD/pages/102695463/SWE-082%2B-%2BAuthorizing%2BChanges">change authorization</a></li><li><a href="https://csrc.nist.gov/pubs/sp/800/218/final">NIST SSDF</a> and <a href="https://csrc.nist.gov/pubs/sp/800/86/final">evidence integrity</a></li><li><a href="https://www.omg.org/spec/SACM/2.3/PDF">OMG SACM 2.3</a></li><li><a href="https://sre.google/sre-book/effective-troubleshooting/">Google SRE troubleshooting</a></li><li><a href="https://www.nist.gov/publications/artificial-intelligence-risk-management-framework-ai-rmf-10">NIST AI RMF</a> and <a href="https://www.nist.gov/publications/artificial-intelligence-risk-management-framework-generative-artificial-intelligence">GenAI Profile</a></li><li><a href="https://www.w3.org/TR/prov-o/">W3C PROV-O</a>, <a href="https://html.spec.whatwg.org/multipage/scripting.html">WHATWG data blocks</a>, <a href="https://www.rfc-editor.org/info/rfc3339">RFC 3339</a>, and <a href="https://www.w3.org/TR/WCAG22/">WCAG 2.2</a></li></ul></article>
+      </div>
+    </section>
+
+    <section aria-labelledby="boundaries-heading">
+      <h2 id="boundaries-heading">Hard authority boundaries</h2>
+      <div class="boundary-list">
+        <article><h3>This report may</h3><ul><li>Confirm the scoped issue and preserve its evidence.</li><li>Record your disagreement and produce an immutable v2.</li><li>Become eligible for planning after your explicit acceptance.</li></ul></article>
+        <article><h3>This report may not</h3><ul><li>Edit or remediate the SOTA skills or either run.</li><li>Approve a root cause, fix, budget, deployment, or release.</li><li>Open its own planning gate or accept itself.</li><li>Erase the original issue, contrary evidence, or your pushback.</li></ul></article>
+      </div>
+    </section>
+  </main>
+
+  <footer><div class="wrap">ICR-SOTA-FAMILY-METHOD-CONSISTENCY · v1 · Agent verdict CONFIRMED · Human review PENDING · Plan gate CLOSED · Implementation authority NONE</div></footer>
+
+  <script type="application/json" id="issue-confirmation-record">
+  {
+    "$schema": "repo.issue-confirmation-report/v1",
+    "schema_version": "1.0.0",
+    "report_id": "ICR-SOTA-FAMILY-METHOD-CONSISTENCY",
+    "issue_id": "ISSUE-SOTA-FAMILY-METHOD-OUTPUT-CONTRACT",
+    "version": 1,
+    "issued_at": "2026-08-19T13:37:04Z",
+    "title": "SOTA family method/output contract inconsistency is confirmed and expanded",
+    "lifecycle_state": "HUMAN_REVIEW_PENDING",
+    "was_revision_of": null,
+    "previous_payload_sha256": null,
+    "canonical_payload_sha256": "b786de5b2fe1d3c62d9c1c00a85861c0d10fd15a3069a845d17968294c579864",
+    "original_report": {
+      "claim_id": "CLAIM-SOTA-FAMILY-001",
+      "verbatim": "The SOTA skill family lacks an enforceable common research contract.\n\nTwo executions attributed to the same skill family use incompatible run topology, canonical records, lifecycle evidence, verification thresholds, and terminal-answer semantics. The plans vary legitimately; the underlying method varies without control.",
+      "reporter": "repository-human-owner",
+      "reported_at": "2026-08-19T00:00:00-04:00",
+      "source": "sota-skill-family-method-output-contract-inconsistency.issue.html",
+      "verbatim_digest": "sha256:cd705a938ad86af6ebee9552ae931418e9d9e33893e139a1715e351df1fb46b7",
+      "source_file_digest": "sha256:790e44b39483d61e88ed2beccebc88bb4bf33cc860bca3699fd69bf64b8102ee"
+    },
+    "actors": [
+      {"id":"ACTOR-HUMAN-OWNER","kind":"HUMAN","role":"reporter and acceptance authority","product_model_version":"not applicable"},
+      {"id":"ACTOR-CODEX-PRIMARY","kind":"AI_AGENT","role":"primary investigator and report author","product_model_version":"Codex; exact model/version not durably exposed in the artifact"},
+      {"id":"ACTOR-CHALLENGER","kind":"AI_AGENT","role":"independent audit challenger","product_model_version":"gpt-5.5; xhigh; separate context"},
+      {"id":"ACTOR-TEMPLATE-RESEARCH","kind":"AI_AGENT","role":"independent report-template researcher","product_model_version":"Codex sub-agent; exact model/version not durably exposed in the artifact"},
+      {"id":"ACTOR-TOOLS","kind":"TOOL","role":"filesystem, Git, hashing, JSON Schema, and HTML validation","product_model_version":"Python 3; jsonschema 4.26.0; lxml; Git"}
+    ],
+    "repository_baseline": {
+      "repository": "curriculum_factory",
+      "commit": "ac91eed9976712ecc2c46c5faac787f74dda2859",
+      "dirty_state": "Pre-existing untracked issue and two run trees; this task adds the requested versioned template and confirmation report.",
+      "affected_items": [".codex/skills/sota-*", "docs/skill-families/sota/sota-guide.v1.html", "research/codex_calls_claude_qa_gate", "research/codex_same_model_qa_gate"]
+    },
+    "investigation": {
+      "run_id": "AUDIT-SOTA-FAMILY-20260819",
+      "questions": ["Does the family enforce a canonical method/output contract?", "Do both runs comply with contemporaneous requirements?", "Which differences are legitimate?", "What provenance can be proved?"],
+      "scope": ["eight installed SOTA skills", "five direct dependencies", "both complete case-study trees", "lifecycle, schemas, authority, verification, and terminal semantics"],
+      "exclusions": ["skill edits", "run repair", "migration", "remediation planning", "implementation"],
+      "permissions": ["read-only investigation", "later explicit permission to author this template and report"],
+      "environment": {"date":"2026-08-19","timezone":"America/New_York","repository_head":"ac91eed9976712ecc2c46c5faac787f74dda2859"},
+      "methods": ["complete inventory", "neutral lifecycle mapping", "seven comparison matrices", "deterministic JSON/ID/count checks", "independent challenge", "second comparison pass"],
+      "acceptance_and_stop_criteria": ["all family components and files accounted", "all lifecycle stages mapped", "two consecutive passes with no new inconsistency class", "every independent challenge dispositioned"]
+    },
+    "classifications": {
+      "verdict": "CONFIRMED",
+      "scope_change": "EXPANDED",
+      "severity": "SEV-2_CRITICAL",
+      "priority": "P0",
+      "evidence_sufficiency": "SUFFICIENT_FOR_CONFIRMATION_AND_PLANNING_REVIEW",
+      "human_review": "PENDING",
+      "plan_handoff": "ELIGIBLE_AWAITING_HUMAN_ACCEPTANCE",
+      "implementation_authority": "NONE"
+    },
+    "evidence": [
+      {"id":"EVD-001","type":"ORIGINAL_REPORT","locator":"sota-skill-family-method-output-contract-inconsistency.issue.html","relation":"CONTEXT_ONLY"},
+      {"id":"EVD-002","type":"REQUIREMENT_OR_CONTRACT","locator":"../../.codex/skills/sota-plan-create/SKILL.md","relation":"SUPPORTS"},
+      {"id":"EVD-003","type":"REQUIREMENT_OR_CONTRACT","locator":"../../.codex/skills/sota-plan-execute/SKILL.md","relation":"SUPPORTS"},
+      {"id":"EVD-004","type":"REQUIREMENT_OR_CONTRACT","locator":"../../.codex/skills/sota-verify/SKILL.md","relation":"SUPPORTS"},
+      {"id":"EVD-005","type":"CHANGE_OR_AUDIT_RECORD","locator":"../../docs/skill-families/sota/sota-guide.v1.html","relation":"SUPPORTS"},
+      {"id":"EVD-006","type":"REQUIREMENT_OR_CONTRACT","locator":"../../research/codex_calls_claude_qa_gate/plan/codex_calls_claude_qa_gate.plan.v1.html","relation":"SUPPORTS"},
+      {"id":"EVD-007","type":"CHANGE_OR_AUDIT_RECORD","locator":"../../research/codex_calls_claude_qa_gate/execution/run-cal-20260819-01/records/challenge.raw.json","relation":"SUPPORTS"},
+      {"id":"EVD-008","type":"TEST_OR_REPRODUCTION_RESULT","locator":"../../research/codex_calls_claude_qa_gate/execution/run-cal-20260819-01/benchmark/claude-sonnet-5.receipts.jsonl","relation":"SUPPORTS"},
+      {"id":"EVD-009","type":"CHANGE_OR_AUDIT_RECORD","locator":"../../research/codex_calls_claude_qa_gate/execution/run-cal-20260819-01/final-verification-report.md","relation":"SUPPORTS"},
+      {"id":"EVD-010","type":"REQUIREMENT_OR_CONTRACT","locator":"../../research/codex_same_model_qa_gate/plan/sota_research.plan.v1.html","relation":"SUPPORTS"},
+      {"id":"EVD-011","type":"TEST_OR_REPRODUCTION_RESULT","locator":"../../research/codex_same_model_qa_gate/evidence/review_extractions.v1.json","relation":"SUPPORTS"},
+      {"id":"EVD-012","type":"CHANGE_OR_AUDIT_RECORD","locator":"../../research/codex_same_model_qa_gate/evidence/execution_log.jsonl","relation":"SUPPORTS"},
+      {"id":"EVD-013","type":"CHANGE_OR_AUDIT_RECORD","locator":"../../research/codex_same_model_qa_gate/evidence/verification/verification_report.v1.json","relation":"SUPPORTS"},
+      {"id":"EVD-014","type":"DERIVED_ANALYSIS","locator":"prompts/identify-sota-family-inconsistencies.goal-loop-test.md","relation":"SUPPORTS"},
+      {"id":"EVD-015","type":"DERIVED_ANALYSIS","locator":"independent challenge preserved in originating conversation and summarized in this report","relation":"SUPPORTS"}
+    ],
+    "findings": [
+      {"id":"ICF-001","epistemic_class":"INFERENCE","status":"SUPPORTED","evidence_ids":["EVD-002","EVD-003","EVD-004","EVD-005"]},
+      {"id":"ICF-002","epistemic_class":"INFERENCE","status":"SUPPORTED","evidence_ids":["EVD-002","EVD-003","EVD-004"]},
+      {"id":"ICF-003","epistemic_class":"FACT","status":"SUPPORTED","evidence_ids":["EVD-006","EVD-010","EVD-012"]},
+      {"id":"ICF-004","epistemic_class":"FACT","status":"SUPPORTED","evidence_ids":["EVD-003","EVD-009","EVD-012","EVD-013"]},
+      {"id":"ICF-005","epistemic_class":"INFERENCE","status":"SUPPORTED","evidence_ids":["EVD-004","EVD-009","EVD-013"]},
+      {"id":"ICF-006","epistemic_class":"FACT","status":"SUPPORTED","evidence_ids":["EVD-007"]},
+      {"id":"ICF-007","epistemic_class":"FACT","status":"SUPPORTED","evidence_ids":["EVD-006","EVD-008","EVD-009"]},
+      {"id":"ICF-008","epistemic_class":"FACT","status":"SUPPORTED","evidence_ids":["EVD-010","EVD-011","EVD-013"]},
+      {"id":"ICF-009","epistemic_class":"FACT","status":"SUPPORTED","evidence_ids":["EVD-012","EVD-013"]},
+      {"id":"ICF-010","epistemic_class":"INFERENCE","status":"SUPPORTED","evidence_ids":["EVD-009","EVD-013"]},
+      {"id":"ICF-011","epistemic_class":"UNKNOWN","status":"SUPPORTED","evidence_ids":["EVD-012","EVD-014"]},
+      {"id":"ICF-012","epistemic_class":"FACT","status":"SUPPORTED","evidence_ids":["EVD-006","EVD-010"]},
+      {"id":"ICF-013","epistemic_class":"FACT","status":"SUPPORTED","evidence_ids":["EVD-005"]},
+      {"id":"ICF-014","epistemic_class":"FACT","status":"SUPPORTED","evidence_ids":["EVD-006","EVD-008","EVD-010","EVD-012"]}
+    ],
+    "alternatives_and_counterevidence": [
+      {"id":"ALT-001","status":"DEFEATED","summary":"Absolute no-baseline claim corrected to underspecified/non-enforced baseline."},
+      {"id":"ALT-002","status":"DEFEATED","summary":"Format difference alone is not the defect."},
+      {"id":"ALT-003","status":"DEFEATED","summary":"Different empirical outcomes are legitimate plan variation."},
+      {"id":"ALT-004","status":"PARTIALLY_DEFEATED","summary":"Run 2 is richer structurally but violates its own contract."},
+      {"id":"ALT-005","status":"UNRESOLVED","summary":"Historical skill-version drift cannot be reconstructed for Run 1."},
+      {"id":"ALT-006","status":"DEFEATED","summary":"External human deliverables can remain external when indexed and digest-bound."},
+      {"id":"ALT-007","status":"DEFEATED","summary":"Future-baseline mismatch is separate from contemporaneous violations."}
+    ],
+    "unknowns_and_limitations": [
+      {"id":"UNK-001","summary":"Run 1 skill version and invocation provenance"},
+      {"id":"UNK-002","summary":"Run 2 actual invocation and full agent assignment provenance"},
+      {"id":"UNK-003","summary":"Final schema registry and compatibility policy"},
+      {"id":"UNK-004","summary":"Universal versus conditional lifecycle stages"},
+      {"id":"UNK-005","summary":"Legacy package commit/wrapper policy"},
+      {"id":"UNK-006","summary":"Required approval identity/authenticity strength"}
+    ],
+    "review_events": [],
+    "change_log": [{"version":1,"issued_at":"2026-08-19T13:37:04Z","actor_ids":["ACTOR-CODEX-PRIMARY","ACTOR-TEMPLATE-RESEARCH"],"summary":"Initial confirmation report created from the completed read-only audit and independently researched template contract."}],
+    "validation": {
+      "validator_version": "VAL-ICR-001/v1",
+      "timestamp": "2026-08-19T13:37:04Z",
+      "result": "PASS",
+      "checks": ["HTML_PARSE","REQUIRED_SECTIONS","UNIQUE_IDS","LOCAL_LINKS","EMBEDDED_JSON","CONTROLLED_STATES","REFERENCE_INTEGRITY","NO_UNRESOLVED_PLACEHOLDERS","IMPLEMENTATION_AUTHORITY_NONE","VISUAL_RENDER"],
+      "waivers": []
+    },
+    "human_acceptance": null,
+    "plan_handoff": null,
+    "references": [
+      "../../templates/issue-confirmation-report.template.v1.html",
+      "../../schemas/plan.schema.v1.json",
+      "https://swehb.nasa.gov/display/SWEHBVD/5.01%2B-%2BCR-PR%2B-%2BSoftware%2BChange%2BRequest%2B-%2BProblem%2BReport",
+      "https://csrc.nist.gov/pubs/sp/800/218/final",
+      "https://www.omg.org/spec/SACM/2.3/PDF",
+      "https://www.w3.org/TR/prov-o/",
+      "https://www.w3.org/TR/WCAG22/"
+    ]
+  }
+  </script>
+</body>
+</html>

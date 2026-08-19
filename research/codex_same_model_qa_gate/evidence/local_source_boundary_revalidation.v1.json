@@ -1,0 +1,56 @@
+{
+  "schema": "sota-local-source-boundary-revalidation/v1",
+  "record_id": "LSBR-CSMQG-20260819-001",
+  "run_id": "RUN-CSMQG-20260819-001",
+  "created_at_utc": "2026-08-19T09:47:55Z",
+  "responsible_role": "sota-incident-analyze",
+  "purpose": "Final local-analysis revalidation of the approved read-only source boundary before synthesis handoff.",
+  "source_boundary": {
+    "canonical_root": ".claude/skills/qa-gate-codex-run",
+    "inventory_record": "local_control_inventory.v1.json",
+    "inventory_record_id": "LCI-CSMQG-20260819-001",
+    "expected_file_count": 22,
+    "revalidation_method": [
+      "Enumerate regular files with rg --files --hidden --no-ignore.",
+      "Compute SHA-256 for every enumerated file.",
+      "Compare the resulting path/digest set with the 22 entries in LCI-CSMQG-20260819-001.",
+      "Check git status only for the named source boundary."
+    ],
+    "result": {
+      "class": "verified_fact",
+      "enumerated_file_count": 22,
+      "digest_set_match": true,
+      "git_status_entries": 0,
+      "statement": "All 22 current path/SHA-256 pairs match the calibration inventory; no git-status entry was reported for the named source boundary during revalidation."
+    }
+  },
+  "interpretive_limit": {
+    "class": "verified_fact",
+    "statement": "Digest equality supports source-identity continuity only. It neither repeats live transport tests nor establishes the runtime correctness, provenance, immutability, or effectiveness of the gate."
+  },
+  "preservation": {
+    "class": "verified_fact",
+    "statement": "The source boundary and all pre-existing calibration records were read only. This revalidation creates a new evidence record and does not supersede or alter their contents."
+  },
+  "evidence": [
+    {
+      "id": "EVD-LSBR-001",
+      "kind": "current deterministic inspection",
+      "locator": "22 SHA-256 outputs for .claude/skills/qa-gate-codex-run/** and git status --short -- .claude/skills/qa-gate-codex-run",
+      "supports": ["LSBR-CSMQG-20260819-001.result", "LSBR-CSMQG-20260819-001.preservation"]
+    },
+    {
+      "id": "EVD-LCI-001",
+      "kind": "calibration inventory",
+      "locator": "local_control_inventory.v1.json, record LCI-CSMQG-20260819-001, files[]",
+      "supports": ["LSBR-CSMQG-20260819-001.source_boundary"]
+    }
+  ],
+  "provenance": {
+    "plan": {
+      "path": "research/codex_same_model_qa_gate/plan/sota_research.plan.v1.html",
+      "sha256": "16ae937c64bb8ce4f673354ec2882d1b422085845b204746408b2c47fce8e862"
+    },
+    "source_boundary_digest_set": "The complete digest set remains recorded in local_control_inventory.v1.json; it is intentionally not copied here."
+  }
+}

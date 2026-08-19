@@ -1,0 +1,72 @@
+{
+  "schema": "sota-local-control-inventory/v1",
+  "record_id": "LCI-CSMQG-20260819-001",
+  "run_id": "RUN-CSMQG-20260819-001",
+  "created_at_utc": "2026-08-19T09:31:00Z",
+  "responsible_role": "sota-incident-analyze",
+  "scope": "calibration-local-inventory-only",
+  "source_boundary": {
+    "canonical_root": ".claude/skills/qa-gate-codex-run",
+    "inspection_mode": "read-only; source boundary not modified",
+    "catalog_stop_condition": "All regular files discovered below the named root are catalogued with canonical repository path, SHA-256, byte size, and access status.",
+    "discovery_method": [
+      "rg --files --hidden --no-ignore .claude/skills/qa-gate-codex-run",
+      "find .claude/skills/qa-gate-codex-run -type f",
+      "shasum -a 256",
+      "stat -f %N|%z|%Sp|%Sm"
+    ],
+    "file_count": 22,
+    "access_summary": {
+      "readable": 22,
+      "unreadable": 0,
+      "missing": 0
+    }
+  },
+  "files": [
+    {"path": ".claude/skills/qa-gate-codex-run/SKILL.md", "sha256": "6a61b15379dda535bdeac44486c28a7ab993f998380900ac65061f1b2f169bf1", "size_bytes": 14614, "access_status": "readable"},
+    {"path": ".claude/skills/qa-gate-codex-run/evals/evals.json", "sha256": "2a75e85aad4632a40bd545633ae5c9637268d505bbcf54332c252b14acefdc02", "size_bytes": 6289, "access_status": "readable"},
+    {"path": ".claude/skills/qa-gate-codex-run/evals/inputs/already-correct/criteria.md", "sha256": "84abd1f5c5aca6e34acfd9661862fc3e878e9783073335f6620c0ae2c77ba2a4", "size_bytes": 258, "access_status": "readable"},
+    {"path": ".claude/skills/qa-gate-codex-run/evals/inputs/already-correct/money.py", "sha256": "2bf00d4ef348ec5a4d8384dcdb77ebe6518f608bb488b26aec6e96fbab62161e", "size_bytes": 482, "access_status": "readable"},
+    {"path": ".claude/skills/qa-gate-codex-run/evals/inputs/buggy-module/criteria.md", "sha256": "5c9626886f4da827dda6a30ef3b4780f024c2a00303b670751d9ce12df9f32d6", "size_bytes": 345, "access_status": "readable"},
+    {"path": ".claude/skills/qa-gate-codex-run/evals/inputs/buggy-module/retry.py", "sha256": "da9f2e76c699326fded5106028edc6d7b59b493631827ffd5ae79c2b8b89fffc", "size_bytes": 313, "access_status": "readable"},
+    {"path": ".claude/skills/qa-gate-codex-run/evals/inputs/deploy-config/Dockerfile", "sha256": "6655610b602d230c26ee1e210b0f0e02f5361e2024d2a04a8b1f8504cc27902d", "size_bytes": 149, "access_status": "readable"},
+    {"path": ".claude/skills/qa-gate-codex-run/evals/inputs/deploy-config/README.md", "sha256": "fdf2f38a14c18cbc8b3196aeee17ef6c5ca593da44aef27feb674cf7ea4e855b", "size_bytes": 187, "access_status": "readable"},
+    {"path": ".claude/skills/qa-gate-codex-run/evals/inputs/deploy-config/criteria.md", "sha256": "61c73d6b7cd5ff1bea9ba9038ceb10779b0873369d83246dc8be49e120b3e333", "size_bytes": 222, "access_status": "readable"},
+    {"path": ".claude/skills/qa-gate-codex-run/evals/inputs/execution-sandboxed/chunking.py", "sha256": "a9db879496d91d816da2693361e50ef9d5fb1023498748a8f7f952dd8e7338f3", "size_bytes": 226, "access_status": "readable"},
+    {"path": ".claude/skills/qa-gate-codex-run/evals/inputs/execution-sandboxed/criteria.md", "sha256": "087de3bcdbab67bf76da9509afb9e35d112bf62e9d45cea45dec0a100452d7fb", "size_bytes": 193, "access_status": "readable"},
+    {"path": ".claude/skills/qa-gate-codex-run/evals/inputs/grounded-claim/criteria.md", "sha256": "a524bea20534b6ab20e266171e1a5be24b6bf66e918438f3f01db70e7b1c58ac", "size_bytes": 183, "access_status": "readable"},
+    {"path": ".claude/skills/qa-gate-codex-run/evals/inputs/grounded-claim/pricing.py", "sha256": "9f892830845c966e4a69ea8b225d9015e86debb20fa96f12a243ddb9e5b5e1cf", "size_bytes": 269, "access_status": "readable"},
+    {"path": ".claude/skills/qa-gate-codex-run/evals/inputs/grounded-claim/tax_schedule.md", "sha256": "88e291557d3353be924f3e85c12cf84b22da0e0562b93e11d2b55f3f16c19857", "size_bytes": 190, "access_status": "readable"},
+    {"path": ".claude/skills/qa-gate-codex-run/references/protocol.md", "sha256": "7366b6fc211b0c2871a1ac5887d3d8fbdf8c0e69fc0e64a7f3993fd086aa67f2", "size_bytes": 9601, "access_status": "readable"},
+    {"path": ".claude/skills/qa-gate-codex-run/scripts/_bridge_flush_fixture.mjs", "sha256": "400a6179e8686acf9275e84f258e1893ca2bc5532493bae7f78a604e4c2ebcbf", "size_bytes": 528, "access_status": "readable"},
+    {"path": ".claude/skills/qa-gate-codex-run/scripts/codex_bridge.mjs", "sha256": "5a5323f4b160411c47a58d6f234f7e29eab3c318adea78302c36fd6dce603dd6", "size_bytes": 8642, "access_status": "readable"},
+    {"path": ".claude/skills/qa-gate-codex-run/scripts/postmortem.schema.json", "sha256": "2ffe1c2f269ef0c75bea262ec2044e5524748d8a9e767915064d4e76fcb36c1a", "size_bytes": 1431, "access_status": "readable"},
+    {"path": ".claude/skills/qa-gate-codex-run/scripts/qa_gate.py", "sha256": "9a3fb4ef38b429f80e0fc37485ce85ceb10261ba948b0a9635d7870b4618b9c6", "size_bytes": 60233, "access_status": "readable"},
+    {"path": ".claude/skills/qa-gate-codex-run/scripts/test_bridge_flush.mjs", "sha256": "59d2734edc84a380e3aa8cf66c9e5c3099ffef2d5afa08ad03493eda49c812de", "size_bytes": 2285, "access_status": "readable"},
+    {"path": ".claude/skills/qa-gate-codex-run/scripts/test_verify_integrity.py", "sha256": "e74de8aef92770bc070922f188862d4ffd805e9c0e90b45e6f06ac923d34d6c8", "size_bytes": 10903, "access_status": "readable"},
+    {"path": ".claude/skills/qa-gate-codex-run/scripts/verdict.schema.json", "sha256": "903bfb58ce58db20f106281dd2009d7781eb4d7bb4c220340e220fe73112169d", "size_bytes": 3137, "access_status": "readable"}
+  ],
+  "tests_executed": [
+    {
+      "test_id": "TST-LCI-001",
+      "command": "PYTHONDONTWRITEBYTECODE=1 python3 .claude/skills/qa-gate-codex-run/scripts/test_verify_integrity.py",
+      "timestamp_utc": "2026-08-19T09:30:00Z",
+      "exit_status": 0,
+      "result": "4 unittest cases passed; they exercise honest PASS/FAIL fixture verification and two synthetic session.json tampering scenarios.",
+      "scope_limit": "The test creates synthetic local rollouts and monkey-patches find_rollout; it does not call Codex or the app-server transport."
+    },
+    {
+      "test_id": "TST-LCI-002",
+      "command": "node .claude/skills/qa-gate-codex-run/scripts/test_bridge_flush.mjs",
+      "timestamp_utc": "2026-08-19T09:30:00Z",
+      "exit_status": 0,
+      "result": "The 200000-character bridge stdout payload was complete and parseable.",
+      "scope_limit": "The test imports only writeResultAndExit; it does not resolve a plugin or run a Codex turn."
+    }
+  ],
+  "provenance": {
+    "plan": {"path": "research/codex_same_model_qa_gate/plan/sota_research.plan.v1.html", "sha256": "16ae937c64bb8ce4f673354ec2882d1b422085845b204746408b2c47fce8e862"},
+    "source_artifacts": [".claude/skills/qa-gate-codex-run/SKILL.md", ".claude/skills/qa-gate-codex-run/references/protocol.md", ".claude/skills/qa-gate-codex-run/scripts/qa_gate.py", ".claude/skills/qa-gate-codex-run/scripts/codex_bridge.mjs", ".claude/skills/qa-gate-codex-run/scripts/test_verify_integrity.py", ".claude/skills/qa-gate-codex-run/scripts/test_bridge_flush.mjs", ".claude/skills/qa-gate-codex-run/evals/evals.json"],
+    "source_mutation_check": "git status --short -- .claude/skills/qa-gate-codex-run returned no entries after inspection and test execution."
+  }
+}

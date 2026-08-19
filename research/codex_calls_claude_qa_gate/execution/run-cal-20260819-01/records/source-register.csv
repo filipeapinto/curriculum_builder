@@ -1,0 +1,25 @@
+source_id,query_family,source_class,title,url,http_status,calibration_decision,reason
+SRC-001,QF-01,official-doc,Claude Code CLI reference,https://code.claude.com/docs/en/cli-reference,200,retain,current official CLI surface
+SRC-002,QF-01,official-doc,Run Claude Code programmatically,https://code.claude.com/docs/en/headless,200,retain,directly addresses non-interactive automation
+SRC-003,QF-01,official-doc,Claude Agent SDK overview,https://code.claude.com/docs/en/agent-sdk/overview,200,retain,documented programmatic route
+SRC-004,QF-01,official-doc,Claude Code costs,https://code.claude.com/docs/en/costs,200,retain,cost measurement candidate
+SRC-005,QF-02,official-doc,Claude Code permissions,https://code.claude.com/docs/en/permissions,200,retain,permission semantics
+SRC-006,QF-02,official-doc,Claude Code settings,https://code.claude.com/docs/en/settings,200,retain,configuration and loading semantics
+SRC-007,QF-02,official-doc,Claude Code MCP,https://code.claude.com/docs/en/mcp,200,retain,integration route and MCP controls
+SRC-008,QF-02,official-doc,Claude Code security,https://code.claude.com/docs/en/security,200,retain,security boundary candidate
+SRC-009,QF-03,official-doc,Anthropic Messages API,https://platform.claude.com/docs/en/api/messages,200,retain,direct API route
+SRC-010,QF-03,official-doc,Anthropic structured outputs,https://platform.claude.com/docs/en/build-with-claude/structured-outputs,200,retain,schema enforcement
+SRC-011,QF-03,official-doc,Anthropic token counting,https://platform.claude.com/docs/en/build-with-claude/token-counting,200,retain,usage ceiling control
+SRC-012,QF-03,official-doc,Anthropic rate limits,https://platform.claude.com/docs/en/api/rate-limits,200,retain,operational reliability
+SRC-013,QF-04,official-doc,Codex developer commands,https://developers.openai.com/codex/cli/reference.md,200,retain,redirects to current official CLI reference
+SRC-014,QF-04,official-doc,Codex non-interactive mode,https://developers.openai.com/codex/noninteractive.md,200,retain,scripted invocation and JSON/schema behavior
+SRC-015,QF-04,official-doc,Codex MCP,https://developers.openai.com/codex/mcp.md,200,retain,external MCP route
+SRC-016,QF-04,official-doc,Codex agent approvals and security,https://learn.chatgpt.com/docs/agent-approvals-security.md,200,retain,sandbox and approval controls
+SRC-017,QF-05,original-research,Judging LLM-as-a-Judge with MT-Bench and Chatbot Arena,https://arxiv.org/abs/2306.05685,200,retain,foundational evaluator study
+SRC-018,QF-05,original-research,Topics in group schemes and surfaces in positive characteristic,https://arxiv.org/abs/2404.02839,200,exclude,query false positive and irrelevant subject
+SRC-019,QF-05,original-research,Replacing Judges with Juries: Evaluating LLM Generations with a Panel of Diverse Models,https://arxiv.org/abs/2404.18796,200,retain,directly relevant diverse-panel evaluator study
+SRC-020,QF-05,original-research,Self-Preference Bias in LLM-as-a-Judge,https://arxiv.org/abs/2410.21819,200,retain,directly relevant evaluator bias study
+SRC-021,QF-06,primary-spec,SLSA provenance v1.2,https://slsa.dev/spec/v1.2/provenance,200,retain,provenance model candidate
+SRC-022,QF-06,primary-spec,in-toto attestation specification candidate,https://in-toto.io/Attestation/v1/specification/,404,exclude,inaccessible obsolete or invalid URL
+SRC-023,QF-06,primary-guidance,OWASP Top 10 for LLM Applications,https://owasp.org/www-project-top-10-for-large-language-model-applications/,200,retain,prompt-injection and application threat candidate
+SRC-024,QF-06,implementation,Anthropic Claude Agent SDK Python repository,https://github.com/anthropics/claude-agent-sdk-python,200,retain,inspectable official implementation candidate

@@ -1,0 +1,120 @@
+{
+  "schema_name": "codex_same_model_qa_gate.calibration_search_eligibility",
+  "schema_version": "1.0.0",
+  "record_id": "CAL-SEARCH-ELIG-v1",
+  "record_status": "proposed_frozen_pending_human_approval",
+  "created_at_utc": "2026-08-19T09:30:04Z",
+  "responsible_role": "$sota-method-lead",
+  "source_plan": {
+    "path": "../plan/sota_research.plan.v1.html",
+    "sha256": "16ae937c64bb8ce4f673354ec2882d1b422085845b204746408b2c47fce8e862",
+    "declared_version": "1",
+    "declared_status": "awaiting approval"
+  },
+  "execution_authority": {
+    "full_screening_authorized": false,
+    "reason": "The plan requires human approval of the calibration packet before full screening. This record freezes a proposal; it is not an approval record."
+  },
+  "research_questions": [
+    {"id": "RQ1", "text": "What accuracy, bias, calibration, and correlated-failure evidence exists when an LLM judges outputs from itself or the same model family?"},
+    {"id": "RQ2", "text": "Which fresh-context, hidden-criteria, test-generation, randomized-sampling, panel, evidence-forcing, and adversarial-role separations improve error detection, and under what conditions?"},
+    {"id": "RQ3", "text": "Which deterministic or formal methods bind verdicts to observable acceptance criteria for code, documents, plans, and mixed artifacts?"},
+    {"id": "RQ4", "text": "How should a gate handle abstention, disagreement, missing evidence, prompt injection, non-convergence, mutable artifacts, and unavailable execution?"},
+    {"id": "RQ5", "text": "Which assurance tiers are justified by artifact risk, and when is same-model QA insufficient without human or external authority?"}
+  ],
+  "mechanism_families": [
+    {"id": "MF1", "name": "same-model judgment and self-critique", "target_candidate_ceiling": 40},
+    {"id": "MF2", "name": "procedural separation, panels, debate, and disagreement", "target_candidate_ceiling": 40},
+    {"id": "MF3", "name": "executable specifications and deterministic assurance", "target_candidate_ceiling": 40},
+    {"id": "MF4", "name": "property-based, metamorphic, mutation, and fault-injection testing", "target_candidate_ceiling": 40},
+    {"id": "MF5", "name": "provenance, auditability, prompt-injection resistance, and immutable evidence", "target_candidate_ceiling": 40},
+    {"id": "MF6", "name": "abstention, escalation, risk tiers, and human authority", "target_candidate_ceiling": 40}
+  ],
+  "source_catalog": [
+    {"source_id": "SRC-ACM", "name": "ACM Digital Library", "class": "scholarly_database", "access": "publisher search interface", "eligible_content": "original and peer-reviewed primary research"},
+    {"source_id": "SRC-IEEE", "name": "IEEE Xplore", "class": "scholarly_database", "access": "publisher search interface", "eligible_content": "original and peer-reviewed primary research and standards"},
+    {"source_id": "SRC-ARXIV", "name": "arXiv", "class": "preprint_repository", "access": "repository search interface", "eligible_content": "original papers only; link later versions and published duplicates"},
+    {"source_id": "SRC-NIST", "name": "NIST", "class": "standards_body", "access": "official site search and publication catalog", "eligible_content": "official standards, frameworks, reports, and guidance"},
+    {"source_id": "SRC-OPENAI", "name": "OpenAI official documentation and research", "class": "official_vendor", "access": "official documentation and research sites", "eligible_content": "versioned official documentation, system cards, evaluations, and original research"},
+    {"source_id": "SRC-TOOLDOC", "name": "Official documentation of included assurance tools", "class": "official_tool_documentation", "access": "maintainer-owned documentation", "eligible_content": "versioned behavior, security model, testability, and operating constraints"},
+    {"source_id": "SRC-PRIMARYREPO", "name": "Primary software repositories", "class": "primary_repository", "access": "maintainer-owned repository and release records", "eligible_content": "source, tests, releases, issue/security records, and demonstrated behavior"},
+    {"source_id": "SRC-SNOWBALL", "name": "Backward and forward citation snowballing", "class": "citation_chaining", "access": "reference lists and citing-work interfaces", "eligible_content": "primary sources reached from included or provisionally included primary studies"}
+  ],
+  "query_set": [
+    {"query_id": "Q-MF1-A", "family_id": "MF1", "query_text": "(\"LLM as judge\" OR \"language model as judge\" OR \"model-based evaluator\") AND (reliability OR bias OR calibration OR agreement OR accuracy)", "sources": ["SRC-ACM", "SRC-IEEE", "SRC-ARXIV", "SRC-OPENAI"]},
+    {"query_id": "Q-MF1-B", "family_id": "MF1", "query_text": "(\"self-critique\" OR \"self-refinement\" OR \"self-evaluation\" OR \"self-correction\") AND (failure OR reliability OR bias OR calibration OR correlated)", "sources": ["SRC-ACM", "SRC-IEEE", "SRC-ARXIV", "SRC-OPENAI"]},
+    {"query_id": "Q-MF2-A", "family_id": "MF2", "query_text": "(\"fresh context\" OR \"independent samples\" OR \"multi-agent debate\" OR \"panel judge\" OR \"majority vote\") AND (LLM OR \"language model\") AND (evaluation OR verifier OR reliability)", "sources": ["SRC-ACM", "SRC-IEEE", "SRC-ARXIV", "SRC-OPENAI"]},
+    {"query_id": "Q-MF2-B", "family_id": "MF2", "query_text": "(LLM OR \"language model\") AND (disagreement OR aggregation OR ensemble OR adversarial) AND (judge OR evaluator OR verifier) AND (error OR calibration OR detection)", "sources": ["SRC-ACM", "SRC-IEEE", "SRC-ARXIV"]},
+    {"query_id": "Q-MF3-A", "family_id": "MF3", "query_text": "(\"executable specification\" OR \"proof obligation\" OR \"formal verification\" OR \"static analysis\") AND (\"generated code\" OR agent OR \"language model\") AND (assurance OR validation OR testing)", "sources": ["SRC-ACM", "SRC-IEEE", "SRC-ARXIV", "SRC-NIST"]},
+    {"query_id": "Q-MF3-B", "family_id": "MF3", "query_text": "(\"document validation\" OR \"schema validation\" OR \"policy as code\" OR \"acceptance criteria\") AND (agent OR \"generated document\" OR workflow) AND (deterministic OR executable OR automated)", "sources": ["SRC-ACM", "SRC-IEEE", "SRC-ARXIV", "SRC-NIST", "SRC-TOOLDOC", "SRC-PRIMARYREPO"]},
+    {"query_id": "Q-MF4-A", "family_id": "MF4", "query_text": "(\"property-based testing\" OR \"metamorphic testing\" OR \"mutation testing\" OR \"fault injection\") AND (LLM OR agent OR \"generated code\") AND (evaluation OR assurance OR verifier)", "sources": ["SRC-ACM", "SRC-IEEE", "SRC-ARXIV", "SRC-TOOLDOC", "SRC-PRIMARYREPO"]},
+    {"query_id": "Q-MF4-B", "family_id": "MF4", "query_text": "(mutation OR metamorphic OR adversarial) AND (benchmark OR corpus OR oracle) AND (\"code generation\" OR \"document generation\" OR \"AI agent\")", "sources": ["SRC-ACM", "SRC-IEEE", "SRC-ARXIV", "SRC-PRIMARYREPO"]},
+    {"query_id": "Q-MF5-A", "family_id": "MF5", "query_text": "(provenance OR \"append-only log\" OR \"tamper-evident log\" OR auditability) AND (\"AI agent\" OR LLM OR \"automated decision\") AND (integrity OR evidence OR verification)", "sources": ["SRC-ACM", "SRC-IEEE", "SRC-ARXIV", "SRC-NIST", "SRC-TOOLDOC", "SRC-PRIMARYREPO"]},
+    {"query_id": "Q-MF5-B", "family_id": "MF5", "query_text": "(\"prompt injection\" OR \"indirect prompt injection\" OR \"untrusted artifact\") AND (evaluator OR verifier OR judge OR agent) AND (mitigation OR isolation OR detection)", "sources": ["SRC-ACM", "SRC-IEEE", "SRC-ARXIV", "SRC-NIST", "SRC-OPENAI"]},
+    {"query_id": "Q-MF6-A", "family_id": "MF6", "query_text": "(abstention OR deferral OR escalation OR \"selective prediction\") AND (LLM OR \"language model\" OR \"AI agent\") AND (risk OR assurance OR calibration)", "sources": ["SRC-ACM", "SRC-IEEE", "SRC-ARXIV", "SRC-NIST", "SRC-OPENAI"]},
+    {"query_id": "Q-MF6-B", "family_id": "MF6", "query_text": "(\"human in the loop\" OR \"human oversight\" OR \"risk tier\" OR \"assurance level\") AND (LLM OR \"AI system\" OR agent) AND (verification OR evaluation OR governance)", "sources": ["SRC-ACM", "SRC-IEEE", "SRC-ARXIV", "SRC-NIST"]}
+  ],
+  "query_execution_rules": {
+    "literal_recording": "Record the exact submitted string, source, interface, filters, result count, retrieval timestamp, and URL or query identifier. Preserve any source-imposed translation of the query.",
+    "filters": {"publication_date": "none", "document_type": "source-native filters may be used only when logged", "language": "no language filter at retrieval"},
+    "ordering": "Use relevance ordering for the initial pass; if the source exposes stable date ordering, also inspect the newest results until the family ceiling or saturation condition is reached.",
+    "snowballing": "For each included or provisionally included primary study, inspect references and citing works for otherwise missed primary evidence; register the seed source ID and direction.",
+    "deduplication_key_order": ["DOI", "canonical repository identifier", "title plus first author plus year", "content digest"],
+    "version_lineage": "Retain the fullest primary version as the screening record and link superseded preprint, conference, journal, report, or repository versions as duplicates rather than independent evidence."
+  },
+  "eligibility": {
+    "include_all": [
+      {"criterion_id": "I1", "rule": "The record reports a mechanism, evaluable method, empirical result, formal property, or operational control relevant to a QA-gate decision."},
+      {"criterion_id": "I2", "rule": "The record is a public standard, original or peer-reviewed research, official vendor/model or tool documentation, a primary benchmark/dataset paper, or a mature primary software repository with inspectable tests or demonstrated behavior."},
+      {"criterion_id": "I3", "rule": "The record informs at least one research question, required candidate architecture, threat, metric, or authority boundary in the plan."},
+      {"criterion_id": "I4", "rule": "Enough text or inspectable material is available to appraise the claimed method or control; metadata-only records remain candidates but cannot be included."}
+    ],
+    "exclude_any": [
+      {"criterion_id": "E1", "reason_code": "UNSOURCED_OPINION", "rule": "Unsourced opinion or commentary without an inspectable method, result, formal property, or operational control."},
+      {"criterion_id": "E2", "reason_code": "SUPERSEDED_DUPLICATE", "rule": "Duplicate or superseded version when a fuller primary version is registered; preserve lineage."},
+      {"criterion_id": "E3", "reason_code": "MARKETING_WITHOUT_METHOD", "rule": "Marketing claim without an inspectable method, test, or evidence."},
+      {"criterion_id": "E4", "reason_code": "OUT_OF_SCOPE", "rule": "Cannot inform a QA-gate decision, listed comparison, threat, metric, or assurance boundary."},
+      {"criterion_id": "E5", "reason_code": "NOT_PRIMARY_OR_OFFICIAL", "rule": "Secondary summary when the underlying primary or official source is available; retain only as a discovery pointer."},
+      {"criterion_id": "E6", "reason_code": "INSUFFICIENT_ACCESS", "rule": "Full method or operative control cannot be inspected after documented retrieval attempts."}
+    ],
+    "not_exclusion_reasons": ["negative or null result", "finding contradicts an anticipated architecture", "preprint status by itself", "non-English language when a reliable translation is available", "low appraisal quality by itself"],
+    "screening_flow": [
+      "Deduplicate reversibly and preserve lineage.",
+      "Perform title/abstract triage; triage may include, mark uncertain, or propose exclusion but has no final exclusion authority.",
+      "Sample at least 20 percent of triage records plus every proposed borderline exclusion for higher-capability review.",
+      "Perform full-text eligibility; record exactly one primary exclusion reason and optional secondary reasons.",
+      "Send all borderline exclusions and all high-impact negative evidence to method-lead adjudication before final status."
+    ]
+  },
+  "coverage_and_stopping": {
+    "hard_ceilings": {"deduplicated_candidates": 240, "full_texts": 80, "included": 45},
+    "warnings": {"deduplicated_candidates": 192, "full_texts": 64, "included": 36},
+    "family_ceiling": 40,
+    "early_saturation": "Two successive human-approved query refinements add no new mechanism class and every required candidate-architecture comparison cell has at least one appraised source or an explicit evidence gap.",
+    "non_suppression": "Contradictory, negative, and null evidence cannot be suppressed by early stopping.",
+    "count_failure": "If stage counts cannot be computed from the source register, stop screening and repair the register before continuing."
+  },
+  "pilot_calibration": {
+    "search_log": "calibration_pilot_search_log.v1.json",
+    "source_register": "calibration_pilot_source_register.v1.json",
+    "concept_map": "calibration_terminology_concept_map.v1.json",
+    "status": "terminology_and_mechanism_convergence_reached_for_pilot_only",
+    "counts": {"query_batches": 5, "exact_queries": 20, "candidate_occurrences": 26, "duplicate_occurrences": 1, "deduplicated_candidates": 25, "pilot_relevant": 25, "full_texts_retrieved": 0, "full_screening_decisions": 0, "appraisals": 0, "extractions": 0},
+    "evidence_class_distribution": {"original_research": 16, "standards_body": 2, "official_documentation": 7},
+    "convergence_support": ["Q04 added no new mechanism class", "Q05 added no new mechanism class"],
+    "coverage": "All pilot concept-map classes MC-01 through MC-08 were observed.",
+    "full_protocol_crosswalk": [
+      {"family_id": "MF1", "pilot_classes": ["MC-01", "MC-02"]},
+      {"family_id": "MF2", "pilot_classes": ["MC-02", "MC-07", "MC-08"]},
+      {"family_id": "MF3", "pilot_classes": ["MC-03", "MC-07", "MC-08"]},
+      {"family_id": "MF4", "pilot_classes": ["MC-03", "MC-08"]},
+      {"family_id": "MF5", "pilot_classes": ["MC-04", "MC-05", "MC-08"]},
+      {"family_id": "MF6", "pilot_classes": ["MC-06", "MC-08"]}
+    ],
+    "interpretive_limit": "Pilot relevance is reversible triage, not eligibility, inclusion, appraisal, extraction, or evidence sufficiency. Pilot convergence supports freezing terminology and the proposed full query set but does not satisfy full-review evidence saturation."
+  },
+  "known_calibration_gaps": [
+    "All 25 deduplicated pilot candidates remain unscreened; no source is included, excluded, appraised, or extracted.",
+    "No query refinement may be added or materially changed after approval without a logged deviation and, when material, human approval or a vN+1 plan."
+  ]
+}

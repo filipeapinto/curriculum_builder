@@ -1,0 +1,37 @@
+{
+  "schema": "csmqg-synthesis-candidate-manifest/v1",
+  "record_id": "SYNMAN-CSMQG-20260819-001",
+  "run_id": "RUN-CSMQG-20260819-001",
+  "created_at_utc": "2026-08-19T10:04:35Z",
+  "revised_at_utc": "2026-08-19T10:22:19Z",
+  "responsible_role": "sota-synthesize",
+  "status": "challenge_revised_candidate_partial_blocked_pending_unresolved_challenges_evaluation_verification_and_human_acceptance",
+  "primary_deliverables": [
+    "../report/sota_research_report.v1.html",
+    "../design/codex_same_model_qa_reference_architecture.v1.html"
+  ],
+  "machine_records": [
+    "synthesis_findings.v1.json",
+    "synthesis_recommendations.v1.json",
+    "synthesis_finding_evidence_map.v1.json",
+    "challenge_dispositions.v1.json",
+    "synthesis_candidate_manifest.v1.json"
+  ],
+  "hash_scope": "Component hashes bind the two HTML deliverables and four synthesis-owned machine records after challenge revision. They are not a full evidence-package integrity verification. The later verifier must enumerate, hash, and report every supporting record cited by findings, recommendations, dispositions, and HTML deliverables.",
+  "component_hashes_sha256": {
+    "../report/sota_research_report.v1.html": "0049195b9591c1374e88504b17937d54c2036411e8a9f2bda8cc2c29c37a7ec4",
+    "../design/codex_same_model_qa_reference_architecture.v1.html": "c4ef8f0d5aad51397c3a058116547c0d1d3503cb7207c0c44ebfc4df76a91e01",
+    "synthesis_findings.v1.json": "83f9365518f26dd6b55482b1d177c4d03fd8a244f8da13a928b79c7f6d809026",
+    "synthesis_recommendations.v1.json": "d6d440bfc54d6869e23c13889d49ae67542be528b5dfcfe2c4872aa8455fc370",
+    "synthesis_finding_evidence_map.v1.json": "b59ea12c205ec6e5ffc257e200c7c0b2e5ca12ff4a9c4322de86fa59abd65d29"
+  },
+  "frozen_finding_ids": ["F-CSMQG-001","F-CSMQG-002","F-CSMQG-003","F-CSMQG-004","F-CSMQG-005","F-CSMQG-006","F-CSMQG-007","F-CSMQG-008","F-CSMQG-009","F-CSMQG-010","F-CSMQG-011","F-CSMQG-012","F-CSMQG-013"],
+  "frozen_recommendation_ids": ["REC-CSMQG-001","REC-CSMQG-002","REC-CSMQG-003","REC-CSMQG-004","REC-CSMQG-005","REC-CSMQG-006","REC-CSMQG-007","REC-CSMQG-008","REC-CSMQG-009","REC-CSMQG-010","REC-CSMQG-011","REC-CSMQG-012"],
+  "next_required_role": "sota-verify_for_deterministic_conformance_and_blocker_reporting",
+  "challenge_state": "all_12_dispositioned; corrected_8; unresolved_4: CH-CSMQG-003,CH-CSMQG-005,CH-CSMQG-007,CH-CSMQG-010",
+  "verification_state": "not_started_by_synthesis_role",
+  "human_acceptance_state": "not_accepted",
+  "implementation_authority": "not_granted",
+  "blocking_record": "controlled_evaluation/raw_results/blocker_record.v1.json:BLK-CSMQG-EVAL-001",
+  "resume_condition": "Before any evaluation operation, resolve CH-CSMQG-003 with independent corpus-label/oracle QA, CH-CSMQG-005 with a concrete telemetry feasibility proof or approved revised protocol, CH-CSMQG-007 with a superseding V3 prompt record, and CH-CSMQG-010 with executable/auditable test specifications. Then execute the approved comparison and revise synthesis before any effectiveness or selection claim."
+}

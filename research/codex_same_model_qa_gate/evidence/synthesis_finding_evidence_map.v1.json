@@ -1,0 +1,45 @@
+{
+  "schema": "csmqg-synthesis-finding-evidence-map/v1",
+  "record_id": "SYNMAP-CSMQG-20260819-001",
+  "run_id": "RUN-CSMQG-20260819-001",
+  "created_at_utc": "2026-08-19T10:04:35Z",
+  "revised_at_utc": "2026-08-19T10:22:19Z",
+  "responsible_role": "sota-synthesize",
+  "status": "challenge_revised_candidate_partial_blocked",
+  "map": [
+    {"finding_id":"F-CSMQG-001","external_claim_ids":["C-003","C-013","C-014","C-018","C-022"],"local_ids":["INF-001","ALT-002","UNK-002"],"evaluation_ids":[],"support":"moderate risk/boundary evidence","applicability_limit":"No same-Codex fault-corpus estimate."},
+    {"finding_id":"F-CSMQG-002","external_claim_ids":["C-005","C-006","C-007","C-008","C-024","C-025"],"local_ids":["CTRL-001","CTRL-002","CTRL-005","CTRL-007","CTRL-009"],"evaluation_ids":[],"support":"high official plus moderate empirical conditional support","applicability_limit":"Predominantly code evidence; oracle and hidden-coverage limits."},
+    {"finding_id":"F-CSMQG-003","external_claim_ids":["C-002","C-003","C-013","C-019","C-020","C-023"],"local_ids":[],"evaluation_ids":["CAL-EVAL-v1.analysis","CAL-EVAL-v1.precision_rationale"],"support":"moderate conditional and negative evidence","applicability_limit":"Mixed-family studies and no local calibration result."},
+    {"finding_id":"F-CSMQG-004","external_claim_ids":["C-009","C-010","C-023"],"local_ids":["CTRL-005","CTRL-006","CTRL-007","THR-005","THR-006","INF-002","ALT-001","UNK-003"],"evaluation_ids":[],"support":"high official plus verified local controls","applicability_limit":"Provenance and byte integrity do not establish semantics or independent origin."},
+    {"finding_id":"F-CSMQG-005","external_claim_ids":[],"local_ids":["LSBR-CSMQG-20260819-001","CTRL-001-through-CTRL-012","GAP-001-through-GAP-005","FACT-001-through-FACT-004"],"evaluation_ids":[],"support":"verified local source/test facts","applicability_limit":"No live transport, sandbox, or effectiveness evidence."},
+    {"finding_id":"F-CSMQG-006","external_claim_ids":["C-022"],"local_ids":["THR-007","THR-008","GAP-003"],"evaluation_ids":["sandbox_policy.v1","prompt_templates.v1"],"support":"moderate adversarial plus approved protocol controls","applicability_limit":"Policy not demonstrated as enforced; excluded official pages not used."},
+    {"finding_id":"F-CSMQG-007","external_claim_ids":[],"local_ids":[],"evaluation_ids":["corpus_integrity.v1","pre_run_dry_run.v1","run_ledger.v1","metrics.v1","BLK-CSMQG-EVAL-001"],"support":"verified execution state","applicability_limit":"All comparative denominators zero; no effectiveness inference allowed."},
+    {"finding_id":"F-CSMQG-008","external_claim_ids":["C-001","C-002","C-003","C-004","C-005","C-006","C-007","C-008","C-009","C-010","C-013","C-014","C-018","C-019","C-020","C-022","C-023","C-024","C-025"],"local_ids":[],"evaluation_ids":[],"support":"verified review reconciliation and appraisal distribution","applicability_limit":"25-candidate bounded corpus; six access exclusions; no full saturation claim."},
+    {"finding_id":"F-CSMQG-009","external_claim_ids":[],"local_ids":[],"evaluation_ids":[],"support":"coverage rationale from cross-class synthesis of F-CSMQG-001 through F-CSMQG-007","applicability_limit":"Unexecuted reference test candidate only; no superiority, selection, or adoption inference."},
+    {"finding_id":"F-CSMQG-010","external_claim_ids":[],"local_ids":[],"evaluation_ids":["pre_run_dry_run.v1","corpus_cases.v1","gold_labels.v1","CH-CSMQG-003"],"support":"verified preflight scope plus independent challenge","applicability_limit":"Gold correctness, representativeness, ambiguity, and clean negative controls are not independently adjudicated."},
+    {"finding_id":"F-CSMQG-011","external_claim_ids":[],"local_ids":[],"evaluation_ids":["budget_ledger.json","run_configuration.v1.telemetry_contract","BLK-CSMQG-EVAL-001","CH-CSMQG-005"],"support":"verified absence plus independent challenge","applicability_limit":"No concrete telemetry ledger or validated pre-scheduling integration exists in the package."},
+    {"finding_id":"F-CSMQG-012","external_claim_ids":[],"local_ids":[],"evaluation_ids":["run_configuration.v1","run_ledger.v1","APR-CSMQG-20260819-002","CH-CSMQG-009"],"support":"verified zero-run/design omission plus independent challenge","applicability_limit":"Deterministic-plus-human/shadow baseline and human workload/quality are unmeasured."},
+    {"finding_id":"F-CSMQG-013","external_claim_ids":[],"local_ids":[],"evaluation_ids":["synthesis_recommendations.v1.proving_tests","CH-CSMQG-010"],"support":"verified synthesis-record scope plus independent challenge","applicability_limit":"Pass-condition concepts lack executable/auditable specifications and completed proof."}
+  ],
+  "recommendation_links": [
+    {"recommendation_id":"REC-CSMQG-001","finding_ids":["F-CSMQG-007","F-CSMQG-010","F-CSMQG-011"],"evaluation_required":true},
+    {"recommendation_id":"REC-CSMQG-002","finding_ids":["F-CSMQG-001","F-CSMQG-002","F-CSMQG-006","F-CSMQG-009","F-CSMQG-012"],"evaluation_required":true},
+    {"recommendation_id":"REC-CSMQG-003","finding_ids":["F-CSMQG-002","F-CSMQG-004","F-CSMQG-005"],"evaluation_required":true},
+    {"recommendation_id":"REC-CSMQG-004","finding_ids":["F-CSMQG-001","F-CSMQG-003"],"evaluation_required":true},
+    {"recommendation_id":"REC-CSMQG-005","finding_ids":["F-CSMQG-006"],"evaluation_required":true},
+    {"recommendation_id":"REC-CSMQG-006","finding_ids":["F-CSMQG-001","F-CSMQG-002","F-CSMQG-004","F-CSMQG-007","F-CSMQG-009","F-CSMQG-012"],"evaluation_required":true},
+    {"recommendation_id":"REC-CSMQG-007","finding_ids":["F-CSMQG-004","F-CSMQG-005"],"evaluation_required":true},
+    {"recommendation_id":"REC-CSMQG-008","finding_ids":["F-CSMQG-008"],"evaluation_required":false},
+    {"recommendation_id":"REC-CSMQG-009","finding_ids":["F-CSMQG-002","F-CSMQG-007","F-CSMQG-010"],"evaluation_required":true},
+    {"recommendation_id":"REC-CSMQG-010","finding_ids":["F-CSMQG-007","F-CSMQG-011"],"evaluation_required":true},
+    {"recommendation_id":"REC-CSMQG-011","finding_ids":["F-CSMQG-007","F-CSMQG-009","F-CSMQG-012"],"evaluation_required":true},
+    {"recommendation_id":"REC-CSMQG-012","finding_ids":["F-CSMQG-013"],"evaluation_required":true}
+  ],
+  "prohibited_inferences": [
+    "No null metric is an observed zero.",
+    "No variant is a winner, dominant, noninferior, equivalent, safe, or production-ready.",
+    "No same-model sample is an independent trust root.",
+    "No digest or local rollout agreement proves semantic truth or cryptographic provenance.",
+    "No local documentation claim is converted to a verified effectiveness result."
+  ]
+}

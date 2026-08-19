@@ -1,0 +1,12 @@
+{
+  "schema":"codex_same_model_qa_gate.review_evidence_map","schema_version":"1.0.0","record_id":"RUN-CSMQG-20260819-001-EVIDENCE-MAP-v1","run_id":"RUN-CSMQG-20260819-001","created_at_utc":"2026-08-19T11:20:00Z","responsible_role":"sota-evidence-review",
+  "claim_map":[
+    {"finding_id":"EVM-001","claim_ids":["C-003","C-013","C-014","C-018","C-022"],"direction":"risk/boundary evidence","support_level":"moderate empirical","scope":"LLM judge instability, same-family bias, position/reference sensitivity and adversarial manipulation"},
+    {"finding_id":"EVM-002","claim_ids":["C-002","C-019","C-020"],"direction":"conditional support","support_level":"moderate empirical","scope":"Debiasing, calibrated panels and criteria/ensemble methods; requires local labeled calibration and does not create independent trust."},
+    {"finding_id":"EVM-003","claim_ids":["C-005","C-006","C-007","C-008","C-024","C-025"],"direction":"conditional support","support_level":"high official plus moderate empirical","scope":"Executable properties, tests and mutation/fault calibration; coverage/oracle limits remain."},
+    {"finding_id":"EVM-004","claim_ids":["C-009","C-010","C-023"],"direction":"boundary/control","support_level":"high official plus moderate formal","scope":"Provenance, attestation verification and pre-specified measurement protocols; none proves artifact security or semantic truth."},
+    {"finding_id":"EVM-005","claim_ids":["C-001","C-004"],"direction":"contextual/low-to-moderate","support_level":"mixed","scope":"Self-refinement and scoring-bias mechanisms; not sufficient acceptance evidence."}
+  ],
+  "excluded_source_observations":[{"source_id":"SRC-011","disposition":"not mapped","reason":"INSUFFICIENT_ACCESS"},{"source_id":"SRC-012","disposition":"not mapped","reason":"INSUFFICIENT_ACCESS"},{"source_id":"SRC-015","disposition":"not mapped","reason":"INSUFFICIENT_ACCESS"},{"source_id":"SRC-016","disposition":"not mapped","reason":"INSUFFICIENT_ACCESS"},{"source_id":"SRC-017","disposition":"not mapped","reason":"INSUFFICIENT_ACCESS"},{"source_id":"SRC-021","disposition":"not mapped","reason":"INSUFFICIENT_ACCESS"}],
+  "note":"This map is an evidence handoff only; it contains no comparative architecture synthesis or recommendation."
+}

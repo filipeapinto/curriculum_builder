@@ -1,0 +1,15 @@
+{
+  "schema":"csmqg-controlled-evaluation-metrics/v1",
+  "run_id":"RUN-CSMQG-20260819-001",
+  "status":"not_estimable_blocked_before_any_comparative_operation",
+  "interpretation":"All denominators are zero because no valid operations were scheduled. Values are deliberately null, not zero, to avoid simulating comparative results.",
+  "variants":[
+    {"variant_id":"V1","valid_case_level_verdicts":0,"false_pass_rate":null,"false_block_rate":null,"abstention_rate":null,"repeat_reproducibility":null,"latency_seconds":null},
+    {"variant_id":"V2","valid_case_level_verdicts":0,"false_pass_rate":null,"false_block_rate":null,"abstention_rate":null,"repeat_reproducibility":null,"latency_seconds":null},
+    {"variant_id":"V3","valid_case_level_verdicts":0,"false_pass_rate":null,"false_block_rate":null,"abstention_rate":null,"repeat_reproducibility":null,"latency_seconds":null},
+    {"variant_id":"V4","valid_case_level_verdicts":0,"false_pass_rate":null,"false_block_rate":null,"abstention_rate":null,"repeat_reproducibility":null,"latency_seconds":null},
+    {"variant_id":"V5","valid_case_level_verdicts":0,"false_pass_rate":null,"false_block_rate":null,"abstention_rate":null,"repeat_reproducibility":null,"latency_seconds":null},
+    {"variant_id":"V6","valid_case_level_verdicts":0,"false_pass_rate":null,"false_block_rate":null,"abstention_rate":null,"repeat_reproducibility":null,"latency_seconds":null}
+  ],
+  "comparison":"No between-variant comparison, Wilson interval, paired difference, or recommendation is reported."
+}

@@ -1,0 +1,27 @@
+{
+  "schema": "codex_same_model_qa_gate.review_source_register",
+  "schema_version": "1.0.0",
+  "record_id": "RUN-CSMQG-20260819-001-SOURCES-v1",
+  "run_id": "RUN-CSMQG-20260819-001",
+  "created_at_utc": "2026-08-19T10:20:00Z",
+  "responsible_role": "sota-evidence-review",
+  "stage": "metadata_normalization_and_reversible_title_abstract_triage",
+  "authority": {"packet": "CAL-PACKET-v1", "gate_record": "GATE-CSMQG-FULL-001", "full_screening_allowed": true, "final_exclusion_authority": false},
+  "provenance": {
+    "plan": "research/codex_same_model_qa_gate/plan/sota_research.plan.v1.html",
+    "eligibility": "research/codex_same_model_qa_gate/evidence/calibration_search_eligibility.v1.json",
+    "pilot_search_log": "research/codex_same_model_qa_gate/evidence/calibration_pilot_search_log.v1.json",
+    "pilot_source_register": "research/codex_same_model_qa_gate/evidence/calibration_pilot_source_register.v1.json",
+    "retrieval_interface": "public web search; source-native URLs retained from approved pilot register",
+    "retrieval_date_utc": "2026-08-19"
+  },
+  "normalization_rules": ["preserve canonical source ID", "preserve exact title and URL", "preserve query IDs and evidence class", "normalize status only; do not alter source content"],
+  "source_register_ref": "calibration_pilot_source_register.v1.json",
+  "candidate_ids": ["SRC-001","SRC-002","SRC-003","SRC-004","SRC-005","SRC-006","SRC-007","SRC-008","SRC-009","SRC-010","SRC-011","SRC-012","SRC-013","SRC-014","SRC-015","SRC-016","SRC-017","SRC-018","SRC-019","SRC-020","SRC-021","SRC-022","SRC-023","SRC-024","SRC-025"],
+  "candidate_count": 25,
+  "candidate_occurrence_count": 26,
+  "duplicate_occurrence_count": 1,
+  "duplicate_receipts": [{"candidate_occurrence":"Q05 candidate 5","canonical_source_id":"SRC-009","reason":"same canonical URL and title as Q02 candidate 4","action":"retained SRC-009 and linked Q05 provenance; not counted twice"}],
+  "metadata_status": "all 25 candidate records normalized by reference to the immutable pilot register; no calibration record mutated",
+  "unresolved": ["abstract/full-text retrieval and eligibility remain open", "publication status, method quality, and applicability remain unappraised", "title/abstract-only evidence cannot support final exclusion or inclusion"]
+}

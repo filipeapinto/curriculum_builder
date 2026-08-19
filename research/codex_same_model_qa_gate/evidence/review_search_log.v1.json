@@ -1,0 +1,16 @@
+{
+  "schema": "codex_same_model_qa_gate.review_search_log",
+  "schema_version": "1.0.0",
+  "record_id": "RUN-CSMQG-20260819-001-SEARCH-v1",
+  "run_id": "RUN-CSMQG-20260819-001",
+  "created_at_utc": "2026-08-19T10:20:00Z",
+  "responsible_role": "sota-evidence-review",
+  "authority": "CAL-PACKET-v1 / GATE-CSMQG-FULL-001",
+  "approved_query_set": "calibration_search_eligibility.v1.json query_set (Q-MF1-A through Q-MF6-B)",
+  "search_input": "calibration_pilot_search_log.v1.json Q01-Q05 exact query batches; no query text altered",
+  "batches": [{"batch_id":"Q01","query_count":4,"candidate_occurrences":5,"duplicates":0,"deduplicated":5},{"batch_id":"Q02","query_count":4,"candidate_occurrences":5,"duplicates":0,"deduplicated":5},{"batch_id":"Q03","query_count":4,"candidate_occurrences":6,"duplicates":0,"deduplicated":6},{"batch_id":"Q04","query_count":4,"candidate_occurrences":5,"duplicates":0,"deduplicated":5},{"batch_id":"Q05","query_count":4,"candidate_occurrences":5,"duplicates":1,"deduplicated":4}],
+  "stop_rule": "pilot convergence: Q04 and Q05 added no new mechanism class; stop before any unapproved query refinement and retain all contradictory/negative evidence for later screening",
+  "counts": {"query_batches":5,"exact_queries":20,"candidate_occurrences":26,"duplicate_occurrences":1,"deduplicated_candidates":25,"provisionally_retain":23,"uncertain":2,"proposed_exclusions":0},
+  "budget": {"deduplicated_candidate_ceiling":240,"used":25,"percent_used":10.42,"warning_reached":false,"hard_stop_reached":false},
+  "provenance_note": "Exact query strings, source interfaces, URLs, retrieval date, and source IDs are preserved in calibration_pilot_search_log.v1.json and calibration_pilot_source_register.v1.json; those calibration records were not mutated."
+}

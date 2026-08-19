@@ -1,0 +1,103 @@
+{
+  "schema_name": "codex_same_model_qa_gate.calibration_appraisal_instruments",
+  "schema_version": "1.0.0",
+  "record_id": "CAL-APPRAISAL-v1",
+  "record_status": "proposed_frozen_pending_human_approval",
+  "created_at_utc": "2026-08-19T09:30:04Z",
+  "responsible_role": "$sota-method-lead",
+  "source_plan": {"path": "../plan/sota_research.plan.v1.html", "sha256": "16ae937c64bb8ce4f673354ec2882d1b422085845b204746408b2c47fce8e862"},
+  "common_scale": {
+    "2": "adequately addressed and supported",
+    "1": "partially addressed, ambiguous, or incompletely supported",
+    "0": "not addressed or materially deficient",
+    "NA": "not applicable, with rationale required",
+    "NR": "not reported or not inspectable"
+  },
+  "common_rules": [
+    "Score each dimension with criterion-linked notes and a direct locator into the source.",
+    "Do not convert the score sum into an effect estimate or truth probability.",
+    "Eligibility and appraisal are separate: an eligible low-quality source remains in the evidence map with reduced interpretive weight.",
+    "Preserve contradictions and null results.",
+    "No causal claim may exceed the source design.",
+    "A critical limitation flag cannot be overridden by a high total score."
+  ],
+  "instruments": [
+    {
+      "instrument_id": "APP-EMPIRICAL-v1",
+      "applies_to": ["experimental study", "observational study", "benchmark/evaluation paper", "primary dataset paper"],
+      "dimensions": [
+        {"id": "EV-CONSTRUCT", "label": "construct validity", "question": "Do outcomes measure the claimed QA property rather than a proxy that changes the decision meaning?", "critical": true},
+        {"id": "EV-REPRESENT", "label": "benchmark representativeness", "question": "Are artifacts, faults, tasks, and operating conditions representative of the intended applicability claim?", "critical": true},
+        {"id": "EV-BASELINE", "label": "baselines and comparators", "question": "Are relevant baselines defined and applied consistently?", "critical": false},
+        {"id": "EV-LEAKAGE", "label": "leakage and contamination controls", "question": "Are train/test leakage, benchmark contamination, label exposure, and evaluator contamination addressed?", "critical": true},
+        {"id": "EV-UNCERTAINTY", "label": "uncertainty and multiplicity", "question": "Are sample size, variance or intervals, repeated measures, and multiple comparisons handled transparently?", "critical": false},
+        {"id": "EV-REPRO", "label": "reproducibility", "question": "Are prompts, versions, data, code, seeds, scoring, and exclusions sufficient to reproduce or audit results?", "critical": false},
+        {"id": "EV-CORRELATED", "label": "correlated-error treatment", "question": "Does the design distinguish repeated samples from independent models, organizations, incentives, or trust roots?", "critical": true},
+        {"id": "EV-APPLY", "label": "applicability", "question": "Are transfer limits to Codex, same-model review, artifact classes, and risk tiers stated?", "critical": false}
+      ],
+      "overall_rating_rule": {
+        "high": "No critical dimension is 0 or NR; at least six dimensions score 2; remaining dimensions are 1, 2, or justified NA.",
+        "moderate": "No more than one critical dimension is 0 or NR and the source still supports a bounded claim.",
+        "low": "Two or more critical dimensions are 0 or NR, or a single critical defect defeats the main assurance claim."
+      }
+    },
+    {
+      "instrument_id": "APP-STANDARD-DOC-v1",
+      "applies_to": ["standard", "official framework", "official vendor/model documentation", "official tool documentation", "system card"],
+      "dimensions": [
+        {"id": "SD-AUTHORITY", "label": "authority and provenance", "question": "Is the issuer authoritative for the stated behavior or normative requirement, and is provenance clear?", "critical": true},
+        {"id": "SD-VERSION", "label": "version and currency", "question": "Are version, publication date, supersession state, and applicable product/model version identifiable?", "critical": true},
+        {"id": "SD-NORM", "label": "normative strength", "question": "Are mandatory requirements, recommendations, informative text, and vendor claims distinguished?", "critical": true},
+        {"id": "SD-SCOPE", "label": "scope and definitions", "question": "Are audience, system boundary, assumptions, exclusions, and terminology precise?", "critical": false},
+        {"id": "SD-TEST", "label": "testability", "question": "Can the relevant requirement or behavior be evaluated against observable evidence?", "critical": true},
+        {"id": "SD-TRACE", "label": "traceability", "question": "Can extracted claims be linked to stable sections, requirements, releases, or identifiers?", "critical": false},
+        {"id": "SD-APPLY", "label": "applicability", "question": "Is applicability to Codex, same-model QA, and the relevant artifact/risk class supported?", "critical": false}
+      ],
+      "overall_rating_rule": {
+        "high": "All critical dimensions score 2 and at least two non-critical dimensions score 2.",
+        "moderate": "No more than one critical dimension scores 1; none scores 0 or NR for the extracted claim.",
+        "low": "Any claim-essential critical dimension scores 0 or NR, or the document is non-normative but cited as mandatory."
+      }
+    },
+    {
+      "instrument_id": "APP-SOFTWARE-v1",
+      "applies_to": ["primary software repository", "assurance tool", "benchmark implementation"],
+      "dimensions": [
+        {"id": "SW-PROVENANCE", "label": "version and provenance", "question": "Are canonical repository, release/commit, license, and ownership identifiable?", "critical": true},
+        {"id": "SW-MATURITY", "label": "maturity", "question": "Are releases, adoption signals, issue handling, and compatibility information sufficient for the claimed use?", "critical": false},
+        {"id": "SW-TESTS", "label": "tests and continuous verification", "question": "Do inspectable tests cover the behavior being relied on?", "critical": true},
+        {"id": "SW-MAINT", "label": "maintenance", "question": "Is maintenance status visible and compatible with the intended operational horizon?", "critical": false},
+        {"id": "SW-SECURITY", "label": "security posture", "question": "Are security policy, dependency posture, privilege boundary, and unsafe-input handling documented or tested?", "critical": true},
+        {"id": "SW-BEHAVIOR", "label": "demonstrated behavior", "question": "Is the claimed mechanism demonstrated by code, tests, reproducible examples, or independent evaluation?", "critical": true},
+        {"id": "SW-APPLY", "label": "applicability and integration cost", "question": "Are artifact coverage, toolchain assumptions, failure modes, and operational cost relevant to this repository?", "critical": false}
+      ],
+      "overall_rating_rule": {
+        "high": "All critical dimensions score 2 and at least two non-critical dimensions score 2.",
+        "moderate": "No critical dimension scores 0; at least three critical dimensions score 2.",
+        "low": "Any behavior-essential critical dimension scores 0 or NR, or the relied-on behavior is asserted without inspectable demonstration."
+      }
+    },
+    {
+      "instrument_id": "APP-FORMAL-v1",
+      "applies_to": ["formal method", "theoretical analysis", "proof or proof-obligation framework"],
+      "dimensions": [
+        {"id": "FM-CLAIM", "label": "formal claim", "question": "Is the proven or argued property stated precisely?", "critical": true},
+        {"id": "FM-ASSUME", "label": "assumptions and trust base", "question": "Are premises, oracle assumptions, environmental assumptions, and trust base explicit?", "critical": true},
+        {"id": "FM-SOUND", "label": "proof soundness evidence", "question": "Is the proof inspectable, peer-reviewed, mechanized, or otherwise supported at the claimed level?", "critical": true},
+        {"id": "FM-SCOPE", "label": "coverage and completeness", "question": "Are the properties not covered by the formal result explicit?", "critical": true},
+        {"id": "FM-APPLY", "label": "operational applicability", "question": "Can the obligations be instantiated and tested for the artifact classes in scope?", "critical": false}
+      ],
+      "overall_rating_rule": {
+        "high": "All critical dimensions score 2.",
+        "moderate": "No critical dimension scores 0; at least three score 2.",
+        "low": "Any claim-essential premise, proof, or scope dimension scores 0 or NR."
+      }
+    }
+  ],
+  "appraisal_adjudication": {
+    "primary_appraiser": "$sota-evidence-review using gpt-5.6-terra high after protocol approval",
+    "method_lead_review": "Review all low ratings used for a material negative conclusion, all sources supporting a high-impact assurance claim, and all instrument-routing disputes.",
+    "disagreement_rule": "Preserve both assessments and record an adjudication; do not overwrite the first assessment.",
+    "threshold_effect": "Overall quality stratifies synthesis weight but does not automatically include or exclude an otherwise eligible source."
+  }
+}

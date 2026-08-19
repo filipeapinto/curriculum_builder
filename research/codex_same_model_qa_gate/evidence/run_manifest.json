@@ -1,0 +1,23 @@
+{
+  "schema": "sota-run-manifest/v1",
+  "run_id": "RUN-CSMQG-20260819-001",
+  "created_at_utc": "2026-08-19T09:29:48Z",
+  "responsible_role": "sota-plan-execute",
+  "repository_commit_at_start": "ac91eed9976712ecc2c46c5faac787f74dda2859",
+  "plan": {
+    "path": "research/codex_same_model_qa_gate/plan/sota_research.plan.v1.html",
+    "version": 1,
+    "sha256": "16ae937c64bb8ce4f673354ec2882d1b422085845b204746408b2c47fce8e862",
+    "file_status_text": "awaiting approval",
+    "approval_record_id": "APR-CSMQG-20260819-001"
+  },
+  "phase": "calibration",
+  "phase_status": "completed_pending_human_full_protocol_decision",
+  "full_protocol_gate": "human_approval_required",
+  "artifact_root": "research/codex_same_model_qa_gate/evidence",
+  "notes": [
+    "The immutable v1 plan file was not rewritten after approval.",
+    "The human owner's explicit chat approval is bound to the plan digest in the approval register.",
+    "Full screening and controlled evaluation remain prohibited until the calibrated protocol receives separate human approval."
+  ]
+}

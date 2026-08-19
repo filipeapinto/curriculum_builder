@@ -1,0 +1,13 @@
+{
+  "schema":"csmqg-evaluation-blocker/v1",
+  "record_id":"BLK-CSMQG-EVAL-001",
+  "run_id":"RUN-CSMQG-20260819-001",
+  "recorded_at_utc":"2026-08-19T09:51:58Z",
+  "status":"blocked",
+  "blocked_activity":"comparative six-variant evaluation (all 1,080 planned case/variant/repeat operations)",
+  "exact_blocker":"The frozen budget ledger records model_calls_total as unavailable and requires reconciliation of session/turn identifiers before further model work. This execution environment exposes neither an authoritative root/session call ledger nor per-operation input/output token and cost telemetry. Scheduling gpt-5.6-terra high reviewer operations would therefore violate the frozen B-CALL hard-stop behavior and required raw-retention telemetry contract.",
+  "evidence":["../../budget_ledger.json","../run_configuration.v1.json","../pre_run_dry_run.v1.json","codex-cli 0.147.0 help inspection: JSON event output is available, but no approved/reconciled account-wide session-call ledger or budget counter is available to this executor"],
+  "non_action":"No model verdicts, generated tests, deterministic V1 operations, synthetic metrics, retries, or variant rankings were recorded. Zero-value usage is not an effectiveness result.",
+  "resume_condition":"Provide an approved telemetry mechanism that records and reconciles, before scheduling, model/version, reasoning effort, operation ID, call count, input/output tokens, cost, and session/turn identifier against the existing run budget; then record a deviation only if that mechanism changes the frozen contract.",
+  "implementation_authority":"not granted"
+}

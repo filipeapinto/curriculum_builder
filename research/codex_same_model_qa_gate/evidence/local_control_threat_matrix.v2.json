@@ -1,0 +1,98 @@
+{
+  "schema": "sota-local-control-threat-matrix/v2",
+  "record_id": "LCTM-CSMQG-20260819-002",
+  "run_id": "RUN-CSMQG-20260819-001",
+  "created_at_utc": "2026-08-19T09:47:55Z",
+  "responsible_role": "sota-incident-analyze",
+  "status": "final_for_local_analysis_handoff",
+  "supersedes": {
+    "record_id": "LCTM-CSMQG-20260819-001",
+    "path": "local_control_threat_matrix.v1.json",
+    "reason": "Adds final protocol-gate state, boundary revalidation, and a synthesis-ready control/threat mapping without changing the approved source boundary."
+  },
+  "scope": "Current observable behavior and documentation claims in the approved qa-gate-codex-run source boundary. This is not an evaluation of live Codex behavior, reviewer accuracy, operational security, or production readiness.",
+  "classification_legend": {
+    "verified_fact": "Directly observed in the named local source, deterministic test record, approval/gate record, or current boundary revalidation.",
+    "attributed_claim": "A claim made by local documentation or source comments, without raw supporting live evidence in the authorized boundary.",
+    "inference": "An analyst conclusion drawn from listed facts; it is not an observed runtime outcome.",
+    "competing_explanation": "A material alternative that the authorized local evidence does not resolve.",
+    "unknown": "A material fact absent from the authorized local evidence."
+  },
+  "evidence_index": [
+    {"id": "EVD-PLAN-001", "locator": "plan/sota_research.plan.v1.html sections 2, 4, 5, 6, 10, 11", "class": "verified_fact", "use": "Approved scope, threat model, local-analysis contract, and synthesis-handoff requirements."},
+    {"id": "EVD-GATE-001", "locator": "protocol_gate_status.v1.json, record GATE-CSMQG-FULL-001", "class": "verified_fact", "use": "Full screening, corpus construction, and comparative evaluation are allowed; implementation is not allowed."},
+    {"id": "EVD-RVL-001", "locator": "local_source_boundary_revalidation.v1.json, record LSBR-CSMQG-20260819-001", "class": "verified_fact", "use": "Current 22-file source boundary equals the calibration inventory."},
+    {"id": "EVD-LCI-001", "locator": "local_control_inventory.v1.json, record LCI-CSMQG-20260819-001", "class": "verified_fact", "use": "Source catalog, digests, and recorded regression-test outcomes."},
+    {"id": "EVD-TEST-001", "locator": "local_control_inventory.v1.json tests_executed[TST-LCI-001]", "class": "verified_fact", "use": "Four synthetic integrity-fixture unittest cases passed; no Codex or app-server call occurred."},
+    {"id": "EVD-TEST-002", "locator": "local_control_inventory.v1.json tests_executed[TST-LCI-002]", "class": "verified_fact", "use": "A 200000-character bridge stdout fixture was complete and parseable; no plugin resolution or Codex turn occurred."},
+    {"id": "EVD-SRC-001", "locator": ".claude/skills/qa-gate-codex-run/scripts/qa_gate.py:93-149, 823-943", "class": "verified_fact", "use": "Version lineage and execution-copy behavior."},
+    {"id": "EVD-SRC-002", "locator": ".claude/skills/qa-gate-codex-run/scripts/qa_gate.py:445-496, 622-776", "class": "verified_fact", "use": "Criteria threshold, history prompt, chain, witness requirement, and terminal-state logic."},
+    {"id": "EVD-SRC-003", "locator": ".claude/skills/qa-gate-codex-run/scripts/qa_gate.py:946-1162", "class": "verified_fact", "use": "Verification replay and rollout comparison behavior."},
+    {"id": "EVD-SRC-004", "locator": ".claude/skills/qa-gate-codex-run/scripts/qa_gate.py:1197-1289, 1328-1348; scripts/codex_bridge.mjs:162-172,226-254", "class": "verified_fact", "use": "Fresh postmortem, transport configuration, and bridge-flush behavior."},
+    {"id": "EVD-DOC-001", "locator": ".claude/skills/qa-gate-codex-run/references/protocol.md:39-59,83-115,152-169", "class": "attributed_claim", "use": "Documentation assertions about session restoration, witness provenance, comparative execution, and same-user limitations."}
+  ],
+  "controls": [
+    {"id": "CTRL-001", "class": "verified_fact", "control": "Versioned artifact lineage", "threats_addressed": ["THR-001"], "mechanism": "Start requires name.vN.ext; later rounds require a newer artifact with the same base.", "evidence": ["EVD-SRC-001"], "test_status": "No direct included test.", "limit": "It controls path/version transitions, not the semantic correctness of a version."},
+    {"id": "CTRL-002", "class": "verified_fact", "control": "Criteria-linked threshold", "threats_addressed": ["THR-002", "THR-003"], "mechanism": "Prompt defines severity and requires criterion references; only findings at the configured threshold block.", "evidence": ["EVD-SRC-002"], "test_status": "No direct included test.", "limit": "qa_gate.py JSON-parses verdicts but does not itself validate them against verdict.schema.json."},
+    {"id": "CTRL-003", "class": "verified_fact", "control": "Persistent review-thread continuity", "threats_addressed": ["THR-004"], "mechanism": "The recorded session/thread is reused; a round refuses a transport change or session discontinuity.", "evidence": ["EVD-SRC-002", "EVD-SRC-004"], "test_status": "No live transport or resume test in the boundary.", "limit": "Continuity of an identifier does not demonstrate that a resumed model retains the intended context."},
+    {"id": "CTRL-004", "class": "verified_fact", "control": "History-consistency prompt and terminal breach", "threats_addressed": ["THR-004", "THR-005"], "mechanism": "Round 2+ asks the reviewer to compare on-disk history with its recalled prior turns; a false consistency value finalizes INTEGRITY_BREACH.", "evidence": ["EVD-SRC-002"], "test_status": "No included test has a live reviewer detect forged history.", "limit": "The mechanism depends on actual resumption and the reviewer response."},
+    {"id": "CTRL-005", "class": "verified_fact", "control": "Hash-chain record integrity", "threats_addressed": ["THR-005", "THR-006"], "mechanism": "Each round chains request, response, artifact, and grounding digests; verify recomputes the chain and request/response hashes.", "evidence": ["EVD-SRC-002", "EVD-SRC-003"], "test_status": "TST-LCI-001 covers two synthetic session.json alterations.", "limit": "Hashes establish equality to recorded bytes, not independent origin or semantic truth."},
+    {"id": "CTRL-006", "class": "verified_fact", "control": "Rollout witness comparison", "threats_addressed": ["THR-005", "THR-006", "THR-007"], "mechanism": "Verify finds a current-user rollout file and checks counts, request and response bodies, available turn context, sandbox, cwd, and roots.", "evidence": ["EVD-SRC-003"], "test_status": "TST-LCI-001 uses synthetic rollout fixtures only.", "limit": "Empty workspace_roots is accepted, and sandbox/cwd checks occur only when recorded turn context is present."},
+    {"id": "CTRL-007", "class": "verified_fact", "control": "Artifact-at-pass binding", "threats_addressed": ["THR-001", "THR-005"], "mechanism": "Verify compares the current artifact digest to the final round and recomputes pass conditions from the final response.", "evidence": ["EVD-SRC-003", "EVD-TEST-001"], "test_status": "TST-LCI-001 includes terminal-state flip and artifact-substitution cases.", "limit": "The binding does not make an erroneous reviewer PASS correct."},
+    {"id": "CTRL-008", "class": "verified_fact", "control": "Execution-copy separation", "threats_addressed": ["THR-007", "THR-008"], "mechanism": "Execution copies direct artifact-parent siblings except QA and deprecated into QA/exec; non-execution review uses the artifact parent.", "evidence": ["EVD-SRC-001"], "test_status": "No actual sandbox test is included.", "limit": "The copy and caller-selected grounding can expose unrelated files; enforcement depends on the external sandbox."},
+    {"id": "CTRL-009", "class": "verified_fact", "control": "Grounding-version capture", "threats_addressed": ["THR-006"], "mechanism": "Each round hashes grounding files and folds the ordered digest into its chain.", "evidence": ["EVD-SRC-002"], "test_status": "No direct included test.", "limit": "Verify compares recorded rounds but does not rehash current grounding at verification time."},
+    {"id": "CTRL-010", "class": "verified_fact", "control": "Bounded iteration and non-convergence", "threats_addressed": ["THR-009"], "mechanism": "Configured iteration/retry limits and repeated-finding fingerprints terminate stalled review.", "evidence": ["EVD-SRC-002", "EVD-SRC-004"], "test_status": "No direct included test.", "limit": "Stopping avoids unbounded looping but cannot decide whether the remaining finding is valid."},
+    {"id": "CTRL-011", "class": "verified_fact", "control": "Fresh-session postmortem", "threats_addressed": ["THR-004", "THR-009"], "mechanism": "Postmortem invokes Codex with resume_id=None and records a separate session/report.", "evidence": ["EVD-SRC-004"], "test_status": "No direct included test.", "limit": "cmd_verify does not authenticate the later postmortem witness."},
+    {"id": "CTRL-012", "class": "verified_fact", "control": "Bridge stdout flush", "threats_addressed": ["THR-010"], "mechanism": "The bridge exits from stdout's write callback.", "evidence": ["EVD-SRC-004", "EVD-TEST-002"], "test_status": "TST-LCI-002 passed.", "limit": "This covers response delivery, not plugin resolution, schema enforcement, or reviewer quality."}
+  ],
+  "threat_assessments": [
+    {"id": "THR-001", "class": "verified_fact", "threat": "Artifact substitution or untracked version transition", "plan_basis": "EVD-PLAN-001", "controls": ["CTRL-001", "CTRL-007"], "residual": {"class": "inference", "statement": "Path and digest binding reduce specified substitution opportunities but do not validate artifact semantics."}},
+    {"id": "THR-002", "class": "verified_fact", "threat": "Rubric ambiguity or preference becoming a blocking defect", "plan_basis": "EVD-PLAN-001", "controls": ["CTRL-002"], "residual": {"class": "unknown", "statement": "No blinded corpus result establishes the rate at which criterion-linked prompting avoids false blocks."}},
+    {"id": "THR-003", "class": "verified_fact", "threat": "False pass or false block", "plan_basis": "EVD-PLAN-001", "controls": ["CTRL-002", "CTRL-007", "CTRL-010"], "residual": {"class": "unknown", "statement": "No local comparative evaluation has measured false-pass, false-block, abstention, or evidence quality."}},
+    {"id": "THR-004", "class": "verified_fact", "threat": "Reviewer drift, dialogue convergence, or correlated producer/reviewer error", "plan_basis": "EVD-PLAN-001", "controls": ["CTRL-003", "CTRL-004", "CTRL-011"], "residual": {"class": "inference", "statement": "Fresh contexts and postmortems are procedural separation, not a separate model, organization, incentive, or cryptographic trust root."}},
+    {"id": "THR-005", "class": "verified_fact", "threat": "Forged, incomplete, or mutable local records", "plan_basis": "EVD-PLAN-001", "controls": ["CTRL-004", "CTRL-005", "CTRL-006", "CTRL-007"], "residual": {"class": "competing_explanation", "explanation_a": "A clean verify result is useful evidence that the checked local records and a current-user rollout agree.", "explanation_b": "A same-user adversary might alter local stores together; the protocol itself disclaims cryptographic unforgeability.", "status": "Both explanations fit the authorized local evidence."}},
+    {"id": "THR-006", "class": "verified_fact", "threat": "Mutable artifact, criteria, or grounding evidence", "plan_basis": "EVD-PLAN-001", "controls": ["CTRL-005", "CTRL-007", "CTRL-009"], "residual": {"class": "verified_fact", "statement": "Current grounding files are not rehashed by verify; only recorded round-to-round grounding changes are checked."}},
+    {"id": "THR-007", "class": "verified_fact", "threat": "Prompt injection, untrusted-artifact effects, or excess execution authority", "plan_basis": "EVD-PLAN-001", "controls": ["CTRL-008"], "residual": {"class": "unknown", "statement": "No live evidence establishes sandbox enforcement, effective least privilege, or prompt-injection resistance in the deployment environment."}},
+    {"id": "THR-008", "class": "verified_fact", "threat": "Confidentiality or portability failure from path and copy semantics", "plan_basis": "EVD-PLAN-001", "controls": ["CTRL-008"], "residual": {"class": "verified_fact", "statement": "Execution copies all direct sibling files/directories other than literal QA and deprecated, and --ground-dir recursively includes files."}},
+    {"id": "THR-009", "class": "verified_fact", "threat": "Non-convergence and unbounded resource use", "plan_basis": "EVD-PLAN-001", "controls": ["CTRL-010", "CTRL-011"], "residual": {"class": "inference", "statement": "The stop rules constrain a single gate session but do not constitute the research plan's cross-workstream cost ledger or prove a correct terminal classification."}},
+    {"id": "THR-010", "class": "verified_fact", "threat": "Bridge response truncation", "plan_basis": "local implementation threat", "controls": ["CTRL-012"], "residual": {"class": "unknown", "statement": "The included fixture does not establish reliability across plugin versions, operating conditions, or arbitrary transport failures."}}
+  ],
+  "attributed_claims": [
+    {"id": "CLM-001", "class": "attributed_claim", "claim": "Both transports restore the same underlying conversation and direct tests showed memory recall and forged-history detection.", "evidence": ["EVD-DOC-001"], "local_support_limit": "No raw live-test result, rollout, or command log for that assertion is in the authorized boundary."},
+    {"id": "CLM-002", "class": "attributed_claim", "claim": "The Codex session witness is written by the Codex process and not by the gate.", "evidence": ["EVD-DOC-001"], "local_support_limit": "The source reads a discovered file, but the inventory does not independently establish writer identity or write permissions."},
+    {"id": "CLM-003", "class": "attributed_claim", "claim": "Read-only review missed a negative-total defect that execution caught.", "evidence": ["EVD-DOC-001"], "local_support_limit": "No linked raw comparative run is present in the boundary."},
+    {"id": "CLM-004", "class": "attributed_claim", "claim": "A perfect-chain forged session without a witness was rejected.", "evidence": ["EVD-DOC-001"], "local_support_limit": "TST-LCI-001 covers different synthetic tamper cases and does not demonstrate this documentation example."}
+  ],
+  "material_unknowns_and_gaps": [
+    {"id": "GAP-001", "class": "verified_fact", "statement": "qa_gate.py does not itself validate parsed verdict JSON against verdict.schema.json.", "evidence": ["EVD-SRC-001"], "resolution": "Exercise both transports with schema-negative verdict fixtures and retain raw transport records."},
+    {"id": "GAP-002", "class": "verified_fact", "statement": "Postmortem witness material is recorded but not checked by cmd_verify.", "evidence": ["EVD-SRC-003", "EVD-SRC-004"], "resolution": "Specify and execute a postmortem-witness verification test before relying on the classification as authenticated evidence."},
+    {"id": "GAP-003", "class": "unknown", "statement": "The actual environment's plugin version, model/version/effort, session-resumption fidelity, rollout immutability, sandbox enforcement, and reviewer verdict accuracy are not established by this local analysis.", "resolution": "Version-pinned live run ledger, retained rollout records, deterministic sandbox probes, and blinded fault-corpus scoring."},
+    {"id": "GAP-004", "class": "unknown", "statement": "The five declared eval cases have no executed QA records, scorer outputs, or results ledger in the inspected boundary.", "resolution": "Frozen evaluator, per-case raw records, deterministic assertions, and an append-only evaluation ledger."},
+    {"id": "GAP-005", "class": "verified_fact", "statement": "The source boundary declares no direct tests for lineage, criterion filtering, live resume, history detection, sandbox behavior, grounding capture, iteration logic, or postmortem behavior.", "evidence": ["EVD-LCI-001"], "resolution": "Add a controlled evaluation record if and when separately authorized; do not retrospectively present new code as part of this analysis."}
+  ],
+  "tests": {
+    "class": "verified_fact",
+    "executed_during_calibration": ["TST-LCI-001", "TST-LCI-002"],
+    "source_identity_at_finalization": "EVD-RVL-001 confirms that the tested source digest set is unchanged.",
+    "conclusion": "The two recorded regressions support only their named deterministic code paths; they do not establish live Codex, app-server, sandbox, rollout, or semantic-judging effectiveness."
+  },
+  "synthesis_handoff": {
+    "recipient": "sota-synthesize",
+    "use_as_facts": ["EVD-GATE-001", "EVD-RVL-001", "CTRL-001 through CTRL-012", "GAP-001", "GAP-002", "GAP-005", "tests"],
+    "retain_as_attributed": ["CLM-001", "CLM-002", "CLM-003", "CLM-004"],
+    "retain_as_inference_or_unresolved": ["THR-001 through THR-010 residual entries", "GAP-003", "GAP-004"],
+    "prohibited_transformations": [
+      "Do not describe fresh sessions, repeated samples, or postmortems as independent trust roots.",
+      "Do not convert hash-chain or rollout agreement into cryptographic provenance or reviewer-verdict correctness.",
+      "Do not report a local effectiveness result before the approved controlled evaluation produces raw records and deterministic scoring.",
+      "Do not recommend implementation from this record alone; implementation remains disallowed by EVD-GATE-001."
+    ]
+  },
+  "provenance": {
+    "inventory_record": "local_control_inventory.v1.json",
+    "prior_matrix": "local_control_threat_matrix.v1.json",
+    "revalidation_record": "local_source_boundary_revalidation.v1.json",
+    "plan": "research/codex_same_model_qa_gate/plan/sota_research.plan.v1.html",
+    "calibration_records_consulted": "calibration_*.v1.json, protocol_gate_status.v1.json, approval_register.jsonl, run_manifest.json, budget_ledger.json, execution_log.jsonl, deviation_register.json, benchmark_feasibility.v1.json"
+  }
+}

@@ -1,0 +1,21 @@
+{
+  "schema": "csmqg-controlled-evaluation-run-configuration/v1",
+  "run_id": "RUN-CSMQG-20260819-001",
+  "status": "frozen_pre_run_blocked_before_comparative_execution",
+  "approval": {"approval_id": "APR-CSMQG-20260819-002", "protocol_gate": "GATE-CSMQG-FULL-001"},
+  "model": {"producer_and_reviewer": "gpt-5.6-terra", "reasoning_effort": "high", "model_version_telemetry_required": true},
+  "variants": [
+    {"id":"V1","name":"deterministic-only","model_calls_per_case_repeat_max":0},
+    {"id":"V2","name":"fresh-same-model-reviewer","model_calls_per_case_repeat_max":1},
+    {"id":"V3","name":"same-model-panel","model_calls_per_case_repeat_max":1,"case_aggregation":"three pass=>pass; any fail=>fail; otherwise abstain"},
+    {"id":"V4","name":"test-generation-plus-execution","model_calls_per_case_repeat_max":1},
+    {"id":"V5","name":"mutation-or-fault-calibrated","model_calls_per_case_repeat_max":1},
+    {"id":"V6","name":"hybrid-tiered","model_calls_per_case_repeat_max":1,"deterministic_failures_waivable":false}
+  ],
+  "design": {"cases":60,"repeat_slots":3,"scheduled_operations":1080,"case_ordering":"block-randomized within artifact class independently by variant/repeat","randomization_seed_namespace":"RUN-CSMQG-20260819-001/v1"},
+  "blinding": {"gate_mount":"fixtures/gate_visible only","private_label_mount":"scorer only","gold_status_in_prompts":false,"fault_taxonomy_in_prompts":false,"expected_verdict_in_prompts":false},
+  "telemetry_contract": {"required_per_operation":["operation_id","model/version","reasoning_effort","prompt_digest","artifact_digest","criteria_digest","seed","start/end UTC","model_call_count","input_tokens","output_tokens","cost_usd","tool_transcript","raw_output","scorer_output"],"unavailable_behavior":"Do not schedule a model operation until session/turn identifiers and call telemetry can be reconciled; token/cost telemetry absence makes the model-call ceiling binding and requires review at its warning threshold."},
+  "retry_contract": {"per_operation_max":2,"overall_max":40,"only_invalid_conditions":true,"changed_condition_required":true},
+  "aggregation": {"V1":"all three identical deterministic slots required; otherwise invalid","V2":"majority of three parseable verdicts; tie=>abstain","V3":"frozen panel rule","V4":"majority of three parseable verdicts; tie=>abstain","V5":"majority of three parseable verdicts; tie=>abstain","V6":"any deterministic fail=>fail; otherwise majority model verdict; required escalation=>abstain"},
+  "environment": {"locale":"C","timezone":"UTC","network":"disabled by default","clock_source":"recorded UTC wall clock"}
+}

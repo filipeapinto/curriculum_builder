@@ -1,0 +1,121 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>P0 — SOTA skill family lacks an enforceable common research contract</title>
+  <style>
+    :root{color-scheme:light dark;--bg:#f4f6f8;--paper:#fff;--ink:#172330;--muted:#596775;--line:#c8d0d8;--navy:#174f6b;--red:#922f3e;--soft:#eaf1f5;--warn:#fff4d6;--ok:#e5f3eb}*{box-sizing:border-box}html{scroll-behavior:smooth}body{margin:0;background:var(--bg);color:var(--ink);font:16px/1.6 system-ui,-apple-system,"Segoe UI",sans-serif}header,main,footer{width:min(1120px,calc(100% - 32px));margin:auto}header{padding:56px 0 28px}.eyebrow{color:var(--red);font-weight:850;letter-spacing:.09em;text-transform:uppercase}h1{max-width:1000px;margin:.3rem 0;font-size:clamp(2.1rem,5vw,3.8rem);line-height:1.04;letter-spacing:-.035em}.dek{max-width:940px;color:var(--muted);font-size:1.12rem}nav{display:flex;flex-wrap:wrap;gap:7px;margin:18px 0 30px}nav a{padding:7px 10px;border:1px solid var(--line);border-radius:6px;background:var(--paper);color:var(--navy);font-size:.82rem;font-weight:750;text-decoration:none}section{margin:42px 0;scroll-margin-top:16px}h2{margin-bottom:10px;color:var(--navy);font-size:1.8rem}h3{margin-bottom:5px;color:var(--navy)}.meta,.card,.callout{padding:19px;border:1px solid var(--line);border-radius:9px;background:var(--paper)}.meta{display:grid;grid-template-columns:repeat(auto-fit,minmax(190px,1fr));gap:11px}.callout{border-left:7px solid var(--red);background:var(--warn);font-size:1.06rem}.principle{border-left-color:var(--navy);background:var(--soft)}.grid{display:grid;grid-template-columns:repeat(2,1fr);gap:14px}.table-wrap{overflow-x:auto;border-radius:9px}table{width:100%;min-width:880px;border-collapse:collapse;background:var(--paper)}th,td{padding:11px 12px;border:1px solid var(--line);text-align:left;vertical-align:top}th{background:var(--soft);color:var(--navy);font-size:.78rem;letter-spacing:.04em;text-transform:uppercase}code{padding:.12em .3em;border-radius:4px;background:var(--soft)}pre{overflow:auto;padding:16px;border-radius:8px;background:#15212c;color:#edf4f7}a{color:var(--navy)}li+li{margin-top:.4rem}.status{font-weight:800;color:var(--red)}footer{padding:20px 0 38px;color:var(--muted)}@media(max-width:760px){.grid{grid-template-columns:1fr}}@media(prefers-color-scheme:dark){:root{--bg:#0e1720;--paper:#17232d;--ink:#edf2f5;--muted:#b6c0c8;--line:#3b4b58;--navy:#83c9de;--red:#ff9aa8;--soft:#203542;--warn:#3c321d;--ok:#193428}}
+  </style>
+</head>
+<body>
+  <header>
+    <div class="eyebrow">P0 · Open · Method integrity</div>
+    <h1>The SOTA skill family lacks an enforceable common research contract</h1>
+    <p class="dek">Two executions attributed to the same skill family use incompatible run topology, canonical records, lifecycle evidence, verification thresholds, and terminal-answer semantics. The plans vary legitimately; the underlying method varies without control.</p>
+  </header>
+  <main>
+    <nav aria-label="Issue contents"><a href="#issue">Issue</a><a href="#boundary">Correct boundary</a><a href="#evidence">Evidence</a><a href="#cause">Cause</a><a href="#contract">Expected contract</a><a href="#criteria">Acceptance</a><a href="#prompt">Audit prompt</a></nav>
+
+    <section class="meta" aria-label="Issue metadata">
+      <div><strong>Area</strong><br><code>sota-*</code> coordinated skill family</div>
+      <div><strong>Primary cases</strong><br>Claude QA gate and same-model QA gate</div>
+      <div><strong>Severity</strong><br>P0 — results are not method-comparable</div>
+      <div><strong>Required decision</strong><br>Approve a canonical family contract before redesign</div>
+    </section>
+
+    <section id="issue">
+      <h2>Issue</h2>
+      <div class="callout"><p><strong>The defect is not that two studies reached different substantive conclusions or produced different domain-specific evidence.</strong> The defect is that the skill family does not enforce one invariant execution method beneath those differences.</p></div>
+      <p>A plan should define the research question, evidence boundary, search strategy, instruments, evaluation design, domain outputs, and stricter project-specific controls. It should not be free to redefine where a run lives, which audit records are canonical, what lifecycle states mean, which baseline checks verification must apply, or how a research answer is expressed.</p>
+      <p>At present, “processed by the SOTA skill family” does not guarantee a stable method. It describes a loose set of role labels whose concrete execution contract can change from plan to plan.</p>
+    </section>
+
+    <section id="boundary">
+      <h2>The correct consistency boundary</h2>
+      <div class="grid">
+        <article class="card"><h3>Legitimate plan variation</h3><p>Questions, hypotheses, sources, eligibility rules, appraisal instruments, experiment design, corpus size, domain analysis, and human-facing deliverables may differ.</p></article>
+        <article class="card"><h3>Required family invariants</h3><p>Run root, lifecycle, approvals, canonical records, identifiers, provenance, budgets, challenges, verification baseline, failure behavior, and terminal-state vocabulary must remain stable.</p></article>
+      </div>
+      <div class="callout principle"><p><strong>“The answer must be the same” means the answer must use the same semantic contract—not that unrelated questions must receive the same conclusion.</strong> Every report must resolve its question as <code>SUPPORTED</code>, <code>PARTIALLY_SUPPORTED</code>, <code>NOT_SUPPORTED</code>, <code>INCONCLUSIVE</code>, or <code>BLOCKED</code>, with evidence strength and scope. Execution completion, verification conformance, human acceptance, and implementation authority must be reported separately.</p></div>
+    </section>
+
+    <section id="evidence">
+      <h2>Verified case evidence</h2>
+      <div class="table-wrap"><table>
+        <thead><tr><th>Contract concern</th><th>Claude QA-gate run</th><th>Same-model QA-gate run</th><th>Defect</th></tr></thead>
+        <tbody>
+          <tr><td>Authoritative run location</td><td><code>execution/run-cal-20260819-01/</code></td><td>No <code>execution/</code>; artifacts are split among <code>evidence/</code>, <code>report/</code>, and <code>design/</code></td><td>No canonical run-package topology</td></tr>
+          <tr><td>Core evidence formats</td><td>Markdown, CSV, and JSONL records</td><td>Predominantly versioned JSON and JSONL records</td><td>No required machine-record layer distinct from presentation views</td></tr>
+          <tr><td>Comparative evaluation</td><td>180 receipts reported across Claude, Sol, and Terra</td><td>0 of 1,080 operations; stopped because accounting and identity telemetry could not be reconciled</td><td>Different empirical outcomes are legitimate; their state representation must still be comparable</td></tr>
+          <tr><td>Verification result</td><td><code>PASS WITH DISCLOSED LIMITATIONS</code></td><td><code>blocked_not_accepted</code></td><td>No demonstrated common severity and terminal-state rules</td></tr>
+          <tr><td>Verification treatment</td><td>Compact plan-specific checklist</td><td>Hard failures for schema, budget, activity pairing, unresolved challenge, zero-run, and unavailable required checks</td><td>Baseline checks appear plan-dependent</td></tr>
+          <tr><td>Final research answer</td><td>Defer operational use after completed benchmark</td><td>Do not select or deploy; effectiveness not estimable</td><td>Both are prose decisions without one normalized support-state envelope</td></tr>
+        </tbody>
+      </table></div>
+      <p>Primary evidence is located in <code>research/codex_calls_claude_qa_gate/</code> and <code>research/codex_same_model_qa_gate/</code>. Both directories are currently untracked, so Git cannot establish which historical skill revision produced either package.</p>
+    </section>
+
+    <section id="cause">
+      <h2>Likely contract failure</h2>
+      <p class="status">Root-cause status: hypothesis requiring the linked audit.</p>
+      <ol>
+        <li><code>sota-plan-execute</code> describes controls but does not appear to impose a canonical physical run package and schema suite.</li>
+        <li>Role-skill output contracts are semantic summaries rather than precise, interoperable artifact contracts.</li>
+        <li>Plans can effectively redefine family method instead of parameterizing a fixed method.</li>
+        <li><code>sota-verify</code> derives checks from each approved plan without an explicit, non-waivable family baseline.</li>
+        <li>Durable skill-version and invocation provenance is insufficient to prove which instructions produced either run.</li>
+      </ol>
+      <p>These are not final findings. The audit must trace each inconsistency to exact skill instructions, plan clauses, run records, or missing rules.</p>
+    </section>
+
+    <section id="contract">
+      <h2>Expected family contract</h2>
+      <pre aria-label="Proposed canonical run structure">execution/&lt;run-id&gt;/
+├── manifest/
+├── approvals/
+├── protocol/
+├── records/
+│   ├── activities/
+│   ├── budget/
+│   ├── sources/
+│   ├── analysis/
+│   ├── synthesis/
+│   └── challenge/
+├── evaluation/        # optional when method requires it
+├── verification/
+└── reports/</pre>
+      <p>The exact names remain subject to audit, but the family must own one authoritative topology and machine-readable record layer. Plans may add scoped artifacts, never remove or relocate required classes.</p>
+      <ol>
+        <li>One invariant lifecycle: start gate → calibration when required → human protocol gate → evidence work → analysis/evaluation → synthesis → independent challenge → correction → deterministic verification → human acceptance.</li>
+        <li>Versioned schemas and stable identifiers for manifest, approvals, activity events, budgets, deviations, sources, findings, challenges, verification, and terminal result.</li>
+        <li>A normalized research-answer state, separated from execution, verification, acceptance, and implementation states.</li>
+        <li>A family-level verification baseline that plans may strengthen but cannot omit, weaken, or relabel.</li>
+        <li>Explicit extension points for research-specific methods, instruments, corpora, and presentation deliverables.</li>
+        <li>Deterministic structural and semantic conformance tests for every run package.</li>
+      </ol>
+    </section>
+
+    <section id="criteria">
+      <h2>Acceptance criteria</h2>
+      <ul>
+        <li>The skill family publishes one canonical execution, artifact, state, and verification contract.</li>
+        <li>Every run has one discoverable <code>execution/&lt;run-id&gt;/</code> root and authoritative manifest.</li>
+        <li>Equivalent artifact classes use the same canonical path class, schema, ID rules, and producer/consumer ownership.</li>
+        <li>Markdown, HTML, and CSV are optional or derived views, not substitutes for required canonical records.</li>
+        <li>Plans parameterize or strengthen the method but cannot remove required stages, records, gates, checks, or fail-closed behavior.</li>
+        <li>Equivalent defects produce equivalent verification outcomes under the common baseline.</li>
+        <li>Every result independently reports research support, execution state, verification state, human acceptance, and implementation authority.</li>
+        <li>Both case-study packages are tested against the same conformance suite and receive precise findings.</li>
+        <li>Skill and run provenance identify the exact skill versions and assigned agents used.</li>
+      </ul>
+    </section>
+
+    <section id="prompt">
+      <h2>Required audit before redesign</h2>
+      <p>Run the <a href="prompts/identify-sota-family-inconsistencies.goal-loop-test.md">Goal–Loop–Test inconsistency audit prompt</a>. Do not modify the skill family until the human owner reviews the verified inconsistency register and approves a canonical contract.</p>
+    </section>
+  </main>
+  <footer>P0 issue · SOTA skill-family method and output-contract consistency · Open</footer>
+</body>
+</html>

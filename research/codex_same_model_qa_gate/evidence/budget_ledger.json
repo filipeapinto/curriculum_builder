@@ -1,0 +1,41 @@
+{
+  "schema": "sota-budget-ledger/v1",
+  "run_id": "RUN-CSMQG-20260819-001",
+  "created_at_utc": "2026-08-19T09:29:48Z",
+  "responsible_role": "sota-plan-execute",
+  "phase": "calibration",
+  "ceilings": {
+    "external_candidates": 240,
+    "full_texts": 80,
+    "included_sources": 45,
+    "evaluated_runs": 1080,
+    "model_calls": 1400,
+    "tokens_total": 8000000,
+    "active_hours": 40,
+    "calendar_days": 14,
+    "active_model_workers": 3,
+    "retries_total": 40,
+    "direct_cost_usd": 200
+  },
+  "usage": {
+    "external_candidates": 25,
+    "full_texts": 0,
+    "included_sources": 0,
+    "evaluated_runs": 0,
+    "model_calls_observed_by_orchestrator": 3,
+    "model_calls_total": null,
+    "tokens_total": null,
+    "active_hours": 0.161,
+    "calendar_start_utc": "2026-08-19T09:29:48Z",
+    "peak_active_model_workers": 3,
+    "retries_total": 0,
+    "direct_cost_usd": null
+  },
+  "unavailable_measure_behavior": {
+    "tokens": "Use model-call ceiling as binding proxy; pause at 1,120 calls for human review if telemetry remains unavailable.",
+    "cost": "Calls and tokens remain binding; require human approval at the 80% token warning if pricing or cost telemetry remains unavailable.",
+    "model_calls": "Only three delegated calibration turns were visible in the orchestrator registry; total root/session turns were not exposed. Reconcile session or turn identifiers before full model work.",
+    "active_duration": "Reconstruct from paired activity timestamps before further work if a hard-limit decision depends on it."
+  },
+  "status": "below_warning_thresholds"
+}

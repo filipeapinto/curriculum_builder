@@ -1,0 +1,20 @@
+{
+  "schema": "sota-protocol-gate-status/v1",
+  "record_id": "GATE-CSMQG-FULL-001",
+  "run_id": "RUN-CSMQG-20260819-001",
+  "created_at_utc": "2026-08-19T09:45:57Z",
+  "responsible_role": "sota-plan-execute",
+  "packet": {
+    "id": "CAL-PACKET-v1",
+    "path": "calibration_protocol_packet.v1.json",
+    "sha256": "b8ffd9dcc6e5032504f15e2c58ba96cb89612d114fbf3c0de71e38f4d58b213e"
+  },
+  "approval_id": "APR-CSMQG-20260819-002",
+  "status": "approved",
+  "resolved_decisions": ["AUTH-001","AUTH-002","AUTH-003","AUTH-004","AUTH-005","AUTH-006","AUTH-007"],
+  "open_nonblocking_decisions": ["AUTH-008","AUTH-009"],
+  "full_screening_allowed": true,
+  "corpus_construction_allowed": true,
+  "comparative_evaluation_allowed": true,
+  "implementation_allowed": false
+}
