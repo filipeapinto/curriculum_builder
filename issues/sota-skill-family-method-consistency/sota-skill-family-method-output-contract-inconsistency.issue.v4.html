@@ -1,0 +1,136 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <title>Issue v4 — SOTA family method, topology, and plan-template inconsistency</title>
+  <style>
+    :root{color-scheme:light dark;--bg:#f5f6f7;--paper:#fff;--ink:#182127;--muted:#59656d;--line:#cbd2d7;--accent:#174b63;--warn:#fff4d6;--bad:#8d3040}*{box-sizing:border-box}body{margin:0;background:var(--bg);color:var(--ink);font:16px/1.5 system-ui,sans-serif}header,main{width:min(1000px,calc(100% - 32px));margin:auto}header{padding:40px 0 24px;border-bottom:1px solid var(--line)}main{padding-bottom:56px}h1{margin:5px 0 10px;font-size:2.2rem;line-height:1.1}h2{margin:36px 0 10px;color:var(--accent)}.meta{color:var(--muted)}.status{color:var(--bad);font-weight:800}.box{padding:14px 16px;border:1px solid var(--line);background:var(--paper)}.warn{border-left:5px solid var(--bad);background:var(--warn)}table{width:100%;border-collapse:collapse;background:var(--paper)}th,td{padding:9px 10px;border:1px solid var(--line);text-align:left;vertical-align:top}th{background:#e9eef1}pre{overflow:auto;padding:14px;border:1px solid var(--line);background:var(--paper);font:14px/1.5 ui-monospace,monospace}code{font-family:ui-monospace,monospace}a{color:var(--accent)}li+li{margin-top:5px}@media(prefers-color-scheme:dark){:root{--bg:#10171c;--paper:#172127;--ink:#edf1f3;--muted:#b2bdc3;--line:#3a4850;--accent:#9ed0e4;--warn:#342d1b;--bad:#ff9cad}th{background:#223039}}
+  </style>
+</head>
+<body>
+<header>
+  <p class="status">P0 · OPEN · ISSUE VERSION 4</p>
+  <h1>The SOTA family lacks an enforceable method, topology, and plan-template contract</h1>
+  <p class="meta">19 August 2026 · Predecessor: <a href="sota-skill-family-method-output-contract-inconsistency.issue.v3.html">issue v3</a> · Evidence: <a href="sota-skill-family-method-output-contract-inconsistency.report.v1.html">confirmation report v1</a></p>
+</header>
+<main>
+  <section>
+    <h2>1. Issue</h2>
+    <div class="box warn">
+      <p>The SOTA family does not enforce one invariant execution method and physical run topology. Its plan creator also treats one unusually complex incident-research plan as the structural model for every SOTA plan instead of owning a minimal, conditional SOTA plan template.</p>
+    </div>
+    <p>Different studies may use different questions, sources, instruments, experiments, analyses, and domain outputs. They must still use the same family-owned run root, required record classes, lifecycle, provenance, challenge process, verification baseline, failure behavior, and terminal-state contract. Planning must not silently expand an issue, and every issue, plan, and report version must be self-contained.</p>
+  </section>
+
+  <section>
+    <h2>2. Evidence and authority status</h2>
+    <table>
+      <thead><tr><th>Source</th><th>Status</th><th>Finding</th></tr></thead>
+      <tbody>
+        <tr><td>Original issue</td><td>Owner requirement</td><td>Requires one authoritative topology and machine-readable record layer; plans may add artifacts but cannot remove or relocate required classes.</td></tr>
+        <tr><td>Confirmation report v1</td><td>Verified</td><td>Confirms an underspecified and unenforced family baseline and defects in both audited runs.</td></tr>
+        <tr><td><code>sota-plan-create/SKILL.md</code></td><td>Verified</td><td>Requires every SOTA plan to use <code>research/llm_failure_analysis/plan/sota_research.plan.v5.html</code> as its structural reference.</td></tr>
+        <tr><td><code>templates/plan.template.v1.html</code> and <code>v2.html</code></td><td>Verified</td><td>Generic repository plan presentation templates exist, but neither is a SOTA-family execution contract.</td></tr>
+        <tr><td>Owner decision, 19 August 2026</td><td>Accepted direction</td><td>A SOTA plan is specialized and its reusable template belongs to the SOTA skill family. The generic repository template must remain generic. The run package must use the compact middle-ground topology in section 3 rather than either a many-folder package or a single-file extreme.</td></tr>
+        <tr><td>Plans v1-v6</td><td>Planning evidence</td><td>Show accumulation of structures, roles, records, diagrams, and outputs beyond what every SOTA study necessarily needs.</td></tr>
+      </tbody>
+    </table>
+  </section>
+
+  <section>
+    <h2>3. Required canonical topology</h2>
+    <pre>research/&lt;sota-slug&gt;/
+├── plan/
+│   └── &lt;sota-slug&gt;.plan.vN.html
+└── runs/
+    └── &lt;run-id&gt;/
+        ├── report.html
+        ├── execution-log.json
+        └── evidence/              optional</pre>
+    <p>This is the family-owned topology. <code>report.html</code> is the complete human-facing SOTA result. <code>execution-log.json</code> records actual execution events and spending under the repository execution-log schema. <code>evidence/</code> exists only when the study produces necessary evidence that cannot reasonably be cited, linked, or embedded.</p>
+    <p>The plan contains the prospective method, model and token-spending strategy, budgets, gates, stopping rules, expected evidence, required outputs, verification rules, and acceptance criteria. Execution does not write actual results back into the approved plan.</p>
+    <p>No separate directories or files are required for manifests, approvals, protocol, activities, budget, sources, analysis, synthesis, challenge, verification, roles, or final answers. Required information from those classes is carried by the plan, execution log, or report according to whether it is prospective, an execution event, or a result. Additional run artifacts require an explicit study-specific need in the approved plan and must be indexed from the report.</p>
+  </section>
+
+  <section>
+    <h2>4. Required method contract</h2>
+    <ul>
+      <li>One lifecycle covering authorization, evidence work, analysis or evaluation when required, synthesis, independent challenge, correction, verification, and human acceptance.</li>
+      <li>Stable run identity, material approvals and deviations, evidence provenance, findings, challenges, verification, and terminal result.</li>
+      <li>Reuse the repository execution-log schema for execution events unless a documented incompatibility requires a versioned extension; do not create a second object that duplicates the log.</li>
+      <li>A non-waivable family verification baseline that plans may strengthen but cannot weaken.</li>
+      <li>One final-answer envelope separating research support, execution, verification, human acceptance, and implementation authority.</li>
+      <li>Plans may add study-specific methods and necessary outputs without turning every workflow step or role into a persisted artifact.</li>
+    </ul>
+  </section>
+
+  <section>
+    <h2>5. SOTA plan-template ownership</h2>
+    <p>A SOTA plan is a specialized research execution contract. It is not interchangeable with a generic implementation, migration, refactoring, or documentation plan.</p>
+    <pre>.codex/skills/sota-plan-create/
+├── SKILL.md
+├── assets/
+│   └── sota-plan.template.html
+├── references/
+│   ├── plan-contract.md
+│   └── research-model-allocation-policy.v1.yaml
+└── scripts/
+    └── next_plan_version.py</pre>
+    <ul>
+      <li><code>sota-plan-create</code> must own and use the SOTA template asset.</li>
+      <li>The LLM-failure plan v5 remains a complex worked example, not the universal structural reference.</li>
+      <li>The generic repository plan templates remain generic and do not acquire SOTA-only requirements.</li>
+      <li>The SOTA template is minimal and conditional. Incident reconstruction, preliminary studies, experiments, diagrams, multiple reviewers, extensive protocols, or additional artifacts appear only when justified by the study.</li>
+      <li>Every SOTA plan states its question, decision, scope, method, execution strategy, applicable model and token/cost controls, stopping rules, required outputs, verification, and approval state.</li>
+      <li>Model and token/cost sections are proportional: detailed controls are required for material model use; a plan with no or trivial model use states that briefly.</li>
+      <li>The family execution topology is referenced by the plan. It is not reproduced as a large bespoke design unless the plan proposes an authorized extension.</li>
+    </ul>
+  </section>
+
+  <section>
+    <h2>6. Ancillary scope added during planning</h2>
+    <ul>
+      <li><strong>Issue synchronization.</strong> Material scope added during planning requires a preserved issue or accepted-report update before the next plan version.</li>
+      <li><strong>Standalone versions.</strong> Every issue, plan, and SOTA report version states the complete current artifact; predecessors provide provenance only.</li>
+      <li><strong><code>sota-slop-remove</code>.</strong> Human-facing SOTA artifacts require a plain-language gate with semantic-preservation tests.</li>
+      <li><strong>Requirement-to-test traceability.</strong> Every mandatory path, record, field, state, template rule, or tool maps to a contract requirement and verifier test.</li>
+      <li><strong>Legacy compatibility.</strong> Both audited runs receive read-only assessment under the same baseline without retroactive repair or invented provenance.</li>
+    </ul>
+  </section>
+
+  <section>
+    <h2>7. Boundaries</h2>
+    <ul>
+      <li>Verified defects, owner requirements, accepted design directions, and unresolved planning proposals remain labeled separately.</li>
+      <li>The topology in section 3 is the approved remediation target; plans may add only study-necessary artifacts and may not recreate workflow-stage or role-specific folder trees.</li>
+      <li>The plan contains prospective instructions and limits; execution logs and reports contain actual events and results. Execution must not rewrite the approved plan.</li>
+      <li>Additional files or schemas are not mandatory merely because an earlier plan proposed them.</li>
+      <li>Models cannot approve method, deviations, acceptance, or implementation authority.</li>
+    </ul>
+  </section>
+
+  <section>
+    <h2>8. Acceptance criteria</h2>
+    <ol>
+      <li>The family publishes and enforces the exact canonical run topology in section 3.</li>
+      <li>The family publishes one lifecycle, record, provenance, challenge, verification, and terminal-answer contract.</li>
+      <li><code>sota-plan-create</code> contains and uses a minimal conditional <code>assets/sota-plan.template.html</code>.</li>
+      <li><code>sota-plan-create</code> no longer uses the LLM-failure plan v5 as the universal structural reference.</li>
+      <li>Generic repository plan templates remain free of mandatory SOTA-specific research machinery.</li>
+      <li>Template tests demonstrate a minimal SOTA study and a complex study without requiring irrelevant sections in either.</li>
+      <li>Plans add detailed model and token/cost controls only in proportion to expected model use.</li>
+      <li>The repository execution-log contract is reused or explicitly extended rather than duplicated.</li>
+      <li>Issue synchronization, standalone artifacts, plain-language editing, traceability, legacy checks, and terminal-state separation remain enforced.</li>
+      <li>The self-contained family guide matches the implemented template, topology, contracts, and validator.</li>
+    </ol>
+  </section>
+
+  <section>
+    <h2>9. Authority</h2>
+    <p>This issue records the complete current defect, ancillary scope, accepted SOTA-template ownership direction, and required compact run-package structure. It does not authorize implementation.</p>
+    <p><strong>Human acceptance:</strong> pending. <strong>Implementation authority:</strong> none.</p>
+  </section>
+</main>
+</body>
+</html>

@@ -1,0 +1,380 @@
+<!doctype html>
+<!-- Canonical template file: issue-report.template.v2.html -->
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>{{PRIORITY}} · Issue confirmation report · v{{VERSION}} · {{LIFECYCLE_STATE}}</title>
+  <style>
+    :root {
+      color-scheme: light dark;
+      --bg: #eef2f4;
+      --paper: #ffffff;
+      --ink: #172631;
+      --muted: #536573;
+      --line: #cbd5dc;
+      --navy: #123b55;
+      --teal: #087d78;
+      --teal-soft: #e2f3f0;
+      --amber: #94600e;
+      --amber-soft: #fff3d5;
+      --red: #922f46;
+      --red-soft: #fbe8ec;
+      --green: #236a46;
+      --green-soft: #e4f2e9;
+      --blue-soft: #e8f0f7;
+      --shadow: 0 12px 36px rgba(16, 42, 57, .09);
+    }
+    * { box-sizing: border-box; }
+    html { scroll-behavior: smooth; background: var(--bg); }
+    body { margin: 0; color: var(--ink); font: 16px/1.58 system-ui, -apple-system, "Segoe UI", sans-serif; }
+    a { color: var(--teal); text-underline-offset: .16em; }
+    a:focus-visible { outline: 3px solid #f0aa30; outline-offset: 3px; }
+    code { padding: .08em .3em; border-radius: 4px; background: var(--blue-soft); font: .88em ui-monospace, SFMono-Regular, Menlo, monospace; }
+    .skip { position: absolute; left: -9999px; top: 8px; z-index: 10; padding: 8px 12px; background: var(--paper); }
+    .skip:focus { left: 8px; }
+    .wrap { width: min(1180px, calc(100% - 34px)); margin-inline: auto; }
+    .hero { color: #fff; background: linear-gradient(125deg, #102c43, #165567 68%, #087d78); }
+    .hero .wrap { padding: 54px 0 38px; }
+    .eyebrow { margin: 0 0 8px; color: #f2fffd; font-weight: 850; letter-spacing: .1em; text-transform: uppercase; }
+    h1 { max-width: 1020px; margin: 0; font-size: clamp(2.15rem, 5vw, 4rem); line-height: 1.04; letter-spacing: -.035em; }
+    .dek { max-width: 940px; margin: 18px 0 24px; color: #f4fbfc; font-size: 1.12rem; }
+    .state-grid { display: grid; grid-template-columns: repeat(4, minmax(150px, 1fr)); gap: 10px; }
+    .state-card { min-height: 94px; padding: 13px 14px; border: 1px solid rgba(255,255,255,.38); border-radius: 9px; background: rgba(0,0,0,.14); }
+    .state-card small { display: block; margin-bottom: 5px; color: #fff; font-size: .7rem; font-weight: 800; letter-spacing: .07em; text-transform: uppercase; }
+    .state-card strong { display: block; font-size: .96rem; overflow-wrap: anywhere; }
+    .authority-stop { margin-top: 14px; padding: 13px 15px; border: 2px solid #ffd989; border-radius: 8px; background: #523b0d; color: #fff8e7; font-weight: 800; }
+    nav { position: sticky; top: 0; z-index: 5; border-bottom: 1px solid var(--line); background: color-mix(in srgb, var(--paper) 96%, transparent); backdrop-filter: blur(8px); }
+    nav .wrap { display: flex; gap: 4px; overflow-x: auto; padding-block: 9px; }
+    nav a { flex: 0 0 auto; padding: 6px 8px; border-radius: 5px; color: var(--navy); font-size: .75rem; font-weight: 750; text-decoration: none; }
+    nav a:hover { background: var(--teal-soft); }
+    main { padding: 20px 0 70px; }
+    section { margin: 46px 0; scroll-margin-top: 62px; }
+    h2 { margin: 0 0 12px; color: var(--navy); font-size: clamp(1.45rem, 3vw, 2rem); line-height: 1.2; }
+    h3 { margin: 22px 0 7px; color: var(--navy); }
+    p { margin: 8px 0; }
+    .lead { max-width: 970px; color: var(--muted); font-size: 1.04rem; }
+    .panel, .callout, .metric, blockquote { border: 1px solid var(--line); border-radius: 10px; background: var(--paper); box-shadow: var(--shadow); }
+    .panel, .callout { padding: 20px; }
+    .callout { border-left: 7px solid var(--teal); }
+    .callout.warning { border-left-color: var(--amber); background: var(--amber-soft); }
+    .callout.stop { border-left-color: var(--red); background: var(--red-soft); }
+    blockquote { margin: 14px 0; padding: 20px 22px; border-left: 7px solid var(--navy); font-size: 1.04rem; }
+    .metrics { display: grid; grid-template-columns: repeat(4, 1fr); gap: 12px; margin: 18px 0; }
+    .metric { padding: 18px; }
+    .metric strong { display: block; color: var(--navy); font-size: 1.65rem; line-height: 1.1; }
+    .metric span { display: block; margin-top: 6px; color: var(--muted); font-size: .82rem; }
+    .two { display: grid; grid-template-columns: repeat(2, 1fr); gap: 14px; }
+    .table-wrap { overflow-x: auto; border: 1px solid var(--line); border-radius: 10px; background: var(--paper); box-shadow: var(--shadow); }
+    table { width: 100%; min-width: 880px; border-collapse: collapse; }
+    caption { padding: 12px 14px; color: var(--muted); font-size: .82rem; text-align: left; }
+    th, td { padding: 10px 12px; border-bottom: 1px solid var(--line); text-align: left; vertical-align: top; }
+    th { background: var(--teal-soft); color: var(--navy); font-size: .73rem; letter-spacing: .045em; text-transform: uppercase; }
+    tr:last-child td { border-bottom: 0; }
+    .pill { display: inline-block; padding: 3px 8px; border-radius: 999px; font-size: .72rem; font-weight: 850; letter-spacing: .025em; }
+    .pill.confirmed, .pill.accepted { color: var(--green); background: var(--green-soft); }
+    .pill.pending, .pill.inconclusive { color: var(--amber); background: var(--amber-soft); }
+    .pill.blocked, .pill.critical { color: var(--red); background: var(--red-soft); }
+    .pill.info { color: var(--navy); background: var(--blue-soft); }
+    .legend { display: flex; flex-wrap: wrap; gap: 7px; margin: 12px 0; }
+    .legend span { padding: 4px 8px; border: 1px solid var(--line); border-radius: 5px; background: var(--paper); font-size: .76rem; }
+    .boundary-list { display: grid; grid-template-columns: repeat(2, 1fr); gap: 12px; }
+    .boundary-list article { padding: 17px; border: 1px solid var(--line); border-radius: 9px; background: var(--paper); }
+    .boundary-list article:first-child { border-top: 5px solid var(--green); }
+    .boundary-list article:last-child { border-top: 5px solid var(--red); }
+    footer { padding: 24px 0 38px; border-top: 1px solid var(--line); color: var(--muted); font-size: .84rem; }
+    @media (max-width: 820px) {
+      .state-grid, .metrics, .two, .boundary-list { grid-template-columns: 1fr; }
+      nav { position: relative; }
+    }
+    @media (prefers-color-scheme: dark) {
+      :root { --bg:#0d1720; --paper:#17242e; --ink:#edf3f5; --muted:#b6c2c9; --line:#3b4d59; --navy:#9dd5e5; --teal:#86d8d0; --teal-soft:#193b3b; --amber:#ffd27d; --amber-soft:#3c321c; --red:#ff9cac; --red-soft:#3e232b; --green:#83d6a7; --green-soft:#1b3829; --blue-soft:#213846; --shadow:none; }
+    }
+    @media print {
+      :root { color-scheme: light; --bg:#fff; --paper:#fff; --ink:#111; --muted:#444; --line:#aaa; --navy:#123b55; --teal:#087d78; --teal-soft:#e8f4f2; --amber-soft:#fff6df; --red-soft:#fbecef; --green-soft:#e8f4ed; --blue-soft:#edf3f7; --shadow:none; }
+      nav, .skip { display: none; }
+      .hero { color: #fff; background: #173f55 !important; print-color-adjust: exact; }
+      section { margin: 28px 0; }
+      .panel, .callout, .metric, blockquote, .table-wrap { break-inside: avoid; box-shadow: none; }
+      a { color: inherit; text-decoration: none; }
+    }
+  </style>
+</head>
+<body>
+  <a class="skip" href="#main">Skip to report</a>
+  <header class="hero">
+    <div class="wrap">
+      <p class="eyebrow">{{PRIORITY}} · Issue confirmation report · v{{VERSION}} · {{LIFECYCLE_STATE}}</p>
+      <h1>{{TITLE}}</h1>
+      <p class="dek">{{ONE_SENTENCE_CONCLUSION_AND_SCOPE}}</p>
+      <div class="state-grid" aria-label="Independent report states">
+        <div class="state-card"><small>Agent verdict</small><strong>{{CONFIRMATION_VERDICT}}</strong></div>
+        <div class="state-card"><small>Investigated severity</small><strong>{{SEVERITY}}</strong></div>
+        <div class="state-card"><small>Human review</small><strong>{{HUMAN_REVIEW_STATE}}</strong></div>
+        <div class="state-card"><small>Plan handoff</small><strong>{{PLAN_HANDOFF_STATE}}</strong></div>
+      </div>
+      <div class="authority-stop">Implementation authority: NONE. This report can authorize neither remediation nor repository mutation.</div>
+    </div>
+  </header>
+
+  <nav aria-label="Report contents">
+    <div class="wrap">
+      <a href="#decision">Decision</a><a href="#original-report">Original report</a><a href="#charter">Scope and test</a><a href="#configuration">Blast radius</a><a href="#evidence">Evidence</a><a href="#investigation">Test log</a><a href="#findings">Findings</a><a href="#counterevidence">Challenges</a><a href="#conclusion">Conclusion</a><a href="#limitations">Open items</a><a href="#review">Approval</a><a href="#versioning">Versions</a><a href="#handoff">Plan gate</a><a href="#validation">Validation</a><a href="#sources">Sources</a>
+    </div>
+  </nav>
+
+  <main id="main" class="wrap">
+    <!-- Required: keep confirmation, severity, human review, plan handoff, and implementation authority orthogonal. -->
+    <section id="decision" data-required-section="true">
+      <h2>Decision at a glance</h2>
+      <p class="lead">Summarizes the verdict, confidence, and evidence coverage. Use it to decide whether to accept, reject, or request changes without reading the full report.</p>
+      <div class="callout">
+        <p><strong>{{CONFIRMATION_VERDICT}}:</strong> {{SCOPED_VERDICT_STATEMENT}}</p>
+        <p>{{EVIDENCE_SUFFICIENCY_AND_CONFIDENCE}}</p>
+      </div>
+      <div class="metrics" aria-label="Investigation coverage">
+        <div class="metric"><strong>{{EVIDENCE_COUNT}}</strong><span>evidence records</span></div>
+        <div class="metric"><strong>{{FINDING_COUNT}}</strong><span>material findings</span></div>
+        <div class="metric"><strong>{{CHALLENGE_COUNT}}</strong><span>independent challenges</span></div>
+        <div class="metric"><strong>{{UNRESOLVED_MATERIAL_COUNT}}</strong><span>unresolved material items</span></div>
+      </div>
+      <div class="legend" aria-label="Evidence labels"><span>FACT — direct evidence</span><span>ATTRIBUTED_CLAIM — source statement</span><span>INFERENCE — reasoned conclusion</span><span>ASSUMPTION — declared premise</span><span>UNKNOWN — not established</span></div>
+    </section>
+
+    <!-- Required: preserve the original words and distinguish reporter assessment from investigator assessment. -->
+    <section id="original-report" data-required-section="true">
+      <h2>Original report</h2>
+      <p class="lead">Preserves the reported issue exactly as received, including its source and priority. Use it to verify that the investigation answered the original concern without rewriting it.</p>
+      <blockquote data-record-id="{{ORIGINAL_CLAIM_ID}}">{{VERBATIM_ORIGINAL_REPORT}}</blockquote>
+      <div class="table-wrap"><table>
+        <caption>Original report provenance</caption>
+        <tbody>
+          <tr><th scope="row">Claim ID</th><td>{{ORIGINAL_CLAIM_ID}}</td><th scope="row">Reporter</th><td>{{REPORTER_ID_AND_ROLE}}</td></tr>
+          <tr><th scope="row">Reported</th><td><time datetime="{{REPORTED_AT_RFC3339}}">{{REPORTED_AT_DISPLAY}}</time></td><th scope="row">Source</th><td>{{ORIGINAL_REPORT_SOURCE}}</td></tr>
+          <tr><th scope="row">Reporter priority</th><td>{{REPORTER_PRIORITY}}</td><th scope="row">Reporter impact</th><td>{{REPORTER_IMPACT}}</td></tr>
+          <tr><th scope="row">Verbatim-text SHA-256</th><td colspan="3"><code>{{VERBATIM_REPORT_SHA256}}</code></td></tr>
+          <tr><th scope="row">Source-file SHA-256</th><td colspan="3"><code>{{ORIGINAL_SOURCE_SHA256_OR_UNAVAILABLE}}</code></td></tr>
+        </tbody>
+      </table></div>
+    </section>
+
+    <!-- Required: do not allow the investigation to silently grow beyond the authorized claim. -->
+    <section id="charter" data-required-section="true">
+      <h2>Investigation scope and test</h2>
+      <p class="lead">Defines the question, scope, authority, test method, and stop condition. Use it to confirm that the investigation was authorized, bounded, and sufficient.</p>
+      <p class="lead">{{INVESTIGATION_OBJECTIVE}}</p>
+      <div class="two">
+        <article class="panel"><h3>Questions and applicable expectation</h3><p>{{TESTABLE_QUESTIONS}}</p><p><strong>Expectation / authority:</strong> {{NORMATIVE_OR_CONTRACT_SOURCE}}</p><p><strong>Decision criterion:</strong> {{DECISION_CRITERION}}</p></article>
+        <article class="panel"><h3>Boundary and authority</h3><p><strong>In scope:</strong> {{IN_SCOPE}}</p><p><strong>Out of scope:</strong> {{OUT_OF_SCOPE}}</p><p><strong>Permissions:</strong> {{PERMISSIONS}}</p></article>
+      </div>
+      <div class="table-wrap"><table>
+        <caption>Hypotheses, methods, and stopping logic</caption>
+        <thead><tr><th>ID</th><th>Hypothesis</th><th>Falsification method</th><th>Sufficiency / stop condition</th></tr></thead>
+        <tbody><tr><td>{{HYPOTHESIS_ID}}</td><td>{{HYPOTHESIS}}</td><td>{{FALSIFICATION_METHOD}}</td><td>{{SUFFICIENCY_AND_STOP}}</td></tr></tbody>
+      </table></div>
+    </section>
+
+    <section id="configuration" data-required-section="true">
+      <h2>Blast radius</h2>
+      <p class="lead">Identifies the affected systems, versions, environments, users, and known impact boundary. Use it to determine where the issue applies and where it does not.</p>
+      <div class="table-wrap"><table>
+        <caption>Configuration needed to reproduce or interpret the result</caption>
+        <thead><tr><th>Item</th><th>Version / commit / state</th><th>Why it matters</th><th>Availability</th></tr></thead>
+        <tbody><tr><td>{{AFFECTED_ITEM}}</td><td>{{VERSION_OR_STATE}}</td><td>{{APPLICABILITY}}</td><td>{{AVAILABILITY}}</td></tr></tbody>
+      </table></div>
+    </section>
+
+    <!-- Required: evidence polarity is separate from evidence type. -->
+    <section id="evidence" data-required-section="true">
+      <h2>Evidence</h2>
+      <p class="lead">Lists the evidence used, where it came from, what it supports or challenges, and its limits. Use it to verify that material claims are traceable to stable records.</p>
+      <div class="table-wrap"><table>
+        <caption>Every material claim must resolve to one or more stable evidence IDs</caption>
+        <thead><tr><th>ID</th><th>Type / epistemic use</th><th>Locator and origin</th><th>Collected / digest</th><th>Relation</th><th>Limit</th></tr></thead>
+        <tbody><tr data-record-id="{{EVIDENCE_ID}}"><td>{{EVIDENCE_ID}}</td><td>{{EVIDENCE_TYPE}}</td><td>{{EVIDENCE_LOCATOR_AND_ORIGIN}}</td><td>{{COLLECTED_AT_AND_DIGEST}}</td><td>{{SUPPORTS_CHALLENGES_CONTEXT}}</td><td>{{EVIDENCE_LIMIT}}</td></tr></tbody>
+      </table></div>
+    </section>
+
+    <section id="investigation" data-required-section="true">
+      <h2>Test log and reproduction</h2>
+      <p class="lead">Records the tests performed, expected and observed results, deviations, and safety controls. Use it to determine whether the issue was reproduced and the process can be audited.</p>
+      <div class="table-wrap"><table>
+        <caption>Append-only actions, negative results, deviations, and safety controls</caption>
+        <thead><tr><th>Activity / time</th><th>Actor and tool/model version</th><th>Expected</th><th>Observed</th><th>Evidence</th><th>Deviation / safety</th></tr></thead>
+        <tbody><tr><td>{{ACTIVITY_ID_AND_TIME}}</td><td>{{ACTOR_AND_VERSION}}</td><td>{{EXPECTED_RESULT}}</td><td>{{OBSERVED_RESULT}}</td><td>{{EVIDENCE_IDS}}</td><td>{{DEVIATION_OR_NONE}}</td></tr></tbody>
+      </table></div>
+    </section>
+
+    <section id="findings" data-required-section="true">
+      <h2>Findings</h2>
+      <p class="lead">States each material finding, its evidence, status, scope, and confidence. Use it to separate established facts from claims, inferences, assumptions, and unknowns.</p>
+      <div class="table-wrap"><table>
+        <caption>Facts, attributed claims, inferences, assumptions, and unknowns remain distinct</caption>
+        <thead><tr><th>ID</th><th>Class / status</th><th>Finding</th><th>Evidence and reasoning</th><th>Scope / confidence</th></tr></thead>
+        <tbody><tr data-record-id="{{FINDING_ID}}"><td>{{FINDING_ID}}</td><td>{{EPISTEMIC_CLASS}} · {{FINDING_STATUS}}</td><td>{{FINDING_STATEMENT}}</td><td>{{EVIDENCE_AND_REASONING_LINKS}}</td><td>{{SCOPE_AND_CONFIDENCE}}</td></tr></tbody>
+      </table></div>
+    </section>
+
+    <!-- Required even when no counterevidence is found: state the search/test performed. -->
+    <section id="counterevidence" data-required-section="true">
+      <h2>Contradicting evidence and alternatives</h2>
+      <p class="lead">Shows evidence against the leading conclusion and tests plausible alternatives. Use it to judge whether the verdict survived meaningful challenge or remains uncertain.</p>
+      <div class="table-wrap"><table>
+        <caption>Strongest disconfirming evidence and plausible alternatives</caption>
+        <thead><tr><th>ID</th><th>Counterevidence or alternative</th><th>Test / evidence</th><th>Disposition</th><th>Residual plausibility</th></tr></thead>
+        <tbody><tr data-record-id="{{ALTERNATIVE_ID}}"><td>{{ALTERNATIVE_ID}}</td><td>{{ALTERNATIVE_OR_COUNTEREVIDENCE}}</td><td>{{TEST_AND_EVIDENCE}}</td><td>{{DISPOSITION_WITH_REASON}}</td><td>{{RESIDUAL_PLAUSIBILITY}}</td></tr></tbody>
+      </table></div>
+    </section>
+
+    <section id="conclusion" data-required-section="true">
+      <h2>Conclusion</h2>
+      <p class="lead">Provides the final scoped verdict, impact, severity, and decision criterion. Use it to determine whether the reported issue is confirmed and how serious it is.</p>
+      <div class="callout"><p><strong>Verdict:</strong> {{CONFIRMATION_VERDICT}} · <strong>Scope change:</strong> {{SCOPE_CHANGE}} · <strong>Evidence sufficiency:</strong> {{EVIDENCE_SUFFICIENCY}}</p><p>{{FULL_SCOPED_CONCLUSION}}</p></div>
+      <h3>Impact and severity rationale</h3>
+      <p>{{IMPACT_AND_SEVERITY_RATIONALE}}</p>
+      <h3>Applicable expectation and decision criterion</h3>
+      <p>{{CONFIRMED_EXPECTATION_NOT_REMEDIATION_PLAN}}</p>
+    </section>
+
+    <section id="limitations" data-required-section="true">
+      <h2>Open questions and limits</h2>
+      <p class="lead">Lists unresolved facts, evidence gaps, and constraints that may affect the verdict. Use it to decide whether the remaining uncertainty is acceptable or requires more investigation.</p>
+      <div class="table-wrap"><table>
+        <caption>Unknowns cannot silently support the verdict</caption>
+        <thead><tr><th>ID</th><th>Unknown / limitation</th><th>Decision relevance</th><th>Evidence that could resolve it</th></tr></thead>
+        <tbody><tr data-record-id="{{UNKNOWN_ID}}"><td>{{UNKNOWN_ID}}</td><td>{{UNKNOWN_OR_LIMITATION}}</td><td>{{DECISION_RELEVANCE}}</td><td>{{RESOLUTION_EVIDENCE}}</td></tr></tbody>
+      </table></div>
+    </section>
+
+    <section id="review" data-required-section="true">
+      <h2>Approval record</h2>
+      <p class="lead">Records the reviewer, decision, comments, and disposition for this exact report version. Use it to verify whether the report is accepted, rejected, or awaiting changes.</p>
+      <div class="callout warning"><p>Current state: <strong>{{HUMAN_REVIEW_STATE}}</strong>. Only a human decision bound to this exact version and canonical payload digest can accept the report. Agent completion is not acceptance.</p></div>
+      <div class="table-wrap"><table>
+        <caption>Verbatim review events and their later dispositions</caption>
+        <thead><tr><th>Review ID / time</th><th>Human and authority</th><th>Target version / digest</th><th>Decision and verbatim comment</th><th>Disposition / addressed in</th></tr></thead>
+        <tbody><tr><td>{{REVIEW_ID_OR_PENDING}}</td><td>{{HUMAN_OR_PENDING}}</td><td>{{TARGET_VERSION_AND_DIGEST}}</td><td>{{DECISION_AND_VERBATIM_COMMENT}}</td><td>{{DISPOSITION_AND_VERSION}}</td></tr></tbody>
+      </table></div>
+    </section>
+
+    <section id="versioning" data-required-section="true">
+      <h2>Version history</h2>
+      <p class="lead">Tracks immutable report versions, changes, actors, timestamps, and predecessor digests. Use it to confirm which version was reviewed and whether its history is intact.</p>
+      <div class="table-wrap"><table>
+        <caption>Issued versions are immutable; pushback creates vN+1</caption>
+        <thead><tr><th>Version</th><th>Issued</th><th>Predecessor / digest</th><th>Actors</th><th>Material change and reason</th></tr></thead>
+        <tbody><tr><td>v{{VERSION}}</td><td>{{ISSUED_AT}}</td><td>{{PREDECESSOR_OR_NONE}}</td><td>{{ISSUING_ACTORS}}</td><td>{{CHANGE_SUMMARY}}</td></tr></tbody>
+      </table></div>
+      <p><strong>Canonical payload SHA-256:</strong> <code>{{CANONICAL_PAYLOAD_SHA256}}</code>. Compute it over the embedded <code>issue-confirmation-record</code> JSON with <code>canonical_payload_sha256</code> omitted, serialized as UTF-8 JSON with lexicographically sorted keys, separators <code>,</code> and <code>:</code>, and no insignificant whitespace.</p>
+      <p>If feedback changes any byte or substantive disposition, preserve this file and create exactly v{{NEXT_VERSION}}. The new version points backward and resets human review and plan handoff.</p>
+    </section>
+
+    <section id="handoff" data-required-section="true">
+      <h2>Planning gate</h2>
+      <p class="lead">Shows whether the verdict, validation, and human approval requirements for planning are satisfied. Use it to decide whether a separate remediation plan may be drafted.</p>
+      <div class="callout stop"><p><strong>{{PLAN_HANDOFF_STATE}}</strong> — {{PLAN_GATE_REASON}}</p><p>Human acceptance authorizes drafting a separate remediation plan only. It does not approve a fix, budget, owner, code change, deployment, or release.</p></div>
+      <div class="table-wrap"><table>
+        <caption>Fail-closed prerequisites for planning</caption>
+        <thead><tr><th>Gate check</th><th>Required state</th><th>Current state</th><th>Evidence / receipt</th></tr></thead>
+        <tbody>
+          <tr><td>Eligible verdict</td><td>CONFIRMED or PARTIALLY_CONFIRMED</td><td>{{CONFIRMATION_VERDICT}}</td><td>{{VERDICT_EVIDENCE}}</td></tr>
+          <tr><td>Structural and semantic validation</td><td>PASS</td><td>{{VALIDATION_RESULT}}</td><td>{{VALIDATION_RECEIPT}}</td></tr>
+          <tr><td>Human acceptance</td><td>ACCEPTED for exact version/digest</td><td>{{HUMAN_REVIEW_STATE}}</td><td>{{HUMAN_ACCEPTANCE_RECEIPT_OR_NONE}}</td></tr>
+          <tr><td>Implementation authority</td><td>NONE</td><td>NONE</td><td>Invariant</td></tr>
+        </tbody>
+      </table></div>
+      <p><strong>Later plan contract:</strong> {{PLAN_SCHEMA_PATH_AND_NOTES}}</p>
+    </section>
+
+    <section id="validation" data-required-section="true">
+      <h2>Validation checks</h2>
+      <p class="lead">Reports automated checks of structure, required fields, and internal consistency. Use it to verify that the report is complete and machine-valid; it does not prove the verdict is true.</p>
+      <div class="table-wrap"><table>
+        <caption>Validator success establishes structural consistency, not substantive truth</caption>
+        <thead><tr><th>Validator / time</th><th>Scope</th><th>Result</th><th>Failures / waivers</th></tr></thead>
+        <tbody><tr><td>{{VALIDATOR_AND_TIME}}</td><td>{{VALIDATION_SCOPE}}</td><td>{{VALIDATION_RESULT}}</td><td>{{FAILURES_AND_WAIVERS}}</td></tr></tbody>
+      </table></div>
+    </section>
+
+    <section id="sources" data-required-section="true">
+      <h2>Sources</h2>
+      <p class="lead">Lists direct investigation sources and the guidance behind this report format. Use it to verify source authority, retrieve supporting material, and distinguish case evidence from template references.</p>
+      <ul>
+        <li><a href="https://swehb.nasa.gov/display/SWEHBVD/5.01%2B-%2BCR-PR%2B-%2BSoftware%2BChange%2BRequest%2B-%2BProblem%2BReport">NASA Software Change Request / Problem Report guidance</a></li>
+        <li><a href="https://swehb.nasa.gov/spaces/SWEHBVD/pages/256671746/7.27%2B-%2BSoftware%2BNon-conformance%2BLevels%2Band%2BFields">NASA non-conformance levels and fields</a></li>
+        <li><a href="https://swehb.nasa.gov/spaces/SWEHBVD/pages/102695463/SWE-082%2B-%2BAuthorizing%2BChanges">NASA SWE-082: Authorizing Changes</a></li>
+        <li><a href="https://csrc.nist.gov/pubs/sp/800/218/final">NIST SP 800-218, Secure Software Development Framework</a></li>
+        <li><a href="https://csrc.nist.gov/pubs/sp/800/86/final">NIST SP 800-86, evidence collection and integrity guidance</a></li>
+        <li><a href="https://www.omg.org/spec/SACM/2.3/PDF">OMG Structured Assurance Case Metamodel 2.3</a></li>
+        <li><a href="https://sre.google/sre-book/effective-troubleshooting/">Google SRE: Effective Troubleshooting</a> and <a href="https://sre.google/workbook/postmortem-culture/">Postmortem Culture</a></li>
+        <li><a href="https://www.nist.gov/publications/artificial-intelligence-risk-management-framework-ai-rmf-10">NIST AI RMF 1.0</a> and <a href="https://www.nist.gov/publications/artificial-intelligence-risk-management-framework-generative-artificial-intelligence">NIST AI 600-1 GenAI Profile</a></li>
+        <li><a href="https://www.w3.org/TR/prov-o/">W3C PROV-O</a></li>
+        <li><a href="https://docs.github.com/en/communities/using-templates-to-encourage-useful-issues-and-pull-requests/syntax-for-issue-forms">GitHub issue-form syntax</a></li>
+        <li><a href="https://html.spec.whatwg.org/multipage/scripting.html">WHATWG HTML data blocks</a>, <a href="https://www.rfc-editor.org/info/rfc3339">RFC 3339</a>, and <a href="https://www.w3.org/TR/WCAG22/">WCAG 2.2</a></li>
+      </ul>
+      <p>{{INVESTIGATION_SOURCE_LIST}}</p>
+    </section>
+
+    <section aria-labelledby="boundaries-heading">
+      <h2 id="boundaries-heading">Authority limits</h2>
+      <p class="lead">States what this report can and cannot authorize. Use it to prevent report approval from being mistaken for approval to change, fund, deploy, or release anything.</p>
+      <div class="boundary-list">
+        <article><h3>This report may</h3><ul><li>Preserve the original suspicion and evidence.</li><li>Confirm, partially confirm, refute, or leave the claim inconclusive.</li><li>Record human disagreement and create a later immutable version.</li><li>Become eligible for planning after human acceptance.</li></ul></article>
+        <article><h3>This report may not</h3><ul><li>Edit or remediate the affected system.</li><li>Approve a root cause, fix, budget, deployment, or release.</li><li>Open its own plan gate or accept itself.</li><li>Erase the original report, negative evidence, or human pushback.</li></ul></article>
+      </div>
+    </section>
+  </main>
+
+  <footer><div class="wrap">Issue confirmation report template v2 · immutable report versions · human-gated planning · implementation authority always NONE</div></footer>
+
+  <script type="application/json" id="issue-confirmation-template-contract">
+  {
+    "schema": "repo.issue-confirmation-template/v2",
+    "template_version": 2,
+    "required_sections": ["decision", "original-report", "charter", "configuration", "evidence", "investigation", "findings", "counterevidence", "conclusion", "limitations", "review", "versioning", "handoff", "validation", "sources"],
+    "enums": {
+      "confirmation_verdict": ["UNASSESSED", "CONFIRMED", "PARTIALLY_CONFIRMED", "REFUTED", "INCONCLUSIVE"],
+      "scope_change": ["UNCHANGED", "NARROWED", "EXPANDED", "REFRAMED"],
+      "severity": ["SEV-U_UNASSESSED", "SEV-1_CATASTROPHIC", "SEV-2_CRITICAL", "SEV-3_MODERATE", "SEV-4_MINOR", "SEV-5_EDITORIAL", "SEV-N_NOT_APPLICABLE"],
+      "human_review": ["NOT_REQUESTED", "PENDING", "CHANGES_REQUESTED", "ACCEPTED", "REJECTED", "DEFERRED"],
+      "plan_handoff": ["BLOCKED", "ELIGIBLE_AWAITING_HUMAN_ACCEPTANCE", "AUTHORIZED_FOR_PLAN_DRAFTING", "HANDOFF_RECORDED", "NOT_APPLICABLE"],
+      "implementation_authority": ["NONE"]
+    },
+    "versioning": {"issued_versions_immutable": true, "increment": 1, "new_version_resets_acceptance": true, "predecessor_link_required_after_v1": true},
+    "canonicalization": {"algorithm": "SHA-256", "payload": "issue-confirmation-record", "exclude_fields": ["canonical_payload_sha256"], "serialization": "UTF-8 JSON; lexicographically sorted keys; separators ',' and ':'; no insignificant whitespace"},
+    "gate_rule": "Only a human-accepted CONFIRMED or PARTIALLY_CONFIRMED exact version may become AUTHORIZED_FOR_PLAN_DRAFTING; implementation authority remains NONE."
+  }
+  </script>
+
+  <script type="application/json" id="issue-confirmation-record">
+  {
+    "$schema": "{{ISSUE_CONFIRMATION_SCHEMA_URI_OR_PENDING}}",
+    "schema_version": "1.0.0",
+    "report_id": "{{REPORT_ID}}",
+    "issue_id": "{{ISSUE_ID}}",
+    "version": "{{VERSION}}",
+    "issued_at": "{{ISSUED_AT_RFC3339}}",
+    "title": "{{TITLE_JSON_ESCAPED}}",
+    "lifecycle_state": "{{LIFECYCLE_STATE}}",
+    "was_revision_of": "{{PREDECESSOR_ID_OR_NULL}}",
+    "previous_payload_sha256": "{{PREDECESSOR_DIGEST_OR_NULL}}",
+    "canonical_payload_sha256": "{{CANONICAL_PAYLOAD_SHA256_OR_PENDING}}",
+    "original_report": {"claim_id": "{{ORIGINAL_CLAIM_ID}}", "verbatim": "{{VERBATIM_ORIGINAL_REPORT_JSON_ESCAPED}}", "reporter": "{{REPORTER_ID}}", "reported_at": "{{REPORTED_AT_RFC3339}}", "source": "{{ORIGINAL_REPORT_SOURCE}}", "verbatim_digest": "{{VERBATIM_REPORT_SHA256}}", "source_file_digest": "{{ORIGINAL_SOURCE_SHA256_OR_UNAVAILABLE}}"},
+    "actors": [],
+    "repository_baseline": {"repository": "{{REPOSITORY}}", "commit": "{{COMMIT_OR_UNKNOWN}}", "dirty_state": "{{DIRTY_STATE}}", "affected_items": []},
+    "investigation": {"run_id": "{{INVESTIGATION_RUN_ID}}", "questions": [], "scope": [], "exclusions": [], "permissions": [], "environment": {}, "methods": [], "acceptance_and_stop_criteria": []},
+    "classifications": {"verdict": "{{CONFIRMATION_VERDICT}}", "scope_change": "{{SCOPE_CHANGE}}", "severity": "{{SEVERITY}}", "priority": "{{PRIORITY}}", "evidence_sufficiency": "{{EVIDENCE_SUFFICIENCY}}", "human_review": "{{HUMAN_REVIEW_STATE}}", "plan_handoff": "{{PLAN_HANDOFF_STATE}}", "implementation_authority": "NONE"},
+    "evidence": [],
+    "findings": [],
+    "alternatives_and_counterevidence": [],
+    "unknowns_and_limitations": [],
+    "review_events": [],
+    "change_log": [],
+    "validation": {"validator_version": "{{VALIDATOR_VERSION}}", "timestamp": "{{VALIDATED_AT_RFC3339}}", "result": "{{VALIDATION_RESULT}}", "checks": [], "waivers": []},
+    "human_acceptance": null,
+    "plan_handoff": null,
+    "references": []
+  }
+  </script>
+</body>
+</html>

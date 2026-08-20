@@ -1,0 +1,121 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <title>Issue v3 — SOTA family method, topology, and planning-record inconsistency</title>
+  <style>
+    :root{color-scheme:light dark;--bg:#f5f6f7;--paper:#fff;--ink:#182127;--muted:#59656d;--line:#cbd2d7;--accent:#174b63;--warn:#fff4d6;--bad:#8d3040}*{box-sizing:border-box}body{margin:0;background:var(--bg);color:var(--ink);font:16px/1.5 system-ui,sans-serif}header,main{width:min(1000px,calc(100% - 32px));margin:auto}header{padding:40px 0 24px;border-bottom:1px solid var(--line)}main{padding-bottom:56px}h1{margin:5px 0 10px;font-size:2.2rem;line-height:1.1}h2{margin:36px 0 10px;color:var(--accent)}.meta{color:var(--muted)}.status{color:var(--bad);font-weight:800}.box{padding:14px 16px;border:1px solid var(--line);background:var(--paper)}.warn{border-left:5px solid var(--bad);background:var(--warn)}table{width:100%;border-collapse:collapse;background:var(--paper)}th,td{padding:9px 10px;border:1px solid var(--line);text-align:left;vertical-align:top}th{background:#e9eef1}pre{overflow:auto;padding:14px;border:1px solid var(--line);background:var(--paper);font:14px/1.5 ui-monospace,monospace}code{font-family:ui-monospace,monospace}a{color:var(--accent)}li+li{margin-top:5px}@media(prefers-color-scheme:dark){:root{--bg:#10171c;--paper:#172127;--ink:#edf1f3;--muted:#b2bdc3;--line:#3a4850;--accent:#9ed0e4;--warn:#342d1b;--bad:#ff9cad}th{background:#223039}}
+  </style>
+</head>
+<body>
+<header>
+  <p class="status">P0 · OPEN · ISSUE VERSION 3</p>
+  <h1>The SOTA family lacks an enforceable method, topology, and planning-record contract</h1>
+  <p class="meta">19 August 2026 · Predecessors: <a href="sota-skill-family-method-output-contract-inconsistency.issue.html">original issue</a> and <a href="sota-skill-family-method-output-contract-inconsistency.issue.v2.html">issue v2</a> · Evidence: <a href="sota-skill-family-method-output-contract-inconsistency.report.v1.html">confirmation report v1</a></p>
+</header>
+<main>
+  <section>
+    <h2>1. Issue</h2>
+    <div class="box warn">
+      <p>The SOTA family does not enforce one invariant execution method and physical run topology. Planning can also add ancillary remediation scope without updating the issue record, and later plans or reports can become predecessor diffs instead of complete current artifacts.</p>
+    </div>
+    <p>Different studies may use different questions, sources, instruments, experiments, analyses, and domain outputs. They must still use the same family-owned run root, required record classes, lifecycle, identifiers, provenance, challenge process, verification baseline, failure behavior, and terminal-state contract.</p>
+  </section>
+
+  <section>
+    <h2>2. Evidence status</h2>
+    <table>
+      <thead><tr><th>Source</th><th>Status</th><th>Finding</th></tr></thead>
+      <tbody>
+        <tr><td>Original issue</td><td>Owner requirement</td><td>Requires one authoritative topology and machine-readable record layer; plans may add artifacts but cannot remove or relocate required classes.</td></tr>
+        <tr><td>Confirmation report v1</td><td>Verified</td><td>Confirms an underspecified and unenforced baseline and defects in both audited runs; historical skill provenance remains unknown where records are absent.</td></tr>
+        <tr><td>Plans v1-v5</td><td>Planning evidence</td><td>Added proposed schemas, validators, lifecycle and authority controls, legacy assessment, issue synchronization, standalone versioning, and <code>sota-slop-remove</code>.</td></tr>
+        <tr><td>Owner feedback</td><td>Authority input</td><td>Rejects overbuilt prose and unnecessary machinery, but confirms that the issue requires a standard folder structure and permits ancillary planning additions when the issue is updated.</td></tr>
+      </tbody>
+    </table>
+  </section>
+
+  <section>
+    <h2>3. Required canonical topology</h2>
+    <pre>research/&lt;effort&gt;/
+├── plan/
+│   └── &lt;effort&gt;.plan.vN.html
+└── execution/&lt;run-id&gt;/
+    ├── manifest/
+    ├── approvals/
+    ├── protocol/
+    ├── records/
+    │   ├── activities/
+    │   ├── budget/
+    │   ├── sources/
+    │   ├── analysis/
+    │   ├── synthesis/
+    │   └── challenge/
+    ├── evaluation/          optional only when the method requires it
+    ├── verification/
+    └── reports/</pre>
+    <p>The family owns these locations and record classes. Plans may add scoped subdirectories and external deliverables, but they may not remove, rename, or relocate required classes. External deliverables must be indexed from the run manifest with path, version, digest, producer, and authority.</p>
+  </section>
+
+  <section>
+    <h2>4. Required method contract</h2>
+    <ul>
+      <li>One lifecycle: start gate, calibration when required, protocol approval, evidence work, analysis or evaluation, synthesis, independent challenge, correction, verification, and human acceptance.</li>
+      <li>Versioned records and stable identifiers for the manifest, approvals, activities, budget, deviations, sources, findings, challenges, verification, and terminal result.</li>
+      <li>Durable producer and invocation provenance. Missing historical provenance remains explicitly unknown.</li>
+      <li>A non-waivable family verification baseline that plans may strengthen but cannot weaken.</li>
+      <li>One final-answer envelope separating research support, execution, verification, human acceptance, and implementation authority.</li>
+      <li>Plan extensions may add stricter controls and domain outputs without changing family semantics or required locations.</li>
+    </ul>
+  </section>
+
+  <section>
+    <h2>5. Ancillary scope added during planning</h2>
+    <p>The following items were not the original contract defect, but planning exposed them as necessary supporting work. They are now part of the issue scope:</p>
+    <ul>
+      <li><strong>Issue synchronization.</strong> Material skills, artifacts, methods, controls, risks, or acceptance rules added during planning require a preserved issue or report update before the next plan version.</li>
+      <li><strong>Standalone versions.</strong> Every issue, plan, and SOTA report version must restate the complete current artifact. Predecessors are provenance, not required context.</li>
+      <li><strong><code>sota-slop-remove</code>.</strong> Human-facing SOTA artifacts require a plain-language gate adapted from Lauren Tan's Pstack <code>unslop</code>, with semantic-preservation tests.</li>
+      <li><strong>Requirement-to-test traceability.</strong> Every mandatory path, record, field, state, or tool must map to the family contract and a verifier test.</li>
+      <li><strong>Legacy compatibility.</strong> Both audited runs require read-only assessment under the same family baseline. No retroactive repair or invented provenance is allowed.</li>
+    </ul>
+  </section>
+
+  <section>
+    <h2>6. Boundaries</h2>
+    <ul>
+      <li>Verified defects, owner requirements, and planning proposals must remain labeled separately.</li>
+      <li>The canonical topology is mandatory. Additional files or schemas are not mandatory merely because a plan proposed them.</li>
+      <li>Study-specific artifacts remain under plan control within or indexed from the canonical run.</li>
+      <li>Old issues, plans, reports, and runs remain unchanged.</li>
+      <li>Models cannot approve method, deviations, acceptance, or implementation authority.</li>
+    </ul>
+  </section>
+
+  <section>
+    <h2>7. Acceptance criteria</h2>
+    <ol>
+      <li>The family publishes and enforces the canonical topology in section 3.</li>
+      <li>The family publishes one lifecycle, record, provenance, challenge, verification, and terminal-answer contract.</li>
+      <li>Plans may add scoped artifacts and stricter controls but cannot weaken the contract or move required classes.</li>
+      <li><code>sota-plan-create</code> synchronizes the issue or accepted report before issuing a plan with material ancillary scope.</li>
+      <li>The synchronized issue distinguishes verified defects, owner requirements, and planning additions.</li>
+      <li>Each issue, plan, and SOTA report version remains complete when all predecessors are unavailable.</li>
+      <li>Every mandatory path, record, field, state, and tool maps to a contract requirement and a verifier test.</li>
+      <li><code>sota-slop-remove</code> removes generic or inflated prose without changing claims, evidence, numbers, uncertainty, limitations, decisions, or authority.</li>
+      <li>Both audited runs receive read-only compatibility results under the same baseline without mutation or invented provenance.</li>
+      <li>Research support, execution, verification, human acceptance, and implementation authority remain separate in every final answer.</li>
+      <li>All SOTA role-skill handoffs use the canonical record classes and locations.</li>
+      <li>The family guide is self-contained and matches the implemented contract and validator.</li>
+    </ol>
+  </section>
+
+  <section>
+    <h2>8. Authority</h2>
+    <p>This issue records the complete current defect and ancillary scope. It does not approve a remediation plan or implementation.</p>
+    <p><strong>Human acceptance:</strong> pending. <strong>Implementation authority:</strong> none.</p>
+  </section>
+</main>
+</body>
+</html>

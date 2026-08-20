@@ -1,0 +1,110 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <title>SOTA family contract and planning-record inconsistency — issue v2</title>
+  <style>
+    :root{color-scheme:light dark;--bg:#f5f6f7;--paper:#fff;--ink:#182127;--muted:#59656d;--line:#cbd2d7;--accent:#174b63;--warn:#fff4d6;--bad:#8d3040}*{box-sizing:border-box}body{margin:0;background:var(--bg);color:var(--ink);font:16px/1.5 system-ui,sans-serif}header,main{width:min(980px,calc(100% - 32px));margin:auto}header{padding:42px 0 24px;border-bottom:1px solid var(--line)}main{padding-bottom:56px}h1{margin:4px 0 10px;font-size:2.25rem;line-height:1.12}h2{margin:36px 0 10px;color:var(--accent)}h3{margin:22px 0 6px}.meta{color:var(--muted)}.status{color:var(--bad);font-weight:800}.box{padding:14px 16px;border:1px solid var(--line);background:var(--paper)}.warn{border-left:5px solid var(--bad);background:var(--warn)}table{width:100%;border-collapse:collapse;background:var(--paper)}th,td{padding:10px;border:1px solid var(--line);text-align:left;vertical-align:top}th{background:#e9eef1}code{font-family:ui-monospace,monospace}a{color:var(--accent)}li+li{margin-top:5px}@media(prefers-color-scheme:dark){:root{--bg:#10171c;--paper:#172127;--ink:#edf1f3;--muted:#b2bdc3;--line:#3a4850;--accent:#9ed0e4;--warn:#342d1b;--bad:#ff9cad}th{background:#223039}}
+  </style>
+</head>
+<body>
+<header>
+  <p class="status">P0 · OPEN · ISSUE VERSION 2</p>
+  <h1>The SOTA family lacks a stable contract and a controlled planning feedback loop</h1>
+  <p class="meta">19 August 2026 · Predecessor: <a href="sota-skill-family-method-output-contract-inconsistency.issue.html">original issue</a> · Confirmation evidence: <a href="sota-skill-family-method-output-contract-inconsistency.report.v1.html">report v1</a></p>
+</header>
+<main>
+  <section>
+    <h2>1. Issue</h2>
+    <div class="box warn">
+      <p>Executions attributed to the SOTA skill family can use incompatible methods and output contracts. The planning workflow can also introduce material remediation scope without updating the issue that authorized planning. Versioned plans and SOTA reports are not explicitly required to stand alone, so a later version can become a commentary on its predecessor instead of the complete current contract or result.</p>
+    </div>
+    <p>This issue has three related parts:</p>
+    <ol>
+      <li>The family does not enforce a sufficiently precise common execution, evidence, provenance, challenge, verification, and final-answer contract.</li>
+      <li>Planning discoveries do not flow back into the originating issue before the plan expands scope.</li>
+      <li>Plan and report iteration rules allow change narration to displace complete current content.</li>
+    </ol>
+  </section>
+
+  <section>
+    <h2>2. Evidence status</h2>
+    <table>
+      <thead><tr><th>Record</th><th>Status</th><th>What it establishes</th></tr></thead>
+      <tbody>
+        <tr><td>Original issue</td><td>Reported claim</td><td>Identifies incompatible run topology, canonical records, lifecycle evidence, verification thresholds, and terminal semantics.</td></tr>
+        <tr><td>Confirmation report v1</td><td>Verified</td><td>Confirms an underspecified and unenforced family baseline, identifies defects in both audited runs, and preserves unknown historical skill provenance.</td></tr>
+        <tr><td>Plans v1-v3</td><td>Planning evidence</td><td>Show remediation scope expanding into schemas, validators, templates, folder contracts, state vocabularies, migration tools, and a proposed <code>sota-slop-remove</code> skill.</td></tr>
+        <tr><td>User review of v2-v3</td><td>Authority feedback</td><td>Rejects the overbuilt folder proposal, rejects diff-centered iteration, and requires issue synchronization and standalone artifacts.</td></tr>
+      </tbody>
+    </table>
+    <p>Planning evidence proves that scope was proposed, not that each proposal is necessary. The next plan must justify or remove each proposed addition.</p>
+  </section>
+
+  <section>
+    <h2>3. Confirmed family-contract defect</h2>
+    <p>A study plan may legitimately choose its question, sources, search method, appraisal instrument, corpus, analysis, and project-specific outputs. It must not silently redefine the minimum evidence record, provenance, challenge, verification, authority, or final-answer semantics that make one family run comparable with another.</p>
+    <p>The confirmation report found that the current family has generic controls but lacks a sufficiently precise, non-waivable implementation contract. The two audited runs differ materially and also contain defects under their own governing records. Historical invocation provenance remains unknown where durable evidence is absent.</p>
+  </section>
+
+  <section>
+    <h2>4. Planning feedback defect</h2>
+    <p>The original issue and report v1 stop before remediation planning. Planning then introduced material additions:</p>
+    <ul>
+      <li>a family contract and precedence rule;</li>
+      <li>multiple schema proposals and a cross-run validator;</li>
+      <li>fixed and later reduced run-folder proposals;</li>
+      <li>lifecycle, provenance, challenge, authority, and terminal-state records;</li>
+      <li>legacy assessment and migration behavior;</li>
+      <li>a new <code>sota-slop-remove</code> role for human-facing SOTA artifacts;</li>
+      <li>new semantic-preservation and plain-language acceptance tests.</li>
+    </ul>
+    <p>Those additions changed the proposed remedy, cost, dependencies, and acceptance tests. The planning workflow had no required step to update the issue before issuing the expanded plan. That breaks traceability between the accepted problem and the proposed work.</p>
+  </section>
+
+  <section>
+    <h2>5. Standalone-version defect</h2>
+    <p>The planning skill required self-contained plans but also emphasized carrying forward accepted content and reporting changes from the predecessor. The synthesis skill did not state how a revised SOTA report must preserve completeness. In practice, change narration can become the organizing structure.</p>
+    <p>Every plan and report version must contain the complete current question, scope, method, evidence or planned evidence, roles, controls, findings where applicable, limitations, outputs, budget, verification state, authority state, and acceptance rules. The predecessor is provenance only. A version note may summarize changes, but no operative meaning may depend on a diff, an “unchanged” statement, or access to an earlier file.</p>
+  </section>
+
+  <section>
+    <h2>6. Required remediation boundary</h2>
+    <p>The remedy must be the smallest contract that makes runs inspectable and final claims hard to misreport. It must not standardize a file or state merely because one plan proposed it.</p>
+    <ul>
+      <li>Require issue synchronization before material planning scope is added.</li>
+      <li>Require standalone plan and report versions.</li>
+      <li>Define minimum family invariants and allow plans to add study-specific artifacts.</li>
+      <li>Keep verified defects separate from proposed remedies.</li>
+      <li>Preserve old issue, report, plan, and run versions unchanged.</li>
+      <li>Assess historical runs read-only. Do not invent missing provenance.</li>
+      <li>Apply plain-language review to human-facing SOTA artifacts without changing evidence or conclusions.</li>
+    </ul>
+  </section>
+
+  <section>
+    <h2>7. Acceptance criteria</h2>
+    <ol>
+      <li><code>sota-plan-create</code> identifies the originating issue or accepted report and synchronizes it before issuing a materially expanded plan.</li>
+      <li>The synchronized issue is versioned, self-contained, and distinguishes verified evidence from planning discoveries.</li>
+      <li>Each plan version remains executable when all predecessors are unavailable.</li>
+      <li>Each SOTA report version remains understandable and reviewable when all predecessors are unavailable.</li>
+      <li>The family publishes a minimum common contract for evidence, provenance, challenge, verification, final-state reporting, and human authority.</li>
+      <li>Every mandatory artifact or field maps to a demonstrated failure and a verifier test.</li>
+      <li>Study-specific artifacts remain plan-controlled and do not become family requirements without evidence.</li>
+      <li>The proposed <code>sota-slop-remove</code> gate removes generic or inflated prose while preserving claims, citations, numbers, uncertainty, limitations, and decisions.</li>
+      <li>Both audited runs receive read-only compatibility results under the same baseline without retroactive repair.</li>
+      <li>Human acceptance and implementation authority remain explicit and separate from model conclusions and verification.</li>
+    </ol>
+  </section>
+
+  <section>
+    <h2>8. Authority and next action</h2>
+    <p>This issue version records the complete current problem and planning discoveries. It does not approve a remediation design. The next plan may now propose the smallest justified remedy against these acceptance criteria.</p>
+    <p><strong>Human acceptance:</strong> pending. <strong>Implementation authority:</strong> none.</p>
+    <p>Planning sources: <a href="../../plans/sota_skill_family_method_consistency/sota_skill_family_method_consistency.plan.v1.html">plan v1</a>, <a href="../../plans/sota_skill_family_method_consistency/sota_skill_family_method_consistency.plan.v2.html">plan v2</a>, and <a href="../../plans/sota_skill_family_method_consistency/sota_skill_family_method_consistency.plan.v3.html">plan v3</a>.</p>
+  </section>
+</main>
+</body>
+</html>
