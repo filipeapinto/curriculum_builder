@@ -1,0 +1,59 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://example.invalid/curriculum_factory/plan.schema.v2.json",
+  "title": "Readable remediation plan v2 with AS-IS, TO-BE, and example",
+  "$comment": "Instances MUST be YAML named <slug>.plan.v<N>.yaml with a first-line yaml-language-server directive resolving to this schema. Version 2 makes current state, target artifacts/folder structure, and a concrete example mandatory.",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["slug","title","version","predecessor","status","objective","rationale","authorizes_implementation","as_is","to_be","worked_example","steps","verification","acceptance_criteria","stop_conditions","implementation","qa","log_path"],
+  "properties": {
+    "slug": {"type":"string","pattern":"^[a-z0-9]+(?:[_-][a-z0-9]+)*$"},
+    "title": {"type":"string","minLength":5},
+    "version": {"type":"integer","minimum":2},
+    "predecessor": {"type":"string","pattern":"\\.plan\\.v\\d+\\.(yaml|html)$"},
+    "status": {"enum":["draft","awaiting_approval","approved","superseded","rejected"]},
+    "objective": {"type":"string","minLength":20},
+    "rationale": {"type":"string","minLength":40},
+    "authorizes_implementation": {"const":false},
+    "as_is": {
+      "type":"object","additionalProperties":false,
+      "required":["summary","observed_shapes","defects","constraints"],
+      "properties": {
+        "summary":{"type":"string","minLength":20},
+        "observed_shapes":{"type":"array","minItems":2,"items":{"type":"object","additionalProperties":false,"required":["name","root","shape","problem"],"properties":{"name":{"type":"string"},"root":{"type":"string"},"shape":{"type":"array","minItems":1,"items":{"type":"string"}},"problem":{"type":"string","minLength":10}}}},
+        "defects":{"type":"array","minItems":1,"items":{"type":"object","additionalProperties":false,"required":["finding_ids","current_behavior","consequence"],"properties":{"finding_ids":{"type":"array","minItems":1,"items":{"type":"string"}},"current_behavior":{"type":"string"},"consequence":{"type":"string"}}}},
+        "constraints":{"type":"array","minItems":1,"items":{"type":"string"}}
+      }
+    },
+    "to_be": {
+      "type":"object","additionalProperties":false,
+      "required":["summary","repository_artifacts","canonical_run_tree","state_model","precedence","migration_policy"],
+      "properties": {
+        "summary":{"type":"string","minLength":20},
+        "repository_artifacts":{"type":"array","minItems":1,"items":{"type":"object","additionalProperties":false,"required":["path","kind","purpose","owner"],"properties":{"path":{"type":"string"},"kind":{"enum":["contract","schema","template","tool","documentation","test"]},"purpose":{"type":"string"},"owner":{"type":"string"}}}},
+        "canonical_run_tree":{"type":"array","minItems":1,"items":{"type":"object","additionalProperties":false,"required":["path","required","contents"],"properties":{"path":{"type":"string"},"required":{"type":"boolean"},"contents":{"type":"string"}}}},
+        "state_model":{"type":"array","minItems":5,"items":{"type":"object","additionalProperties":false,"required":["dimension","values","authority"],"properties":{"dimension":{"type":"string"},"values":{"type":"array","minItems":2,"items":{"type":"string"}},"authority":{"type":"string"}}}},
+        "precedence":{"type":"string","minLength":20},
+        "migration_policy":{"type":"string","minLength":20}
+      }
+    },
+    "worked_example": {
+      "type":"object","additionalProperties":false,
+      "required":["scenario","run_id","manifest_excerpt","event_sequence","verifier_result","terminal_answer"],
+      "properties": {
+        "scenario":{"type":"string"},"run_id":{"type":"string"},
+        "manifest_excerpt":{"type":"object"},
+        "event_sequence":{"type":"array","minItems":3,"items":{"type":"object","additionalProperties":false,"required":["event","effect"],"properties":{"event":{"type":"string"},"effect":{"type":"string"}}}},
+        "verifier_result":{"type":"string"},"terminal_answer":{"type":"object"}
+      }
+    },
+    "prerequisites":{"type":"array","items":{"type":"object","additionalProperties":false,"required":["blocker","fail_fast_check"],"properties":{"blocker":{"type":"string"},"fail_fast_check":{"type":"string"}}}},
+    "steps":{"type":"array","minItems":1,"items":{"type":"string","minLength":5}},
+    "verification":{"type":"array","minItems":1,"items":{"type":"string","minLength":5}},
+    "acceptance_criteria":{"type":"array","minItems":1,"items":{"type":"string","minLength":5}},
+    "stop_conditions":{"type":"string","minLength":10},
+    "implementation":{"type":"object","additionalProperties":false,"required":["execution_model","prompt_path","reasoning"],"properties":{"execution_model":{"const":"single_prompt"},"prompt_path":{"type":"string","pattern":"\\.prompt\\.v\\d+\\.md$"},"reasoning":{"type":"string"}}},
+    "qa":{"type":"object","additionalProperties":false,"required":["plan_qa_path","plan_qa_verdict","execution_test_plan_path","final_audit_path","final_audit_verdict"],"properties":{"plan_qa_path":{"type":"string","pattern":"qa/plan_qa\\.v\\d+\\.md$"},"plan_qa_verdict":{"type":"string","pattern":"^(APPROVED|CHANGES REQUIRED) — \\d+ Critical, \\d+ High\\.$"},"execution_test_plan_path":{"type":"string","pattern":"qa/execution_test\\.plan\\.v\\d+\\.md$"},"final_audit_path":{"type":"string","pattern":"qa/final_audit\\.v\\d+\\.md$"},"final_audit_verdict":{"type":"string","pattern":"^(PASS|CHANGES REQUIRED) — \\d+ Critical, \\d+ High remaining\\.$"}}},
+    "log_path":{"type":"string","pattern":"plans/.+/plans\\.log\\.md$"}
+  }
+}

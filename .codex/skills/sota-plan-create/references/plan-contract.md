@@ -13,8 +13,13 @@ A plan must define:
 9. A workload-derived budget. For every numeric ceiling include derivation, confidence, measurement mechanism, warning threshold, hard stop, and behavior when measurement is unavailable.
 10. Required outputs, provenance, verification, acceptance criteria, and human approval state.
 11. Textual equivalents for diagrams when their meaning is not fully present in surrounding prose or tables.
-12. Version, predecessor, date, status, and material changes from the predecessor.
+12. Version, predecessor, date, status, and a concise version note.
+13. The originating issue or accepted report, plus the synchronized issue/report version when planning discovered material new scope.
 
 The plan must distinguish proposed actions from completed work and attributed claims from verified evidence. It must not imply that plan approval occurred unless the human owner explicitly granted it.
 
 The approved plan must be the sole execution contract. Supporting research artifacts may provide evidence or history, but they must not contain instructions that the executor needs in order to run the plan.
+
+Every version must be standalone. It must restate the complete current contract and remain usable when prior versions cannot be opened. A version note may summarize changes, but a diff, “unchanged from vN,” or a predecessor link cannot carry operative content.
+
+Planning may refine a remedy, but it must not silently expand the issue. A newly proposed skill, artifact, method, control, risk, acceptance criterion, or authority boundary that materially changes remediation scope requires a preserved, self-contained update to the originating issue or issue-confirmation report before the plan is issued. Label planning discoveries as such; do not promote them to verified defects without evidence.
