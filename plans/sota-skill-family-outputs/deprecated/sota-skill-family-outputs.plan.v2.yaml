@@ -1,0 +1,186 @@
+# yaml-language-server: $schema=../../schemas/plan.schema.v2.json
+slug: sota_skill_family_method_consistency
+title: SOTA Skill-Family Method and Output Contract Remediation Plan
+version: 2
+predecessor: sota_skill_family_method_consistency.plan.v1.yaml
+status: awaiting_approval
+objective: >-
+  Replace plan-defined SOTA run packaging with one enforceable family-owned contract, explicit
+  schemas, reusable templates, deterministic validators, and a canonical run tree while preserving
+  legitimate study-specific variation.
+rationale: >-
+  Version 1 correctly identified the required controls but did not show the current competing shapes,
+  commit to exact target paths, or provide a worked run. Version 2 makes those design commitments
+  reviewable before implementation. It remains grounded in accepted report
+  ICR-SOTA-FAMILY-METHOD-CONSISTENCY v1 and payload SHA-256
+  b786de5b2fe1d3c62d9c1c00a85861c0d10fd15a3069a845d17968294c579864.
+authorizes_implementation: false
+
+as_is:
+  summary: >-
+    The family currently delegates package names, schemas, verifier checks, lifecycle evidence, and
+    terminal language to each approved plan. The eight role skills share general principles but no
+    mechanically enforced family package.
+  observed_shapes:
+    - name: Compact benchmark run
+      root: research/codex_calls_claude_qa_gate/execution/run-cal-20260819-01/
+      shape:
+        - protocol/ contains the benchmark protocol and controller.
+        - benchmark/ contains CSV/JSONL receipts and results.
+        - records/ contains challenge files and registers.
+        - final-verification-report.md carries a compound final verdict.
+      problem: Challenge counts conflict, 18 receipts omit required run IDs, and required adjudication and intervals are absent despite a passing-style verdict.
+    - name: JSON-heavy research run
+      root: research/codex_same_model_qa_gate/
+      shape:
+        - evidence/ contains execution_log.jsonl, extractions, and verification records.
+        - plan/ contains the approved HTML plan.
+        - final outputs and approval evidence are distributed across project-specific paths.
+      problem: Zero of 19 extraction records validate, provenance is incomplete, and the run remains partial and blocked.
+  defects:
+    - finding_ids: [ICF-001, ICF-002, ICF-003]
+      current_behavior: Each plan can redefine topology, schemas, and effective precedence.
+      consequence: Two runs from the same family cannot be compared or validated by one stable contract.
+    - finding_ids: [ICF-004, ICF-010]
+      current_behavior: Lifecycle and final outcome use project-specific or compound labels.
+      consequence: Resume, completion, verification, acceptance, and implementation authority cannot be discovered independently.
+    - finding_ids: [ICF-005, ICF-006, ICF-007, ICF-008, ICF-009]
+      current_behavior: Verification is derived from the plan and can miss family-level integrity failures.
+      consequence: Structurally invalid or incomplete runs can receive misleading passing language.
+    - finding_ids: [ICF-011, ICF-012, ICF-013]
+      current_behavior: Invocation provenance, digest-bound approvals, and family documentation are incomplete or stale.
+      consequence: Historical executor identity and exact approved bytes may be unprovable.
+  constraints:
+    - Preserve ICF-014 variation in research question, sources, corpus, budget, scale, and empirical outcome.
+    - Do not rewrite or bless either historical run; compatibility assessment is read-only.
+    - External human deliverables may remain external when the canonical index binds their path, version, digest, and authority.
+    - A plan may strengthen the family contract but may never weaken or replace it.
+
+to_be:
+  summary: >-
+    Every SOTA execution will use the same family contract, schema registry, templates, validator,
+    canonical run root, five-dimensional state model, and terminal-answer schema. Plans will supply
+    research-specific values and optional typed extensions only.
+  repository_artifacts:
+    - {path: contracts/sota-family/sota-family-contract.v1.md, kind: contract, purpose: "Normative precedence, invariants, lifecycle, provenance, authority, and terminal rules.", owner: sota-method-lead}
+    - {path: contracts/sota-family/requirement-registry.v1.yaml, kind: contract, purpose: "Stable requirement IDs mapped to ICF-001 through ICF-014 and verifier checks.", owner: sota-method-lead}
+    - {path: schemas/sota-run-manifest.schema.v1.json, kind: schema, purpose: "Canonical run identity, inputs, contract versions, artifacts, extensions, and current-state pointers.", owner: deterministic-tools}
+    - {path: schemas/sota-lifecycle-event.schema.v1.json, kind: schema, purpose: "Append-only event envelope with run ID, sequence, actor, time, prior-event digest, and state effect.", owner: deterministic-tools}
+    - {path: schemas/sota-invocation-receipt.schema.v1.json, kind: schema, purpose: "Skill, model, effort, prompt/input/output digests, timing, tokens, cost, and result provenance.", owner: deterministic-tools}
+    - {path: schemas/sota-evidence-record.schema.v1.json, kind: schema, purpose: "Source identity, eligibility, quality, claims, extraction, provenance, and exclusions.", owner: sota-evidence-review}
+    - {path: schemas/sota-challenge-record.schema.v1.json, kind: schema, purpose: "Immutable challenges with target IDs, evidence, severity, disposition, and digest binding.", owner: sota-independent-challenge}
+    - {path: schemas/sota-authority-record.schema.v1.json, kind: schema, purpose: "Human decisions bound to exact artifact versions and SHA-256 values.", owner: human-owner}
+    - {path: schemas/sota-verification-report.schema.v1.json, kind: schema, purpose: "Non-waivable family checks plus plan-added checks and explicit failure inventory.", owner: sota-verify}
+    - {path: schemas/sota-terminal-answer.schema.v1.json, kind: schema, purpose: "Separate research, execution, verification, acceptance, and implementation states.", owner: sota-verify}
+    - {path: templates/sota-run/run-manifest.template.v1.yaml, kind: template, purpose: "Starter manifest for every run.", owner: sota-plan-execute}
+    - {path: templates/sota-run/terminal-answer.template.v1.json, kind: template, purpose: "Human-readable and machine-valid final state summary.", owner: sota-verify}
+    - {path: templates/sota-run/external-artifact-index.template.v1.yaml, kind: template, purpose: "Digest-bound references to deliverables stored outside the run root.", owner: sota-plan-execute}
+    - {path: tools/sota/validate_run.py, kind: tool, purpose: "Validate schemas, IDs, references, digests, counts, provenance, lifecycle, and mandatory checks.", owner: deterministic-tools}
+    - {path: tools/sota/reduce_lifecycle.py, kind: tool, purpose: "Recompute the five current states only from valid append-only events.", owner: deterministic-tools}
+    - {path: tools/sota/assess_legacy_run.py, kind: tool, purpose: "Read-only compatibility report for pre-contract packages.", owner: deterministic-tools}
+    - {path: tests/sota_family/test_contract_failures.py, kind: test, purpose: "Reproduce ICF-006 through ICF-010 and prove fail-closed behavior.", owner: sota-verify}
+    - {path: docs/skill-families/sota/sota-guide.v2.html, kind: documentation, purpose: "Explain the canonical package and handoffs with verified examples.", owner: sota-synthesize}
+  canonical_run_tree:
+    - {path: research/<effort>/plan/, required: true, contents: Approved plan and digest-bound human approval.}
+    - {path: research/<effort>/runs/<run-id>/manifest.yaml, required: true, contents: "Canonical index of contracts, inputs, artifacts, extensions, and state pointers."}
+    - {path: research/<effort>/runs/<run-id>/lifecycle/events.jsonl, required: true, contents: Append-only hash-chained lifecycle events.}
+    - {path: research/<effort>/runs/<run-id>/receipts/invocations.jsonl, required: true, contents: "One schema-valid receipt for every skill, model, tool, and human handoff."}
+    - {path: research/<effort>/runs/<run-id>/evidence/source-register.yaml, required: true, contents: "Candidate, included, excluded, quality, and claim mappings."}
+    - {path: research/<effort>/runs/<run-id>/evidence/extractions.jsonl, required: true, contents: Schema-valid extracted evidence keyed to sources and findings.}
+    - {path: research/<effort>/runs/<run-id>/incident/, required: false, contents: Incident matrix and timeline when the approved plan includes incident analysis.}
+    - {path: research/<effort>/runs/<run-id>/synthesis/findings.yaml, required: true, contents: Stable findings with evidence and applicability.}
+    - {path: research/<effort>/runs/<run-id>/challenge/challenges.jsonl, required: true, contents: Raw challenges and immutable dispositions in one schema.}
+    - {path: research/<effort>/runs/<run-id>/verification/report.json, required: true, contents: Family baseline and plan-added verification results.}
+    - {path: research/<effort>/runs/<run-id>/authority/decisions.jsonl, required: true, contents: "Digest-bound human approvals, changes requested, rejections, and deferrals."}
+    - {path: research/<effort>/runs/<run-id>/outputs/report.html, required: true, contents: Human-readable research report.}
+    - {path: research/<effort>/runs/<run-id>/outputs/terminal-answer.json, required: true, contents: Five independent terminal-state dimensions and evidence pointers.}
+    - {path: research/<effort>/runs/<run-id>/external-artifacts.yaml, required: false, contents: "Indexed external deliverables with path, digest, version, and authority."}
+  state_model:
+    - {dimension: research_support, values: [NOT_ASSESSED, INSUFFICIENT, PARTIAL, SUPPORTED, CONTRADICTED], authority: Synthesis proposes; verifier checks evidence linkage; human accepts use.}
+    - {dimension: execution, values: [NOT_STARTED, RUNNING, PAUSED, BLOCKED, FAILED, COMPLETE], authority: Deterministic lifecycle reducer only.}
+    - {dimension: verification, values: [NOT_RUN, FAIL, PASS], authority: Family verifier from non-waivable checks.}
+    - {dimension: human_acceptance, values: [PENDING, CHANGES_REQUESTED, ACCEPTED, REJECTED, DEFERRED], authority: Human owner only through digest-bound decision.}
+    - {dimension: implementation_authority, values: [NONE, AUTHORIZED, REVOKED], authority: Human owner only; plan approval defaults to NONE.}
+  precedence: The family contract and schema registry are mandatory. An approved plan may add checks, fields, and narrower limits but may not remove, rename, reinterpret, waive, or bypass family requirements.
+  migration_policy: Legacy runs remain immutable. assess_legacy_run.py emits a separate compatibility report with PASS, FAIL, PARTIAL, or UNKNOWN per requirement; no legacy run is upgraded by inference.
+
+worked_example:
+  scenario: A small SOTA review completes its evidence and verification but awaits human acceptance.
+  run_id: RUN-SOTA-EXAMPLE-20260819-01
+  manifest_excerpt:
+    contract: contracts/sota-family/sota-family-contract.v1.md
+    schema_registry: contracts/sota-family/requirement-registry.v1.yaml
+    plan: research/example/plan/example.plan.v1.html
+    required_artifacts:
+      - evidence/source-register.yaml
+      - synthesis/findings.yaml
+      - challenge/challenges.jsonl
+      - verification/report.json
+      - outputs/terminal-answer.json
+    plan_extensions: [incident]
+  event_sequence:
+    - {event: RUN_CREATED, effect: execution becomes NOT_STARTED; all other dimensions retain defaults.}
+    - {event: EXECUTION_STARTED, effect: execution becomes RUNNING after manifest validation.}
+    - {event: EVIDENCE_REVIEW_COMPLETED, effect: artifacts are indexed; research_support remains NOT_ASSESSED.}
+    - {event: SYNTHESIS_COMPLETED, effect: research_support becomes SUPPORTED with finding IDs and evidence links.}
+    - {event: CHALLENGE_DISPOSITIONED, effect: every Critical and High challenge is resolved and digest-bound.}
+    - {event: EXECUTION_COMPLETED, effect: execution becomes COMPLETE; this does not imply verification or acceptance.}
+    - {event: VERIFICATION_PASSED, effect: verification becomes PASS after all mandatory and plan-added checks pass.}
+  verifier_result: PASS — 42 mandatory checks and 7 plan-added checks passed; 0 waived; 0 Critical or High findings remain.
+  terminal_answer:
+    run_id: RUN-SOTA-EXAMPLE-20260819-01
+    research_support: SUPPORTED
+    execution: COMPLETE
+    verification: PASS
+    human_acceptance: PENDING
+    implementation_authority: NONE
+    plain_language: Research is supported and mechanically verified, but it is not human-accepted and authorizes no implementation.
+
+prerequisites:
+  - blocker: Human approval must bind this exact v2 YAML and HTML plan digest before execution.
+    fail_fast_check: Stop unless an authority record names both files, version 2, and their SHA-256 values.
+  - blocker: The baseline inventory of eight SOTA skills, direct dependencies, and both case-study trees must remain stable.
+    fail_fast_check: Recompute the manifest before work and stop on any unreviewed digest change.
+steps:
+  - Freeze and hash the accepted report, eight skills, dependencies, schemas, guide, and two legacy runs.
+  - Have $sota-method-lead finalize the family contract, requirement registry, precedence, applicability, compatibility, and four unresolved human design decisions.
+  - Have $sota-incident-analyze map both legacy packages to the target tree and state model without mutation.
+  - Have $sota-evidence-review appraise primary evidence for schema compatibility, provenance, append-only events, and approval binding.
+  - Create the exact contracts, schemas, templates, tools, tests, guide, and skill-reference changes listed under to_be.repository_artifacts.
+  - Create positive and negative example packages, including the worked example above and fixtures reproducing ICF-006 through ICF-010.
+  - Have $sota-synthesize trace every proposed artifact and rule to ICF-001 through ICF-014 and preserve legitimate variation.
+  - Have $sota-independent-challenge test weakening, bypass, false-pass, ambiguous-state, over-standardization, and unsafe-migration paths in a separate context.
+  - Have $sota-verify run deterministic validation and semantic checks; no family check may be waived by a plan.
+  - Freeze the reviewed package and present its digests, residual risks, migration results, and approval choices to the human owner.
+verification:
+  - Validate this YAML against schemas/plan.schema.v2.json and require all AS-IS, TO-BE, tree, artifact, state, and example fields.
+  - Confirm every proposed repository artifact has a unique path, owner, purpose, and corresponding acceptance test.
+  - Validate the worked example against the proposed manifest, event, verification, and terminal schemas.
+  - Require tests reproducing ICF-006 through ICF-010 to fail before remediation and pass only under the non-waivable family validator.
+  - Replay both legacy packages read-only and compare deterministic compatibility results with the accepted issue findings.
+  - Confirm all five state dimensions are independently derived and no compound label can imply acceptance or implementation authority.
+  - Check local links, unique IDs, schema references, digests, accessibility, and HTML/YAML content equivalence.
+acceptance_criteria:
+  - The reviewer can identify every file and directory the remediation will create or modify from this plan alone.
+  - A new run created from templates has exactly one canonical manifest, lifecycle stream, invocation stream, verification report, authority stream, and terminal answer.
+  - Every mandatory artifact validates, every cross-reference resolves, and every listed digest recomputes.
+  - Plans can add stricter rules and typed extensions but cannot weaken the family baseline.
+  - The example truthfully shows COMPLETE plus PASS while human acceptance remains PENDING and implementation authority remains NONE.
+  - Both legacy runs receive read-only compatibility reports without mutation or inferred provenance.
+  - All Critical and High challenge findings are resolved before human approval.
+stop_conditions: >-
+  Stop on baseline drift, unresolved schema or authority ambiguity, unavailable required telemetry,
+  exhausted ceiling, any unresolved Critical or High finding, or inability to preserve ICF-014 variation.
+  Record the outcome in plans/sota_skill_family_method_consistency/result.v2.yaml and append
+  plans/sota_skill_family_method_consistency/plans.log.md. Do not implement or migrate.
+implementation:
+  execution_model: single_prompt
+  prompt_path: plans/sota_skill_family_method_consistency/prompts/sota_skill_family_method_consistency.prompt.v2.md
+  reasoning: One governed workflow with explicit role handoffs is sufficient; execution begins only after digest-bound human approval.
+qa:
+  plan_qa_path: plans/sota_skill_family_method_consistency/qa/plan_qa.v2.md
+  plan_qa_verdict: "CHANGES REQUIRED — 1 Critical, 0 High."
+  execution_test_plan_path: plans/sota_skill_family_method_consistency/qa/execution_test.plan.v2.md
+  final_audit_path: plans/sota_skill_family_method_consistency/qa/final_audit.v2.md
+  final_audit_verdict: "CHANGES REQUIRED — 1 Critical, 0 High remaining."
+log_path: plans/sota_skill_family_method_consistency/plans.log.md

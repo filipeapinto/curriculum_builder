@@ -5,6 +5,8 @@ description: Independently challenge SOTA research findings, causal language, ev
 
 # SOTA Independent Challenge
 
+Use the frozen canonical package defined by `../sota-plan-execute/references/sota-family-contract.md`. Missing frozen inputs or provenance is a blocking challenge condition, not implicit evidence.
+
 Preserve independence: review the frozen evidence package and synthesis without receiving the synthesizer's intended defenses or preferred outcomes.
 
 1. Test whether every material claim has adequate, correctly classified support.
@@ -14,4 +16,3 @@ Preserve independence: review the frozen evidence package and synthesis without 
 5. Do not rewrite findings silently or grant final acceptance.
 
 Return a challenge register. Each item must be accepted, corrected, rejected with reason, or explicitly unresolved by synthesis.
-

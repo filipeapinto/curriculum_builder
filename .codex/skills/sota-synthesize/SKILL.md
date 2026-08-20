@@ -1,9 +1,11 @@
 ---
 name: sota-synthesize
-description: Synthesize appraised external evidence and an incident reconstruction into comparative SOTA findings and repository recommendations. Use when serving as the synthesis analyst under sota-plan-execute.
+description: Synthesize appraised external evidence into comparative SOTA findings and repository recommendations. Use when serving as the synthesis analyst under sota-plan-execute.
 ---
 
 # SOTA Synthesize
+
+Write findings, limitations, challenge dispositions, and the five separate terminal dimensions into the canonical `report.html` defined by `../sota-plan-execute/references/sota-family-contract.md`.
 
 1. Accept only identified, appraised evidence products authorized by the plan.
 2. Synthesize within evidence class before comparing across standards, research, implementations, and practice.

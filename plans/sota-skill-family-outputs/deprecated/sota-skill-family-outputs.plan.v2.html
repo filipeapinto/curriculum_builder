@@ -1,0 +1,99 @@
+<!doctype html>
+<html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>SOTA family contract remediation plan — v2</title>
+<style>:root{color-scheme:light dark;--bg:#eef2f4;--paper:#fff;--ink:#172630;--muted:#596a74;--line:#c7d2d9;--navy:#123b55;--teal:#087d78;--soft:#e5f3f1;--warn:#fff1ce;--bad:#f9e7eb}*{box-sizing:border-box}html{background:var(--bg);scroll-behavior:smooth}body{margin:0;color:var(--ink);font:16px/1.58 system-ui,sans-serif}.wrap{width:min(1180px,calc(100% - 32px));margin:auto}header{padding:54px 0 38px;color:#fff;background:linear-gradient(125deg,#102c43,#165567 68%,#087d78)}h1{max-width:1050px;margin:0;font-size:clamp(2.2rem,5vw,4rem);line-height:1.04}.dek{max-width:940px;font-size:1.12rem}nav{position:sticky;top:0;z-index:3;background:var(--paper);border-bottom:1px solid var(--line)}nav .wrap{display:flex;gap:6px;overflow:auto;padding:9px 0}nav a{flex:none;padding:5px 8px;color:var(--teal);font-size:.78rem;font-weight:800;text-decoration:none}main{padding:22px 0 70px}section{margin:44px 0;scroll-margin-top:55px}h2,h3{color:var(--navy)}.lead{max-width:970px;color:var(--muted);font-size:1.05rem}.card,.callout,.table,.tree,.example{padding:18px;border:1px solid var(--line);border-radius:9px;background:var(--paper)}.bad{border-left:7px solid #92364b;background:var(--bad)}.good{border-left:7px solid var(--teal)}.warn{background:var(--warn)}.compare{display:grid;grid-template-columns:1fr 1fr;gap:15px}.table{overflow:auto;padding:0}table{width:100%;min-width:860px;border-collapse:collapse}th,td{padding:10px 12px;border-bottom:1px solid var(--line);vertical-align:top;text-align:left}th{background:var(--soft);font-size:.73rem;text-transform:uppercase}tr:last-child td{border:0}.tree,pre,code{font-family:ui-monospace,monospace}pre{overflow:auto;white-space:pre-wrap}.pill{display:inline-block;padding:4px 9px;border-radius:99px;background:var(--warn);font-weight:850;font-size:.78rem}.state{font-weight:800}.yes{color:#17724a}.no{color:#9a3048}@media(max-width:760px){.compare{grid-template-columns:1fr}nav{position:relative}}@media(prefers-color-scheme:dark){:root{--bg:#0d1720;--paper:#17242e;--ink:#edf3f5;--muted:#b6c2c9;--line:#3b4d59;--navy:#a6d8e6;--teal:#80d7cf;--soft:#193a3a;--warn:#3d321c;--bad:#3d232b}.yes{color:#7ed7aa}.no{color:#ff9caf}}@media print{nav{display:none}.card,.callout,.table,.tree,.example{break-inside:avoid}}</style></head>
+<body>
+<header><div class="wrap"><p><span class="pill">AWAITING APPROVAL</span></p><h1>SOTA Skill-Family Method and Output Contract Remediation Plan</h1><p class="dek">Create a concrete, shared package for every SOTA run: fixed contract, schemas, templates, folder structure, validator, lifecycle, and terminal answer.</p><p>Version 2 · Predecessor: v1 YAML and HTML · Implementation authority: NONE</p></div></header>
+<nav><div class="wrap"><a href="#decision">Decision</a><a href="#as-is">AS-IS</a><a href="#to-be">TO-BE</a><a href="#artifacts">Files</a><a href="#tree">Folders</a><a href="#states">States</a><a href="#example">Example</a><a href="#execution">Execution</a><a href="#approval">Approval</a></div></nav>
+<main class="wrap">
+<section id="decision"><h2>1. What you are being asked to approve</h2><div class="callout good"><p><strong>Replace “each plan invents its own run package” with one mandatory SOTA-family package.</strong></p><p>Every future SOTA run will use the exact contract files, schemas, templates, folders, lifecycle events, verifier, and five-state terminal answer listed below. A study may still choose its question, evidence, methods, corpus, and budget, but it cannot redefine auditability or weaken validation.</p></div><p>This approval would authorize planning/execution of the remediation package—not implementation itself. A separate implementation authorization remains required.</p></section>
+
+<section id="as-is"><h2>2. AS-IS: what exists now</h2><div class="compare"><article class="card bad"><h3>Run 1: compact benchmark package</h3><pre>research/codex_calls_claude_qa_gate/
+└── execution/run-cal-20260819-01/
+    ├── protocol/
+    ├── benchmark/
+    ├── records/
+    └── final-verification-report.md</pre><p>Challenge counts disagree; 18 receipts lack run IDs; mandatory adjudication and intervals are absent; the final verdict still sounds passing.</p></article><article class="card bad"><h3>Run 2: JSON-heavy package</h3><pre>research/codex_same_model_qa_gate/
+├── plan/
+├── evidence/
+│   ├── execution_log.jsonl
+│   ├── review_extractions.v1.json
+│   └── verification/
+└── project-specific outputs</pre><p>0/19 extractions validate; provenance is missing; the run remains partial and blocked; its structure and terminal language differ from Run 1.</p></article></div><h3>The actual defect</h3><div class="table"><table><thead><tr><th>Today</th><th>Why it fails</th></tr></thead><tbody><tr><td>Each plan defines folders and schemas.</td><td>No stable cross-run validator or comparison.</td></tr><tr><td>The plan is the sole contract.</td><td>A plan can accidentally weaken family controls.</td></tr><tr><td>Lifecycle is project-specific.</td><td>Resume and final-state discovery are ambiguous.</td></tr><tr><td>Verifier checks come from the plan.</td><td>Family integrity failures may be missed.</td></tr><tr><td>Compound labels describe outcomes.</td><td>Completion, PASS, acceptance, and implementation authority become conflated.</td></tr></tbody></table></div></section>
+
+<section id="to-be"><h2>3. TO-BE: the proposed operating model</h2><div class="callout good"><p>A family contract owns the invariant rules. Plans provide values and may strengthen them. Every run starts from the same templates, writes the same canonical records, passes the same mandatory verifier, and ends with five independent state values.</p></div><div class="compare"><article class="card"><h3>Family owns</h3><ul><li>Required folders and artifact classes</li><li>Schema registry and stable IDs</li><li>Append-only lifecycle events</li><li>Invocation and provenance receipts</li><li>Challenge and human-decision records</li><li>Non-waivable verification</li><li>Terminal-answer vocabulary</li></ul></article><article class="card"><h3>Each plan owns</h3><ul><li>Research question and intended decision</li><li>Sources, queries, eligibility, and appraisal</li><li>Corpus, sample, method, and analysis</li><li>Budget below family safety limits</li><li>Conditional typed extensions</li><li>Additional stricter checks</li></ul></article></div><p><strong>Precedence:</strong> a plan may add or tighten requirements; it may not remove, rename, reinterpret, waive, or bypass a family requirement.</p><p><strong>Legacy policy:</strong> old runs stay unchanged. A read-only tool reports PASS, FAIL, PARTIAL, or UNKNOWN for each new requirement.</p></section>
+
+<section id="artifacts"><h2>4. Exact repository files proposed</h2><div class="table"><table><thead><tr><th>Path</th><th>What it will do</th></tr></thead><tbody>
+<tr><td><code>contracts/sota-family/sota-family-contract.v1.md</code></td><td>Normative invariants, precedence, lifecycle, provenance, authority, and terminal rules.</td></tr>
+<tr><td><code>contracts/sota-family/requirement-registry.v1.yaml</code></td><td>Stable requirement IDs mapped to issue findings and verifier checks.</td></tr>
+<tr><td><code>schemas/sota-run-manifest.schema.v1.json</code></td><td>Canonical run identity, contract versions, inputs, artifacts, extensions, and state pointers.</td></tr>
+<tr><td><code>schemas/sota-lifecycle-event.schema.v1.json</code></td><td>Hash-chained append-only events with sequence, actor, time, and state effect.</td></tr>
+<tr><td><code>schemas/sota-invocation-receipt.schema.v1.json</code></td><td>Skill/model/tool identity, effort, digests, timing, tokens, cost, and result.</td></tr>
+<tr><td><code>schemas/sota-evidence-record.schema.v1.json</code></td><td>Sources, screening, quality, extraction, claims, and exclusions.</td></tr>
+<tr><td><code>schemas/sota-challenge-record.schema.v1.json</code></td><td>Raw challenge, target, severity, evidence, disposition, and digests.</td></tr>
+<tr><td><code>schemas/sota-authority-record.schema.v1.json</code></td><td>Human decisions bound to exact artifact versions and SHA-256 values.</td></tr>
+<tr><td><code>schemas/sota-verification-report.schema.v1.json</code></td><td>Mandatory family checks plus stricter plan checks; no silent waivers.</td></tr>
+<tr><td><code>schemas/sota-terminal-answer.schema.v1.json</code></td><td>Five independent final-state dimensions.</td></tr>
+<tr><td><code>templates/sota-run/run-manifest.template.v1.yaml</code></td><td>Starter manifest used by every run.</td></tr>
+<tr><td><code>templates/sota-run/terminal-answer.template.v1.json</code></td><td>Starter machine-readable final answer.</td></tr>
+<tr><td><code>templates/sota-run/external-artifact-index.template.v1.yaml</code></td><td>Digest-bound external deliverable references.</td></tr>
+<tr><td><code>tools/sota/validate_run.py</code></td><td>Validates schemas, IDs, links, digests, counts, provenance, lifecycle, and mandatory checks.</td></tr>
+<tr><td><code>tools/sota/reduce_lifecycle.py</code></td><td>Recomputes current state from valid events.</td></tr>
+<tr><td><code>tools/sota/assess_legacy_run.py</code></td><td>Read-only compatibility assessment for older packages.</td></tr>
+<tr><td><code>tests/sota_family/test_contract_failures.py</code></td><td>Reproduces the false-pass and integrity defects from both audited runs.</td></tr>
+<tr><td><code>docs/skill-families/sota/sota-guide.v2.html</code></td><td>Explains the package, roles, handoffs, and verified example.</td></tr>
+</tbody></table></div><p>The eight <code>.codex/skills/sota-*/SKILL.md</code> contracts and their direct references will be versioned/updated to require these family artifacts. That change is part of later implementation, not this plan edit.</p></section>
+
+<section id="tree"><h2>5. Exact run folder structure</h2><div class="tree"><pre>research/&lt;effort&gt;/
+├── plan/
+│   ├── &lt;effort&gt;.plan.vN.html
+│   └── approval.json
+└── runs/&lt;run-id&gt;/
+    ├── manifest.yaml                         REQUIRED
+    ├── lifecycle/
+    │   └── events.jsonl                     REQUIRED, append-only
+    ├── receipts/
+    │   └── invocations.jsonl                REQUIRED
+    ├── evidence/
+    │   ├── source-register.yaml             REQUIRED
+    │   └── extractions.jsonl                REQUIRED
+    ├── incident/                            CONDITIONAL extension
+    │   ├── timeline.yaml
+    │   └── evidence-matrix.yaml
+    ├── synthesis/
+    │   └── findings.yaml                    REQUIRED
+    ├── challenge/
+    │   └── challenges.jsonl                 REQUIRED
+    ├── verification/
+    │   └── report.json                      REQUIRED
+    ├── authority/
+    │   └── decisions.jsonl                  REQUIRED
+    ├── outputs/
+    │   ├── report.html                      REQUIRED
+    │   └── terminal-answer.json             REQUIRED
+    └── external-artifacts.yaml              OPTIONAL</pre></div><p>The manifest is the single index. Files outside this root remain valid only when <code>external-artifacts.yaml</code> records their path, version, digest, and authority.</p></section>
+
+<section id="states"><h2>6. Five independent state dimensions</h2><div class="table"><table><thead><tr><th>Dimension</th><th>Allowed values</th><th>Who controls it</th></tr></thead><tbody><tr><td>Research support</td><td>NOT_ASSESSED · INSUFFICIENT · PARTIAL · SUPPORTED · CONTRADICTED</td><td>Synthesis proposes; verifier checks linkage.</td></tr><tr><td>Execution</td><td>NOT_STARTED · RUNNING · PAUSED · BLOCKED · FAILED · COMPLETE</td><td>Deterministic event reducer.</td></tr><tr><td>Verification</td><td>NOT_RUN · FAIL · PASS</td><td>Family verifier only.</td></tr><tr><td>Human acceptance</td><td>PENDING · CHANGES_REQUESTED · ACCEPTED · REJECTED · DEFERRED</td><td>Human owner only.</td></tr><tr><td>Implementation authority</td><td>NONE · AUTHORIZED · REVOKED</td><td>Human owner only; defaults to NONE.</td></tr></tbody></table></div></section>
+
+<section id="example"><h2>7. Worked example</h2><p class="lead">A small review finishes and passes verification. It still cannot claim human acceptance or implementation authority.</p><div class="compare"><article class="example"><h3>Example manifest excerpt</h3><pre>run_id: RUN-SOTA-EXAMPLE-20260819-01
+contract: contracts/sota-family/sota-family-contract.v1.md
+plan: research/example/plan/example.plan.v1.html
+required_artifacts:
+  - evidence/source-register.yaml
+  - synthesis/findings.yaml
+  - challenge/challenges.jsonl
+  - verification/report.json
+  - outputs/terminal-answer.json
+plan_extensions: [incident]</pre></article><article class="example"><h3>Event sequence</h3><ol><li>RUN_CREATED</li><li>EXECUTION_STARTED</li><li>EVIDENCE_REVIEW_COMPLETED</li><li>SYNTHESIS_COMPLETED</li><li>CHALLENGE_DISPOSITIONED</li><li>EXECUTION_COMPLETED</li><li>VERIFICATION_PASSED</li></ol><p>No human decision event exists yet.</p></article></div><div class="example"><h3>Final terminal answer</h3><pre>{
+  "run_id": "RUN-SOTA-EXAMPLE-20260819-01",
+  "research_support": "SUPPORTED",
+  "execution": "COMPLETE",
+  "verification": "PASS",
+  "human_acceptance": "PENDING",
+  "implementation_authority": "NONE",
+  "plain_language": "Research is supported and mechanically verified, but is not human-accepted and authorizes no implementation."
+}</pre></div><div class="callout good"><p><strong>Why this matters:</strong> “COMPLETE” and “PASS” can no longer be mistaken for “ACCEPTED” or “AUTHORIZED.”</p></div></section>
+
+<section id="execution"><h2>8. How the remediation would be executed and tested</h2><ol><li>Freeze the current skills, dependencies, guide, schemas, and both legacy runs.</li><li>Finalize four human decisions: schema registry/compatibility, universal vs conditional stages, legacy policy, and approval-authenticity strength.</li><li>Create the listed contracts, schemas, templates, validators, tests, and guide.</li><li>Create positive examples and negative fixtures reproducing ICF-006–ICF-010.</li><li>Map both legacy runs read-only to the new contract.</li><li>Independently challenge bypasses, false passes, ambiguous states, over-standardization, and migration risk.</li><li>Run deterministic and semantic verification; no mandatory check may be waived.</li><li>Return frozen outputs, exact digests, residual risks, and compatibility results for human acceptance.</li></ol><h3>Acceptance tests</h3><ul><li>A new run from templates has one manifest, event stream, invocation stream, verifier report, authority stream, and terminal answer.</li><li>Missing IDs, digests, provenance, challenge dispositions, or required artifacts fail validation.</li><li>A plan that weakens a family rule fails before execution.</li><li>Both historical packages receive truthful read-only compatibility reports without mutation.</li><li>All Critical and High findings are resolved before approval.</li></ul></section>
+
+<section id="approval"><h2>9. Approval status</h2><div class="callout warn"><p><strong>Status: awaiting approval.</strong> The YAML validates against the new plan schema v2. Independent QA and final audit remain outstanding, so implementation remains unauthorized.</p><p>Approval should bind the exact v2 YAML and HTML digests. The YAML is the machine-readable governing plan; this HTML is its human-readable equivalent.</p></div><p><a href="sota_skill_family_method_consistency.plan.v2.yaml">Governing YAML v2</a> · <a href="../../schemas/plan.schema.v2.json">Plan schema v2</a> · <a href="../../templates/plan.template.v2.html">HTML template v2</a> · <a href="sota_skill_family_method_consistency.plan.v1.html">Predecessor HTML v1</a></p></section>
+</main></body></html>

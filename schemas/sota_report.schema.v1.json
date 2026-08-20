@@ -1,0 +1,18 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://example.invalid/curriculum_factory/sota_report.schema.v1.json",
+  "title": "SOTA report terminal-state envelope v1",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["study_id", "plan_id", "run_id", "research_support", "execution", "verification", "human_acceptance", "implementation_authority"],
+  "properties": {
+    "study_id": {"type": "string", "minLength": 1},
+    "plan_id": {"type": "string", "minLength": 1},
+    "run_id": {"type": "string", "minLength": 1},
+    "research_support": {"enum": ["SUPPORTED", "PARTIALLY_SUPPORTED", "NOT_SUPPORTED", "INCONCLUSIVE", "BLOCKED"]},
+    "execution": {"enum": ["NOT_STARTED", "RUNNING", "BLOCKED", "FAILED", "COMPLETE"]},
+    "verification": {"enum": ["NOT_RUN", "PASS", "FAIL", "BLOCKED"]},
+    "human_acceptance": {"enum": ["PENDING", "ACCEPTED", "REJECTED", "REVISION_REQUESTED"]},
+    "implementation_authority": {"enum": ["NONE", "LIMITED", "GRANTED", "REVOKED"]}
+  }
+}

@@ -1,0 +1,35 @@
+{
+  "receipt_id": "TEST-SOTA-FAMILY-VALIDATOR-001",
+  "date": "2026-08-20",
+  "plan_id": "sota-skill-family-outputs.plan.v7",
+  "graph_id": "PG-SOTA-FAMILY-V7",
+  "node_id": "RT-fixtures",
+  "command": "python3 -m pytest tests/sota_family/test_validate_package.py -q",
+  "environment": {
+    "python": "3.13.1",
+    "pytest": "9.0.3",
+    "working_directory": "/Users/filipepinto/Projects/curriculum_factory"
+  },
+  "result": {
+    "status": "PASS",
+    "exit_code": 0,
+    "tests_collected": 5,
+    "tests_passed": 5,
+    "tests_failed": 0,
+    "elapsed_seconds_reported_by_pytest": 0.06,
+    "stdout": "..... [100%]\n5 passed in 0.06s"
+  },
+  "scope": [
+    "minimal and complex package acceptance",
+    "missing required report rejection",
+    "missing terminal-state dimension rejection",
+    "unpaired execution activity rejection",
+    "same seeded defect produces the same family outcome"
+  ],
+  "test_source": "tests/sota_family/test_validate_package.py",
+  "validator_source": "tools/sota_family/validate_package.py",
+  "limitations": [
+    "This receipt covers the current five family-validator fixtures only.",
+    "It is not the final AC-01 through AC-13 verification receipt."
+  ]
+}

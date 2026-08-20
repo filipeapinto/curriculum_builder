@@ -1,0 +1,74 @@
+# yaml-language-server: $schema=../../schemas/plan.schema.v1.json
+slug: sota_skill_family_method_consistency
+title: SOTA Skill-Family Method and Output Contract Remediation Plan
+objective: >-
+  Produce a reviewable, family-owned contract design and implementation package that makes
+  SOTA research executions method-comparable through a canonical record root, stable schemas
+  and identifiers, explicit precedence, append-only lifecycle evidence, non-waivable verification,
+  unambiguous terminal semantics, and provenance-bound authority records while preserving
+  legitimate plan-specific research variation.
+rationale: >-
+  Accepted report ICR-SOTA-FAMILY-METHOD-CONSISTENCY v1, payload SHA-256
+  b786de5b2fe1d3c62d9c1c00a85861c0d10fd15a3069a845d17968294c579864, confirms that the
+  current SOTA family permits incompatible package topology, schemas, lifecycle evidence,
+  verifier thresholds, and terminal meanings. Without remediation, executions can remain
+  non-comparable, non-deterministically resumable, and capable of false assurance even when
+  individual plans appear complete.
+authorizes_implementation: false
+prerequisites:
+  - blocker: The human owner must approve this exact plan version before any implementation begins.
+    fail_fast_check: Confirm a recorded approval binds this filename and its SHA-256; otherwise stop.
+  - blocker: Current SOTA skill files and direct contract dependencies must be inventoried and digest-bound.
+    fail_fast_check: Stop if any affected file is absent, unreadable, or changes after the baseline freeze.
+steps:
+  - "1. Freeze scope and evidence: bind the accepted issue report, all eight SOTA skills, direct references, family guide, schemas, validators, and both comparison-run packages by path and SHA-256; preserve ICF-001 through ICF-014, alternatives, and UNK-001 through UNK-006."
+  - "2. Assign governance: the human owner alone approves scope, compatibility, budget, material deviations, acceptance, and release; deterministic tools own inventories, hashes, schema checks, link checks, duplicate detection, and state reduction; models may recommend but never grant authority."
+  - "3. Use $sota-method-lead with gpt-5.6-sol at high reasoning to define the strengthen-only family precedence rule, universal versus conditional stages, compatibility policy, and exact boundary between family invariants and legitimate plan variation; inputs are Step 1 evidence, and outputs are a versioned contract decision record and requirement-to-finding matrix."
+  - "4. Use $sota-incident-analyze with gpt-5.6-terra at high reasoning to map both legacy runs to the proposed lifecycle without rewriting them; output a facts/inferences/unknowns matrix and migration-risk register, with no authority to repair or reclassify historical evidence."
+  - "5. Use $sota-evidence-review with gpt-5.6-terra at high reasoning for bounded repository and primary-source comparison of schema versioning, provenance, append-only events, approval authenticity, and compatibility; output an auditable source and extraction register, with no final design authority."
+  - "6. Design one family-owned canonical record contract covering a canonical run index/root, stable IDs, typed domain extensions, schema registry and compatibility, append-only lifecycle events, digest-bound inputs/challenges/approvals, invocation and model receipts, and external-deliverable indexing."
+  - "7. Define orthogonal controlled states for research support, execution completion, deterministic verification, human acceptance, and implementation authority; define allowed transitions, terminal discovery, resume behavior, and precedence so no compound label conflates these dimensions."
+  - "8. Define a non-waivable family verification baseline mapped to ICF-001 through ICF-013, plus plan-added strengthen-only checks; include schema validity, referential integrity, count reconciliation, provenance completeness, lifecycle closure, challenge disposition, budget accounting, and truthful terminal-answer checks."
+  - "9. Use $sota-synthesize with gpt-5.6-sol at xhigh reasoning to combine the design, incident mapping, and appraised evidence into proposed contract, schema, validator, migration, documentation, and proving-test changes; each recommendation must cite finding IDs and preserve ICF-014 legitimate variation."
+  - "10. Use $sota-independent-challenge with gpt-5.5 at xhigh reasoning in a separate context to challenge weakening paths, over-standardization, migration safety, state ambiguity, false-pass routes, evidence sufficiency, and operational feasibility; every challenge receives a stable disposition before acceptance."
+  - "11. Use $sota-verify with deterministic tools plus gpt-5.6-sol at high reasoning for semantic inspection to verify required artifacts, schema examples, references, accessibility, compatibility cases, negative controls, state-machine reachability, and challenge dispositions; verification has no waiver or acceptance authority."
+  - "12. Present the frozen remediation package, verification receipts, residual risks, migration choices, and exact digests to the human owner; approval authorizes a later implementation run only and never follows from agent completion."
+  - "13. Budget derivation: baseline inventory of 8 skills, 5 direct dependencies, 2 run packages/94 files, 14 findings, 6 unknowns, and 12 prior challenges yields ceilings of 140 files, 180 model calls, 1,200,000 input-plus-output tokens, 24 elapsed hours, 4 concurrent workers, 2 retries per failed operation, and USD 120 when spend telemetry exists; confidence is medium because final schema count is unresolved."
+  - "14. Budget control: measure file count from the manifest, calls/tokens/model from append-only receipts, elapsed time from RFC 3339 events, concurrency from controller events, retries by stable operation ID, and spend from provider telemetry; warn at 75 percent, hard-stop at 100 percent, and stop immediately if any required measurement is unavailable rather than estimating success."
+verification:
+  - Validate this YAML with schemas/validate_instance.py against schemas/plan.schema.v1.json and confirm the schema directive resolves canonically.
+  - Confirm the plan names the accepted report ID, version, and exact canonical payload digest and keeps authorizes_implementation false.
+  - Confirm every ICF-001 through ICF-014 and UNK-001 through UNK-006 maps to a requirement, preserved variation, explicit decision, or residual-risk record.
+  - Validate canonical schemas with positive examples and negative fixtures for missing IDs, stale digests, invalid transitions, mismatched counts, absent provenance, compound terminal labels, and plan attempts to weaken family rules.
+  - Replay both comparison-run packages read-only through the compatibility validator and require deterministic, evidence-linked classifications without mutating historical artifacts.
+  - Prove every lifecycle state has an owner, allowed predecessor, append-only event, resume rule, and terminal-answer mapping; reject unreachable or ambiguous states.
+  - Require the family verifier to fail fixtures reproducing ICF-006 through ICF-010 and to preserve ICF-014 variation.
+  - Check all local links, unique identifiers, digests, schemas, human-readable equivalents, documentation claims, and append-only logs.
+acceptance_criteria:
+  - When a SOTA plan varies its question, sources, corpus, budget, or applicable conditional stages, the family contract permits the variation while preserving every universal invariant.
+  - When a plan attempts to weaken or omit a family invariant, validation fails before execution and identifies the violated stable requirement ID.
+  - When a run is resumed or inspected, one canonical index and append-only lifecycle record deterministically reveal its current execution, verification, acceptance, and authority states.
+  - When receipts, challenges, extractions, approvals, or terminal records omit required IDs, provenance, digests, or count consistency, the non-waivable verifier returns failure.
+  - When external human deliverables remain outside the canonical root, a schema-valid canonical index binds their paths, digests, versions, and authority state.
+  - When the two historical packages are evaluated, their defects and unknown provenance are reported without silently repairing, blessing, or rewriting either package.
+  - When independent challenge and verification finish, all Critical and High findings are resolved or the package remains unapproved with explicit residual risks.
+  - When the human owner reviews the package, the decision binds exact artifact versions and digests and remains separate from implementation authorization.
+stop_conditions: >-
+  Stop immediately on a changed evidence baseline, unavailable required budget telemetry, exhausted ceiling,
+  unresolved Critical or High challenge, schema ambiguity affecting authority or terminal state, inability to
+  preserve legitimate variation, or missing human decision on UNK-003 through UNK-006. Record the outcome in
+  plans/sota_skill_family_method_consistency/result.v1.yaml and append the event to
+  plans/sota_skill_family_method_consistency/plans.log.md; do not implement, migrate, or release changes.
+implementation:
+  execution_model: single_prompt
+  reasoning: >-
+    The approved remediation can be executed as one governed workflow with explicit role handoffs and gates;
+    this planning artifact does not create or run that prompt.
+  prompt_path: plans/sota_skill_family_method_consistency/prompts/sota_skill_family_method_consistency.prompt.v1.md
+qa:
+  plan_qa_path: plans/sota_skill_family_method_consistency/qa/plan_qa.v1.md
+  plan_qa_verdict: "CHANGES REQUIRED — 1 Critical, 0 High."
+  execution_test_plan_path: plans/sota_skill_family_method_consistency/qa/execution_test.plan.v1.md
+  final_audit_path: plans/sota_skill_family_method_consistency/qa/final_audit.v1.md
+  final_audit_verdict: "CHANGES REQUIRED — 1 Critical, 0 High remaining."
+log_path: plans/sota_skill_family_method_consistency/plans.log.md

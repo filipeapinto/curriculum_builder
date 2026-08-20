@@ -1,0 +1,245 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <title>SOTA skill-family consistency remediation plan v4</title>
+  <style>
+    :root{color-scheme:light dark;--bg:#f5f6f7;--paper:#fff;--ink:#182127;--muted:#59656d;--line:#cbd2d7;--accent:#174b63;--note:#fff4d6;--done:#e8f2eb}*{box-sizing:border-box}body{margin:0;background:var(--bg);color:var(--ink);font:16px/1.5 system-ui,sans-serif}header,main{width:min(1000px,calc(100% - 32px));margin:auto}header{padding:42px 0 24px;border-bottom:1px solid var(--line)}main{padding-bottom:60px}h1{margin:5px 0 10px;font-size:2.3rem;line-height:1.1}h2{margin:38px 0 10px;color:var(--accent);font-size:1.45rem}h3{margin:22px 0 6px;font-size:1.05rem}.meta{color:var(--muted)}.status{display:inline-block;padding:3px 8px;border:1px solid #9b7b22;background:var(--note);font-weight:800}.box{padding:14px 16px;border:1px solid var(--line);background:var(--paper)}.done{background:var(--done)}table{width:100%;border-collapse:collapse;background:var(--paper)}th,td{padding:10px;border:1px solid var(--line);text-align:left;vertical-align:top}th{background:#e9eef1}pre{overflow:auto;padding:15px;border:1px solid var(--line);background:var(--paper);font:14px/1.5 ui-monospace,monospace}code{font-family:ui-monospace,monospace}a{color:var(--accent)}li+li{margin-top:5px}@media(prefers-color-scheme:dark){:root{--bg:#10171c;--paper:#172127;--ink:#edf1f3;--muted:#b2bdc3;--line:#3a4850;--accent:#9ed0e4;--note:#342d1b;--done:#193126}.status{color:#f2df9c}th{background:#223039}}
+  </style>
+</head>
+<body>
+<header>
+  <span class="status">AWAITING APPROVAL</span>
+  <h1>SOTA skill-family consistency remediation plan</h1>
+  <p class="meta">Version 4 · 19 August 2026 · Owner: repository human owner · Predecessor: <a href="sota_skill_family_method_consistency.plan.v3.html">plan v3</a></p>
+  <p class="meta">Originating issue: <a href="../../issues/sota-skill-family-method-consistency/sota-skill-family-method-output-contract-inconsistency.issue.v2.html">issue v2</a> · Confirmation evidence: <a href="../../issues/sota-skill-family-method-consistency/sota-skill-family-method-output-contract-inconsistency.report.v1.html">report v1</a></p>
+</header>
+<main>
+  <section>
+    <h2>1. Research question and decision</h2>
+    <div class="box">
+      <p><strong>Question.</strong> What is the smallest set of skill, record, validation, and writing controls needed to make SOTA runs method-consistent, auditable, plainly written, and correctly versioned?</p>
+      <p><strong>Decision this work must support.</strong> Select and implement only the family controls that map to a verified failure or an explicit owner requirement, then decide whether the revised family is ready for use.</p>
+    </div>
+    <p>The issue has three parts. The current family baseline is not precise or enforceable enough to make runs comparable. Planning can add material remediation scope without synchronizing the issue. Revised plans and reports can emphasize changes instead of restating the complete current contract or result.</p>
+  </section>
+
+  <section>
+    <h2>2. Current evidence and assumptions</h2>
+    <h3>Verified evidence</h3>
+    <ul>
+      <li>The confirmation report reviewed the eight installed SOTA skills, their direct dependencies, and two complete run trees.</li>
+      <li>It confirmed an underspecified and unenforced family baseline and identified defects within both audited runs.</li>
+      <li>It could not prove all historical skill versions or invocations. Those facts remain unknown.</li>
+    </ul>
+    <h3>Planning evidence and owner requirements</h3>
+    <ul>
+      <li>Plans v1-v3 proposed contracts, schemas, validators, folder layouts, state vocabularies, migration behavior, and <code>sota-slop-remove</code>.</li>
+      <li>The owner rejected the overbuilt fixed-folder proposal.</li>
+      <li>The owner requires issue synchronization when planning adds material scope.</li>
+      <li>The owner requires every plan and SOTA report version to be self-sufficient.</li>
+      <li>The owner requires a new <code>sota-slop-remove</code> skill based on Lauren Tan's Pstack <code>unslop</code>.</li>
+    </ul>
+    <p><strong>Assumption.</strong> A common contract is necessary, but its physical file layout is not decided. Calibration must establish the minimum before implementation.</p>
+  </section>
+
+  <section>
+    <h2>3. Scope and exclusions</h2>
+    <table>
+      <thead><tr><th>In scope</th><th>Out of scope</th></tr></thead>
+      <tbody>
+        <tr><td>All installed <code>sota-*</code> skills and direct references</td><td>Changing unrelated skill families</td></tr>
+        <tr><td>Issue-to-plan feedback and versioning rules</td><td>Rewriting or repairing historical run evidence</td></tr>
+        <tr><td>Minimum cross-run evidence, provenance, challenge, verification, and authority contract</td><td>Forcing domain-specific research products into one layout</td></tr>
+        <tr><td><code>sota-slop-remove</code> and semantic-preservation tests</td><td>Using style cleanup to change findings or hide uncertainty</td></tr>
+        <tr><td>Read-only compatibility checks for the two audited runs</td><td>Inventing unavailable provenance</td></tr>
+        <tr><td>Family guide and regression tests</td><td>Executing a new substantive SOTA study</td></tr>
+      </tbody>
+    </table>
+    <p>The evidence boundary is the synchronized issue v2, confirmation report v1, current repository skills and references, the two audited run packages, owner feedback, and the Pstack <code>unslop</code> source. External sources may clarify implementation technique but cannot override the issue or grant authority.</p>
+  </section>
+
+  <section>
+    <h2>4. Completed prerequisites</h2>
+    <div class="box done">
+      <ul>
+        <li><code>sota-plan-create</code> now requires issue synchronization before material plan expansion and requires every plan version to stand alone.</li>
+        <li>The plan contract reference carries the same requirements.</li>
+        <li><code>sota-synthesize</code> now requires every revised SOTA report to restate the complete current result.</li>
+        <li>Issue v2 records the family-contract, planning-feedback, and standalone-version defects, including the additions discovered during plans v1-v3.</li>
+      </ul>
+    </div>
+    <p>These edits were explicitly requested in the current task. They do not approve the remaining remediation or prove that the new behavior is sufficient.</p>
+  </section>
+
+  <section>
+    <h2>5. Preliminary calibration</h2>
+    <p>Implementation cannot begin from the old folder proposal. The method lead must first create a requirement-to-failure table for every proposed family control.</p>
+    <table>
+      <thead><tr><th>Calibration action</th><th>Required result</th><th>Stop condition</th></tr></thead>
+      <tbody>
+        <tr><td>Inventory proposals</td><td>Every proposed skill, file, schema, field, state, tool, and test from issue v2 and plans v1-v3</td><td>No proposal remains unclassified</td></tr>
+        <tr><td>Map necessity</td><td>Each proposal linked to a verified defect, explicit owner requirement, or rejected as unsupported</td><td>Every retained item has a failure and proving test</td></tr>
+        <tr><td>Separate invariant from extension</td><td>Family minimum distinguished from plan-specific and domain-specific outputs</td><td>No study-specific artifact is mandatory without cross-run need</td></tr>
+        <tr><td>Test candidate minimum</td><td>Positive minimal fixture and negative fixtures for both audited failure patterns</td><td>Smallest candidate passes the positive fixture and catches required failures</td></tr>
+        <tr><td>Human design review</td><td>Approved retained-items table, rejected-items table, and implementation boundary</td><td>Explicit owner approval or revision request</td></tr>
+      </tbody>
+    </table>
+    <p>The preliminary output is a self-contained design decision, not another plan diff. It must state the selected contract in full and list rejected proposals with reasons.</p>
+  </section>
+
+  <section>
+    <h2>6. Proposed implementation after the design gate</h2>
+    <p>The following work is authorized only after the owner approves the calibrated design.</p>
+    <ol>
+      <li>Write one short family contract containing the approved invariants, precedence rule, failure behavior, and authority boundaries.</li>
+      <li>Update each SOTA role skill so its input, output, and handoff satisfy that contract.</li>
+      <li>Create only the schemas or deterministic checks approved by the calibration table.</li>
+      <li>Create a validator that checks the approved baseline and lets a plan add stricter checks.</li>
+      <li>Create <code>sota-slop-remove</code> and require it for human-facing SOTA plans, preliminary reports, synthesis reports, verification narratives, and final answers.</li>
+      <li>Add regression fixtures for issue synchronization, standalone versions, semantic preservation, false-pass prevention, missing provenance, and plan-specific extensions.</li>
+      <li>Assess the two historical runs read-only against the approved baseline.</li>
+      <li>Update the family guide with the complete current workflow, handoffs, failure paths, outputs, and authority gates.</li>
+    </ol>
+    <p>No fixed run tree is selected in this plan. The calibration and design gate decide whether any physical layout belongs in the family contract.</p>
+  </section>
+
+  <section>
+    <h2>7. <code>sota-slop-remove</code> contract</h2>
+    <p>The new skill will adapt the MIT-licensed <a href="https://github.com/cursor/plugins/blob/main/pstack/skills/unslop/SKILL.md">Pstack <code>unslop</code> skill</a>. The implementation will record the source URL, commit, license, and adapted rules.</p>
+    <h3>Purpose</h3>
+    <p>Make SOTA writing direct, specific, and easy to audit. It is an editing gate, not a research or decision role.</p>
+    <h3>Required checks</h3>
+    <ul>
+      <li>Remove puffery, promotional language, vague attribution, generic conclusions, chatbot phrases, filler, stacked hedges, forced triads, false ranges, abstract jargon, and decorative formatting.</li>
+      <li>Delete or replace any sentence that states no fact, instruction, decision, limit, test, or supported interpretation.</li>
+      <li>Prefer named actors, plain verbs, exact numbers, and project-specific statements.</li>
+      <li>Flag text that could be pasted into an unrelated SOTA report unchanged.</li>
+    </ul>
+    <h3>Non-negotiable preservation</h3>
+    <p>The skill must not change claims, evidence IDs, citations, quotations, numbers, confidence, limitations, dissent, recommendations, verification results, or authority states. Code, data, schemas, and source quotations are excluded from stylistic rewriting. Any semantic change fails the gate.</p>
+    <h3>Output</h3>
+    <p>Return the cleaned artifact and a short count of edits by category. Do not create a second narrative report about the cleanup.</p>
+  </section>
+
+  <section>
+    <h2>8. Roles, inputs, outputs, and authority</h2>
+    <table>
+      <thead><tr><th>Role</th><th>Inputs</th><th>Output and boundary</th></tr></thead>
+      <tbody>
+        <tr><td><code>sota-method-lead</code></td><td>Issue v2, report v1, skills, plans v1-v3</td><td>Calibration table and proposed minimum. Cannot approve it.</td></tr>
+        <tr><td><code>sota-evidence-review</code></td><td>Two run trees and governing records</td><td>Failure-to-requirement evidence. Cannot invent missing history.</td></tr>
+        <tr><td><code>sota-incident-analyze</code></td><td>Only disputed execution evidence</td><td>Optional reconstruction. Not used unless calibration identifies a factual dispute.</td></tr>
+        <tr><td><code>sota-synthesize</code></td><td>Approved design and appraised evidence</td><td>Complete contract, recommendations, and self-contained report. Cannot self-accept.</td></tr>
+        <tr><td><code>sota-slop-remove</code></td><td>Complete human-facing draft and its source findings</td><td>Plain-language revision. Cannot change substance.</td></tr>
+        <tr><td><code>sota-independent-challenge</code></td><td>Frozen candidate artifacts and evidence map</td><td>Challenges necessity, omissions, bypasses, and overbuilding. Makes no edits.</td></tr>
+        <tr><td><code>sota-verify</code></td><td>Final artifacts, fixtures, challenge dispositions</td><td>Deterministic and semantic verification. Cannot grant acceptance.</td></tr>
+        <tr><td>Human owner</td><td>Calibration decision, verification, unresolved risks</td><td>Approves design, deviations, final acceptance, and any implementation authority.</td></tr>
+      </tbody>
+    </table>
+  </section>
+
+  <section>
+    <h2>9. Dependency and data flow</h2>
+    <pre>issue v2 + report v1 + skills + runs
+                 |
+       calibration and evidence review
+                 |
+          HUMAN DESIGN GATE
+                 |
+ contract + skills + validator + sota-slop-remove + tests
+                 |
+          plain-language gate
+                 |
+        independent challenge
+                 |
+             correction
+                 |
+            verification
+                 |
+          HUMAN ACCEPTANCE</pre>
+    <p><strong>Dependency meaning.</strong> Calibration and evidence review may run in parallel. Implementation waits for the human design gate. Challenge waits for complete cleaned artifacts. Verification waits for challenge dispositions. Acceptance waits for passing verification.</p>
+    <p><strong>Data transfer.</strong> Repository evidence enters the method and evidence roles as read-only inputs. Their requirement mappings enter synthesis. The approved design controls implementation. The writing gate receives human-facing drafts plus frozen source findings for semantic comparison. Challenge returns findings to the responsible producer. Verification returns check results and residual risks to the human owner.</p>
+  </section>
+
+  <section>
+    <h2>10. Model and tool allocation</h2>
+    <table>
+      <thead><tr><th>Work</th><th>Executor</th><th>Reason and review</th></tr></thead>
+      <tbody>
+        <tr><td>Discovery, hashes, links, schemas, fixtures, rendering</td><td>Deterministic tools</td><td>Directly measurable; no model judgment needed.</td></tr>
+        <tr><td>Bounded inventory and metadata normalization</td><td><code>gpt-5.6-luna</code>, medium</td><td>Economical first pass; Terra samples and corrects it.</td></tr>
+        <tr><td>Evidence extraction and optional incident reconstruction</td><td><code>gpt-5.6-terra</code>, high</td><td>Careful source handling and tool use.</td></tr>
+        <tr><td>Calibration protocol, contract comparison, synthesis</td><td><code>gpt-5.6-sol</code>, high or xhigh</td><td>High-consequence cross-source decisions.</td></tr>
+        <tr><td>Independent challenge</td><td><code>gpt-5.5</code>, xhigh</td><td>Model-family diversity.</td></tr>
+        <tr><td>Method, budget, material deviations, design approval, acceptance</td><td>Human owner</td><td>Authority cannot be delegated to a model.</td></tr>
+      </tbody>
+    </table>
+    <p>Execution records the actual model version and effort. A model substitution or allocation change requires an approved deviation before affected work begins.</p>
+  </section>
+
+  <section>
+    <h2>11. Budget and stopping rules</h2>
+    <table>
+      <thead><tr><th>Ceiling</th><th>Derivation and confidence</th><th>Warning, hard stop, unavailable measure</th></tr></thead>
+      <tbody>
+        <tr><td>18 total model calls</td><td>Eight skill groups/direct references, two run comparisons, four synthesis units, two writing passes, one challenge, one correction review. Medium confidence.</td><td>Warn at 14; stop at 18. Calls remain measurable if token data is missing.</td></tr>
+        <tr><td>8 elapsed hours</td><td>Two hours calibration, four implementation, one challenge/correction, one verification. Medium confidence.</td><td>Warn at 6.4 hours; stop at 8.</td></tr>
+        <tr><td>2 retries per failed operation</td><td>One changed-method retry plus one final alternative. High confidence.</td><td>Second failure warns; third attempt is prohibited without owner approval.</td></tr>
+        <tr><td>2 slop-removal passes per artifact</td><td>Initial cleanup and one post-correction cleanup. High confidence.</td><td>Second pass is the hard stop. Remaining style disputes go to the owner.</td></tr>
+        <tr><td>2 comparison passes with no new defect class</td><td>Saturation rule from the originating audit. Medium confidence.</td><td>Stop collection after the second stable pass.</td></tr>
+      </tbody>
+    </table>
+    <p>Measure calls, tokens when available, elapsed time, retries, and output paths. If token or cost telemetry is unavailable, mark it unavailable and enforce calls plus elapsed time. A retry must record the prior failure and change the input, hypothesis, executor, or method. Any request for new authority, destructive change, or scope outside section 3 stops the run.</p>
+  </section>
+
+  <section>
+    <h2>12. Required outputs</h2>
+    <ul>
+      <li>Self-contained calibration and design decision with retained and rejected proposals.</li>
+      <li>Approved minimum family contract.</li>
+      <li>Updated SOTA role skills and direct references.</li>
+      <li>New <code>sota-slop-remove</code> skill with attribution and validation.</li>
+      <li>Only the schemas and deterministic validator checks approved at the design gate.</li>
+      <li>Positive and negative regression fixtures.</li>
+      <li>Read-only compatibility results for both audited runs.</li>
+      <li>Updated standalone family guide.</li>
+      <li>Self-contained SOTA report and verification result.</li>
+    </ul>
+    <p>Every output records its version, status, producer, inputs, and applicable digest. No output may claim human acceptance or implementation authority unless the owner explicitly provides it.</p>
+  </section>
+
+  <section>
+    <h2>13. Acceptance tests</h2>
+    <ol>
+      <li>Planning a material new skill, artifact, method, risk, control, or acceptance rule without a synchronized issue/report version fails.</li>
+      <li>Removing all predecessor files leaves the current plan complete and executable.</li>
+      <li>Removing all predecessor files leaves the current SOTA report complete and reviewable.</li>
+      <li>No operative section relies on “unchanged,” “see previous version,” or a diff.</li>
+      <li>Every mandatory family control maps to an issue criterion, verified failure, and passing/failing fixture.</li>
+      <li>A study-specific output can be added by a plan without becoming a universal family artifact.</li>
+      <li>Both historical runs receive truthful read-only results; unknown provenance remains unknown.</li>
+      <li><code>sota-slop-remove</code> removes seeded filler, vague attribution, puffery, generic conclusions, forced triads, abstract jargon, and decorative formatting.</li>
+      <li>The writing gate fails when a revision changes any claim, citation, evidence ID, quotation, number, uncertainty, limitation, recommendation, verification result, or authority state.</li>
+      <li>The independent challenger finds no unresolved Critical or High bypass, omission, or unnecessary requirement.</li>
+      <li>All required links resolve, HTML renders without overflow, machine records validate, and deterministic tests pass.</li>
+      <li>Verification PASS, human acceptance, and implementation authority remain separate states.</li>
+    </ol>
+  </section>
+
+  <section>
+    <h2>14. Approval gates</h2>
+    <p><strong>Gate 1: plan approval.</strong> Approval authorizes the preliminary calibration in section 5 within the budget in section 11.</p>
+    <p><strong>Gate 2: design approval.</strong> After calibration, the owner must approve the exact retained controls and implementation boundary. Without this approval, implementation does not begin.</p>
+    <p><strong>Gate 3: acceptance.</strong> After implementation, challenge, and verification, the owner accepts, rejects, or requests revision. Verification cannot accept the work.</p>
+    <div class="box"><p><strong>Current state.</strong> Plan: awaiting approval. Calibration: not started. Design: not approved. Remaining implementation: unauthorized. Human acceptance: pending.</p></div>
+  </section>
+
+  <section>
+    <h2>15. Version note</h2>
+    <p>Version 4 follows the synchronized issue v2 and the corrected planning skill. It removes the preselected run folder, makes calibration and a human design gate mandatory, records completed prerequisite skill edits, and states the complete current plan. This note is provenance only; no operative instruction depends on an earlier plan.</p>
+  </section>
+</main>
+</body>
+</html>

@@ -1,5 +1,7 @@
 # SOTA research-plan contract
 
+This reference specializes the mandatory `../../sota-plan-execute/references/sota-family-contract.md`. The family contract prevails; plans may only strengthen it.
+
 A plan must define:
 
 1. Primary research question and intended decision.

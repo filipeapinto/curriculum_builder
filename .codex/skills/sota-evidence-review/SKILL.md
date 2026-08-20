@@ -5,6 +5,8 @@ description: Search, deduplicate, screen, appraise, and extract external evidenc
 
 # SOTA Evidence Review
 
+Produce records under `../sota-plan-execute/references/sota-family-contract.md`; do not create an alternative run topology or terminal-state vocabulary.
+
 1. Use only approved sources, queries, dates, eligibility rules, and ceilings.
 2. Record every candidate with a stable ID and retrieval provenance before screening.
 3. Deduplicate with receipts; record one primary reason for every exclusion.
@@ -14,4 +16,3 @@ description: Search, deduplicate, screen, appraise, and extract external evidenc
 7. Stop at convergence, warning, or hard limits.
 
 Return source register entries, decisions, appraisals, extractions, counts, budget use, and unresolved cases. First-pass triage has no final exclusion authority.
-

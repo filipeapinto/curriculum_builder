@@ -1,0 +1,4 @@
+interface:
+  display_name: "Plan Graph Create"
+  short_description: "Compile plans into tested execution graphs"
+  default_prompt: "Use $plan-graph-create to compile this approved plan into a tested prompt graph and execute it."

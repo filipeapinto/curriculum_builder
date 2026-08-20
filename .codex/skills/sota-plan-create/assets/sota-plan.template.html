@@ -1,0 +1,15 @@
+<!doctype html>
+<html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>{{TITLE}} · plan {{VERSION}}</title></head><body>
+<header><p>SOTA plan · {{VERSION}} · {{STATUS}}</p><h1>{{TITLE}}</h1><p>Study <code>{{STUDY_ID}}</code> · Plan <code>{{PLAN_ID}}</code> · Owner {{OWNER}} · Predecessor {{PREDECESSOR_OR_NONE}}</p></header>
+<main>
+<section id="decision"><h2>Question and intended decision</h2>{{QUESTION_AND_DECISION}}</section>
+<section id="scope"><h2>Scope and evidence boundary</h2>{{SCOPE_EXCLUSIONS_ASSUMPTIONS_BOUNDARY}}</section>
+<section id="method"><h2>Method</h2>{{UNIVERSAL_METHOD}}<!-- Add only applicable study-specific methods. --></section>
+<section id="flow"><h2>Dependency and data flow</h2>{{DEPENDENCIES_HANDOFFS_GATES}}</section>
+<section id="roles"><h2>Roles and authority</h2>{{ROLE_ASSIGNMENTS}}</section>
+<section id="allocation"><h2>Model, tool, and human allocation</h2>{{ALLOCATIONS_AND_DEVIATIONS}}</section>
+<section id="budget"><h2>Budgets, retries, and stopping rules</h2>{{BUDGETS_MEASUREMENT_WARNINGS_STOPS}}</section>
+<section id="outputs"><h2>Outputs and provenance</h2>{{OUTPUTS_IDS_PROVENANCE}}</section>
+<section id="tests"><h2>Family and plan-specific verification</h2>{{FAMILY_FIRST_AND_PLAN_TESTS}}</section>
+<section id="approval"><h2>Approval and terminal conditions</h2>{{APPROVAL_ACCEPTANCE_AUTHORITY}}</section>
+</main></body></html>

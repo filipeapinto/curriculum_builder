@@ -1,0 +1,200 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <title>Plan v7 — Make SOTA study outputs consistent and verifiable</title>
+  <style>
+    :root{color-scheme:light dark;--bg:#f4f6f8;--paper:#fff;--ink:#182432;--muted:#586676;--line:#bcc7d2;--navy:#173b5b;--teal:#0d727b;--soft:#eaf1f5;--warm:#fff4d6;--red:#8c3640;--shadow:0 10px 28px rgba(24,36,50,.08)}*{box-sizing:border-box}html{background:var(--bg);color:var(--ink);scroll-behavior:smooth}body{margin:0;font:16px/1.55 system-ui,-apple-system,"Segoe UI",sans-serif}a{color:var(--teal)}header{background:#173b5b;color:#fff}.wrap,main{width:min(1120px,calc(100% - 36px));margin:auto}.wrap{padding:44px 0 34px}h1{max-width:980px;margin:5px 0 12px;font-size:clamp(2rem,4vw,3.35rem);line-height:1.08}.eyebrow{font-weight:850;letter-spacing:.09em;text-transform:uppercase}.meta{display:flex;flex-wrap:wrap;gap:9px 22px;color:#dce8ef}.meta strong{color:#fff}main{padding:20px 0 64px}nav{display:flex;gap:5px;overflow-x:auto;padding:9px 0;border-bottom:1px solid var(--line)}nav a{flex:0 0 auto;padding:5px 8px;font-size:.78rem;font-weight:750;text-decoration:none}section{margin:38px 0;scroll-margin-top:20px}h2{margin:0 0 10px;color:var(--navy);font-size:1.65rem}h3{margin:20px 0 7px;color:var(--navy)}p{margin:8px 0}.lead{max-width:930px;color:var(--muted)}.box,.table-wrap{border:1px solid var(--line);border-radius:8px;background:var(--paper);box-shadow:var(--shadow)}.box{padding:17px}.warning{border-left:6px solid #9b6b12;background:var(--warm)}.stop{border-left:6px solid var(--red)}.two{display:grid;grid-template-columns:1fr 1fr;gap:12px}.table-wrap{overflow-x:auto}table{width:100%;min-width:790px;border-collapse:collapse}th,td{padding:9px 11px;border-bottom:1px solid var(--line);text-align:left;vertical-align:top}th{background:var(--soft);color:var(--navy);font-size:.74rem;text-transform:uppercase}tr:last-child td{border-bottom:0}code{padding:.08em .3em;border-radius:4px;background:var(--soft);font:.88em ui-monospace,monospace}pre{overflow:auto;padding:16px;border-radius:8px;background:#15212c;color:#edf4f7}li+li{margin-top:.38rem}@media(prefers-color-scheme:dark){:root{--bg:#0d1520;--paper:#151f2b;--ink:#e9eef3;--muted:#b3bec9;--line:#364658;--navy:#b7d7ed;--teal:#77cbd2;--soft:#1b3041;--warm:#382f1d;--shadow:none}}@media(max-width:760px){.two{grid-template-columns:1fr}nav{flex-wrap:wrap}}@media print{header{background:#173b5b!important;print-color-adjust:exact}.box,.table-wrap{box-shadow:none;break-inside:avoid}nav{display:none}}
+  </style>
+</head>
+<body>
+<header><div class="wrap">
+  <p class="eyebrow">SOTA remediation plan · version 7 · awaiting approval</p>
+  <h1>Make SOTA study outputs consistent and verifiable</h1>
+  <div class="meta"><span><strong>Date:</strong> 20 August 2026</span><span><strong>Owner:</strong> repository human owner</span><span><strong>Predecessor:</strong> <a href="sota-skill-family-outputs.plan.v6.html">plan v6</a></span><span><strong>Originating report:</strong> <a href="../../issues/sota-skill-family-outputs/sota-skill-family-outputs.report.v8.html">report v8</a></span></div>
+</div></header>
+<main>
+  <nav aria-label="Plan contents"><a href="#decision">Question</a><a href="#scope">Scope</a><a href="#baseline">Baseline</a><a href="#method">Method</a><a href="#flow">Flow</a><a href="#roles">Roles</a><a href="#allocation">Allocation</a><a href="#budget">Budget</a><a href="#outputs">Outputs</a><a href="#tests">Tests</a><a href="#approval">Approval</a></nav>
+
+  <section id="decision">
+    <h2>1. Question and intended decision</h2>
+    <div class="box"><p><strong>Primary question.</strong> What changes to the installed SOTA skill family will ensure that every new SOTA study uses the same compact output structure, preserves the same minimum evidence and state meanings, and receives the same baseline verification while still allowing study-specific methods?</p><p><strong>Intended decision.</strong> After implementation evidence and independent verification exist, the human owner will decide whether the revised SOTA family is fit for use on new studies and whether any legacy migration should be authorized.</p></div>
+    <p>This plan is a remediation design and execution contract awaiting approval. It does not itself authorize implementation, accept results, alter historical runs, or grant deployment authority.</p>
+  </section>
+
+  <section id="scope">
+    <h2>2. Scope and evidence boundary</h2>
+    <div class="two"><div class="box"><h3>In scope</h3><ul><li>A minimal conditional plan template owned by <code>sota-plan-create</code>.</li><li>The compact plan/run topology selected in report v8.</li><li>A family contract covering required contents, precedence, extensions, lifecycle, provenance, challenge, verification, and terminal states.</li><li>Updates to all seven currently installed SOTA skills and their direct references.</li><li>Reuse or explicit extension of the repository execution-log schema.</li><li>Deterministic validation, minimal and complex fixtures, and read-only legacy assessment.</li><li>An updated standalone SOTA family guide and remediation report.</li></ul></div><div class="box"><h3>Excluded</h3><ul><li>Changing research questions, evidence sources, instruments, evaluations, or conclusions to make studies identical.</li><li>Restoring the deleted <code>sota-incident-analyze</code> skill without a separate owner decision.</li><li>Creating a file or directory for every role or workflow stage.</li><li>Rewriting historical runs, fabricating missing provenance, or treating compatibility assessment as migration.</li><li>Unrelated skill families, generic repository plan templates, deployment, or release.</li></ul></div></div>
+    <p><strong>Evidence boundary.</strong> The sole originating finding record is <a href="../../issues/sota-skill-family-outputs/sota-skill-family-outputs.report.v8.html">report v8</a>. Execution may inspect the current seven installed <code>sota-*</code> skills, their direct references and existing schemas, the two historical run trees named by the report, the current family guide, and repository tests. Plans v1–v6 provide provenance only and are not governing instructions.</p>
+    <p><strong>Assumptions.</strong> Report v8 remains pending human review; therefore this plan also remains awaiting approval. Current working-tree edits and the deletion of <code>sota-incident-analyze</code> belong to the user and must not be reversed. No preliminary study is required because report v8 fixes the remediation classes, the current family is small, and the two required test shapes are known. If schema reuse or lifecycle applicability cannot be resolved within this boundary, stop for a new plan version.</p>
+  </section>
+
+  <section id="baseline">
+    <h2>3. Target contract</h2>
+    <h3>Compact topology</h3>
+    <pre>research/&lt;sota-slug&gt;/
+├── plan/
+│   └── &lt;sota-slug&gt;.plan.vN.html
+└── runs/
+    └── &lt;run-id&gt;/
+        ├── report.html
+        ├── execution-log.json
+        └── evidence/          # optional</pre>
+    <div class="table-wrap"><table><thead><tr><th>Artifact</th><th>Required responsibility</th><th>Authority</th></tr></thead><tbody>
+      <tr><td>Versioned plan</td><td>Prospective question, decision, scope, method, roles, allocations, budgets, gates, stopping rules, outputs, verification, and approval state.</td><td>Sole execution contract after explicit approval; immutable versions.</td></tr>
+      <tr><td><code>execution-log.json</code></td><td>Actual start/terminal events, actors, installed skill and model/tool versions, inputs and outputs, budgets, retries, deviations, gates, and terminal execution state.</td><td>Append-only run evidence; reuse the repository schema or document and test a versioned extension.</td></tr>
+      <tr><td><code>report.html</code></td><td>Question, method actually used, evidence and findings, limitations, challenge dispositions, verification, and separate terminal states.</td><td>Human-facing result; never substitutes for missing execution events.</td></tr>
+      <tr><td><code>evidence/</code></td><td>Only evidence that cannot reasonably be cited, linked, or embedded; every item indexed from the report and attributable from the log.</td><td>Optional and plan-justified.</td></tr>
+    </tbody></table></div>
+    <h3>Non-waivable family rules</h3>
+    <ol><li>Plans may add or strengthen controls but cannot remove, rename, weaken, or contradict family requirements.</li><li>Every run records stable study, plan, run, activity, finding, challenge, verification, and decision identifiers where applicable.</li><li>Producer, installed skill/version, actual model/tool/version, effort, time, inputs, outputs, and explicit unknown provenance are recorded.</li><li>Independent challenge uses frozen inputs and every challenge receives a disposition.</li><li>Family checks run before stricter plan-specific checks; an unavailable required check is <code>BLOCKED</code>, never <code>PASS</code>.</li><li>The final report separately records research support, execution, verification, human acceptance, and implementation authority.</li><li>Historical packages are evaluated read-only; absence remains absence.</li></ol>
+    <div class="table-wrap"><table><thead><tr><th>Dimension</th><th>Allowed states</th></tr></thead><tbody>
+      <tr><td>Research support</td><td><code>SUPPORTED</code>, <code>PARTIALLY_SUPPORTED</code>, <code>NOT_SUPPORTED</code>, <code>INCONCLUSIVE</code>, <code>BLOCKED</code></td></tr>
+      <tr><td>Execution</td><td><code>NOT_STARTED</code>, <code>RUNNING</code>, <code>BLOCKED</code>, <code>FAILED</code>, <code>COMPLETE</code></td></tr>
+      <tr><td>Verification</td><td><code>NOT_RUN</code>, <code>PASS</code>, <code>FAIL</code>, <code>BLOCKED</code></td></tr>
+      <tr><td>Human acceptance</td><td><code>PENDING</code>, <code>ACCEPTED</code>, <code>REJECTED</code>, <code>REVISION_REQUESTED</code></td></tr>
+      <tr><td>Implementation authority</td><td><code>NONE</code>, <code>LIMITED</code>, <code>GRANTED</code>, <code>REVOKED</code>; human owner only</td></tr>
+    </tbody></table></div>
+  </section>
+
+  <section id="method">
+    <h2>4. Work plan</h2>
+    <ol>
+      <li><strong>Freeze scope and inventory.</strong> Record current digests and status for report v8, seven installed skills, direct references, relevant schemas, family guide, and both historical run trees. Do not alter user changes.</li>
+      <li><strong>Map requirements.</strong> Map every report-v8 correction and verified defect class to a contract clause, owning skill, output artifact, and deterministic test. Label report facts, owner decisions, planning choices, and unknowns separately.</li>
+      <li><strong>Define the family contract.</strong> Specify the compact topology, plan/log/report responsibilities, strengthen-only precedence, lifecycle applicability, provenance, challenge, failure, and state semantics.</li>
+      <li><strong>Create the minimal plan template.</strong> Add a family-owned conditional HTML template and remove the requirement to use the LLM-failure plan as the universal structure. Preserve it as a complex example only.</li>
+      <li><strong>Bind records to schemas.</strong> Reuse the existing execution-log contract where compatible. Create only the smallest versioned extensions or report contracts required for otherwise unexpressible invariants.</li>
+      <li><strong>Update installed skills.</strong> Make <code>sota-plan-create</code>, <code>sota-plan-execute</code>, <code>sota-method-lead</code>, <code>sota-evidence-review</code>, <code>sota-synthesize</code>, <code>sota-independent-challenge</code>, and <code>sota-verify</code> produce, consume, and validate the same contract.</li>
+      <li><strong>Build fixtures and validator.</strong> Create one minimal valid study, one complex valid study, and focused invalid fixtures for each baseline rule.</li>
+      <li><strong>Assess legacy packages.</strong> Run the same baseline in read-only mode against both historical runs. Record nonconformance and unknown provenance without migration or repair.</li>
+      <li><strong>Update documentation.</strong> Regenerate the standalone family guide from the implemented skills and contract; document how callers start a study, where outputs appear, how failures route, and what evidence establishes trust.</li>
+      <li><strong>Synthesize, challenge, correct, and verify.</strong> Produce the remediation report and traceability matrix, freeze them for independent challenge, correct accepted findings, run all deterministic checks, and deliver results for human decision.</li>
+    </ol>
+    <h3>Eligibility and evidence handling</h3>
+    <p>Include only current family files, directly consumed repository contracts, report-v8 evidence, named historical packages, and tests necessary to prove the corrections. Exclude unrelated schemas and inferred historical events. Cite repository paths and stable IDs. Deterministic inspection establishes existence, syntax, links, hashes, and schema conformance; model judgment is reserved for contract design, classification, synthesis, and challenge.</p>
+  </section>
+
+  <section id="flow">
+    <h2>5. Dependency and data flow</h2>
+    <pre>HUMAN APPROVES PLAN
+        |
+scope freeze + inventory
+        |
+report requirements → contract and traceability map
+        |
+  +-----+-------------------+
+  |                         |
+plan template          record/schema binding
+  |                         |
+  +---------- skill integration
+                         |
+             fixtures + validator
+                         |
+       legacy read-only assessment
+                         |
+           family guide + report
+                         |
+    independent challenge → correction
+                         |
+        deterministic verification
+                         |
+             HUMAN DECISION</pre>
+    <p><strong>Textual equivalent.</strong> Approval precedes all execution. Inventory and requirement mapping establish the contract. Template and schema work may proceed in parallel after the contract is fixed. Skill integration consumes both. Fixtures and validator gate legacy assessment. Documentation and the remediation report use only implemented, tested behavior. Independent challenge precedes correction and final verification. Verification results go to the human owner.</p>
+    <div class="table-wrap"><table><thead><tr><th>From</th><th>To</th><th>Transfer</th><th>Control</th></tr></thead><tbody>
+      <tr><td>Report v8 and current repository</td><td>Method lead and evidence reviewer</td><td>Findings, corrections, current artifacts, legacy packages</td><td>Read-only baseline and digests</td></tr>
+      <tr><td>Method lead</td><td>Implementers</td><td>Approved clauses, applicability, scope, budget, deviation decisions</td><td>Stable requirement IDs</td></tr>
+      <tr><td>Evidence reviewer</td><td>Synthesis and tests</td><td>Requirement-to-evidence mappings and legacy observations</td><td>Exact paths; no invented history</td></tr>
+      <tr><td>Implementation units</td><td>Challenge and verification</td><td>Frozen skills, templates, schemas, fixtures, guide, report, traceability</td><td>Digests and complete output index</td></tr>
+      <tr><td>Challenger</td><td>Responsible producer</td><td>Challenges and required dispositions</td><td>No self-disposition; unresolved Critical/High blocks</td></tr>
+      <tr><td>Verifier</td><td>Human owner</td><td>Family and plan check results, failures, limitations, terminal states</td><td>Verifier cannot accept or authorize</td></tr>
+    </tbody></table></div>
+  </section>
+
+  <section id="roles">
+    <h2>6. Roles and authority</h2>
+    <div class="table-wrap"><table><thead><tr><th>Installed role skill</th><th>Inputs</th><th>Output and responsibility</th><th>Boundary</th></tr></thead><tbody>
+      <tr><td><code>sota-method-lead</code></td><td>Approved v7, report v8, inventory, deviations</td><td>Govern scope, applicability, requirement IDs, evidence coverage, budget, stops, and pre-approved deviations</td><td>Cannot approve plan, acceptance, or implementation; material scope returns to planning</td></tr>
+      <tr><td><code>sota-evidence-review</code></td><td>Report evidence, current files, legacy packages, criteria from method lead</td><td>Auditable requirement-to-evidence mapping and read-only legacy observations</td><td>No historical repair, invented provenance, or final design authority</td></tr>
+      <tr><td><code>sota-synthesize</code></td><td>Implemented contract, mappings, test results, legacy assessment</td><td>Self-contained remediation findings, limitations, recommendations, and report</td><td>Cannot self-verify, self-challenge, or accept</td></tr>
+      <tr><td><code>sota-independent-challenge</code></td><td>Frozen outputs, evidence map, acceptance matrix</td><td>Challenge causal claims, completeness, applicability, feasibility, and omitted alternatives</td><td>No edits or acceptance; different model family</td></tr>
+      <tr><td><code>sota-verify</code></td><td>Corrected package, fixtures, traceability, challenge dispositions</td><td>Deterministic family baseline and plan-specific verification report</td><td>Cannot waive required checks or grant human acceptance</td></tr>
+      <tr><td>Deterministic tools</td><td>Files, schemas, links, digests, fixtures</td><td>Inventory, validation, comparison, rendering, and reproducible test receipts</td><td>No semantic or authority decisions</td></tr>
+      <tr><td>Human owner</td><td>Plan, deviations, residual risks, final verification</td><td>Approve or reject plan, material deviations, acceptance, migration, and implementation authority</td><td>Sole authority source</td></tr>
+    </tbody></table></div>
+    <div class="box warning"><p><strong>Current role boundary.</strong> <code>sota-incident-analyze</code> is not installed in the current working tree. This plan neither restores it nor assigns work to it. If the owner requires a dedicated incident-analysis role, update the originating report and create plan v8 before execution.</p></div>
+  </section>
+
+  <section id="allocation">
+    <h2>7. Model, tool, and human allocation</h2>
+    <div class="table-wrap"><table><thead><tr><th>Work</th><th>Executor</th><th>Control and reason</th></tr></thead><tbody>
+      <tr><td>Discovery, hashing, paths, links, schema validation, fixtures, render checks</td><td>Deterministic tools</td><td>Measurable operations require reproducible receipts, not model judgment.</td></tr>
+      <tr><td>Bounded metadata normalization, if volume requires it</td><td><code>gpt-5.6-luna</code>, medium</td><td>Reversible only; Terra samples at least 20%; no final exclusion authority.</td></tr>
+      <tr><td>Requirement/evidence mapping and legacy classification</td><td><code>gpt-5.6-terra</code>, high</td><td>Exact repository locators; facts, inference, and unknowns separated.</td></tr>
+      <tr><td>Contract design, comparison, integration decisions, synthesis</td><td><code>gpt-5.6-sol</code>, xhigh</td><td>High-consequence cross-artifact reasoning; every decision maps to evidence and a test.</td></tr>
+      <tr><td>Independent challenge</td><td><code>gpt-5.5</code>, xhigh</td><td>Preserve model-family diversity; frozen inputs; no access to intended defenses.</td></tr>
+      <tr><td>Scope, budget, deviations, plan approval, acceptance, implementation authority</td><td>Human owner</td><td>Authority decisions are not inference tasks.</td></tr>
+    </tbody></table></div>
+    <p>Execution records the actual executor, model version, effort, tool version, inputs, outputs, and result. Any model substitution, role reassignment, new artifact class, budget increase, or authority change requires an approved deviation before affected work begins; material scope returns to <code>sota-plan-create</code>.</p>
+  </section>
+
+  <section id="budget">
+    <h2>8. Budget and stopping rules</h2>
+    <div class="table-wrap"><table><thead><tr><th>Ceiling</th><th>Derivation</th><th>Confidence</th><th>Measurement, warning, and hard stop</th></tr></thead><tbody>
+      <tr><td>20 model calls</td><td>2 mapping calls + 5 contract/template/schema decisions + 7 skill integrations + 2 fixture/legacy reviews + 2 synthesis/correction + 1 challenge + 1 verification review.</td><td>Medium</td><td>Append each call to the execution log; warn at 16; stop before call 21.</td></tr>
+      <tr><td>320,000 total model tokens</td><td>20 calls × 16,000-token conservative average for repository-heavy inputs and outputs.</td><td>Low</td><td>Record platform telemetry when available; warn at 256,000; stop at 320,000. If unavailable, mark unavailable and enforce calls plus elapsed time.</td></tr>
+      <tr><td>10 elapsed hours</td><td>1 inventory/mapping + 4 contract and integration + 2 fixtures/legacy + 1 documentation + 1 challenge/correction + 1 verification.</td><td>Medium</td><td>Use wall-clock timestamps; warn at 8 hours; stop at 10.</td></tr>
+      <tr><td>2 attempts per failed operation</td><td>Initial method plus one materially changed retry.</td><td>High</td><td>Log failure and changed approach; a third attempt requires owner approval.</td></tr>
+      <tr><td>0 external monetary spend</td><td>Repository-local work and already available models/tools are sufficient.</td><td>High</td><td>Any paid external service or purchase stops for owner approval.</td></tr>
+    </tbody></table></div>
+    <p><strong>Convergence.</strong> Stop comparison after two consecutive complete passes find no new requirement or defect class. Stop immediately if report-v8 scope must expand, a required dependency is missing, user-owned changes would be overwritten, historical evidence would be mutated, a required measurement cannot be enforced by its fallback, or human authority is required.</p>
+  </section>
+
+  <section id="outputs">
+    <h2>9. Required outputs</h2>
+    <div class="table-wrap"><table><thead><tr><th>Output</th><th>Required contents</th><th>Producer / consumer</th></tr></thead><tbody>
+      <tr><td>Normative SOTA family contract</td><td>Topology, artifact responsibilities, precedence, extensions, lifecycle, provenance, challenge, verification, failure, and terminal states</td><td>Method lead and Sol / all installed skills and verifier</td></tr>
+      <tr><td>Minimal conditional SOTA plan template</td><td>Universal sections, conditional sections, self-contained approval state, no incident-plan dependency</td><td><code>sota-plan-create</code> / callers and executor</td></tr>
+      <tr><td>Record schemas or documented reuse decisions</td><td>Execution-log reuse/extension, report terminal contract, stable IDs, compatibility policy</td><td>Contract implementer / executor and verifier</td></tr>
+      <tr><td>Updated seven-skill family</td><td>Exact inputs, outputs, handoffs, failure routes, provenance, and authority boundaries</td><td>Skill implementers / family callers</td></tr>
+      <tr><td>Validator and fixtures</td><td>Minimal valid, complex valid, and negative cases for every baseline rule</td><td>Deterministic tools / verifier</td></tr>
+      <tr><td>Two read-only legacy assessments</td><td>Same baseline, exact evidence, explicit non-applicability and unknowns, pre/post source digests</td><td>Evidence reviewer / synthesis and owner</td></tr>
+      <tr><td>Updated standalone family guide</td><td>Start path, roles, handoffs, outputs, failure routing, examples, and trust evidence matching installed bytes</td><td>Documentation producer / callers</td></tr>
+      <tr><td>Traceability matrix and remediation report</td><td>Report finding → clause → file → test → result; limitations, challenge dispositions, verification, residual risk</td><td>Synthesis / challenger, verifier, owner</td></tr>
+      <tr><td>Execution log and terminal result</td><td>Actual actors, allocations, budget, deviations, outputs, and separate five-dimensional state envelope</td><td>Executor / verifier and owner</td></tr>
+    </tbody></table></div>
+  </section>
+
+  <section id="tests">
+    <h2>10. Acceptance and verification</h2>
+    <div class="table-wrap"><table><thead><tr><th>ID</th><th>Requirement</th><th>Proving test</th></tr></thead><tbody>
+      <tr><td>AC-01</td><td>Minimal family-owned template</td><td>A minimal literature study and a complex mixed-method study both instantiate successfully; irrelevant conditional sections are absent and all universal fields remain.</td></tr>
+      <tr><td>AC-02</td><td>Compact topology</td><td>One validator discovers the plan and each run’s report/log/evidence without plan-specific path configuration; missing or relocated required files fail.</td></tr>
+      <tr><td>AC-03</td><td>Plan/log/report separation</td><td>Prospective instructions appear only in the plan, actual events in the log, and findings/states in the report; duplication or contradiction fails.</td></tr>
+      <tr><td>AC-04</td><td>Strengthen-only plans</td><td>An added stricter check passes; deleting, weakening, relabeling, or overriding a family rule fails plan preflight.</td></tr>
+      <tr><td>AC-05</td><td>Execution-log reuse</td><td>Valid events conform to the selected repository schema; any extension is versioned, justified, backward-tested, and contains no duplicate object with the same authority.</td></tr>
+      <tr><td>AC-06</td><td>Invocation provenance</td><td>Every model/skill activity records actual installed skill identity/version or explicit unknown, model/tool version, effort, inputs, outputs, and paired terminal event.</td></tr>
+      <tr><td>AC-07</td><td>Independent challenge</td><td>Frozen input and every challenge/disposition are present; an unresolved Critical or High challenge blocks completion.</td></tr>
+      <tr><td>AC-08</td><td>Family-first verification</td><td>The same seeded defect produces the same family outcome in minimal and complex runs before plan-specific checks execute.</td></tr>
+      <tr><td>AC-09</td><td>Five separate terminal dimensions</td><td>Schema rejects combined or missing research, execution, verification, acceptance, or authority states; verification PASS with acceptance PENDING remains unauthorized.</td></tr>
+      <tr><td>AC-10</td><td>Read-only legacy assessment</td><td>Both historical runs receive the same baseline and pre/post tree digests match exactly; unknown provenance remains unknown.</td></tr>
+      <tr><td>AC-11</td><td>Installed skill integration</td><td>Producer/consumer tests show all seven installed skills use the canonical artifacts and failure routes; no required handoff points to the deleted incident skill.</td></tr>
+      <tr><td>AC-12</td><td>Guide and report accuracy</td><td>Links, topology, examples, states, role inventory, template version, validator version, and test results match installed artifacts; HTML renders without overflow.</td></tr>
+      <tr><td>AC-13</td><td>Traceability completeness</td><td>Every report-v8 correction and every mandatory clause maps to an owning file and passing test; unmapped requirements fail verification.</td></tr>
+    </tbody></table></div>
+    <p><strong>Verification sequence.</strong> Run syntax and schema checks; run minimal and complex positive fixtures; run every negative fixture; reconcile traceability; compare legacy pre/post digests; validate links and standalone HTML; render human-facing artifacts; confirm all challenge dispositions; then run <code>sota-verify</code> against this exact plan version. A required failed or unmeasurable check prevents acceptance.</p>
+  </section>
+
+  <section id="approval">
+    <h2>11. Approval and terminal conditions</h2>
+    <div class="box stop"><p><strong>Current state:</strong> plan AWAITING_APPROVAL; execution NOT_STARTED; verification NOT_RUN; human acceptance PENDING; implementation authority NONE.</p></div>
+    <p><strong>Approval requested.</strong> Approve or request changes to this plan as the complete remediation contract. Plan approval does not itself authorize implementation; execution begins only after the human owner separately directs execution of this exact version.</p>
+    <p><strong>Success.</strong> All AC-01–AC-13 checks pass, no Critical or High challenge remains unresolved, all required outputs exist, budgets remain within ceilings, legacy digests are unchanged, and the final state envelope is complete.</p>
+    <p><strong>Blocked.</strong> A required dependency or authority decision is missing, a material scope change requires report synchronization, a hard measurement fallback is unavailable, or user-owned/historical data cannot be preserved.</p>
+    <p><strong>Failed.</strong> A required test remains failed after its allowed retry, the hard budget is reached, a historical artifact is modified, or required provenance is fabricated.</p>
+    <p><strong>Version note.</strong> Version 7 replaces plan v6’s many-directory topology and ancillary work with the compact plan/report/log/evidence contract and five corrections stated in report v8. It uses the current seven-skill inventory, removes the unapproved <code>sota-slop-remove</code> scope, preserves read-only legacy assessment, and restates the full executable contract here. This note is provenance only.</p>
+  </section>
+</main>
+</body>
+</html>

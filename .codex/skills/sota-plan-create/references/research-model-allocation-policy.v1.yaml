@@ -25,7 +25,7 @@ allocations:
       - The executor has no final exclusion authority.
     reason: Use the economical model for bounded, high-volume work.
 
-  - work: Preliminary mapping, extraction, and incident reconstruction
+  - work: Preliminary mapping and extraction
     executor:
       type: model
       model: gpt-5.6-terra
@@ -59,4 +59,3 @@ plan_contract:
     - Record the actual executor, model version, and reasoning effort during execution.
     - Record and justify every deviation before affected work begins.
   override_authority: human_owner
-

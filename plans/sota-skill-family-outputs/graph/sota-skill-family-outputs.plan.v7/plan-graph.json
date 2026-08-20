@@ -1,0 +1,1288 @@
+{
+  "schema_version": "1.0",
+  "graph_id": "PG-SOTA-FAMILY-V7",
+  "plan": {
+    "path": "plans/sota-skill-family-outputs/sota-skill-family-outputs.plan.v7.html",
+    "version": "7",
+    "digest": "sha256:05473c35051c501969f864510e145c00e5eb974f5d49a0f8c1ab0b0418291a05",
+    "approval": "APPROVED",
+    "implementation_authority": "GRANTED",
+    "authority_evidence": "user conversation: proceed; what are you waiting for"
+  },
+  "budgets": {
+    "model_calls": 20,
+    "total_tokens": 320000,
+    "elapsed_hours": 10,
+    "max_attempts": 2,
+    "external_spend": 0
+  },
+  "protected_paths": [
+    "plans/sota-skill-family-outputs/deprecated/",
+    "research/codex_calls_claude_qa_gate/",
+    "research/codex_same_model_qa_gate/"
+  ],
+  "nodes": [
+    {
+      "id": "G-contract",
+      "kind": "goal",
+      "title": "Define family contract, template, and schema binding",
+      "depends_on": [],
+      "executor": {
+        "type": "coordinator"
+      },
+      "inputs": [
+        "approved plan v7"
+      ],
+      "outputs": [
+        "contract result"
+      ],
+      "acceptance": {
+        "criteria": [
+          "AC-01",
+          "AC-02",
+          "AC-03",
+          "AC-04",
+          "AC-05",
+          "AC-06",
+          "AC-09"
+        ]
+      },
+      "budget": {
+        "source": "plan-v7"
+      },
+      "retry": {
+        "max_attempts": 1,
+        "repair_node": null
+      },
+      "terminal_routes": {
+        "pass": "PT-contract",
+        "fail": "failed",
+        "blocked": "blocked"
+      }
+    },
+    {
+      "id": "PT-contract",
+      "kind": "prompt_test",
+      "title": "Preflight Define family contract, template, and schema binding",
+      "depends_on": [
+        "G-contract"
+      ],
+      "executor": {
+        "type": "tool",
+        "command_or_check": "lint prompts/contract.prompt.md for scope, inputs, outputs, oracle, budget, provenance, stops"
+      },
+      "inputs": [
+        "G-contract"
+      ],
+      "outputs": [
+        "PT-contract-receipt"
+      ],
+      "acceptance": {
+        "required": "PASS"
+      },
+      "budget": {
+        "calls": 0
+      },
+      "retry": {
+        "max_attempts": 2,
+        "repair_node": null
+      },
+      "terminal_routes": {
+        "pass": "I-contract",
+        "fail": "blocked",
+        "blocked": "blocked"
+      }
+    },
+    {
+      "id": "I-contract",
+      "kind": "implement",
+      "title": "Define family contract, template, and schema binding",
+      "depends_on": [
+        "PT-contract"
+      ],
+      "executor": {
+        "type": "model",
+        "model": "gpt-5.6-sol",
+        "effort": "xhigh",
+        "routing_basis": "plan v7 allocation",
+        "prompt_path": "prompts/contract.prompt.md"
+      },
+      "inputs": [
+        "PT-contract-receipt"
+      ],
+      "outputs": [
+        "I-contract-artifacts"
+      ],
+      "acceptance": {
+        "criteria": [
+          "AC-01",
+          "AC-02",
+          "AC-03",
+          "AC-04",
+          "AC-05",
+          "AC-06",
+          "AC-09"
+        ]
+      },
+      "budget": {
+        "source": "plan-v7"
+      },
+      "retry": {
+        "max_attempts": 2,
+        "repair_node": null
+      },
+      "terminal_routes": {
+        "pass": "RT-contract",
+        "fail": "blocked",
+        "blocked": "blocked"
+      }
+    },
+    {
+      "id": "RT-contract",
+      "kind": "result_test",
+      "title": "Test Define family contract, template, and schema binding",
+      "depends_on": [
+        "I-contract"
+      ],
+      "executor": {
+        "type": "tool",
+        "command_or_check": "run acceptance checks AC-01,AC-02,AC-03,AC-04,AC-05,AC-06,AC-09"
+      },
+      "inputs": [
+        "I-contract-artifacts"
+      ],
+      "outputs": [
+        "RT-contract-receipt"
+      ],
+      "acceptance": {
+        "required": "PASS"
+      },
+      "budget": {
+        "calls": 0
+      },
+      "retry": {
+        "max_attempts": 2,
+        "repair_node": null
+      },
+      "terminal_routes": {
+        "pass": "next",
+        "fail": "blocked",
+        "blocked": "blocked"
+      }
+    },
+    {
+      "id": "G-integrate",
+      "kind": "goal",
+      "title": "Integrate all seven installed SOTA skills",
+      "depends_on": [
+        "RT-contract"
+      ],
+      "executor": {
+        "type": "coordinator"
+      },
+      "inputs": [
+        "approved plan v7"
+      ],
+      "outputs": [
+        "integrate result"
+      ],
+      "acceptance": {
+        "criteria": [
+          "AC-11"
+        ]
+      },
+      "budget": {
+        "source": "plan-v7"
+      },
+      "retry": {
+        "max_attempts": 1,
+        "repair_node": null
+      },
+      "terminal_routes": {
+        "pass": "PT-integrate",
+        "fail": "failed",
+        "blocked": "blocked"
+      }
+    },
+    {
+      "id": "PT-integrate",
+      "kind": "prompt_test",
+      "title": "Preflight Integrate all seven installed SOTA skills",
+      "depends_on": [
+        "G-integrate"
+      ],
+      "executor": {
+        "type": "tool",
+        "command_or_check": "lint prompts/integrate.prompt.md for scope, inputs, outputs, oracle, budget, provenance, stops"
+      },
+      "inputs": [
+        "G-integrate"
+      ],
+      "outputs": [
+        "PT-integrate-receipt"
+      ],
+      "acceptance": {
+        "required": "PASS"
+      },
+      "budget": {
+        "calls": 0
+      },
+      "retry": {
+        "max_attempts": 2,
+        "repair_node": null
+      },
+      "terminal_routes": {
+        "pass": "I-integrate",
+        "fail": "blocked",
+        "blocked": "blocked"
+      }
+    },
+    {
+      "id": "I-integrate",
+      "kind": "implement",
+      "title": "Integrate all seven installed SOTA skills",
+      "depends_on": [
+        "PT-integrate"
+      ],
+      "executor": {
+        "type": "model",
+        "model": "gpt-5.6-sol",
+        "effort": "xhigh",
+        "routing_basis": "plan v7 allocation",
+        "prompt_path": "prompts/integrate.prompt.md"
+      },
+      "inputs": [
+        "PT-integrate-receipt"
+      ],
+      "outputs": [
+        "I-integrate-artifacts"
+      ],
+      "acceptance": {
+        "criteria": [
+          "AC-11"
+        ]
+      },
+      "budget": {
+        "source": "plan-v7"
+      },
+      "retry": {
+        "max_attempts": 2,
+        "repair_node": null
+      },
+      "terminal_routes": {
+        "pass": "RT-integrate",
+        "fail": "blocked",
+        "blocked": "blocked"
+      }
+    },
+    {
+      "id": "RT-integrate",
+      "kind": "result_test",
+      "title": "Test Integrate all seven installed SOTA skills",
+      "depends_on": [
+        "I-integrate"
+      ],
+      "executor": {
+        "type": "tool",
+        "command_or_check": "run acceptance checks AC-11"
+      },
+      "inputs": [
+        "I-integrate-artifacts"
+      ],
+      "outputs": [
+        "RT-integrate-receipt"
+      ],
+      "acceptance": {
+        "required": "PASS"
+      },
+      "budget": {
+        "calls": 0
+      },
+      "retry": {
+        "max_attempts": 2,
+        "repair_node": null
+      },
+      "terminal_routes": {
+        "pass": "next",
+        "fail": "blocked",
+        "blocked": "blocked"
+      }
+    },
+    {
+      "id": "G-fixtures",
+      "kind": "goal",
+      "title": "Build validator and positive/negative fixtures",
+      "depends_on": [
+        "RT-integrate"
+      ],
+      "executor": {
+        "type": "coordinator"
+      },
+      "inputs": [
+        "approved plan v7"
+      ],
+      "outputs": [
+        "fixtures result"
+      ],
+      "acceptance": {
+        "criteria": [
+          "AC-01",
+          "AC-02",
+          "AC-03",
+          "AC-04",
+          "AC-05",
+          "AC-06",
+          "AC-07",
+          "AC-08",
+          "AC-09",
+          "AC-11",
+          "AC-13"
+        ]
+      },
+      "budget": {
+        "source": "plan-v7"
+      },
+      "retry": {
+        "max_attempts": 1,
+        "repair_node": null
+      },
+      "terminal_routes": {
+        "pass": "PT-fixtures",
+        "fail": "failed",
+        "blocked": "blocked"
+      }
+    },
+    {
+      "id": "PT-fixtures",
+      "kind": "prompt_test",
+      "title": "Preflight Build validator and positive/negative fixtures",
+      "depends_on": [
+        "G-fixtures"
+      ],
+      "executor": {
+        "type": "tool",
+        "command_or_check": "validate deterministic node contract"
+      },
+      "inputs": [
+        "G-fixtures"
+      ],
+      "outputs": [
+        "PT-fixtures-receipt"
+      ],
+      "acceptance": {
+        "required": "PASS"
+      },
+      "budget": {
+        "calls": 0
+      },
+      "retry": {
+        "max_attempts": 2,
+        "repair_node": null
+      },
+      "terminal_routes": {
+        "pass": "I-fixtures",
+        "fail": "blocked",
+        "blocked": "blocked"
+      }
+    },
+    {
+      "id": "I-fixtures",
+      "kind": "implement",
+      "title": "Build validator and positive/negative fixtures",
+      "depends_on": [
+        "PT-fixtures"
+      ],
+      "executor": {
+        "type": "tool",
+        "command_or_check": "build and run validator fixtures"
+      },
+      "inputs": [
+        "PT-fixtures-receipt"
+      ],
+      "outputs": [
+        "I-fixtures-artifacts"
+      ],
+      "acceptance": {
+        "criteria": [
+          "AC-01",
+          "AC-02",
+          "AC-03",
+          "AC-04",
+          "AC-05",
+          "AC-06",
+          "AC-07",
+          "AC-08",
+          "AC-09",
+          "AC-11",
+          "AC-13"
+        ]
+      },
+      "budget": {
+        "source": "plan-v7"
+      },
+      "retry": {
+        "max_attempts": 2,
+        "repair_node": null
+      },
+      "terminal_routes": {
+        "pass": "RT-fixtures",
+        "fail": "blocked",
+        "blocked": "blocked"
+      }
+    },
+    {
+      "id": "RT-fixtures",
+      "kind": "result_test",
+      "title": "Test Build validator and positive/negative fixtures",
+      "depends_on": [
+        "I-fixtures"
+      ],
+      "executor": {
+        "type": "tool",
+        "command_or_check": "run acceptance checks AC-01,AC-02,AC-03,AC-04,AC-05,AC-06,AC-07,AC-08,AC-09,AC-11,AC-13"
+      },
+      "inputs": [
+        "I-fixtures-artifacts"
+      ],
+      "outputs": [
+        "RT-fixtures-receipt"
+      ],
+      "acceptance": {
+        "required": "PASS"
+      },
+      "budget": {
+        "calls": 0
+      },
+      "retry": {
+        "max_attempts": 2,
+        "repair_node": null
+      },
+      "terminal_routes": {
+        "pass": "next",
+        "fail": "blocked",
+        "blocked": "blocked"
+      }
+    },
+    {
+      "id": "G-legacy",
+      "kind": "goal",
+      "title": "Assess both historical packages read-only",
+      "depends_on": [
+        "RT-fixtures"
+      ],
+      "executor": {
+        "type": "coordinator"
+      },
+      "inputs": [
+        "approved plan v7"
+      ],
+      "outputs": [
+        "legacy result"
+      ],
+      "acceptance": {
+        "criteria": [
+          "AC-10"
+        ]
+      },
+      "budget": {
+        "source": "plan-v7"
+      },
+      "retry": {
+        "max_attempts": 1,
+        "repair_node": null
+      },
+      "terminal_routes": {
+        "pass": "PT-legacy",
+        "fail": "failed",
+        "blocked": "blocked"
+      }
+    },
+    {
+      "id": "PT-legacy",
+      "kind": "prompt_test",
+      "title": "Preflight Assess both historical packages read-only",
+      "depends_on": [
+        "G-legacy"
+      ],
+      "executor": {
+        "type": "tool",
+        "command_or_check": "lint prompts/legacy.prompt.md for scope, inputs, outputs, oracle, budget, provenance, stops"
+      },
+      "inputs": [
+        "G-legacy"
+      ],
+      "outputs": [
+        "PT-legacy-receipt"
+      ],
+      "acceptance": {
+        "required": "PASS"
+      },
+      "budget": {
+        "calls": 0
+      },
+      "retry": {
+        "max_attempts": 2,
+        "repair_node": null
+      },
+      "terminal_routes": {
+        "pass": "I-legacy",
+        "fail": "blocked",
+        "blocked": "blocked"
+      }
+    },
+    {
+      "id": "I-legacy",
+      "kind": "implement",
+      "title": "Assess both historical packages read-only",
+      "depends_on": [
+        "PT-legacy"
+      ],
+      "executor": {
+        "type": "model",
+        "model": "gpt-5.6-terra",
+        "effort": "high",
+        "routing_basis": "plan v7 allocation",
+        "prompt_path": "prompts/legacy.prompt.md"
+      },
+      "inputs": [
+        "PT-legacy-receipt"
+      ],
+      "outputs": [
+        "I-legacy-artifacts"
+      ],
+      "acceptance": {
+        "criteria": [
+          "AC-10"
+        ]
+      },
+      "budget": {
+        "source": "plan-v7"
+      },
+      "retry": {
+        "max_attempts": 2,
+        "repair_node": null
+      },
+      "terminal_routes": {
+        "pass": "RT-legacy",
+        "fail": "blocked",
+        "blocked": "blocked"
+      }
+    },
+    {
+      "id": "RT-legacy",
+      "kind": "result_test",
+      "title": "Test Assess both historical packages read-only",
+      "depends_on": [
+        "I-legacy"
+      ],
+      "executor": {
+        "type": "tool",
+        "command_or_check": "run acceptance checks AC-10"
+      },
+      "inputs": [
+        "I-legacy-artifacts"
+      ],
+      "outputs": [
+        "RT-legacy-receipt"
+      ],
+      "acceptance": {
+        "required": "PASS"
+      },
+      "budget": {
+        "calls": 0
+      },
+      "retry": {
+        "max_attempts": 2,
+        "repair_node": null
+      },
+      "terminal_routes": {
+        "pass": "next",
+        "fail": "blocked",
+        "blocked": "blocked"
+      }
+    },
+    {
+      "id": "G-report",
+      "kind": "goal",
+      "title": "Create guide, traceability, and remediation report",
+      "depends_on": [
+        "RT-legacy"
+      ],
+      "executor": {
+        "type": "coordinator"
+      },
+      "inputs": [
+        "approved plan v7"
+      ],
+      "outputs": [
+        "report result"
+      ],
+      "acceptance": {
+        "criteria": [
+          "AC-12",
+          "AC-13"
+        ]
+      },
+      "budget": {
+        "source": "plan-v7"
+      },
+      "retry": {
+        "max_attempts": 1,
+        "repair_node": null
+      },
+      "terminal_routes": {
+        "pass": "PT-report",
+        "fail": "failed",
+        "blocked": "blocked"
+      }
+    },
+    {
+      "id": "PT-report",
+      "kind": "prompt_test",
+      "title": "Preflight Create guide, traceability, and remediation report",
+      "depends_on": [
+        "G-report"
+      ],
+      "executor": {
+        "type": "tool",
+        "command_or_check": "lint prompts/report.prompt.md for scope, inputs, outputs, oracle, budget, provenance, stops"
+      },
+      "inputs": [
+        "G-report"
+      ],
+      "outputs": [
+        "PT-report-receipt"
+      ],
+      "acceptance": {
+        "required": "PASS"
+      },
+      "budget": {
+        "calls": 0
+      },
+      "retry": {
+        "max_attempts": 2,
+        "repair_node": null
+      },
+      "terminal_routes": {
+        "pass": "I-report",
+        "fail": "blocked",
+        "blocked": "blocked"
+      }
+    },
+    {
+      "id": "I-report",
+      "kind": "implement",
+      "title": "Create guide, traceability, and remediation report",
+      "depends_on": [
+        "PT-report"
+      ],
+      "executor": {
+        "type": "model",
+        "model": "gpt-5.6-sol",
+        "effort": "xhigh",
+        "routing_basis": "plan v7 allocation",
+        "prompt_path": "prompts/report.prompt.md"
+      },
+      "inputs": [
+        "PT-report-receipt"
+      ],
+      "outputs": [
+        "I-report-artifacts"
+      ],
+      "acceptance": {
+        "criteria": [
+          "AC-12",
+          "AC-13"
+        ]
+      },
+      "budget": {
+        "source": "plan-v7"
+      },
+      "retry": {
+        "max_attempts": 2,
+        "repair_node": null
+      },
+      "terminal_routes": {
+        "pass": "RT-report",
+        "fail": "blocked",
+        "blocked": "blocked"
+      }
+    },
+    {
+      "id": "RT-report",
+      "kind": "result_test",
+      "title": "Test Create guide, traceability, and remediation report",
+      "depends_on": [
+        "I-report"
+      ],
+      "executor": {
+        "type": "tool",
+        "command_or_check": "run acceptance checks AC-12,AC-13"
+      },
+      "inputs": [
+        "I-report-artifacts"
+      ],
+      "outputs": [
+        "RT-report-receipt"
+      ],
+      "acceptance": {
+        "required": "PASS"
+      },
+      "budget": {
+        "calls": 0
+      },
+      "retry": {
+        "max_attempts": 2,
+        "repair_node": null
+      },
+      "terminal_routes": {
+        "pass": "next",
+        "fail": "blocked",
+        "blocked": "blocked"
+      }
+    },
+    {
+      "id": "G-challenge",
+      "kind": "goal",
+      "title": "Independently challenge frozen outputs",
+      "depends_on": [
+        "RT-report"
+      ],
+      "executor": {
+        "type": "coordinator"
+      },
+      "inputs": [
+        "approved plan v7"
+      ],
+      "outputs": [
+        "challenge result"
+      ],
+      "acceptance": {
+        "criteria": [
+          "AC-07"
+        ]
+      },
+      "budget": {
+        "source": "plan-v7"
+      },
+      "retry": {
+        "max_attempts": 1,
+        "repair_node": null
+      },
+      "terminal_routes": {
+        "pass": "PT-challenge",
+        "fail": "failed",
+        "blocked": "blocked"
+      }
+    },
+    {
+      "id": "PT-challenge",
+      "kind": "prompt_test",
+      "title": "Preflight Independently challenge frozen outputs",
+      "depends_on": [
+        "G-challenge"
+      ],
+      "executor": {
+        "type": "tool",
+        "command_or_check": "lint prompts/challenge.prompt.md for scope, inputs, outputs, oracle, budget, provenance, stops"
+      },
+      "inputs": [
+        "G-challenge"
+      ],
+      "outputs": [
+        "PT-challenge-receipt"
+      ],
+      "acceptance": {
+        "required": "PASS"
+      },
+      "budget": {
+        "calls": 0
+      },
+      "retry": {
+        "max_attempts": 2,
+        "repair_node": null
+      },
+      "terminal_routes": {
+        "pass": "I-challenge",
+        "fail": "blocked",
+        "blocked": "blocked"
+      }
+    },
+    {
+      "id": "I-challenge",
+      "kind": "implement",
+      "title": "Independently challenge frozen outputs",
+      "depends_on": [
+        "PT-challenge"
+      ],
+      "executor": {
+        "type": "model",
+        "model": "gpt-5.5",
+        "effort": "xhigh",
+        "routing_basis": "plan v7 allocation",
+        "prompt_path": "prompts/challenge.prompt.md"
+      },
+      "inputs": [
+        "PT-challenge-receipt"
+      ],
+      "outputs": [
+        "I-challenge-artifacts"
+      ],
+      "acceptance": {
+        "criteria": [
+          "AC-07"
+        ]
+      },
+      "budget": {
+        "source": "plan-v7"
+      },
+      "retry": {
+        "max_attempts": 2,
+        "repair_node": null
+      },
+      "terminal_routes": {
+        "pass": "RT-challenge",
+        "fail": "blocked",
+        "blocked": "blocked"
+      }
+    },
+    {
+      "id": "RT-challenge",
+      "kind": "result_test",
+      "title": "Test Independently challenge frozen outputs",
+      "depends_on": [
+        "I-challenge"
+      ],
+      "executor": {
+        "type": "tool",
+        "command_or_check": "run acceptance checks AC-07"
+      },
+      "inputs": [
+        "I-challenge-artifacts"
+      ],
+      "outputs": [
+        "RT-challenge-receipt"
+      ],
+      "acceptance": {
+        "required": "PASS"
+      },
+      "budget": {
+        "calls": 0
+      },
+      "retry": {
+        "max_attempts": 2,
+        "repair_node": null
+      },
+      "terminal_routes": {
+        "pass": "next",
+        "fail": "blocked",
+        "blocked": "blocked"
+      }
+    },
+    {
+      "id": "G-verify",
+      "kind": "goal",
+      "title": "Run deterministic family-first final verification",
+      "depends_on": [
+        "RT-challenge"
+      ],
+      "executor": {
+        "type": "coordinator"
+      },
+      "inputs": [
+        "approved plan v7"
+      ],
+      "outputs": [
+        "verify result"
+      ],
+      "acceptance": {
+        "criteria": [
+          "AC-08",
+          "AC-12",
+          "AC-13"
+        ]
+      },
+      "budget": {
+        "source": "plan-v7"
+      },
+      "retry": {
+        "max_attempts": 1,
+        "repair_node": null
+      },
+      "terminal_routes": {
+        "pass": "PT-verify",
+        "fail": "failed",
+        "blocked": "blocked"
+      }
+    },
+    {
+      "id": "PT-verify",
+      "kind": "prompt_test",
+      "title": "Preflight Run deterministic family-first final verification",
+      "depends_on": [
+        "G-verify"
+      ],
+      "executor": {
+        "type": "tool",
+        "command_or_check": "validate deterministic node contract"
+      },
+      "inputs": [
+        "G-verify"
+      ],
+      "outputs": [
+        "PT-verify-receipt"
+      ],
+      "acceptance": {
+        "required": "PASS"
+      },
+      "budget": {
+        "calls": 0
+      },
+      "retry": {
+        "max_attempts": 2,
+        "repair_node": null
+      },
+      "terminal_routes": {
+        "pass": "I-verify",
+        "fail": "blocked",
+        "blocked": "blocked"
+      }
+    },
+    {
+      "id": "I-verify",
+      "kind": "implement",
+      "title": "Run deterministic family-first final verification",
+      "depends_on": [
+        "PT-verify"
+      ],
+      "executor": {
+        "type": "tool",
+        "command_or_check": "run deterministic family-first verification"
+      },
+      "inputs": [
+        "PT-verify-receipt"
+      ],
+      "outputs": [
+        "I-verify-artifacts"
+      ],
+      "acceptance": {
+        "criteria": [
+          "AC-08",
+          "AC-12",
+          "AC-13"
+        ]
+      },
+      "budget": {
+        "source": "plan-v7"
+      },
+      "retry": {
+        "max_attempts": 2,
+        "repair_node": null
+      },
+      "terminal_routes": {
+        "pass": "RT-verify",
+        "fail": "blocked",
+        "blocked": "blocked"
+      }
+    },
+    {
+      "id": "RT-verify",
+      "kind": "result_test",
+      "title": "Test Run deterministic family-first final verification",
+      "depends_on": [
+        "I-verify"
+      ],
+      "executor": {
+        "type": "tool",
+        "command_or_check": "run acceptance checks AC-08,AC-12,AC-13"
+      },
+      "inputs": [
+        "I-verify-artifacts"
+      ],
+      "outputs": [
+        "RT-verify-receipt"
+      ],
+      "acceptance": {
+        "required": "PASS"
+      },
+      "budget": {
+        "calls": 0
+      },
+      "retry": {
+        "max_attempts": 2,
+        "repair_node": null
+      },
+      "terminal_routes": {
+        "pass": "next",
+        "fail": "blocked",
+        "blocked": "blocked"
+      }
+    }
+  ],
+  "edges": [
+    {
+      "from": "G-contract",
+      "to": "PT-contract",
+      "condition": "always"
+    },
+    {
+      "from": "PT-contract",
+      "to": "I-contract",
+      "condition": "pass"
+    },
+    {
+      "from": "I-contract",
+      "to": "RT-contract",
+      "condition": "pass"
+    },
+    {
+      "from": "G-integrate",
+      "to": "PT-integrate",
+      "condition": "always"
+    },
+    {
+      "from": "PT-integrate",
+      "to": "I-integrate",
+      "condition": "pass"
+    },
+    {
+      "from": "I-integrate",
+      "to": "RT-integrate",
+      "condition": "pass"
+    },
+    {
+      "from": "G-fixtures",
+      "to": "PT-fixtures",
+      "condition": "always"
+    },
+    {
+      "from": "PT-fixtures",
+      "to": "I-fixtures",
+      "condition": "pass"
+    },
+    {
+      "from": "I-fixtures",
+      "to": "RT-fixtures",
+      "condition": "pass"
+    },
+    {
+      "from": "G-legacy",
+      "to": "PT-legacy",
+      "condition": "always"
+    },
+    {
+      "from": "PT-legacy",
+      "to": "I-legacy",
+      "condition": "pass"
+    },
+    {
+      "from": "I-legacy",
+      "to": "RT-legacy",
+      "condition": "pass"
+    },
+    {
+      "from": "G-report",
+      "to": "PT-report",
+      "condition": "always"
+    },
+    {
+      "from": "PT-report",
+      "to": "I-report",
+      "condition": "pass"
+    },
+    {
+      "from": "I-report",
+      "to": "RT-report",
+      "condition": "pass"
+    },
+    {
+      "from": "G-challenge",
+      "to": "PT-challenge",
+      "condition": "always"
+    },
+    {
+      "from": "PT-challenge",
+      "to": "I-challenge",
+      "condition": "pass"
+    },
+    {
+      "from": "I-challenge",
+      "to": "RT-challenge",
+      "condition": "pass"
+    },
+    {
+      "from": "G-verify",
+      "to": "PT-verify",
+      "condition": "always"
+    },
+    {
+      "from": "PT-verify",
+      "to": "I-verify",
+      "condition": "pass"
+    },
+    {
+      "from": "I-verify",
+      "to": "RT-verify",
+      "condition": "pass"
+    }
+  ],
+  "traceability": [
+    {
+      "requirement_id": "AC-01",
+      "source_locator": "plan.v7.html#tests:AC-01",
+      "node_ids": [
+        "I-contract",
+        "I-fixtures"
+      ],
+      "test_node_ids": [
+        "RT-contract",
+        "RT-fixtures"
+      ]
+    },
+    {
+      "requirement_id": "AC-02",
+      "source_locator": "plan.v7.html#tests:AC-02",
+      "node_ids": [
+        "I-contract",
+        "I-fixtures"
+      ],
+      "test_node_ids": [
+        "RT-contract",
+        "RT-fixtures"
+      ]
+    },
+    {
+      "requirement_id": "AC-03",
+      "source_locator": "plan.v7.html#tests:AC-03",
+      "node_ids": [
+        "I-contract",
+        "I-fixtures"
+      ],
+      "test_node_ids": [
+        "RT-contract",
+        "RT-fixtures"
+      ]
+    },
+    {
+      "requirement_id": "AC-04",
+      "source_locator": "plan.v7.html#tests:AC-04",
+      "node_ids": [
+        "I-contract",
+        "I-fixtures"
+      ],
+      "test_node_ids": [
+        "RT-contract",
+        "RT-fixtures"
+      ]
+    },
+    {
+      "requirement_id": "AC-05",
+      "source_locator": "plan.v7.html#tests:AC-05",
+      "node_ids": [
+        "I-contract",
+        "I-fixtures"
+      ],
+      "test_node_ids": [
+        "RT-contract",
+        "RT-fixtures"
+      ]
+    },
+    {
+      "requirement_id": "AC-06",
+      "source_locator": "plan.v7.html#tests:AC-06",
+      "node_ids": [
+        "I-contract",
+        "I-fixtures"
+      ],
+      "test_node_ids": [
+        "RT-contract",
+        "RT-fixtures"
+      ]
+    },
+    {
+      "requirement_id": "AC-07",
+      "source_locator": "plan.v7.html#tests:AC-07",
+      "node_ids": [
+        "I-fixtures",
+        "I-challenge"
+      ],
+      "test_node_ids": [
+        "RT-fixtures",
+        "RT-challenge"
+      ]
+    },
+    {
+      "requirement_id": "AC-08",
+      "source_locator": "plan.v7.html#tests:AC-08",
+      "node_ids": [
+        "I-fixtures",
+        "I-verify"
+      ],
+      "test_node_ids": [
+        "RT-fixtures",
+        "RT-verify"
+      ]
+    },
+    {
+      "requirement_id": "AC-09",
+      "source_locator": "plan.v7.html#tests:AC-09",
+      "node_ids": [
+        "I-contract",
+        "I-fixtures"
+      ],
+      "test_node_ids": [
+        "RT-contract",
+        "RT-fixtures"
+      ]
+    },
+    {
+      "requirement_id": "AC-10",
+      "source_locator": "plan.v7.html#tests:AC-10",
+      "node_ids": [
+        "I-legacy"
+      ],
+      "test_node_ids": [
+        "RT-legacy"
+      ]
+    },
+    {
+      "requirement_id": "AC-11",
+      "source_locator": "plan.v7.html#tests:AC-11",
+      "node_ids": [
+        "I-integrate",
+        "I-fixtures"
+      ],
+      "test_node_ids": [
+        "RT-integrate",
+        "RT-fixtures"
+      ]
+    },
+    {
+      "requirement_id": "AC-12",
+      "source_locator": "plan.v7.html#tests:AC-12",
+      "node_ids": [
+        "I-report",
+        "I-verify"
+      ],
+      "test_node_ids": [
+        "RT-report",
+        "RT-verify"
+      ]
+    },
+    {
+      "requirement_id": "AC-13",
+      "source_locator": "plan.v7.html#tests:AC-13",
+      "node_ids": [
+        "I-fixtures",
+        "I-report",
+        "I-verify"
+      ],
+      "test_node_ids": [
+        "RT-fixtures",
+        "RT-report",
+        "RT-verify"
+      ]
+    }
+  ]
+}
+

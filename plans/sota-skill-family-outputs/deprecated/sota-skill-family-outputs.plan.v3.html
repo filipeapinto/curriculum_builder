@@ -1,0 +1,179 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <title>SOTA family remediation plan v3</title>
+  <style>
+    :root{color-scheme:light dark;--bg:#f5f6f7;--paper:#fff;--ink:#182127;--muted:#59656d;--line:#cbd2d7;--accent:#174b63;--note:#f7f0d8}
+    *{box-sizing:border-box}body{margin:0;background:var(--bg);color:var(--ink);font:16px/1.5 system-ui,sans-serif}header,main{width:min(980px,calc(100% - 32px));margin:auto}header{padding:44px 0 20px;border-bottom:1px solid var(--line)}main{padding:10px 0 60px}h1{margin:0 0 10px;font-size:2.3rem;line-height:1.1}h2{margin:38px 0 10px;color:var(--accent);font-size:1.45rem}h3{margin:22px 0 6px;font-size:1.05rem}p{margin:8px 0}.meta{color:var(--muted)}.status{display:inline-block;padding:3px 8px;border:1px solid #9b7b22;background:var(--note);color:#4a3a10;font-weight:700}table{width:100%;border-collapse:collapse;background:var(--paper)}th,td{padding:10px;border:1px solid var(--line);text-align:left;vertical-align:top}th{background:#e9eef1}pre{overflow:auto;padding:16px;border:1px solid var(--line);background:var(--paper);font:14px/1.5 ui-monospace,monospace}code{font-family:ui-monospace,monospace}.decision{padding:14px 16px;border-left:5px solid var(--accent);background:var(--paper)}.warning{padding:14px 16px;border:1px solid #c9ad61;background:var(--note)}ul,ol{padding-left:22px}li+li{margin-top:5px}a{color:var(--accent)}
+    @media(prefers-color-scheme:dark){:root{--bg:#10171c;--paper:#172127;--ink:#edf1f3;--muted:#b2bdc3;--line:#3a4850;--accent:#9ed0e4;--note:#342d1b}.status{color:#f2df9c}th{background:#223039}}
+  </style>
+</head>
+<body>
+<header>
+  <span class="status">AWAITING APPROVAL</span>
+  <h1>SOTA skill-family remediation plan</h1>
+  <p class="meta">Version 3 · 19 August 2026 · Predecessor: <a href="sota_skill_family_method_consistency.plan.v2.html">v2</a> · Implementation authority: none</p>
+</header>
+<main>
+  <section>
+    <h2>1. Decision</h2>
+    <div class="decision">
+      <p>Approve a smaller SOTA family contract and the addition of <code>sota-slop-remove</code>.</p>
+      <p>Do not approve the v2 folder tree, its large schema set, or its separate machine files for every state and stage.</p>
+    </div>
+    <p>The target is a run that another person can inspect without forcing every study into the same internal layout. The family contract will require evidence, provenance, challenge, verification, and an honest final state. It will not require a directory or schema unless a test depends on it.</p>
+  </section>
+
+  <section>
+    <h2>2. Why v2 is being replaced</h2>
+    <table>
+      <thead><tr><th>v2 proposal</th><th>v3 decision</th></tr></thead>
+      <tbody>
+        <tr><td>18 fixed repository artifacts</td><td>Start with six implementation artifacts. Add another only when a failing test proves the need.</td></tr>
+        <tr><td>12 fixed run paths</td><td>Require four run artifacts. Let each approved plan define any study-specific working files.</td></tr>
+        <tr><td>Separate lifecycle, receipts, authority, challenge, terminal, and external-artifact streams</td><td>Keep one run record and one evidence register. Use an event stream only for a long or resumable run.</td></tr>
+        <tr><td>Five state dimensions presented as a large universal vocabulary</td><td>Keep four plain fields in the run record: execution, evidence conclusion, verification, and human decision.</td></tr>
+        <tr><td>Long explanatory HTML with promotional headings, cards, and repeated claims</td><td>Use plain HTML. Each section must support a decision, instruction, test, or limit.</td></tr>
+      </tbody>
+    </table>
+  </section>
+
+  <section>
+    <h2>3. Question, scope, and exclusions</h2>
+    <p><strong>Question.</strong> What is the smallest shared contract that makes SOTA runs reproducible, reviewable, and hard to misreport?</p>
+    <p><strong>Intended decision.</strong> Decide which family rules, files, skill changes, and tests to implement.</p>
+    <p><strong>In scope.</strong> The eight installed <code>sota-*</code> skills, their direct references, the family guide, the two audited runs, the plan and report formats, and the proposed <code>sota-slop-remove</code> skill.</p>
+    <p><strong>Out of scope.</strong> Rewriting historical runs, inventing missing provenance, executing a new SOTA study, or changing unrelated skills.</p>
+    <p><strong>Evidence boundary.</strong> Repository files, the two audited run packages, current skill contracts, user feedback, and the Pstack <code>unslop</code> source. Claims outside those sources remain unverified.</p>
+  </section>
+
+  <section>
+    <h2>4. Minimal contract</h2>
+    <h3>Required run structure</h3>
+    <pre>research/&lt;effort&gt;/
+├── plan/
+│   └── &lt;effort&gt;.plan.vN.html
+└── runs/&lt;run-id&gt;/
+    ├── run.yaml              identity, plan digest, executors, status, outputs
+    ├── evidence.jsonl        sources, exclusions, extractions, claim links
+    ├── report.html           human-readable result
+    └── verification.json     deterministic and semantic checks</pre>
+    <p>Study-specific files may sit below the run directory. The approved plan names them. They do not become family requirements.</p>
+    <h3>Conditional files</h3>
+    <ul>
+      <li><code>events.jsonl</code> is required only when a run is resumed, delegated across processes, or expected to exceed four hours.</li>
+      <li>Raw source copies, incident timelines, benchmark outputs, and challenge working files are required only when the approved method needs them.</li>
+      <li>External outputs may remain elsewhere when <code>run.yaml</code> records their path and digest.</li>
+    </ul>
+    <h3>Four final fields</h3>
+    <pre>execution: NOT_STARTED | RUNNING | BLOCKED | FAILED | COMPLETE
+evidence_conclusion: NOT_ASSESSED | INCONCLUSIVE | PARTIAL | SUPPORTED | CONTRADICTED
+verification: NOT_RUN | FAIL | PASS
+human_decision: PENDING | ACCEPTED | REJECTED | REVISION_REQUESTED</pre>
+    <p><code>PASS</code> does not mean accepted. Implementation remains unauthorized unless the human owner gives separate, explicit authority.</p>
+  </section>
+
+  <section>
+    <h2>5. Implementation artifacts</h2>
+    <table>
+      <thead><tr><th>Path</th><th>Purpose</th></tr></thead>
+      <tbody>
+        <tr><td><code>contracts/sota-family/sota-family-contract.v1.md</code></td><td>Short normative contract and precedence rule.</td></tr>
+        <tr><td><code>schemas/sota-run.schema.v1.json</code></td><td>Validate <code>run.yaml</code> after YAML-to-JSON parsing.</td></tr>
+        <tr><td><code>schemas/sota-evidence-record.schema.v1.json</code></td><td>Validate each evidence row.</td></tr>
+        <tr><td><code>schemas/sota-verification.schema.v1.json</code></td><td>Validate check results and the final verification state.</td></tr>
+        <tr><td><code>tools/sota/validate_run.py</code></td><td>Check required files, schemas, digests, claim links, and final-state consistency.</td></tr>
+        <tr><td><code>.codex/skills/sota-slop-remove/</code></td><td>Edit all human-facing SOTA plans, reports, and final responses for plain, specific prose without changing findings.</td></tr>
+      </tbody>
+    </table>
+    <p>The existing role skills and family guide will be updated to call these artifacts. Templates are useful examples, not governing files. A separate template, reducer, migration tool, or schema requires its own demonstrated failure and test.</p>
+  </section>
+
+  <section>
+    <h2>6. <code>sota-slop-remove</code></h2>
+    <p>The new skill will adapt Lauren Tan's Pstack <a href="https://github.com/cursor/plugins/blob/main/pstack/skills/unslop/SKILL.md"><code>unslop</code></a> skill. The source is MIT-licensed. The implementation will retain attribution and record the source commit digest.</p>
+    <h3>When it runs</h3>
+    <p>Run it on every SOTA plan, preliminary report, synthesis report, verification narrative, and final answer. For research execution, it runs after the author completes the draft and before independent challenge. Run it again after material revisions.</p>
+    <h3>What it removes</h3>
+    <ul>
+      <li>Puffery, promotional language, vague attribution, generic conclusions, chatbot phrases, filler, stacked hedges, and abstract jargon.</li>
+      <li>Forced groups of three, false ranges, repeated bold-label lists, title-case headings, decorative presentation, and sentences that could be pasted into an unrelated report unchanged.</li>
+      <li>Claims about importance, quality, maturity, readiness, or confidence that lack evidence or a defined test.</li>
+    </ul>
+    <h3>What it must preserve</h3>
+    <ul>
+      <li>Meaning, evidence IDs, citations, quotations, numbers, confidence, limitations, dissent, and decision status.</li>
+      <li>Required technical terms when a plain substitute would be less exact.</li>
+      <li>Machine-readable payloads, code, paths, schemas, and source text.</li>
+    </ul>
+    <h3>Required self-audit</h3>
+    <ol>
+      <li>Mark every sentence that states no fact, instruction, decision, limit, test, or supported interpretation.</li>
+      <li>Delete it or replace it with the missing concrete content.</li>
+      <li>Compare the revised report with the findings and evidence. Any semantic difference fails the gate.</li>
+      <li>Return the cleaned artifact and a short change count. Do not create a second prose report about the cleanup.</li>
+    </ol>
+  </section>
+
+  <section>
+    <h2>7. Method and dependency flow</h2>
+    <ol>
+      <li><code>sota-method-lead</code> inventories current requirements and applies a subtraction test: remove a proposed requirement unless a specific failure and verifier check justify it.</li>
+      <li><code>sota-evidence-review</code> traces the two audited runs and current skills to identify the minimum evidence and provenance needed.</li>
+      <li><code>sota-incident-analyze</code> is used only if a disputed historical failure needs reconstruction.</li>
+      <li><code>sota-synthesize</code> drafts the contract, schemas, validator behavior, skill changes, and migration notes.</li>
+      <li><code>sota-slop-remove</code> cleans the human-facing drafts without changing their substance.</li>
+      <li><code>sota-independent-challenge</code> tests both under-specification and unnecessary machinery.</li>
+      <li><code>sota-verify</code> runs deterministic tests, checks semantic preservation, links, rendering, and the accepted challenge dispositions.</li>
+      <li>The human owner accepts, rejects, or requests revision. No model grants implementation authority.</li>
+    </ol>
+    <p><strong>Dependency text.</strong> Inventory and evidence review may run in parallel. Synthesis waits for both. Slop removal waits for a complete draft. Challenge waits for the cleaned draft. Verification waits for challenge dispositions. Human review waits for verification.</p>
+    <p><strong>Data flow.</strong> Current skills and run evidence enter the method and evidence roles. They produce requirement-to-failure mappings. Synthesis turns those mappings into proposed files and tests. Slop removal edits only the human-readable layer. Challenge returns objections to synthesis. Verification receives the final artifacts and produces <code>verification.json</code>.</p>
+  </section>
+
+  <section>
+    <h2>8. Allocation, budget, and stopping rules</h2>
+    <table>
+      <thead><tr><th>Work</th><th>Executor</th><th>Limit</th></tr></thead>
+      <tbody>
+        <tr><td>File discovery, hashes, schema, links, tests</td><td>Deterministic tools</td><td>No model call.</td></tr>
+        <tr><td>Inventory and extraction</td><td><code>gpt-5.6-terra</code>, high</td><td>At most 6 calls.</td></tr>
+        <tr><td>Contract and synthesis</td><td><code>gpt-5.6-sol</code>, high or xhigh</td><td>At most 4 calls.</td></tr>
+        <tr><td>Plain-language editing</td><td><code>sota-slop-remove</code> using the draft's assigned model</td><td>At most 2 passes per artifact.</td></tr>
+        <tr><td>Independent challenge</td><td><code>gpt-5.5</code>, xhigh</td><td>One challenge plus one disposition review.</td></tr>
+        <tr><td>Scope, deviations, acceptance</td><td>Human owner</td><td>Human decision required.</td></tr>
+      </tbody>
+    </table>
+    <p><strong>Derivation.</strong> The evidence set is bounded to eight skills, their direct references, two historical runs, and one external skill. Six extraction calls allow one per major evidence group. Four synthesis calls cover contract, schemas, validator/tests, and final integration. Confidence in these ceilings is medium because file volume is known but defect density is not.</p>
+    <p><strong>Measurement.</strong> Record calls, model, effort, tokens when available, elapsed time, retries, and outputs in <code>run.yaml</code>. Warn at 80% of any ceiling. Stop at 100%. If token or cost measurement is unavailable, use call and elapsed-time ceilings and mark the missing measure.</p>
+    <p><strong>Hard stops.</strong> Stop after 16 total model calls, 8 hours elapsed execution, 2 retries for the same failed operation, 2 slop-removal passes per artifact, or any request for new authority. A retry must change the input or method. Two review passes with no new material defect establish saturation.</p>
+  </section>
+
+  <section>
+    <h2>9. Acceptance tests</h2>
+    <ul>
+      <li>A minimal valid run containing the four required artifacts passes.</li>
+      <li>A missing plan digest, source identity, claim-to-evidence link, challenge disposition, or verification result fails.</li>
+      <li>A plan can add study files without changing the family contract.</li>
+      <li>A short study is not forced to create lifecycle, receipt, authority, incident, or terminal-answer directories.</li>
+      <li>The validator catches the known false-pass and provenance defects in the two historical runs without changing them.</li>
+      <li><code>sota-slop-remove</code> removes seeded puffery, vague claims, generic conclusions, forced triads, filler, and decorative formatting.</li>
+      <li>The slop gate fails if editing changes a number, citation, evidence ID, confidence label, limitation, finding, or decision state.</li>
+      <li>Every paragraph in the final report contains a fact, instruction, decision, limit, test, or supported interpretation.</li>
+      <li>The HTML renders without horizontal overflow and all local links resolve.</li>
+      <li>All Critical and High challenge findings are resolved or explicitly accepted by the human owner.</li>
+    </ul>
+  </section>
+
+  <section>
+    <h2>10. Outputs and approval</h2>
+    <p>Execution will produce the six implementation artifacts in section 5, updates to the existing SOTA role skills and family guide, regression fixtures for both audited runs, and one concise verification report. It will not migrate or rewrite the historical runs.</p>
+    <div class="warning">
+      <p><strong>Status: awaiting approval.</strong> This plan replaces the v2 proposal. Approval authorizes the remediation work within the limits above. It does not accept the resulting contract and does not authorize unrelated implementation.</p>
+    </div>
+  </section>
+</main>
+</body>
+</html>

@@ -1,4 +1,0 @@
-interface:
-  display_name: "SOTA Incident Analyze"
-  short_description: "Reconstruct incidents from bounded evidence"
-  default_prompt: "Use $sota-incident-analyze to reconstruct this incident from the approved evidence boundary."

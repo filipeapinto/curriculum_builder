@@ -9,7 +9,7 @@ Create a rigorous, reviewable research plan. Iterate until its question, method,
 
 ## Required references
 
-1. Inspect `research/llm_failure_analysis/plan/sota_research.plan.v5.html` as the structural reference.
+1. Read `../sota-plan-execute/references/sota-family-contract.md` and use `assets/sota-plan.template.html` as the normative minimal structure. Treat `research/llm_failure_analysis/plan/sota_research.plan.v5.html` only as a complex example.
 2. Read `references/plan-contract.md` before creating or revising a plan.
 3. Read `references/research-model-allocation-policy.v1.yaml` as planning input. Embed the selected allocation and controls in the plan so execution does not depend on the policy file.
 
@@ -22,10 +22,10 @@ If a referenced repository file is missing, stop and report the missing dependen
 3. For a new plan, create `v1`. For an iteration, read the latest version and create exactly `vN+1`.
 4. Preserve the previous plan unchanged. Never rename, replace, edit, or delete it.
 5. Before drafting the plan, compare the intended remediation scope with the originating issue and accepted report. If planning has introduced or materially changed a proposed skill, artifact, method, control, risk, acceptance criterion, or authority boundary, create the next preserved version of the issue or issue-confirmation report first. The updated issue must be self-contained, distinguish verified issue evidence from planning discoveries, and identify the plan versions that exposed the new scope. Do not silently broaden the plan beyond the issue record.
-6. Build the new plan using the contract. Keep it technology-neutral unless the research question requires a named implementation.
+6. Build the new plan using the family contract and conditional template. A plan may strengthen but never remove, rename, weaken, relabel, or contradict family requirements.
 7. Estimate execution cost from the proposed workload. For every ceiling, state its derivation, confidence, measurement mechanism, warning threshold, hard stop, and unavailable-measure behavior.
 8. Separate deterministic operations, model judgment, and human authority. Apply the shared model-allocation policy, embed the selected allocation, and document justified deviations.
-9. Assign every non-human research-team function to an installed role skill: `$sota-method-lead`, `$sota-evidence-review`, `$sota-incident-analyze`, `$sota-synthesize`, `$sota-independent-challenge`, or `$sota-verify`. Embed each role's inputs, outputs, responsibility, and authority boundary in the plan.
+9. Assign every non-human research-team function to an installed role skill: `$sota-method-lead`, `$sota-evidence-review`, `$sota-synthesize`, `$sota-independent-challenge`, or `$sota-verify`. Embed each role's inputs, outputs, responsibility, and authority boundary in the plan.
 10. Make the plan self-contained: it must hold every instruction, role assignment, allocation, budget, control, output, and acceptance rule needed for execution. A reader must not need the predecessor to understand or execute it. Never replace operative content with “unchanged,” “as before,” a diff, or a predecessor reference. Supporting evidence may be cited but must not become a second governing contract.
 11. Verify internal links, required sections, version labels, textual equivalents for meaningful diagrams, references, issue synchronization, and standalone completeness.
 12. Mark the result `awaiting approval` unless the human owner explicitly approves it. Planning does not authorize execution.
