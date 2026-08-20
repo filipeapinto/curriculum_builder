@@ -1,0 +1,87 @@
+<!doctype html>
+<!-- Canonical template file: issue-report.template.v4.html -->
+<html lang="en">
+<head>
+  <meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>{{PRIORITY}} · Issue confirmation report · v{{VERSION}} · {{LIFECYCLE_STATE}}</title>
+  <style>
+    :root{color-scheme:light dark;--bg:#eef2f4;--paper:#fff;--ink:#172631;--muted:#536573;--line:#cbd5dc;--navy:#123b55;--teal:#087d78;--soft:#e2f3f0;--warn:#fff3d5;--stop:#fbe8ec;--shadow:0 8px 24px rgba(16,42,57,.08)}
+    *{box-sizing:border-box}html{scroll-behavior:smooth;background:var(--bg)}body{margin:0;color:var(--ink);font:16px/1.5 system-ui,-apple-system,"Segoe UI",sans-serif}a{color:var(--teal)}code{padding:.08em .3em;border-radius:4px;background:var(--soft);font:.88em ui-monospace,monospace}.wrap{width:min(1120px,calc(100% - 34px));margin-inline:auto}.hero{color:#fff;background:#173f55}.hero .wrap{padding:38px 0 30px}.eyebrow{margin:0 0 8px;font-weight:800;letter-spacing:.08em;text-transform:uppercase}h1{margin:0;font-size:clamp(2rem,4vw,3.4rem);line-height:1.08}.summary{max-width:900px;margin:14px 0 20px;font-size:1.08rem}.status-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:10px}.status{padding:12px;border:1px solid rgba(255,255,255,.4);border-radius:7px;background:rgba(0,0,0,.12)}.status small{display:block;margin-bottom:4px;font-weight:800;text-transform:uppercase}nav{position:sticky;top:0;z-index:2;border-bottom:1px solid var(--line);background:var(--paper)}nav .wrap{display:flex;gap:5px;overflow-x:auto;padding:8px 0}nav a{flex:0 0 auto;padding:5px 8px;color:var(--navy);font-size:.8rem;font-weight:750;text-decoration:none}main{padding:10px 0 60px}section{margin:38px 0;scroll-margin-top:60px}h2{margin:0 0 7px;color:var(--navy);font-size:1.75rem}h3{margin:18px 0 6px;color:var(--navy)}p{margin:7px 0}.guide{max-width:920px;margin:0 0 14px;color:var(--muted)}.callout,.card,.table-wrap{border:1px solid var(--line);border-radius:8px;background:var(--paper);box-shadow:var(--shadow)}.callout,.card{padding:16px}.callout{border-left:6px solid var(--teal)}.warning{border-left-color:#94600e;background:var(--warn)}.stop{border-left-color:#922f46;background:var(--stop)}.two{display:grid;grid-template-columns:repeat(2,1fr);gap:12px}.table-wrap{overflow-x:auto}table{width:100%;min-width:760px;border-collapse:collapse}th,td{padding:9px 11px;border-bottom:1px solid var(--line);text-align:left;vertical-align:top}th{background:var(--soft);color:var(--navy);font-size:.75rem;text-transform:uppercase}tr:last-child td{border-bottom:0}footer{padding:22px 0 34px;border-top:1px solid var(--line);color:var(--muted);font-size:.84rem}@media(max-width:760px){.status-grid,.two{grid-template-columns:1fr}nav{position:relative}}@media(prefers-color-scheme:dark){:root{--bg:#0d1720;--paper:#17242e;--ink:#edf3f5;--muted:#b6c2c9;--line:#3b4d59;--navy:#9dd5e5;--teal:#86d8d0;--soft:#193b3b;--warn:#3c321c;--stop:#3e232b;--shadow:none}}@media print{nav{display:none}section{margin:24px 0}.card,.callout,.table-wrap{box-shadow:none;break-inside:avoid}}
+  </style>
+</head>
+<body>
+  <header class="hero"><div class="wrap">
+    <p class="eyebrow">{{PRIORITY}} · Issue confirmation report · v{{VERSION}} · {{LIFECYCLE_STATE}}</p>
+    <h1>{{TITLE}}</h1><p class="summary">{{ONE_SENTENCE_RESULT}}</p>
+    <div class="status-grid" aria-label="Report status">
+      <div class="status"><small>Detected by</small><strong>{{DETECTED_BY}}</strong></div>
+      <div class="status"><small>Investigated by</small><strong>{{INVESTIGATED_BY}}</strong></div>
+      <div class="status"><small>Result</small><strong>{{CONFIRMATION_RESULT}}</strong></div>
+      <div class="status"><small>Human decision</small><strong>{{HUMAN_DECISION}}</strong></div>
+    </div>
+  </div></header>
+  <nav aria-label="Report contents"><div class="wrap"><a href="#decision">Decision</a><a href="#reported">Reported issue</a><a href="#verification">Verification</a><a href="#diagnosis">Diagnosis</a><a href="#correction">Correction</a><a href="#open-items">Open items</a><a href="#approval">Approval</a></div></nav>
+  <main class="wrap">
+    <section id="decision" data-required-section="true">
+      <h2>Decision</h2>
+      <p class="guide">Gives the result and requested human decision. A reviewer should be able to approve, reject, or request changes here, then use the remaining sections to verify the basis.</p>
+      <div class="callout"><p><strong>{{CONFIRMATION_RESULT}}:</strong> {{SCOPED_RESULT}}</p><p><strong>Recommended correction:</strong> {{RECOMMENDED_CORRECTION_SUMMARY}}</p><p><strong>Decision requested:</strong> {{DECISION_REQUEST}}</p></div>
+      <div class="two"><div class="card"><strong>Severity</strong><p>{{SEVERITY_AND_REASON}}</p></div><div class="card"><strong>Confidence</strong><p>{{CONFIDENCE_AND_REASON}}</p></div></div>
+    </section>
+    <section id="reported" data-required-section="true">
+      <h2>Reported issue</h2>
+      <p class="guide">Records what a human or agent detected before this investigation began. It preserves the original claim, expected behavior, observed behavior, source, and reporting context.</p>
+      <div class="table-wrap"><table><tbody>
+        <tr><th>Issue ID</th><td>{{ISSUE_ID}}</td><th>Detected by</th><td>{{DETECTED_BY_WITH_ROLE}}</td></tr>
+        <tr><th>Detected at</th><td>{{DETECTED_AT}}</td><th>Source</th><td>{{DETECTION_SOURCE}}</td></tr>
+        <tr><th>Expected</th><td colspan="3">{{EXPECTED_BEHAVIOR}}</td></tr><tr><th>Observed</th><td colspan="3">{{OBSERVED_BEHAVIOR}}</td></tr>
+        <tr><th>Original report</th><td colspan="3">{{ORIGINAL_REPORT_VERBATIM}}</td></tr>
+      </tbody></table></div>
+    </section>
+    <section id="verification" data-required-section="true">
+      <h2>Independent verification</h2>
+      <p class="guide">Shows who independently checked the report, what they tested, and whether they reproduced it. It establishes whether the issue is confirmed, partly confirmed, not reproduced, or disproved.</p>
+      <div class="callout warning"><p><strong>Independence:</strong> {{INVESTIGATOR_INDEPENDENCE_STATEMENT}}</p></div>
+      <div class="table-wrap"><table><thead><tr><th>Investigator</th><th>Baseline and environment</th><th>Test performed</th><th>Expected</th><th>Observed</th><th>Evidence</th></tr></thead><tbody><tr><td>{{INVESTIGATED_BY_WITH_ROLE}}</td><td>{{BASELINE_AND_ENVIRONMENT}}</td><td>{{REPRODUCTION_STEPS}}</td><td>{{TEST_EXPECTED}}</td><td>{{TEST_OBSERVED}}</td><td>{{EVIDENCE_LINKS}}</td></tr></tbody></table></div>
+      <p><strong>Reproduction result:</strong> {{REPRODUCTION_RESULT_AND_SCOPE}}</p>
+    </section>
+    <section id="diagnosis" data-required-section="true">
+      <h2>Root Cause</h2>
+      <p class="guide">Explains the verified defect, why it occurs, and its blast radius. It distinguishes a demonstrated cause from a suspected cause so reviewers can assess the proposed correction.</p>
+      <div class="callout"><p><strong>Defect:</strong> {{DEFECT_STATEMENT}}</p><p><strong>Cause:</strong> {{CAUSE_AND_CONFIDENCE}}</p></div>
+      <h3>Blast radius</h3><div class="table-wrap"><table><tbody>
+        <tr><th>Affected</th><td>{{AFFECTED_SYSTEMS_VERSIONS_USERS}}</td></tr><tr><th>Not affected</th><td>{{NOT_AFFECTED}}</td></tr>
+        <tr><th>Impact</th><td>{{IMPACT_IF_UNCORRECTED}}</td></tr><tr><th>Basis</th><td>{{DIAGNOSIS_EVIDENCE}}</td></tr>
+      </tbody></table></div>
+    </section>
+    <section id="correction" data-required-section="true">
+      <h2>Recommended correction</h2>
+      <p class="guide">States what should change, where it should change, and how to verify the correction. Approval accepts this direction for planning; it does not authorize implementation.</p>
+      <div class="table-wrap"><table><tbody>
+        <tr><th>Change</th><td>{{CORRECTION_DESCRIPTION}}</td></tr><tr><th>Target</th><td>{{CORRECTION_TARGET}}</td></tr>
+        <tr><th>Why this corrects the issue</th><td>{{CORRECTION_RATIONALE}}</td></tr><tr><th>Acceptance tests</th><td>{{ACCEPTANCE_TESTS}}</td></tr>
+        <tr><th>Out of scope</th><td>{{CORRECTION_NON_GOALS}}</td></tr>
+      </tbody></table></div>
+    </section>
+    <section id="open-items" data-required-section="true">
+      <h2>Open items and risks</h2>
+      <p class="guide">Lists only unresolved items that could change the diagnosis, correction, severity, or decision. If none remain, state “None”; this is not a general research backlog.</p>
+      <div class="table-wrap"><table><thead><tr><th>Item</th><th>Why it matters</th><th>Owner</th><th>Required before approval?</th></tr></thead><tbody><tr><td>{{OPEN_ITEM_OR_NONE}}</td><td>{{DECISION_IMPACT}}</td><td>{{OWNER_OR_NONE}}</td><td>{{YES_NO}}</td></tr></tbody></table></div>
+    </section>
+    <section id="approval" data-required-section="true">
+      <h2>Human decision</h2>
+      <p class="guide">Records the authorized reviewer’s decision on this exact report version. Approval confirms the investigation and recommended direction; requested changes produce a new immutable version.</p>
+      <div class="callout stop"><p><strong>{{HUMAN_DECISION}}</strong> — {{HUMAN_DECISION_REASON_OR_PENDING}}</p></div>
+      <div class="table-wrap"><table><tbody>
+        <tr><th>Reviewer and authority</th><td>{{REVIEWER_AND_AUTHORITY}}</td></tr><tr><th>Decision time</th><td>{{DECISION_AT_OR_PENDING}}</td></tr>
+        <tr><th>Report version</th><td>v{{VERSION}} · <code>{{REPORT_SHA256}}</code></td></tr><tr><th>Comments or required changes</th><td>{{REVIEW_COMMENTS_OR_NONE}}</td></tr>
+        <tr><th>Previous version</th><td>{{PREVIOUS_VERSION_OR_NONE}}</td></tr>
+      </tbody></table></div>
+    </section>
+  </main>
+  <footer><div class="wrap">Issue confirmation report template v4 · detection → independent verification → diagnosis → correction → human decision</div></footer>
+  <script type="application/json" id="issue-confirmation-template-contract">
+  {"schema":"repo.issue-confirmation-template/v4","template_version":4,"purpose":"Confirm or reject a reported issue through independent verification, diagnose what is wrong, recommend a correction, and record a human decision.","required_sections":["decision","reported","verification","diagnosis","correction","open-items","approval"],"confirmation_results":["PENDING","CONFIRMED","PARTLY_CONFIRMED","NOT_REPRODUCED","DISPROVED"],"human_decisions":["PENDING","APPROVED","CHANGES_REQUESTED","REJECTED"],"rules":{"detector_identified":true,"independent_investigator_identified":true,"reproduction_result_required":true,"diagnosis_confidence_required":true,"recommended_correction_required_for_confirmed_issue":true,"issued_versions_immutable":true,"implementation_authority":"NONE"}}
+  </script>
+</body>
+</html>

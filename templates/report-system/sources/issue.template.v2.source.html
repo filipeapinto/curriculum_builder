@@ -1,0 +1,34 @@
+<!doctype html>
+<!-- Source template: report-system/sources/issue.template.v2.source.html -->
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>[PRIORITY] Issue title</title>
+  <style data-report-system="v1">
+{{{REPORT_SYSTEM_CSS}}}
+  </style>
+</head>
+<body>
+  <header class="report-hero"><div class="report-wrap">
+    <p class="report-eyebrow">[PRIORITY] · [STATUS]</p>
+    <h1>[Issue title]</h1>
+    <p class="report-summary">[One-sentence operational consequence.]</p>
+  </div></header>
+  <main class="report-wrap report-main">
+    <section class="report-metadata" aria-label="Issue metadata">
+      <div><strong>Area</strong><br>[Component or family]</div>
+      <div><strong>Evidence</strong><br>[Primary paths or records]</div>
+      <div><strong>Owner</strong><br>[Responsible owner]</div>
+      <div><strong>Decision</strong><br>[Decision required]</div>
+    </section>
+    <section><h2>Issue</h2><div class="report-callout report-stop"><p>[State the invariant that is violated, not merely the observed symptom.]</p></div></section>
+    <section><h2>Evidence</h2><p>[Record verified observations with exact paths, IDs, and states. Separate fact from inference.]</p></section>
+    <section><h2>Expected contract</h2><p>[Define behavior that must remain invariant and the variation that remains legitimate.]</p></section>
+    <section><h2>Impact</h2><p>[Explain audit, safety, reliability, interoperability, and user consequences.]</p></section>
+    <section><h2>Acceptance criteria</h2><ul><li>[Testable condition]</li></ul></section>
+    <section><h2>Unknowns</h2><p>[List facts that cannot be established from available provenance.]</p></section>
+  </main>
+  <footer class="report-footer"><div class="report-wrap">Repository issue template v2 · preserve evidence links and use testable acceptance criteria</div></footer>
+</body>
+</html>

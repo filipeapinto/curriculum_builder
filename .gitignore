@@ -15,9 +15,11 @@ __pycache__/
 outputs/
 
 # Python packaging artifacts are disposable and must never affect inventory,
-# imports, or release verification.
-build/
-dist/
+# imports, or release verification. Anchored to repo root so nested build/
+# directories that hold real source (e.g. templates/report-system/build/)
+# aren't swept up.
+/build/
+/dist/
 *.egg-info/
 
 # Retained Plan 26 execution branches are local forensic artifacts. Their

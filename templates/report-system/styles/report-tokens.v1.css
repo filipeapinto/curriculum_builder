@@ -1,0 +1,32 @@
+:root {
+  color-scheme: light dark;
+  --report-bg: #eef2f4;
+  --report-paper: #ffffff;
+  --report-ink: #172631;
+  --report-muted: #536573;
+  --report-line: #cbd5dc;
+  --report-heading: #123b55;
+  --report-accent: #087d78;
+  --report-soft: #e2f3f0;
+  --report-warning: #fff3d5;
+  --report-stop: #fbe8ec;
+  --report-shadow: 0 8px 24px rgba(16, 42, 57, .08);
+  --report-radius: 8px;
+  --report-width: 1120px;
+}
+
+@media (prefers-color-scheme: dark) {
+  :root {
+    --report-bg: #0d1720;
+    --report-paper: #17242e;
+    --report-ink: #edf3f5;
+    --report-muted: #b6c2c9;
+    --report-line: #3b4d59;
+    --report-heading: #9dd5e5;
+    --report-accent: #86d8d0;
+    --report-soft: #193b3b;
+    --report-warning: #3c321c;
+    --report-stop: #3e232b;
+    --report-shadow: none;
+  }
+}
