@@ -1,0 +1,135 @@
+<!doctype html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>P0 · Issue report · v8 · HUMAN_REVIEW_PENDING</title><style data-report-system="v1">
+:root {
+  color-scheme: light dark;
+  --report-bg: #eef2f4;
+  --report-paper: #ffffff;
+  --report-ink: #172631;
+  --report-muted: #536573;
+  --report-line: #cbd5dc;
+  --report-heading: #123b55;
+  --report-accent: #087d78;
+  --report-soft: #e2f3f0;
+  --report-warning: #fff3d5;
+  --report-stop: #fbe8ec;
+  --report-shadow: 0 8px 24px rgba(16, 42, 57, .08);
+  --report-radius: 8px;
+  --report-width: 1120px;
+}
+
+@media (prefers-color-scheme: dark) {
+  :root {
+    --report-bg: #0d1720;
+    --report-paper: #17242e;
+    --report-ink: #edf3f5;
+    --report-muted: #b6c2c9;
+    --report-line: #3b4d59;
+    --report-heading: #9dd5e5;
+    --report-accent: #86d8d0;
+    --report-soft: #193b3b;
+    --report-warning: #3c321c;
+    --report-stop: #3e232b;
+    --report-shadow: none;
+  }
+}
+
+* { box-sizing: border-box; }
+html { scroll-behavior: smooth; background: var(--report-bg); }
+body { margin: 0; color: var(--report-ink); font: 16px/1.5 system-ui, -apple-system, "Segoe UI", sans-serif; }
+a { color: var(--report-accent); }
+code { padding: .08em .3em; border-radius: 4px; background: var(--report-soft); font: .88em ui-monospace, monospace; }
+.report-wrap { width: min(var(--report-width), calc(100% - 34px)); margin-inline: auto; }
+.report-hero { color: #fff; background: #173f55; }
+.report-hero .report-wrap { padding: 38px 0 30px; }
+.report-eyebrow { margin: 0 0 8px; font-weight: 800; letter-spacing: .08em; text-transform: uppercase; }
+.report-hero h1 { margin: 0; font-size: clamp(2rem, 4vw, 3.4rem); line-height: 1.08; }
+.report-summary { max-width: 900px; margin: 14px 0 0; font-size: 1.08rem; }
+.report-nav { position: sticky; top: 0; z-index: 2; border-bottom: 1px solid var(--report-line); background: var(--report-paper); }
+.report-nav .report-wrap { display: flex; gap: 5px; overflow-x: auto; padding: 8px 0; }
+.report-nav a { flex: 0 0 auto; padding: 5px 8px; color: var(--report-heading); font-size: .8rem; font-weight: 750; text-decoration: none; }
+.report-main { padding: 10px 0 60px; }
+.report-main section { margin: 38px 0; scroll-margin-top: 60px; }
+.report-main h2 { margin: 0 0 7px; color: var(--report-heading); font-size: 1.75rem; }
+.report-main h3 { margin: 18px 0 6px; color: var(--report-heading); }
+.report-main p { margin: 7px 0; }
+.report-guide { max-width: 920px; margin: 0 0 14px; color: var(--report-muted); }
+.report-callout, .report-card, .report-table { border: 1px solid var(--report-line); border-radius: var(--report-radius); background: var(--report-paper); box-shadow: var(--report-shadow); }
+.report-callout, .report-card { padding: 16px; }
+.report-callout { border-left: 6px solid var(--report-accent); }
+.report-warning { border-left-color: #94600e; background: var(--report-warning); }
+.report-stop { border-left-color: #922f46; background: var(--report-stop); }
+.report-two-column { display: grid; grid-template-columns: repeat(2, 1fr); gap: 12px; }
+.report-metadata { display: grid; grid-template-columns: repeat(auto-fit, minmax(180px, 1fr)); gap: 10px; padding: 16px; border: 1px solid var(--report-line); border-radius: var(--report-radius); background: var(--report-paper); box-shadow: var(--report-shadow); }
+.report-table { overflow-x: auto; }
+.report-table table { width: 100%; min-width: 760px; border-collapse: collapse; }
+.report-table th, .report-table td { padding: 9px 11px; border-bottom: 1px solid var(--report-line); text-align: left; vertical-align: top; }
+.report-table th { background: var(--report-soft); color: var(--report-heading); font-size: .75rem; text-transform: uppercase; }
+.report-table tr:last-child td { border-bottom: 0; }
+.report-main pre { overflow: auto; padding: 16px; border-radius: var(--report-radius); background: #15212c; color: #edf4f7; }
+.report-footer { padding: 22px 0 34px; border-top: 1px solid var(--report-line); color: var(--report-muted); font-size: .84rem; }
+
+@media (max-width: 760px) {
+  .report-two-column { grid-template-columns: 1fr; }
+  .report-nav { position: relative; }
+}
+
+@media print {
+  .report-nav { display: none; }
+  .report-main section { margin: 24px 0; }
+  .report-card, .report-callout, .report-table { box-shadow: none; break-inside: avoid; }
+}
+</style></head><body>
+<header class="report-hero"><div class="report-wrap"><p class="report-eyebrow">P0 · Issue report · v8 · HUMAN_REVIEW_PENDING</p><h1>The two SOTA studies used different structures, records, checks, and result states</h1></div></header>
+<nav class="report-nav" aria-label="Report contents"><div class="report-wrap"><a href="#executive-summary">Executive summary</a><a href="#trigger">Trigger</a><a href="#verification">Independent verification</a><a href="#root-cause">Root cause</a><a href="#corrections">Corrections</a><a href="#risks">Risks</a><a href="#decision">Human decision</a></div></nav>
+<main class="report-wrap report-main">
+<section id="executive-summary" data-required-section="true"><h2>Executive summary</h2><div class="report-callout"><p>The user noticed that two SOTA studies were organized and verified very differently. The resulting investigation confirmed that the studies used different artifact locations, record formats, lifecycle evidence, verification outcomes, and final-state language; it also found defects inside both runs. Some differences were legitimate because the studies asked different questions. The current evidence does not prove which exact SOTA skills or agents executed the historical runs. The recommended correction is to define one compact SOTA run structure, one SOTA-owned plan template, explicit result states, and checks that apply to every SOTA run.</p></div></section>
+
+<section id="trigger" data-required-section="true"><h2>Trigger</h2><div class="report-callout"><p>The user observed that <code>research/codex_calls_claude_qa_gate/</code> and <code>research/codex_same_model_qa_gate/</code> differed substantially. The user created <a href="prompts/identify-sota-family-inconsistencies.prompt.md"><code>identify-sota-family-inconsistencies.prompt.md</code></a> to determine which differences were legitimate, which were defects, why they occurred, and what should change.</p></div><div class="report-table"><table><tbody>
+<tr><th>What the prompt required</th><td>Inventory every installed SOTA skill and both complete run trees; map both runs to one lifecycle; build seven comparison matrices; classify and trace each inconsistency; propose a canonical contract; independently challenge it; correct it; retest it; and return a final readiness disposition.</td></tr>
+<tr><th>Inputs named by the prompt</th><td>All installed <code>sota-*</code> skills and direct dependencies; <a href="../../research/codex_calls_claude_qa_gate/">Claude QA-gate run</a>; <a href="../../research/codex_same_model_qa_gate/">same-model QA-gate run</a>; their plans, records, evidence, challenges, verification, and reports.</td></tr>
+<tr><th>Results</th><td><a href="sota-skill-family-method-output-contract-inconsistency.report.v1.html#evidence">Evidence register</a>, <a href="sota-skill-family-method-output-contract-inconsistency.report.v1.html#investigation">investigation log</a>, <a href="sota-skill-family-method-output-contract-inconsistency.report.v1.html#findings">finding register</a>, and the remaining matrices, challenge dispositions, unknowns, and validation sections in report v1.</td></tr>
+<tr><th>Boundary</th><td>The prompt was the user’s investigation instruction. It was not proof. The investigation was read-only and did not authorize changes to skills or runs.</td></tr>
+</tbody></table></div></section>
+
+<section id="verification" data-required-section="true"><h2>Independent verification</h2><p class="report-guide">The historical audit record identifies investigator roles and tools, but it does not contain durable receipts proving that the named SOTA role skills were invoked. The table distinguishes the family skill that would own each function from what is actually evidenced.</p><div class="report-table"><table><thead><tr><th>Investigation function</th><th>SOTA-family skill that owns this function</th><th>What is actually evidenced</th><th>Where the result is recorded</th></tr></thead><tbody>
+<tr><td>Govern the protocol, scope, lifecycle, coverage, and stopping rules</td><td><a href="../../.codex/skills/sota-method-lead/SKILL.md"><code>sota-method-lead</code></a></td><td>“Primary Codex investigator”; no durable receipt proves invocation of <code>sota-method-lead</code>.</td><td><a href="sota-skill-family-method-output-contract-inconsistency.report.v1.html#charter">Charter</a>, <a href="sota-skill-family-method-output-contract-inconsistency.report.v1.html#configuration">configuration</a>, and ACT-001/ACT-002</td></tr>
+<tr><td>Inspect and appraise external evidence</td><td><a href="../../.codex/skills/sota-evidence-review/SKILL.md"><code>sota-evidence-review</code></a></td><td>The issue investigation primarily used repository evidence. Separate template research is attributed to a research agent; no durable receipt proves invocation of <code>sota-evidence-review</code>.</td><td>ACT-007 and report v1 sources section</td></tr>
+<tr><td>Reconstruct the two executions and separate facts, inferences, and unknowns</td><td><a href="../../.codex/skills/sota-incident-analyze/SKILL.md"><code>sota-incident-analyze</code></a></td><td>Primary investigator plus filesystem, Git, Python, and JSON Schema checks; no durable skill-invocation receipt.</td><td><a href="sota-skill-family-method-output-contract-inconsistency.report.v1.html#evidence">EVD-002–EVD-014</a> and ACT-002–ACT-004</td></tr>
+<tr><td>Synthesize comparison findings and recommendations</td><td><a href="../../.codex/skills/sota-synthesize/SKILL.md"><code>sota-synthesize</code></a></td><td>Primary investigator; no durable receipt proves invocation of <code>sota-synthesize</code>.</td><td><a href="sota-skill-family-method-output-contract-inconsistency.report.v1.html#findings">ICF-001–ICF-014</a> and conclusion</td></tr>
+<tr><td>Challenge the findings and proposed uniformity</td><td><a href="../../.codex/skills/sota-independent-challenge/SKILL.md"><code>sota-independent-challenge</code></a></td><td>A separate <code>gpt-5.5</code> xhigh agent produced 12 challenges. The record does not prove that the skill itself was invoked.</td><td>ACT-005, EVD-015, and report v1 counterevidence section</td></tr>
+<tr><td>Run deterministic verification and final checks</td><td><a href="../../.codex/skills/sota-verify/SKILL.md"><code>sota-verify</code></a></td><td>Python 3, JSON Schema, Git, link, HTML, and repository checks run by the investigator; no durable receipt proves invocation of <code>sota-verify</code>.</td><td>ACT-003, ACT-006, and report v1 validation section</td></tr>
+</tbody></table></div><p><strong>Verification result:</strong> The repository evidence supports the inconsistency findings. It does not support claims that particular SOTA role skills were actually invoked during the historical audit or either historical run.</p>
+<h3>Verified results</h3><div class="report-table"><table><thead><tr><th>Finding</th><th>Result</th><th>Evidence location</th></tr></thead><tbody>
+<tr><td>Run structure and record shape</td><td>Different roots and representations for equivalent artifact classes</td><td>ICF-003; EVD-005–EVD-013</td></tr>
+<tr><td>Lifecycle and terminal state</td><td>No shared record makes resume and final-state discovery comparable</td><td>ICF-004 and ICF-010</td></tr>
+<tr><td>Run 1 defects</td><td>9-versus-12 challenge conflict; 18 receipts lack required run IDs; required adjudication and intervals absent despite a passing result</td><td>ICF-006–ICF-007; EVD-006–EVD-009</td></tr>
+<tr><td>Run 2 defects</td><td>0/19 extraction records validate; ten provenance gaps; required execution and challenge work remains incomplete</td><td>ICF-008–ICF-009; EVD-010–EVD-013</td></tr>
+<tr><td>Legitimate differences</td><td>Questions, sources, corpora, budgets, evaluations, and substantive outcomes may differ</td><td>ICF-014</td></tr>
+<tr><td>Historical skill and agent provenance</td><td>Unknown</td><td>ICF-011</td></tr>
+</tbody></table></div></section>
+
+<section id="root-cause" data-required-section="true"><h2>Root-cause analysis</h2><div class="report-callout"><p><strong>Root cause:</strong> The SOTA family states shared research controls, but the concrete locations, record shapes, lifecycle states, verification checks, and final-result terms are supplied by each plan and run. The family does not currently bind those elements to one enforced contract.</p></div><div class="report-table"><table><thead><tr><th>Cause</th><th>Evidence</th><th>Produces</th><th>Confidence</th></tr></thead><tbody>
+<tr><td>The approved plan is treated as the sole execution contract without an explicit rule that plans may strengthen but not weaken family requirements.</td><td><a href="../../.codex/skills/sota-plan-execute/SKILL.md"><code>sota-plan-execute</code></a>, execution contract, and ICF-002</td><td>Plans can define different mandatory records, stages, and meanings.</td><td>High</td></tr>
+<tr><td>The execution contract names IDs, provenance, budgets, challenge, verification, and acceptance but does not bind them to one canonical package and schema suite.</td><td><a href="../../.codex/skills/sota-plan-execute/references/execution-contract.md">Execution contract</a> and ICF-001/ICF-003/ICF-004</td><td>Equivalent information appears in incompatible locations and forms.</td><td>High</td></tr>
+<tr><td>The verifier derives checks from each approved plan and names no additional cross-run conformance suite.</td><td><a href="../../.codex/skills/sota-verify/SKILL.md"><code>sota-verify</code></a> step 1 and ICF-005</td><td>Verification meanings and coverage vary with the plan.</td><td>High for the instruction; outcome causation is an inference supported by both cases</td></tr>
+<tr><td>Historical executions lack durable skill-invocation and complete assignment receipts.</td><td>ICF-011 and run manifests</td><td>The exact historical cause of every difference cannot be reconstructed.</td><td>High that provenance is absent</td></tr>
+</tbody></table></div></section>
+
+<section id="corrections" data-required-section="true"><h2>Recommended corrections</h2><div class="report-table"><table><thead><tr><th>Correction</th><th>Target</th><th>Why</th><th>Acceptance test</th></tr></thead><tbody>
+<tr><td>Add a minimal, conditional SOTA plan template owned by the family; keep the LLM-failure plan as an example rather than the universal structure.</td><td><code>sota-plan-create</code></td><td>Separates universal requirements from study-specific sections.</td><td>Create one minimal and one complex plan without missing universal requirements or forcing irrelevant sections.</td></tr>
+<tr><td>Adopt the owner-selected compact structure: versioned plan plus per-run <code>report.html</code>, <code>execution-log.json</code>, and optional <code>evidence/</code>.</td><td><code>sota-plan-execute</code> and schemas</td><td>Gives every run a discoverable location for prospective instructions, actual events, evidence, findings, and final state.</td><td>One structural validator discovers and validates both test runs.</td></tr>
+<tr><td>Define family requirements that plans may strengthen but cannot remove.</td><td>Plan, execution, and role-skill contracts</td><td>Prevents plan-specific method redefinition.</td><td>Removing a baseline requirement from a test plan causes preflight failure.</td></tr>
+<tr><td>Run family checks before plan-specific checks.</td><td><code>sota-verify</code></td><td>Makes equivalent defects receive equivalent findings.</td><td>The same injected defect produces the same verification outcome in minimal and complex runs.</td></tr>
+<tr><td>Report research support, execution, verification, human acceptance, and implementation authority separately.</td><td>Run report and terminal schema</td><td>Removes ambiguous pass/blocked/final-state language.</td><td>Schema rejects a result that combines or omits these states.</td></tr>
+</tbody></table></div></section>
+
+<section id="risks" data-required-section="true"><h2>Risks and open items</h2><div class="report-table"><table><thead><tr><th>Risk or open item</th><th>Effect</th><th>Owner</th><th>Blocks decision?</th></tr></thead><tbody>
+<tr><td>Exact historical skill versions and invocation receipts are unavailable.</td><td>Historical attribution remains unknown; current-contract and run-record findings remain valid.</td><td>Repository owner if additional receipts exist</td><td>No</td></tr>
+<tr><td>Field-level plan, log, and report schemas are not yet designed.</td><td>Implementation could duplicate existing schemas or recreate unnecessary complexity.</td><td>Remediation plan owner</td><td>No; blocks implementation, not direction</td></tr>
+<tr><td>Universal versus conditional lifecycle stages require a human decision.</td><td>Affects the minimal template and verifier applicability rules.</td><td>Repository owner</td><td>No; resolve during planning</td></tr>
+<tr><td>Legacy-run migration policy is undecided.</td><td>Migration must not invent provenance or rewrite historical evidence.</td><td>Repository owner</td><td>No</td></tr>
+</tbody></table></div></section>
+
+<section id="decision" data-required-section="true"><h2>Human decision</h2><div class="report-callout report-stop"><p><strong>PENDING</strong> — Decide whether the verified results, root-cause mapping, and recommended corrections are accurate enough to begin remediation planning. This report does not authorize implementation.</p></div><div class="report-table"><table><tbody><tr><th>Decision requested</th><td>Approve, reject, or request changes to the findings and correction direction.</td></tr><tr><th>Reviewer and authority</th><td>Repository human owner</td></tr><tr><th>Decision time</th><td>Pending</td></tr><tr><th>Report version</th><td>v8 · digest to be recorded with the decision</td></tr><tr><th>Previous version</th><td><a href="sota-skill-family-method-output-contract-inconsistency.report.v7.html">report v7</a> — replaced because the report structure obscured the required communication sequence</td></tr></tbody></table></div></section>
+</main><footer class="report-footer"><div class="report-wrap">Issue report template v13 · executive summary → trigger → independent verification → root cause → corrections → risks → human decision</div></footer>
+<script type="application/json" id="issue-report-template-contract">{"schema":"repo.issue-report-template/v13","template_version":13,"required_sections":["executive-summary","trigger","verification","root-cause","corrections","risks","decision"],"rules":{"executive_summary_max_paragraphs":1,"trigger_prompt_and_results_required":true,"skill_to_result_mapping_required":true,"root_cause_evidence_mapping_required":true,"issued_versions_immutable":true,"implementation_authority":"NONE"}}</script>
+</body></html>

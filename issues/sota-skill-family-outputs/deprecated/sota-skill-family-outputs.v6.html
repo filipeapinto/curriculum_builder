@@ -1,0 +1,112 @@
+<!doctype html>
+<!-- Applies templates/issue-report.template.v10.html; preserves report v1 as an immutable predecessor. -->
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>P0 · Issue report · v2 · HUMAN_REVIEW_PENDING</title>
+  <style data-report-system="v1">
+:root{color-scheme:light dark;--report-bg:#eef2f4;--report-paper:#fff;--report-ink:#172631;--report-muted:#536573;--report-line:#cbd5dc;--report-heading:#123b55;--report-accent:#087d78;--report-soft:#e2f3f0;--report-warning:#fff3d5;--report-stop:#fbe8ec;--report-shadow:0 8px 24px rgba(16,42,57,.08);--report-radius:8px;--report-width:1120px}
+@media(prefers-color-scheme:dark){:root{--report-bg:#0d1720;--report-paper:#17242e;--report-ink:#edf3f5;--report-muted:#b6c2c9;--report-line:#3b4d59;--report-heading:#9dd5e5;--report-accent:#86d8d0;--report-soft:#193b3b;--report-warning:#3c321c;--report-stop:#3e232b;--report-shadow:none}}
+*{box-sizing:border-box}html{scroll-behavior:smooth;background:var(--report-bg)}body{margin:0;color:var(--report-ink);font:16px/1.5 system-ui,-apple-system,"Segoe UI",sans-serif}a{color:var(--report-accent)}code{padding:.08em .3em;border-radius:4px;background:var(--report-soft);font:.88em ui-monospace,monospace}.report-wrap{width:min(var(--report-width),calc(100% - 34px));margin-inline:auto}.report-hero{color:#fff;background:#173f55}.report-hero .report-wrap{padding:38px 0 30px}.report-eyebrow{margin:0 0 8px;font-weight:800;letter-spacing:.08em;text-transform:uppercase}.report-hero h1{margin:0;font-size:clamp(2rem,4vw,3.4rem);line-height:1.08}.report-summary{max-width:900px;margin:14px 0 0;font-size:1.08rem}.report-nav{position:sticky;top:0;z-index:2;border-bottom:1px solid var(--report-line);background:var(--report-paper)}.report-nav .report-wrap{display:flex;gap:5px;overflow-x:auto;padding:8px 0}.report-nav a{flex:0 0 auto;padding:5px 8px;color:var(--report-heading);font-size:.8rem;font-weight:750;text-decoration:none}.report-main{padding:10px 0 60px}.report-main section{margin:38px 0;scroll-margin-top:60px}.report-main h2{margin:0 0 7px;color:var(--report-heading);font-size:1.75rem}.report-main h3{margin:18px 0 6px;color:var(--report-heading)}.report-main p{margin:7px 0}.report-guide{max-width:920px;margin:0 0 14px;color:var(--report-muted)}.report-callout,.report-card,.report-table{border:1px solid var(--report-line);border-radius:var(--report-radius);background:var(--report-paper);box-shadow:var(--report-shadow)}.report-callout,.report-card{padding:16px}.report-callout{border-left:6px solid var(--report-accent)}.report-warning{border-left-color:#94600e;background:var(--report-warning)}.report-stop{border-left-color:#922f46;background:var(--report-stop)}.report-two-column{display:grid;grid-template-columns:repeat(2,1fr);gap:12px}.report-metadata{display:grid;grid-template-columns:repeat(auto-fit,minmax(180px,1fr));gap:10px;padding:16px;border:1px solid var(--report-line);border-radius:var(--report-radius);background:var(--report-paper);box-shadow:var(--report-shadow)}.report-table{overflow-x:auto}.report-table table{width:100%;min-width:760px;border-collapse:collapse}.report-table th,.report-table td{padding:9px 11px;border-bottom:1px solid var(--report-line);text-align:left;vertical-align:top}.report-table th{background:var(--report-soft);color:var(--report-heading);font-size:.75rem;text-transform:uppercase}.report-table tr:last-child td{border-bottom:0}.report-main pre{overflow:auto;padding:16px;border-radius:var(--report-radius);background:#15212c;color:#edf4f7}.report-footer{padding:22px 0 34px;border-top:1px solid var(--report-line);color:var(--report-muted);font-size:.84rem}
+@media(max-width:760px){.report-two-column{grid-template-columns:1fr}.report-nav{position:relative}}@media print{.report-nav{display:none}.report-main section{margin:24px 0}.report-card,.report-callout,.report-table{box-shadow:none;break-inside:avoid}}
+  </style>
+</head>
+<body>
+  <header class="report-hero"><div class="report-wrap">
+    <p class="report-eyebrow">P0 · Issue report · v2 · CHANGES REQUESTED</p>
+    <h1>The SOTA workflow has rules, but no shared definition of a valid run</h1>
+    <p class="report-summary">We proved two specific contract gaps. The plan creator forces every study to copy one unusually complex example, while the verifier checks only whatever each plan happens to require. Therefore two “SOTA runs” can have different required files and different pass/fail rules.</p>
+  </div></header>
+  <nav class="report-nav" aria-label="Report contents"><div class="report-wrap"><a href="#decision">Answer</a><a href="#reported">Question</a><a href="#verification">Proof</a><a href="#diagnosis">Cause</a><a href="#correction">Fix</a><a href="#open-items">Not proved</a><a href="#approval">Decision</a></div></nav>
+  <main class="report-wrap report-main">
+    <section id="decision" data-required-section="true">
+      <h2>What did we prove?</h2>
+      <div class="report-callout">
+        <p><strong>CONFIRMED:</strong> The SOTA skills do not define one minimum package and one minimum verification suite that every run must satisfy.</p>
+        <p><strong>Why that matters:</strong> A plan can omit a control, and the verifier will omit the same control. The verifier therefore cannot reliably detect that the plan weakened the family method.</p>
+        <p><strong>What we suggest:</strong> Add one small SOTA-owned plan template, one compact run layout, and one baseline validator. Let individual plans add stricter or study-specific requirements.</p>
+      </div>
+      <div class="report-two-column"><div class="report-card"><strong>Priority</strong><p>P0. The current workflow can report success without testing the same minimum conditions from one study to the next.</p></div><div class="report-card"><strong>Confidence</strong><p>High for the two contract gaps below. The exact historical skill version used by each old run was not proved.</p></div></div>
+    </section>
+
+    <section id="reported" data-required-section="true">
+      <h2>What question did we investigate?</h2>
+      <div class="report-table"><table><tbody>
+        <tr><th>Issue</th><td>SOTA-SKILL-FAMILY-METHOD-CONSISTENCY</td><th>Reported</th><td>19 August 2026 by the repository owner</td></tr>
+        <tr><th>Expected</th><td colspan="3">Every SOTA run should have the same minimum layout, required records, lifecycle states, and verification checks. A plan may add requirements, but may not remove the minimum.</td></tr>
+        <tr><th>Observed</th><td colspan="3">The family describes useful research practices, but each plan decides the concrete artifacts and the verifier derives its checklist only from that plan.</td></tr>
+        <tr><th>Original issue</th><td colspan="3"><a href="sota-skill-family-method-output-contract-inconsistency.issue.v4.html">Current issue v4</a> · <a href="sota-skill-family-method-output-contract-inconsistency.issue.html">Original issue</a></td></tr>
+      </tbody></table></div>
+    </section>
+
+    <section id="verification" data-required-section="true">
+      <h2>The proof</h2>
+      <p class="report-guide">These are the findings needed for the conclusion. The older v1 dossier contains the full audit trail.</p>
+      <div class="report-callout report-warning"><p><strong>Independent check:</strong> The investigator inspected the skills and both run packages. A separate challenger tested whether file-format differences, different research questions, or a proposed future layout were being mistaken for proof. They were not used as proof.</p></div>
+      <div class="report-table"><table><thead><tr><th>Proved fact</th><th>Direct evidence</th><th>What follows</th></tr></thead><tbody>
+        <tr><td><strong>1. There is no small, family-owned SOTA plan template.</strong></td><td><a href="../../.codex/skills/sota-plan-create/SKILL.md"><code>sota-plan-create/SKILL.md</code></a> lines 3 and 12 tell every plan to model itself on <code>research/llm_failure_analysis/plan/sota_research.plan.v5.html</code>.</td><td>One complex incident plan is being used as the universal structure. Required versus optional SOTA sections are not defined by a reusable family template.</td></tr>
+        <tr><td><strong>2. There is no family-level verification floor.</strong></td><td><a href="../../.codex/skills/sota-verify/SKILL.md"><code>sota-verify/SKILL.md</code></a> line 8 says: “Derive the checklist only from the approved plan.”</td><td>If a plan omits a required family control, verification omits it too. Plans can accidentally weaken the method.</td></tr>
+        <tr><td><strong>3. The execution contract lists concepts, not a required package.</strong></td><td><a href="../../.codex/skills/sota-plan-execute/references/execution-contract.md"><code>execution-contract.md</code></a> requires IDs, paired records, provenance, budgets, challenge, verification, and acceptance, but does not say which run files must contain them or provide a common schema suite.</td><td>Two runs can satisfy the prose using incompatible files and record shapes. A generic requirement exists, but interoperability does not.</td></tr>
+        <tr><td><strong>4. The two audited runs demonstrate the consequence.</strong></td><td><a href="../../research/codex_calls_claude_qa_gate/">Run 1</a> uses an <code>execution/</code> package and passed with missing plan-required evidence. <a href="../../research/codex_same_model_qa_gate/">Run 2</a> splits records across other directories and correctly remained blocked after schema and accounting failures.</td><td>The two packages cannot be checked by one existing family validator, and equivalent control classes do not receive a demonstrably common test.</td></tr>
+      </tbody></table></div>
+      <p><strong>Reproduction result:</strong> CONFIRMED for the current skills and the two audited packages. See <a href="sota-skill-family-method-output-contract-inconsistency.report.v1.html">report v1</a> for record counts, challenge dispositions, and the legacy-run defect register.</p>
+    </section>
+
+    <section id="diagnosis" data-required-section="true">
+      <h2>Why is this happening?</h2>
+      <div class="report-callout"><p><strong>Root cause:</strong> The plan is treated as the entire execution contract, and verification trusts that plan as the complete source of checks. There is no higher-level SOTA contract that says, “every plan must include at least these things, every run must produce these files, and the verifier must always run these tests.”</p></div>
+      <div class="report-table"><table><tbody>
+        <tr><th>Affected</th><td>New SOTA plans, SOTA executions, and SOTA verification.</td></tr>
+        <tr><th>Not the problem</th><td>Different research questions, sources, experiments, sample sizes, conclusions, or human-facing report formats.</td></tr>
+        <tr><th>Concrete risk</th><td>A weak plan can generate a weak run and still be “verified” because the verifier checks only the weak plan.</td></tr>
+      </tbody></table></div>
+    </section>
+
+    <section id="correction" data-required-section="true">
+      <h2>What exactly are we suggesting?</h2>
+      <div class="report-table"><table><thead><tr><th>Change</th><th>Exact proposal</th><th>Where</th></tr></thead><tbody>
+        <tr><td><strong>1. Add a real SOTA plan template</strong></td><td>Create a minimal, conditional template. It defines the research question, scope, method, evidence rules, model/budget controls when applicable, outputs, stopping rules, and approval state. Complex incident sections appear only when needed.</td><td><code>.codex/skills/sota-plan-create/assets/sota-plan.template.html</code></td></tr>
+        <tr><td><strong>2. Stop using the incident plan as the universal template</strong></td><td>Keep <code>sota_research.plan.v5.html</code> as an example only. Make the new SOTA template the normative structure.</td><td><code>.codex/skills/sota-plan-create/SKILL.md</code></td></tr>
+        <tr><td><strong>3. Standardize the run package</strong></td><td>Use exactly the compact structure below. Extra evidence files are allowed only when the study needs them.</td><td><code>sota-plan-execute</code> contract</td></tr>
+        <tr><td><strong>4. Add checks that no plan can turn off</strong></td><td>Always verify the required files, lifecycle, IDs, provenance, challenge disposition, terminal result, and human-acceptance state. Then run any extra checks from the plan.</td><td><code>sota-verify/SKILL.md</code> plus deterministic tests</td></tr>
+      </tbody></table></div>
+      <pre aria-label="Proposed run layout">research/&lt;sota-slug&gt;/
+├── plan/
+│   └── &lt;sota-slug&gt;.plan.vN.html
+└── runs/
+    └── &lt;run-id&gt;/
+        ├── report.html
+        ├── execution-log.json
+        └── evidence/          # optional</pre>
+      <p><strong>Why this fixes the issue:</strong> every run becomes discoverable and testable the same way, while the plan still controls the study-specific method.</p>
+      <p><strong>Acceptance test:</strong> create one minimal study and one complex study from the template; run both; prove that the same baseline validator checks both; prove that removing any baseline requirement makes verification fail.</p>
+      <p><strong>Not proposed:</strong> one giant directory tree, a separate file for every role or stage, identical research methods, or retroactive rewriting of old runs.</p>
+    </section>
+
+    <section id="open-items" data-required-section="true">
+      <h2>What did we not prove?</h2>
+      <div class="report-table"><table><thead><tr><th>Unknown</th><th>Effect on this decision</th><th>Required now?</th></tr></thead><tbody>
+        <tr><td>Which exact skill bytes were invoked for each historical run</td><td>Limits historical attribution; does not change the current contract gaps.</td><td>No</td></tr>
+        <tr><td>Final field-level schema for <code>report.html</code> and <code>execution-log.json</code></td><td>Must be designed and tested in the remediation plan.</td><td>No</td></tr>
+        <tr><td>Whether old runs should be wrapped, migrated, or left read-only</td><td>Affects migration only.</td><td>No</td></tr>
+      </tbody></table></div>
+    </section>
+
+    <section id="approval" data-required-section="true">
+      <h2>Your decision</h2>
+      <div class="report-callout report-stop"><p><strong>CHANGES_REQUESTED</strong> — On 20 August 2026, the repository owner rejected the first v2 draft as confusing and asked what was proved and what was being suggested. This revision answers those questions directly. It does not authorize implementation.</p></div>
+      <div class="report-table"><table><tbody>
+        <tr><th>Decision now requested</th><td>Confirm whether the four proposed changes above are the correct remediation direction.</td></tr>
+        <tr><th>Reviewer</th><td>Repository human owner</td></tr>
+        <tr><th>Implementation authority</th><td>NONE</td></tr>
+        <tr><th>Previous report</th><td><a href="sota-skill-family-method-output-contract-inconsistency.report.v1.html">report v1</a></td></tr>
+      </tbody></table></div>
+    </section>
+  </main>
+  <footer class="report-footer"><div class="report-wrap">Issue report template v10 · question → proof → cause → concrete correction → human decision</div></footer>
+  <script type="application/json" id="issue-confirmation-template-contract">
+  {"schema":"repo.issue-confirmation-template/v10","template_version":10,"purpose":"Confirm or reject a reported issue through independent verification, diagnose what is wrong, recommend a correction, and record a human decision.","required_sections":["decision","reported","verification","diagnosis","correction","open-items","approval"],"confirmation_results":["PENDING","CONFIRMED","PARTLY_CONFIRMED","NOT_REPRODUCED","DISPROVED"],"human_decisions":["PENDING","APPROVED","CHANGES_REQUESTED","REJECTED"],"rules":{"detector_identified":true,"independent_investigator_identified":true,"reproduction_result_required":true,"diagnosis_confidence_required":true,"recommended_correction_required_for_confirmed_issue":true,"issued_versions_immutable":true,"implementation_authority":"NONE"}}
+  </script>
+</body>
+</html>

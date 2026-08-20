@@ -1,0 +1,96 @@
+<!doctype html>
+<!-- Source template: report-system/sources/issue-report.template.v13.source.html -->
+<html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>{{PRIORITY}} · Issue report · v{{VERSION}} · {{LIFECYCLE_STATE}}</title><style data-report-system="v1">
+:root {
+  color-scheme: light dark;
+  --report-bg: #eef2f4;
+  --report-paper: #ffffff;
+  --report-ink: #172631;
+  --report-muted: #536573;
+  --report-line: #cbd5dc;
+  --report-heading: #123b55;
+  --report-accent: #087d78;
+  --report-soft: #e2f3f0;
+  --report-warning: #fff3d5;
+  --report-stop: #fbe8ec;
+  --report-shadow: 0 8px 24px rgba(16, 42, 57, .08);
+  --report-radius: 8px;
+  --report-width: 1120px;
+}
+
+@media (prefers-color-scheme: dark) {
+  :root {
+    --report-bg: #0d1720;
+    --report-paper: #17242e;
+    --report-ink: #edf3f5;
+    --report-muted: #b6c2c9;
+    --report-line: #3b4d59;
+    --report-heading: #9dd5e5;
+    --report-accent: #86d8d0;
+    --report-soft: #193b3b;
+    --report-warning: #3c321c;
+    --report-stop: #3e232b;
+    --report-shadow: none;
+  }
+}
+
+* { box-sizing: border-box; }
+html { scroll-behavior: smooth; background: var(--report-bg); }
+body { margin: 0; color: var(--report-ink); font: 16px/1.5 system-ui, -apple-system, "Segoe UI", sans-serif; }
+a { color: var(--report-accent); }
+code { padding: .08em .3em; border-radius: 4px; background: var(--report-soft); font: .88em ui-monospace, monospace; }
+.report-wrap { width: min(var(--report-width), calc(100% - 34px)); margin-inline: auto; }
+.report-hero { color: #fff; background: #173f55; }
+.report-hero .report-wrap { padding: 38px 0 30px; }
+.report-eyebrow { margin: 0 0 8px; font-weight: 800; letter-spacing: .08em; text-transform: uppercase; }
+.report-hero h1 { margin: 0; font-size: clamp(2rem, 4vw, 3.4rem); line-height: 1.08; }
+.report-summary { max-width: 900px; margin: 14px 0 0; font-size: 1.08rem; }
+.report-nav { position: sticky; top: 0; z-index: 2; border-bottom: 1px solid var(--report-line); background: var(--report-paper); }
+.report-nav .report-wrap { display: flex; gap: 5px; overflow-x: auto; padding: 8px 0; }
+.report-nav a { flex: 0 0 auto; padding: 5px 8px; color: var(--report-heading); font-size: .8rem; font-weight: 750; text-decoration: none; }
+.report-main { padding: 10px 0 60px; }
+.report-main section { margin: 38px 0; scroll-margin-top: 60px; }
+.report-main h2 { margin: 0 0 7px; color: var(--report-heading); font-size: 1.75rem; }
+.report-main h3 { margin: 18px 0 6px; color: var(--report-heading); }
+.report-main p { margin: 7px 0; }
+.report-guide { max-width: 920px; margin: 0 0 14px; color: var(--report-muted); }
+.report-callout, .report-card, .report-table { border: 1px solid var(--report-line); border-radius: var(--report-radius); background: var(--report-paper); box-shadow: var(--report-shadow); }
+.report-callout, .report-card { padding: 16px; }
+.report-callout { border-left: 6px solid var(--report-accent); }
+.report-warning { border-left-color: #94600e; background: var(--report-warning); }
+.report-stop { border-left-color: #922f46; background: var(--report-stop); }
+.report-two-column { display: grid; grid-template-columns: repeat(2, 1fr); gap: 12px; }
+.report-metadata { display: grid; grid-template-columns: repeat(auto-fit, minmax(180px, 1fr)); gap: 10px; padding: 16px; border: 1px solid var(--report-line); border-radius: var(--report-radius); background: var(--report-paper); box-shadow: var(--report-shadow); }
+.report-table { overflow-x: auto; }
+.report-table table { width: 100%; min-width: 760px; border-collapse: collapse; }
+.report-table th, .report-table td { padding: 9px 11px; border-bottom: 1px solid var(--report-line); text-align: left; vertical-align: top; }
+.report-table th { background: var(--report-soft); color: var(--report-heading); font-size: .75rem; text-transform: uppercase; }
+.report-table tr:last-child td { border-bottom: 0; }
+.report-main pre { overflow: auto; padding: 16px; border-radius: var(--report-radius); background: #15212c; color: #edf4f7; }
+.report-footer { padding: 22px 0 34px; border-top: 1px solid var(--report-line); color: var(--report-muted); font-size: .84rem; }
+
+@media (max-width: 760px) {
+  .report-two-column { grid-template-columns: 1fr; }
+  .report-nav { position: relative; }
+}
+
+@media print {
+  .report-nav { display: none; }
+  .report-main section { margin: 24px 0; }
+  .report-card, .report-callout, .report-table { box-shadow: none; break-inside: avoid; }
+}
+</style></head><body>
+<header class="report-hero"><div class="report-wrap"><p class="report-eyebrow">{{PRIORITY}} · Issue report · v{{VERSION}} · {{LIFECYCLE_STATE}}</p><h1>{{TITLE}}</h1></div></header>
+<nav class="report-nav" aria-label="Report contents"><div class="report-wrap"><a href="#executive-summary">Executive summary</a><a href="#trigger">Trigger</a><a href="#verification">Independent verification</a><a href="#root-cause">Root cause</a><a href="#corrections">Corrections</a><a href="#risks">Risks</a><a href="#decision">Human decision</a></div></nav>
+<main class="report-wrap report-main">
+<section id="executive-summary" data-required-section="true"><h2>Executive summary</h2><div class="report-callout"><p>{{EXECUTIVE_SUMMARY_ONE_PARAGRAPH}}</p></div></section>
+<section id="trigger" data-required-section="true"><h2>Trigger</h2><div class="report-callout"><p>{{TRIGGER_NARRATIVE}}</p></div><div class="report-table"><table><tbody><tr><th>Prompt</th><td>{{TRIGGER_PROMPT_LINK}}</td></tr><tr><th>What the prompt required</th><td>{{PROMPT_MANDATE}}</td></tr><tr><th>Investigation result</th><td>{{RESULT_LINKS}}</td></tr><tr><th>Boundary</th><td>{{TRIGGER_BOUNDARY}}</td></tr></tbody></table></div></section>
+<section id="verification" data-required-section="true"><h2>Independent verification</h2><p class="report-guide">Maps each investigation function to the SOTA-family skill expected to perform it, the actor or skill actually evidenced, and the result location. Missing invocation evidence must be stated as unknown.</p><div class="report-table"><table><thead><tr><th>Investigation function</th><th>Expected SOTA skill</th><th>Actual execution evidence</th><th>Result location</th><th>Finding</th></tr></thead><tbody><tr><td>{{INVESTIGATION_FUNCTION}}</td><td>{{EXPECTED_SKILL}}</td><td>{{ACTUAL_EXECUTION_EVIDENCE}}</td><td>{{RESULT_LOCATION}}</td><td>{{VERIFICATION_FINDING}}</td></tr></tbody></table></div><p><strong>Verification result:</strong> {{VERIFICATION_RESULT}}</p></section>
+<section id="root-cause" data-required-section="true"><h2>Root-cause analysis</h2><div class="report-callout"><p><strong>Root cause:</strong> {{ROOT_CAUSE_STATEMENT}}</p></div><div class="report-table"><table><thead><tr><th>Cause</th><th>Evidence</th><th>Produces</th><th>Confidence</th></tr></thead><tbody><tr><td>{{CAUSE}}</td><td>{{CAUSE_EVIDENCE}}</td><td>{{CAUSAL_EFFECT}}</td><td>{{CAUSE_CONFIDENCE}}</td></tr></tbody></table></div></section>
+<section id="corrections" data-required-section="true"><h2>Recommended corrections</h2><div class="report-table"><table><thead><tr><th>Correction</th><th>Target</th><th>Why</th><th>Acceptance test</th></tr></thead><tbody><tr><td>{{CORRECTION}}</td><td>{{CORRECTION_TARGET}}</td><td>{{CORRECTION_RATIONALE}}</td><td>{{ACCEPTANCE_TEST}}</td></tr></tbody></table></div></section>
+<section id="risks" data-required-section="true"><h2>Risks and open items</h2><div class="report-table"><table><thead><tr><th>Risk or open item</th><th>Effect</th><th>Owner</th><th>Blocks decision?</th></tr></thead><tbody><tr><td>{{RISK_OR_OPEN_ITEM}}</td><td>{{RISK_EFFECT}}</td><td>{{RISK_OWNER}}</td><td>{{BLOCKS_DECISION}}</td></tr></tbody></table></div></section>
+<section id="decision" data-required-section="true"><h2>Human decision</h2><div class="report-callout report-stop"><p><strong>{{HUMAN_DECISION}}</strong> — {{HUMAN_DECISION_REASON_OR_PENDING}}</p></div><div class="report-table"><table><tbody><tr><th>Decision requested</th><td>{{DECISION_REQUEST}}</td></tr><tr><th>Reviewer and authority</th><td>{{REVIEWER_AND_AUTHORITY}}</td></tr><tr><th>Decision time</th><td>{{DECISION_AT_OR_PENDING}}</td></tr><tr><th>Report version</th><td>v{{VERSION}} · <code>{{REPORT_SHA256}}</code></td></tr><tr><th>Previous version</th><td>{{PREVIOUS_VERSION_OR_NONE}}</td></tr></tbody></table></div></section>
+</main><footer class="report-footer"><div class="report-wrap">Issue report template v13 · executive summary → trigger → independent verification → root cause → corrections → risks → human decision</div></footer>
+<script type="application/json" id="issue-report-template-contract">{"schema":"repo.issue-report-template/v13","template_version":13,"required_sections":["executive-summary","trigger","verification","root-cause","corrections","risks","decision"],"rules":{"executive_summary_max_paragraphs":1,"trigger_prompt_and_results_required":true,"skill_to_result_mapping_required":true,"root_cause_evidence_mapping_required":true,"issued_versions_immutable":true,"implementation_authority":"NONE"}}</script>
+</body></html>

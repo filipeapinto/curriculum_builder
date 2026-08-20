@@ -1,0 +1,82 @@
+<!doctype html>
+<!-- Source template: report-system/sources/issue-report.template.v11.source.html -->
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>{{PRIORITY}} · Issue report · v{{VERSION}} · {{LIFECYCLE_STATE}}</title>
+  <style data-report-system="v1">
+{{{REPORT_SYSTEM_CSS}}}
+  </style>
+</head>
+<body>
+  <header class="report-hero"><div class="report-wrap">
+    <p class="report-eyebrow">{{PRIORITY}} · Issue report · v{{VERSION}} · {{LIFECYCLE_STATE}}</p>
+    <h1>{{TITLE}}</h1><p class="report-summary">{{ONE_SENTENCE_RESULT}}</p>
+  </div></header>
+  <nav class="report-nav" aria-label="Report contents"><div class="report-wrap"><a href="#decision">Decision</a><a href="#trigger">Trigger</a><a href="#reported">Reported issue</a><a href="#verification">Verification</a><a href="#diagnosis">Diagnosis</a><a href="#correction">Correction</a><a href="#open-items">Open items</a><a href="#approval">Approval</a></div></nav>
+  <main class="report-wrap report-main">
+    <section id="decision" data-required-section="true">
+      <h2>Decision</h2>
+      <p class="report-guide">Gives the result and requested human decision. A reviewer should be able to approve, reject, or request changes here, then use the remaining sections to verify the basis.</p>
+      <div class="report-callout"><p><strong>{{CONFIRMATION_RESULT}}:</strong> {{SCOPED_RESULT}}</p><p><strong>Recommended correction:</strong> {{RECOMMENDED_CORRECTION_SUMMARY}}</p><p><strong>Decision requested:</strong> {{DECISION_REQUEST}}</p></div>
+      <div class="report-two-column"><div class="report-card"><strong>Severity</strong><p>{{SEVERITY_AND_REASON}}</p></div><div class="report-card"><strong>Confidence</strong><p>{{CONFIDENCE_AND_REASON}}</p></div></div>
+    </section>
+    <section id="trigger" data-required-section="true">
+      <h2>Issue trigger and investigation mandate</h2>
+      <p class="report-guide">Identifies the person or event that initiated the report, why the investigation was requested, and the artifact that defined its scope and tests. A trigger is a detection record or mandate, not proof of the reported issue.</p>
+      <div class="report-table"><table><tbody>
+        <tr><th>Triggered by</th><td>{{TRIGGERED_BY_WITH_ROLE}}</td><th>Triggered at</th><td>{{TRIGGERED_AT}}</td></tr>
+        <tr><th>Trigger artifact</th><td colspan="3">{{TRIGGER_ARTIFACT}}</td></tr>
+        <tr><th>Why triggered</th><td colspan="3">{{TRIGGER_RATIONALE}}</td></tr>
+        <tr><th>Investigation requested</th><td colspan="3">{{INVESTIGATION_MANDATE}}</td></tr>
+        <tr><th>Evidence boundary requested</th><td colspan="3">{{REQUESTED_EVIDENCE_BOUNDARY}}</td></tr>
+        <tr><th>Trigger authority</th><td colspan="3">{{TRIGGER_AUTHORITY_BOUNDARY}}</td></tr>
+      </tbody></table></div>
+    </section>
+    <section id="reported" data-required-section="true">
+      <h2>Reported issue</h2>
+      <p class="report-guide">Preserves the claim that existed before independent verification. The claim remains separate from the trigger mandate and from evidence produced during investigation.</p>
+      <div class="report-table"><table><tbody>
+        <tr><th>Issue ID</th><td>{{ISSUE_ID}}</td><th>Detected by</th><td>{{DETECTED_BY_WITH_ROLE}}</td></tr>
+        <tr><th>Detected at</th><td>{{DETECTED_AT}}</td><th>Detection source</th><td>{{DETECTION_SOURCE}}</td></tr>
+        <tr><th>Expected</th><td colspan="3">{{EXPECTED_BEHAVIOR}}</td></tr><tr><th>Observed</th><td colspan="3">{{OBSERVED_BEHAVIOR}}</td></tr>
+        <tr><th>Original report</th><td colspan="3">{{ORIGINAL_REPORT_VERBATIM}}</td></tr>
+      </tbody></table></div>
+    </section>
+    <section id="verification" data-required-section="true">
+      <h2>Independent verification</h2>
+      <p class="report-guide">Shows who independently executed the investigation mandate, what inputs and procedure they used, and whether they reproduced the issue.</p>
+      <div class="report-callout report-warning"><p><strong>Independence:</strong> {{INVESTIGATOR_INDEPENDENCE_STATEMENT}}</p></div>
+      <div class="report-table"><table><thead><tr><th>Investigator</th><th>Baseline and environment</th><th>Test performed</th><th>Expected</th><th>Observed</th><th>Evidence</th></tr></thead><tbody><tr><td>{{INVESTIGATED_BY_WITH_ROLE}}</td><td>{{BASELINE_AND_ENVIRONMENT}}</td><td>{{REPRODUCTION_STEPS}}</td><td>{{TEST_EXPECTED}}</td><td>{{TEST_OBSERVED}}</td><td>{{EVIDENCE_LINKS}}</td></tr></tbody></table></div>
+      <p><strong>Reproduction result:</strong> {{REPRODUCTION_RESULT_AND_SCOPE}}</p>
+    </section>
+    <section id="diagnosis" data-required-section="true">
+      <h2>Root Cause</h2>
+      <p class="report-guide">Explains the verified defect, why it occurs, and its blast radius. It distinguishes a demonstrated cause from a suspected cause.</p>
+      <div class="report-callout"><p><strong>Defect:</strong> {{DEFECT_STATEMENT}}</p><p><strong>Cause:</strong> {{CAUSE_AND_CONFIDENCE}}</p></div>
+      <h3>Blast radius</h3><div class="report-table"><table><tbody><tr><th>Affected</th><td>{{AFFECTED_SYSTEMS_VERSIONS_USERS}}</td></tr><tr><th>Not affected</th><td>{{NOT_AFFECTED}}</td></tr><tr><th>Impact</th><td>{{IMPACT_IF_UNCORRECTED}}</td></tr><tr><th>Basis</th><td>{{DIAGNOSIS_EVIDENCE}}</td></tr></tbody></table></div>
+    </section>
+    <section id="correction" data-required-section="true">
+      <h2>Recommended correction</h2>
+      <p class="report-guide">States what should change, where, and how to verify it. Approval accepts this direction for planning; it does not authorize implementation.</p>
+      <div class="report-table"><table><tbody><tr><th>Change</th><td>{{CORRECTION_DESCRIPTION}}</td></tr><tr><th>Target</th><td>{{CORRECTION_TARGET}}</td></tr><tr><th>Why this corrects the issue</th><td>{{CORRECTION_RATIONALE}}</td></tr><tr><th>Acceptance tests</th><td>{{ACCEPTANCE_TESTS}}</td></tr><tr><th>Out of scope</th><td>{{CORRECTION_NON_GOALS}}</td></tr></tbody></table></div>
+    </section>
+    <section id="open-items" data-required-section="true">
+      <h2>Open items and risks</h2>
+      <p class="report-guide">Lists only unresolved items that could change the diagnosis, correction, severity, or decision.</p>
+      <div class="report-table"><table><thead><tr><th>Item</th><th>Why it matters</th><th>Owner</th><th>Required before approval?</th></tr></thead><tbody><tr><td>{{OPEN_ITEM_OR_NONE}}</td><td>{{DECISION_IMPACT}}</td><td>{{OWNER_OR_NONE}}</td><td>{{YES_NO}}</td></tr></tbody></table></div>
+    </section>
+    <section id="approval" data-required-section="true">
+      <h2>Human decision</h2>
+      <p class="report-guide">Records the authorized reviewer’s decision on this exact report version. Requested changes produce a new immutable version.</p>
+      <div class="report-callout report-stop"><p><strong>{{HUMAN_DECISION}}</strong> — {{HUMAN_DECISION_REASON_OR_PENDING}}</p></div>
+      <div class="report-table"><table><tbody><tr><th>Reviewer and authority</th><td>{{REVIEWER_AND_AUTHORITY}}</td></tr><tr><th>Decision time</th><td>{{DECISION_AT_OR_PENDING}}</td></tr><tr><th>Report version</th><td>v{{VERSION}} · <code>{{REPORT_SHA256}}</code></td></tr><tr><th>Comments or required changes</th><td>{{REVIEW_COMMENTS_OR_NONE}}</td></tr><tr><th>Previous version</th><td>{{PREVIOUS_VERSION_OR_NONE}}</td></tr></tbody></table></div>
+    </section>
+  </main>
+  <footer class="report-footer"><div class="report-wrap">Issue report template v11 · trigger → reported issue → independent verification → diagnosis → correction → human decision</div></footer>
+  <script type="application/json" id="issue-confirmation-template-contract">
+  {"schema":"repo.issue-confirmation-template/v11","template_version":11,"purpose":"Preserve the trigger and investigation mandate, then confirm or reject the reported issue through independent verification, diagnose it, recommend a correction, and record a human decision.","required_sections":["decision","trigger","reported","verification","diagnosis","correction","open-items","approval"],"confirmation_results":["PENDING","CONFIRMED","PARTLY_CONFIRMED","NOT_REPRODUCED","DISPROVED"],"human_decisions":["PENDING","APPROVED","CHANGES_REQUESTED","REJECTED"],"rules":{"trigger_identified":true,"trigger_is_not_proof":true,"detector_identified":true,"independent_investigator_identified":true,"reproduction_result_required":true,"diagnosis_confidence_required":true,"recommended_correction_required_for_confirmed_issue":true,"issued_versions_immutable":true,"implementation_authority":"NONE"}}
+  </script>
+</body>
+</html>

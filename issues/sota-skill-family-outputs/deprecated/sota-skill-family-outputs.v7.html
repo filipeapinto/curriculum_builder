@@ -1,0 +1,102 @@
+<!doctype html>
+<!-- Applies templates/issue-report.template.v10.html. Previous versions are immutable. -->
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>P0 · Issue report · v3 · HUMAN_REVIEW_PENDING</title>
+  <style data-report-system="v1">
+:root{color-scheme:light dark;--report-bg:#eef2f4;--report-paper:#fff;--report-ink:#172631;--report-muted:#536573;--report-line:#cbd5dc;--report-heading:#123b55;--report-accent:#087d78;--report-soft:#e2f3f0;--report-warning:#fff3d5;--report-stop:#fbe8ec;--report-shadow:0 8px 24px rgba(16,42,57,.08);--report-radius:8px;--report-width:1120px}
+@media(prefers-color-scheme:dark){:root{--report-bg:#0d1720;--report-paper:#17242e;--report-ink:#edf3f5;--report-muted:#b6c2c9;--report-line:#3b4d59;--report-heading:#9dd5e5;--report-accent:#86d8d0;--report-soft:#193b3b;--report-warning:#3c321c;--report-stop:#3e232b;--report-shadow:none}}
+*{box-sizing:border-box}html{scroll-behavior:smooth;background:var(--report-bg)}body{margin:0;color:var(--report-ink);font:16px/1.5 system-ui,-apple-system,"Segoe UI",sans-serif}a{color:var(--report-accent)}code{padding:.08em .3em;border-radius:4px;background:var(--report-soft);font:.88em ui-monospace,monospace}.report-wrap{width:min(var(--report-width),calc(100% - 34px));margin-inline:auto}.report-hero{color:#fff;background:#173f55}.report-hero .report-wrap{padding:38px 0 30px}.report-eyebrow{margin:0 0 8px;font-weight:800;letter-spacing:.08em;text-transform:uppercase}.report-hero h1{margin:0;font-size:clamp(2rem,4vw,3.4rem);line-height:1.08}.report-summary{max-width:900px;margin:14px 0 0;font-size:1.08rem}.report-nav{position:sticky;top:0;z-index:2;border-bottom:1px solid var(--report-line);background:var(--report-paper)}.report-nav .report-wrap{display:flex;gap:5px;overflow-x:auto;padding:8px 0}.report-nav a{flex:0 0 auto;padding:5px 8px;color:var(--report-heading);font-size:.8rem;font-weight:750;text-decoration:none}.report-main{padding:10px 0 60px}.report-main section{margin:38px 0;scroll-margin-top:60px}.report-main h2{margin:0 0 7px;color:var(--report-heading);font-size:1.75rem}.report-main h3{margin:18px 0 6px;color:var(--report-heading)}.report-main p{margin:7px 0}.report-guide{max-width:920px;margin:0 0 14px;color:var(--report-muted)}.report-callout,.report-card,.report-table{border:1px solid var(--report-line);border-radius:var(--report-radius);background:var(--report-paper);box-shadow:var(--report-shadow)}.report-callout,.report-card{padding:16px}.report-callout{border-left:6px solid var(--report-accent)}.report-warning{border-left-color:#94600e;background:var(--report-warning)}.report-stop{border-left-color:#922f46;background:var(--report-stop)}.report-two-column{display:grid;grid-template-columns:repeat(2,1fr);gap:12px}.report-table{overflow-x:auto}.report-table table{width:100%;min-width:760px;border-collapse:collapse}.report-table th,.report-table td{padding:9px 11px;border-bottom:1px solid var(--report-line);text-align:left;vertical-align:top}.report-table th{background:var(--report-soft);color:var(--report-heading);font-size:.75rem;text-transform:uppercase}.report-table tr:last-child td{border-bottom:0}.report-main pre{overflow:auto;padding:16px;border-radius:var(--report-radius);background:#15212c;color:#edf4f7}.report-footer{padding:22px 0 34px;border-top:1px solid var(--report-line);color:var(--report-muted);font-size:.84rem}@media(max-width:760px){.report-two-column{grid-template-columns:1fr}.report-nav{position:relative}}@media print{.report-nav{display:none}.report-main section{margin:24px 0}.report-card,.report-callout,.report-table{box-shadow:none;break-inside:avoid}}
+  </style>
+</head>
+<body>
+  <header class="report-hero"><div class="report-wrap">
+    <p class="report-eyebrow">P0 · Issue report · v3 · HUMAN_REVIEW_PENDING</p>
+    <h1>The SOTA verifier cannot detect requirements omitted by a plan</h1>
+    <p class="report-summary">The verifier is explicitly told to derive its checklist only from the approved plan. There is no separate family checklist against which the plan itself is tested. A plan can therefore omit a family control, and verification will omit that same control.</p>
+  </div></header>
+  <nav class="report-nav" aria-label="Report contents"><div class="report-wrap"><a href="#decision">Decision</a><a href="#reported">Reported issue</a><a href="#verification">Verification</a><a href="#diagnosis">Root cause</a><a href="#correction">Correction</a><a href="#open-items">Open items</a><a href="#approval">Approval</a></div></nav>
+  <main class="report-wrap report-main">
+    <section id="decision" data-required-section="true">
+      <h2>Decision</h2>
+      <div class="report-callout">
+        <p><strong>CONFIRMED:</strong> <a href="../../.codex/skills/sota-verify/SKILL.md"><code>sota-verify/SKILL.md</code></a> says, “Derive the checklist only from the approved plan.” No other SOTA-family instruction requires the verifier to test the plan against a non-waivable family baseline.</p>
+        <p><strong>Consequence:</strong> if a plan omits a required control—such as a provenance field, lifecycle record, challenge disposition, or terminal state—the verifier has no independent rule requiring it to report that omission.</p>
+        <p><strong>Recommended correction:</strong> define a short family baseline and require verification to run it before plan-specific checks.</p>
+        <p><strong>Decision requested:</strong> approve, reject, or request changes to the three corrections in this report. Approval authorizes planning only.</p>
+      </div>
+      <div class="report-two-column"><div class="report-card"><strong>Severity</strong><p>P0: this is a false-assurance path. A plan and its verification can agree with each other while both omit a family requirement.</p></div><div class="report-card"><strong>Confidence</strong><p>High. The controlling instructions state the behavior directly; no inference from file-format differences is needed.</p></div></div>
+    </section>
+
+    <section id="reported" data-required-section="true">
+      <h2>Reported issue</h2>
+      <div class="report-table"><table><tbody>
+        <tr><th>Issue ID</th><td>SOTA-SKILL-FAMILY-METHOD-CONSISTENCY</td><th>Detected by</th><td>Repository human owner</td></tr>
+        <tr><th>Detected at</th><td>2026-08-19</td><th>Source</th><td><a href="sota-skill-family-method-output-contract-inconsistency.issue.v4.html">Issue v4</a></td></tr>
+        <tr><th>Expected</th><td colspan="3">A SOTA plan may add study-specific requirements, but it cannot remove family requirements. Verification must detect both plan defects and run defects.</td></tr>
+        <tr><th>Observed</th><td colspan="3">The verifier checks only the plan. The plan creator also lacks a minimal family-owned SOTA template, and the execution contract does not bind its required concepts to canonical run files or record schemas.</td></tr>
+        <tr><th>Original report</th><td colspan="3">The SOTA family does not enforce one invariant method beneath legitimate differences among studies.</td></tr>
+      </tbody></table></div>
+    </section>
+
+    <section id="verification" data-required-section="true">
+      <h2>Independent verification</h2>
+      <div class="report-callout report-warning"><p><strong>Method:</strong> inspect the current normative SOTA instructions and ask three binary questions: Is there a family verification checklist? Is there a family-owned minimal plan template? Are required execution concepts bound to canonical files and schemas?</p></div>
+      <div class="report-table"><table><thead><tr><th>Test</th><th>Expected rule</th><th>Observed instruction</th><th>Result</th></tr></thead><tbody>
+        <tr><td>Can verification detect a requirement missing from the plan?</td><td>The verifier must first test every plan and run against a family checklist that plans cannot weaken.</td><td><a href="../../.codex/skills/sota-verify/SKILL.md"><code>sota-verify/SKILL.md</code></a>, step 1: “Derive the checklist only from the approved plan.” No family checklist is named.</td><td><strong>FAIL.</strong> A missing plan requirement produces a missing verification check.</td></tr>
+        <tr><td>Does plan creation start from a minimal SOTA contract?</td><td>The family should own a template that marks universal sections as required and study-specific sections as conditional.</td><td><a href="../../.codex/skills/sota-plan-create/SKILL.md"><code>sota-plan-create/SKILL.md</code></a>, steps 1 and 12: inspect <code>research/llm_failure_analysis/plan/sota_research.plan.v5.html</code> as the structural reference.</td><td><strong>FAIL.</strong> One complex incident plan is the required structural model; no minimal SOTA template is supplied.</td></tr>
+        <tr><td>Can two runs be tested with the same structural validator?</td><td>The execution contract should name the required run files, their purposes, and their schemas.</td><td><a href="../../.codex/skills/sota-plan-execute/references/execution-contract.md"><code>execution-contract.md</code></a> requires IDs, records, provenance, budgets, challenge, verification, and acceptance, but names no canonical run files and binds these concepts to no schema suite.</td><td><strong>FAIL.</strong> The prose requirements do not define a mechanically testable package.</td></tr>
+      </tbody></table></div>
+      <p><strong>Reproduction result:</strong> CONFIRMED against the current repository instructions on 2026-08-20.</p>
+      <p><strong>Supporting cases:</strong> The two audited packages use different locations and record shapes and received different verification treatment. Those runs demonstrate impact; they are not the primary proof. Detailed run findings remain in <a href="sota-skill-family-method-output-contract-inconsistency.report.v1.html">report v1</a>.</p>
+    </section>
+
+    <section id="diagnosis" data-required-section="true">
+      <h2>Root Cause</h2>
+      <div class="report-callout"><p><strong>Defect:</strong> verification has no authority source above the individual plan.</p><p><strong>Cause:</strong> the workflow treats the plan as both the object being trusted and the sole source of rules used to verify the resulting run. No independent family contract constrains what the plan must contain.</p></div>
+      <div class="report-table"><table><tbody>
+        <tr><th>Affected</th><td>All plans created by <code>sota-plan-create</code>, runs executed by <code>sota-plan-execute</code>, and reports checked by <code>sota-verify</code>.</td></tr>
+        <tr><th>Not affected</th><td>Study-specific questions, search strategies, evidence sources, experiments, sample sizes, analyses, and conclusions.</td></tr>
+        <tr><th>Impact</th><td>A weak or incomplete plan can define a weak verification checklist and still receive a clean verification result.</td></tr>
+        <tr><th>Basis</th><td>The three current instruction files linked in the verification table.</td></tr>
+      </tbody></table></div>
+    </section>
+
+    <section id="correction" data-required-section="true">
+      <h2>Recommended correction</h2>
+      <div class="report-table"><table><thead><tr><th>Change</th><th>Exact requirement</th><th>Acceptance test</th></tr></thead><tbody>
+        <tr><td><strong>1. Family verification baseline</strong></td><td>Add a baseline checklist to the SOTA family. Change verifier order to: (a) test the plan against the family baseline; (b) test the run against the family baseline; (c) run additional plan-specific checks. Plans may add checks but cannot disable or relabel baseline checks.</td><td>Delete one baseline requirement from a test plan. Verification must fail because the plan is incomplete, even though the omitted requirement does not appear in that plan.</td></tr>
+        <tr><td><strong>2. Minimal SOTA plan template</strong></td><td>Create <code>.codex/skills/sota-plan-create/assets/sota-plan.template.html</code>. It must distinguish universal sections from conditional sections. Retain the LLM-failure plan as a complex example, not the normative structure.</td><td>Instantiate one minimal literature study and one complex incident study. Both contain every universal requirement; neither is forced to include irrelevant conditional sections.</td></tr>
+        <tr><td><strong>3. Canonical run contract</strong></td><td>Require <code>research/&lt;sota-slug&gt;/plan/&lt;sota-slug&gt;.plan.vN.html</code> and, per run, <code>report.html</code>, <code>execution-log.json</code>, plus optional <code>evidence/</code>. Define which required facts belong in the plan, log, and report. Bind machine-readable records to versioned schemas.</td><td>One structural validator discovers and validates both the minimal and complex test runs without plan-specific path configuration.</td></tr>
+      </tbody></table></div>
+      <p><strong>Out of scope:</strong> forcing studies to use the same research method or reach the same conclusion; creating a directory or file for every workflow role; rewriting legacy evidence; approving implementation.</p>
+    </section>
+
+    <section id="open-items" data-required-section="true">
+      <h2>Open items and risks</h2>
+      <div class="report-table"><table><thead><tr><th>Item</th><th>Why it matters</th><th>Owner</th><th>Required before approval?</th></tr></thead><tbody>
+        <tr><td>Exact baseline fields and schemas</td><td>The report proves the missing authority structure; the remediation plan must specify the field-level contract without duplicating existing repository schemas.</td><td>Plan author and repository owner</td><td>No</td></tr>
+        <tr><td>Legacy-run treatment</td><td>Old packages may be assessed read-only, wrapped, or migrated, but missing provenance must not be invented.</td><td>Repository owner</td><td>No</td></tr>
+      </tbody></table></div>
+    </section>
+
+    <section id="approval" data-required-section="true">
+      <h2>Human decision</h2>
+      <div class="report-callout report-stop"><p><strong>PENDING</strong> — Decide whether the three verified defects and three corresponding corrections are accurate enough to enter remediation planning. Implementation authority remains NONE.</p></div>
+      <div class="report-table"><table><tbody>
+        <tr><th>Reviewer and authority</th><td>Repository human owner</td></tr>
+        <tr><th>Decision time</th><td>Pending</td></tr>
+        <tr><th>Report version</th><td>v3 · digest to be recorded with the human decision</td></tr>
+        <tr><th>Comments or required changes</th><td>Pending</td></tr>
+        <tr><th>Previous version</th><td><a href="sota-skill-family-method-output-contract-inconsistency.report.v2.html">report v2</a> — preserved unchanged; changes requested for vague and confusing findings</td></tr>
+      </tbody></table></div>
+    </section>
+  </main>
+  <footer class="report-footer"><div class="report-wrap">Issue report template v10 · detection → independent verification → diagnosis → correction → human decision</div></footer>
+  <script type="application/json" id="issue-confirmation-template-contract">
+  {"schema":"repo.issue-confirmation-template/v10","template_version":10,"purpose":"Confirm or reject a reported issue through independent verification, diagnose what is wrong, recommend a correction, and record a human decision.","required_sections":["decision","reported","verification","diagnosis","correction","open-items","approval"],"confirmation_results":["PENDING","CONFIRMED","PARTLY_CONFIRMED","NOT_REPRODUCED","DISPROVED"],"human_decisions":["PENDING","APPROVED","CHANGES_REQUESTED","REJECTED"],"rules":{"detector_identified":true,"independent_investigator_identified":true,"reproduction_result_required":true,"diagnosis_confidence_required":true,"recommended_correction_required_for_confirmed_issue":true,"issued_versions_immutable":true,"implementation_authority":"NONE"}}
+  </script>
+</body>
+</html>
