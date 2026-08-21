@@ -1,0 +1,46 @@
+version: 1
+
+default:
+  mode: rewrite
+  voice: restrained
+  preserve_structure: true
+  first_person: false
+  opinions: false
+  sentence_complexity: contextual
+
+patterns:
+  throat_clearing: remove
+  filler: remove
+  puffery: remove
+  promotional_language: remove
+  chatbot_phrases: remove
+  sycophancy: remove
+  vague_attribution: require_named_source
+  generic_conclusions: remove
+  formulaic_contrast: review
+  forced_groups: review
+  false_ranges: review
+  superficial_ing_clauses: review
+  synonym_cycling: remove
+  qualitative_claims: prefer_evidence
+  passive_voice: contextual
+  technical_jargon: allow_if_defined_or_exact
+
+punctuation:
+  em_dash: contextual
+  colon: contextual
+  parentheses: contextual
+  bold_lead_ins: contextual
+  heading_case: preserve_contract
+  decorative_symbols: remove
+
+artifact_profiles:
+  learner_prose: learner_prose
+  operational_documentation: operational_documentation
+  issue_plan_verification: issue_plan_verification
+  research: research
+  conversational: conversational
+
+exempt_terms:
+  - scaffolding
+

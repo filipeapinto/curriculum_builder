@@ -7,19 +7,17 @@ description: Tighten human-facing prose in Curriculum Factory artifacts by remov
 
 Make repository prose concrete, economical, and appropriate to its reader. Preserve the artifact's job. A less generic sentence is not an improvement if it weakens a contract, changes a fact, or hides uncertainty.
 
-## Establish the editing boundary
+## Load policy
 
-Identify the artifact class before editing:
+Read `references/default-policy.yaml` for the baseline settings. Then:
 
-- **Learner-facing curriculum:** favor concrete objects and actions, short paragraphs, defined vocabulary, calm troubleshooting, and age-appropriate explanations. Follow `meta_prompt/assets/unit_prose.v1.md` and the active readability, pedagogy, and safety contracts.
-- **Operational documentation:** make every sentence name a condition, component, input, output, state transition, gate, dependency, boundary, failure owner, or useful consequence. Preserve required information architecture.
-- **Issue reports, plans, and verification records:** remove filler without changing findings, dispositions, acceptance criteria, status vocabulary, evidence distinctions, or uncertainty.
-- **Research prose:** tighten rhetoric while preserving citations, attribution, causal strength, limitations, and warranted hedging.
-- **Conversational or explanatory prose:** a restrained human voice is appropriate when it does not invent opinions or imply authority.
+- Read `references/configuration.md` when the user supplies preferences or a configuration path, or when `<repo-root>/policy/slop-remove.yaml` exists.
+- Read only the relevant section of `references/artifact-profiles.md` after classifying the artifact.
+- Follow the precedence and merge rules in `references/configuration.md`. Style preferences never override binding contracts or the preservation floor below.
 
-Do not rewrite code, JSON, YAML, schemas, commands, identifiers, hashes, URLs, citations, quoted evidence, source receipts, or generated data merely to improve style. Do not modify an immutable or superseded artifact in place. If repository rules require a new version, create the next version only when the user authorized an edit; otherwise report proposed changes.
+Classify mixed artifacts by region. Apply prose editing only to eligible human-facing regions.
 
-## Preserve before improving
+## Non-configurable preservation floor
 
 Record the facts and constraints that must survive. At minimum, protect:
 
@@ -30,6 +28,8 @@ Record the facts and constraints that must survive. At minimum, protect:
 - pedagogical sequence, reading band, defined terminology, and required repetition;
 - required headings, tables, examples, and accessibility content;
 - statements of uncertainty, absence of evidence, and untested paths.
+
+Do not rewrite code, JSON, YAML, schemas, commands, identifiers, hashes, URLs, citations, quoted evidence, source receipts, or generated data merely to improve style. Do not modify an immutable or superseded artifact in place. If repository rules require a new version, create the next version only when the user authorized an edit; otherwise report proposed changes.
 
 Repository contracts outrank this skill. Read the relevant current contract before editing when the artifact identifies one or its location makes one discoverable. Do not infer that prose is redundant merely because a schema or another artifact contains related information; duplication may be an intentional interface or safety control.
 
@@ -47,6 +47,8 @@ Cut or replace:
 - superficial `-ing` clauses that imply a consequence without explaining or sourcing it;
 - ornamental synonyms that rename the same actor or concept.
 
+Apply only the pattern families enabled by the merged policy. Treat configured patterns as review signals, not blind substitutions.
+
 If removing a sentence changes no instruction, fact, relationship, qualification, or reader decision, remove it.
 
 ### 2. Make the content concrete
@@ -57,16 +59,16 @@ If removing a sentence changes no instruction, fact, relationship, qualification
 - Prefer a plain word when it preserves the domain meaning.
 - Split a sentence when a reader must backtrack to find its subject, condition, or result.
 - Repeat a precise term instead of cycling through synonyms.
-- Keep domain terms such as `scaffolding` when they name repository-defined concepts. Do not apply a generic jargon blacklist to controlled or technically exact vocabulary.
+- Keep domain terms when they name repository-defined concepts. Do not apply a generic jargon blacklist to controlled or technically exact vocabulary.
 - Prefer active voice for instructions and ownership. Keep passive voice when the actor is unknown, irrelevant, or the artifact deliberately centers the state or result.
 
 Ask of each sentence: could it appear unchanged in an unrelated repository? If yes, replace it with repository-specific information or remove it.
 
 ### 3. Restore an appropriate human voice
 
-Avoid sterile uniformity, but do not manufacture personality. Vary sentence length where it improves reading rhythm. Use first person or an opinion only when the artifact class and authorial role permit it. Do not add emotional reactions, jokes, deliberate messiness, or false certainty to technical, evidentiary, safety, or governance artifacts.
+Apply the merged artifact profile's voice settings. Avoid sterile uniformity, but do not manufacture personality. Do not add emotional reactions, jokes, deliberate messiness, or false certainty to technical, evidentiary, safety, or governance artifacts.
 
-Treat punctuation as syntax, not as an AI detector. Remove repeated em dashes, colons, parentheses, bold lead-ins, title case, or decorative symbols when they become mannerisms. Retain them when they express a real hierarchy, qualification, definition, range, or interface convention.
+Treat punctuation as syntax, not as an AI detector. Apply configured punctuation preferences only when they preserve a real hierarchy, qualification, definition, range, or interface convention.
 
 ## Validate the result
 
