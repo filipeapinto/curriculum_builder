@@ -1,0 +1,3 @@
+interface:
+  display_name: "Slop Remove"
+  short_description: "Tighten prose without weakening repository contracts"

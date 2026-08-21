@@ -1,0 +1,4 @@
+interface:
+  display_name: "Plan Createe"
+  short_description: "Turn issue reports into solution plans"
+  default_prompt: "Use $plan-createe to create a solution plan from this issue report."
